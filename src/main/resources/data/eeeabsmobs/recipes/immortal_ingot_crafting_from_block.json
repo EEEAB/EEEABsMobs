@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "immortal_ingot",
+  "ingredients": [
+    {
+      "item": "eeeabsmobs:immortal_block"
+    }
+  ],
+  "result": {
+    "item": "eeeabsmobs:immortal_ingot",
+    "count": 9
+  }
+}

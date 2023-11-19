@@ -1,0 +1,175 @@
+{
+  "laser": {
+    "subtitle": "subtitles.laser",
+    "sounds": [
+      "eeeabsmobs:effect/laser"
+    ]
+  },
+  "immortal.skeleton.roar": {
+    "subtitle": "subtitles.immortal.skeleton.roar",
+    "sounds": [
+      "eeeabsmobs:entity/immortal_skeleton/roar"
+    ]
+  },
+  "immortal.skeleton.hurt": {
+    "subtitle": "subtitles.immortal.skeleton.hurt",
+    "sounds": [
+      "eeeabsmobs:entity/immortal_skeleton/hurt1",
+      "eeeabsmobs:entity/immortal_skeleton/hurt2",
+      "eeeabsmobs:entity/immortal_skeleton/hurt3"
+    ]
+  },
+  "immortal.skeleton.death": {
+    "subtitle": "subtitles.immortal.skeleton.death",
+    "sounds": [
+      "eeeabsmobs:entity/immortal_skeleton/death"
+    ]
+  },
+  "immortal.shaman.prepare_shoot": {
+    "subtitle": "subtitles.immortal.shaman.prepare_shoot",
+    "sounds": [
+      "eeeabsmobs:entity/immortal_shaman/prepare_shoot1",
+      "eeeabsmobs:entity/immortal_shaman/prepare_shoot2",
+      "eeeabsmobs:entity/immortal_shaman/prepare_shoot3",
+      "eeeabsmobs:entity/immortal_shaman/prepare_shoot4"
+    ]
+  },
+  "immortal.shaman.hurt": {
+    "subtitle": "subtitles.immortal.shaman.hurt",
+    "sounds": [
+      "eeeabsmobs:generic/entity/skeleton_hurt1",
+      "eeeabsmobs:generic/entity/skeleton_hurt2",
+      "eeeabsmobs:generic/entity/skeleton_hurt3"
+    ]
+  },
+  "immortal.shaman.prepare_spell_casting": {
+    "subtitle": "subtitles.immortal.shaman.prepare_spell_casting",
+    "sounds": [
+      "eeeabsmobs:entity/immortal_shaman/prepare_spell_casting"
+    ]
+  },
+  "immortal.shaman.death": {
+    "subtitle": "subtitles.immortal.shaman.death",
+    "sounds": [
+      "eeeabsmobs:generic/entity/skeleton_death"
+    ]
+  },
+  "immortal.golem.hurt": {
+    "subtitle": "subtitles.immortal.golem.hurt",
+    "sounds": [
+      "eeeabsmobs:generic/entity/skeleton_hurt1",
+      "eeeabsmobs:generic/entity/skeleton_hurt2",
+      "eeeabsmobs:generic/entity/skeleton_hurt3"
+    ]
+  },
+  "immortal.golem.death": {
+    "subtitle": "subtitles.immortal.golem.death",
+    "sounds": [
+      "eeeabsmobs:generic/entity/skeleton_death"
+    ]
+  },
+  "nameless.guardian.step": {
+    "subtitle": "subtitles.nameless.guardian.step",
+    "sounds": [
+      "eeeabsmobs:entity/nameless_guardian/step1",
+      "eeeabsmobs:entity/nameless_guardian/step2"
+    ]
+  },
+  "nameless.guardian.accumulating": {
+    "subtitle": "subtitles.nameless.guardian.accumulating",
+    "sounds": [
+      "eeeabsmobs:entity/nameless_guardian/accumulating"
+    ]
+  },
+  "nameless.guardian.whoosh": {
+    "subtitle": "subtitles.nameless.guardian.whoosh",
+    "sounds": [
+      "eeeabsmobs:entity/nameless_guardian/whoosh"
+    ]
+  },
+  "nameless.guardian.pre_swing": {
+    "subtitle": "nameless.guardian.pre_swing",
+    "sounds": [
+      "eeeabsmobs:entity/nameless_guardian/pre_swing"
+    ]
+  },
+  "nameless.guardian.pre_pounce": {
+    "subtitle": "subtitles.nameless.guardian.pre_pounce",
+    "sounds": [
+      "eeeabsmobs:entity/nameless_guardian/pre_pounce"
+    ]
+  },
+  "nameless.guardian.madness": {
+    "subtitle": "subtitles.nameless.guardian.madness",
+    "sounds": [
+      "eeeabsmobs:entity/nameless_guardian/madness1",
+      "eeeabsmobs:entity/nameless_guardian/madness2"
+    ]
+  },
+  "nameless.guardian.idle": {
+    "subtitle": "subtitles.nameless.guardian.idle",
+    "sounds": [
+      "eeeabsmobs:entity/nameless_guardian/idle1",
+      "eeeabsmobs:entity/nameless_guardian/idle2"
+    ]
+  },
+  "nameless.guardian.hurt": {
+    "subtitle": "subtitles.nameless.guardian.hurt",
+    "sounds": [
+      "eeeabsmobs:entity/nameless_guardian/hurt1",
+      "eeeabsmobs:entity/nameless_guardian/hurt2"
+    ]
+  },
+  "nameless.guardian.creak": {
+    "subtitle": "subtitles.immortal.guardian.creak",
+    "sounds": [
+      "eeeabsmobs:entity/nameless_guardian/creak"
+    ]
+  },
+  "giant_axe_hit": {
+    "subtitle": "subtitles.giant_axe_hit",
+    "sounds": [
+      "eeeabsmobs:effect/giant_axe_hit"
+    ]
+  },
+  "nameless.guardian.death": {
+    "subtitle": "subtitles.immortal.guardian.death",
+    "sounds": [
+      "eeeabsmobs:entity/nameless_guardian/death"
+    ]
+  },
+  "music.nameless_guardian_theme_1": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "eeeabsmobs:music/guardians/guardians_prelude",
+        "stream": true,
+        "volume": 1.0
+      }
+    ],
+    "subtitle": "subtitles.nameless_guardian_theme_prelude"
+  },
+  "music.nameless_guardian_theme_2": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "eeeabsmobs:music/guardians/guardians_climax",
+        "stream": true,
+        "volume": 1.0
+      }
+    ],
+    "subtitle": "subtitles.nameless_guardian_theme_climax"
+  },
+  "music.guardians": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "eeeabsmobs:music/guardians/guardians",
+        "stream": true,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.music.guardians"
+  }
+}
+

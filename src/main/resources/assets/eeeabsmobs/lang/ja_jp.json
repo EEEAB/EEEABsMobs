@@ -1,0 +1,78 @@
+{
+  "_comment": "クリエイティブモードタブ",
+  "item_group.eeeabsmobs.creative_tab": "EEEAB's Mobs",
+
+  "_comment": "モブ",
+  "entity.eeeabsmobs.immortal_skeleton": "不滅のスケルトン",
+  "entity.eeeabsmobs.immortal_knight": "不滅の騎士",
+  "entity.eeeabsmobs.immortal_shaman": "不滅のシャーマン",
+  "entity.eeeabsmobs.immortal_golem": "不滅のゴーレム",
+  "entity.eeeabsmobs.nameless_guardian": "名も無き守護者",
+
+  "_comment": "エンティティ",
+  "entity.eeeabsmobs.shaman_bomb": "シャーマンボム",
+  "entity.eeeabsmobs.eye_of_struct": "ストラクチャーアイ",
+  "entity.eeeabsmobs.falling_block": "落下ブロック",
+  "entity.eeeabsmobs.guardian_laser": "ガーディアンレーザー",
+  "entity.eeeabsmobs.scorch": "焦げ",
+  "entity.eeeabsmobs.camera_shake": "カメラの揺れ",
+  "entity.eeeabsmobs.moving_controller": "コントローラーの移動",
+  "entity.eeeabsmobs.testllager": "テストラガー",
+
+  "_comment": "アイテム",
+  "item.eeeabsmobs.logo_item": "EEEAB's Mobs MOD のアイテム",
+  "item.eeeabsmobs.remove_mob": "モブリムーバー",
+  "item.eeeabsmobs.immortal_axe": "不滅の斧",
+  "item.eeeabsmobs.immortal_sword": "不滅の剣",
+  "item.eeeabsmobs.immortal_bone": "不滅の骨",
+  "item.eeeabsmobs.immortal_helmet": "不滅のヘルメット",
+  "item.eeeabsmobs.immortal_chest_plate": "不滅のチェストプレート",
+  "item.eeeabsmobs.immortal_leggings": "不滅のレギンス",
+  "item.eeeabsmobs.immortal_boots": "不滅のブーツ",
+  "item.eeeabsmobs.immortal_staff": "不滅の杖",
+  "item.eeeabsmobs.immortal_debris": "鎧の破片",
+  "item.eeeabsmobs.immortal_ingot": "不滅の鉄インゴット",
+  "item.eeeabsmobs.guardians_music_disc": "レコード",
+  "item.eeeabsmobs.ancient_tomb_eye": "エンシェントグレイブアイ",
+  "item.eeeabsmobs.guardian_axe": "守護者の戦斧",
+
+  "_comment": "ブロック",
+  "block.eeeabsmobs.immortal_block": "不滅の鉄ブロック",
+  "block.eeeabsmobs.soul_light": "ソウルライト",
+
+  "_comment": "スポーンエッグ",
+  "item.eeeabsmobs.immortal_skeleton_egg": "不滅のスケルトンのスポーンエッグ",
+  "item.eeeabsmobs.immortal_knight_egg": "不滅の騎士のスポーンエッグ",
+  "item.eeeabsmobs.immortal_shaman_egg": "不滅のシャーマンのスポーンエッグ",
+  "item.eeeabsmobs.immortal_golem_egg": "不滅のゴーレムのスポーンエッグ",
+  "item.eeeabsmobs.nameless_guardian_egg": "名も無き守護者のスポーンエッグ (製作中)",
+
+  "_comment": "チップ",
+  "key_down.tip": "<Shift> を押したままにすると詳細が表示される",
+  "item.unable_depleted_tip": "壊れない",
+  "item.eeeabsmobs.immortal_sword.tip": "攻撃した者に浸食の効果を与える",
+  "item.eeeabsmobs.remove_mob.tip_1": "左クリックして EEEAB のMob モブ/エンティティを削除する",
+  "item.eeeabsmobs.remove_mob.tip_2": "右クリックして、16*16*16 の範囲の EEEAB Mob からモブ/エンティティを削除する",
+  "item.eeeabsmobs.immortal_staff.tip": "右クリックを 1 秒間押し続けるとシャーマンボムを発射する",
+  "item.eeeabsmobs.immortal_debris.tip": "何かの生き物の鎧の破片のようだ...",
+  "eye_of_ancient_tomb.tip": "右クリックで古代の墓の構造を見つけられる",
+  "full_suit_of_armor_tip": "フルスーツのアーマー効果:",
+  "immortal_full_suit_of_armor_tip":"不滅の暴徒が与えるダメージは 10% 減少する",
+
+  "_comment": "効果",
+  "effect.eeeabsmobs.erode_effect": "侵食",
+  "effect.eeeabsmobs.armor_lower_effect": "アーマーロワー",
+  "effect.eeeabsmobs.vertigo_effect": "眩暈",
+
+  "_comment": "ダメージソースメッセージ",
+  "death. Attack.shaman_bomb": "%1$s はシャーマンの爆弾によって粉々に吹き飛ばされた",
+  "death. Attack.guardian_robust_attach": "%1$s は %2$s によって粉砕された",
+  "death. Attack.guardian_laser_attach":"1$s は %2$s からのレーザーによって焼却された",
+
+  "_comment": "レコード",
+  "item.eeeabsmobs.guardians_music_disc.desc": "Guardians - Evan King",
+
+  "_comment": "Sounds subtitle",
+  "subtitles.music.guardians": "Guardians - Evan King"
+
+}
