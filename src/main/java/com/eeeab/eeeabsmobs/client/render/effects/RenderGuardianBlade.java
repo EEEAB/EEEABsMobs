@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.client.render.entity;
+package com.eeeab.eeeabsmobs.client.render.effects;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelGuardianBlade;
