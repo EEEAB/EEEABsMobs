@@ -29,8 +29,6 @@ public class EERenderType extends RenderType {
 
     public static RenderType getGlowingCutOutEffect(ResourceLocation location) {
         RenderStateShard.TextureStateShard shard = new RenderStateShard.TextureStateShard(location, false, false);
-        //RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER
-        //old: RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER
         RenderType.CompositeState rendertype$state = RenderType.CompositeState.builder().setTextureState(shard).setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER).setTransparencyState(TRANSLUCENT_TRANSPARENCY).setCullState(NO_CULL).setOverlayState(OVERLAY).setLightmapState(LIGHTMAP).createCompositeState(true);
         return create("glow_cutout_effect", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, false, rendertype$state);
     }
