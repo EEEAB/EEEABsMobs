@@ -74,11 +74,11 @@ public class EntityInit {
 //                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal").toString()));
 
 
-    public static final RegistryObject<EntityType<EntityTest>> TEST =
-            ENTITIES.register("test",
-                    () -> EntityType.Builder.<EntityTest>of(EntityTest::new, MobCategory.MONSTER)
-                            .sized(1f, 2f).clientTrackingRange(8)
-                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "test").toString()));
+//    public static final RegistryObject<EntityType<EntityTest>> TEST =
+//            ENTITIES.register("test",
+//                    () -> EntityType.Builder.<EntityTest>of(EntityTest::new, MobCategory.MONSTER)
+//                            .sized(1f, 2f).clientTrackingRange(8)
+//                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "test").toString()));
 
 
     //非生物实体
