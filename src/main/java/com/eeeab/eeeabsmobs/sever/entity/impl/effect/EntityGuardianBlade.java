@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.impl.effect;
 
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -30,12 +31,19 @@ public class EntityGuardianBlade extends EntityMagicEffects {
     }
 
 
+    public EntityGuardianBlade(Level level, LivingEntity caster, double x, double y, double z, float yRot) {
+        super(EntityInit.GUARDIAN_BLADE.get(), level);
+        this.caster = caster;
+        this.setYRot((yRot * (180F / (float) Math.PI)) - 90F);
+        this.setPos(x, y, z);
+    }
+
     @Override
     public void tick() {
         super.tick();
         alphaControlled.updatePrevTimer();
         this.move(MoverType.SELF, this.getDeltaMovement());
-        if (this.caster == null && this.tickCount == 1) {
+        if (this.tickCount == 1) {
             Vec3 lookAngle = this.getLookAngle();
             this.shoot(lookAngle.x, lookAngle.y, lookAngle.z, 1);
         }
