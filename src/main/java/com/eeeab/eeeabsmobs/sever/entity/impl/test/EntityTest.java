@@ -22,7 +22,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-//初次使用Citadel库的实验性实体,仅测试
+@Deprecated
 public class EntityTest extends EEEABMobLibrary {
     public static final Animation ATTACK_ANIMATION = Animation.create(20);
     private int attackTick;

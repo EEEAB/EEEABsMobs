@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 
+@Deprecated
 public class RenderTest extends MobRenderer<EntityTest, ModelTest> {
     public RenderTest(EntityRendererProvider.Context context) {
         super(context, new ModelTest(), 0.3f);

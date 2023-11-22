@@ -10,6 +10,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.world.entity.HumanoidArm;
 
+@Deprecated
 public class ModelTest extends AdvancedEntityModel<EntityTest> implements ArmedModel {
     private final AdvancedModelBox root;
     private final AdvancedModelBox upper;
