@@ -142,9 +142,9 @@ public class EntityInit {
         event.put(EntityInit.IMMORTAL_SHAMAN.get(), EntityImmortalShaman.setAttributes().build());
         event.put(EntityInit.IMMORTAL_GOLEM.get(), EntityImmortalGolem.setAttributes().build());
         event.put(EntityInit.NAMELESS_GUARDIAN.get(), EntityNamelessGuardian.setAttributes().build());
-//        event.put(EntityInit.IMMORTAL.get(), EntityTheImmortal.setAttributes().build());
         event.put(EntityInit.TESTLLAGER.get(), EntityTestllager.setAttributes().build());
-        event.put(EntityInit.TEST.get(), setCommonAttributes());
+//        event.put(EntityInit.IMMORTAL.get(), EntityTheImmortal.setAttributes().build());
+//        event.put(EntityInit.TEST.get(), setCommonAttributes());
     }
 
     public static AttributeSupplier setCommonAttributes() {
