@@ -1,6 +1,5 @@
 package com.eeeab.eeeabsmobs.sever.entity.impl.effect;
 
-import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import net.minecraft.core.particles.ParticleTypes;
@@ -10,7 +9,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 public class EntityScorch extends EntityMagicEffects {
-    private static final int ALIVE_TIME = EEConfigHandler.COMMON.EXPERIMENTAL_ENTITY.SCORCH.existTimer.get() * 20;
+    //private static final int ALIVE_TIME = EEConfigHandler.COMMON.EXPERIMENTAL_ENTITY.SCORCH.existTimer.get() * 20;
+    private static final int ALIVE_TIME = 20;
     public final ControlledAnimation controlled = new ControlledAnimation(20);
 
     public EntityScorch(EntityType<? extends EntityScorch> type, Level level) {

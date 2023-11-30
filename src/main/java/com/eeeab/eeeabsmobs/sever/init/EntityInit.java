@@ -3,11 +3,12 @@ package com.eeeab.eeeabsmobs.sever.init;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.entity.impl.effect.*;
+import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.EntityImmortalGolem;
+import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.EntityImmortalKnight;
+import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.EntityImmortalShaman;
+import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.EntityImmortalSkeleton;
 import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
-import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.*;
 import com.eeeab.eeeabsmobs.sever.entity.impl.projectile.EntityShamanBomb;
-import com.eeeab.eeeabsmobs.sever.entity.impl.test.EntityTest;
-import com.eeeab.eeeabsmobs.sever.entity.impl.test.EntityTestllager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -59,12 +60,12 @@ public class EntityInit {
                             .sized(2.25f, 4.0f).fireImmune().clientTrackingRange(5).updateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "nameless_guardian").toString()));
 
-    //test entity
-    public static final RegistryObject<EntityType<EntityTestllager>> TESTLLAGER =
-            ENTITIES.register("testllager",
-                    () -> EntityType.Builder.<EntityTestllager>of(EntityTestllager::new, MobCategory.CREATURE)
-                            .sized(0.6f, 1.95f).clientTrackingRange(10)
-                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "testllager").toString()));
+    ////test entity
+    //public static final RegistryObject<EntityType<EntityTestllager>> TESTLLAGER =
+    //        ENTITIES.register("testllager",
+    //                () -> EntityType.Builder.<EntityTestllager>of(EntityTestllager::new, MobCategory.CREATURE)
+    //                        .sized(0.6f, 1.95f).clientTrackingRange(10)
+    //                        .build(new ResourceLocation(EEEABMobs.MOD_ID, "testllager").toString()));
 
 
 //    public static final RegistryObject<EntityType<EntityTheImmortal>> IMMORTAL =
@@ -142,7 +143,7 @@ public class EntityInit {
         event.put(EntityInit.IMMORTAL_SHAMAN.get(), EntityImmortalShaman.setAttributes().build());
         event.put(EntityInit.IMMORTAL_GOLEM.get(), EntityImmortalGolem.setAttributes().build());
         event.put(EntityInit.NAMELESS_GUARDIAN.get(), EntityNamelessGuardian.setAttributes().build());
-        event.put(EntityInit.TESTLLAGER.get(), EntityTestllager.setAttributes().build());
+        //event.put(EntityInit.TESTLLAGER.get(), EntityTestllager.setAttributes().build());
 //        event.put(EntityInit.IMMORTAL.get(), EntityTheImmortal.setAttributes().build());
 //        event.put(EntityInit.TEST.get(), setCommonAttributes());
     }

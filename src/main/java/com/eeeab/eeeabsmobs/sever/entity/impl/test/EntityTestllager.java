@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 //伤害测试单位 仅用于测试
+@Deprecated
 public class EntityTestllager extends EEEABMobLibrary implements IEntity {
     public static final Animation YES = Animation.create(5);
     public static final Animation NO = Animation.create(5);

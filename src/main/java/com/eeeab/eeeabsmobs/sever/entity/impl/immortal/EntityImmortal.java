@@ -5,7 +5,6 @@ import com.eeeab.eeeabsmobs.sever.entity.impl.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.util.EEMobType;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
 import com.eeeab.eeeabsmobs.sever.entity.impl.projectile.EntityShamanBomb;
-import com.eeeab.eeeabsmobs.sever.entity.impl.test.EntityTestllager;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -98,7 +97,7 @@ public abstract class EntityImmortal extends EEEABMobLibrary implements GlowEnti
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, AbstractSkeleton.class, 5, false, false, null));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Zombie.class, 5, false, false, (zombie) -> !(zombie instanceof ZombifiedPiglin)));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, AbstractIllager.class, 5, false, false, (illager) -> !(illager instanceof SpellcasterIllager)));
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, EntityTestllager.class, 0, true, false, null));//Only test
+        //this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, EntityTestllager.class, 0, true, false, null));//Only test
     }
 
     @Override

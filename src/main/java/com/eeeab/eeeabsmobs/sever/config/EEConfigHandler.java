@@ -30,12 +30,12 @@ public class EEConfigHandler {
         public ExperimentalEntity(final ForgeConfigSpec.Builder builder) {
             builder.push("Experimental Entity");
             GUARDIAN_LASER = new GuardianLaser(builder);
-            SCORCH = new Scorch(builder);
+            //SCORCH = new Scorch(builder);
             builder.pop();
         }
 
         public final GuardianLaser GUARDIAN_LASER;
-        public final Scorch SCORCH;
+        //public final Scorch SCORCH;
     }
 
     public static class GuardianLaser {
@@ -50,17 +50,17 @@ public class EEConfigHandler {
         public final ForgeConfigSpec.BooleanValue enableGenerateScorchEntity;
     }
 
-    public static class Scorch {
-        public Scorch(final ForgeConfigSpec.Builder builder) {
-            builder.push("Scorch");
-            this.existTimer = BUILDER.comment("Exist duration").
-                    defineInRange("Exist Seconds", 1, 1, 9);
-            builder.pop();
-        }
-
-        //存在时间
-        public final ForgeConfigSpec.ConfigValue<Integer> existTimer;
-    }
+    //public static class Scorch {
+    //    public Scorch(final ForgeConfigSpec.Builder builder) {
+    //        builder.push("Scorch");
+    //        this.existTimer = BUILDER.comment("Exist duration").
+    //                defineInRange("Exist Seconds", 1, 1, 9);
+    //        builder.pop();
+    //    }
+    //
+    //    //存在时间
+    //    public final ForgeConfigSpec.ConfigValue<Integer> existTimer;
+    //}
 
     public static class Mob {
         public Mob(final ForgeConfigSpec.Builder builder) {
