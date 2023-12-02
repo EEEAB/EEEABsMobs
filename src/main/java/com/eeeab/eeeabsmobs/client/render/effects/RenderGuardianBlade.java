@@ -14,7 +14,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
-//TODO 渲染偏移问题待解决
 public class RenderGuardianBlade extends EntityRenderer<EntityGuardianBlade> {
     private final ModelGuardianBlade MODEL = new ModelGuardianBlade();
     private final ResourceLocation[] LOCATIONS = new ResourceLocation[6];
