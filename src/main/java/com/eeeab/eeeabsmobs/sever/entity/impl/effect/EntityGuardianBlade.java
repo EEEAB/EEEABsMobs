@@ -99,8 +99,8 @@ public class EntityGuardianBlade extends EntityMagicEffects {
             double y = getBoundingBox().minY + 0.1;
             double z = getZ() + 1 * vecZ;
             int hitY = Mth.floor(getY() - 0.2);
-            for (float[] robustAttackBlockOffset : BLOCK_OFFSETS) {
-                float ox = robustAttackBlockOffset[0], oy = robustAttackBlockOffset[1];
+            for (float[] floats : BLOCK_OFFSETS) {
+                float ox = floats[0], oy = floats[1];
                 int hitX = Mth.floor(x + ox);
                 int hitZ = Mth.floor(z + oy);
                 BlockPos hit = new BlockPos(hitX, hitY, hitZ);

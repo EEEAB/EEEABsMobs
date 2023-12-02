@@ -30,7 +30,7 @@ public class RenderGuardianBlade extends EntityRenderer<EntityGuardianBlade> {
     @Override
     public void render(EntityGuardianBlade blade, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
         pPoseStack.pushPose();
-        pPoseStack.translate(0F, 1.5F, 0.5F);
+        pPoseStack.translate(0F, 1.5F, 0F);
         pPoseStack.scale(1F, -1.0F, -1.0F);
         int timer = blade.alphaControlled.getPrevTimer();
         float alpha = 1.0F - (timer * 0.1F);
