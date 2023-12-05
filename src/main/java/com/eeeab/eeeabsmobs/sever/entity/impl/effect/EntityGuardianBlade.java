@@ -9,6 +9,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -45,24 +46,18 @@ public class EntityGuardianBlade extends EntityMagicEffects {
         this.move(MoverType.SELF, this.getDeltaMovement());
         if (this.tickCount == 1) {
             Vec3 lookAngle = this.getLookAngle();
-            this.shoot(lookAngle.x, lookAngle.y, lookAngle.z, 1);
+            this.shoot(lookAngle.x, lookAngle.y, lookAngle.z, 1.5);
         }
-
-        //判断是否触碰撞箱
-        //if (!this.level().noCollision(this, this.getBoundingBox().inflate(0.15))) {
-        //    this.discard();
-        //}
 
         if (tickCount % 8 == 0 && this.tickCount <= 40) {
             this.setDeltaMovement(this.getDeltaMovement().multiply(0.6, 0.6, 0.6));
             this.alphaControlled.increaseTimer(2);
         }
 
-        //List<LivingEntity> entities = this.getNearByLivingEntities(0.3, 3, 0.3, 0.3);
-
         if (this.tickCount > 45) {
             this.discard();
         }
+
         if (this.tickCount <= 40) {
             this.breakBlockEffect();
             this.doHurtTarget();
@@ -74,11 +69,15 @@ public class EntityGuardianBlade extends EntityMagicEffects {
     }
 
     private void doHurtTarget() {
+        double attackValue = 10;
         float moveX = (float) (this.getX() - this.xo);
         float moveZ = (float) (this.getZ() - this.zo);
         float speed = Mth.sqrt(moveX * moveX + moveZ * moveZ);
         List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.15));
-        float damage = 10 - 10 * (1 - speed);
+        if (caster != null) {
+            attackValue = caster.getAttributeValue(Attributes.ATTACK_DAMAGE);
+        }
+        float damage = (float) (attackValue - attackValue * (1 - speed));
         if (!entities.isEmpty()) {
             for (LivingEntity livingEntity : entities) {
                 if (livingEntity == caster) continue;
