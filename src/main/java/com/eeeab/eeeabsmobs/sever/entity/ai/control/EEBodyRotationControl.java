@@ -24,14 +24,14 @@ public class EEBodyRotationControl extends BodyRotationControl {
         double dsq = dx * dx + dz * dz;
         //实体正在移动
         if (dsq > 2.5E-7F) {
-            double moveAngle = (float) Mth.atan2(dz, dx) * (180 / (float) Math.PI) - 90;
-            mob.yBodyRot += Mth.wrapDegrees(moveAngle - mob.yBodyRot) * 0.6F;
+            //double moveAngle = (float) Mth.atan2(dz, dx) * (180 / (float) Math.PI) - 90;
+            //mob.yBodyRot += Mth.wrapDegrees(moveAngle - mob.yBodyRot) * 0.6F;
+            //this.lastStableYHeadRot = this.mob.yHeadRot;
+            //this.headStableTime = 0;
+            this.mob.yBodyRot = this.mob.getYRot();
             this.rotateHeadIfNecessary();
             this.lastStableYHeadRot = this.mob.yHeadRot;
             this.headStableTime = 0;
-            //this.mob.yBodyRot = this.mob.getYRot();
-            //this.targetYawHead = this.mob.yHeadRot;
-            //this.rotateTime = 0;
         } else {
             if (this.notCarryingMobPassengers()) {
                 float limit = MAX_ROTATE;
