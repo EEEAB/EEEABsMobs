@@ -17,13 +17,8 @@ public class EEBodyRotationControl extends BodyRotationControl {
 
     @Override
     public void clientTick() {
-        double dx = this.mob.getX() - this.mob.xo;
-        double dz = this.mob.getZ() - this.mob.zo;
-        //double d0 = this.mob.getX() - this.mob.xo;
-        //double d1 = this.mob.getZ() - this.mob.zo;
-        double dsq = dx * dx + dz * dz;
         //实体正在移动
-        if (dsq > 2.5E-7F) {
+        if (this.isMoving()) {
             //double moveAngle = (float) Mth.atan2(dz, dx) * (180 / (float) Math.PI) - 90;
             //mob.yBodyRot += Mth.wrapDegrees(moveAngle - mob.yBodyRot) * 0.6F;
             //this.lastStableYHeadRot = this.mob.yHeadRot;
