@@ -37,9 +37,7 @@ public class AnimationFullRangeAttackGoal<T extends EEEABMobLibrary & IAnimatedE
         if (entity.getAnimationTick() == attackFrame) {
             List<LivingEntity> hitEntities = entity.getNearByLivingEntities(range, range * 2, range, range);
             for (LivingEntity hit : hitEntities) {
-                if (hit.getMobType() == entity.getMobType() && EEConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()) {
-                    continue;
-                }
+                if (preHit(hit)) continue;
                 entity.doHurtTarget(hit, damageMultiplier, applyKnockBackMultiplier);
                 if (pureShotEffect && !hit.isInvulnerable()) {
                     if (hit instanceof Player player && player.getAbilities().invulnerable) continue;
@@ -57,5 +55,9 @@ public class AnimationFullRangeAttackGoal<T extends EEEABMobLibrary & IAnimatedE
     }
 
     protected void onHit(LivingEntity entity) {
+    }
+
+    protected boolean preHit(LivingEntity entity){
+        return false;
     }
 }
