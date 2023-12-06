@@ -14,7 +14,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Locale;
 
-//Edited from https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/client/particle/util/AdvancedParticleData.java base code
+//参考自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/client/particle/util/AdvancedParticleData.java
 public class AdvancedParticleData implements ParticleOptions {
     public static final Deserializer<AdvancedParticleData> DESERIALIZER = new Deserializer<AdvancedParticleData>() {
         public AdvancedParticleData fromCommand(ParticleType<AdvancedParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException {

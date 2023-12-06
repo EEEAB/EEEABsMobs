@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
+//自定义伤害
 public class EEDamageTypeProvider extends DamageTypeTagsProvider {
     public EEDamageTypeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, @Nullable ExistingFileHelper existingFileHelper) {
         super(output, future, EEEABMobs.MOD_ID, existingFileHelper);

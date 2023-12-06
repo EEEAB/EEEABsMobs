@@ -9,6 +9,7 @@ import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 
+//自定义物品模型
 public class EEItemModelProvider extends ItemModelProvider {
     public EEItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, EEEABMobs.MOD_ID, existingFileHelper);

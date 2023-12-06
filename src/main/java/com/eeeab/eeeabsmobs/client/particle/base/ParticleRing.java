@@ -73,7 +73,7 @@ public class ParticleRing extends TextureSheetParticle {
     }
 
     @Override
-    //Edited from net.minecraft.client.particle.SingleQuadParticle.render base code
+    //参考自: net.minecraft.client.particle.SingleQuadParticle.render
     public void render(VertexConsumer vertexConsumer, Camera renderInfo, float partialTicks) {
         float var = (age + partialTicks) / lifetime;
         if (behavior == EnumRingBehavior.GROW) {

@@ -31,6 +31,7 @@ import com.github.alexthe666.citadel.animation.Animation;
 
 import javax.annotation.Nullable;
 
+//基本AI完成
 public class EntityImmortalGolem extends EntityImmortal implements IEntity {
     public static final Animation DIE_ANIMATION = Animation.create(30);
     public static final Animation ATTACK_ANIMATION = Animation.create(12);

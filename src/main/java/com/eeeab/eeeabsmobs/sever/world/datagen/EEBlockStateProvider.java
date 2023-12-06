@@ -7,7 +7,7 @@ import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 
-//方块物品
+//自定义方块物品
 public class EEBlockStateProvider extends BlockStateProvider {
     public EEBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
         super(output, EEEABMobs.MOD_ID, exFileHelper);

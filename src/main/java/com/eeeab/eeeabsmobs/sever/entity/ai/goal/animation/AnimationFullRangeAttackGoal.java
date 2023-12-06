@@ -1,6 +1,5 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation;
 
-import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
 import com.eeeab.eeeabsmobs.sever.entity.impl.EEEABMobLibrary;
 import com.github.alexthe666.citadel.animation.Animation;

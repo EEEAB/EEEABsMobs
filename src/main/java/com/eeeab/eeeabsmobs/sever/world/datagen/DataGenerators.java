@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.concurrent.CompletableFuture;
 
 @Mod.EventBusSubscriber(modid = EEEABMobs.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+//json数据生成
 public class DataGenerators {
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {

@@ -8,10 +8,10 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
 public class ModTag {
-    //StructureTags
+    //结构标签
     public static TagKey<Structure> EYE_OF_ANCIENT_TOMB = registerStructKey("eye_of_ancient_tomb");
 
-    //DamageTypeTags
+    //伤害标签
     public static final TagKey<DamageType> GENERAL_UNRESISTANT_TO = registerDamageTypeKey("general_unresistant_to");
     public static final TagKey<DamageType> MAGIC_UNRESISTANT_TO = registerDamageTypeKey("magic_unresistant_to");
 

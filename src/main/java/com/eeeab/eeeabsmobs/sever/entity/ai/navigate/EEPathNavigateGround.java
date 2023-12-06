@@ -12,7 +12,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.Objects;
 
-//Base off of https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/server/ai/MMPathNavigateGround.java
+//参考自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/server/ai/MMPathNavigateGround.java
 public class EEPathNavigateGround extends GroundPathNavigation {
     private static final float EPSILON = 1.0E-8F;
 

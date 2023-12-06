@@ -15,6 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.EnumMap;
 import java.util.function.Supplier;
 
+//盔甲级别
 public enum EEArmorMaterial implements net.minecraft.world.item.ArmorMaterial {
     IMMORTAL_MATERIAL("immortal", 15, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
         map.put(ArmorItem.Type.BOOTS, 2);

@@ -23,7 +23,7 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 @OnlyIn(Dist.CLIENT)
-//Edited from https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/client/render/entity/RenderSolarBeam.java base code
+//参考自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/client/render/entity/RenderSolarBeam.java
 public class RenderGuardianLaser extends EntityRenderer<EntityGuardianLaser> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/guardian_laser.png");
     private static final float TEXTURE_WIDTH = 256;

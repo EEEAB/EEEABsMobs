@@ -147,6 +147,11 @@ public class EntityImmortalShaman extends EntityImmortal implements IEntity, Ran
                 }
                 entity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), 40, 0, false, false, true));
             }
+
+            @Override
+            protected boolean preHit(LivingEntity entity) {
+                return entity instanceof EntityImmortal && EEConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get();
+            }
         });
         this.goalSelector.addGoal(2, new EntityImmortalShaman.ShamanSummonGoal());
         this.goalSelector.addGoal(3, new EntityImmortalShaman.ShamanAvoid());

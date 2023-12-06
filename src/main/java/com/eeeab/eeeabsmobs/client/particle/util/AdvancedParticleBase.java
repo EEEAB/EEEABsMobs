@@ -14,7 +14,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-//Edited from https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/client/particle/util/AdvancedParticleBase.java base code
+//参考自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/client/particle/util/AdvancedParticleBase.java
 @OnlyIn(Dist.CLIENT)
 public class AdvancedParticleBase extends TextureSheetParticle {
     public float airDiffusionSpeed;

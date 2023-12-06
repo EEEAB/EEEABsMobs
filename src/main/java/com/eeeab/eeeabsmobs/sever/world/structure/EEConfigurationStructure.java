@@ -17,7 +17,7 @@ import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 
 import java.util.Optional;
 
-//参考自:https://github.com/TelepathicGrunt/StructureTutorialMod
+//参考自: https://github.com/TelepathicGrunt/StructureTutorialMod
 public class EEConfigurationStructure extends Structure {
 
     public static final Codec<EEConfigurationStructure> CODEC = RecordCodecBuilder.<EEConfigurationStructure>mapCodec(instance ->

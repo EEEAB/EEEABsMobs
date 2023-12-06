@@ -30,7 +30,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
 
-//create by 2023/1/17
+//创建于 2023/1/17
 public class EntityTheImmortal extends EntityImmortal implements IBoss {
     public static final Animation SUMMONER_MOB_ANIMATION = Animation.create(40);
     private static final Animation[] ANIMATIONS = {

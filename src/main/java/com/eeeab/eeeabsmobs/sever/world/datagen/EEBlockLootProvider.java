@@ -8,7 +8,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Set;
 
-//方块掉落
+//自定义方块掉落
 public class EEBlockLootProvider extends BlockLootSubProvider {
     protected EEBlockLootProvider() {
         super(Set.of(), FeatureFlags.REGISTRY.allFlags());

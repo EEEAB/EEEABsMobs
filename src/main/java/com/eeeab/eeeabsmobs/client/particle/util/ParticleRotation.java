@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.particle.util;
 import net.minecraft.world.phys.Vec3;
 
-//Edited from https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/client/particle/util/ParticleRotation.java base code
+//参考自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/client/particle/util/ParticleRotation.java
 public abstract class ParticleRotation {
     public void setPrevValues() {
 

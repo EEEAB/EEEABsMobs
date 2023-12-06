@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-//Base off of https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/server/ai/MMPathFinder.java
+//参考自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/server/ai/MMPathFinder.java
 public class EEPathFinder extends net.minecraft.world.level.pathfinder.PathFinder {
     public EEPathFinder(NodeEvaluator processor, int maxVisitedNodes) {
         super(processor, maxVisitedNodes);
