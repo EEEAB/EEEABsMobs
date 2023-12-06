@@ -7,6 +7,7 @@ import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import com.github.alexthe666.citadel.client.model.basic.BasicModelPart;
 import com.google.common.collect.ImmutableList;
 
+@Deprecated
 public class ModelTestllager extends AdvancedEntityModel<EntityTestllager> {
     private final AdvancedModelBox root;
     private final AdvancedModelBox upper;
