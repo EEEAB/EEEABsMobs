@@ -19,8 +19,11 @@ build
 
 # other
 eclipse
-run-data
-run
+
+# minecraft
+**/run-data/
+**/run/
+**/generated/
 
 # Files from Forge MDK
 forge*changelog.txt

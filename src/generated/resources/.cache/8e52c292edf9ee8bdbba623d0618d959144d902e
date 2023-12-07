@@ -1,5 +1,0 @@
-// 1.20.1	2023-11-11T18:18:23.8998466	Tags for minecraft:damage_type mod id eeeabsmobs
-97bc06b51b83e660342256d2f473ef44b30ca235 data/eeeabsmobs/tags/damage_type/general_unresistant_to.json
-59e4d9b48c36b871448acba6a38fa7797b9371ad data/eeeabsmobs/tags/damage_type/magic_unresistant_to.json
-48bb67a39f26f53e61fb6983738e7ebf1f9b94ac data/minecraft/tags/damage_type/bypasses_armor.json
-889c5aca3bd7dbef652a43112b7ff4db7ceaf46a data/minecraft/tags/damage_type/is_projectile.json
