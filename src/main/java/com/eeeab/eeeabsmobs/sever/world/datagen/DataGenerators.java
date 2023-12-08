@@ -21,6 +21,7 @@ public class DataGenerators {
         ExistingFileHelper helper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> provider = event.getLookupProvider();
         generator.addProvider(true, new EEDamageTypeProvider(packOutput, provider, helper));
+        generator.addProvider(true, new EEStructureProvider(packOutput, provider, helper));
 
         //generator.addProvider(true, new EERecipeProvider(packOutput));
         //generator.addProvider(true, EELootTableProvider.create(packOutput));
