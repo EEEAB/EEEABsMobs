@@ -68,9 +68,9 @@ public class ItemGuardianAxe extends AxeItem {
         }
     }
 
-    private void doSpawnBlade(Player player, int spawnCount) {
-        for (int i = 0; i < spawnCount; ++i) {
-            float f1 = (float) (player.getYRot() + (float) i * (float) Math.PI * (2.0 / spawnCount));
+    private void doSpawnBlade(Player player, int spawnQuantity) {
+        for (int i = 0; i < spawnQuantity; ++i) {
+            float f1 = (float) (player.getYRot() + (float) i * (float) Math.PI * (2.0 / spawnQuantity));
             double x = player.getX() + Mth.cos(f1) * 1.5D;
             double y = player.getY() + 0.1F;
             double z = player.getZ() + Mth.sin(f1) * 1.5D;
@@ -79,9 +79,9 @@ public class ItemGuardianAxe extends AxeItem {
         }
     }
 
-    private void doWeaponEffect(Level level, Player player, int spawnCount) {
+    private void doWeaponEffect(Level level, Player player, int spawnQuantity) {
         RandomSource random = player.getRandom();
-        for (int i = 0; i < spawnCount; i++) {
+        for (int i = 0; i < spawnQuantity; i++) {
             double x = player.getX() + random.nextGaussian();
             double y = player.getY();
             double z = player.getZ() + random.nextGaussian();
@@ -120,6 +120,7 @@ public class ItemGuardianAxe extends AxeItem {
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
         tooltip.add(Component.translatable("item.unable_depleted_tip").setStyle(ItemInit.TIPS_GRAY));
+        tooltip.add(Component.translatable(getDescriptionId() + ".tip").setStyle(ItemInit.TIPS_GRAY));
     }
 
     @Override
