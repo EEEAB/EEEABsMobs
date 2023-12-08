@@ -1,0 +1,32 @@
+{
+  "parent": "eeeabsmobs:eeeabsmobs/root",
+  "display": {
+    "icon": {
+      "item": "eeeabsmobs:ancient_tomb_eye"
+    },
+    "title": {
+      "translate": "advancements.eeeabsmobs.origin.title"
+    },
+    "description": {
+      "translate": "advancements.eeeabsmobs.origin.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "eeeabsmobs:ancient_tomb_eye"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

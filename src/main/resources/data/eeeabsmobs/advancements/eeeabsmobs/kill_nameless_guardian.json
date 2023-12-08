@@ -1,0 +1,37 @@
+{
+  "parent": "eeeabsmobs:eeeabsmobs/ancient_tomb",
+  "display": {
+    "icon": {
+      "item": "eeeabsmobs:nameless_guardian_egg"
+    },
+    "title": {
+      "translate": "advancements.eeeabsmobs.kill_nameless_guardian.title"
+    },
+    "description": {
+      "translate": "advancements.eeeabsmobs.kill_nameless_guardian.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "eeeabsmobs:nameless_guardian"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "experience": 20
+  }
+}
