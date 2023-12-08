@@ -72,7 +72,7 @@ public class ItemGuardianAxe extends AxeItem {
         for (int i = 0; i < spawnQuantity; ++i) {
             float f1 = (float) (player.getYRot() + (float) i * (float) Math.PI * (2.0 / spawnQuantity));
             double x = player.getX() + Mth.cos(f1) * 1.5D;
-            double y = player.getY() + 0.1F;
+            double y = player.getY();
             double z = player.getZ() + Mth.sin(f1) * 1.5D;
             EntityGuardianBlade blade = new EntityGuardianBlade(player.level(), player, x, y, z, f1);
             player.level().addFreshEntity(blade);
@@ -83,7 +83,7 @@ public class ItemGuardianAxe extends AxeItem {
         RandomSource random = player.getRandom();
         for (int i = 0; i < spawnQuantity; i++) {
             double x = player.getX() + random.nextGaussian();
-            double y = player.getY();
+            double y = player.getY() + 0.1F;
             double z = player.getZ() + random.nextGaussian();
             level.addParticle(ParticleTypes.GLOW, x, y, z, 0, 0.01, 0);
         }
