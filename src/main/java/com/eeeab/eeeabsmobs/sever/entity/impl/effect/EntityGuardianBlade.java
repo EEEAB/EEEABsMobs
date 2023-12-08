@@ -1,6 +1,5 @@
 package com.eeeab.eeeabsmobs.sever.entity.impl.effect;
 
-import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
@@ -21,7 +20,7 @@ import java.util.List;
 
 public class EntityGuardianBlade extends EntityMagicEffects {
     public final ControlledAnimation alphaControlled = new ControlledAnimation(10);
-    private static final float MAX_DAMAGE = 20F;
+    private static final float MAX_DAMAGE = 30F;
     private static final float[][] BLOCK_OFFSETS = {
             {-0.5F, -0.5F},
             {-0.5F, 0.5F},
@@ -54,6 +53,7 @@ public class EntityGuardianBlade extends EntityMagicEffects {
         }
 
         if (tickCount % 8 == 0 && this.tickCount <= 40) {
+            //移动速度会随着时间衰减
             this.setDeltaMovement(this.getDeltaMovement().multiply(0.6, 0.6, 0.6));
             this.alphaControlled.increaseTimer(2);
         }
@@ -87,6 +87,7 @@ public class EntityGuardianBlade extends EntityMagicEffects {
             if (caster instanceof EntityNamelessGuardian) {
                 attackValue += target.getMaxHealth() * 0.05F;
             }
+            //伤害会随着时间衰减
             float damage = (float) (attackValue - attackValue * (1 - speed));
             target.hurt(this.damageSources().indirectMagic(this, target), damage);
         }
