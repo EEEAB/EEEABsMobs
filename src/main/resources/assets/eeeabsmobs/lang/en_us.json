@@ -53,8 +53,9 @@
   "item.unable_depleted_tip": "Unable breaks",
   "item.eeeabsmobs.immortal_sword.tip": "Give the attacker an erosion status",
   "item.eeeabsmobs.remove_mob.tip_1": "Left-click to remove a EEEAB's Mobs mob/entity",
-  "item.eeeabsmobs.remove_mob.tip_2": "Right-click to remove a creature/entity from a 16*16*16 range EEEAB's Mobs",
+  "item.eeeabsmobs.remove_mob.tip_2": "Right-click to remove EEEAB's Mobs mobs/entities with a ranges of 16*16*16",
   "item.eeeabsmobs.immortal_staff.tip": "Hold the Right-click for 1 second to fire the Shaman Bomb",
+  "item.eeeabsmobs.guardian_axe.tip": "Hold the Right-click for 1 second to release a range attack, the longer the charge time, the stronger the release effect",
   "item.eeeabsmobs.immortal_debris.tip": "It seems to be a fragment of the armor of some kind of creature...",
   "eye_of_ancient_tomb.tip": "Right-click to find the ancient tomb structure",
   "full_suit_of_armor_tip": "Full suit of armor effect :",
@@ -74,6 +75,17 @@
   "item.eeeabsmobs.guardians_music_disc.desc": "Guardians - Evan King",
 
   "_comment": "Sounds subtitle",
-  "subtitles.music.guardians": "Guardians - Evan King"
+  "subtitles.music.guardians": "Guardians - Evan King",
 
+  "_comment": "Advancements",
+  "advancements.eeeabsmobs.root.title": "EEEAB 's Mobs",
+  "advancements.eeeabsmobs.root.description": "Thank you for playing EEEAB's Mobs!",
+  "advancements.eeeabsmobs.origin.title": "Eye of origin",
+  "advancements.eeeabsmobs.origin.description": "Obtain any Structural Eye",
+  "advancements.eeeabsmobs.ancient_tomb.title": "The Ancient Tomb",
+  "advancements.eeeabsmobs.ancient_tomb.description": "Arrive Ancient Tomb",
+  "advancements.eeeabsmobs.kill_nameless_guardian.title": "...",
+  "advancements.eeeabsmobs.kill_nameless_guardian.description": "...",
+  "advancements.eeeabsmobs.kill_all_immortal_mob.title": "...",
+  "advancements.eeeabsmobs.kill_all_immortal_mob.description": "..."
 }
