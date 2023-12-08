@@ -1,6 +1,8 @@
 package com.eeeab.eeeabsmobs.sever.entity.impl.effect;
 
+import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -19,6 +21,7 @@ import java.util.List;
 
 public class EntityGuardianBlade extends EntityMagicEffects {
     public final ControlledAnimation alphaControlled = new ControlledAnimation(10);
+    private static final float MAX_DAMAGE = 20F;
     private static final float[][] BLOCK_OFFSETS = {
             {-0.5F, -0.5F},
             {-0.5F, 0.5F},
@@ -29,11 +32,12 @@ public class EntityGuardianBlade extends EntityMagicEffects {
 
     public EntityGuardianBlade(EntityType<?> type, Level level) {
         super(type, level);
+        this.noPhysics = true;
     }
 
 
     public EntityGuardianBlade(Level level, LivingEntity caster, double x, double y, double z, float yRot) {
-        super(EntityInit.GUARDIAN_BLADE.get(), level);
+        this(EntityInit.GUARDIAN_BLADE.get(), level);
         this.caster = caster;
         this.setYRot((yRot * (180F / (float) Math.PI)) - 90F);
         this.setPos(x, y, z);
@@ -69,20 +73,22 @@ public class EntityGuardianBlade extends EntityMagicEffects {
     }
 
     private void doHurtTarget() {
-        double attackValue = 10;
+        double attackValue = 10F;
         float moveX = (float) (this.getX() - this.xo);
         float moveZ = (float) (this.getZ() - this.zo);
         float speed = Mth.sqrt(moveX * moveX + moveZ * moveZ);
-        List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.15));
         if (caster != null) {
             attackValue = caster.getAttributeValue(Attributes.ATTACK_DAMAGE);
+            attackValue = Mth.clamp(attackValue, attackValue, MAX_DAMAGE);
         }
-        float damage = (float) (attackValue - attackValue * (1 - speed));
-        if (!entities.isEmpty()) {
-            for (LivingEntity livingEntity : entities) {
-                if (livingEntity == caster) continue;
-                livingEntity.hurt(this.damageSources().indirectMagic(this, livingEntity), damage);
+        List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.2));
+        for (LivingEntity target : entities) {
+            if (target == caster) continue;
+            if (caster instanceof EntityNamelessGuardian) {
+                attackValue += target.getMaxHealth() * 0.05F;
             }
+            float damage = (float) (attackValue - attackValue * (1 - speed));
+            target.hurt(this.damageSources().indirectMagic(this, target), damage);
         }
     }
 
