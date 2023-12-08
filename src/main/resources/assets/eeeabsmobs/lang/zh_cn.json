@@ -55,7 +55,7 @@
   "item.eeeabsmobs.remove_mob.tip_1": "左键移除 EEEAB的生物 模组的生物/实体",
   "item.eeeabsmobs.remove_mob.tip_2": "右键移除自身范围 16*16*16 的EEEAB模组生物/实体",
   "item.eeeabsmobs.immortal_staff.tip": "按住右键1秒发射巫师炸弹",
-  "item.eeeabsmobs.guardian_axe.tip": "按住右键1秒以上释放范围攻击,蓄力时间越长,释放效果越强",
+  "item.eeeabsmobs.guardian_axe.tip": "按住右键1秒以上释放范围攻击,蓄力时间越长,释放效果越强,造成的伤害会随着使用者的攻击力而提高,伤害上限为当前武器攻击力的2倍",
   "item.eeeabsmobs.immortal_debris.tip": "似乎是某种生物的盔甲碎片...",
   "eye_of_ancient_tomb.tip": "右键查找古陵结构",
   "full_suit_of_armor_tip": "全套盔甲效果 :",

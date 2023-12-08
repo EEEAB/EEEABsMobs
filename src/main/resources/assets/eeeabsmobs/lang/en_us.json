@@ -55,7 +55,7 @@
   "item.eeeabsmobs.remove_mob.tip_1": "Left-click to remove a EEEAB's Mobs mob/entity",
   "item.eeeabsmobs.remove_mob.tip_2": "Right-click to remove EEEAB's Mobs mobs/entities with a ranges of 16*16*16",
   "item.eeeabsmobs.immortal_staff.tip": "Hold the Right-click for 1 second to fire the Shaman Bomb",
-  "item.eeeabsmobs.guardian_axe.tip": "Hold the Right-click for 1 second to release a range attack, the longer the charge time, the stronger the release effect",
+  "item.eeeabsmobs.guardian_axe.tip": "Hold down the right button for more than 1 second to release a range attack, the longer the charge time, the stronger the release effect, and the damage dealt will increase with the user's attack power, and the damage limit is 2 times the attack power of the current weapon",
   "item.eeeabsmobs.immortal_debris.tip": "It seems to be a fragment of the armor of some kind of creature...",
   "eye_of_ancient_tomb.tip": "Right-click to find the ancient tomb structure",
   "full_suit_of_armor_tip": "Full suit of armor effect :",
