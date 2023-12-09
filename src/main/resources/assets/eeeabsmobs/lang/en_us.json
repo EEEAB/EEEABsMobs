@@ -79,13 +79,13 @@
 
   "_comment": "Advancements",
   "advancements.eeeabsmobs.root.title": "EEEAB 's Mobs",
-  "advancements.eeeabsmobs.root.description": "Thank you for playing EEEAB's Mobs!",
+  "advancements.eeeabsmobs.root.description": "Welcome to EEEAB's Mobs!",
   "advancements.eeeabsmobs.origin.title": "Eye of origin",
   "advancements.eeeabsmobs.origin.description": "Obtain any Structural Eye",
   "advancements.eeeabsmobs.ancient_tomb.title": "The Ancient Tomb",
   "advancements.eeeabsmobs.ancient_tomb.description": "Arrive Ancient Tomb",
-  "advancements.eeeabsmobs.kill_nameless_guardian.title": "...",
-  "advancements.eeeabsmobs.kill_nameless_guardian.description": "...",
-  "advancements.eeeabsmobs.kill_all_immortal_mob.title": "...",
-  "advancements.eeeabsmobs.kill_all_immortal_mob.description": "..."
+  "advancements.eeeabsmobs.kill_nameless_guardian.title": "The last line of defense",
+  "advancements.eeeabsmobs.kill_nameless_guardian.description": "Kill a Nameless Guardian",
+  "advancements.eeeabsmobs.kill_all_immortal_mob.title": "Immortal Killer",
+  "advancements.eeeabsmobs.kill_all_immortal_mob.description": "Kill one of every hostile monster"
 }

@@ -79,14 +79,14 @@
 
   "_comment": "成就",
   "advancements.eeeabsmobs.root.title": "EEEAB 's Mobs",
-  "advancements.eeeabsmobs.root.description": "感谢您游玩EEEAB的暴徒!",
+  "advancements.eeeabsmobs.root.description": "感谢你游玩EEEAB的暴徒!",
   "advancements.eeeabsmobs.origin.title": "起源之眼",
   "advancements.eeeabsmobs.origin.description": "获得任意一个结构之眼",
   "advancements.eeeabsmobs.ancient_tomb.title": "远古陵墓",
   "advancements.eeeabsmobs.ancient_tomb.description": "到达远古陵墓",
-  "advancements.eeeabsmobs.kill_nameless_guardian.title": "...",
-  "advancements.eeeabsmobs.kill_nameless_guardian.description": "...",
-  "advancements.eeeabsmobs.kill_all_immortal_mob.title": "",
-  "advancements.eeeabsmobs.kill_all_immortal_mob.description": "..."
+  "advancements.eeeabsmobs.kill_nameless_guardian.title": "最后一道防线",
+  "advancements.eeeabsmobs.kill_nameless_guardian.description": "击杀无名守护者",
+  "advancements.eeeabsmobs.kill_all_immortal_mob.title": "不朽杀手",
+  "advancements.eeeabsmobs.kill_all_immortal_mob.description": "击杀所有不朽生物"
 
 }
