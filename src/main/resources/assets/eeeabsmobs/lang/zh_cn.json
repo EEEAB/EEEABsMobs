@@ -1,6 +1,6 @@
 {
   "_comment": "创造模式标签",
-  "item_group.eeeabsmobs.creative_tab": "EEEAB's Mobs",
+  "itemGroup.eeeabsmobs.creative_tab": "EEEAB's Mobs",
 
   "_comment": "生物",
   "entity.eeeabsmobs.immortal_skeleton": "不朽骷髅",

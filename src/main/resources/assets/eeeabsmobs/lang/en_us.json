@@ -1,6 +1,6 @@
 {
   "_comment": "Creative Mode Tab",
-  "item_group.eeeabsmobs.creative_tab": "EEEAB's Mobs",
+  "itemGroup.eeeabsmobs.creative_tab": "EEEAB's Mobs",
 
   "_comment": "Mobs",
   "entity.eeeabsmobs.immortal_skeleton": "Immortal Skeleton",

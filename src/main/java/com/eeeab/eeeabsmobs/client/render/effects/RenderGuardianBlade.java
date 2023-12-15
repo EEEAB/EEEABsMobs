@@ -32,7 +32,7 @@ public class RenderGuardianBlade extends EntityRenderer<EntityGuardianBlade> {
         pPoseStack.translate(0F, 1.5F, 0F);
         pPoseStack.scale(1F, -1.0F, -1.0F);
         int timer = blade.alphaControlled.getPrevTimer();
-        float alpha = 1.0F - (timer * 0.1F);
+        float alpha = Mth.clamp(1.0F - (timer * 0.1F), 0.01F, 0.8F);
         pPoseStack.mulPose(Axis.YP.rotationDegrees(blade.getYRot()));
         MODEL.renderToBuffer(pPoseStack, pBuffer.getBuffer(EERenderType.getGlowingCutOutEffect(getTextureLocation(blade))), pPackedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, alpha);
         pPoseStack.popPose();

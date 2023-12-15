@@ -15,7 +15,7 @@ public class ModCreativeModeTabGroup {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, EEEABMobs.MOD_ID);
 
     public static final RegistryObject<CreativeModeTab> EEEAB_MOBS_TAB = TABS.register("eeeabmobs_tab", () -> CreativeModeTab.builder()
-            .title(Component.translatable("item_group." + EEEABMobs.MOD_ID + ".creative_tab"))
+            .title(Component.translatable("itemGroup." + EEEABMobs.MOD_ID + ".creative_tab"))
             .icon(() -> new ItemStack(ItemInit.IMMORTAL_AXE.get()))
             .displayItems((enabledFeatures, entries) -> {
                 /* misc Item */

@@ -42,12 +42,13 @@ public class GuardianLobedAttackGoal extends AnimationCommonGoal<EntityNamelessG
     }
 
     private void doSpawnBlade() {
-        final int count = 6;//生成刃的数量
+        final int count = 8;
+        float offset = (float) Math.toRadians(entity.getRandom().nextFloat() * 360 - 180);
         for (int i = 0; i < count; ++i) {
-            float f1 = (float) (entity.getYRot() + (float) i * (float) Math.PI * (2.0 / count));
-            double x = entity.getX() + Mth.cos(f1) * 1.5D;
+            float f1 = (float) (entity.getYRot() + (i + offset) * (float) Math.PI * (2.0 / count));
+            double x = entity.getX() + Mth.cos(f1) * 3D;
             double y = entity.getY();
-            double z = entity.getZ() + Mth.sin(f1) * 1.5D;
+            double z = entity.getZ() + Mth.sin(f1) * 3D;
             EntityGuardianBlade blade = new EntityGuardianBlade(entity.level(), entity, x, y, z, f1);
             entity.level().addFreshEntity(blade);
         }

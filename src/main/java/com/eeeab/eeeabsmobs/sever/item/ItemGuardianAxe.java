@@ -62,7 +62,7 @@ public class ItemGuardianAxe extends AxeItem {
                 InteractionHand hand = player.getUsedItemHand();
                 player.swing(hand, true);
                 int round = (int) Math.round(i * 0.1);
-                doSpawnBlade(player, Mth.clamp(round, 3, 6));
+                doSpawnBlade(player, Mth.clamp(round, 3, 6), player.getRandom().nextFloat());
                 player.getCooldowns().addCooldown(this, 100);
                 player.playSound(SoundEvents.GENERIC_EXPLODE, 1.5F, 1F + player.getRandom().nextFloat() * 0.1F);
                 EntityCameraShake.cameraShake(level, player.position(), 8, 0.2F + round * 0.01F, 0, 20);
@@ -70,9 +70,9 @@ public class ItemGuardianAxe extends AxeItem {
         }
     }
 
-    private void doSpawnBlade(Player player, int spawnQuantity) {
+    private void doSpawnBlade(Player player, int spawnQuantity, float offset) {
         for (int i = 0; i < spawnQuantity; ++i) {
-            float f1 = (float) (player.getYRot() + (float) i * (float) Math.PI * (2.0 / spawnQuantity));
+            float f1 = (float) (player.getYRot() + (i + offset) * (float) Math.PI * (2.0 / spawnQuantity));
             double x = player.getX() + Mth.cos(f1) * 1.5D;
             double y = player.getY();
             double z = player.getZ() + Mth.sin(f1) * 1.5D;

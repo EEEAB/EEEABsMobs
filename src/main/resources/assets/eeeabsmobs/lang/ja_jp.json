@@ -1,6 +1,6 @@
 {
   "_comment": "クリエイティブモードタブ",
-  "item_group.eeeabsmobs.creative_tab": "EEEAB's Mobs",
+  "itemGroup.eeeabsmobs.creative_tab": "EEEAB's Mobs",
 
   "_comment": "モブ",
   "entity.eeeabsmobs.immortal_skeleton": "不滅のスケルトン",

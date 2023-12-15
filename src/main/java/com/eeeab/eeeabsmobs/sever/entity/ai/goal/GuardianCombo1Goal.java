@@ -14,12 +14,12 @@ import java.util.List;
 import static com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian.ATTACK_ANIMATION_3;
 import static com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian.ATTACK_ANIMATION_2;
 
-public class GuardianComboGoal extends AnimationAbstractGoal<EntityNamelessGuardian> {
+public class GuardianCombo1Goal extends AnimationAbstractGoal<EntityNamelessGuardian> {
     private final float range;
     private final float attackArc;
     private boolean isPowered;
 
-    public GuardianComboGoal(EntityNamelessGuardian entity, float range, float attackArc) {
+    public GuardianCombo1Goal(EntityNamelessGuardian entity, float range, float attackArc) {
         super(entity);
         this.range = range;
         this.attackArc = attackArc;
