@@ -1,3 +1,5 @@
 # EEEAB's Mobs
 
-日志都会存放到这个分支中
+中文:这个分支用于存放更新日志
+
+English:This branch is used to store the changelog
