@@ -21,15 +21,15 @@ public class EEBodyRotationControl extends BodyRotationControl {
         double dz = this.mob.getZ() - this.mob.zo;
         //实体正在移动
         if (this.isMoving()) {
-            double moveAngle = (float) Mth.atan2(dz, dx) * (180 / (float) Math.PI) - 90;
-            mob.yBodyRot += Mth.wrapDegrees(moveAngle - mob.yBodyRot) * 0.6F;
-            this.rotateHeadIfNecessary();
-            this.lastStableYHeadRot = this.mob.yHeadRot;
-            this.headStableTime = 0;
-            //this.mob.yBodyRot = this.mob.getYRot();
+            //double moveAngle = (float) Mth.atan2(dz, dx) * (180 / (float) Math.PI) - 90;
+            //mob.yBodyRot += Mth.wrapDegrees(moveAngle - mob.yBodyRot) * 0.6F;
             //this.rotateHeadIfNecessary();
             //this.lastStableYHeadRot = this.mob.yHeadRot;
             //this.headStableTime = 0;
+            this.mob.yBodyRot = this.mob.getYRot();
+            this.rotateHeadIfNecessary();
+            this.lastStableYHeadRot = this.mob.yHeadRot;
+            this.headStableTime = 0;
         } else {
             if (this.notCarryingMobPassengers()) {
                 float limit = MAX_ROTATE;

@@ -79,7 +79,6 @@ import java.util.List;
 import java.util.Optional;
 
 //创建于 2023/1/17
-//基本AI完成
 public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, GlowEntity, PowerableMob, NeedStopAiEntity {
     public static final Animation DIE_ANIMATION = Animation.create(60);
     public static final Animation ROAR_ANIMATION = Animation.create(80);
@@ -135,19 +134,21 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EntityNamelessGuardian.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_IS_UNNATURAL = SynchedEntityData.defineId(EntityNamelessGuardian.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Optional<BlockPos>> DATA_REST_POSITION = SynchedEntityData.defineId(EntityNamelessGuardian.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
-    private int madnessTick;/* madness持续时间 */
-    private int nextMadnessTick;/* 距离下次madness时间 */
-    private int pounceTick;/* 距离下次pounce时间 */
-    private int smashTick;/* 距离下次smash时间 */
-    private int leapTick;/* 距离下次leap时间 */
-    private int laserTick;/* 距离下次laser时间 */
-    private int guardianInvulnerableTime;/* 额外的无敌时间 */
-    private int noUseSkillFromLongTick;/* 用来判断因为特殊情况导致部分技能无法释放,用于计算时长 */
+    private int madnessTick;
+    private int nextMadnessTick;
+    private int pounceTick;
+    private int smashTick;
+    private int leapTick;
+    private int laserTick;
+    private int guardianInvulnerableTime;
+    //用来判断因为特殊情况导致部分技能无法释放,用于计算时长
+    private int noUseSkillFromLongTick;
     private boolean executeWeak;
     private boolean shouldUseSkill;
     private boolean FIRST = true;
     private int attackTick;
-    private static final int MADNESS_TICK = 1300;/* 时长正好是BGM高潮部分的时长 */
+    //BGM高潮部分的时长
+    private static final int MADNESS_TICK = 1300;
     private static final int USE_SKILL_TIME_OUT_MAX_LIMIT = 300;
     private final static int MAX_NEXT_MADNESS_TICK = 900;
     private final static int MIN_NEXT_MADNESS_TICK = 600;
@@ -665,7 +666,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             }
         }
 
-        //TODO 并无实际用途,仅作为测试 复制自EndDragon class
+        //并无实际用途,仅作为测试 复制自EndDragon
         if (!this.isNoAi()) {
             float arc = this.yBodyRot * ((float) Math.PI / 180F);
             float fx = Mth.sin(arc) * (1.0F - Math.abs(this.getXRot() / 90F));
@@ -1238,8 +1239,8 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     public void setUnnatural(boolean flag) {
         this.entityData.set(DATA_IS_UNNATURAL, flag);
         if (flag && !this.level().isClientSide) {
-            this.goalSelector.addGoal(7, waterAvoidingRandomStrollGoal);
-            this.goalSelector.addGoal(8, lookAtPlayerGoal);
+            this.goalSelector.addGoal(6, waterAvoidingRandomStrollGoal);
+            this.goalSelector.addGoal(7, lookAtPlayerGoal);
             this.goalSelector.addGoal(8, randomLookAroundGoal);
         }
     }
