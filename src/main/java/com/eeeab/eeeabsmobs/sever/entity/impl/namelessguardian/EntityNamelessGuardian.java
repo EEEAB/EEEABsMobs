@@ -387,8 +387,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     @Override
     public boolean isInvulnerableTo(DamageSource damageSource) {
         Animation animation = this.getAnimation();
-        return ((!this.isActive() || animation == ACTIVATE_ANIMATION || animation == DEACTIVATE_ANIMATION || animation == ROAR_ANIMATION || animation == WEAK_ANIMATION_1 || animation == WEAK_ANIMATION_3)
-                && !damageSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) || super.isInvulnerableTo(damageSource);
+        return ((!this.isActive() || animation == ACTIVATE_ANIMATION || animation == DEACTIVATE_ANIMATION || animation == ROAR_ANIMATION || animation == WEAK_ANIMATION_1 || animation == WEAK_ANIMATION_3)) || super.isInvulnerableTo(damageSource);
     }
 
     @Override
