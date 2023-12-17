@@ -144,6 +144,12 @@ tasks.named('jar', Jar).configure {
 // tasks.named('publish').configure {
 //     dependsOn 'reobfJar'
 // }
+tasks.withType(Copy).configureEach {
+    filesMatching("**/*.json") {
+        //重复资源处理策略
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+}
 
 publishing {
     publications {
