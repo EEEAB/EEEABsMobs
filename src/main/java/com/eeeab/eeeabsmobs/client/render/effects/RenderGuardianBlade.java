@@ -22,17 +22,17 @@ public class RenderGuardianBlade extends EntityRenderer<EntityGuardianBlade> {
         super(pContext);
         //初始化文件地址
         for (int i = 0; i < LOCATIONS.length; i++) {
-            LOCATIONS[i] = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/guardian_blade/gb_" + (i + 1) + ".png");//TODO 待更新纹理
+            LOCATIONS[i] = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/guardian_blade/gb_" + (i + 1) + ".png");
         }
     }
 
     @Override
     public void render(EntityGuardianBlade blade, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
         pPoseStack.pushPose();
-        pPoseStack.translate(0F, 1.5F, 0F);
+        pPoseStack.translate(0F, 2.0F, 0F);
         pPoseStack.scale(1F, -1.0F, -1.0F);
         int timer = blade.alphaControlled.getPrevTimer();
-        float alpha = Mth.clamp(1.0F - (timer * 0.1F), 0.01F, 0.8F);
+        float alpha = Mth.clamp(1F - (timer * 0.1F), 0.01F, 0.8F);
         pPoseStack.mulPose(Axis.YP.rotationDegrees(blade.getYRot()));
         MODEL.renderToBuffer(pPoseStack, pBuffer.getBuffer(EERenderType.getGlowingCutOutEffect(getTextureLocation(blade))), pPackedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, alpha);
         pPoseStack.popPose();
