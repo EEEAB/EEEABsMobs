@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
@@ -19,7 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class EntityGuardianBlade extends EntityMagicEffects {
-    public final ControlledAnimation alphaControlled = new ControlledAnimation(10);
+    public final ControlledAnimation alphaControlled = new ControlledAnimation(20);
     private static final float MAX_DAMAGE = 30F;
     private static final int PLAY_DURATION = 32;
     private static final int GUARDIAN_DURATION = 40;
@@ -50,19 +51,22 @@ public class EntityGuardianBlade extends EntityMagicEffects {
         alphaControlled.updatePrevTimer();
         this.move(MoverType.SELF, this.getDeltaMovement());
         int duration = caster instanceof EntityNamelessGuardian ? GUARDIAN_DURATION : PLAY_DURATION;
-
         if (this.tickCount == 1) {
             Vec3 lookAngle = this.getLookAngle();
-            this.shoot(lookAngle.x, lookAngle.y, lookAngle.z, 1.5);
+            this.shoot(lookAngle.x, lookAngle.y, lookAngle.z, 1.5 + this.random.nextFloat() * 0.5F);
         } else if (this.tickCount <= duration) {
             //移动速度会随着时间衰减
-            if (this.tickCount % 8 == 0) {
-                this.setDeltaMovement(this.getDeltaMovement().multiply(0.5, 0.5, 0.5));
-                this.alphaControlled.increaseTimer(3);
+            if (this.tickCount % 5 == 0) {
+                this.setDeltaMovement(this.getDeltaMovement().multiply(0.4, 0.4, 0.4));
+                this.alphaControlled.increaseTimer(2);
             }
             this.breakBlockEffect();
             this.doHurtTarget();
         } else {
+            this.alphaControlled.increaseTimer(2);
+        }
+
+        if (this.alphaControlled.getTimer() >= 20) {
             this.discard();
         }
     }
@@ -72,23 +76,23 @@ public class EntityGuardianBlade extends EntityMagicEffects {
     }
 
     private void doHurtTarget() {
-        double attackValue = 10F;
-        float moveX = (float) (this.getX() - this.xo);
-        float moveZ = (float) (this.getZ() - this.zo);
-        float speed = Mth.sqrt(moveX * moveX + moveZ * moveZ);
         if (caster != null) {
+            double attackValue;
+            float moveX = (float) (this.getX() - this.xo);
+            float moveZ = (float) (this.getZ() - this.zo);
+            float speed = Mth.sqrt(moveX * moveX + moveZ * moveZ);
             attackValue = caster.getAttributeValue(Attributes.ATTACK_DAMAGE);
             attackValue = Mth.clamp(attackValue, attackValue, MAX_DAMAGE);
-        }
-        List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.2));
-        for (LivingEntity target : entities) {
-            if (target == caster) continue;
-            if (caster instanceof EntityNamelessGuardian) {
-                attackValue += target.getMaxHealth() * 0.05F;
+            List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.2));
+            for (LivingEntity target : entities) {
+                if (target == caster) continue;
+                if (caster instanceof EntityNamelessGuardian) {
+                    attackValue += target.getMaxHealth() * 0.05F;
+                }
+                //伤害会随着移速衰减
+                float damage = (float) (attackValue - attackValue * (1 - speed));
+                target.hurt(this.damageSources().indirectMagic(target, caster), damage);
             }
-            //伤害会随着时间衰减
-            float damage = (float) (attackValue - attackValue * (1 - speed));
-            target.hurt(this.damageSources().indirectMagic(this, target), damage);
         }
     }
 
@@ -111,7 +115,7 @@ public class EntityGuardianBlade extends EntityMagicEffects {
                 BlockPos hit = new BlockPos(hitX, hitY, hitZ);
                 BlockState block = level().getBlockState(hit);
                 if (block.getRenderShape() != RenderShape.INVISIBLE) {
-                    int count = 16 - (int) (this.tickCount * 0.5);
+                    int count = 14 - (int) (this.tickCount * 0.75);
                     for (int n = 0; n < count; n++) {
                         double pa = random.nextDouble() * 2 * Math.PI;
                         double pd = random.nextDouble() * 0.6 - 0.1;
