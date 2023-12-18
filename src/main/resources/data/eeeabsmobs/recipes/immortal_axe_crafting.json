@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XX",
+    "X#",
+    " #"
+  ],
+  "key": {
+    "#": {
+      "item": "eeeabsmobs:immortal_bone"
+    },
+    "X": {
+      "item": "eeeabsmobs:immortal_ingot"
+    }
+  },
+  "result": {
+    "item": "eeeabsmobs:immortal_axe"
+  }
+}

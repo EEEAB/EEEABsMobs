@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "eeeabsmobs:immortal_axe"
+    },
+    "title": {
+      "translate": "advancements.eeeabsmobs.root.title"
+    },
+    "description": {
+      "translate": "advancements.eeeabsmobs.root.description"
+    },
+    "background": "eeeabsmobs:textures/block/immortal_block.png",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:tick"
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "parent": "eeeabsmobs:eeeabsmobs/ancient_tomb",
+  "display": {
+    "icon": {
+      "item": "eeeabsmobs:immortal_sword"
+    },
+    "title": {
+      "translate": "advancements.eeeabsmobs.kill_all_immortal_mob.title"
+    },
+    "description": {
+      "translate": "advancements.eeeabsmobs.kill_all_immortal_mob.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "eeeabsmobs:immortal_golem": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "eeeabsmobs:immortal_golem"
+            }
+          }
+        ]
+      }
+    },
+    "eeeabsmobs:immortal_skeleton": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "eeeabsmobs:immortal_skeleton"
+            }
+          }
+        ]
+      }
+    },
+    "eeeabsmobs:immortal_knight": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "eeeabsmobs:immortal_knight"
+            }
+          }
+        ]
+      }
+    },
+    "eeeabsmobs:immortal_shaman": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "eeeabsmobs:immortal_shaman"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements":[
+    [
+      "eeeabsmobs:immortal_golem"
+    ],
+    [
+      "eeeabsmobs:immortal_skeleton"
+    ],
+    [
+      "eeeabsmobs:immortal_knight"
+    ],
+    [
+      "eeeabsmobs:immortal_shaman"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  }
+}

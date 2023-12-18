@@ -1,0 +1,448 @@
+package com.eeeab.eeeabsmobs.sever.entity.impl;
+
+import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
+import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.util.MobSkinStyle;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
+import net.minecraft.world.BossEvent;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * <b>EEEABMobEntity</b><br/>
+ */
+public abstract class EEEABMobEntity extends PathfinderMob {
+    private final EEBossInfoServer bossInfo = new EEBossInfoServer(this);
+    private DamageSource killDataCause;//死亡的伤害源
+    public Player killDataAttackingPlayer;
+    public float targetDistance = -1;//与实体距离
+    public float targetAngle = -1;//目标与实体之间的角度
+    public boolean active;
+    public int frame;
+    public boolean dropAfterDeathAnim = true;//死亡掉落动画
+    public int killDataRecentlyHit;
+    public LivingEntity blockEntity = null;
+    private static final byte MAKE_POOF_ID = 60;
+    private static final byte RESET_BOSS_MUSIC_ID = 76;
+    private static final byte PLAY_BOSS_MUSIC_ID = 77;
+    private static final byte STOP_BOSS_MUSIC_ID = 78;
+    private static final UUID HEALTH_UUID = UUID.fromString("cca33d36-6842-43d8-b615-0cad4460a18a");
+    private static final UUID ATTACK_UUID = UUID.fromString("e1b02986-1699-4120-a687-40419a294482");
+
+    private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(EEEABMobEntity.class, EntityDataSerializers.INT);
+    //private static final EntityDataAccessor<Boolean> DATA_FOUND_TARGET = SynchedEntityData.defineId(EEEABMobEntity.class, EntityDataSerializers.BOOLEAN);
+    //private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EEEABMobEntity.class, EntityDataSerializers.BOOLEAN);
+    //private static final EntityDataAccessor<Boolean> DATA_STARTING_SPAWN = SynchedEntityData.defineId(EEEABMobEntity.class, EntityDataSerializers.BOOLEAN);
+
+    public EEEABMobEntity(EntityType<? extends EEEABMobEntity> type, Level level) {
+        super(type, level);
+        //加载配置文件并修改值
+        EEConfigHandler.AttributeConfig config = getAttributeConfig();
+        if (config != null) {
+            AttributeInstance healthAttribute = getAttribute(Attributes.MAX_HEALTH);
+            if (healthAttribute != null) {
+                double finalValue = healthAttribute.getBaseValue() * config.healthMultiplier.get() - healthAttribute.getBaseValue();
+                healthAttribute.addTransientModifier(new AttributeModifier(HEALTH_UUID, "Reset health by config", finalValue, AttributeModifier.Operation.ADDITION));
+                this.setHealth(this.getMaxHealth());
+            }
+            AttributeInstance attackAttribute = getAttribute(Attributes.ATTACK_DAMAGE);
+            if (attackAttribute != null) {
+                double finalValue = attackAttribute.getBaseValue() * config.attackMultiplier.get() - attackAttribute.getBaseValue();
+                attackAttribute.addTransientModifier(new AttributeModifier(ATTACK_UUID, "Reset attack damage by config", finalValue, AttributeModifier.Operation.ADDITION));
+            }
+        }
+    }
+
+    protected EEConfigHandler.AttributeConfig getAttributeConfig() {
+        return null;
+    }
+
+    public boolean isInvulnerableTo(DamageSource damageSource) {
+        return super.isInvulnerableTo(damageSource);
+    }
+
+    @Override//是否免疫爆炸
+    public boolean ignoreExplosion() {
+        return super.ignoreExplosion();
+    }
+
+    @Override//是否在实体上渲染着火效果
+    public boolean displayFireAnimation() {
+        return super.displayFireAnimation();
+    }
+
+    @Override//是否免疫摔伤
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource damageSource) {
+        return super.causeFallDamage(fallDistance, multiplier, damageSource);
+    }
+
+    @Override//是否免疫药水效果
+    public boolean addEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
+        return super.addEffect(effectInstance, entity);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        frame++;
+        if (getTarget() != null) {
+            //获取当前目标实体的模型(减去模型宽度的1/2)与当前实体之间的距离
+            targetDistance = distanceTo(getTarget()) - getTarget().getBbWidth() / 2f;
+            targetAngle = (float) getAngleBetweenEntities(this, getTarget());
+            //System.out.println("targetDistance: " + targetDistance+" || targetAngle: "+targetAngle);
+        }
+        if (!level.isClientSide) {
+            //if (tickCount % 20 == 0) this.setFoundTarget(getTarget() != null);
+            if (getBossMusic() != null) {
+                if (canHandOffMusic()) {
+                    this.level.broadcastEntityEvent(this, RESET_BOSS_MUSIC_ID);
+                } else if (canPlayMusic()) {
+                    this.level.broadcastEntityEvent(this, PLAY_BOSS_MUSIC_ID);
+                } else {
+                    this.level.broadcastEntityEvent(this, STOP_BOSS_MUSIC_ID);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == RESET_BOSS_MUSIC_ID) {
+            BossMusicPlayer.resetBossMusic(this);
+        } else if (id == PLAY_BOSS_MUSIC_ID) {
+            BossMusicPlayer.playBossMusic(this);
+        } else if (id == STOP_BOSS_MUSIC_ID) {
+            BossMusicPlayer.stopBossMusic(this);
+        } else if (id == MAKE_POOF_ID) {
+            makePoofParticles();
+        } else {
+            super.handleEntityEvent(id);
+        }
+    }
+
+    protected void makePoofParticles() {
+        for (int i = 0; i < 20; ++i) {
+            double d0 = this.random.nextGaussian() * 0.02D;
+            double d1 = this.random.nextGaussian() * 0.02D;
+            double d2 = this.random.nextGaussian() * 0.02D;
+            this.level.addParticle(ParticleTypes.POOF, this.getRandomX(1.0D), this.getRandomY(), this.getRandomZ(1.0D), d0, d1, d2);
+        }
+    }
+
+    @Override
+    protected void customServerAiStep() {
+        super.customServerAiStep();
+        if (tickCount % 4 == 0) bossInfo.update();
+    }
+
+    @Override
+    protected final void tickDeath() {
+        ++this.deathTime;
+        int deathDuration = getDeathDuration();
+        if (this.deathTime == deathDuration && !this.level.isClientSide()) {
+            lastHurtByPlayer = killDataAttackingPlayer;
+            lastHurtByPlayerTime = killDataRecentlyHit;
+            if (dropAfterDeathAnim && killDataCause != null) {
+                this.dropAllDeathLoot(killDataCause);
+            }
+            this.level.broadcastEntityEvent(this, (byte) 60);
+            this.remove(Entity.RemovalReason.KILLED);
+        }
+    }
+
+    @Override
+    protected void dropAllDeathLoot(DamageSource source) {
+        if (!dropAfterDeathAnim || deathTime > 0) {
+            super.dropAllDeathLoot(source);
+        }
+    }
+
+    protected int getDeathDuration() {
+        return 20;
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        if (!this.dead) {
+            killDataCause = source;
+            killDataRecentlyHit = this.lastHurtByPlayerTime;
+            killDataAttackingPlayer = lastHurtByPlayer;
+        }
+        super.die(source);
+        if (!this.isRemoved()) {
+            bossInfo.update();
+        }
+    }
+
+    @Override
+    public boolean doHurtTarget(Entity entity) {
+        return doHurtTarget(entity, 1.0F, 1.0F);
+    }
+
+    public boolean doHurtTarget(Entity entity, float damageMultiplier, float knockBackMultiplier) {
+        return doHurtTarget(entity, damageMultiplier, knockBackMultiplier, false);
+    }
+
+    //复制自: net.minecraft.world.entity.Mob.doHurtTarget(Entity entity)
+    public boolean doHurtTarget(Entity entity, float damageMultiplier, float knockBackMultiplier, boolean canDisableShield) {
+        float f = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * damageMultiplier;
+        float f1 = (float) this.getAttributeValue(Attributes.ATTACK_KNOCKBACK) * knockBackMultiplier;
+        if (entity instanceof LivingEntity) {
+            f += EnchantmentHelper.getDamageBonus(this.getMainHandItem(), ((LivingEntity) entity).getMobType());
+            f1 += (float) EnchantmentHelper.getKnockbackBonus(this);
+        }
+
+        int i = EnchantmentHelper.getFireAspect(this);
+        if (i > 0) {
+            entity.setSecondsOnFire(i * 4);
+        }
+
+        boolean flag = entity.hurt(DamageSource.mobAttack(this), f);
+        if (flag) {
+            if (f1 > 0.0F && entity instanceof LivingEntity) {
+                ((LivingEntity) entity).knockback((double) (f1 * 0.5F), (double) Mth.sin(this.getYRot() * ((float) Math.PI / 180F)), (double) (-Mth.cos(this.getYRot() * ((float) Math.PI / 180F))));
+                this.setDeltaMovement(this.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
+            }
+
+            if (entity instanceof Player player) {
+                if (canDisableShield)
+                    this.maybeDisableShield(player, this.getMainHandItem(), player.isUsingItem() ? player.getUseItem() : ItemStack.EMPTY);
+            }
+
+            this.doEnchantDamageEffects(this, entity);
+            this.setLastHurtMob(entity);
+        }
+
+        return flag;
+    }
+
+    //复制自: net.minecraft.world.entity.Mob.maybeDisableShield(Player player, ItemStack mobItemStack, ItemStack playerItemStack)
+    private void maybeDisableShield(Player player, ItemStack mobItemStack, ItemStack playerItemStack) {
+        if (!mobItemStack.isEmpty() && !playerItemStack.isEmpty() && mobItemStack.getItem() instanceof AxeItem && playerItemStack.is(Items.SHIELD)) {
+            float f = 0.25F + (float) EnchantmentHelper.getBlockEfficiency(this) * 0.05F;
+            if (this.random.nextFloat() < f) {
+                player.getCooldowns().addCooldown(Items.SHIELD, 100);
+                this.level.broadcastEntityEvent(player, (byte) 30);
+            }
+        }
+    }
+
+    protected void registerGoals() {
+        this.registerCustomGoals();
+    }
+
+    protected void registerCustomGoals() {
+    }
+
+    protected boolean canBePushedByEntity(Entity entity) {
+        return true;
+    }
+
+    @Override
+    public void push(Entity entityIn) {
+        if (!this.isSleeping()) {
+            if (!this.isPassengerOfSameVehicle(entityIn)) {
+                if (!entityIn.noPhysics && !this.noPhysics) {
+                    double d0 = entityIn.getX() - this.getX();
+                    double d1 = entityIn.getZ() - this.getZ();
+                    double d2 = Mth.absMax(d0, d1);
+                    if (d2 >= (double) 0.01F) {
+                        d2 = Math.sqrt(d2);
+                        d0 = d0 / d2;
+                        d1 = d1 / d2;
+                        double d3 = 1.0D / d2;
+                        if (d3 > 1.0D) {
+                            d3 = 1.0D;
+                        }
+
+                        d0 = d0 * d3;
+                        d1 = d1 * d3;
+                        d0 = d0 * (double) 0.05F;
+                        d1 = d1 * (double) 0.05F;
+                        if (!this.isVehicle()) {
+                            if (canBePushedByEntity(entityIn)) {
+                                this.push(-d0, 0.0D, -d1);
+                            }
+                        }
+
+                        if (!entityIn.isVehicle()) {
+                            entityIn.push(d0, 0.0D, d1);
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+
+    @Override//初始化NBT数据
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_VARIANT, 0);
+        //this.entityData.define(DATA_FOUND_TARGET, false);
+        //this.entityData.define(DATA_STARTING_SPAWN, false);
+        //this.entityData.define(DATA_ACTIVE, true);
+    }
+
+
+    @Override//退出时保存自定义NBT(不然数据将会重置)
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putInt("DATA_VARIANT", this.entityData.get(DATA_VARIANT));
+        //compound.putBoolean("DATA_FOUND_TARGET", this.entityData.get(DATA_FOUND_TARGET));
+        //compound.putBoolean("DATA_ACTIVE", this.entityData.get(DATA_ACTIVE));
+        //compound.putBoolean("DATA_STARTING_SPAWN", this.entityData.get(DATA_STARTING_SPAWN));
+    }
+
+
+    @Override//加载世界时读写自定义NBT
+    public void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.entityData.set(DATA_VARIANT, compound.getInt("DATA_VARIANT"));
+        //this.entityData.set(DATA_FOUND_TARGET, compound.getBoolean("DATA_FOUND_TARGET"));
+        //this.entityData.set(DATA_ACTIVE, compound.getBoolean("DATA_ACTIVE"));
+        //this.entityData.set(DATA_STARTING_SPAWN, compound.getBoolean("DATA_STARTING_SPAWN"));
+
+    }
+
+    public List<LivingEntity> getNearByLivingEntities(double range) {
+        return this.getNearByEntities(LivingEntity.class, range, range, range, range);
+    }
+
+    //获取特定范围所有实体
+    public List<LivingEntity> getNearByLivingEntities(double rangeX, double height, double rangeZ, double radius) {
+        return this.getNearByEntities(LivingEntity.class, rangeX, height, rangeZ, radius);
+    }
+
+    //获取特定范围某一个实体
+    public <T extends Entity> List<T> getNearByEntities(Class<T> entityClass, double x, double y, double z, double radius) {
+        return level.getEntitiesOfClass(entityClass, getBoundingBox().inflate(x, y, z), targetEntity -> targetEntity != this &&
+                distanceTo(targetEntity) <= radius + targetEntity.getBbWidth() / 2f && targetEntity.getY() <= getY() + y);
+    }
+
+    //获取实体之间的角度
+    public double getAngleBetweenEntities(Entity attacker, Entity target) {
+        return Math.atan2(target.getZ() - attacker.getZ(), target.getX() - attacker.getX()) * (180 / Math.PI) + 90;
+    }
+
+    //推开其他实体
+    protected void pushEntitiesAway(float X, float Y, float Z, float radius) {
+        List<LivingEntity> entityList = getNearByLivingEntities(X, Y, Z, radius);
+        for (Entity entity : entityList) {
+            if (!entity.noPhysics && entity.isPickable()) {
+                double angle = (getAngleBetweenEntities(this, entity) + 90) * Math.PI / 180;
+                entity.setDeltaMovement(-0.10 * Math.cos(angle), entity.getDeltaMovement().y, -0.10 * Math.sin(angle));
+            }
+        }
+    }
+
+    //指定坐标添加弧度
+    public Vec3 circlePosition(Vec3 targetVec3, float radius, float speed, boolean direction, int circleFrame, float offset) {
+        double theta = (direction ? 1 : -1) * circleFrame * 0.5 * speed / radius + offset;
+        return targetVec3.add(radius * Math.cos(theta), 0, radius * Math.sin(theta));
+    }
+
+
+    @Override
+    public void startSeenByPlayer(ServerPlayer player) {
+        super.startSeenByPlayer(player);
+        this.bossInfo.addPlayer(player);
+    }
+
+    @Override
+    public void stopSeenByPlayer(ServerPlayer player) {
+        super.stopSeenByPlayer(player);
+        this.bossInfo.removePlayer(player);
+    }
+
+
+    protected boolean setDarkenScreen() {
+        return false;
+    }
+
+    protected boolean showBossBloodBars() {
+        return false;
+    }
+
+    protected BossEvent.BossBarColor bossBloodBarsColor() {
+        return BossEvent.BossBarColor.PURPLE;
+    }
+
+    public float getHealthPercentage() {
+        return (this.getHealth() / this.getMaxHealth()) * 100;
+    }
+
+//    public void setInitializing(boolean flag, int initializingTick) {
+//        this.initializingTick = initializingTick;
+//        this.entityData.set(DATA_STARTING_SPAWN, flag);
+//    }
+
+//    public boolean isInitializing() {
+//        return this.entityData.get(DATA_STARTING_SPAWN);
+//    }
+
+    //public void setActive(boolean flag) {
+    //    this.entityData.set(DATA_ACTIVE, flag);
+    //}
+    //
+    //public boolean isActive() {
+    //    return this.entityData.get(DATA_ACTIVE);
+    //}
+
+    //public void setFoundTarget(boolean flag) {
+    //    this.entityData.set(DATA_FOUND_TARGET, flag);
+    //}
+    //
+    //public boolean isFoundTarget() {
+    //    return this.entityData.get(DATA_FOUND_TARGET);
+    //}
+
+    public MobSkinStyle getStyle() {
+        return MobSkinStyle.byId(this.entityData.get(DATA_VARIANT));
+    }
+
+    public void setStyle(MobSkinStyle style) {
+        this.entityData.set(DATA_VARIANT, style.getId());
+    }
+
+    public SoundEvent getBossMusic() {
+        return null;
+    }
+
+    protected boolean canPlayMusic() {
+        return !isSilent() && getTarget() instanceof Player;
+    }
+
+    protected boolean canHandOffMusic() {
+        return false;
+    }
+
+    public boolean canPlayerHearMusic(Player player) {
+        return player != null
+                && canAttack(player)
+                && distanceTo(player) < 50 * 50;
+    }
+}
