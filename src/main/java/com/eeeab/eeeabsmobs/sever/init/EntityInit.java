@@ -57,7 +57,7 @@ public class EntityInit {
     public static final RegistryObject<EntityType<EntityNamelessGuardian>> NAMELESS_GUARDIAN =
             ENTITIES.register("nameless_guardian",
                     () -> EntityType.Builder.<EntityNamelessGuardian>of(EntityNamelessGuardian::new, MobCategory.MONSTER)
-                            .sized(2.5f, 4.0f).fireImmune().clientTrackingRange(5)/*.updateInterval(1)*/
+                            .sized(2.5f, 4.0f).fireImmune().clientTrackingRange(10)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "nameless_guardian").toString()));
 
     ////test entity

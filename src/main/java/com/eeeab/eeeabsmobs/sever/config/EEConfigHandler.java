@@ -96,7 +96,7 @@ public class EEConfigHandler {
     public static class Skeleton {
         public Skeleton(final ForgeConfigSpec.Builder builder) {
             builder.push("Immortal Skeleton");
-            combatConfig = new AttributeConfig(1, 1);
+            combatConfig = new AttributeConfig();
             builder.pop();
         }
 
@@ -107,7 +107,7 @@ public class EEConfigHandler {
     public static class Knight {
         public Knight(final ForgeConfigSpec.Builder builder) {
             builder.push("Immortal Knight");
-            combatConfig = new AttributeConfig(1, 1);
+            combatConfig = new AttributeConfig();
             builder.pop();
         }
 
@@ -120,7 +120,7 @@ public class EEConfigHandler {
             builder.push("Immortal Shaman");
             healValue = BUILDER.comment("Immortal Shaman heal values").
                     defineInRange("Heal values", 16, 0D, Double.MAX_VALUE);
-            combatConfig = new AttributeConfig(1, 1);
+            combatConfig = new AttributeConfig();
             maximumDamageCap = new GeneralDamageCap(0.2F);
             builder.pop();
         }
@@ -134,7 +134,7 @@ public class EEConfigHandler {
     public static class Golem {
         public Golem(final ForgeConfigSpec.Builder builder) {
             builder.push("Immortal Golem");
-            combatConfig = new AttributeConfig(1, 1);
+            combatConfig = new AttributeConfig();
             builder.pop();
         }
 
@@ -149,7 +149,7 @@ public class EEConfigHandler {
                     define("Enable non-combat heal", true);
             suckBloodFactor = BUILDER.comment("The upper limit of vampire is based on the percentage of maximum health").
                     defineInRange("Suck blood factor", 0.05, 0, 1);
-            combatConfig = new AttributeConfig(1, 1);
+            combatConfig = new AttributeConfig();
             maximumDamageCap = new GeneralDamageCap(0.05F);
             builder.pop();
         }
@@ -166,7 +166,7 @@ public class EEConfigHandler {
     public static class Immortal {
         public Immortal(final ForgeConfigSpec.Builder builder) {
             builder.push("The Immortal");
-            combatConfig = new AttributeConfig(1, 1);
+            combatConfig = new AttributeConfig();
             builder.pop();
         }
 
@@ -205,12 +205,14 @@ public class EEConfigHandler {
 
     //属性倍率
     public static class AttributeConfig {
+        public AttributeConfig() {
+            this(1.0F, 1.0F);
+        }
         public AttributeConfig(float healthMultiplier, float attackMultiplier) {
-            this.healthMultiplier = BUILDER.comment("Set this mob health multiplier").
-                    defineInRange("Health multiplier", healthMultiplier, 0D, Double.MAX_VALUE);
-
-            this.attackMultiplier = BUILDER.comment("set this mob attack multiplier").
-                    defineInRange("Attack multiplier", attackMultiplier, 0D, Double.MAX_VALUE);
+            this.healthMultiplier = BUILDER.comment("Set this mob health multiplier")
+                    .defineInRange("Health multiplier", healthMultiplier, 0D, Double.MAX_VALUE);
+            this.attackMultiplier = BUILDER.comment("set this mob attack multiplier")
+                    .defineInRange("Attack multiplier", attackMultiplier, 0D, Double.MAX_VALUE);
         }
 
         public final ForgeConfigSpec.DoubleValue healthMultiplier;
