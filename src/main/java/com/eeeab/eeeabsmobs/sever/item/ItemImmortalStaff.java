@@ -4,6 +4,7 @@ import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.item.util.EEToolTipItem;
+import com.eeeab.eeeabsmobs.sever.util.MTUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -22,12 +23,12 @@ public class ItemImmortalStaff extends EEToolTipItem {
 
     @Override
     protected void detailsTooltip(List<Component> tooltip) {
-        tooltip.add(Component.translatable(getDescriptionId() + ".tip").setStyle(ItemInit.TIPS_GRAY));
+        tooltip.add(MTUtil.simpleWeaponText("immortal_staff", MTUtil.STYLE_GRAY));
     }
 
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
-        tooltip.add(Component.translatable("item.unable_depleted_tip").setStyle(ItemInit.TIPS_GRAY));
+        tooltip.add(MTUtil.UNABLE_BREAKS);
         super.appendHoverText(stack, level, tooltip, flagIn);
     }
 

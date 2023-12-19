@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.sever.item;
 
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.eeeab.eeeabsmobs.sever.util.MTUtil;
 import net.minecraft.network.chat.*;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,8 +22,8 @@ public class ImmortalSword extends SwordItem {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.add(Component.translatable("item.unable_depleted_tip").setStyle(ItemInit.TIPS_GRAY));
-        tooltip.add(Component.translatable(getDescriptionId() + ".tip").setStyle(ItemInit.TIPS_GRAY));
+        tooltip.add(MTUtil.UNABLE_BREAKS);
+        tooltip.add(MTUtil.simpleWeaponText("immortal_sword", MTUtil.STYLE_GRAY));
     }
 
     @Override

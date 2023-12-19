@@ -2,8 +2,8 @@ package com.eeeab.eeeabsmobs.sever.item;
 
 import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityGuardianBlade;
-import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
+import com.eeeab.eeeabsmobs.sever.util.MTUtil;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -121,11 +121,11 @@ public class ItemGuardianAxe extends AxeItem {
 
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.add(Component.translatable("item.unable_depleted_tip").setStyle(ItemInit.TIPS_GRAY));
+        tooltip.add(MTUtil.UNABLE_BREAKS);
         if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340)) {
-            tooltip.add(Component.translatable("key_down.tip").setStyle(ItemInit.TIPS_GREEN));
+            tooltip.add(MTUtil.simpleShiftDownText(null, MTUtil.STYLE_GREEN));
         } else {
-            tooltip.add(Component.translatable(getDescriptionId() + ".tip").setStyle(ItemInit.TIPS_GRAY));
+            tooltip.add(MTUtil.simpleWeaponText("guardian_axe", MTUtil.STYLE_GRAY));
         }
     }
 

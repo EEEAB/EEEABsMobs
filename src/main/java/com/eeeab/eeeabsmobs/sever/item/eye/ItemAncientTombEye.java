@@ -8,7 +8,7 @@ import net.minecraft.world.item.Rarity;
 
 public class ItemAncientTombEye extends ItemFindStructureEye {
     public ItemAncientTombEye() {
-        super(new Properties().rarity(Rarity.RARE), ModTag.EYE_OF_ANCIENT_TOMB, 0.047F, 0.146F, 0.179F);
+        super(new Properties().rarity(Rarity.RARE).stacksTo(16), ModTag.EYE_OF_ANCIENT_TOMB, 0.047F, 0.146F, 0.179F);
     }
 
     @Override
