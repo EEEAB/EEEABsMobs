@@ -412,8 +412,11 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             //    this.playAnimation(SMASH_ATTACK_ANIMATION);
             //this.playAnimation(WEAK_ANIMATION_1);
 
-            if (this.getTarget() != null && this.isActive() && !this.isPowered() && this.noConflictingTasks() && ((this.FIRST && this.getHealthPercentage() <= 60) || (!this.FIRST && this.getNextMadnessTick() <= 0)) && !this.isNoAi())
+            if (this.getTarget() != null && this.isActive() && !this.isPowered() && this.noConflictingTasks() && ((this.FIRST && this.getHealthPercentage() <= 60) || (!this.FIRST && this.getNextMadnessTick() <= 0))) {
+                this.removeAllEffects();
+                this.setNoAi(false);
                 this.playAnimation(ROAR_ANIMATION);
+            }
 
             if (this.isUnnatural()) {
                 this.setActive(true);
@@ -797,8 +800,8 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
 
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().
-                add(Attributes.MAX_HEALTH, 200.0D).
-                add(Attributes.ARMOR, 2).
+                add(Attributes.MAX_HEALTH, 300.0D).
+                add(Attributes.ARMOR, 10).
                 add(Attributes.ATTACK_DAMAGE, 14.0D).
                 add(Attributes.FOLLOW_RANGE, 50.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.3D).
@@ -1208,7 +1211,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     @Override
     public void playAnimation(Animation animation) {
         if (animation != NO_ANIMATION && this.attackTick <= 0 && !this.isPowered()) {
-            this.attackTick = getCoolingTimerUtil(20, 0, 0.5F);
+            this.attackTick = 10;
         }
         super.playAnimation(animation);
     }

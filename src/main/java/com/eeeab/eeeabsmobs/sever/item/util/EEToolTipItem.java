@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.item.util;
 
-import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.eeeab.eeeabsmobs.sever.util.MTUtil;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -21,11 +21,11 @@ public abstract class EEToolTipItem extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
         if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340)) {
-            tooltip.add(Component.translatable("key_down.tip").setStyle(ItemInit.TIPS_GREEN));
+            tooltip.add(MTUtil.simpleShiftDownText(null, MTUtil.STYLE_GREEN));
         } else {
             detailsTooltip(tooltip);
         }
     }
 
-     protected abstract void detailsTooltip(List<Component> tooltip);
+    protected abstract void detailsTooltip(List<Component> tooltip);
 }

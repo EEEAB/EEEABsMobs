@@ -84,7 +84,7 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier {
 
     @Override
     public boolean isCurrentlyGlowing() {
-        return !this.level.getBlockState(this.blockPosition().above()).isAir() || super.isCurrentlyGlowing();
+        return this.level.isClientSide && !this.level.getBlockState(this.blockPosition().above()).isAir() || super.isCurrentlyGlowing();//TODO
     }
 
     private ItemStack getItemRaw() {

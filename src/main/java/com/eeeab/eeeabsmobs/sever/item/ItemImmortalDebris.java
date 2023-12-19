@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.item;
 
-import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.eeeab.eeeabsmobs.sever.util.MTUtil;
 import com.eeeab.eeeabsmobs.sever.util.ModCreativeModeTabGroup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -19,6 +19,6 @@ public class ItemImmortalDebris extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level p_41422_, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, p_41422_, tooltip, flag);
-        tooltip.add(Component.translatable(getDescriptionId() + ".tip").setStyle(ItemInit.TIPS_GRAY));
+        tooltip.add(MTUtil.simpleItemText("immortal_debris", MTUtil.STYLE_GRAY));
     }
 }

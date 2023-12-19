@@ -1,8 +1,8 @@
 package com.eeeab.eeeabsmobs.sever.item.eye;
 
 import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityEyeOfStructure;
-import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.item.util.EEToolTipItem;
+import com.eeeab.eeeabsmobs.sever.util.MTUtil;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -16,9 +16,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.phys.HitResult;
 
 import java.util.List;
 
@@ -41,6 +43,11 @@ public abstract class ItemFindStructureEye extends EEToolTipItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack eyeItem = getEyeItem(player, hand);
         player.startUsingItem(hand);
+        HitResult hitresult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
+        if (hitresult.getType() == HitResult.Type.BLOCK) {
+            player.displayClientMessage(Component.translatable("entity.minecraft.player"), true);
+            return InteractionResultHolder.pass(eyeItem);
+        }
         if (level instanceof ServerLevel serverlevel) {
             BlockPos blockpos = serverlevel.findNearestMapStructure(FIND_STRUCTURE, player.blockPosition(), FIND_MAX_HEIGHT, false);
             if (blockpos != null) {
@@ -72,7 +79,7 @@ public abstract class ItemFindStructureEye extends EEToolTipItem {
 
     @Override
     protected void detailsTooltip(List<Component> tooltip) {
-        tooltip.add(Component.translatable(FIND_STRUCTURE.location().getPath() + ".tip").setStyle(ItemInit.TIPS_GRAY));
+        tooltip.add(MTUtil.simpleText(MTUtil.STRUCTURE_PREFIX, FIND_STRUCTURE.location().getPath(), MTUtil.STYLE_GRAY));
     }
 
     protected abstract ItemStack getEyeItem(Player player, InteractionHand hand);
