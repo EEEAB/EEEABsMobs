@@ -57,7 +57,7 @@
   "tooltip.armor.eeeabsmobs.full_suit_of_armor.tip": "フルスーツのアーマー効果:",
   "tooltip.armor.eeeabsmobs.immortal_full_suit_of_armor.tip": "不滅の暴徒が与えるダメージは 10% 減少する",
   "keyboard.shift_down.eeeabsmobs.tip": "<Shift> を押したままにすると詳細が表示される",
-  "other.unable_breaks.tip": "壊れない",
+  "other.eeeabsmobs.unable_breaks.tip": "壊れない",
 
   "_comment": "効果",
   "effect.eeeabsmobs.erode_effect": "侵食",

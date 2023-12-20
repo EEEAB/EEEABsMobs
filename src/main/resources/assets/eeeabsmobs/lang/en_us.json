@@ -59,7 +59,7 @@
   "tooltip.armor.eeeabsmobs.full_suit_of_armor.tip": "Full suit of armor effect :",
   "tooltip.armor.eeeabsmobs.immortal_full_suit_of_armor.tip": "Immortal mobs deal 10% less damage",
   "keyboard.shift_down.eeeabsmobs.tip": "Hold down <Shift> to see the details",
-  "other.unable_breaks.tip": "Unable breaks",
+  "other.eeeabsmobs.unable_breaks.tip": "Unable breaks",
 
   "_comment": "Effects",
   "effect.eeeabsmobs.erode_effect": "Erode",
