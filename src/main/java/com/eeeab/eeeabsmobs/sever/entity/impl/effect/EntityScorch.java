@@ -47,7 +47,7 @@ public class EntityScorch extends EntityMagicEffects {
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
-        return distance < 16 * 16;
+        return distance < 32 * 32;
     }
 
     @Override
