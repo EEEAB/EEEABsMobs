@@ -26,7 +26,7 @@ public class RenderEntityScorch extends EntityRenderer<EntityScorch> {
     private static final float TEXTURE_WIDTH = 32;
     private static final float TEXTURE_HEIGHT = 32;
     private static final float RING_FRAME_SIZE = 16;
-    private static final float LINGER_RADIUS = 0.9f;
+    private static final float LINGER_RADIUS = 1.1f;
     private static final float SCORCH_MIN_U = 0f / TEXTURE_WIDTH;
     private static final float SCORCH_MAX_U = SCORCH_MIN_U + RING_FRAME_SIZE / TEXTURE_WIDTH;
     private static final float SCORCH_MIN_V = 0f / TEXTURE_HEIGHT;
