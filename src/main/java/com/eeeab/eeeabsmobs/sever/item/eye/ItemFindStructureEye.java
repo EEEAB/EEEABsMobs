@@ -43,11 +43,11 @@ public abstract class ItemFindStructureEye extends EEToolTipItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack eyeItem = getEyeItem(player, hand);
         player.startUsingItem(hand);
-        HitResult hitresult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
-        if (hitresult.getType() == HitResult.Type.BLOCK) {
-            player.displayClientMessage(Component.translatable("entity.minecraft.player"), true);
-            return InteractionResultHolder.pass(eyeItem);
-        }
+        //HitResult hitresult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
+        //if (hitresult.getType() == HitResult.Type.BLOCK) {
+        //    player.displayClientMessage(MTUtil.simpleText(MTUtil.WARN_PREFIX,""), true);
+        //    return InteractionResultHolder.pass(eyeItem);
+        //}
         if (level instanceof ServerLevel serverlevel) {
             BlockPos blockpos = serverlevel.findNearestMapStructure(FIND_STRUCTURE, player.blockPosition(), FIND_MAX_HEIGHT, false);
             if (blockpos != null) {
