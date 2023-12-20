@@ -3,6 +3,7 @@ package com.eeeab.eeeabsmobs.sever.util;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 
@@ -25,6 +26,8 @@ public class MTUtil {
 
     public static final Style STYLE_GREEN = Style.EMPTY.withColor(TextColor.fromLegacyFormat(ChatFormatting.GREEN));
 
+    public static final Style STYLE_RED = Style.EMPTY.withColor(TextColor.fromLegacyFormat(ChatFormatting.RED));
+
     //general
     public static final String TIP_SUFFIX = ".tip";
 
@@ -32,9 +35,7 @@ public class MTUtil {
 
     public static final String MOD_ID = EEEABMobs.MOD_ID + ".";
 
-    public static final String ERROR = "error.translate_message";//翻译字段错误
-
-    public static final Component UNABLE_BREAKS = Component.translatable(OTHER_PREFIX + "unable_breaks" + TIP_SUFFIX).setStyle(MTUtil.STYLE_GRAY);//无法破坏
+    public static final Component UNABLE_BREAKS = simpleText(OTHER_PREFIX, "unable_breaks", MTUtil.STYLE_GRAY);//无法破坏
 
     //item
     public static final String ITEM_PREFIX = "item.";
@@ -61,12 +62,15 @@ public class MTUtil {
 
 
     public static Component simpleText(String prefix, String key, Style style) {
-        if (style == null) {
-            return Component.translatable(ERROR);
-        } else if (key == null) {
-            return Component.translatable(prefix + MOD_ID + TIP_SUFFIX.substring(1)).setStyle(style);
+        MutableComponent component;
+        String finalPrefix = prefix + MOD_ID;
+        if (style == null) style = Style.EMPTY;
+        if (key == null) {
+            component = Component.translatable(finalPrefix + TIP_SUFFIX.substring(1)).setStyle(style);
+        } else {
+            component = Component.translatable(finalPrefix + key + TIP_SUFFIX).setStyle(style);
         }
-        return Component.translatable(prefix + MOD_ID + key + TIP_SUFFIX).setStyle(style);
+        return component;
     }
 
     public static Component simpleItemText(String key, Style style) {
@@ -98,10 +102,8 @@ public class MTUtil {
     }
 
     public static List<Component> complexText(String prefix, int count, Style style, String key) {
-        if (key == null || count <= 0) {
-            return List.of(Component.translatable(ERROR));
-        }
         List<Component> components = new ArrayList<>();
+        if (style == null) style = Style.EMPTY;
         for (int i = 1; i <= count; i++) {
             StringBuilder sb = new StringBuilder();
             components.add(Component.translatable(sb
@@ -118,10 +120,8 @@ public class MTUtil {
     }
 
     public static List<Component> complexText(String prefix, boolean hasIndex, Style style, String... keys) {
-        if (keys == null || keys.length == 0) {
-            return List.of(Component.translatable(ERROR));
-        }
         List<Component> components = new ArrayList<>();
+        if (style == null) style = Style.EMPTY;
         for (int i = 0; i < keys.length; i++) {
             StringBuilder sb = new StringBuilder();
             sb.append(prefix)
