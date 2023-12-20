@@ -53,7 +53,7 @@ public class EntityGuardianBlade extends EntityMagicEffects {
         int duration = caster instanceof EntityNamelessGuardian ? GUARDIAN_DURATION : PLAY_DURATION;
         if (this.tickCount == 1) {
             Vec3 lookAngle = this.getLookAngle();
-            this.shoot(lookAngle.x, lookAngle.y, lookAngle.z, 1.5 + this.random.nextFloat() * 0.5F);
+            this.shoot(lookAngle.x, lookAngle.y, lookAngle.z, 1.4 + this.random.nextFloat() * 0.5F);
         } else if (this.tickCount <= duration) {
             //移动速度会随着时间衰减
             if (this.tickCount % 5 == 0) {
