@@ -48,7 +48,7 @@ public class EntityScorch extends EntityMagicEffects {
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
         return distance < 32 * 32;
-    }//TODO
+    }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compoundTag) {
