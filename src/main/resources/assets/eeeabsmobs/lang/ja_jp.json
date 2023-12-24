@@ -51,6 +51,7 @@
   "item.eeeabsmobs.remove_mob.tip_1": "左クリックして EEEAB のMob モブ/エンティティを削除する",
   "item.eeeabsmobs.remove_mob.tip_2": "右クリックして、16*16*16 の範囲の EEEAB Mob からモブ/エンティティを削除する",
   "item.eeeabsmobs.immortal_debris.tip": "何かの生き物の鎧の破片のようだ...",
+  "tooltip.weapon.eeeabsmobs.guardian_axe.tip": "右ボタン1秒以上長押しで範囲攻撃を放つ。チャージ時間が長いほど解除効果が強くなり、使用者の攻撃力に応じて与えるダメージが増加し、ダメージ上限は現在の武器の攻撃力の2倍となる",
   "tooltip.weapon.eeeabsmobs.immortal_sword.tip": "攻撃した者に浸食の効果を与える",
   "tooltip.weapon.eeeabsmobs.immortal_staff.tip": "右クリックを 1 秒間押し続けるとシャーマンボムを発射する",
   "structure.eeeabsmobs.eye_of_ancient_tomb.tip": "右クリックで古代の墓の構造を見つけられる",
@@ -65,14 +66,26 @@
   "effect.eeeabsmobs.vertigo_effect": "眩暈",
 
   "_comment": "ダメージソースメッセージ",
-  "death. Attack.shaman_bomb": "%1$s はシャーマンの爆弾によって粉々に吹き飛ばされた",
-  "death. Attack.guardian_robust_attach": "%1$s は %2$s によって粉砕された",
-  "death. Attack.guardian_laser_attach":"1$s は %2$s からのレーザーによって焼却された",
+  "death.attack.shaman_bomb": "%1$s はシャーマンの爆弾によって粉々に吹き飛ばされた",
+  "death.attack.guardian_robust_attack": "%1$s は %2$s によって粉砕された",
+  "death.attack.guardian_laser_attack":"1$s は %2$s からのレーザーによって焼却された",
 
   "_comment": "レコード",
   "item.eeeabsmobs.guardians_music_disc.desc": "Guardians - Evan King",
 
-  "_comment": "Sounds subtitle",
-  "subtitles.music.guardians": "Guardians - Evan King"
+   "_comment": "Sounds subtitle",
+  "subtitles.music.guardians": "Guardians - Evan King",
 
+  "_comment": "進捗",
+  "advancements.eeeabsmobs.root.title": "EEEAB 's Mobs",
+  "advancements.eeeabsmobs.root.description": "EEEAB's Mobsの世界にようこそ!",
+  "advancements.eeeabsmobs.origin.title": "原点の目",
+  "advancements.eeeabsmobs.origin.description": "任意の構造の目を取得する",
+  "advancements.eeeabsmobs.ancient_tomb.title": "古代の墓",
+  "advancements.eeeabsmobs.ancient_tomb.description": "古代の墓を見つける",
+  "advancements.eeeabsmobs.kill_nameless_guardian.title": "最後の防衛線は破られた",
+  "advancements.eeeabsmobs.kill_nameless_guardian.description": "名も無き守護者を倒す",
+  "advancements.eeeabsmobs.kill_all_immortal_mob.title": "不滅の者を狩る者",
+  "advancements.eeeabsmobs.kill_all_immortal_mob.description": "このMODで追加された敵対的なモブをすべて倒す"
+  
 }
