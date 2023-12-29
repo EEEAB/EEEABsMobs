@@ -780,6 +780,250 @@ public class ModelNamelessGuardian extends EEAdvancedEntityModel<EntityNamelessG
             animator.endKeyframe();
 
             animator.setStaticKeyframe(2);
+        } else if (animator.setAnimation(EntityNamelessGuardian.ATTACK2_ANIMATION_1)) {
+            animator.startKeyframe(0);
+            animator.rotate(head, 0, 0, 0);
+            animator.rotate(root, 0, 0, 0);
+            animator.move(root, 0, 0, 0);
+            animator.rotate(upper, 0, 0, 0);
+            animator.rotate(rightArm, toRadians(-30), toRadians(25), toRadians(25));
+            animator.move(rightArm, 0, 0, 0);
+            animator.rotate(rightArmUnder, toRadians(-95), 0, 0);
+            animator.rotate(leftArm, 0, 0, 0);
+            animator.rotate(leftLeg, 0, 0, 0);
+            animator.move(leftLeg, 0, 0, 0);
+            animator.rotate(leftLegUnder, 0, 0, 0);
+            animator.rotate(rightLeg, 0, 0, 0);
+            animator.move(rightLeg, 0, 0, 0);
+            animator.rotate(rightLegUnder, 0, 0, 0);
+            animator.rotate(axe, toRadians(-2.5), toRadians(-10), toRadians(20));
+            animator.move(axe, 0, -1F, -5F);
+            animator.endKeyframe();
+
+            //animator.startKeyframe(4);//0.2
+            //animator.rotate(head, toRadians(-2.31), toRadians(-9.94), toRadians(-0.69));
+            //animator.rotate(root, toRadians(1.25), 0, 0);
+            //animator.move(root, 0, 0, -1);
+            //animator.rotate(upper, toRadians(-10), toRadians(30), toRadians(-2.5));
+            //animator.rotate(rightArm, toRadians(-8.42), toRadians(28.74), toRadians(12.86));
+            //animator.move(rightArm, 0, 0, 0);
+            //animator.rotate(rightArmUnder, toRadians(-68.75), 0, 0);
+            //animator.rotate(leftArm, toRadians(-11.63), toRadians(-4.88), toRadians(-5.1));
+            //animator.rotate(leftLeg, toRadians(-20), 0, 0);
+            //animator.move(leftLeg, 0, 0, -3);
+            //animator.rotate(leftLegUnder, toRadians(3), 0, 0);
+            //animator.rotate(rightLeg, toRadians(5), toRadians(2.5), toRadians(2.5));
+            //animator.move(rightLeg, 0, 0, 1.5F);
+            //animator.rotate(rightLegUnder, toRadians(4.44), 0, 0);
+            //animator.rotate(axe, toRadians(33.46), toRadians(-7.61), toRadians(12.82));
+            //animator.move(axe, 0, 3F, -5F);
+            //animator.endKeyframe();
+
+            animator.startKeyframe(4);//0.2
+            animator.rotate(head, toRadians(-4.6141), toRadians(-19.882), toRadians(-1.3811));
+            animator.rotate(root, toRadians(2.5), 0, 0);
+            animator.move(root, 0, 0, -2);
+            animator.rotate(upper, 0, toRadians(30), toRadians(-2.5));
+            animator.rotate(rightArm, toRadians(13.1657), toRadians(32.4813), toRadians(0.7232));
+            animator.move(rightArm, 0, 0, 0);
+            animator.rotate(rightArmUnder, toRadians(-42.5), 0, 0);
+            animator.rotate(leftArm, toRadians(-23.2613), toRadians(-9.7602), toRadians(-10.1917));
+            animator.rotate(leftLeg, toRadians(-5), 0, 0);
+            animator.move(leftLeg, 0, 0, -6);
+            animator.rotate(leftLegUnder, toRadians(6), 0, 0);
+            animator.rotate(rightLeg, toRadians(10), toRadians(5), toRadians(5));
+            animator.move(rightLeg, 0, 0, 3F);
+            animator.rotate(rightLegUnder, toRadians(8.89), 0, 0);
+            animator.rotate(axe, toRadians(69.4128), toRadians(-5.226), toRadians(5.6485));
+            animator.move(axe, 0, 7F, -5F);
+            animator.endKeyframe();
+
+            animator.startKeyframe(4);//0.44
+            animator.rotate(head, toRadians(-0.18), toRadians(0.13), toRadians(2.17));
+            animator.rotate(root, toRadians(3.75), toRadians(-2.5), 0);
+            animator.move(root, 0, 0, -2);
+            animator.rotate(upper, toRadians(-2.9453), toRadians(40.0917), toRadians(-10.8652));
+            animator.rotate(rightArm, toRadians(13.1657), toRadians(32.4813), toRadians(0.7232));
+            animator.move(rightArm, 0, 0, 0);
+            animator.rotate(rightArmUnder, toRadians(-20.1092), toRadians(10.5789), toRadians(-9.0343));
+            animator.rotate(leftArm, toRadians(18.52), toRadians(-6.38), toRadians(-6.92));
+            animator.rotate(leftArmUnder, 0, 0, 0);
+            animator.rotate(leftLeg, toRadians(8.44), toRadians(-10.53), toRadians(-4.1));
+            animator.move(leftLeg, -1, 0, -0.5F);
+            animator.rotate(leftLegUnder, toRadians(11.63), 0, 0);
+            animator.rotate(rightLeg, toRadians(10), toRadians(5), toRadians(5));
+            animator.move(rightLeg, 0, 0, -1F);
+            animator.rotate(rightLegUnder, toRadians(13.33), 0, 0);
+            animator.rotate(axe, toRadians(18.1755), toRadians(19.7208), toRadians(-52.9428));
+            animator.move(axe, 0, 5F, -9F);
+            animator.endKeyframe();
+
+            animator.startKeyframe(2);//0.56
+            animator.rotate(head, toRadians(2.4859), toRadians(12.1324), toRadians(4.3049));
+            animator.rotate(root, toRadians(4.5), toRadians(-4), 0);
+            animator.move(root, 0, 0, -2);
+            animator.rotate(upper, toRadians(-6.34), toRadians(-9.4), toRadians(-10.29));
+            animator.rotate(rightArm, toRadians(-34.3), toRadians(-3.24), toRadians(-3.09));
+            animator.move(rightArm, -1.43F, 3.57F, -5.71F);
+            animator.rotate(rightArmUnder, toRadians(6.85), toRadians(-16.7), toRadians(4.76));
+            animator.rotate(leftArm, toRadians(43.5937), toRadians(-4.3537), toRadians(-4.9519));
+            animator.rotate(leftArmUnder, toRadians(-33), 0, 0);
+            animator.rotate(leftLeg, toRadians(16.51), toRadians(-16.84), toRadians(-6.57));
+            animator.move(leftLeg, -1.6F, 0, 2.8F);
+            animator.rotate(leftLegUnder, toRadians(15), 0, 0);
+            animator.rotate(rightLeg, toRadians(-40.83), toRadians(1.67), toRadians(1.67));
+            animator.move(rightLeg, 0, 0, -3.4F);
+            animator.rotate(rightLegUnder, toRadians(16), 0, 0);
+            animator.rotate(axe, toRadians(-56.925), toRadians(52.1291), toRadians(-133.0771));
+            animator.move(axe, -1.14F, 6F, -3.14F);
+            animator.endKeyframe();
+
+            animator.startKeyframe(2);//0.64
+            animator.rotate(head, toRadians(16.1114), toRadians(42.0217), toRadians(4.5183));
+            animator.rotate(root, toRadians(5), toRadians(-5), 0);
+            animator.move(root, 0, 0, -4);
+            animator.rotate(upper, toRadians(-12.7765), toRadians(-42.4005), toRadians(-9.8982));
+            animator.rotate(rightArm, toRadians(-95.1111), toRadians(-27.0463), toRadians(-5.6255));
+            animator.move(rightArm, -2F, 5F, -8F);
+            animator.rotate(rightArmUnder, toRadians(24.8171), toRadians(-34.8823), toRadians(13.9582));
+            animator.move(rightArmUnder, 0, 0, -3F);
+            animator.rotate(leftArm, toRadians(51.0937), toRadians(-4.3537), toRadians(-4.9519));
+            animator.rotate(leftArmUnder, toRadians(-55), 0, 0);
+            animator.rotate(leftLeg, toRadians(21.8848), toRadians(-21.0508), toRadians(-8.2086));
+            animator.move(leftLeg, -2F, 0, 5F);
+            animator.rotate(leftLegUnder, toRadians(15), 0, 0);
+            animator.rotate(rightLeg, toRadians(-10), toRadians(0), toRadians(0));
+            animator.move(rightLeg, 0, 0, -5F);
+            animator.rotate(rightLegUnder, toRadians(7.5), 0, 0);
+            animator.rotate(axe, toRadians(-56.925), toRadians(52.1291), toRadians(-133.0771));
+            animator.move(axe, -4F, 12F, -2F);
+            animator.endKeyframe();
+
+            animator.setStaticKeyframe(20);//1.56
+
+            animator.startKeyframe(8);
+            animator.rotate(head, 0, 0, 0);
+            animator.rotate(root, 0, 0, 0);
+            animator.move(root, 0, 0, 0);
+            animator.rotate(upper, 0, 0, 0);
+            animator.rotate(rightArm, toRadians(-30), toRadians(25), toRadians(25));
+            animator.move(rightArm, 0, 0, 0);
+            animator.rotate(rightArmUnder, toRadians(-95), 0, 0);
+            animator.rotate(leftArm, 0, 0, 0);
+            animator.rotate(leftLeg, 0, 0, 0);
+            animator.move(leftLeg, 0, 0, 0);
+            animator.rotate(leftLegUnder, 0, 0, 0);
+            animator.rotate(rightLeg, 0, 0, 0);
+            animator.move(rightLeg, 0, 0, 0);
+            animator.rotate(rightLegUnder, 0, 0, 0);
+            animator.rotate(axe, toRadians(-2.5), toRadians(-10), toRadians(20));
+            animator.move(axe, 0, -1F, -5F);
+            animator.endKeyframe();
+        } else if (animator.setAnimation(EntityNamelessGuardian.ATTACK2_ANIMATION_2)) {
+            animator.startKeyframe(0);
+            animator.rotate(head, toRadians(16.1114), toRadians(42.0217), toRadians(4.5183));
+            animator.rotate(root, toRadians(5), toRadians(-5), 0);
+            animator.move(root, 0, 0, -4);
+            animator.rotate(upper, toRadians(-12.7765), toRadians(-42.4005), toRadians(-9.8982));
+            animator.rotate(rightArm, toRadians(-95.1111), toRadians(-27.0463), toRadians(-5.6255));
+            animator.move(rightArm, -2F, 5F, -8F);
+            animator.rotate(rightArmUnder, toRadians(24.8171), toRadians(-34.8823), toRadians(13.9582));
+            animator.move(rightArmUnder, 0, 0, -3F);
+            animator.rotate(leftArm, toRadians(51.0937), toRadians(-4.3537), toRadians(-4.9519));
+            animator.rotate(leftArmUnder, toRadians(-55), 0, 0);
+            animator.rotate(leftLeg, toRadians(21.8848), toRadians(-21.0508), toRadians(-8.2086));
+            animator.move(leftLeg, -2F, 0, 5F);
+            animator.rotate(leftLegUnder, toRadians(15), 0, 0);
+            animator.rotate(rightLeg, toRadians(-10), toRadians(0), toRadians(0));
+            animator.move(rightLeg, 0, 0, -5F);
+            animator.rotate(rightLegUnder, toRadians(7.5), 0, 0);
+            animator.rotate(axe, toRadians(-56.925), toRadians(52.1291), toRadians(-133.0771));
+            animator.move(axe, -4F, 12F, -2F);
+            animator.endKeyframe();
+
+            animator.startKeyframe(4);//0.2
+            animator.rotate(head, toRadians(10.56), toRadians(39.61), toRadians(3.65));
+            animator.rotate(root, toRadians(5), toRadians(-5), 0);
+            animator.move(root, 0, 0, -4);
+            animator.rotate(upper, toRadians(-16.5315), toRadians(-57.0752), toRadians(-5.0253));
+            animator.rotate(rightArm, toRadians(-96.3815), toRadians(-44.4645), toRadians(-3.4793));
+            animator.move(rightArm, -2F, 5F, -8F);
+            animator.rotate(rightArmUnder, toRadians(87.8519), toRadians(-97.6907), toRadians(-53.7422));
+            animator.move(rightArmUnder, 0, 0, 0);
+            animator.rotate(leftArm, toRadians(38.59), toRadians(-4.35), toRadians(-4.95));
+            animator.rotate(leftArmUnder, 0, 0, 0);
+            animator.rotate(leftLeg, toRadians(21.88), toRadians(-21.05), toRadians(-8.21));
+            animator.move(leftLeg, -2F, 0, 5F);
+            animator.rotate(leftLegUnder, toRadians(15), 0, 0);
+            animator.rotate(rightLeg, toRadians(-10), toRadians(0), toRadians(0));
+            animator.move(rightLeg, 0, 0, -5F);
+            animator.rotate(rightLegUnder, toRadians(7.5), 0, 0);
+            animator.rotate(axe, toRadians(0.5457), toRadians(15.3246), toRadians(-18.2975));
+            animator.move(axe, -1F, 1F, -12F);
+            animator.endKeyframe();
+
+            animator.startKeyframe(4);//0.4
+            animator.rotate(head, toRadians(5), toRadians(37.2), toRadians(2.78));
+            animator.rotate(root, toRadians(5), toRadians(-5), 0);
+            animator.move(root, 0, 0, -4);
+            animator.rotate(upper, toRadians(-20.2138), toRadians(-37.546), toRadians(1.9736));
+            animator.rotate(rightArm, toRadians(-96.38), toRadians(-44.46), toRadians(-3.48));
+            animator.move(rightArm, -2F, 5F, -8F);
+            animator.rotate(rightArmUnder, toRadians(87.8519), toRadians(-97.6907), toRadians(-53.7422));
+            animator.move(rightArmUnder, 0, 0, 0);
+            animator.rotate(leftArm, toRadians(26.09), toRadians(-4.35), toRadians(-4.95));
+            animator.rotate(leftLeg, toRadians(-41.3534), toRadians(-1.1897), toRadians(-7.7501));
+            animator.move(leftLeg, -2F, 0, 0);
+            animator.rotate(leftLegUnder, toRadians(15), 0, 0);
+            animator.rotate(rightLeg, toRadians(35), toRadians(0), toRadians(0));
+            animator.move(rightLeg, 0, 0, -3F);
+            animator.rotate(rightLegUnder, toRadians(-5), 0, 0);
+            animator.rotate(axe, toRadians(19.681), toRadians(16.3327), toRadians(9.4499));
+            animator.move(axe, -1F, 0, -12F);
+            animator.endKeyframe();
+
+            animator.startKeyframe(2);//0.52
+            animator.rotate(head, toRadians(-3.516), toRadians(2.2997), toRadians(-0.0877));
+            animator.rotate(root, toRadians(10), toRadians(-5), 0);
+            animator.move(root, 0, 0, -6);
+            animator.rotate(upper, toRadians(-6.8042), toRadians(5.8204), toRadians(-8.8916));
+            animator.rotate(rightArm, toRadians(-100.8051), toRadians(64.9714), toRadians(-17.7692));
+            animator.move(rightArm, -2F, 2F, -5F);
+            animator.rotate(rightArmUnder, toRadians(99.1154), toRadians(-87.9401), toRadians(-65.2221));
+            animator.move(rightArmUnder, 2F, 0, 0);
+            animator.rotate(leftArm, toRadians(41.2195), toRadians(3.4126), toRadians(-20.6467));
+            animator.rotate(leftLeg, toRadians(-31.35), toRadians(-1.19), toRadians(-7.75));
+            animator.move(leftLeg, -2F, 0, 0);
+            animator.rotate(leftLegUnder, toRadians(27.5), 0, 0);
+            animator.rotate(rightLeg, toRadians(35.0371), toRadians(-4.3079), toRadians(6.1409));
+            animator.move(rightLeg, 0, 0, 5F);
+            animator.rotate(rightLegUnder, toRadians(7.5), 0, 0);
+            animator.rotate(axe, toRadians(24.0965), toRadians(-3.0523), toRadians(4.4701));
+            animator.move(axe, -1F, 2F, -12F);
+            animator.endKeyframe();
+
+            animator.setStaticKeyframe(10);//1.0
+
+            animator.startKeyframe(10);
+            animator.rotate(head, 0, 0, 0);
+            animator.rotate(root, 0, 0, 0);
+            animator.move(root, 0, 0, 0);
+            animator.rotate(upper, 0, 0, 0);
+            animator.rotate(rightArm, toRadians(-30), toRadians(25), toRadians(25));
+            animator.move(rightArm, 0, 0, 0);
+            animator.rotate(rightArmUnder, toRadians(-95), 0, 0);
+            animator.rotate(leftArm, 0, 0, 0);
+            animator.rotate(leftLeg, 0, 0, 0);
+            animator.move(leftLeg, 0, 0, 0);
+            animator.rotate(leftLegUnder, 0, 0, 0);
+            animator.rotate(rightLeg, 0, 0, 0);
+            animator.move(rightLeg, 0, 0, 0);
+            animator.rotate(rightLegUnder, 0, 0, 0);
+            animator.rotate(axe, toRadians(-2.5), toRadians(-10), toRadians(20));
+            animator.move(axe, 0, -1F, -5F);
+            animator.endKeyframe();
+        } else if (animator.setAnimation(EntityNamelessGuardian.ATTACK2_ANIMATION_3)) {
+
         } else if (animator.setAnimation(EntityNamelessGuardian.SMASH_ATTACK_ANIMATION)) {
             animator.startKeyframe(0);
             animator.rotate(head, 0, 0, 0);
