@@ -99,8 +99,8 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     public static final Animation SMASH_DOWN_ANIMATION = Animation.create(21);
     public static final Animation LASER_ANIMATION = Animation.create(120);
     public static final Animation CONCUSSION_ANIMATION = Animation.create(24);
-    public static final Animation ATTACK2_ANIMATION_1 = Animation.create(20);
-    public static final Animation ATTACK2_ANIMATION_2 = Animation.create(20);
+    public static final Animation ATTACK2_ANIMATION_1 = Animation.create(40);
+    public static final Animation ATTACK2_ANIMATION_2 = Animation.create(30);
     public static final Animation ATTACK2_ANIMATION_3 = Animation.create(20);
     private static final Animation[] ANIMATIONS = {
             DIE_ANIMATION,
@@ -335,7 +335,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         this.goalSelector.addGoal(1, new AnimationHurtGoal<>(this, false));
         this.goalSelector.addGoal(1, new AnimationDieGoal<>(this));
         this.goalSelector.addGoal(1, new GuardianCombo1Goal(this, 3.5F, 100F));
-        this.goalSelector.addGoal(1, new GuardianCombo2Goal(this, 4.0F, 100F));
+        this.goalSelector.addGoal(1, new GuardianCombo2Goal(this, 5.0F, 100F));
         this.goalSelector.addGoal(1, new GuardianLobedAttackGoal(this, SMASH_ATTACK_ANIMATION));
         this.goalSelector.addGoal(1, new GuardianPounceAttackGoal(this, 3F));
         this.goalSelector.addGoal(1, new GuardianRobustAttackGoal(this, ROBUST_ATTACK_ANIMATION));
@@ -410,8 +410,8 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         if (!this.level().isClientSide) {
             if (this.getTarget() != null && !this.getTarget().isAlive()) this.setTarget(null);
 
-            //if (this.isActive() && this.getAnimation() == NO_ANIMATION && !this.isNoAi())
-            //    this.playAnimation(CONCUSSION_ANIMATION);
+            if (this.isActive() && this.getAnimation() == NO_ANIMATION && !this.isNoAi())
+                this.playAnimation(ATTACK2_ANIMATION_1);
             //this.playAnimation(WEAK_ANIMATION_1);
 
             if (this.getTarget() != null && this.isActive() && !this.isPowered() && this.noConflictingTasks() && ((this.FIRST && this.getHealthPercentage() <= 60) || (!this.FIRST && this.getNextMadnessTick() <= 0))) {
