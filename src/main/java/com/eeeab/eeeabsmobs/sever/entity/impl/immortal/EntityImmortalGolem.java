@@ -1,8 +1,8 @@
 package com.eeeab.eeeabsmobs.sever.entity.impl.immortal;
 
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerDieGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.ResetOwnerGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.CopyOwnerTargetGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerResetGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerCopyTargetGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EELookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationActivateGoal;
 import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
@@ -70,9 +70,9 @@ public class EntityImmortalGolem extends EntityImmortal implements IEntity {
         this.goalSelector.addGoal(1, new AnimationActivateGoal<>(this, SPAWN_ANIMATION));
         this.goalSelector.addGoal(1, new AnimationAttackGoal<>(this, ATTACK_ANIMATION, 7, 1.5f, 1.0f, 1.0f));
         this.goalSelector.addGoal(1, new AnimationHurtGoal<>(this, false));
-        this.goalSelector.addGoal(1, new ResetOwnerGoal<>(this, EntityImmortalShaman.class, 20D));
-        this.targetSelector.addGoal(2, new CopyOwnerTargetGoal(this));
-        this.goalSelector.addGoal(3, new OwnerDieGoal(this));
+        this.goalSelector.addGoal(1, new OwnerResetGoal<>(this, EntityImmortalShaman.class, 20D));
+        this.targetSelector.addGoal(2, new OwnerCopyTargetGoal<>(this));
+        this.goalSelector.addGoal(3, new OwnerDieGoal<>(this));
     }
 
 
