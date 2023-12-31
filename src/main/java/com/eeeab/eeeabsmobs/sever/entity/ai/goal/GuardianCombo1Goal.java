@@ -55,7 +55,7 @@ public class GuardianCombo1Goal extends AnimationAbstractGoal<EntityNamelessGuar
             } else {
                 entity.setYRot(entity.yRotO);
             }
-            if (tick == 11) {
+            if (tick == 10) {
                 if (this.entity.targetDistance > 1.8 || entity.getTarget() == null) {
                     double moveMultiplier = entity.targetDistance < 6 && entity.targetDistance > 3 ? (entity.targetDistance - 1.85) : 1.5;
                     this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier));

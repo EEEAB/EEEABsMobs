@@ -43,6 +43,7 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
         LivingEntity target = this.entity.getTarget();
         int tick = this.entity.getAnimationTick();
         float baseDamageMultiplier = isPowered ? 1.2F : 1.0F;
+        entity.setDeltaMovement(0, entity.onGround() ? 0 : entity.getDeltaMovement().y, 0);
         if (animation == EntityNamelessGuardian.ATTACK2_ANIMATION_1) {
             int lookAtFrame = isPowered ? 12 : 8;
             if (tick < lookAtFrame && target != null) {
@@ -102,6 +103,7 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
             }
         } else if (animation == EntityNamelessGuardian.ATTACK2_ANIMATION_3) {
             tick = this.entity.getAnimationTick();
+            baseDamageMultiplier += 0.2F;
             if (tick < 13 && target != null) {
                 this.entity.lookAt(target, 30F, 30F);
             } else {
@@ -109,7 +111,7 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
             }
             if (tick == 5) {
                 if (this.entity.targetDistance > 1.8 || entity.getTarget() == null) {
-                    double moveMultiplier = entity.targetDistance < 8 && entity.targetDistance > 4.5 ? (entity.targetDistance - 1.85) : 1.4;
+                    double moveMultiplier = entity.targetDistance < 8 && entity.targetDistance > 4.5 ? (entity.targetDistance - 2.45) : 1.4;
                     this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier));
                 }
             } else if (tick == 9) {
@@ -122,7 +124,7 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, livingEntity);
                     float entityHitDistance = (float) Math.sqrt((livingEntity.getZ() - entity.getZ()) * (livingEntity.getZ() - entity.getZ()) + (livingEntity.getX() - entity.getX()) * (livingEntity.getX() - entity.getX())) - livingEntity.getBbWidth() / 2F;
                     if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                        entity.guardianHurtTarget(ModDamageSource.guardianRobustAttack(entity), entity, livingEntity, 0.1F, 1.0F, 2.5F, true, true);
+                        entity.guardianHurtTarget(entity, livingEntity, 0.1F, 1.0F, baseDamageMultiplier, true, true);
                         entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                     }
                 }
