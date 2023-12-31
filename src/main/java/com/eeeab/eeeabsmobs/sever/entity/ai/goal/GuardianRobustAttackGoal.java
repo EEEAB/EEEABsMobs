@@ -66,7 +66,7 @@ public class GuardianRobustAttackGoal extends AnimationCommonGoal<EntityNameless
             entity.playSound(SoundEvents.GENERIC_EXPLODE, 1.5F, 1F + entity.getRandom().nextFloat() * 0.1F);
             EntityCameraShake.cameraShake(entity.level(), entity.position(), 30, 0.2F, 10, 10);
         } else if (tick == 72) {
-            if (entity.getMadnessTick() == 0 && entity.isPowered()) {
+            if (entity.getMadnessTick() <= 0 && entity.isPowered()) {
                 entity.setExecuteWeak(true);
                 entity.playAnimation(EntityNamelessGuardian.WEAK_ANIMATION_1);
             }
