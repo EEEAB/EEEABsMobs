@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
+import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.util.ModDamageSource;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
 import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityCameraShake;
@@ -8,7 +9,10 @@ import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -37,11 +41,18 @@ public class GuardianRobustAttackGoal extends AnimationCommonGoal<EntityNameless
             final float attackArc = 40F;
             final float range = 4.6F;
             List<LivingEntity> entities = entity.getNearByLivingEntities(range, range - 0.6F, range, range);
-            for (LivingEntity livingEntity : entities) {
-                float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, livingEntity);
-                float entityHitDistance = (float) Math.sqrt((livingEntity.getZ() - entity.getZ()) * (livingEntity.getZ() - entity.getZ()) + (livingEntity.getX() - entity.getX()) * (livingEntity.getX() - entity.getX())) - livingEntity.getBbWidth() / 2F;
+            for (LivingEntity hitEntity : entities) {
+                float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
+                float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
                 if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                    entity.guardianHurtTarget(ModDamageSource.guardianRobustAttack(entity), entity, livingEntity, 0.1F, 1.0F, 2.5F, true, true);
+                    double duration = 2;
+                    if (Difficulty.HARD.equals(this.entity.level().getDifficulty())) duration = 4;
+                    if (hitEntity instanceof Player player && !player.isCreative() && !player.isBlocking()) {
+                        player.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), (int) (duration * 20), 0, false, false, true));
+                    } else if (!(hitEntity instanceof Player) && !hitEntity.isBlocking()) {
+                        hitEntity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), (int) (duration * 20), 0, false, false, true));
+                    }
+                    entity.guardianHurtTarget(ModDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.1F, 1.0F, 2.5F, true, true);
                 }
             }
         } else if (tick == 36) {
