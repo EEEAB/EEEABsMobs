@@ -15,8 +15,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-import static com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian.ATTACK_ANIMATION_3;
-import static com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian.ATTACK_ANIMATION_2;
+import static com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian.*;
 
 public class GuardianCombo1Goal extends AnimationAbstractGoal<EntityNamelessGuardian> {
     private final float range;
@@ -37,14 +36,14 @@ public class GuardianCombo1Goal extends AnimationAbstractGoal<EntityNamelessGuar
 
     @Override
     protected boolean test(Animation animation) {
-        return animation == EntityNamelessGuardian.ATTACK_ANIMATION_1 || animation == ATTACK_ANIMATION_2 || animation == ATTACK_ANIMATION_3;
+        return animation == ATTACK_ANIMATION_1 || animation == ATTACK_ANIMATION_2 || animation == ATTACK_ANIMATION_3;
     }
 
     @Override
     public void tick() {
         LivingEntity target = entity.getTarget();
         entity.setDeltaMovement(0, entity.onGround() ? 0 : entity.getDeltaMovement().y, 0);
-        if (entity.getAnimation() == EntityNamelessGuardian.ATTACK_ANIMATION_1) {
+        if (entity.getAnimation() == ATTACK_ANIMATION_1) {
             int tick = entity.getAnimationTick();
             int lookAtFrame = isPowered ? 15 : 11;
             //如果是狂化状态,则追加攻击力的40%
@@ -60,6 +59,8 @@ public class GuardianCombo1Goal extends AnimationAbstractGoal<EntityNamelessGuar
                     double moveMultiplier = entity.targetDistance < 6 && entity.targetDistance > 3 ? (entity.targetDistance - 1.85) : 1.5;
                     this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier));
                 }
+            } else if (tick == 11) {
+                entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.05f, entity.getVoicePitch() + 0.15f);
             } else if (tick == 15) {
                 List<LivingEntity> entities = entity.getNearByLivingEntities(range, 4F, range, range);
                 for (LivingEntity hitEntity : entities) {
@@ -94,6 +95,8 @@ public class GuardianCombo1Goal extends AnimationAbstractGoal<EntityNamelessGuar
                     double moveMultiplier = entity.targetDistance < 6 && entity.targetDistance > 3 ? (entity.targetDistance - 1.85) : 1.7;
                     this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier));
                 }
+            } else if (tick == 11) {
+                entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 1.95f, entity.getVoicePitch());
             } else if (tick == 15) {
                 List<LivingEntity> entities = entity.getNearByLivingEntities(range + 0.5F, 4F, range + 0.5F, range + 0.5F);
                 for (LivingEntity hitEntity : entities) {
@@ -126,6 +129,8 @@ public class GuardianCombo1Goal extends AnimationAbstractGoal<EntityNamelessGuar
                     double moveMultiplier = entity.targetDistance < 6 && entity.targetDistance > 4 ? (entity.targetDistance - 2) : 2.5;
                     this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier));
                 }
+            } else if (tick == 11) {
+                entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.2f, entity.getVoicePitch() - 0.2f);
             } else if (tick == 15) {
                 List<LivingEntity> entities = entity.getNearByLivingEntities(range + 0.4F, 5.0F, range + 0.4F, range + 0.4F);
                 for (LivingEntity hitEntity : entities) {
