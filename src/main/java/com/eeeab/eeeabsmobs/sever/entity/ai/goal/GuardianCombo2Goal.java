@@ -5,7 +5,6 @@ import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.ModDamageSource;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,6 +12,9 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+
+import static com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian.*;
+
 
 public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuardian> {
     private boolean isPowered;
@@ -34,7 +36,7 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
 
     @Override
     protected boolean test(Animation animation) {
-        return animation == EntityNamelessGuardian.ATTACK2_ANIMATION_1 || animation == EntityNamelessGuardian.ATTACK2_ANIMATION_2 || animation == EntityNamelessGuardian.ATTACK2_ANIMATION_3;
+        return animation == ATTACK2_ANIMATION_1 || animation == ATTACK2_ANIMATION_2 || animation == ATTACK2_ANIMATION_3;
     }
 
     @Override
@@ -44,7 +46,7 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
         int tick = this.entity.getAnimationTick();
         float baseDamageMultiplier = isPowered ? 1.2F : 1.0F;
         entity.setDeltaMovement(0, entity.onGround() ? 0 : entity.getDeltaMovement().y, 0);
-        if (animation == EntityNamelessGuardian.ATTACK2_ANIMATION_1) {
+        if (animation == ATTACK2_ANIMATION_1) {
             int lookAtFrame = isPowered ? 12 : 8;
             if (tick < lookAtFrame && target != null) {
                 this.entity.lookAt(target, 30F, 30F);
@@ -70,9 +72,9 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
                     }
                 }
             } else if (tick == 20 && entity.checkCanAttackRange(2.0F, range) && canToggleAnimation(80)) {
-                this.entity.playAnimation(EntityNamelessGuardian.ATTACK2_ANIMATION_2);
+                this.entity.playAnimation(ATTACK2_ANIMATION_2);
             }
-        } else if (animation == EntityNamelessGuardian.ATTACK2_ANIMATION_2) {
+        } else if (animation == ATTACK2_ANIMATION_2) {
             tick = this.entity.getAnimationTick();
             int lookAtFrame = isPowered ? 12 : 8;
             if (tick < lookAtFrame && target != null) {
@@ -99,9 +101,9 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
                     }
                 }
             } else if (tick == 20 && entity.checkCanAttackRange(2.5F, range) && canToggleAnimation(70)) {
-                this.entity.playAnimation(EntityNamelessGuardian.ATTACK2_ANIMATION_3);
+                this.entity.playAnimation(ATTACK2_ANIMATION_3);
             }
-        } else if (animation == EntityNamelessGuardian.ATTACK2_ANIMATION_3) {
+        } else if (animation == ATTACK2_ANIMATION_3) {
             tick = this.entity.getAnimationTick();
             baseDamageMultiplier += 0.2F;
             if (tick < 13 && target != null) {
