@@ -49,7 +49,7 @@ public class GuardianLobedAttackGoal extends AnimationCommonGoal<EntityNamelessG
             double x = entity.getX() + Mth.cos(f1) * 3D;
             double y = entity.getY();
             double z = entity.getZ() + Mth.sin(f1) * 3D;
-            EntityGuardianBlade blade = new EntityGuardianBlade(entity.level(), entity, x, y, z, f1);
+            EntityGuardianBlade blade = new EntityGuardianBlade(entity.level(), entity, x, y, z, f1, true);
             entity.level().addFreshEntity(blade);
         }
     }

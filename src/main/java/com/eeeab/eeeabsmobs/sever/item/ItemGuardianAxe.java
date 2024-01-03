@@ -76,7 +76,7 @@ public class ItemGuardianAxe extends AxeItem {
             double x = player.getX() + Mth.cos(f1) * 1.5D;
             double y = player.getY();
             double z = player.getZ() + Mth.sin(f1) * 1.5D;
-            EntityGuardianBlade blade = new EntityGuardianBlade(player.level(), player, x, y, z, f1);
+            EntityGuardianBlade blade = new EntityGuardianBlade(player.level(), player, x, y, z, f1, false);
             player.level().addFreshEntity(blade);
         }
     }
