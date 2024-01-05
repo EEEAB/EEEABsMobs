@@ -16,13 +16,13 @@ import net.minecraft.util.Mth;
 
 public class RenderGuardianBlade extends EntityRenderer<EntityGuardianBlade> {
     private final ModelGuardianBlade MODEL = new ModelGuardianBlade();
-    private final ResourceLocation[] LOCATIONS = new ResourceLocation[6];
+    private static final ResourceLocation[] TEXTURES = new ResourceLocation[6];
 
     public RenderGuardianBlade(EntityRendererProvider.Context pContext) {
         super(pContext);
         //初始化文件地址
-        for (int i = 0; i < LOCATIONS.length; i++) {
-            LOCATIONS[i] = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/guardian_blade/gb_" + (i + 1) + ".png");
+        for (int i = 0; i < TEXTURES.length; i++) {
+            TEXTURES[i] = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/guardian_blade/gb_" + (i + 1) + ".png");
         }
     }
 
@@ -41,7 +41,7 @@ public class RenderGuardianBlade extends EntityRenderer<EntityGuardianBlade> {
 
     @Override
     public ResourceLocation getTextureLocation(EntityGuardianBlade blade) {
-        return LOCATIONS[Mth.clamp((int) (blade.tickCount * 0.5 % LOCATIONS.length), 0, LOCATIONS.length - 1)];
+        return TEXTURES[Mth.clamp((int) (blade.tickCount * 0.5 % TEXTURES.length), 0, TEXTURES.length - 1)];
     }
 
     @Override

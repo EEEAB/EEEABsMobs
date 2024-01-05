@@ -15,8 +15,8 @@ import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 
 public class RenderImmortalShaman extends MobRenderer<EntityImmortalShaman, ModelImmortalShaman> {
-    private static final ResourceLocation TEXTURE_0 = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal_shaman/immortal_shaman_0.png");
-    private static final ResourceLocation TEXTURE_1 = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal_shaman/immortal_shaman_1.png");
+    private static final ResourceLocation TEXTURE_DEFAULT = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal_shaman/immortal_shaman_0.png");
+    private static final ResourceLocation TEXTURE_STYLE_1 = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal_shaman/immortal_shaman_1.png");
 
     public RenderImmortalShaman(EntityRendererProvider.Context context) {
         super(context, new ModelImmortalShaman(), 0.45F);
@@ -35,9 +35,9 @@ public class RenderImmortalShaman extends MobRenderer<EntityImmortalShaman, Mode
     @Override
     public ResourceLocation getTextureLocation(EntityImmortalShaman entity) {
         if (entity.getStyle() == MobSkinStyle.DEFAULT_STYLE) {
-            return TEXTURE_0;
+            return TEXTURE_DEFAULT;
         } else {
-            return TEXTURE_1;
+            return TEXTURE_STYLE_1;
         }
     }
 

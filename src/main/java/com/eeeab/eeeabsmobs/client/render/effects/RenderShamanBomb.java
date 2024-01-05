@@ -22,10 +22,8 @@ import org.joml.Matrix4f;
 @OnlyIn(Dist.CLIENT)
 public class RenderShamanBomb extends EntityRenderer<EntityShamanBomb> {
     private final float SCALE = 2.0F;
-    private static final ResourceLocation NO_DANGEROUS = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/projectile/shaman_bomb.png");
-    private static final ResourceLocation DANGEROUS = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/projectile/shaman_bomb_dangerous.png");
-    private static final RenderType RENDER_TYPE1 = RenderType.entityCutoutNoCull(NO_DANGEROUS);
-    private static final RenderType RENDER_TYPE2 = RenderType.entityCutoutNoCull(DANGEROUS);
+    private static final ResourceLocation N_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/projectile/shaman_bomb.png");
+    private static final ResourceLocation D_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/projectile/shaman_bomb_dangerous.png");
     private final RandomSource random = RandomSource.create();
 
     public RenderShamanBomb(EntityRendererProvider.Context context) {
@@ -61,9 +59,9 @@ public class RenderShamanBomb extends EntityRenderer<EntityShamanBomb> {
         Matrix3f matrix3f = posestack$pose.normal();
         VertexConsumer vertexconsumer;
         if (!entity.isDangerous()) {
-            vertexconsumer = buffer.getBuffer(RENDER_TYPE1);
+            vertexconsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(N_TEXTURE));
         } else {
-            vertexconsumer = buffer.getBuffer(RENDER_TYPE2);
+            vertexconsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(D_TEXTURE));
         }
         vertex(vertexconsumer, matrix4f, matrix3f, packedLight, 0.0F, 0, 0, 1);
         vertex(vertexconsumer, matrix4f, matrix3f, packedLight, 1.0F, 0, 1, 1);
@@ -79,6 +77,6 @@ public class RenderShamanBomb extends EntityRenderer<EntityShamanBomb> {
 
     @Override
     public ResourceLocation getTextureLocation(EntityShamanBomb entity) {
-        return entity.isDangerous() ? DANGEROUS : NO_DANGEROUS;
+        return entity.isDangerous() ? D_TEXTURE : N_TEXTURE;
     }
 }

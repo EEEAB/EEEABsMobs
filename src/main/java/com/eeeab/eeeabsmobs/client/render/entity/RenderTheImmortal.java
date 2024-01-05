@@ -10,6 +10,8 @@ import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 
 public class RenderTheImmortal extends MobRenderer<EntityTheImmortal, ModelTheImmortal> {
+    private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/test/test.png");
+
     public RenderTheImmortal(EntityRendererProvider.Context context) {
         super(context, new ModelTheImmortal(), 0.3f);
         this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
@@ -22,6 +24,6 @@ public class RenderTheImmortal extends MobRenderer<EntityTheImmortal, ModelTheIm
 
     @Override
     public ResourceLocation getTextureLocation(EntityTheImmortal p_114482_) {
-        return new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/test/test.png");
+        return TEXTURE;
     }
 }

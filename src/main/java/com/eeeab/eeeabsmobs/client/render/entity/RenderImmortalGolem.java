@@ -11,6 +11,8 @@ import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 
 public class RenderImmortalGolem extends MobRenderer<EntityImmortalGolem, ModelImmortalGolem> {
+    private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal_golem/immortal_golem.png");
+
     public RenderImmortalGolem(EntityRendererProvider.Context context) {
         super(context, new ModelImmortalGolem(), 0.3f);
         this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
@@ -25,7 +27,7 @@ public class RenderImmortalGolem extends MobRenderer<EntityImmortalGolem, ModelI
     }
 
     @Override
-    public ResourceLocation getTextureLocation(EntityImmortalGolem p_114482_) {
-        return new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal_golem/immortal_golem.png");
+    public ResourceLocation getTextureLocation(EntityImmortalGolem entity) {
+        return TEXTURE;
     }
 }
