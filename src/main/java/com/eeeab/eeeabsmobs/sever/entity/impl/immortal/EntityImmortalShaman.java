@@ -103,7 +103,7 @@ public class EntityImmortalShaman extends EntityImmortal implements IEntity, Ran
 
     @Override
     protected EEConfigHandler.AttributeConfig getAttributeConfig() {
-        return EEConfigHandler.COMMON.MOB.IMMORTAL.SHAMAN.combatConfig;
+        return EEConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SHAMAN.combatConfig;
     }
 
     @Override
@@ -196,7 +196,7 @@ public class EntityImmortalShaman extends EntityImmortal implements IEntity, Ran
             } else if (animation == SPELL_CASTING_HEAL_ANIMATION) {
                 int timer;
                 if (this.hurtCountBeforeHeal < CAN_STOP_HEAL_COUNT && !this.isWeakness()) {
-                    this.heal((float) (EEConfigHandler.COMMON.MOB.IMMORTAL.SHAMAN.healValue.get() * 1F));
+                    this.heal((float) (EEConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SHAMAN.healValue.get() * 1F));
                     this.level().broadcastEntityEvent(this, (byte) 12);
                     timer = 15;
                 } else {
@@ -291,7 +291,7 @@ public class EntityImmortalShaman extends EntityImmortal implements IEntity, Ran
         if (this.level().isClientSide) {
             return false;
         } else if (entity != null) {
-            float maximumDamageCap = (float) (EEConfigHandler.COMMON.MOB.IMMORTAL.SHAMAN.maximumDamageCap.damageCap.get() * 1F);
+            float maximumDamageCap = (float) (EEConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SHAMAN.maximumDamageCap.damageCap.get() * 1F);
             float maxHurtDamage = getMaxHealth() * maximumDamageCap;
             if (this.getAnimation() == SPELL_CASTING_HEAL_ANIMATION && !(this.hurtTime > 0)) {
                 this.hurtCountBeforeHeal++;

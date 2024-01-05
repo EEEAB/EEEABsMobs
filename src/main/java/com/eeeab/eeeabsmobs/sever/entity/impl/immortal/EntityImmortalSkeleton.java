@@ -28,7 +28,7 @@ public class EntityImmortalSkeleton extends AbstractImmortalSkeleton implements 
 
     @Override
     protected EEConfigHandler.AttributeConfig getAttributeConfig() {
-        return EEConfigHandler.COMMON.MOB.IMMORTAL.SKELETON.combatConfig;
+        return EEConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SKELETON.combatConfig;
     }
 
 

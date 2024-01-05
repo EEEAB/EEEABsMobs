@@ -58,7 +58,7 @@ public class EntityInit {
     public static final RegistryObject<EntityType<EntityNamelessGuardian>> NAMELESS_GUARDIAN =
             ENTITIES.register("nameless_guardian",
                     () -> EntityType.Builder.<EntityNamelessGuardian>of(EntityNamelessGuardian::new, MobCategory.MONSTER)
-                            .sized(2.5f, 4.0f).fireImmune().clientTrackingRange(10)
+                            .sized(2.5f, 4.0f).fireImmune().clientTrackingRange(8)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "nameless_guardian").toString()));
 
     //test entity
@@ -117,7 +117,7 @@ public class EntityInit {
 
     public static final RegistryObject<EntityType<EntityGuardianBlade>> GUARDIAN_BLADE=
             ENTITIES.register("guardian_blade",
-                    ()->EntityType.Builder.<EntityGuardianBlade>of(EntityGuardianBlade::new,MobCategory.MISC).sized(0.3f,3f).setUpdateInterval(1)
+                    ()->EntityType.Builder.<EntityGuardianBlade>of(EntityGuardianBlade::new,MobCategory.MISC).sized(0.4f,3f).setUpdateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID,"guardian_blade").toString()));
 
     //烧焦的地面

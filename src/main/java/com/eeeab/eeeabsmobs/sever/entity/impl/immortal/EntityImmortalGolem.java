@@ -52,7 +52,7 @@ public class EntityImmortalGolem extends EntityImmortal implements IEntity {
 
     @Override
     protected EEConfigHandler.AttributeConfig getAttributeConfig() {
-        return EEConfigHandler.COMMON.MOB.IMMORTAL.GOLEM.combatConfig;
+        return EEConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_GOLEM.combatConfig;
     }
 
 

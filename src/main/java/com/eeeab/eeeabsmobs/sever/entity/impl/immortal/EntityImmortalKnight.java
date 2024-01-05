@@ -75,7 +75,7 @@ public class EntityImmortalKnight extends AbstractImmortalSkeleton implements IE
 
     @Override
     protected EEConfigHandler.AttributeConfig getAttributeConfig() {
-        return EEConfigHandler.COMMON.MOB.IMMORTAL.KNIGHT.combatConfig;
+        return EEConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_KNIGHT.combatConfig;
     }
 
     @Override
