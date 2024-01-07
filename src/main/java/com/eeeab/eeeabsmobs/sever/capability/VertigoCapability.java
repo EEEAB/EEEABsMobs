@@ -12,6 +12,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
@@ -22,6 +23,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class VertigoCapability {
@@ -148,8 +150,11 @@ public class VertigoCapability {
 
                 entity.stopUsingItem();
 
-                if (entity instanceof Mob mob) {
-                    if (mob.getTarget() != null) setPrevAttackTargetUUID(mob.getTarget().getUUID());
+                if (entity instanceof Mob mob && mob.getTarget() != null) {
+                    setPrevAttackTargetUUID(mob.getTarget().getUUID());
+                    mob.setTarget(null);
+                    if (mob.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET))
+                        mob.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, Optional.empty());
                 }
             }
         }
@@ -162,12 +167,9 @@ public class VertigoCapability {
                     if (entity instanceof Mob mob) {
                         if (getPrevAttackTargetUUID() != null) {
                             Player target = mob.level().getPlayerByUUID(getPrevAttackTargetUUID());
-                            if (target != null) {
-                                mob.setTarget(target);
-                            }
+                            if (target != null) mob.setTarget(target);
                         }
                     }
-
                 }
             }
         }
@@ -176,7 +178,6 @@ public class VertigoCapability {
         public void tick(LivingEntity entity) {
             if (isVertigo) {
                 entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 2, 50, false, false, false));
-                //entity.lookAt(EntityAnchorArgument.Anchor.FEET, new Vec3(entity.position().x(), entity.position().y() - 1, entity.position().z() - 1));
                 //疑似特性:重进游戏后isClientSide始终为false
                 if (entity.level().isClientSide()) {
                     for (int i = 0; i < 5; i++) {
@@ -184,6 +185,7 @@ public class VertigoCapability {
                         entity.level().addParticle(ParticleTypes.CRIT, pos.x(), pos.y(), pos.z(), 0, 0, 0);
                     }
                 }
+                if (entity instanceof Mob mob) mob.getNavigation().stop();
             }
         }
 
@@ -235,7 +237,6 @@ public class VertigoCapability {
         @Override
         public void deserializeNBT(CompoundTag nbt) {
             instance.orElseThrow(NullPointerException::new).deserializeNBT(nbt);
-
         }
     }
 }
