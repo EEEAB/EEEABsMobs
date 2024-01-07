@@ -1044,7 +1044,7 @@ public class ModelNamelessGuardian extends EEAdvancedEntityModel<EntityNamelessG
             animator.move(axe, -1F, 2F, -12F);
             animator.endKeyframe();
 
-            animator.startKeyframe(4);//0.52
+            animator.startKeyframe(6);//0.52
             animator.rotate(head, toRadians(26.5418), toRadians(-4.4133), toRadians(-3.4364));
             animator.rotate(root, toRadians(20), toRadians(-5), 0);
             animator.move(root, 0, 0, -7.5F);
@@ -1108,7 +1108,7 @@ public class ModelNamelessGuardian extends EEAdvancedEntityModel<EntityNamelessG
 
             animator.setStaticKeyframe(10);//1.2
 
-            animator.startKeyframe(12);
+            animator.startKeyframe(10);
             animator.rotate(head, 0, 0, 0);
             animator.rotate(root, 0, 0, 0);
             animator.move(root, 0, 0, 0);
@@ -3201,42 +3201,132 @@ public class ModelNamelessGuardian extends EEAdvancedEntityModel<EntityNamelessG
             animator.move(axe, 0, -1F, -5F);
             animator.endKeyframe();
             animator.setStaticKeyframe(10);
+        } else if (animator.setAnimation(EntityNamelessGuardian.DIE_WORDS_ANIMATION)) {
+            animator.startKeyframe(0);
+            animator.rotate(head, 0, 0, 0);
+            animator.rotate(upper, 0, 0, 0);
+            animator.move(upper, 0, 0, 0);
+            animator.rotate(rightArm, toRadians(-30), toRadians(25), toRadians(25));
+            animator.rotate(rightArmUnder, toRadians(-95), 0, 0);
+            animator.rotate(leftArm, 0, 0, 0);
+            animator.rotate(leftArmUnder, 0, 0, 0);
+            animator.rotate(lower, 0, 0, 0);
+            animator.rotate(leftLeg, 0, 0, 0);
+            animator.move(leftLeg, 0, 0, 0);
+            animator.rotate(leftLegUnder, 0, 0, 0);
+            animator.rotate(rightLeg, 0, 0, 0);
+            animator.move(rightLeg, 0, 0, 0);
+            animator.rotate(rightLegUnder, 0, 0, 0);
+            animator.rotate(axe, toRadians(-2.5), toRadians(-10), toRadians(20));
+            animator.move(axe, 0, -1F, -5F);
+            animator.endKeyframe();
+
+            animator.startKeyframe(24);
+            animator.rotate(head, toRadians(20), 0, 0);
+            animator.rotate(root, toRadians(2.5), 0, 0);
+            animator.rotate(upper, toRadians(22.5), 0, 0);
+            animator.move(upper, 0, 1, 0);
+            animator.rotate(rightArm, toRadians(-10), toRadians(-22), toRadians(4));
+            animator.rotate(rightArmUnder, toRadians(-17.5), toRadians(-10), toRadians(-10));
+            animator.rotate(leftArm, toRadians(-10), toRadians(22), toRadians(-4));
+            animator.rotate(leftArmUnder, toRadians(-17.5), toRadians(10), toRadians(10));
+            animator.rotate(lower, 0, 0, 0);
+            animator.rotate(leftLeg, 0, toRadians(-5), toRadians(-5));
+            animator.move(leftLeg, 1F, 0, 0);
+            animator.rotate(leftLegUnder, toRadians(5), 0, 0);
+            animator.rotate(rightLeg, 0, toRadians(5), toRadians(5));
+            animator.move(rightLeg, -1F, 0, 0);
+            animator.rotate(rightLegUnder, toRadians(5), 0, 0);
+            animator.rotate(axe, 0, 0, 0);
+            animator.move(axe, 0, 0, 0);
+            animator.endKeyframe();
+
+            animator.startKeyframe(4);
+            animator.rotate(head, toRadians(30), 0, 0);
+            animator.rotate(root, 0, 0, 0);
+            animator.rotate(upper, toRadians(-2.5), 0, 0);
+            animator.move(upper, 0, -1, 0);
+            animator.rotate(rightArm, toRadians(-77), toRadians(4), toRadians(12));
+            animator.rotate(rightArmUnder, toRadians(-17.5), toRadians(-20), toRadians(-10));
+            animator.rotate(leftArm, toRadians(-77), toRadians(-4), toRadians(-12));
+            animator.rotate(leftArmUnder, toRadians(-17.5), toRadians(20), toRadians(10));
+            animator.rotate(lower, 0, toRadians(2.5), 0);
+            animator.rotate(leftLeg, 0, toRadians(-7.5), toRadians(-7.5));
+            animator.move(leftLeg, 0.5F, 0, 0);
+            animator.rotate(leftLegUnder, toRadians(5), 0, 0);
+            animator.rotate(rightLeg, toRadians(15), toRadians(7.5), toRadians(7.5));
+            animator.move(rightLeg, -0.5F, 0, 0);
+            animator.rotate(rightLegUnder, toRadians(5), 0, 0);
+            animator.rotate(axe, toRadians(10), 0, 0);
+            animator.move(axe, 0, -1, 0);
+            animator.endKeyframe();
+
+            animator.startKeyframe(4);
+            animator.rotate(head, toRadians(20), toRadians(-10), 0);
+            animator.rotate(root, toRadians(-2.5), 0, 0);
+            animator.rotate(upper, toRadians(-22.5), toRadians(10), 0);
+            animator.move(upper, 0, 1, 0);
+            animator.rotate(rightArm, toRadians(-29), toRadians(30), toRadians(19));
+            animator.rotate(rightArmUnder, toRadians(-17.5), toRadians(-30), toRadians(-10));
+            animator.rotate(leftArm, toRadians(-29), toRadians(-30), toRadians(-19));
+            animator.rotate(leftArmUnder, toRadians(-17.5), toRadians(30), toRadians(10));
+            animator.rotate(lower, 0, toRadians(5), 0);
+            animator.rotate(leftLeg, 0, toRadians(-10), toRadians(-10));
+            animator.move(leftLeg, 0, 0, 0);
+            animator.rotate(leftLegUnder, toRadians(5), 0, 0);
+            animator.rotate(rightLeg, toRadians(30), toRadians(10), toRadians(10));
+            animator.move(rightLeg, 0, 0, 0);
+            animator.rotate(rightLegUnder, toRadians(5), 0, 0);
+            animator.rotate(axe, toRadians(20), 0, 0);
+            animator.move(axe, 0, 2, 0);
+            animator.endKeyframe();
+
+            animator.setStaticKeyframe(18);
         }
 
         int tick = entity.getAnimationTick();
         if (entity.getAnimation() == EntityNamelessGuardian.SMASH_ATTACK_ANIMATION) {
-            if (tick < 20) upper.rotateAngleZ += upper.rotationPointX * 0.01 * Math.cos(2.0F * frame);
+            if (tick < 20) upper.rotateAngleZ += (float) (upper.rotationPointX * 0.01 * Math.cos(2.0F * frame));
         } else if (entity.getAnimation() == EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION_2) {
-            upper.rotateAngleZ += root.rotationPointX * 0.01 * Math.sin(frame);
+            upper.rotateAngleZ += (float) (root.rotationPointX * 0.01 * Math.sin(frame));
         } else if (entity.getAnimation() == EntityNamelessGuardian.LEAP_ANIMATION) {
             if (tick > 14) {
-                rightArm.rotateAngleX += root.rotationPointX * 0.01 * Math.cos(frame);
-                rightLeg.rotateAngleX += root.rotationPointX * 0.01 * Math.sin(frame);
-                leftArm.rotateAngleX += root.rotationPointX * 0.01 * Math.sin(frame);
-                leftLeg.rotateAngleX += root.rotationPointX * 0.01 * Math.cos(frame);
-                root.rotateAngleX += root.rotationPointX * 0.01 * Math.cos(0.5F * frame);
+                rightArm.rotateAngleX += (float) (root.rotationPointX * 0.01 * Math.cos(frame));
+                rightLeg.rotateAngleX += (float) (root.rotationPointX * 0.01 * Math.sin(frame));
+                leftArm.rotateAngleX += (float) (root.rotationPointX * 0.01 * Math.sin(frame));
+                leftLeg.rotateAngleX += (float) (root.rotationPointX * 0.01 * Math.cos(frame));
+                root.rotateAngleX += (float) (root.rotationPointX * 0.01 * Math.cos(0.5F * frame));
             }
         } else if (entity.getAnimation() == EntityNamelessGuardian.ROAR_ANIMATION) {
             if (tick <= 24 && tick > 5) {
-                upper.rotateAngleZ += upper.rotationPointX * 0.01 * Math.cos(Mth.clamp(tick * 0.1, 0, 2.5) * frame);
-                upper.rotateAngleX += upper.rotationPointX * 0.01 * Math.cos(Mth.clamp(tick * 0.1, 0, 2.5) * frame);
+                upper.rotateAngleZ += (float) (upper.rotationPointX * 0.01 * Math.cos(Mth.clamp(tick * 0.1, 0, 2.5) * frame));
+                upper.rotateAngleX += (float) (upper.rotationPointX * 0.01 * Math.cos(Mth.clamp(tick * 0.1, 0, 2.5) * frame));
             } else if (tick > 24 && tick < 70) {
-                rightArm.rotateAngleX += root.rotationPointX * 0.01 * Math.cos(frame);
-                rightLeg.rotateAngleX += root.rotationPointX * 0.01 * Math.sin(frame);
-                leftArm.rotateAngleX += root.rotationPointX * 0.01 * Math.sin(frame);
-                leftLeg.rotateAngleX += root.rotationPointX * 0.01 * Math.cos(frame);
-                root.rotateAngleX += root.rotationPointX * 0.01 * Math.cos(3F * frame);
-                head.rotateAngleX += root.rotationPointX * 0.01 * Math.cos(3F * frame);
-                head.rotateAngleZ += root.rotationPointX * 0.01 * Math.cos(3F * frame);
+                rightArm.rotateAngleX += (float) (root.rotationPointX * 0.01 * Math.cos(frame));
+                rightLeg.rotateAngleX += (float) (root.rotationPointX * 0.01 * Math.sin(frame));
+                leftArm.rotateAngleX += (float) (root.rotationPointX * 0.01 * Math.sin(frame));
+                leftLeg.rotateAngleX += (float) (root.rotationPointX * 0.01 * Math.cos(frame));
+                root.rotateAngleX += (float) (root.rotationPointX * 0.01 * Math.cos(3F * frame));
+                head.rotateAngleX += (float) (root.rotationPointX * 0.01 * Math.cos(3F * frame));
+                head.rotateAngleZ += (float) (root.rotationPointX * 0.01 * Math.cos(3F * frame));
             }
         } else if (entity.getAnimation() == EntityNamelessGuardian.LASER_ANIMATION) {
             if (tick > 24 && tick < 100) {
-                rightArm.rotateAngleX += root.rotationPointX * 0.01 * Math.cos(frame);
-                leftArm.rotateAngleX += root.rotationPointX * 0.01 * Math.sin(frame);
-                upper.rotateAngleX += root.rotationPointX * 0.01 * Math.cos(3F * frame);
-                head.rotateAngleX += root.rotationPointX * 0.01 * Math.cos(3F * frame);
-                head.rotateAngleZ += root.rotationPointX * 0.01 * Math.cos(3F * frame);
+                rightArm.rotateAngleX += (float) (root.rotationPointX * 0.01 * Math.cos(frame));
+                leftArm.rotateAngleX += (float) (root.rotationPointX * 0.01 * Math.sin(frame));
+                upper.rotateAngleX += (float) (root.rotationPointX * 0.01 * Math.cos(3F * frame));
+                head.rotateAngleX += (float) (root.rotationPointX * 0.01 * Math.cos(3F * frame));
+                head.rotateAngleZ += (float) (root.rotationPointX * 0.01 * Math.cos(3F * frame));
             }
+        } else if (entity.getAnimation() == EntityNamelessGuardian.DIE_WORDS_ANIMATION) {
+            float explodeCoefficient = entity.getExplodeCoefficient(ageInTicks - entity.tickCount);
+            rightArm.rotateAngleX += (float) (root.rotationPointX * explodeCoefficient * 0.01 * Math.cos(2 * frame));
+            rightLeg.rotateAngleX += (float) (root.rotationPointX * explodeCoefficient * 0.01 * Math.sin(2 * frame));
+            leftArm.rotateAngleX += (float) (root.rotationPointX * explodeCoefficient * 0.01 * Math.sin(2 * frame));
+            leftLeg.rotateAngleX += (float) (root.rotationPointX * explodeCoefficient * 0.01 * Math.cos(2 * frame));
+            root.rotateAngleX += (float) (root.rotationPointX * explodeCoefficient * 0.01 * Math.cos(4F * frame));
+            head.rotateAngleX += (float) (root.rotationPointX * explodeCoefficient * 0.01 * Math.cos(4F * frame));
+            head.rotateAngleZ += (float) (root.rotationPointX * explodeCoefficient * 0.01 * Math.cos(4F * frame));
         } else if (entity.getAnimation() == EntityNamelessGuardian.WEAK_ANIMATION_2) {
             float speed = 0.5F;
             float degree = 0.2F;
