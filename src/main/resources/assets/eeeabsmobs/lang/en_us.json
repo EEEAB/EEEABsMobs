@@ -7,7 +7,7 @@
   "entity.eeeabsmobs.immortal_knight": "Immortal Knight",
   "entity.eeeabsmobs.immortal_shaman": "Immortal Shaman",
   "entity.eeeabsmobs.immortal_golem": "Immortal Golem",
-  "entity.eeeabsmobs.nameless_guardian": "The Nameless Guardian",
+  "entity.eeeabsmobs.nameless_guardian": "Nameless Guardian",
 
   "_comment": "Entities",
   "entity.eeeabsmobs.shaman_bomb": "Shaman Bomb",
@@ -35,7 +35,7 @@
   "item.eeeabsmobs.immortal_ingot": "Immortal Ingot",
   "item.eeeabsmobs.guardians_music_disc": "Music Disc",
   "item.eeeabsmobs.ancient_tomb_eye": "Eye of Ancient Tomb",
-  "item.eeeabsmobs.guardian_axe": "The Guardian Battleaxe",
+  "item.eeeabsmobs.guardian_axe": "Guardian Battleaxe",
 
   "_comment": "Blocks",
   "block.eeeabsmobs.immortal_block": "Immortal Block",
@@ -46,7 +46,7 @@
   "item.eeeabsmobs.immortal_knight_egg": "Immortal Knight Spawn Egg",
   "item.eeeabsmobs.immortal_shaman_egg": "Immortal Shaman Spawn Egg",
   "item.eeeabsmobs.immortal_golem_egg": "Immortal Golem Spawn Egg",
-  "item.eeeabsmobs.nameless_guardian_egg": "The Nameless Guardian Spawn Egg (WIP)",
+  "item.eeeabsmobs.nameless_guardian_egg": "Nameless Guardian Spawn Egg",
 
   "_comment": "Tips",
   "item.eeeabsmobs.remove_mob.tip_1": "Left-click to remove a EEEAB's Mobs mob/entity",

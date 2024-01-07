@@ -131,7 +131,7 @@ public class EEConfigHandler {
     //无名守卫者
     public static class NamelessGuardian {
         public NamelessGuardian(final ForgeConfigSpec.Builder builder) {
-            builder.push("The Nameless Guardian");
+            builder.push("Nameless Guardian");
             enableNonCombatHeal = BUILDER.comment("If False disable non-combat heal").
                     define("Enable non-combat heal", true);
             suckBloodFactor = BUILDER.comment("Max life steal coefficient (based on a percentage of max health)").
