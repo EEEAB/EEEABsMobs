@@ -24,7 +24,10 @@ public class LayerGuardianWhitening extends RenderLayer<EntityNamelessGuardian, 
 
     @Override
     public void render(PoseStack stack, MultiBufferSource bufferSource, int packedLightIn, EntityNamelessGuardian entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.getParentModel().renderToBuffer(stack, bufferSource.getBuffer(RenderType.entityTranslucentEmissive(NAMELESS_GUARDIAN_TEXTURE)), packedLightIn, getOverlayCoords(Mth.clamp(entity.getExplodeCoefficient(partialTicks), 0F, 1F)), 1, 1, 1, 1);
+        float coefficient = entity.getExplodeCoefficient(partialTicks);
+        if (coefficient > 0) {
+            this.getParentModel().renderToBuffer(stack, bufferSource.getBuffer(RenderType.entityTranslucentEmissive(NAMELESS_GUARDIAN_TEXTURE)), packedLightIn, getOverlayCoords(Mth.clamp(coefficient, 0F, 1F)), 1, 1, 1, 1);
+        }
     }
 
     private static int getOverlayCoords(float pU) {
