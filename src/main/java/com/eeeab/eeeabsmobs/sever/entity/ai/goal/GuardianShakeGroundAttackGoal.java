@@ -56,7 +56,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAbstractGoal<EntityN
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
                     float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
                     if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                        entity.guardianHurtTarget(ModDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.02F, 1F, 1.25F, true, true);
+                        entity.guardianHurtTarget(ModDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1F, 1.2F, true, true);
                     }
                 }
                 doSpawnBlade(2, 0.4F);
@@ -85,14 +85,14 @@ public class GuardianShakeGroundAttackGoal extends AnimationAbstractGoal<EntityN
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
                     float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
                     if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                        entity.guardianHurtTarget(ModDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.02F, 1F, 1.25F, true, true);
+                        entity.guardianHurtTarget(ModDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1F, 1.0F, true, true);
                     }
                 }
                 doSpawnBlade(2, 0.4F);
             } else if (tick == 18) {
                 this.entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                 EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.125F, 5, 10);
-            } else if (tick == 30) {
+            } else if (tick == 30 && this.entity.isPowered()) {
                 this.entity.playAnimation(SHAKE_GROUND_ATTACK_ANIMATION_3);
             }
         } else if (animation == SHAKE_GROUND_ATTACK_ANIMATION_3) {
@@ -121,7 +121,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAbstractGoal<EntityN
                         } else if (!(hitEntity instanceof Player) && !hitEntity.isBlocking()) {
                             hitEntity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), (int) (duration * 20), 0, false, false, true));
                         }
-                        entity.guardianHurtTarget(ModDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.02F, 1F, 1.25F, true, true);
+                        entity.guardianHurtTarget(ModDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1.5F, 1.2F, true, true);
                     }
                 }
                 doSpawnBlade(3, 0.35F);
@@ -137,7 +137,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAbstractGoal<EntityN
             if (count % 2 == 0 && i == 0) {
                 doSpawnBlade(looking);
                 count++;
-            }else {
+            } else {
                 doSpawnBlade(looking.yRot(i * offset));
             }
         }
