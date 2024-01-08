@@ -1,6 +1,5 @@
 package com.eeeab.eeeabsmobs.sever.init;
 
-
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.entity.impl.effect.*;
 import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.EntityImmortalGolem;

@@ -8,14 +8,11 @@ import com.eeeab.eeeabsmobs.client.render.layer.LayerGuardianWhitening;
 import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.monster.Creeper;
 
 public class RenderNamelessGuardian extends MobRenderer<EntityNamelessGuardian, ModelNamelessGuardian> {
     private static final ResourceLocation NAMELESS_GUARDIAN_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/nameless_guardian/nameless_guardian.png");
@@ -54,13 +51,6 @@ public class RenderNamelessGuardian extends MobRenderer<EntityNamelessGuardian, 
         float f2 = (1.0F + f * 0.2F) * f1;
         float f3 = (1.0F + f * 0.1F) / f1;
         poseStack.scale(f2, f3, f2);
-    }
-
-
-    @Override
-    protected float getWhiteOverlayProgress(EntityNamelessGuardian guardian, float partialTicks) {
-        float f = guardian.getExplodeCoefficient(partialTicks);
-        return Mth.clamp(f, 0.0F, 1.0F);
     }
 
 

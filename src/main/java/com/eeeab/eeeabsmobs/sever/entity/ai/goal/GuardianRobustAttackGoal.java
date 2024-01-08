@@ -68,7 +68,7 @@ public class GuardianRobustAttackGoal extends AnimationCommonGoal<EntityNameless
         } else if (tick == 72) {
             if (entity.getMadnessTick() == 0 && entity.isPowered()) {
                 if (entity.isChallengeMode()) {
-                    entity.setMadnessTick(-1);
+                    entity.setMadnessTick(EntityNamelessGuardian.NEVER_STOP);
                     entity.setRobustTick(EntityNamelessGuardian.MADNESS_TICK);
                     return;
                 }
