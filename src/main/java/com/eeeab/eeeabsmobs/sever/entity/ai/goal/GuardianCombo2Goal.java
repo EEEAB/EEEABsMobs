@@ -54,7 +54,7 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
             }
             if (tick == 11) {
                 if (this.entity.targetDistance > 1.8 || entity.getTarget() == null) {
-                    double moveMultiplier = entity.targetDistance < 8 && entity.targetDistance > 3 ? (entity.targetDistance - 1.85) : 1.2;
+                    double moveMultiplier = entity.targetDistance < 8 && entity.targetDistance > 3 ? (entity.targetDistance - 2.5) : 1.2;
                     this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier));
                 }
             } else if (tick == 8) {
@@ -112,14 +112,14 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
             }
             if (tick == 7) {
                 if (this.entity.targetDistance > 1.8 || entity.getTarget() == null) {
-                    double moveMultiplier = entity.targetDistance < 8 && entity.targetDistance > 4.5 ? (entity.targetDistance - 3) : 1.4;
+                    double moveMultiplier = entity.targetDistance < 8 && entity.targetDistance > 4.5 ? (entity.targetDistance - 3.5) : 1.4;
                     this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier));
                 }
             } else if (tick == 10) {
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.2f, this.entity.getVoicePitch() + 0.15f);
             } else if (tick == 14) {
                 final float attackArc = 30F;
-                final float range = 5.4F;
+                final float range = 5.2F;
                 List<LivingEntity> entities = entity.getNearByLivingEntities(range, range - 0.6F, range, range);
                 for (LivingEntity livingEntity : entities) {
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, livingEntity);

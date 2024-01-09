@@ -98,7 +98,7 @@ public class GuardianCombo1Goal extends AnimationAbstractGoal<EntityNamelessGuar
             } else if (tick == 11) {
                 entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 1.95f, entity.getVoicePitch());
             } else if (tick == 15) {
-                List<LivingEntity> entities = entity.getNearByLivingEntities(range + 0.5F, 4F, range + 0.5F, range + 0.5F);
+                List<LivingEntity> entities = entity.getNearByLivingEntities(range + 0.15F, 4F, range + 0.15F, range + 0.15F);
                 for (LivingEntity hitEntity : entities) {
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
                     float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
@@ -132,7 +132,7 @@ public class GuardianCombo1Goal extends AnimationAbstractGoal<EntityNamelessGuar
             } else if (tick == 11) {
                 entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.2f, entity.getVoicePitch() - 0.2f);
             } else if (tick == 15) {
-                List<LivingEntity> entities = entity.getNearByLivingEntities(range + 0.4F, 5.0F, range + 0.4F, range + 0.4F);
+                List<LivingEntity> entities = entity.getNearByLivingEntities(range + 0.1F, 5.0F, range + 0.1F, range + 0.1F);
                 for (LivingEntity hitEntity : entities) {
                     double duration = 1.5;
                     if (Difficulty.HARD.equals(this.entity.level().getDifficulty())) duration = 2.5;
