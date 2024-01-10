@@ -7,7 +7,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
-public class ModTag {
+public class EETagKey {
     //结构标签
     public static TagKey<Structure> EYE_OF_ANCIENT_TOMB = registerStructureTag("eye_of_ancient_tomb");
 

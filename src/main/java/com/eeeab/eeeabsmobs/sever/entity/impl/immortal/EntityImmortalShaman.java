@@ -19,7 +19,7 @@ import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationHurtGoal;
 import com.eeeab.eeeabsmobs.sever.init.*;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
-import com.eeeab.eeeabsmobs.sever.util.ModTag;
+import com.eeeab.eeeabsmobs.sever.util.EETagKey;
 import com.github.alexthe666.citadel.animation.AnimationHandler;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.core.BlockPos;
@@ -300,7 +300,7 @@ public class EntityImmortalShaman extends EntityImmortal implements IEntity, Ran
                 damage = Math.min(damage, maxHurtDamage);
             }
             return super.hurt(source, damage);
-        } else if (source.is(ModTag.GENERAL_UNRESISTANT_TO)) {
+        } else if (source.is(EETagKey.GENERAL_UNRESISTANT_TO)) {
             return super.hurt(source, damage);
         }
         return false;

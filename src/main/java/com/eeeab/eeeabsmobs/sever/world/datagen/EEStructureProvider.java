@@ -1,8 +1,8 @@
 package com.eeeab.eeeabsmobs.sever.world.datagen;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.util.ModKey;
-import com.eeeab.eeeabsmobs.sever.util.ModTag;
+import com.eeeab.eeeabsmobs.sever.util.EEResourceKey;
+import com.eeeab.eeeabsmobs.sever.util.EETagKey;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.StructureTagsProvider;
@@ -18,6 +18,6 @@ public class EEStructureProvider extends StructureTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        this.tag(ModTag.EYE_OF_ANCIENT_TOMB).add(ModKey.ANCIENT_TOMB);
+        this.tag(EETagKey.EYE_OF_ANCIENT_TOMB).add(EEResourceKey.ANCIENT_TOMB);
     }
 }

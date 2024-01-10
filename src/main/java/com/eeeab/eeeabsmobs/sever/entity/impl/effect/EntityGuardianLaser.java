@@ -6,7 +6,7 @@ import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
-import com.eeeab.eeeabsmobs.sever.util.ModDamageSource;
+import com.eeeab.eeeabsmobs.sever.util.EEDamageSource;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -141,7 +141,7 @@ public class EntityGuardianLaser extends EntityMagicEffects {
                 for (LivingEntity target : hit) {
                     if (caster instanceof EntityNamelessGuardian guardian) {
                         //guardian.guardianHurtTarget(this.damageSources().indirectMagic(this, guardian), guardian, target, 0.02F, 0.4F, 1F, true, false);
-                        guardian.guardianHurtTarget(ModDamageSource.guardianLaserAttack(this, guardian), guardian, target, 0.03F, 0.1F, 1F, true, false);
+                        guardian.guardianHurtTarget(EEDamageSource.guardianLaserAttack(this, guardian), guardian, target, 0.03F, 0.1F, 1F, true, false);
                     } else {
                         target.hurt(this.damageSources().magic(), 1.5f);
                     }

@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs;
 import com.eeeab.eeeabsmobs.client.ClientProxy;
 import com.eeeab.eeeabsmobs.sever.ServerProxy;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerServerEvent;
-import com.eeeab.eeeabsmobs.sever.util.ModCreativeModeTabGroup;
+import com.eeeab.eeeabsmobs.sever.util.EETabGroup;
 import com.eeeab.eeeabsmobs.sever.init.*;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.init.StructuresInit;
@@ -32,7 +32,7 @@ public class EEEABMobs {
         BlockInit.register(bus);
         BlockEntityInit.register(bus);
         EntityInit.register(bus);
-        ModCreativeModeTabGroup.register(bus);
+        EETabGroup.register(bus);
         EffectInit.register(bus);
         ParticleInit.register(bus);
         SoundInit.register(bus);
