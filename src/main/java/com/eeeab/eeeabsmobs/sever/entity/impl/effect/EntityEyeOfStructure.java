@@ -204,7 +204,7 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier {
     public void handleEntityEvent(byte id) {
         if (id == 5) {
             ModParticleUtils.roundParticleOutburst(level(), 30, new ParticleOptions[]{new ParticleOrb.OrbData(getR(), getG(), getB(), 3, 40)}, getX(), getY(), getZ(), 1);
-            ModParticleUtils.randomAnnularParticleOutburst(level(), 10, 0.45F, new ParticleOptions[]{new ItemParticleOption(ParticleTypes.ITEM, getItem())}, getX(), getY(), getZ());
+            ModParticleUtils.randomAnnularParticleOutburst(level(), 10, new ParticleOptions[]{new ItemParticleOption(ParticleTypes.ITEM, getItem())}, getX(), getY(), getZ(), 0.45F);
         }
         super.handleEntityEvent(id);
     }

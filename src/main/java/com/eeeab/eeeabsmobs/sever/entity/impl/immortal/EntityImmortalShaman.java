@@ -370,7 +370,7 @@ public class EntityImmortalShaman extends EntityImmortal implements IEntity, Ran
     }
 
     private void spawnExplosionParticles(int amount, ParticleOptions[] particles, float velocity) {
-        ModParticleUtils.randomAnnularParticleOutburst(this.level(), amount, velocity, particles, this.getX(), this.getY(), this.getZ());
+        ModParticleUtils.randomAnnularParticleOutburst(this.level(), amount, particles, this.getX(), this.getY(), this.getZ(), velocity);
     }
 
     private void addParticlesAroundHeart(int duration) {

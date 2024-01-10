@@ -5,7 +5,7 @@ import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationActivateGoal
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationDeactivateGoal;
 import com.eeeab.eeeabsmobs.sever.entity.impl.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
-import com.eeeab.eeeabsmobs.sever.util.MTUtil;
+import com.eeeab.eeeabsmobs.sever.util.MTUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.AnimationHandler;
 import net.minecraft.nbt.CompoundTag;
@@ -135,7 +135,7 @@ public class EntityTestllager extends EEEABMobLibrary implements IEntity {
         if (player.isShiftKeyDown()) {
             this.setCustomName(Component.keybind("damage:0.0"));
             this.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP);
-            player.displayClientMessage(Component.keybind("reset success").setStyle(MTUtil.STYLE_GREEN), true);
+            player.displayClientMessage(Component.keybind("reset success").setStyle(MTUtils.STYLE_GREEN), true);
             return InteractionResult.SUCCESS;
         }
         if (getAnimation() == NO_ANIMATION) {

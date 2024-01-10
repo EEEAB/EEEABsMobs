@@ -11,14 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 翻译字段常量类:
- * M->Mod T->Translate
+ * 翻译字段工具类
  *
  * @author EEEAB
  */
-public class MTUtil {
+public class MTUtils {
 
-    private MTUtil() {
+    private MTUtils() {
     }
 
     //text style
@@ -35,7 +34,7 @@ public class MTUtil {
 
     public static final String MOD_ID = EEEABMobs.MOD_ID + ".";
 
-    public static final Component UNABLE_BREAKS = simpleText(OTHER_PREFIX, "unable_breaks", MTUtil.STYLE_GRAY);//无法破坏
+    public static final Component UNABLE_BREAKS = simpleText(OTHER_PREFIX, "unable_breaks", MTUtils.STYLE_GRAY);//无法破坏
 
     //item
     public static final String ITEM_PREFIX = "item.";

@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.sever.item.eye;
 
 import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityEyeOfStructure;
 import com.eeeab.eeeabsmobs.sever.item.util.EEToolTipItem;
-import com.eeeab.eeeabsmobs.sever.util.MTUtil;
+import com.eeeab.eeeabsmobs.sever.util.MTUtils;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -72,7 +72,7 @@ public abstract class ItemFindStructureEye extends EEToolTipItem {
 
     @Override
     protected void detailsTooltip(List<Component> tooltip) {
-        tooltip.add(MTUtil.simpleText(MTUtil.STRUCTURE_PREFIX, FIND_STRUCTURE.location().getPath(), MTUtil.STYLE_GRAY));
+        tooltip.add(MTUtils.simpleText(MTUtils.STRUCTURE_PREFIX, FIND_STRUCTURE.location().getPath(), MTUtils.STYLE_GRAY));
     }
 
     protected abstract ItemStack getEyeItem(Player player, InteractionHand hand);
