@@ -52,13 +52,10 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
             } else {
                 this.entity.setYRot(this.entity.yRotO);
             }
-            if (tick == 11) {
-                if (this.entity.targetDistance > 1.8 || entity.getTarget() == null) {
-                    double moveMultiplier = entity.targetDistance < 8 && entity.targetDistance > 3 ? (entity.targetDistance - 2.5) : 1.2;
-                    this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier));
-                }
-            } else if (tick == 8) {
+            if (tick == 8) {
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 1.95f, this.entity.getVoicePitch());
+            } else if (tick == 11) {
+                pursuit(5F, 1.5F);
             } else if (tick == 12) {
                 List<LivingEntity> entities = this.entity.getNearByLivingEntities(range);
                 for (LivingEntity hitEntity : entities) {
@@ -75,15 +72,14 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
             }
         } else if (animation == ATTACK2_ANIMATION_2) {
             tick = this.entity.getAnimationTick();
-            int lookAtFrame = isPowered ? 12 : 8;
+            int lookAtFrame = isPowered ? 10 : 4;
             if (tick < lookAtFrame && target != null) {
                 this.entity.lookAt(target, 30F, 30F);
             } else {
                 this.entity.setYRot(this.entity.yRotO);
             }
             if (tick == 5) {
-                if (this.entity.targetDistance > 1.8 || entity.getTarget() == null)
-                    this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * 1.4, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * 1.4));
+                pursuit(-1F, 1.4F);
             } else if (tick == 6) {
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.05f, this.entity.getVoicePitch() + 0.15f);
             } else if (tick == 10) {
@@ -105,16 +101,14 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
         } else if (animation == ATTACK2_ANIMATION_3) {
             tick = this.entity.getAnimationTick();
             baseDamageMultiplier += 0.2F;
-            if (tick < 14 && target != null) {
+            int lookAtFrame = isPowered ? 14 : 12;
+            if (tick < lookAtFrame && target != null) {
                 this.entity.lookAt(target, 30F, 30F);
             } else {
                 this.entity.setYRot(this.entity.yRotO);
             }
             if (tick == 7) {
-                if (this.entity.targetDistance > 1.8 || entity.getTarget() == null) {
-                    double moveMultiplier = entity.targetDistance < 8 && entity.targetDistance > 4.5 ? (entity.targetDistance - 3.5) : 1.4;
-                    this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier));
-                }
+                pursuit(5F, 2.5F);
             } else if (tick == 10) {
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.2f, this.entity.getVoicePitch() + 0.15f);
             } else if (tick == 14) {
@@ -126,7 +120,6 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
                     float entityHitDistance = (float) Math.sqrt((livingEntity.getZ() - entity.getZ()) * (livingEntity.getZ() - entity.getZ()) + (livingEntity.getX() - entity.getX()) * (livingEntity.getX() - entity.getX())) - livingEntity.getBbWidth() / 2F;
                     if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
                         entity.guardianHurtTarget(entity, livingEntity, 0.025F, 1.0F, baseDamageMultiplier, true, true);
-                        entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                     }
                 }
             } else if (tick == 15) {
@@ -140,5 +133,15 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
         return (!isPowered && ((entity.getHealthPercentage() >= healthPercentage && entity.getRandom().nextFloat() < 0.4F) ||
                 (entity.getHealthPercentage() < healthPercentage && entity.getRandom().nextFloat() < 0.6F))) ||
                 (isPowered && entity.getRandom().nextFloat() < 0.9F);
+    }
+
+    private void pursuit(float pursuitDistance, float moveMultiplier) {
+        float targetDistance = this.entity.targetDistance;
+        if (this.entity.getTarget() != null && targetDistance < pursuitDistance && targetDistance > 0) {
+            moveMultiplier = --targetDistance;
+        }
+        targetDistance = this.entity.targetDistance;
+        if (this.entity.getTarget() == null || targetDistance > 1.8F)
+            this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier));
     }
 }
