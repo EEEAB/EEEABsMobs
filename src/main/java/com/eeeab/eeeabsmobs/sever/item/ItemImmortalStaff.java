@@ -16,8 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class ItemImmortalStaff extends EEToolTipItem {
-    public ItemImmortalStaff(Properties properties) {
-        super(properties);
+    public ItemImmortalStaff() {
+        super(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant());
     }
 
     @Override

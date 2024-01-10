@@ -39,7 +39,7 @@ public abstract class ItemFindStructureEye extends EEToolTipItem {
     }
 
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack eyeItem = getEyeItem(player, hand);
+        ItemStack eyeItem = player.getItemInHand(hand);
         player.startUsingItem(hand);
         if (level instanceof ServerLevel serverlevel) {
             BlockPos blockpos = serverlevel.findNearestMapStructure(FIND_STRUCTURE, player.blockPosition(), FIND_MAX_HEIGHT, false);
@@ -74,7 +74,5 @@ public abstract class ItemFindStructureEye extends EEToolTipItem {
     protected void detailsTooltip(List<Component> tooltip) {
         tooltip.add(MTUtils.simpleText(MTUtils.STRUCTURE_PREFIX, FIND_STRUCTURE.location().getPath(), MTUtils.STYLE_GRAY));
     }
-
-    protected abstract ItemStack getEyeItem(Player player, InteractionHand hand);
 
 }

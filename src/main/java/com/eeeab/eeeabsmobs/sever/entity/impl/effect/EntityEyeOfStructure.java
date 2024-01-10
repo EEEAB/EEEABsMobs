@@ -73,9 +73,7 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier {
     }
 
     public void setItem(ItemStack itemStack) {
-        if (!itemStack.isEmpty()) {
-            this.getEntityData().set(DATA_ITEM_STACK, itemStack.copyWithCount(1));
-        }
+        this.getEntityData().set(DATA_ITEM_STACK, itemStack.copyWithCount(1));
     }
 
     @Override

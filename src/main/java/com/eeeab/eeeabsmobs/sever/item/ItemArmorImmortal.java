@@ -1,19 +1,17 @@
 package com.eeeab.eeeabsmobs.sever.item;
 
+import com.eeeab.eeeabsmobs.sever.item.util.EEArmorMaterial;
 import com.eeeab.eeeabsmobs.sever.util.MTUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 
 public class ItemArmorImmortal extends ArmorItem {
-    public ItemArmorImmortal(ArmorMaterial material, Type type, Properties properties) {
-        super(material, type, properties);
+    public ItemArmorImmortal(Type type) {
+        super(EEArmorMaterial.IMMORTAL_MATERIAL, type, new Item.Properties());
     }
 
     @Override
