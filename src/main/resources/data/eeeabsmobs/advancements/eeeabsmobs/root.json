@@ -9,7 +9,7 @@
     "description": {
       "translate": "advancements.eeeabsmobs.root.description"
     },
-    "background": "eeeabsmobs:textures/block/immortal_block.png",
+    "background": "minecraft:textures/block/deepslate_bricks.png",
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,
