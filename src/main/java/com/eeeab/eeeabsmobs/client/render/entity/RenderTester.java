@@ -43,8 +43,8 @@ public class RenderTester extends MobRenderer<EntityTester, ModelTester> {
             int j = (int) (f1 * 255.0F) << 24;
             Font font = this.getFont();
             float f2 = (float) (-font.width(pDisplayName) / 2);
-            font.drawInBatch(pDisplayName, f2, (float) 0, 553648127, false, matrix4f, pBuffer, Font.DisplayMode.SEE_THROUGH, j, pPackedLight);
-            font.drawInBatch(pDisplayName, f2, (float) 0, -1, false, matrix4f, pBuffer, Font.DisplayMode.NORMAL, 0, pPackedLight);
+            font.drawInBatch(pDisplayName, f2, (float) -10, 553648127, false, matrix4f, pBuffer, Font.DisplayMode.SEE_THROUGH, j, pPackedLight);
+            font.drawInBatch(pDisplayName, f2, (float) -10, -1, false, matrix4f, pBuffer, Font.DisplayMode.NORMAL, 0, pPackedLight);
             pMatrixStack.popPose();
         }
     }
