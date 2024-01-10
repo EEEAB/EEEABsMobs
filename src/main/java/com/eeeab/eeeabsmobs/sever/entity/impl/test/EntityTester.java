@@ -28,18 +28,19 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 //伤害测试单位 仅用于测试
-public class EntityTestllager extends EEEABMobLibrary implements IEntity {
+public class EntityTester extends EEEABMobLibrary implements IEntity {
     public static final Animation YES = Animation.create(5);
     public static final Animation NO = Animation.create(5);
     public static final Animation[] ANIMATIONS = {YES, NO};
-    private static final EntityDataAccessor<Boolean> ACTIVE = SynchedEntityData.defineId(EntityTestllager.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> ACTIVE = SynchedEntityData.defineId(EntityTester.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Optional<Component>> DAMAGE = SynchedEntityData.defineId(EntityTester.class, EntityDataSerializers.OPTIONAL_COMPONENT);
 
-    public EntityTestllager(EntityType<? extends EEEABMobLibrary> type, Level level) {
+    public EntityTester(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
-        active = false;
-        if (this.level().isClientSide) this.setCustomNameVisible(true);
-        this.setCustomName(Component.keybind("damage:0.0"));
+        active = true;
     }
 
     @Override
@@ -98,7 +99,7 @@ public class EntityTestllager extends EEEABMobLibrary implements IEntity {
         if (this.level().isClientSide) {
             return false;
         } else if (entity != null) {
-            this.setCustomName(Component.keybind("damage:" + String.format("%.1f", damage)));
+            this.setDamage(damage);
             super.hurt(source, 0);
         } else if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             return super.hurt(source, damage);
@@ -129,11 +130,15 @@ public class EntityTestllager extends EEEABMobLibrary implements IEntity {
         return SoundEvents.VILLAGER_DEATH;
     }
 
+    @Override
+    public boolean shouldShowName() {
+        return true;
+    }
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (player.isShiftKeyDown()) {
-            this.setCustomName(Component.keybind("damage:0.0"));
+            this.setDamage(0.0);
             this.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP);
             player.displayClientMessage(Component.keybind("reset success").setStyle(MTUtils.STYLE_GREEN), true);
             return InteractionResult.SUCCESS;
@@ -168,6 +173,7 @@ public class EntityTestllager extends EEEABMobLibrary implements IEntity {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(ACTIVE, true);
+        this.entityData.define(DAMAGE, Optional.of(Component.keybind("0.0")));
     }
 
     public void setActive(boolean isActive) {
@@ -176,5 +182,13 @@ public class EntityTestllager extends EEEABMobLibrary implements IEntity {
 
     public boolean isActive() {
         return this.entityData.get(ACTIVE);
+    }
+
+    public Component getDamage() {
+        return this.entityData.get(DAMAGE).orElse(Component.keybind("0.0"));
+    }
+
+    public void setDamage(double damage) {
+        this.entityData.set(DAMAGE, Optional.of(Component.keybind(String.format("%.1f", damage))));
     }
 }

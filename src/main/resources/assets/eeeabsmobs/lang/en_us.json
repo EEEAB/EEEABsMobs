@@ -17,7 +17,7 @@
   "entity.eeeabsmobs.scorch": "Scorch",
   "entity.eeeabsmobs.camera_shake": "Camera Shake",
   "entity.eeeabsmobs.moving_controller": "Moving Controller",
-  "entity.eeeabsmobs.testllager": "Testllager",
+  "entity.eeeabsmobs.tester": "Tester",
   "entity.eeeabsmobs.guardian_blade": "Guardian Blade",
 
   "_comment": "Items",
@@ -47,6 +47,7 @@
   "item.eeeabsmobs.immortal_shaman_egg": "Immortal Shaman Spawn Egg",
   "item.eeeabsmobs.immortal_golem_egg": "Immortal Golem Spawn Egg",
   "item.eeeabsmobs.nameless_guardian_egg": "Nameless Guardian Spawn Egg",
+  "item.eeeabsmobs.tester_egg": "Tester Spawn Egg",
 
   "_comment": "Tips",
   "item.eeeabsmobs.remove_mob.tip_1": "Left-click to remove a EEEAB's Mobs mob/entity",

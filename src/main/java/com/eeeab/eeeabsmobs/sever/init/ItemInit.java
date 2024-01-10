@@ -2,13 +2,9 @@ package com.eeeab.eeeabsmobs.sever.init;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.item.*;
-import com.eeeab.eeeabsmobs.sever.item.util.EEArmorMaterial;
 import com.eeeab.eeeabsmobs.sever.item.ItemArmorImmortal;
 import com.eeeab.eeeabsmobs.sever.item.eye.ItemAncientTombEye;
 import com.eeeab.eeeabsmobs.sever.item.util.EEToolsTier;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.*;
@@ -30,7 +26,7 @@ public class ItemInit {
     public static final RegistryObject<Item> IMMORTAL_SHAMAN_EGG = registerEgg("immortal_shaman_egg", EntityInit.IMMORTAL_SHAMAN, IMMORTAL_BACK_COLOR, rgb2dec(56, 195, 255));
     public static final RegistryObject<Item> IMMORTAL_GOLEM_EGG = registerEgg("immortal_golem_egg", EntityInit.IMMORTAL_GOLEM, IMMORTAL_BACK_COLOR, rgb2dec(158, 226, 255));
     public static final RegistryObject<Item> NAMELESS_GUARDIAN_EGG = registerEgg("nameless_guardian_egg", EntityInit.NAMELESS_GUARDIAN, rgb2dec(31, 31, 31), rgb2dec(77, 126, 159));
-    public static final RegistryObject<Item> TESTLLAGER = registerEgg("testllager_egg", EntityInit.TESTLLAGER, rgb2dec(70, 145, 190), rgb2dec(95, 195, 255));
+    public static final RegistryObject<Item> TESTER = registerEgg("tester_egg", EntityInit.TESTER, rgb2dec(70, 145, 190), rgb2dec(95, 195, 255));
     //物品
     public static final RegistryObject<Item> LOGO_ITEM = ITEMS.register("logo_item", ItemLogo::new);
     public static final RegistryObject<Item> REMOVE_MOB = ITEMS.register("remove_mob", ItemRemoveMob::new);
