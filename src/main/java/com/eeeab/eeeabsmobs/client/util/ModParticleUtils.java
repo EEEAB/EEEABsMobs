@@ -11,8 +11,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
-import java.util.Random;
-
 /**
  * 粒子效果工具类
  *
@@ -81,9 +79,9 @@ public class ModParticleUtils {
             double theta = phi * i;
             double velocityX = Math.cos(theta) * radius;
             double velocityZ = Math.sin(theta) * radius;
-            sizeModifier += (float) (random.nextGaussian() * 0.02D) * (random.nextBoolean() ? 1 : -1);
+            float sideOffset = (float) (random.nextGaussian() * 0.2D) * (random.nextBoolean() ? 1 : -1);
             for (ParticleOptions particle : particles) {
-                world.addParticle(particle, true, x, y, z, velocityX * sizeModifier, velocityY * sizeModifier, velocityZ * sizeModifier);
+                world.addParticle(particle, true, x, y, z, velocityX * (sizeModifier + sideOffset), velocityY * sizeModifier, velocityZ * (sizeModifier + sideOffset));
             }
         }
     }
@@ -136,8 +134,8 @@ public class ModParticleUtils {
      * @param particles     粒子
      * @param entity        实体
      * @param yOffset       y轴偏移
-     * @param inFrontOffset 向前偏移
-     * @param sideOffset    向侧偏移
+     * @param inFrontOffset 前后偏移
+     * @param sideOffset    左右偏移
      * @param speedModifier 速度乘数
      */
     public static void sphericalParticleOutburst(Level level, float points, ParticleOptions[] particles, LivingEntity entity, float yOffset, double inFrontOffset, double sideOffset, double speedModifier) {
