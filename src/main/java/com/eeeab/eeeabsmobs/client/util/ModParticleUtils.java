@@ -17,7 +17,7 @@ import net.minecraft.world.level.Level;
  * @author EEEAB
  */
 public class ModParticleUtils {
-    private static final RandomSource random = RandomSource.create();
+    private static final RandomSource random = RandomSource.createNewThreadLocalInstance();
 
     private ModParticleUtils() {
     }
