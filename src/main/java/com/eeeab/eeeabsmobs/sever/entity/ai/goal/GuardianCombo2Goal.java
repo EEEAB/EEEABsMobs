@@ -123,6 +123,8 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
                     }
                 }
             } else if (tick == 15) {
+                entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 2F, 0.2F);
+            } else if (tick == 16) {
                 entity.playSound(SoundEvents.GENERIC_EXPLODE, 1.25F, 1F + entity.getRandom().nextFloat() * 0.1F);
                 EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.125F, 5, 10);
             }
