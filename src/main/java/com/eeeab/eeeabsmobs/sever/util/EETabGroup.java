@@ -18,16 +18,16 @@ public class EETabGroup {
             .title(Component.translatable("itemGroup." + EEEABMobs.MOD_ID + ".creative_tab"))
             .icon(() -> new ItemStack(ItemInit.IMMORTAL_AXE.get()))
             .displayItems((enabledFeatures, entries) -> {
+                /* Block Item */
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.IMMORTAL_BLOCK));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.SOUL_LIGHT));
+
                 /* misc Item */
                 entries.accept(ItemInit.REMOVE_MOB.get());
                 entries.accept(ItemInit.IMMORTAL_BONE.get());
                 entries.accept(ItemInit.IMMORTAL_DEBRIS.get());
                 entries.accept(ItemInit.IMMORTAL_INGOT.get());
                 entries.accept(ItemInit.ANCIENT_TOMB_EYE.get());
-
-                /* Block Item */
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.IMMORTAL_BLOCK));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.SOUL_LIGHT));
 
                 /* fight Item */
                 entries.accept(ItemInit.IMMORTAL_HELMET.get());
@@ -39,15 +39,15 @@ public class EETabGroup {
                 entries.accept(ItemInit.IMMORTAL_STAFF.get());
                 entries.accept(ItemInit.GUARDIAN_AXE.get());
 
+                /* Disc Item */
+                entries.accept(ItemInit.GUARDIANS_MUSIC_DISC.get());
+
                 /* Spawn Egg */
                 entries.accept(ItemInit.IMMORTAL_SKELETON_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_KNIGHT_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_SHAMAN_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_GOLEM_EGG.get());
                 entries.accept(ItemInit.NAMELESS_GUARDIAN_EGG.get());
-
-                /* Disc Item */
-                entries.accept(ItemInit.GUARDIANS_MUSIC_DISC.get());
             }).build());
 
 
