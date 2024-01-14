@@ -4,6 +4,7 @@ import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.sever.advancements.EECriteriaTriggers;
 import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
 import com.eeeab.eeeabsmobs.sever.entity.IBoss;
@@ -22,8 +23,8 @@ import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.ModDamageSource;
-import com.eeeab.eeeabsmobs.sever.util.ModTag;
+import com.eeeab.eeeabsmobs.sever.util.EEDamageSource;
+import com.eeeab.eeeabsmobs.sever.util.EETagKey;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.AnimationHandler;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
@@ -65,6 +66,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.*;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.AABB;
@@ -76,6 +78,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 //创建于 2023/1/17
 public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, GlowEntity, PowerableMob, NeedStopAiEntity {
@@ -158,6 +161,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     private int attackTick;
     //BGM高潮部分的时长
     public static final int MADNESS_TICK = 1300;
+    public static final int NEVER_STOP = -1;
     private static final int USE_SKILL_TIME_OUT_MAX_LIMIT = 300;
     private final static int NEXT_MADNESS_TICK = 600;
     private final static int MAX_SMASH_ATTACK_TICK = 300;
@@ -173,6 +177,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     private final static int HARD_MODE_STATE_TICK = 80;
     private final EntityNamelessGuardianPart core;
     private final EntityNamelessGuardianPart[] subEntities;
+    private final DynamicGameEventListener<EntityNamelessGuardian.Listener> dynamicListener;
     private static final float[][] ROBUST_ATTACK_BLOCK_OFFSETS = {
             {-0.5F, -0.5F},
             {-0.5F, 0.5F},
@@ -190,6 +195,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         this.active = false;
         this.core = new EntityNamelessGuardianPart(this, "core", 0.6F, 0.6F);
         this.subEntities = new EntityNamelessGuardianPart[]{this.core};
+        this.dynamicListener = new DynamicGameEventListener<>(new Listener());
         this.setId(ENTITY_COUNTER.getAndAdd(this.subEntities.length + 1) + 1);
         this.canplayHurtAnimation = false;
         this.setPathfindingMalus(BlockPathTypes.UNPASSABLE_RAIL, 0.0F);
@@ -318,7 +324,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
                 this.setExecuteWeak(false);
                 this.resetTimeOutToUseSkill();
             } else if (animation == ROAR_ANIMATION) {
-                this.setMadnessTick(this.isChallengeMode() ? -1 : MADNESS_TICK);
+                this.setMadnessTick(this.isChallengeMode() ? NEVER_STOP : MADNESS_TICK);
                 this.setRobustTick(MADNESS_TICK);
                 if (this.FIRST && !this.isChallengeMode()) this.FIRST = false;
                 this.laserTick = this.pounceTick = this.smashTick = this.attackTick = 0;
@@ -340,8 +346,8 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     protected void registerCustomGoals() {
         this.goalSelector.addGoal(1, new AnimationHurtGoal<>(this, false));
         this.goalSelector.addGoal(1, new AnimationDieGoal<>(this));
-        this.goalSelector.addGoal(1, new GuardianCombo1Goal(this, 3.5F, 100F));
-        this.goalSelector.addGoal(1, new GuardianCombo2Goal(this, 5.0F, 100F));
+        this.goalSelector.addGoal(1, new GuardianCombo1Goal(this, 4F, 100F));
+        this.goalSelector.addGoal(1, new GuardianCombo2Goal(this, 4.5F, 100F));
         this.goalSelector.addGoal(1, new GuardianLobedAttackGoal(this, SMASH_ATTACK_ANIMATION));
         this.goalSelector.addGoal(1, new GuardianPounceAttackGoal(this, 3F));
         this.goalSelector.addGoal(1, new GuardianRobustAttackGoal(this, ROBUST_ATTACK_ANIMATION));
@@ -499,7 +505,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         } else if (this.getAnimation() == CONCUSSION_ANIMATION) {
             this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
             if (tick == 8) {
-                ModParticleUtils.sphericalParticleOutburst(level(), this, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleInit.GUARDIAN_SPARK.get()}, 2.5F, 10F, 0, 0, 3);
+                ModParticleUtils.sphericalParticleOutburst(level(), 10F, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleInit.GUARDIAN_SPARK.get()}, this, 2.5F, 0, 0, 3);
                 EntityCameraShake.cameraShake(level(), position(), 30, 0.125F, 0, 20);
             } else if (tick > 8) {
                 this.strongKnockBlock();
@@ -604,8 +610,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 25, ParticleDust.EnumDustBehavior.SHRINK, 1.0f);
             ModParticleUtils.annularParticleOutburst(level(), 15, new ParticleOptions[]{dustData}, getX(), this.getY(), getZ(), 0.8F, 0.1);
         } else if (id == 8) {
-            ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 50, ParticleDust.EnumDustBehavior.CONSTANT, 1.0f);
-            ModParticleUtils.annularParticleOutburst(level(), 20, new ParticleOptions[]{dustData}, getX(), this.getY(), getZ(), 0.8F, 0.1);
+            ModParticleUtils.roundParticleOutburst(level(), 200, new ParticleOptions[]{ParticleTypes.LARGE_SMOKE, ParticleTypes.SMOKE, ParticleTypes.EXPLOSION}, getX(), this.getY(0.1), getZ(), 1);
         }
         super.handleEntityEvent(id);
     }
@@ -681,7 +686,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
                 this.nextMadnessTick--;
             }
 
-            if (this.robustTick > 0 && this.isChallengeMode()) {
+            if (this.robustTick > 0) {
                 this.robustTick--;
             }
         }
@@ -731,12 +736,12 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
                     if (ModEntityUtils.isProjectileSource(source)) return false;
                 }
                 if (this.getAnimation() == WEAK_ANIMATION_2) {
-                    maxHurtDamage = /* 如果伤害源是magic类型 则没有限制伤害,反之则受到最大伤害上限2倍伤害*/source.is(ModTag.MAGIC_UNRESISTANT_TO) ? damage : getMaxHealth() * (maximumDamageCap * 2);
+                    maxHurtDamage = /* 如果伤害源是magic类型 则没有限制伤害,反之则受到最大伤害上限2倍伤害*/source.is(EETagKey.MAGIC_UNRESISTANT_TO) ? damage : getMaxHealth() * (maximumDamageCap * 2);
                     maxHurtDamage = /* 防止超过生命值上限 */Math.min(maxHurtDamage, getMaxHealth());
                 }
                 damage = Math.min(damage, maxHurtDamage);
                 return super.hurt(source, damage);
-            } else if (source.is(ModTag.GENERAL_UNRESISTANT_TO)) {
+            } else if (source.is(EETagKey.GENERAL_UNRESISTANT_TO)) {
                 return super.hurt(source, damage);
             }
         }
@@ -937,28 +942,27 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
                 }
             }
             dist = this.guardian.distanceToSqr(this.targetX, this.targetY, this.targetZ);
-            boolean challengeMode = this.guardian.isChallengeMode();
             if (this.guardian.attackTick <= 0 && this.guardian.getSensing().hasLineOfSight(target)) {
                 boolean checkAttackHeight = target.getY() - guardian.getY() < 4 && target.getY() - this.guardian.getY() > -4;
                 double entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this.guardian, target);
-                boolean canRobust = dist <= 144D && this.isPowered && (this.guardian.getMadnessTick() == 0 || challengeMode && this.guardian.getRobustTick() == 0);
+                boolean canRobust = dist <= 144D && this.isPowered && (this.guardian.getMadnessTick() == 0 || this.guardian.isChallengeMode() && this.guardian.getRobustTick() == 0);
                 boolean canSmash = (checkAttackHeight || target.onGround()) && (this.random.nextFloat() < 0.6F && dist <= (this.isPowered ? 50D : 25D) && this.guardian.getSmashTick() <= 0);
                 if (dist < 25D && !canSmash && !canRobust) {
                     Animation attackAnimation = this.random.nextBoolean() ? ATTACK_ANIMATION_1 : ATTACK2_ANIMATION_1;
                     this.guardian.playAnimation(attackAnimation);
                 } else if (canRobust) {
                     this.guardian.playAnimation(ROBUST_ATTACK_ANIMATION);
-                    if (challengeMode) this.guardian.setRobustTick(MADNESS_TICK);
+                    this.guardian.setRobustTick(MADNESS_TICK);
                 } else if (canSmash) {
                     this.guardian.playAnimation(SMASH_ATTACK_ANIMATION);
                     this.guardian.setSmashTick(this.guardian.getCoolingTimerUtil(MAX_SMASH_ATTACK_TICK, MIN_SMASH_ATTACK_TICK, 0.2F));
                 }
 
                 boolean canLaser = this.random.nextFloat() < 0.6F && this.isPowered && checkModeOrPreventTimeouts(120) && (((checkAttackHeight ? this.guardian.targetDistance > 10.0D : this.guardian.targetDistance > 4.0D) && (entityRelativeAngle < 60.0 || entityRelativeAngle > 300) && this.guardian.targetDistance < EntityGuardianLaser.GUARDIAN_RADIUS && this.guardian.getLaserTick() <= 0) || this.guardian.isTimeOutToUseSkill());
-                boolean canShakeGround = this.random.nextFloat() < 0.6F && this.guardian.getHealthPercentage() <= 50 && this.guardian.targetDistance < 12.0D && this.guardian.getShakeGroundTick() <= 0 && (checkModeOrPreventTimeouts(180) || !this.isPowered);
+                boolean canShakeGround = (checkAttackHeight || target.onGround()) && !this.guardian.isTimeOutToUseSkill() && this.random.nextFloat() < 0.6F && this.guardian.getHealthPercentage() <= 50 && this.guardian.targetDistance > 8.0D && this.guardian.getShakeGroundTick() <= 0 && (checkModeOrPreventTimeouts(180) || !this.isPowered);
                 boolean canLeap = this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 12.0D && this.guardian.targetDistance < 24.0 && this.guardian.getLeapTick() <= 0 && checkModeOrPreventTimeouts(100);
                 boolean canPouch = checkAttackHeight && checkModeOrPreventTimeouts(80) && (this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 6.0D && this.guardian.targetDistance < 14.0 && this.guardian.getPounceTick() <= 0 || this.guardian.isTimeOutToUseSkill());
-                if (canShakeGround && !this.guardian.isTimeOutToUseSkill()) {
+                if (canShakeGround) {
                     this.guardian.playAnimation(SHAKE_GROUND_ATTACK_ANIMATION_1);
                     this.guardian.setShakeGroundTick(SHAKE_GROUND_ATTACK_TICK);
                 } else if (canLaser) {
@@ -975,7 +979,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         }
 
         private boolean checkModeOrPreventTimeouts(int tick) {
-            return this.guardian.isChallengeMode() || this.guardian.getMadnessTick() > tick;
+            return this.guardian.isChallengeMode() || this.guardian.getMadnessTick() > tick || !this.guardian.isPowered();
         }
     }
 
@@ -1016,7 +1020,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
                         continue;
                     }
                     if (hit instanceof LivingEntity livingEntity) {
-                        this.guardianHurtTarget(ModDamageSource.guardianRobustAttack(this), this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, shouldHeal, false);
+                        this.guardianHurtTarget(EEDamageSource.guardianRobustAttack(this), this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, shouldHeal, false);
                     }
                     double magnitude = level().random.nextGaussian() * 0.15 + 0.1;
                     double angle = this.getAngleBetweenEntities(this, hit);
@@ -1108,7 +1112,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
                 this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundInit.NAMELESS_GUARDIAN_ACCUMULATING.get(), this.getSoundSource(), 2F, 3.5F, false);
         } else if (tick >= 30 && tick < 70) {
             if (tick == 32) {
-                ModParticleUtils.sphericalParticleOutburst(level(), this, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleInit.GUARDIAN_SPARK.get()}, 2.5F, 10F, 0, 0, 3);
+                ModParticleUtils.sphericalParticleOutburst(level(), 10F, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleInit.GUARDIAN_SPARK.get()}, this, 2.5F, 0, 0, 3);
                 if (!this.isSilent())
                     this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.TOTEM_USE, this.getSoundSource(), 1F, 0.95F, false);
                 this.playSound(SoundInit.NAMELESS_GUARDIAN_MADNESS.get(), 1.5F, 0.92F);
@@ -1475,7 +1479,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
 
     @Override
     public SoundEvent getBossMusic() {
-        return this.isPowered() ? SoundInit.GUARDIANS_CLIMAX.get() : SoundInit.GUARDIANS_PRELUDE.get();
+        return !this.isPowered() ? SoundInit.GUARDIANS_PRELUDE.get() : this.isChallengeMode() ? SoundInit.GUARDIANS.get() : SoundInit.GUARDIANS_CLIMAX.get();
     }
 
     @Override
@@ -1483,4 +1487,46 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         return this.getTarget() == null ? 0.5F : super.getSoundVolume();
     }
 
+    public class Listener implements GameEventListener {
+
+        @Override
+        public PositionSource getListenerSource() {
+            return new EntityPositionSource(EntityNamelessGuardian.this, EntityNamelessGuardian.this.getEyeHeight());
+        }
+
+        @Override
+        public int getListenerRadius() {
+            return 16;
+        }
+
+        @Override
+        public boolean handleGameEvent(ServerLevel level, GameEvent gameEvent, GameEvent.Context context, Vec3 vec3) {
+            if (gameEvent == GameEvent.ENTITY_DIE) {
+                Entity entity = context.sourceEntity();
+                if (entity instanceof LivingEntity livingEntity) {
+                    this.tryAdvancement(level, livingEntity);
+                }
+            }
+            return false;
+        }
+
+        private void tryAdvancement(Level level, LivingEntity entity) {
+            LivingEntity livingentity = entity.getLastHurtByMob();
+            if (livingentity instanceof ServerPlayer serverplayer) {
+                if (entity instanceof EntityNamelessGuardian guardian && guardian.isChallengeMode()) {
+                    DamageSource damagesource = entity.getLastDamageSource() == null ? level.damageSources().playerAttack(serverplayer) : entity.getLastDamageSource();
+                    EECriteriaTriggers.KILL_BOSS_IN_CHALLENGE_MODE.trigger(serverplayer, entity, damagesource);
+                }
+            }
+
+        }
+    }
+
+    @Override
+    public void updateDynamicGameEventListener(BiConsumer<DynamicGameEventListener<?>, ServerLevel> listenerConsumer) {
+        Level level = this.level();
+        if (level instanceof ServerLevel serverLevel) {
+            listenerConsumer.accept(this.dynamicListener, serverLevel);
+        }
+    }
 }
