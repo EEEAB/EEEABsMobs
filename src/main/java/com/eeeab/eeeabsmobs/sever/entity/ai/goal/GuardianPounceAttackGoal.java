@@ -3,7 +3,6 @@ package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationAbstractGoal;
 import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
-import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.core.BlockPos;
@@ -14,6 +13,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
@@ -120,27 +120,21 @@ public class GuardianPounceAttackGoal extends AnimationAbstractGoal<EntityNamele
                         if (hitEntity == this.entity) {
                             continue;
                         }
-                        boolean hitFlag = false;
                         float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this.entity, hitEntity);
                         float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - this.entity.getZ()) * (hitEntity.getZ() - this.entity.getZ()) + (hitEntity.getX() - this.entity.getX()) * (hitEntity.getX() - this.entity.getX())) - hitEntity.getBbWidth() / 2F;
 
                         if (entityHitDistance <= 3F && (entityRelativeAngle <= 120 / 2F && entityRelativeAngle >= -120 / 2F) || (entityRelativeAngle >= 360 - 120 / 2F || entityRelativeAngle <= -360 + 120 / 2F)) {
-                            //hitFlag = hitEntity.hurt(DamageSource.mobAttack(entity), (baseDamage * 0.8F + hitEntity.getMaxHealth() * 0.05F) * baseDamageMultiplier);
-                            hitFlag = this.entity.guardianHurtTarget(this.entity, hitEntity, 0.05F, 1F, baseDamageMultiplier, false, false);
-                            //if (hitEntity instanceof ServerPlayer) {
-                            //    ((ServerPlayer) hitEntity).connection.send(new ClientboundSetEntityMotionPacket(hitEntity));
-                            //}
+                            this.entity.guardianHurtTarget(this.entity, hitEntity, 0.05F, 1F, baseDamageMultiplier, false, false);
                             double ratioX = Math.sin(this.entity.getYRot() * ((float) Math.PI / 180F));
                             double ratioZ = (-Math.cos(this.entity.getYRot() * ((float) Math.PI / 180F)));
                             ModEntityUtils.forceKnockBack(hitEntity, 1.5f, ratioX, ratioZ, 0.01f, false);
-                        }
-                        if (hitFlag) {
-                            double duration = 1.0;
+                            double duration = 1.5;
                             if (Difficulty.HARD.equals(this.entity.level().getDifficulty())) duration = 2.5;
-                            if (!hitEntity.isBlocking() && !hitEntity.hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
+                            if (hitEntity instanceof Player player && !player.isCreative() && !player.isBlocking()) {
+                                player.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), (int) (duration * 20), 0, false, false, true));
+                            } else if (!(hitEntity instanceof Player) && !hitEntity.isBlocking()) {
                                 hitEntity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), (int) (duration * 20), 0, false, false, true));
                             }
-                            entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                         }
                     }
                 }
@@ -150,7 +144,7 @@ public class GuardianPounceAttackGoal extends AnimationAbstractGoal<EntityNamele
         } else if (this.entity.getAnimation() == EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION_3) {
             this.entity.setDeltaMovement(0, entity.getDeltaMovement().y(), 0);
             int maxExtraConsecutive = 2;
-            if (this.consecutive < maxExtraConsecutive && entity.getTarget() != null && this.entity.getAnimationTick() <= 6 && this.entity.getAnimationTick() > 1 && isPowered && this.entity.getMadnessTick() > 200 && this.entity.targetDistance < 16 && this.entity.targetDistance > 4
+            if (this.consecutive < maxExtraConsecutive && entity.getTarget() != null && this.entity.getAnimationTick() <= 6 && this.entity.getAnimationTick() > 1 && checkModeOrPreventTimeouts() && this.entity.targetDistance < 16 && this.entity.targetDistance > 4
                     && ((this.entity.hasEffect(EffectInit.VERTIGO_EFFECT.get()) && this.entity.getRandom().nextInt(3 - consecutive) == 0) || this.entity.getRandom().nextInt(10) == 0)) {
                 this.consecutive++;
                 this.entity.playAnimation(EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION_1);
@@ -161,6 +155,10 @@ public class GuardianPounceAttackGoal extends AnimationAbstractGoal<EntityNamele
     public static Vec3 findTargetPoint(Entity attacker, Entity target) {
         Vec3 vec3 = target.position();
         return (new Vec3(vec3.x - attacker.getX(), 0.0, vec3.z - attacker.getZ())).normalize();
+    }
+
+    private boolean checkModeOrPreventTimeouts() {
+        return this.entity.isChallengeMode() || (this.entity.getMadnessTick() > 200 && this.entity.isPowered());
     }
 
 }
