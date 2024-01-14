@@ -959,7 +959,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
                 }
 
                 boolean canLaser = this.random.nextFloat() < 0.6F && this.isPowered && checkModeOrPreventTimeouts(120) && (((checkAttackHeight ? this.guardian.targetDistance > 10.0D : this.guardian.targetDistance > 4.0D) && (entityRelativeAngle < 60.0 || entityRelativeAngle > 300) && this.guardian.targetDistance < EntityGuardianLaser.GUARDIAN_RADIUS && this.guardian.getLaserTick() <= 0) || this.guardian.isTimeOutToUseSkill());
-                boolean canShakeGround = (checkAttackHeight || target.onGround()) && !this.guardian.isTimeOutToUseSkill() && this.random.nextFloat() < 0.6F && this.guardian.getHealthPercentage() <= 50 && this.guardian.targetDistance > 8.0D && this.guardian.getShakeGroundTick() <= 0 && (checkModeOrPreventTimeouts(180) || !this.isPowered);
+                boolean canShakeGround = (checkAttackHeight || target.onGround()) && !this.guardian.isTimeOutToUseSkill() && this.random.nextFloat() < 0.6F && this.guardian.getHealthPercentage() <= 50 && this.guardian.targetDistance < 8.0D && this.guardian.getShakeGroundTick() <= 0 && (checkModeOrPreventTimeouts(180) || !this.isPowered);
                 boolean canLeap = this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 12.0D && this.guardian.targetDistance < 24.0 && this.guardian.getLeapTick() <= 0 && checkModeOrPreventTimeouts(100);
                 boolean canPouch = checkAttackHeight && checkModeOrPreventTimeouts(80) && (this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 6.0D && this.guardian.targetDistance < 14.0 && this.guardian.getPounceTick() <= 0 || this.guardian.isTimeOutToUseSkill());
                 if (canShakeGround) {
