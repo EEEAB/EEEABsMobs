@@ -31,6 +31,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -576,6 +577,8 @@ public class EntityImmortalShaman extends EntityImmortal implements IEntity, Ran
                         MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
                 entity.setOwner(EntityImmortalShaman.this);
                 entity.setSummonAliveTime(20 * (30 + EntityImmortalShaman.this.random.nextInt(90)));
+                Difficulty difficulty = EntityImmortalShaman.this.level().getDifficulty();
+                entity.setDangerous(EntityImmortalShaman.this.random.nextInt(10 - difficulty.getId()) == 0);
                 entity.setPos(vec3);
 
                 level().addFreshEntity(entity);
