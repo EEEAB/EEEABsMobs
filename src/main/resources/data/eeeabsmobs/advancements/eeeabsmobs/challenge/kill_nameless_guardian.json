@@ -1,0 +1,28 @@
+{
+  "parent": "eeeabsmobs:eeeabsmobs/kill_nameless_guardian",
+  "display": {
+    "icon": {
+      "item": "eeeabsmobs:guardian_axe"
+    },
+    "title": {
+      "translate": "advancements.eeeabsmobs.challenge_mode_kill_nameless_guardian.title",
+      "color": "red",
+      "bold": true
+    },
+    "description": {
+      "translate": "advancements.eeeabsmobs.challenge_mode_kill_nameless_guardian.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "eeeabsmobs:kill_boss_in_challenge_mode"
+    }
+  },
+  "rewards": {
+    "experience": 100
+  }
+}

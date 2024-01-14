@@ -87,6 +87,8 @@
   "advancements.eeeabsmobs.ancient_tomb.description": "Arrive Ancient Tomb",
   "advancements.eeeabsmobs.kill_nameless_guardian.title": "The last line of defense",
   "advancements.eeeabsmobs.kill_nameless_guardian.description": "Kill a Nameless Guardian",
+  "advancements.eeeabsmobs.challenge_mode_kill_nameless_guardian.title": "The real savior",
+  "advancements.eeeabsmobs.challenge_mode_kill_nameless_guardian.description": "Kill Nameless Guardian in challenge mode",
   "advancements.eeeabsmobs.kill_all_immortal_mob.title": "Immortal Killer",
   "advancements.eeeabsmobs.kill_all_immortal_mob.description": "Kill one of every hostile monster"
 }

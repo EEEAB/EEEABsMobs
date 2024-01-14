@@ -18,6 +18,11 @@ public class ClientProxy extends ServerProxy {
     }
 
     @Override
+    public void onLateInit(IEventBus bus) {
+        super.onLateInit(bus);
+    }
+
+    @Override
     public Object getISTERProperties() {
         return new EEItemStackRenderProperties();
     }
