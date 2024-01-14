@@ -58,11 +58,11 @@ public class GuardianCombo1Goal extends AnimationAbstractGoal<EntityNamelessGuar
                 pursuit(4F, 1.7F);
                 entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.05f, entity.getVoicePitch() + 0.15f);
             } else if (tick == 12) {
-                List<LivingEntity> entities = entity.getNearByLivingEntities(range, 4F, range, range);
+                List<LivingEntity> entities = entity.getNearByLivingEntities(range - 0.5F, 4F, range - 0.5F, range - 0.5F);
                 for (LivingEntity hitEntity : entities) {
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
                     float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
-                    if ((entityHitDistance <= range && (entityRelativeAngle <= 10F && entityRelativeAngle >= -(attackArc + 20) / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
+                    if ((entityHitDistance <= range - 0.5F && (entityRelativeAngle <= 10F && entityRelativeAngle >= -(attackArc + 20) / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
                         entity.guardianHurtTarget(entity, hitEntity, 0.025F, 1.0F, baseDamageMultiplier, true, true);
                         double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
                         double ratioZ = (-Math.cos(entity.getYRot() * ((float) Math.PI / 180F)));
@@ -91,11 +91,11 @@ public class GuardianCombo1Goal extends AnimationAbstractGoal<EntityNamelessGuar
             } else if (tick == 11) {
                 entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 1.95f, entity.getVoicePitch());
             } else if (tick == 15) {
-                List<LivingEntity> entities = entity.getNearByLivingEntities(range + 0.15F, 4F, range + 0.15F, range + 0.15F);
+                List<LivingEntity> entities = entity.getNearByLivingEntities(range - 0.1F, 4F, range - 0.1F, range - 0.1F);
                 for (LivingEntity hitEntity : entities) {
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
                     float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
-                    if ((entityHitDistance <= range + 0.5F && (entityRelativeAngle <= attackArc1 / 2F && entityRelativeAngle >= -attackArc1 / 2F) || (entityRelativeAngle >= 360 - attackArc1 / 2F || entityRelativeAngle <= -360 + attackArc1 / 2F))) {
+                    if ((entityHitDistance <= range - 0.1F && (entityRelativeAngle <= attackArc1 / 2F && entityRelativeAngle >= -attackArc1 / 2F) || (entityRelativeAngle >= 360 - attackArc1 / 2F || entityRelativeAngle <= -360 + attackArc1 / 2F))) {
                         entity.guardianHurtTarget(entity, hitEntity, 0.025F, 1.0F, baseDamageMultiplier, true, true);
                         entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                         double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
