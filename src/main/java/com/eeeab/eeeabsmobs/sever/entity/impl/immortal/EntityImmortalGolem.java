@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.impl.immortal;
 
+import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerDieGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerResetGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerCopyTargetGoal;
@@ -11,10 +12,13 @@ import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationAttackGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationHurtGoal;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.github.alexthe666.citadel.animation.AnimationHandler;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -27,7 +31,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import com.github.alexthe666.citadel.animation.Animation;
-
 
 import javax.annotation.Nullable;
 
@@ -81,10 +84,34 @@ public class EntityImmortalGolem extends EntityImmortal implements IEntity {
         super.tick();
         AnimationHandler.INSTANCE.updateAnimations(this);
         meleeAttackAI();
+        if (this.isDangerous() && this.getAnimation() == ATTACK_ANIMATION) {
+            if (!this.level().isClientSide && this.getAnimationTick() == 7) {
+                this.level().broadcastEntityEvent(this, (byte) 5);
+                this.level().explode(this, this.getX(), this.getY(), this.getZ(), 1.0F, false, Level.ExplosionInteraction.NONE);
+                this.kill();
+            }
+        }
+    }
+
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == 5) {
+            ModParticleUtils.roundParticleOutburst(level(), 10, new ParticleOptions[]{ParticleTypes.LARGE_SMOKE, ParticleTypes.SMOKE}, getX(), this.getY(0.5), getZ(), 0.5F);
+            this.level().addParticle(ParticleTypes.EXPLOSION_EMITTER, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
+        } else {
+            super.handleEntityEvent(id);
+        }
+    }
+
+    @Override
+    protected void makePoofParticles() {
+        if (!isDangerous()) super.makePoofParticles();
     }
 
     private void meleeAttackAI() {
-        if (!this.level().isClientSide && this.getTarget() != null && !this.getTarget().isAlive()) setTarget(null);
+        if (!this.level().isClientSide && ((this.getTarget() != null && !this.getTarget().isAlive()) || this.getTarget() == getOwner()))
+            setTarget(null);
 
         if (attackTick > 0) {
             attackTick--;
@@ -94,12 +121,12 @@ public class EntityImmortalGolem extends EntityImmortal implements IEntity {
             LivingEntity target = getTarget();
             this.getLookControl().setLookAt(target, 30F, 30F);
             if (targetDistance > 6) {
-                this.getNavigation().moveTo(target, 1.0D);
+                this.getNavigation().moveTo(target, (isDangerous() ? 1.1D : 1.0D));
             }
             if (attackTick <= 0 && getSensing().hasLineOfSight(target)) {
                 attacking = true;
                 if (getAnimation() == NO_ANIMATION) {
-                    this.getNavigation().moveTo(target, 1.0D);
+                    this.getNavigation().moveTo(target, (isDangerous() ? 1.1D : 1.0D));
                 }
             }
 
@@ -138,7 +165,6 @@ public class EntityImmortalGolem extends EntityImmortal implements IEntity {
         this.populateDefaultEquipmentSlots(randomsource, difficultyIn);
         return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
-
 
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource p_217055_, DifficultyInstance p_217056_) {
@@ -184,4 +210,15 @@ public class EntityImmortalGolem extends EntityImmortal implements IEntity {
     protected SoundEvent getDeathSound() {
         return SoundInit.IMMORTAL_GOLEM_DEATH.get();
     }
+
+    public boolean isDangerous() {
+        return this.getItemInHand(InteractionHand.MAIN_HAND).is(Items.TNT) || this.getItemInHand(InteractionHand.OFF_HAND).is(Items.TNT);
+    }
+
+    public void setDangerous(boolean dangerous) {
+        if (dangerous) {
+            this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.TNT));
+        }
+    }
+
 }

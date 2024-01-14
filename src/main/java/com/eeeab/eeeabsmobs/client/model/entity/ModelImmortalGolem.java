@@ -136,6 +136,11 @@ public class ModelImmortalGolem extends ModelImmortalBase<EntityImmortalGolem> i
             this.walk(leftArm, speed, degree, false, 0, -0.05F, frame, 1);
             this.swing(leftArm, speed, degree, false, 0, 0, frame, 1);
         }
+
+        if (entity.isDangerous() && entity.getAnimation() != EntityImmortalGolem.SPAWN_ANIMATION) {
+            setStaticRotationAngle(leftArm, toRadians(20), toRadians(25), 0);
+            setStaticRotationAngle(rightArm, toRadians(20), toRadians(-25), 0);
+        }
     }
 
 
