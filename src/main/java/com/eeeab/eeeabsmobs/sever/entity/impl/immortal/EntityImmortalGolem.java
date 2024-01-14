@@ -19,6 +19,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -46,6 +47,7 @@ public class EntityImmortalGolem extends EntityImmortal implements IEntity {
             HURT_ANIMATION,
             SPAWN_ANIMATION,
     };
+    private boolean boom;
 
     public EntityImmortalGolem(EntityType<? extends EntityImmortalGolem> type, Level level) {
         super(type, level);
@@ -85,7 +87,15 @@ public class EntityImmortalGolem extends EntityImmortal implements IEntity {
         AnimationHandler.INSTANCE.updateAnimations(this);
         meleeAttackAI();
         if (this.isDangerous() && this.getAnimation() == ATTACK_ANIMATION) {
-            if (!this.level().isClientSide && this.getAnimationTick() == 7) {
+            if (this.getAnimationTick() == 6) this.boom();
+        }
+        if (this.isDangerous() && this.isOnFire()) this.boom();
+    }
+
+    private void boom() {
+        if (!this.level().isClientSide) {
+            if (!this.boom) {
+                this.boom = true;
                 this.level().broadcastEntityEvent(this, (byte) 5);
                 this.level().explode(this, this.getX(), this.getY(), this.getZ(), 1.0F, false, Level.ExplosionInteraction.NONE);
                 this.kill();
@@ -155,6 +165,15 @@ public class EntityImmortalGolem extends EntityImmortal implements IEntity {
             }
         }
         return super.hurt(source, damage);
+    }
+
+    @Override
+    protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (player.getItemInHand(hand).is(Items.FLINT_AND_STEEL)) {
+            this.boom();
+            return InteractionResult.SUCCESS;
+        }
+        return InteractionResult.PASS;
     }
 
     @Nullable
