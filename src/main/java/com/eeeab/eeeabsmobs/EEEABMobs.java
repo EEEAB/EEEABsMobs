@@ -12,6 +12,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.apache.logging.log4j.LogManager;
@@ -31,26 +32,30 @@ public class EEEABMobs {
         BlockInit.register(bus);
         BlockEntityInit.register(bus);
         EntityInit.register(bus);
-        //ModCreativeModeTabGroup.register(bus);
         EffectInit.register(bus);
         ParticleInit.register(bus);
         SoundInit.register(bus);
         StructuresInit.register(bus);
 
         PROXY.init(bus);
-        bus.addListener(this::init);
+        bus.<FMLCommonSetupEvent>addListener(this::init);
+        bus.<FMLLoadCompleteEvent>addListener(this::init);
         bus.addListener(HandlerCapability::registerCapabilities);
-
 
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new HandlerServerEvent());
         MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, HandlerCapability::attachEntityCapability);
-        //bus.addListener(NetWorkInit::registerMessage);
-        //MinecraftForge.EVENT_BUS.register(new HandlerClientEvent());
+
     }
 
-    public void init(final FMLCommonSetupEvent event){
+    public void init(final FMLCommonSetupEvent event) {
         PROXY.registerMessage();
+    }
+
+
+    private void init(FMLLoadCompleteEvent event) {
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        PROXY.onLateInit(bus);
     }
 
 }

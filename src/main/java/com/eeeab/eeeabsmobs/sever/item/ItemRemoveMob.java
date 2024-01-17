@@ -1,8 +1,9 @@
 package com.eeeab.eeeabsmobs.sever.item;
 
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
-import com.eeeab.eeeabsmobs.sever.util.MTUtil;
-import com.eeeab.eeeabsmobs.sever.util.ModCreativeModeTabGroup;
+import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.eeeab.eeeabsmobs.sever.util.MTUtils;
+import com.eeeab.eeeabsmobs.sever.util.EETabGroup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -17,8 +18,9 @@ import java.util.List;
 public class ItemRemoveMob extends Item {
     private static final double findSize = 16;
 
-    public ItemRemoveMob() {
-        super(new Properties().tab(ModCreativeModeTabGroup.TABS).stacksTo(1).rarity(Rarity.UNCOMMON));
+    //tab(EETabGroup.TABS).stacksTo(1).rarity(Rarity.UNCOMMON)
+    public ItemRemoveMob(Item.Properties properties) {
+        super(properties);
     }
 
     //右键删除16*16*16范围的模组实体
@@ -54,7 +56,7 @@ public class ItemRemoveMob extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.addAll(MTUtil.complexText(MTUtil.ITEM_PREFIX, 2, MTUtil.STYLE_GRAY, "remove_mob"));
+        tooltip.addAll(MTUtils.complexText(MTUtils.ITEM_PREFIX, 2, MTUtils.STYLE_GRAY, "remove_mob"));
     }
 
     private static List<Entity> getNearByEntities(Entity entity, double size) {

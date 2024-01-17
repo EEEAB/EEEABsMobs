@@ -75,7 +75,7 @@ public class EntityImmortalKnight extends AbstractImmortalSkeleton implements IE
 
     @Override
     protected EEConfigHandler.AttributeConfig getAttributeConfig() {
-        return EEConfigHandler.COMMON.MOB.IMMORTAL.KNIGHT.combatConfig;
+        return EEConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_KNIGHT.combatConfig;
     }
 
     @Override
@@ -168,7 +168,7 @@ public class EntityImmortalKnight extends AbstractImmortalSkeleton implements IE
                 this.setLastHurtByMob(livingEntity);
             }
             if (ModEntityUtils.isProjectileSource(source)) {
-                damage *= 0.1F;
+                damage *= 0.5F;
             }
             return super.hurt(source, damage);
         }

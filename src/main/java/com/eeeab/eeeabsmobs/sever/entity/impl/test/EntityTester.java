@@ -1,13 +1,13 @@
 package com.eeeab.eeeabsmobs.sever.entity.impl.test;
 
+import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EELookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationActivateGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationDeactivateGoal;
 import com.eeeab.eeeabsmobs.sever.entity.impl.EEEABMobLibrary;
-import com.eeeab.eeeabsmobs.sever.entity.IEntity;
+import com.eeeab.eeeabsmobs.sever.util.MTUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.AnimationHandler;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -25,26 +25,21 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 //伤害测试单位 仅用于测试
-@Deprecated
-public class EntityTestllager extends EEEABMobLibrary implements IEntity {
+public class EntityTester extends EEEABMobLibrary implements IEntity {
     public static final Animation YES = Animation.create(5);
     public static final Animation NO = Animation.create(5);
     public static final Animation[] ANIMATIONS = {YES, NO};
-    private static final EntityDataAccessor<Boolean> ACTIVE = SynchedEntityData.defineId(EntityTestllager.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> ACTIVE = SynchedEntityData.defineId(EntityTester.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Optional<Component>> DAMAGE = SynchedEntityData.defineId(EntityTester.class, EntityDataSerializers.OPTIONAL_COMPONENT);
 
-    public EntityTestllager(EntityType<? extends EEEABMobLibrary> type, Level level) {
+    public EntityTester(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
-        active = false;
-    }
-
-    @Override
-    public void sendSystemMessage(@NotNull Component component) {
-        Minecraft mc = Minecraft.getInstance();
-        mc.gui.getChat().addMessage(component);
+        active = true;
     }
 
     @Override
@@ -74,22 +69,17 @@ public class EntityTestllager extends EEEABMobLibrary implements IEntity {
 
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().
-                add(Attributes.MAX_HEALTH, 20.0D);
+                add(Attributes.MAX_HEALTH, 20.0D)
+                .add(Attributes.ATTACK_DAMAGE, 0.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.0D)
+                .add(Attributes.FLYING_SPEED, 0.0D);
     }
 
     @Override
     public void tick() {
-        if (!this.isActive()) this.setDeltaMovement(0, onGround ? 0 : getDeltaMovement().y, 0);
+        if (!this.isActive()) this.setDeltaMovement(0, isOnGround() ? 0 : getDeltaMovement().y, 0);
         super.tick();
         AnimationHandler.INSTANCE.updateAnimations(this);
-    }
-
-    @Override
-    public void aiStep() {
-        super.aiStep();
-        if (invulnerableTime > 0) {
-            invulnerableTime = 0;
-        }
     }
 
     @Override
@@ -105,14 +95,14 @@ public class EntityTestllager extends EEEABMobLibrary implements IEntity {
     @Override
     public boolean hurt(DamageSource source, float damage) {
         Entity entity = source.getEntity();
-        if (entity != null) {
-            //服务端崩溃
-            //sendSystemMessage(Component.keybind("Damage source: " + entity.getDisplayName().getString() + " damage: " + damage));
-            damage = 0;
-            super.hurt(source, damage);
-        }/* else if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+        if (this.level.isClientSide) {
+            return false;
+        } else if (entity != null) {
+            this.setDamage(damage);
+            super.hurt(source, 0);
+        } else if (source == DamageSource.OUT_OF_WORLD || source == DamageSource.GENERIC) {
             return super.hurt(source, damage);
-        }*/
+        }
         return false;
     }
 
@@ -129,7 +119,7 @@ public class EntityTestllager extends EEEABMobLibrary implements IEntity {
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource p_21239_) {
+    protected SoundEvent getHurtSound(DamageSource damageSource) {
         return SoundEvents.VILLAGER_HURT;
     }
 
@@ -139,16 +129,24 @@ public class EntityTestllager extends EEEABMobLibrary implements IEntity {
         return SoundEvents.VILLAGER_DEATH;
     }
 
+    @Override
+    public boolean shouldShowName() {
+        return true;
+    }
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (getAnimation() == NO_ANIMATION) {
-            setActive(!isActive());
-            this.playAnimation(isActive() ? YES : NO);
+        if (player.isShiftKeyDown()) {
+            this.setDamage(0.0);
+            this.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP);
+            player.displayClientMessage(Component.keybind("reset success").setStyle(MTUtils.STYLE_GREEN), true);
             return InteractionResult.SUCCESS;
         }
-        //playSound(isActive() ? SoundEvents.VILLAGER_YES : SoundEvents.VILLAGER_NO, 1.0F, 1.0F);
-        //setNoAi(isActive());
+        if (getAnimation() == NO_ANIMATION) {
+            setActive(!isActive());
+            this.playAnimation(isActive() ? NO : YES);
+            return InteractionResult.SUCCESS;
+        }
         return InteractionResult.PASS;
     }
 
@@ -174,6 +172,7 @@ public class EntityTestllager extends EEEABMobLibrary implements IEntity {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(ACTIVE, true);
+        this.entityData.define(DAMAGE, Optional.of(Component.keybind("0.0")));
     }
 
     public void setActive(boolean isActive) {
@@ -182,5 +181,13 @@ public class EntityTestllager extends EEEABMobLibrary implements IEntity {
 
     public boolean isActive() {
         return this.entityData.get(ACTIVE);
+    }
+
+    public Component getDamage() {
+        return this.entityData.get(DAMAGE).orElse(Component.keybind("0.0"));
+    }
+
+    public void setDamage(double damage) {
+        this.entityData.set(DAMAGE, Optional.of(Component.keybind(String.format("%.1f", damage))));
     }
 }

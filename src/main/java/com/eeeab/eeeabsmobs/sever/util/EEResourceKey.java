@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
-public class ModKey {
+public class EEResourceKey {
     //结构资源键
     public static ResourceKey<Structure> ANCIENT_TOMB = registerStructureKey("ancient_tomb");
 

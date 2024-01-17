@@ -5,8 +5,8 @@ import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 
-public class ModDamageSource extends DamageSource {
-    public ModDamageSource(String pMessageId) {
+public class EEDamageSource extends DamageSource {
+    public EEDamageSource(String pMessageId) {
         super(pMessageId);
     }
 

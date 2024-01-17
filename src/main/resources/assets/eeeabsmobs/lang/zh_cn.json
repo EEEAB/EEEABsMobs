@@ -17,7 +17,7 @@
   "entity.eeeabsmobs.scorch": "烧焦",
   "entity.eeeabsmobs.camera_shake": "相机抖动",
   "entity.eeeabsmobs.moving_controller": "移动控制器",
-  "entity.eeeabsmobs.testllager": "伤害测试单位",
+  "entity.eeeabsmobs.tester": "测试者",
   "entity.eeeabsmobs.guardian_blade": "守护者之刃",
 
   "_comment": "物品",
@@ -46,7 +46,8 @@
   "item.eeeabsmobs.immortal_knight_egg": "不朽骑士刷怪蛋",
   "item.eeeabsmobs.immortal_shaman_egg": "不朽巫师刷怪蛋",
   "item.eeeabsmobs.immortal_golem_egg": "不朽傀儡刷怪蛋",
-  "item.eeeabsmobs.nameless_guardian_egg": "无名守护者刷怪蛋(未完成)",
+  "item.eeeabsmobs.nameless_guardian_egg": "无名守护者刷怪蛋",
+  "item.eeeabsmobs.tester_egg": "测试者刷怪蛋",
 
   "_comment": "提示",
   "item.eeeabsmobs.remove_mob.tip_1": "左键移除 EEEAB的生物 模组的生物/实体",
@@ -86,6 +87,8 @@
   "advancements.eeeabsmobs.ancient_tomb.description": "到达远古陵墓",
   "advancements.eeeabsmobs.kill_nameless_guardian.title": "最后一道防线",
   "advancements.eeeabsmobs.kill_nameless_guardian.description": "击杀无名守护者",
+  "advancements.eeeabsmobs.challenge_mode_kill_nameless_guardian.title": "真正的救世主",
+  "advancements.eeeabsmobs.challenge_mode_kill_nameless_guardian.description": "在挑战模式下击杀无名守护者",
   "advancements.eeeabsmobs.kill_all_immortal_mob.title": "不朽杀手",
   "advancements.eeeabsmobs.kill_all_immortal_mob.description": "击杀所有不朽生物"
 

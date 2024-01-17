@@ -1,14 +1,13 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.eeeabsmobs.sever.entity.impl.test.EntityTestllager;
+import com.eeeab.eeeabsmobs.sever.entity.impl.test.EntityTester;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedModelBox;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import com.github.alexthe666.citadel.client.model.basic.BasicModelPart;
 import com.google.common.collect.ImmutableList;
 
-@Deprecated
-public class ModelTestllager extends AdvancedEntityModel<EntityTestllager> {
+public class ModelTester extends AdvancedEntityModel<EntityTester> {
     private final AdvancedModelBox root;
     private final AdvancedModelBox upper;
     private final AdvancedModelBox head;
@@ -25,7 +24,7 @@ public class ModelTestllager extends AdvancedEntityModel<EntityTestllager> {
     private final ModelAnimator animator;
 
 
-    public ModelTestllager() {
+    public ModelTester() {
         texHeight = 64;
         texWidth = 64;
 
@@ -109,10 +108,10 @@ public class ModelTestllager extends AdvancedEntityModel<EntityTestllager> {
     }
 
     @Override
-    public void setupAnim(EntityTestllager entityTestllager, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.animate(entityTestllager, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        float delta = ageInTicks - entityTestllager.tickCount;
-        float frame = entityTestllager.frame + delta;
+    public void setupAnim(EntityTester entityTester, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.animate(entityTester, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        float delta = ageInTicks - entityTester.tickCount;
+        float frame = entityTester.frame + delta;
         float walkSpeed = 0.6F;
         float walkDegree = 0.6F;
         this.faceTarget(netHeadYaw, headPitch, 1.0F, this.head);
@@ -125,10 +124,10 @@ public class ModelTestllager extends AdvancedEntityModel<EntityTestllager> {
         this.bob(this.head, walkSpeed * 0.2F, walkDegree * 0.2F, true, frame, 1);
     }
 
-    private void animate(EntityTestllager entityTestllager, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    private void animate(EntityTester entityTester, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
-        animator.update(entityTestllager);
-        if (animator.setAnimation(EntityTestllager.YES) || animator.setAnimation(EntityTestllager.NO)) {
+        animator.update(entityTester);
+        if (animator.setAnimation(EntityTester.YES) || animator.setAnimation(EntityTester.NO)) {
             animator.startKeyframe(2);
             animator.rotate(head, toRadians(35), 0, 0);
             animator.rotate(upper, toRadians(5), 0, 0);

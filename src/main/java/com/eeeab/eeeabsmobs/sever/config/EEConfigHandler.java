@@ -35,7 +35,6 @@ public class EEConfigHandler {
         }
 
         public final GuardianLaser GUARDIAN_LASER;
-        //public final Scorch SCORCH;
     }
 
     public static class GuardianLaser {
@@ -50,51 +49,39 @@ public class EEConfigHandler {
         public final ForgeConfigSpec.BooleanValue enableGenerateScorchEntity;
     }
 
-    //public static class Scorch {
-    //    public Scorch(final ForgeConfigSpec.Builder builder) {
-    //        builder.push("Scorch");
-    //        this.existTimer = BUILDER.comment("Exist duration").
-    //                defineInRange("Exist Seconds", 1, 1, 9);
-    //        builder.pop();
-    //    }
-    //
-    //    //存在时间
-    //    public final ForgeConfigSpec.ConfigValue<Integer> existTimer;
-    //}
-
     public static class Mob {
         public Mob(final ForgeConfigSpec.Builder builder) {
             builder.push("Mobs");
             IMMORTAL = new ImmortalMobs(builder);
-            GUARDIAN = new Guardian(builder);
+            NAMELESS_GUARDIAN = new NamelessGuardian(builder);
             builder.pop();
         }
 
         public final ImmortalMobs IMMORTAL;
-        public final Guardian GUARDIAN;
+        public final NamelessGuardian NAMELESS_GUARDIAN;
     }
 
     public static class ImmortalMobs {
         public ImmortalMobs(final ForgeConfigSpec.Builder builder) {
             builder.push("Immortal Mobs");
-            SKELETON = new Skeleton(builder);
-            KNIGHT = new Knight(builder);
-            SHAMAN = new Shaman(builder);
-            GOLEM = new Golem(builder);
+            IMMORTAL_SKELETON = new ImmortalSkeleton(builder);
+            IMMORTAL_KNIGHT = new ImmortalKnight(builder);
+            IMMORTAL_SHAMAN = new ImmortalShaman(builder);
+            IMMORTAL_GOLEM = new ImmortalGolem(builder);
             THE_IMMORTAL = new Immortal(builder);
             builder.pop();
         }
 
-        public final Skeleton SKELETON;
-        public final Knight KNIGHT;
-        public final Shaman SHAMAN;
-        public final Golem GOLEM;
+        public final ImmortalSkeleton IMMORTAL_SKELETON;
+        public final ImmortalKnight IMMORTAL_KNIGHT;
+        public final ImmortalShaman IMMORTAL_SHAMAN;
+        public final ImmortalGolem IMMORTAL_GOLEM;
         public final Immortal THE_IMMORTAL;
     }
 
     //不朽骷髅
-    public static class Skeleton {
-        public Skeleton(final ForgeConfigSpec.Builder builder) {
+    public static class ImmortalSkeleton {
+        public ImmortalSkeleton(final ForgeConfigSpec.Builder builder) {
             builder.push("Immortal Skeleton");
             combatConfig = new AttributeConfig();
             builder.pop();
@@ -104,8 +91,8 @@ public class EEConfigHandler {
     }
 
     //不朽骷髅骑士
-    public static class Knight {
-        public Knight(final ForgeConfigSpec.Builder builder) {
+    public static class ImmortalKnight {
+        public ImmortalKnight(final ForgeConfigSpec.Builder builder) {
             builder.push("Immortal Knight");
             combatConfig = new AttributeConfig();
             builder.pop();
@@ -115,8 +102,8 @@ public class EEConfigHandler {
     }
 
     //不朽巫师
-    public static class Shaman {
-        public Shaman(final ForgeConfigSpec.Builder builder) {
+    public static class ImmortalShaman {
+        public ImmortalShaman(final ForgeConfigSpec.Builder builder) {
             builder.push("Immortal Shaman");
             healValue = BUILDER.comment("Immortal Shaman heal values").
                     defineInRange("Heal values", 16, 0D, Double.MAX_VALUE);
@@ -131,8 +118,8 @@ public class EEConfigHandler {
     }
 
     //不朽傀儡
-    public static class Golem {
-        public Golem(final ForgeConfigSpec.Builder builder) {
+    public static class ImmortalGolem {
+        public ImmortalGolem(final ForgeConfigSpec.Builder builder) {
             builder.push("Immortal Golem");
             combatConfig = new AttributeConfig();
             builder.pop();
@@ -142,13 +129,14 @@ public class EEConfigHandler {
     }
 
     //无名守卫者
-    public static class Guardian {
-        public Guardian(final ForgeConfigSpec.Builder builder) {
-            builder.push("The Nameless Guardian");
+    public static class NamelessGuardian {
+        public NamelessGuardian(final ForgeConfigSpec.Builder builder) {
+            builder.push("Nameless Guardian");
             enableNonCombatHeal = BUILDER.comment("If False disable non-combat heal").
                     define("Enable non-combat heal", true);
-            suckBloodFactor = BUILDER.comment("The upper limit of vampire is based on the percentage of maximum health").
+            suckBloodFactor = BUILDER.comment("Max life steal coefficient (based on a percentage of max health)").
                     defineInRange("Suck blood factor", 0.05, 0, 1);
+            challengeMode = BUILDER.comment("Challenge mode!").define("Be careful! It's going to get tricky!", false);
             combatConfig = new AttributeConfig();
             maximumDamageCap = new GeneralDamageCap(0.05F);
             builder.pop();
@@ -158,6 +146,8 @@ public class EEConfigHandler {
         public final ForgeConfigSpec.BooleanValue enableNonCombatHeal;
         //吸血系数上限(基于最大生命值的百分比)
         public final ForgeConfigSpec.DoubleValue suckBloodFactor;
+        //挑战模式
+        public final ForgeConfigSpec.BooleanValue challengeMode;
         public final AttributeConfig combatConfig;
         public final GeneralDamageCap maximumDamageCap;
     }

@@ -1,10 +1,11 @@
 package com.eeeab.eeeabsmobs.sever.entity.impl.immortal;
 
 import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.impl.EEEABMobLibrary;
-import com.eeeab.eeeabsmobs.sever.entity.util.EEMobType;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
+import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
+import com.eeeab.eeeabsmobs.sever.entity.impl.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.impl.projectile.EntityShamanBomb;
+import com.eeeab.eeeabsmobs.sever.entity.util.EEMobType;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -17,7 +18,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.*;
@@ -29,13 +33,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public abstract class EntityImmortal extends EEEABMobLibrary implements GlowEntity {
+public abstract class EntityImmortal extends EEEABMobLibrary implements GlowEntity, VenerableEntity<EntityImmortal> {
     protected int attackTick;
     protected boolean attacking;
-    private boolean isBySummon;
+    private boolean isSummon;
     private int countdown = -1;
     @Nullable
-    private Mob owner;
+    private EntityImmortal owner;
     private UUID ownerUUID;
     private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EntityImmortal.class, EntityDataSerializers.BOOLEAN);
 
@@ -84,7 +88,7 @@ public abstract class EntityImmortal extends EEEABMobLibrary implements GlowEnti
             return;
         }
 
-        if (this.isBySummon && --countdown <= 0) {
+        if (this.isSummon() && --countdown <= 0) {
             this.hurt(DamageSource.STARVE, 1.0F);
             countdown = 20;
         }
@@ -124,7 +128,7 @@ public abstract class EntityImmortal extends EEEABMobLibrary implements GlowEnti
 
     //设置召唤物存在时长
     protected void setSummonAliveTime(int time) {
-        this.isBySummon = true;
+        this.isSummon = true;
         this.countdown = time;
     }
 
@@ -183,10 +187,10 @@ public abstract class EntityImmortal extends EEEABMobLibrary implements GlowEnti
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        if (this.isBySummon) {
+        if (this.isSummon) {
             compound.putInt("countdown", countdown);
         }
-        if (this.owner != null && this.owner.isAlive()) {
+        if (this.owner != null && this.owner.getHealth() > 0F) {
             compound.putUUID("owner", owner.getUUID());
         }
     }
@@ -197,7 +201,7 @@ public abstract class EntityImmortal extends EEEABMobLibrary implements GlowEnti
         if (compound.contains("countdown")) {
             this.setSummonAliveTime(compound.getInt("countdown"));
         }
-        this.ownerUUID = compound.hasUUID("owner") ? compound.getUUID("owner") : null;
+        this.setOwnerUUID(compound.hasUUID("owner") ? compound.getUUID("owner") : null);
     }
 
     protected Animation getSpawnAnimation() {
@@ -211,20 +215,29 @@ public abstract class EntityImmortal extends EEEABMobLibrary implements GlowEnti
     }
 
     @Nullable
-    public Mob getOwner() {
+    @Override
+    public EntityImmortal getOwner() {
         return owner;
     }
 
-    public void setOwner(@Nullable Mob owner) {
+    @Override
+    public void setOwner(@Nullable EntityImmortal owner) {
         this.owner = owner;
     }
 
+    @Override
     public UUID getOwnerUUID() {
         return this.ownerUUID;
     }
 
-    public boolean isBySummon() {
-        return this.isBySummon;
+    @Override
+    public void setOwnerUUID(UUID uuid) {
+        this.ownerUUID = uuid;
+    }
+
+    @Override
+    public boolean isSummon() {
+        return this.isSummon;
     }
 
     @Override

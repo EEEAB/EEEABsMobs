@@ -2,24 +2,24 @@ package com.eeeab.eeeabsmobs.sever.entity.impl.immortal;
 
 import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
 import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EELookAtGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
-import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
-import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
+import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
 import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
-import com.eeeab.eeeabsmobs.sever.entity.util.MobSkinStyle;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityCameraShake;
-import com.eeeab.eeeabsmobs.sever.entity.impl.projectile.EntityShamanBomb;
+import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EELookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.KeepDistanceGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationDieGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationFullRangeAttackGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationHurtGoal;
-import com.eeeab.eeeabsmobs.sever.init.*;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
+import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.entity.impl.projectile.EntityShamanBomb;
+import com.eeeab.eeeabsmobs.sever.entity.util.MobSkinStyle;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
-import com.eeeab.eeeabsmobs.sever.util.ModTag;
+import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
+import com.eeeab.eeeabsmobs.sever.init.*;
+import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.AnimationHandler;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.core.BlockPos;
@@ -31,6 +31,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -38,7 +39,8 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -53,13 +55,12 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import com.github.alexthe666.citadel.animation.Animation;
 
 import javax.annotation.Nullable;
-
 import java.util.EnumSet;
 import java.util.List;
 
+//基本AI完成
 public class EntityImmortalShaman extends EntityImmortal implements IEntity, RangedAttackMob, NeedStopAiEntity {
     public static final Animation DIE_ANIMATION = Animation.create(80);
     public static final Animation HURT_ANIMATION = Animation.create(0);
@@ -102,7 +103,7 @@ public class EntityImmortalShaman extends EntityImmortal implements IEntity, Ran
 
     @Override
     protected EEConfigHandler.AttributeConfig getAttributeConfig() {
-        return EEConfigHandler.COMMON.MOB.IMMORTAL.SHAMAN.combatConfig;
+        return EEConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SHAMAN.combatConfig;
     }
 
     @Override
@@ -152,10 +153,10 @@ public class EntityImmortalShaman extends EntityImmortal implements IEntity, Ran
                 return entity instanceof EntityImmortal && EEConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get();
             }
         });
-        this.goalSelector.addGoal(2, new EntityImmortalShaman.ShamanSummonGoal());
-        this.goalSelector.addGoal(3, new EntityImmortalShaman.ShamanAvoid());
-        this.goalSelector.addGoal(4, new EntityImmortalShaman.ShamanBombing());
-        this.goalSelector.addGoal(5, new EntityImmortalShaman.ShamanWololo());
+        this.goalSelector.addGoal(2, new ShamanSummon());
+        this.goalSelector.addGoal(3, new ShamanAvoid());
+        this.goalSelector.addGoal(4, new ShamanBombing());
+        this.goalSelector.addGoal(5, new ShamanWololo());
         this.goalSelector.addGoal(6, new KeepDistanceGoal<>(this, 1.0D, 16.0F, 1.5F));
     }
 
@@ -195,7 +196,7 @@ public class EntityImmortalShaman extends EntityImmortal implements IEntity, Ran
             } else if (animation == SPELL_CASTING_HEAL_ANIMATION) {
                 int timer;
                 if (this.hurtCountBeforeHeal < CAN_STOP_HEAL_COUNT && !this.isWeakness()) {
-                    this.heal((float) (EEConfigHandler.COMMON.MOB.IMMORTAL.SHAMAN.healValue.get() * 1F));
+                    this.heal((float) (EEConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SHAMAN.healValue.get() * 1F));
                     this.level.broadcastEntityEvent(this, (byte) 12);
                     timer = 15;
                 } else {
@@ -290,7 +291,7 @@ public class EntityImmortalShaman extends EntityImmortal implements IEntity, Ran
         if (this.level.isClientSide) {
             return false;
         } else if (entity != null) {
-            float maximumDamageCap = (float) (EEConfigHandler.COMMON.MOB.IMMORTAL.SHAMAN.maximumDamageCap.damageCap.get() * 1F);
+            float maximumDamageCap = (float) (EEConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SHAMAN.maximumDamageCap.damageCap.get() * 1F);
             float maxHurtDamage = getMaxHealth() * maximumDamageCap;
             if (this.getAnimation() == SPELL_CASTING_HEAL_ANIMATION && !(this.hurtTime > 0)) {
                 this.hurtCountBeforeHeal++;
@@ -369,7 +370,7 @@ public class EntityImmortalShaman extends EntityImmortal implements IEntity, Ran
     }
 
     private void spawnExplosionParticles(int amount, ParticleOptions[] particles, float velocity) {
-        ModParticleUtils.randomAnnularParticleOutburst(this.level, amount, velocity, particles, this.getX(), this.getY(), this.getZ());
+        ModParticleUtils.randomAnnularParticleOutburst(this.level, amount, particles, this.getX(), this.getY(), this.getZ(), velocity);
     }
 
     private void addParticlesAroundHeart(int duration) {
@@ -528,7 +529,7 @@ public class EntityImmortalShaman extends EntityImmortal implements IEntity, Ran
         }
     }
 
-    private class ShamanSummonGoal extends ShamanSpellGoal {
+    private class ShamanSummon extends ShamanSpellGoal {
         private final TargetingConditions CountTargeting = TargetingConditions.forNonCombat().range(30.0D).ignoreLineOfSight().ignoreInvisibilityTesting();
 
         @Override
@@ -575,6 +576,8 @@ public class EntityImmortalShaman extends EntityImmortal implements IEntity, Ran
                         MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
                 entity.setOwner(EntityImmortalShaman.this);
                 entity.setSummonAliveTime(20 * (30 + EntityImmortalShaman.this.random.nextInt(90)));
+                Difficulty difficulty = EntityImmortalShaman.this.level.getDifficulty();
+                entity.setDangerous(EntityImmortalShaman.this.random.nextInt(10 - difficulty.getId()) == 0);
                 entity.setPos(vec3);
 
                 level.addFreshEntity(entity);

@@ -17,6 +17,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 
 import javax.annotation.Nullable;
 
+//基本AI完成
 public class EntityImmortalSkeleton extends AbstractImmortalSkeleton implements IEntity {
     public EntityImmortalSkeleton(EntityType<? extends EntityImmortalSkeleton> type, Level level) {
         super(type, level);
@@ -27,7 +28,7 @@ public class EntityImmortalSkeleton extends AbstractImmortalSkeleton implements 
 
     @Override
     protected EEConfigHandler.AttributeConfig getAttributeConfig() {
-        return EEConfigHandler.COMMON.MOB.IMMORTAL.SKELETON.combatConfig;
+        return EEConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SKELETON.combatConfig;
     }
 
 

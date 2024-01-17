@@ -24,6 +24,8 @@ public class EntityGuardianBlade extends EntityMagicEffects {
     private static final float MAX_DAMAGE = 30F;
     private static final int PLAY_DURATION = 32;
     private static final int GUARDIAN_DURATION = 40;
+    private boolean moveOffset;
+    private int aliveTick;
     private static final float[][] BLOCK_OFFSETS = {
             {-0.5F, -0.5F},
             {-0.5F, 0.5F},
@@ -38,8 +40,9 @@ public class EntityGuardianBlade extends EntityMagicEffects {
     }
 
 
-    public EntityGuardianBlade(Level level, LivingEntity caster, double x, double y, double z, float yRot) {
+    public EntityGuardianBlade(Level level, LivingEntity caster, double x, double y, double z, float yRot, boolean moveOffset) {
         this(EntityInit.GUARDIAN_BLADE.get(), level);
+        this.moveOffset = moveOffset;
         this.caster = caster;
         this.setYRot((yRot * (180F / (float) Math.PI)) - 90F);
         this.setPos(x, y, z);
@@ -51,12 +54,14 @@ public class EntityGuardianBlade extends EntityMagicEffects {
         alphaControlled.updatePrevTimer();
         this.move(MoverType.SELF, this.getDeltaMovement());
         int duration = caster instanceof EntityNamelessGuardian ? GUARDIAN_DURATION : PLAY_DURATION;
-        if (this.tickCount == 1) {
+        if (this.aliveTick == 0) {
             Vec3 lookAngle = this.getLookAngle();
-            this.shoot(lookAngle.x, lookAngle.y, lookAngle.z, 1.4 + this.random.nextFloat() * 0.5F);
-        } else if (this.tickCount <= duration) {
+            float speed = 1.4F;
+            if (moveOffset) speed += this.random.nextFloat() * 0.5F;
+            this.shoot(lookAngle.x, lookAngle.y, lookAngle.z, speed);
+        } else if (this.aliveTick <= duration) {
             //移动速度会随着时间衰减
-            if (this.tickCount % 5 == 0) {
+            if (this.aliveTick % 5 == 0) {
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.4, 0.4, 0.4));
                 this.alphaControlled.increaseTimer(2);
             }
@@ -69,6 +74,8 @@ public class EntityGuardianBlade extends EntityMagicEffects {
         if (this.alphaControlled.getTimer() >= 20) {
             this.discard();
         }
+
+        this.aliveTick++;
     }
 
     private void shoot(double x, double y, double z, double speed) {
@@ -76,22 +83,22 @@ public class EntityGuardianBlade extends EntityMagicEffects {
     }
 
     private void doHurtTarget() {
-        if (caster != null) {
-            double attackValue;
-            float moveX = (float) (this.getX() - this.xo);
-            float moveZ = (float) (this.getZ() - this.zo);
-            float speed = Mth.sqrt(moveX * moveX + moveZ * moveZ);
-            attackValue = caster.getAttributeValue(Attributes.ATTACK_DAMAGE);
-            attackValue = Mth.clamp(attackValue, attackValue, MAX_DAMAGE);
-            List<LivingEntity> entities = this.level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.2));
-            for (LivingEntity target : entities) {
-                if (target == caster) continue;
-                if (caster instanceof EntityNamelessGuardian) {
-                    attackValue += target.getMaxHealth() * 0.05F;
+        if (!this.level.isClientSide) {
+            if (caster != null) {
+                double attackValue;
+                double duration = caster instanceof EntityNamelessGuardian ? GUARDIAN_DURATION : PLAY_DURATION;
+                attackValue = caster.getAttributeValue(Attributes.ATTACK_DAMAGE);
+                attackValue = Mth.clamp(attackValue, 0, MAX_DAMAGE);
+                List<LivingEntity> entities = this.level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.2));
+                for (LivingEntity target : entities) {
+                    if (target == caster) continue;
+                    if (caster instanceof EntityNamelessGuardian) {
+                        attackValue += target.getMaxHealth() * 0.05F;
+                    }
+                    //伤害会随着时间衰减
+                    double damage = Math.abs(attackValue * (((double) this.aliveTick - duration) / duration));
+                    target.hurt(DamageSource.indirectMagic(target, caster), (float) damage);
                 }
-                //伤害会随着移速衰减
-                float damage = (float) (attackValue - attackValue * (1 - speed));
-                target.hurt(DamageSource.indirectMagic(target, caster), damage);
             }
         }
     }

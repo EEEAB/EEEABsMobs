@@ -51,6 +51,10 @@ public class ControlledAnimation {
         return prevtimer;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
     /**
      * Sets the timer to a specific value.
      *

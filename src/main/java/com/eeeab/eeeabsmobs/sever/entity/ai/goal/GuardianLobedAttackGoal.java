@@ -37,7 +37,7 @@ public class GuardianLobedAttackGoal extends AnimationCommonGoal<EntityNamelessG
             } else if (tick == 24) {
                 entity.playSound(SoundEvents.STONE_BREAK, 1.5F, 1.0F);
             }
-            entity.lobedAttack(tick - 13, 2.0, 0.0, maxFallingDistance, isPowered ? 1.25F : 1.0F);
+            entity.lobedAttack(tick - 13, 2.0, 0.0, maxFallingDistance, (isPowered ? 1.0F : 0.8F));
         }
     }
 
@@ -49,7 +49,7 @@ public class GuardianLobedAttackGoal extends AnimationCommonGoal<EntityNamelessG
             double x = entity.getX() + Mth.cos(f1) * 3D;
             double y = entity.getY();
             double z = entity.getZ() + Mth.sin(f1) * 3D;
-            EntityGuardianBlade blade = new EntityGuardianBlade(entity.level, entity, x, y, z, f1);
+            EntityGuardianBlade blade = new EntityGuardianBlade(entity.level, entity, x, y, z, f1, true);
             entity.level.addFreshEntity(blade);
         }
     }

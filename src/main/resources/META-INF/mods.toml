@@ -1,10 +1,10 @@
 modLoader = "javafml"
-loaderVersion = "${loader_version_range}"
-license = "${mod_license}"
+loaderVersion = "[43,)"
+license = "GNU LESSER GENERAL PUBLIC LICENSE"
 
 [[mods]]
 modId = "eeeabsmobs"
-version = "0.4"
+version = "0.5"
 displayName = "EEEAB's Mobs"
 displayURL = "https://www.curseforge.com/minecraft/mc-mods/eeeabs-mobs"
 logoFile = "banner.png"
@@ -13,13 +13,13 @@ description = '''EEEAB's Mobs adds a variety of challenging mobs to your Minecra
 [[dependencies.eeeabsmobs]]
 modId = "forge"
 mandatory = true
-versionRange = "${forge_version_range}"
+versionRange = "[43,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.eeeabsmobs]]
 modId = "minecraft"
 mandatory = true
-versionRange = "${minecraft_version_range}"
+versionRange = "[1.19.2,1.20)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.eeeabsmobs]] #optional

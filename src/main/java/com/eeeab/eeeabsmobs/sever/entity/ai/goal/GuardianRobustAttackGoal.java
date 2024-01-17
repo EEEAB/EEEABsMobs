@@ -1,14 +1,18 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
-import com.eeeab.eeeabsmobs.sever.util.ModDamageSource;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
 import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
-import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.init.EffectInit;
+import com.eeeab.eeeabsmobs.sever.init.SoundInit;
+import com.eeeab.eeeabsmobs.sever.util.EEDamageSource;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -27,7 +31,7 @@ public class GuardianRobustAttackGoal extends AnimationCommonGoal<EntityNameless
         entity.setDeltaMovement(0, entity.isOnGround() ? 0 : entity.getDeltaMovement().y(), 0);
         if (tick < 32 && target != null) {
             //entity.getLookControl().setLookAt(target, 30F, 30F);
-            entity.lookAt(target,30F,30F);
+            entity.lookAt(target, 30F, 30F);
         } else {
             entity.setYRot(entity.yRotO);
         }
@@ -37,11 +41,18 @@ public class GuardianRobustAttackGoal extends AnimationCommonGoal<EntityNameless
             final float attackArc = 40F;
             final float range = 4.6F;
             List<LivingEntity> entities = entity.getNearByLivingEntities(range, range - 0.6F, range, range);
-            for (LivingEntity livingEntity : entities) {
-                float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, livingEntity);
-                float entityHitDistance = (float) Math.sqrt((livingEntity.getZ() - entity.getZ()) * (livingEntity.getZ() - entity.getZ()) + (livingEntity.getX() - entity.getX()) * (livingEntity.getX() - entity.getX())) - livingEntity.getBbWidth() / 2F;
+            for (LivingEntity hitEntity : entities) {
+                float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
+                float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
                 if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                    entity.guardianHurtTarget(ModDamageSource.guardianRobustAttack(entity), entity, livingEntity, 0.1F, 1.0F, 2.5F, true, true);
+                    double duration = 3;
+                    if (Difficulty.HARD.equals(this.entity.level.getDifficulty())) duration = 5;
+                    if (hitEntity instanceof Player player && !player.isCreative() && !player.isBlocking()) {
+                        player.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), (int) (duration * 20), 0, false, false, true));
+                    } else if (!(hitEntity instanceof Player) && !hitEntity.isBlocking()) {
+                        hitEntity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), (int) (duration * 20), 0, false, false, true));
+                    }
+                    entity.guardianHurtTarget(EEDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.03F, 1.85F, 1.4F, true, true);
                 }
             }
         } else if (tick == 36) {
@@ -49,13 +60,18 @@ public class GuardianRobustAttackGoal extends AnimationCommonGoal<EntityNameless
             EntityCameraShake.cameraShake(entity.level, entity.position(), 10, 0.3F, 0, 10);
         } else if (tick == 45) {
             for (int i = 2; i <= 12; i++) {
-                entity.robustAttack(i, 0.1F, 1.0F, 1.25F, false);
+                entity.robustAttack(i, 0.025F, 1.3F, 1.25F, false);
             }
         } else if (tick == 46) {
             entity.playSound(SoundEvents.GENERIC_EXPLODE, 1.5F, 1F + entity.getRandom().nextFloat() * 0.1F);
             EntityCameraShake.cameraShake(entity.level, entity.position(), 30, 0.2F, 10, 10);
         } else if (tick == 72) {
             if (entity.getMadnessTick() == 0 && entity.isPowered()) {
+                if (entity.isChallengeMode()) {
+                    entity.setMadnessTick(EntityNamelessGuardian.NEVER_STOP);
+                    entity.setRobustTick(EntityNamelessGuardian.MADNESS_TICK);
+                    return;
+                }
                 entity.setExecuteWeak(true);
                 entity.playAnimation(EntityNamelessGuardian.WEAK_ANIMATION_1);
             }

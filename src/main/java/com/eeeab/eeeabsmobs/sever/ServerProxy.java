@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.sever;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 
+import com.eeeab.eeeabsmobs.sever.advancements.EECriteriaTriggers;
 import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
 import com.eeeab.eeeabsmobs.sever.message.MessagePlayerUseAbility;
 import com.eeeab.eeeabsmobs.sever.message.MessageUseAbility;
@@ -34,6 +35,10 @@ public class ServerProxy {
     public void init(IEventBus bus){
         /* 配置文件 */
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, EEConfigHandler.SPEC);
+    }
+
+    public void onLateInit(IEventBus bus) {
+        EECriteriaTriggers.register();
     }
 
     public Object getISTERProperties() {

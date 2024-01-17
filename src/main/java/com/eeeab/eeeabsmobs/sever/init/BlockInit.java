@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs.sever.init;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.block.BlockTombstone;
 import com.eeeab.eeeabsmobs.sever.item.util.EEBlockEntityItemRender;
-import com.eeeab.eeeabsmobs.sever.util.ModCreativeModeTabGroup;
+import com.eeeab.eeeabsmobs.sever.util.EETabGroup;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
@@ -27,14 +27,7 @@ public class BlockInit {
     public static final RegistryObject<Block> TOMBSTONE = registryBlock("tombstone",BlockTombstone::new, true);
 
     private static <T extends Block> RegistryObject<T> registryBlock(String name, Supplier<T> block, boolean isEntity) {
-        RegistryObject<T> register = BLOCKS.register(name, block);
-        registerBlockItem(name, register, isEntity);
-        return register;
-    }
-
-    private static <T extends Block> void registerBlockItem(String name, RegistryObject<T> block, boolean isEntityBlock) {
-        Item.Properties properties = new Item.Properties().tab(ModCreativeModeTabGroup.TABS);
-        ItemInit.ITEMS.register(name, () -> isEntityBlock ? new EEBlockEntityItemRender(block.get(), properties) : new BlockItem(block.get(), properties));
+        return BLOCKS.register(name, block);
     }
 
     public static void register(IEventBus bus) {

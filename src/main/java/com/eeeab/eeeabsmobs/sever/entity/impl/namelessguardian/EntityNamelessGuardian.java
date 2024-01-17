@@ -4,6 +4,7 @@ import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.sever.advancements.EECriteriaTriggers;
 import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
 import com.eeeab.eeeabsmobs.sever.entity.IBoss;
@@ -22,7 +23,7 @@ import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.ModDamageSource;
+import com.eeeab.eeeabsmobs.sever.util.EEDamageSource;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.AnimationHandler;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
@@ -59,11 +60,13 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.*;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.AABB;
@@ -75,14 +78,19 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 //创建于 2023/1/17
 public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, GlowEntity, PowerableMob, NeedStopAiEntity {
     public static final Animation DIE_ANIMATION = Animation.create(60);
+    public static final Animation DIE_WORDS_ANIMATION = Animation.create(70);
     public static final Animation ROAR_ANIMATION = Animation.create(80);
-    public static final Animation ATTACK_ANIMATION_1 = Animation.create(40);
+    public static final Animation ATTACK_ANIMATION_1 = Animation.create(34);
     public static final Animation ATTACK_ANIMATION_2 = Animation.create(35);
     public static final Animation ATTACK_ANIMATION_3 = Animation.create(44);
+    public static final Animation ATTACK2_ANIMATION_1 = Animation.create(40);
+    public static final Animation ATTACK2_ANIMATION_2 = Animation.create(36);
+    public static final Animation ATTACK2_ANIMATION_3 = Animation.create(36);
     public static final Animation ROBUST_ATTACK_ANIMATION = Animation.create(82);
     public static final Animation SMASH_ATTACK_ANIMATION = Animation.create(40);
     public static final Animation POUNCE_ATTACK_ANIMATION_1 = Animation.create(16);
@@ -97,11 +105,12 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     public static final Animation SMASH_DOWN_ANIMATION = Animation.create(21);
     public static final Animation LASER_ANIMATION = Animation.create(120);
     public static final Animation CONCUSSION_ANIMATION = Animation.create(24);
-    public static final Animation ATTACK2_ANIMATION_1 = Animation.create(20);
-    public static final Animation ATTACK2_ANIMATION_2 = Animation.create(20);
-    public static final Animation ATTACK2_ANIMATION_3 = Animation.create(20);
+    public static final Animation SHAKE_GROUND_ATTACK_ANIMATION_1 = Animation.create(60);
+    public static final Animation SHAKE_GROUND_ATTACK_ANIMATION_2 = Animation.create(56);
+    public static final Animation SHAKE_GROUND_ATTACK_ANIMATION_3 = Animation.create(60);
     private static final Animation[] ANIMATIONS = {
             DIE_ANIMATION,
+            DIE_WORDS_ANIMATION,
             ROAR_ANIMATION,
             ATTACK_ANIMATION_1,
             ATTACK_ANIMATION_2,
@@ -122,7 +131,10 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             CONCUSSION_ANIMATION,
             ATTACK2_ANIMATION_1,
             ATTACK2_ANIMATION_2,
-            ATTACK2_ANIMATION_3
+            ATTACK2_ANIMATION_3,
+            SHAKE_GROUND_ATTACK_ANIMATION_1,
+            SHAKE_GROUND_ATTACK_ANIMATION_2,
+            SHAKE_GROUND_ATTACK_ANIMATION_3
     };
 
     private final EELookAtGoal lookAtPlayerGoal = new EELookAtGoal(this, Player.class, 8.0F);
@@ -138,6 +150,8 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     private int smashTick;
     private int leapTick;
     private int laserTick;
+    private int shakeGroundTick;
+    private int robustTick;
     private int guardianInvulnerableTime;
     //用来判断因为特殊情况导致部分技能无法释放,用于计算时长
     private int noUseSkillFromLongTick;
@@ -146,22 +160,24 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     private boolean FIRST = true;
     private int attackTick;
     //BGM高潮部分的时长
-    private static final int MADNESS_TICK = 1300;
+    public static final int MADNESS_TICK = 1300;
+    public static final int NEVER_STOP = -1;
     private static final int USE_SKILL_TIME_OUT_MAX_LIMIT = 300;
-    private final static int MAX_NEXT_MADNESS_TICK = 900;
-    private final static int MIN_NEXT_MADNESS_TICK = 600;
-    private final static int MAX_SMASH_ATTACK_TICK = 200;
-    private final static int MIN_SMASH_ATTACK_TICK = 160;
+    private final static int NEXT_MADNESS_TICK = 600;
+    private final static int MAX_SMASH_ATTACK_TICK = 300;
+    private final static int MIN_SMASH_ATTACK_TICK = 200;
     private final static int MAX_POUNCE_ATTACK_TICK = 400;
     private final static int MIN_POUNCE_ATTACK_TICK = 200;
     private final static int MAX_LEAP_TICK = 500;
-    private final static int MIN_LEAP_TICK = 280;
-    private final static int MAX_LASER_ATTACK_TICK = 380;
+    private final static int MIN_LEAP_TICK = 300;
+    private final static int MAX_LASER_ATTACK_TICK = 400;
     private final static int MIN_LASER_ATTACK_TICK = 300;
-    private final static int WEAK_FRAME = 8;
-    private final static int HARD_MODE_WEAK_FRAME = 4;
+    private final static int SHAKE_GROUND_ATTACK_TICK = 400;
+    private final static int WEAK_STATE_TICK = 160;
+    private final static int HARD_MODE_STATE_TICK = 80;
     private final EntityNamelessGuardianPart core;
     private final EntityNamelessGuardianPart[] subEntities;
+    private final DynamicGameEventListener<EntityNamelessGuardian.Listener> dynamicListener;
     private static final float[][] ROBUST_ATTACK_BLOCK_OFFSETS = {
             {-0.5F, -0.5F},
             {-0.5F, 0.5F},
@@ -171,6 +187,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
 
     public boolean inShoot = false;
     public final ControlledAnimation coreControlled = new ControlledAnimation(10);
+    public final ControlledAnimation explodeControlled = new ControlledAnimation(30);
 
     public EntityNamelessGuardian(EntityType<? extends EntityNamelessGuardian> type, Level level) {
         super(type, level);
@@ -178,6 +195,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         this.active = false;
         this.core = new EntityNamelessGuardianPart(this, "core", 0.6F, 0.6F);
         this.subEntities = new EntityNamelessGuardianPart[]{this.core};
+        this.dynamicListener = new DynamicGameEventListener<>(new Listener());
         this.setId(ENTITY_COUNTER.getAndAdd(this.subEntities.length + 1) + 1);
         this.canplayHurtAnimation = false;
         this.setPathfindingMalus(BlockPathTypes.UNPASSABLE_RAIL, 0.0F);
@@ -254,7 +272,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
 
     @Override
     protected EEConfigHandler.AttributeConfig getAttributeConfig() {
-        return EEConfigHandler.COMMON.MOB.GUARDIAN.combatConfig;
+        return EEConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.combatConfig;
     }
 
     @Override
@@ -288,10 +306,11 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             if (animation == WEAK_ANIMATION_1) {
                 this.setExecuteWeak(true);
                 this.setPowered(false);
-                this.setNextMadnessTick(getCoolingTimerUtil(MAX_NEXT_MADNESS_TICK, MIN_NEXT_MADNESS_TICK, 0.5F));
+                int duration = Difficulty.HARD.equals(this.level.getDifficulty()) ? HARD_MODE_STATE_TICK : WEAK_STATE_TICK;
+                this.setNextMadnessTick(NEXT_MADNESS_TICK + duration);
+                this.resetTimeOutToUseSkill();
             } else if (animation == POUNCE_ATTACK_ANIMATION_1 || animation == LASER_ANIMATION) {
-                this.noUseSkillFromLongTick = 0;
-                this.shouldUseSkill = false;
+                this.resetTimeOutToUseSkill();
             }
         }
     }
@@ -301,11 +320,13 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         if (!this.level.isClientSide) {
             if (animation == DEACTIVATE_ANIMATION || animation == ACTIVATE_ANIMATION) {
                 this.FIRST = true;
-                this.attackTick = this.madnessTick = this.guardianInvulnerableTime = this.noUseSkillFromLongTick = 0;
-                setExecuteWeak(false);
+                this.attackTick = this.madnessTick = this.guardianInvulnerableTime = 0;
+                this.setExecuteWeak(false);
+                this.resetTimeOutToUseSkill();
             } else if (animation == ROAR_ANIMATION) {
-                this.madnessTick = MADNESS_TICK;
-                this.FIRST = false;
+                this.setMadnessTick(this.isChallengeMode() ? NEVER_STOP : MADNESS_TICK);
+                this.setRobustTick(MADNESS_TICK);
+                if (this.FIRST && !this.isChallengeMode()) this.FIRST = false;
                 this.laserTick = this.pounceTick = this.smashTick = this.attackTick = 0;
                 this.removeAllEffects();
             } else if (animation == WEAK_ANIMATION_3) {
@@ -317,26 +338,20 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        //this.goalSelector.addGoal(0, new FloatGoal(this) {
-        //    @Override
-        //    public boolean canUse() {
-        //        return EntityNamelessGuardian.this.isInWater() && EntityNamelessGuardian.this.getFluidHeight(FluidTags.WATER) > EntityNamelessGuardian.this.getFluidJumpThreshold() || EntityNamelessGuardian.this.isInFluidType((fluidType, height) -> EntityNamelessGuardian.this.canSwimInFluidType(fluidType) && height > EntityNamelessGuardian.this.getFluidJumpThreshold());
-        //    }
-        //});
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null));
-        //this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, EntityTestllager.class, 0, true, false, null));
     }
 
     @Override
     protected void registerCustomGoals() {
         this.goalSelector.addGoal(1, new AnimationHurtGoal<>(this, false));
         this.goalSelector.addGoal(1, new AnimationDieGoal<>(this));
-        this.goalSelector.addGoal(1, new GuardianCombo1Goal(this, 3.5F, 100F));
-        this.goalSelector.addGoal(1, new GuardianCombo2Goal(this, 4.0F, 100F));
+        this.goalSelector.addGoal(1, new GuardianCombo1Goal(this, 4F, 100F));
+        this.goalSelector.addGoal(1, new GuardianCombo2Goal(this, 4.5F, 100F));
         this.goalSelector.addGoal(1, new GuardianLobedAttackGoal(this, SMASH_ATTACK_ANIMATION));
         this.goalSelector.addGoal(1, new GuardianPounceAttackGoal(this, 3F));
         this.goalSelector.addGoal(1, new GuardianRobustAttackGoal(this, ROBUST_ATTACK_ANIMATION));
+        this.goalSelector.addGoal(1, new GuardianShakeGroundAttackGoal(this));
         this.goalSelector.addGoal(1, new AnimationActivateGoal<>(this, ACTIVATE_ANIMATION));
         this.goalSelector.addGoal(1, new AnimationDeactivateGoal<>(this, DEACTIVATE_ANIMATION));
         this.goalSelector.addGoal(1, new AnimationCommonGoal<>(this, ROAR_ANIMATION));
@@ -355,8 +370,8 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
                         entity.playAnimation(WEAK_ANIMATION_2);
                     }
                 } else if (entity.getAnimation() == EntityNamelessGuardian.WEAK_ANIMATION_2) {
-                    int frame = Difficulty.HARD.equals(entity.level.getDifficulty()) ? HARD_MODE_WEAK_FRAME : WEAK_FRAME;
-                    if (entity.getAnimationTick() == (frame * 20)) {
+                    int duration = Difficulty.HARD.equals(entity.level.getDifficulty()) ? HARD_MODE_STATE_TICK : WEAK_STATE_TICK;
+                    if (entity.getAnimationTick() == duration) {
                         entity.playAnimation(WEAK_ANIMATION_3);
                     }
                 }
@@ -368,7 +383,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             public void tick() {
                 int tick = getAnimationTick();
                 if (tick >= 2 && tick < 9) {
-                    entity.lobedAttack(tick + 6, 2.0F, 0.0F, 3F, entity.isPowered() ? 0.625F : 0.5F);
+                    entity.lobedAttack(tick + 6, 2.0F, 0.0F, 3F, (entity.isPowered() ? 0.8F : 0.6F));
                     if (tick == 2) {
                         entity.playSound(SoundEvents.GENERIC_EXPLODE, 1.0F, 1F + entity.getRandom().nextFloat() * 0.1F);
                         EntityCameraShake.cameraShake(entity.level, entity.position(), 20, 0.125F, 8, 17);
@@ -377,7 +392,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             }
         });
         this.goalSelector.addGoal(1, new GuardianShootLaserGoal(this, LASER_ANIMATION));
-        this.goalSelector.addGoal(2, new AnimationFullRangeAttackGoal<>(this, CONCUSSION_ANIMATION, 6.5F, 8, 2.5F, 1.0F, true));
+        this.goalSelector.addGoal(2, new AnimationFullRangeAttackGoal<>(this, CONCUSSION_ANIMATION, 6.5F, 8, 2.5F, 0.2F, true));
         this.goalSelector.addGoal(2, new GuardianAIGoal(this));
         this.goalSelector.addGoal(2, new AnimationDieGoal<>(this));
     }
@@ -402,6 +417,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         super.tick();
         floatGuardian();
         this.coreControlled.updatePrevTimer();
+        this.explodeControlled.updatePrevTimer();
 
         AnimationHandler.INSTANCE.updateAnimations(this);
 
@@ -409,10 +425,10 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             if (this.getTarget() != null && !this.getTarget().isAlive()) this.setTarget(null);
 
             //if (this.isActive() && this.getAnimation() == NO_ANIMATION && !this.isNoAi())
-            //    this.playAnimation(SMASH_ATTACK_ANIMATION);
+            //    this.playAnimation(ATTACK2_ANIMATION_3);
+            //this.playAnimation(ROBUST_ATTACK_ANIMATION);
             //this.playAnimation(WEAK_ANIMATION_1);
-
-            if (this.getTarget() != null && this.isActive() && !this.isPowered() && this.noConflictingTasks() && ((this.FIRST && this.getHealthPercentage() <= 60) || (!this.FIRST && this.getNextMadnessTick() <= 0))) {
+            if (this.getTarget() != null && this.isActive() && !this.isPowered() && this.noConflictingTasks() && (this.isChallengeMode() || (this.FIRST && this.getHealthPercentage() <= 60) || (!this.FIRST && this.getNextMadnessTick() <= 0))) {
                 this.removeAllEffects();
                 this.setNoAi(false);
                 this.playAnimation(ROAR_ANIMATION);
@@ -441,7 +457,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             }
 
             if (!this.active && this.getAnimation() != ACTIVATE_ANIMATION) {
-                if (EEConfigHandler.COMMON.MOB.GUARDIAN.enableNonCombatHeal.get()) this.heal(0.5F);
+                if (EEConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.enableNonCombatHeal.get()) this.heal(0.5F);
             }
             if (this.active && getTarget() != null && this.targetDistance < 6.0f && this.isPowered()) {
                 if (this.laserTick <= 0) {
@@ -481,64 +497,57 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         }
 
         int tick = this.getAnimationTick();
-        if (this.getAnimation() == ROAR_ANIMATION) {
-            if (!this.isPowered()) this.setPowered(true);
+        if (this.getAnimation() == DIE_WORDS_ANIMATION) {
+            this.doExplodeEffect();
+        } else if (this.getAnimation() == ROAR_ANIMATION) {
+            this.setPowered(true);
             this.doRoarEffect();
         } else if (this.getAnimation() == CONCUSSION_ANIMATION) {
             this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
             if (tick == 8) {
-                ModParticleUtils.sphericalParticleOutburst(level, this, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleInit.GUARDIAN_SPARK.get()}, 2.5F, 10F, 0, 0, 3);
+                ModParticleUtils.sphericalParticleOutburst(level, 10F, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleInit.GUARDIAN_SPARK.get()}, this, 2.5F, 0, 0, 3);
                 EntityCameraShake.cameraShake(level, position(), 30, 0.125F, 0, 20);
             } else if (tick > 8) {
                 this.strongKnockBlock();
             }
             if (this.getTarget() != null) this.lookAt(getTarget(), 30F, 30F);
-        } else
-
-            //if ((this.fallDistance > 0.2 && !this.onGround() &&) || this.getAnimation() == DODGE_ANIMATION)
-            //    this.shouldPlayLandAnimation = true;
-            //if (this.onGround() && this.shouldPlayLandAnimation && this.getAnimation() != DODGE_ANIMATION) {
-            //    if (!this.level().isClientSide && this.getAnimation() == NO_ANIMATION) {
-            //        this.playAnimation(LANDING_ANIMATION);
-            //        this.shouldPlayLandAnimation = false;
-            //    }
-            //}
-
-            if (this.getAnimation() == ATTACK_ANIMATION_1 && tick == 15) {
-                this.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 1.95f, this.getVoicePitch());
-            } else if (this.getAnimation() == ATTACK_ANIMATION_2 && tick == 11) {
-                this.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.05f, this.getVoicePitch() + 0.15f);
-            } else if (this.getAnimation() == ATTACK_ANIMATION_3 && tick == 11) {
-                this.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.2f, this.getVoicePitch() - 0.2f);
-            } else if (this.getAnimation() == ROBUST_ATTACK_ANIMATION) {
-                if (tick < 35) {
-                    this.preRobustAttack();
-                } else if (tick == 35) {
-                    this.robustAttackEffect();
-                }
-            } else if (this.getAnimation() == SMASH_ATTACK_ANIMATION) {
-                this.doSmashEffect();
-            } else if (this.getAnimation() == POUNCE_ATTACK_ANIMATION_2) {
-                this.doWalkEffect(10);
-                if (tick > 2) this.doBreakAirEffect(tick);
-            } else if (this.getAnimation() == WEAK_ANIMATION_2) {
-                if (this.level.isClientSide && tick % 5 == 0) {
-                    this.level.addParticle(ParticleTypes.LARGE_SMOKE, this.getRandomX(0.5D), this.getRandomY() - 1.5F, this.getRandomZ(0.5D), -0.15D + this.random.nextDouble() * 0.15D, -0.15D + this.random.nextDouble() * 0.15D, -0.15D + this.random.nextDouble() * 0.15D);
-                }
-            } else if (this.getAnimation() == LASER_ANIMATION) {
-                if (tick == 22) this.playSound(SoundInit.LASER.get(), 2f, 1.0f);
-                else if (this.level.isClientSide) this.inShoot = tick > 23 && tick < 99;
-            } else if (this.getAnimation() == LEAP_ANIMATION && tick == 13) {
-                if (!this.level.isClientSide) this.level.broadcastEntityEvent(this, (byte) 7);
-            } else if (this.getAnimation() == SMASH_DOWN_ANIMATION && tick == 4) {
-                if (!this.level.isClientSide) this.level.broadcastEntityEvent(this, (byte) 7);
-            } else if (this.getAnimation() == ACTIVATE_ANIMATION) {
-                LivingEntity target = getTarget();
-                if (target != null && tick > 40) {
-                    //this.getLookControl().setLookAt(target, 30F, 30F);
-                    this.lookAt(target, 30F, 30F);
-                }
+        } else if (this.getAnimation() == ATTACK2_ANIMATION_3) {
+            if (tick == 15) this.doSplashParticlesEffect(20);
+        } else if (this.getAnimation() == SHAKE_GROUND_ATTACK_ANIMATION_1) {
+            if (tick == 24) this.doSplashParticlesEffect(25);
+        } else if (this.getAnimation() == SHAKE_GROUND_ATTACK_ANIMATION_2) {
+            if (tick == 17) this.doSplashParticlesEffect(20);
+        } else if (this.getAnimation() == SHAKE_GROUND_ATTACK_ANIMATION_3) {
+            if (tick == 26) this.doSplashParticlesEffect(30);
+        } else if (this.getAnimation() == ROBUST_ATTACK_ANIMATION) {
+            if (tick < 35) {
+                this.preRobustAttack();
+            } else if (tick == 35) {
+                this.doSplashParticlesEffect(30);
             }
+        } else if (this.getAnimation() == SMASH_ATTACK_ANIMATION) {
+            this.doSmashEffect();
+        } else if (this.getAnimation() == POUNCE_ATTACK_ANIMATION_2) {
+            this.doWalkEffect(10);
+            if (tick > 2) this.doBreakAirEffect();
+        } else if (this.getAnimation() == WEAK_ANIMATION_2) {
+            if (this.level.isClientSide && tick % 5 == 0) {
+                this.level.addParticle(ParticleTypes.LARGE_SMOKE, this.getRandomX(0.5D), this.getRandomY() - 1.5F, this.getRandomZ(0.5D), -0.15D + this.random.nextDouble() * 0.15D, -0.15D + this.random.nextDouble() * 0.15D, -0.15D + this.random.nextDouble() * 0.15D);
+            }
+        } else if (this.getAnimation() == LASER_ANIMATION) {
+            if (tick == 22) this.playSound(SoundInit.LASER.get(), 2f, 1.0f);
+            else if (this.level.isClientSide) this.inShoot = tick > 23 && tick < 99;
+        } else if (this.getAnimation() == LEAP_ANIMATION && tick == 13) {
+            if (!this.level.isClientSide) this.level.broadcastEntityEvent(this, (byte) 7);
+        } else if (this.getAnimation() == SMASH_DOWN_ANIMATION && tick == 4) {
+            if (!this.level.isClientSide) this.level.broadcastEntityEvent(this, (byte) 7);
+        } else if (this.getAnimation() == ACTIVATE_ANIMATION) {
+            LivingEntity target = getTarget();
+            if (target != null && tick > 40) {
+                //this.getLookControl().setLookAt(target, 30F, 30F);
+                this.lookAt(target, 30F, 30F);
+            }
+        }
 
         if (this.isPowered()) {
             if (this.isPassenger()) this.stopRiding();
@@ -587,6 +596,9 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         }
     }
 
+    public float getExplodeCoefficient(float partialTicks) {
+        return Mth.lerp(partialTicks, (float) this.explodeControlled.getPrevTimer(), (float) this.explodeControlled.getTimer()) / (float) (this.explodeControlled.getDuration() - 2);
+    }
 
     @Override
     public void handleEntityEvent(byte id) {
@@ -597,24 +609,29 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         } else if (id == 7) {
             ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 25, ParticleDust.EnumDustBehavior.SHRINK, 1.0f);
             ModParticleUtils.annularParticleOutburst(level, 15, new ParticleOptions[]{dustData}, getX(), this.getY(), getZ(), 0.8F, 0.1);
+        } else if (id == 8) {
+            ModParticleUtils.roundParticleOutburst(level, 200, new ParticleOptions[]{ParticleTypes.LARGE_SMOKE, ParticleTypes.SMOKE, ParticleTypes.EXPLOSION}, getX(), this.getY(0.1), getZ(), 1);
         }
         super.handleEntityEvent(id);
     }
 
     @Override
     protected void makePoofParticles() {
-        for (int i = 0; i < 30; ++i) {
-            double d0 = this.random.nextGaussian() * 0.02D;
-            double d1 = this.random.nextGaussian() * 0.02D;
-            double d2 = this.random.nextGaussian() * 0.02D;
-            this.level.addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getRandomX(1.2D), this.getRandomY(), this.getRandomZ(1.2D), d0, d1, d2);
-            this.level.addParticle(ParticleTypes.LARGE_SMOKE, this.getRandomX(1.5D), this.getRandomY(), this.getRandomZ(1.5D), d0, d1, d2);
-        }
-        for (int i = 0; i < 10; ++i) {
-            double d0 = this.random.nextGaussian() * 0.02D;
-            double d1 = this.random.nextGaussian() * 0.02D;
-            double d2 = this.random.nextGaussian() * 0.02D;
-            this.level.addParticle(ParticleInit.GUARDIAN_SPARK.get(), this.getRandomX(1.4D), this.getRandomY(), this.getRandomZ(1.4D), d0, d1, d2);
+        if (this.isPowered()) {
+            for (int i = 0; i < 10; ++i) {
+                double d0 = this.random.nextGaussian() * 0.02D;
+                double d1 = this.random.nextGaussian() * 0.02D;
+                double d2 = this.random.nextGaussian() * 0.02D;
+                this.level.addParticle(ParticleInit.GUARDIAN_SPARK.get(), this.getRandomX(1.4D), this.getRandomY(), this.getRandomZ(1.4D), d0, d1, d2);
+                this.level.addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getRandomX(1.2D), this.getRandomY(), this.getRandomZ(1.2D), d0, d1, d2);
+            }
+        } else {
+            for (int i = 0; i < 30; ++i) {
+                double d0 = this.random.nextGaussian() * 0.02D;
+                double d1 = this.random.nextGaussian() * 0.02D;
+                double d2 = this.random.nextGaussian() * 0.02D;
+                this.level.addParticle(ParticleTypes.LARGE_SMOKE, this.getRandomX(1.5D), this.getRandomY(), this.getRandomZ(1.5D), d0, d1, d2);
+            }
         }
     }
 
@@ -653,6 +670,10 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
                 this.laserTick--;
             }
 
+            if (this.shakeGroundTick > 0) {
+                this.shakeGroundTick--;
+            }
+
             if (this.attackTick > 0 && this.getAnimation() == NO_ANIMATION) {
                 this.attackTick--;
             }
@@ -663,6 +684,10 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
 
             if (this.nextMadnessTick > 0) {
                 this.nextMadnessTick--;
+            }
+
+            if (this.robustTick > 0) {
+                this.robustTick--;
             }
         }
 
@@ -697,7 +722,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     public boolean hurt(DamageSource source, float damage) {
         if (!this.level.isClientSide/* 在服务端进行判断 */) {
             Entity entity = source.getEntity();
-            float maximumDamageCap = (float) (EEConfigHandler.COMMON.MOB.GUARDIAN.maximumDamageCap.damageCap.get() * 1F);
+            float maximumDamageCap = (float) (EEConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.maximumDamageCap.damageCap.get() * 1F);
             float maxHurtDamage = getMaxHealth() * maximumDamageCap;
             if ((!active || getTarget() == null) && entity instanceof LivingEntity livingEntity
                     && !(livingEntity instanceof Player player && player.isCreative() || this.level.getDifficulty() == Difficulty.PEACEFUL)
@@ -721,6 +746,17 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             }
         }
         return false;
+    }
+
+    @Override
+    public void thunderHit(ServerLevel level, LightningBolt lightningBolt) {
+        super.thunderHit(level, lightningBolt);
+        if (!this.isPowered()) {
+            if (!this.isChallengeMode()) FIRST = false;
+            this.setNextMadnessTick(0);
+        } else {
+            this.heal(this.getMaxHealth() * 0.01F);
+        }
     }
 
     @Override
@@ -788,11 +824,13 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         this.getRestPos().ifPresent(spawnPos -> compound.put("spawnPos", NbtUtils.writeBlockPos(spawnPos)));
+        if (!this.isChallengeMode()) {
+            compound.putBoolean("power", this.entityData.get(DATA_POWER));
+            compound.putInt("madnessCountdownTick", this.madnessTick);
+        }
         compound.putBoolean("isFirst", this.FIRST);
-        compound.putBoolean("power", this.entityData.get(DATA_POWER));
         compound.putBoolean("isUnnatural", this.entityData.get(DATA_IS_UNNATURAL));
         compound.putBoolean("isActive", this.entityData.get(DATA_ACTIVE));
-        compound.putInt("madnessCountdownTick", this.madnessTick);
         compound.putInt("nextMadnessTick", this.nextMadnessTick);
         compound.putInt("coreLighting", this.coreControlled.getTimer());
         //compound.putBoolean("executeWeak", this.executeWeak);
@@ -802,7 +840,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         return Mob.createMobAttributes().
                 add(Attributes.MAX_HEALTH, 300.0D).
                 add(Attributes.ARMOR, 10).
-                add(Attributes.ATTACK_DAMAGE, 14.0D).
+                add(Attributes.ATTACK_DAMAGE, 15.0D).
                 add(Attributes.FOLLOW_RANGE, 50.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.3D).
                 add(Attributes.KNOCKBACK_RESISTANCE, 1.0D);
@@ -827,7 +865,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
 
     @Override
     public Animation getDeathAnimation() {
-        return DIE_ANIMATION;
+        return !this.isPowered() ? DIE_ANIMATION : DIE_WORDS_ANIMATION;
     }
 
     @Override
@@ -907,31 +945,41 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             if (this.guardian.attackTick <= 0 && this.guardian.getSensing().hasLineOfSight(target)) {
                 boolean checkAttackHeight = target.getY() - guardian.getY() < 4 && target.getY() - this.guardian.getY() > -4;
                 double entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this.guardian, target);
-                boolean canRobust = dist <= 144D && this.isPowered && this.guardian.getMadnessTick() <= 0;
+                boolean canRobust = dist <= 144D && this.isPowered && (this.guardian.getMadnessTick() == 0 || this.guardian.isChallengeMode() && this.guardian.getRobustTick() == 0);
                 boolean canSmash = (checkAttackHeight || target.isOnGround()) && (this.random.nextFloat() < 0.6F && dist <= (this.isPowered ? 50D : 25D) && this.guardian.getSmashTick() <= 0);
-                if (dist < 16D && !canSmash && !canRobust) {
-                    this.guardian.playAnimation(ATTACK_ANIMATION_1);
+                if (dist < 25D && !canSmash && !canRobust) {
+                    Animation attackAnimation = this.random.nextBoolean() ? ATTACK_ANIMATION_1 : ATTACK2_ANIMATION_1;
+                    this.guardian.playAnimation(attackAnimation);
                 } else if (canRobust) {
                     this.guardian.playAnimation(ROBUST_ATTACK_ANIMATION);
+                    this.guardian.setRobustTick(MADNESS_TICK);
                 } else if (canSmash) {
                     this.guardian.playAnimation(SMASH_ATTACK_ANIMATION);
-                    this.guardian.smashTick = this.guardian.getCoolingTimerUtil(MAX_SMASH_ATTACK_TICK, MIN_SMASH_ATTACK_TICK, 0.2F);
+                    this.guardian.setSmashTick(this.guardian.getCoolingTimerUtil(MAX_SMASH_ATTACK_TICK, MIN_SMASH_ATTACK_TICK, 0.2F));
                 }
 
-                boolean canLaser = this.random.nextFloat() < 0.6F && this.isPowered && (((checkAttackHeight ? this.guardian.targetDistance > 10.0D : this.guardian.targetDistance > 4.0D) && (entityRelativeAngle < 60.0 || entityRelativeAngle > 300) && this.guardian.targetDistance < EntityGuardianLaser.GUARDIAN_RADIUS && this.guardian.getLaserTick() <= 0) || this.guardian.isTimeOutToUseSkill() && this.guardian.shouldUseSkill);
-                boolean canPouch = checkAttackHeight && (this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 6.0D && this.guardian.targetDistance < 16.0 && this.guardian.getPounceTick() <= 0 || this.guardian.isTimeOutToUseSkill() && this.guardian.shouldUseSkill);
-                boolean canLeap = this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 12.0D && this.guardian.targetDistance < 24.0 && this.guardian.getLeapTick() <= 0;
-                if (canLaser) {
+                boolean canLaser = this.random.nextFloat() < 0.6F && this.isPowered && checkModeOrPreventTimeouts(120) && (((checkAttackHeight ? this.guardian.targetDistance > 10.0D : this.guardian.targetDistance > 4.0D) && (entityRelativeAngle < 60.0 || entityRelativeAngle > 300) && this.guardian.targetDistance < EntityGuardianLaser.GUARDIAN_RADIUS && this.guardian.getLaserTick() <= 0) || this.guardian.isTimeOutToUseSkill());
+                boolean canShakeGround = (checkAttackHeight || target.isOnGround()) && !this.guardian.isTimeOutToUseSkill() && this.random.nextFloat() < 0.6F && this.guardian.getHealthPercentage() <= 50 && this.guardian.targetDistance < 6.0D && this.guardian.getShakeGroundTick() <= 0 && (checkModeOrPreventTimeouts(180) || !this.isPowered);
+                boolean canLeap = this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 12.0D && this.guardian.targetDistance < 24.0 && this.guardian.getLeapTick() <= 0 && checkModeOrPreventTimeouts(100);
+                boolean canPouch = checkAttackHeight && checkModeOrPreventTimeouts(80) && (this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 6.0D && this.guardian.targetDistance < 14.0 && this.guardian.getPounceTick() <= 0 || this.guardian.isTimeOutToUseSkill());
+                if (canShakeGround) {
+                    this.guardian.playAnimation(SHAKE_GROUND_ATTACK_ANIMATION_1);
+                    this.guardian.setShakeGroundTick(SHAKE_GROUND_ATTACK_TICK);
+                } else if (canLaser) {
                     this.guardian.playAnimation(LASER_ANIMATION);
-                    this.guardian.laserTick = this.guardian.getCoolingTimerUtil(MAX_LASER_ATTACK_TICK, MIN_LASER_ATTACK_TICK, 0.5F);
+                    this.guardian.setLaserTick(this.guardian.getCoolingTimerUtil(MAX_LASER_ATTACK_TICK, MIN_LASER_ATTACK_TICK, 0.5F));
                 } else if (canPouch) {
                     this.guardian.playAnimation(POUNCE_ATTACK_ANIMATION_1);
-                    this.guardian.pounceTick = this.guardian.getCoolingTimerUtil(MAX_POUNCE_ATTACK_TICK, MIN_POUNCE_ATTACK_TICK, 0.5F);
+                    this.guardian.setPounceTick(this.guardian.getCoolingTimerUtil(MAX_POUNCE_ATTACK_TICK, MIN_POUNCE_ATTACK_TICK, 0.5F));
                 } else if (canLeap) {
                     this.guardian.playAnimation(LEAP_ANIMATION);
-                    this.guardian.leapTick = this.guardian.getCoolingTimerUtil(MAX_LEAP_TICK, MIN_LEAP_TICK, 0.2F);
+                    this.guardian.setLeapTick(this.guardian.getCoolingTimerUtil(MAX_LEAP_TICK, MIN_LEAP_TICK, 0.2F));
                 }
             }
+        }
+
+        private boolean checkModeOrPreventTimeouts(int tick) {
+            return this.guardian.isChallengeMode() || this.guardian.getMadnessTick() > tick || !this.guardian.isPowered();
         }
     }
 
@@ -972,7 +1020,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
                         continue;
                     }
                     if (hit instanceof LivingEntity livingEntity) {
-                        this.guardianHurtTarget(ModDamageSource.guardianRobustAttack(this), this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, shouldHeal, false);
+                        this.guardianHurtTarget(EEDamageSource.guardianRobustAttack(this), this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, shouldHeal, false);
                     }
                     double magnitude = level.random.nextGaussian() * 0.15 + 0.1;
                     double angle = this.getAngleBetweenEntities(this, hit);
@@ -1025,7 +1073,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
                             continue;
                         }
                         if (hit instanceof LivingEntity livingEntity) {
-                            this.guardianHurtTarget(this, livingEntity, 0.05F, 0.5F, damageMultiply, false, false);
+                            this.guardianHurtTarget(this, livingEntity, 0.02F, 0.5F, damageMultiply, false, false);
                         }
 
                         double magnitude = level.random.nextDouble() * 0.15 + 0.1;
@@ -1064,11 +1112,11 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
                 this.level.playLocalSound(this.getX(), this.getY(), this.getZ(), SoundInit.NAMELESS_GUARDIAN_ACCUMULATING.get(), this.getSoundSource(), 2F, 3.5F, false);
         } else if (tick >= 30 && tick < 70) {
             if (tick == 32) {
-                ModParticleUtils.sphericalParticleOutburst(this.level, this, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleInit.GUARDIAN_SPARK.get()}, 2.5F, 10F, 0, 0, 3);
+                ModParticleUtils.sphericalParticleOutburst(level, 10F, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleInit.GUARDIAN_SPARK.get()}, this, 2.5F, 0, 0, 3);
                 if (!this.isSilent())
                     this.level.playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.TOTEM_USE, this.getSoundSource(), 1F, 0.95F, false);
                 this.playSound(SoundInit.NAMELESS_GUARDIAN_MADNESS.get(), 1.5F, 0.92F);
-                EntityCameraShake.cameraShake(this.level, position(), 20, 0.125F, 20, 20);
+                EntityCameraShake.cameraShake(level, position(), 20, 0.125F, 20, 20);
             }
             this.strongKnockBlock();
             if (!this.level.isClientSide && tick % 10 == 0) this.level.broadcastEntityEvent(this, (byte) 6);
@@ -1082,7 +1130,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         int maxDistance = 6;
         if (tick >= 20 && tick < 33) {
             if (tick == 22) {
-                ModParticleUtils.annularParticleOutburstOnGround(this.level, this.isPowered() ? ParticleInit.GUARDIAN_SPARK.get() : ParticleTypes.SMOKE, this, 12, 8, 0.1, 0.8, -0.5, this.isPowered() ? 0.075 : 0.065);
+                ModParticleUtils.annularParticleOutburstOnGround(level, this.isPowered() ? ParticleInit.GUARDIAN_SPARK.get() : ParticleTypes.SMOKE, this, 12, 8, 0.1, 0.8, -0.5, this.isPowered() ? 0.075 : 0.065);
             }
             if (tick % 2 == 0) {
                 tick -= this.isPowered() ? 7 : 11;
@@ -1111,7 +1159,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         }
     }
 
-    private void robustAttackEffect() {
+    public void doSplashParticlesEffect(int count) {
         if (this.level.isClientSide) {
             double theta = yBodyRot * (Math.PI / 180);
             double perpX = Math.cos(theta);
@@ -1130,7 +1178,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
                 BlockPos hit = new BlockPos(hitX, hitY, hitZ);
                 BlockState block = level.getBlockState(hit);
                 if (block.getRenderShape() != RenderShape.INVISIBLE) {
-                    for (int n = 0; n < 20; n++) {
+                    for (int n = 0; n < count; n++) {
                         double pa = random.nextDouble() * 2 * Math.PI;
                         double pd = random.nextDouble() * 0.6 + 0.1;
                         double px = x + Math.cos(pa) * pd;
@@ -1168,8 +1216,9 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         }
     }
 
-    private void doBreakAirEffect(int tick) {
+    private void doBreakAirEffect() {
         if (this.level.isClientSide) {
+            int tick = this.getAnimationTick();
             float alpha = this.isPowered() ? 0.18F : 0.14F;
             int keyFrame = this.isPowered() ? 22 : 18;
             if (tick < keyFrame) {
@@ -1191,6 +1240,22 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         }
     }
 
+    private void doExplodeEffect() {
+        int tick = this.getAnimationTick();
+        if (tick == 10) this.playSound(SoundInit.NAMELESS_GUARDIAN_ACCUMULATING.get(), 2F, 2.5F);
+        if (tick > 20) this.explodeControlled.increaseTimer();
+        this.setDeltaMovement(0, 0, 0);
+        LivingEntity target = this.getTarget();
+        if (target != null) this.getLookControl().setLookAt(target, 30F, 30F);
+        if (!this.level.isClientSide) {
+            if (tick == 49) {
+                this.level.broadcastEntityEvent(this, (byte) 8);
+                this.level.explode(this, this.getX(), this.getY(), this.getZ(), 5F, false, Explosion.BlockInteraction.NONE);
+                EntityCameraShake.cameraShake(level, position(), 20, 0.2F, 10, 20);
+            }
+        }
+    }
+
 
     public boolean guardianHurtTarget(EntityNamelessGuardian guardian, LivingEntity hitEntity, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier, boolean shouldHeal, boolean disableShield) {
         return this.guardianHurtTarget(DamageSource.mobAttack(guardian), guardian, hitEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, shouldHeal, disableShield);
@@ -1199,8 +1264,9 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     public boolean guardianHurtTarget(DamageSource damageSource, EntityNamelessGuardian guardian, LivingEntity hitEntity, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier, boolean shouldHeal, boolean disableShield) {
         float finalDamage = ((guardian.getAttackDamageAttributeValue() * baseDamageMultiplier) + hitEntity.getMaxHealth() * hitEntityMaxHealth) * damageMultiplier;
         boolean flag = hitEntity.hurt(damageSource, finalDamage);
-        double suckBloodCap = EEConfigHandler.COMMON.MOB.GUARDIAN.suckBloodFactor.get();
-        if (flag && shouldHeal) guardian.heal((float) Mth.clamp(finalDamage * 0.2F, 0F, getMaxHealth() * suckBloodCap));
+        double suckBloodCap = EEConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.suckBloodFactor.get();
+        if (flag && shouldHeal)
+            guardian.heal((float) Mth.clamp(finalDamage * 0.22F, 0F, getMaxHealth() * suckBloodCap));
         if (disableShield && hitEntity instanceof Player player && player.isBlocking()) {
             player.disableShield(true);
             flag = true;
@@ -1216,9 +1282,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         super.playAnimation(animation);
     }
 
-
     private int getCoolingTimerUtil(int maxCooling, int minCooling, float healthPercentage) {
-        //if (maxCooling <= minCooling || healthPercentage > 1 && healthPercentage < 0) return maxCooling;
         float maximumCoolingPercentage = 1 - healthPercentage;
         float ratio = 1 - (this.getHealthPercentage() / 100);
         if (ratio > maximumCoolingPercentage) {
@@ -1245,12 +1309,16 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         }
     }
 
+    public boolean isChallengeMode() {
+        return EEConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.challengeMode.get();
+    }
+
     public void setExecuteWeak(boolean executeWeak) {
         this.executeWeak = executeWeak;
     }
 
     public int getNextMadnessTick() {
-        return nextMadnessTick;
+        return this.nextMadnessTick;
     }
 
     public void setNextMadnessTick(int nextMadnessTick) {
@@ -1270,15 +1338,23 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     }
 
     public int getPounceTick() {
-        return pounceTick;
+        return this.pounceTick;
+    }
+
+    public void setPounceTick(int pounceTick) {
+        this.pounceTick = pounceTick;
     }
 
     public int getSmashTick() {
-        return smashTick;
+        return this.smashTick;
+    }
+
+    public void setSmashTick(int smashTick) {
+        this.smashTick = smashTick;
     }
 
     public int getMadnessTick() {
-        return madnessTick;
+        return this.madnessTick;
     }
 
     public void setMadnessTick(int madnessTick) {
@@ -1286,11 +1362,35 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     }
 
     public int getLeapTick() {
-        return leapTick;
+        return this.leapTick;
+    }
+
+    public void setLeapTick(int leapTick) {
+        this.leapTick = leapTick;
     }
 
     public int getLaserTick() {
-        return laserTick;
+        return this.laserTick;
+    }
+
+    public void setLaserTick(int laserTick) {
+        this.laserTick = laserTick;
+    }
+
+    public int getShakeGroundTick() {
+        return this.shakeGroundTick;
+    }
+
+    public void setShakeGroundTick(int shakeGroundTick) {
+        this.shakeGroundTick = shakeGroundTick;
+    }
+
+    public int getRobustTick() {
+        return this.robustTick;
+    }
+
+    public void setRobustTick(int robustTick) {
+        this.robustTick = robustTick;
     }
 
     @Override
@@ -1299,7 +1399,12 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     }
 
     public boolean isTimeOutToUseSkill() {
-        return noUseSkillFromLongTick >= USE_SKILL_TIME_OUT_MAX_LIMIT;
+        return this.noUseSkillFromLongTick >= USE_SKILL_TIME_OUT_MAX_LIMIT || this.shouldUseSkill;
+    }
+
+    private void resetTimeOutToUseSkill() {
+        this.noUseSkillFromLongTick = 0;
+        this.shouldUseSkill = false;
     }
 
     @Override
@@ -1331,11 +1436,6 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     public boolean isActive() {
         return this.entityData.get(DATA_ACTIVE);
     }
-
-    //@Override
-    //public boolean isPowered() {
-    //    return this.isMadness();
-    //}
 
     @Nullable
     @Override
@@ -1379,11 +1479,54 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
 
     @Override
     public SoundEvent getBossMusic() {
-        return this.isPowered() ? SoundInit.GUARDIANS_CLIMAX.get() : SoundInit.GUARDIANS_PRELUDE.get();
+        return !this.isPowered() ? SoundInit.GUARDIANS_PRELUDE.get() : this.isChallengeMode() ? SoundInit.GUARDIANS.get() : SoundInit.GUARDIANS_CLIMAX.get();
     }
 
     @Override
     protected float getSoundVolume() {
         return this.getTarget() == null ? 0.5F : super.getSoundVolume();
+    }
+
+    public class Listener implements GameEventListener {
+
+        @Override
+        public PositionSource getListenerSource() {
+            return new EntityPositionSource(EntityNamelessGuardian.this, EntityNamelessGuardian.this.getEyeHeight());
+        }
+
+        @Override
+        public int getListenerRadius() {
+            return 16;
+        }
+
+        @Override
+        public boolean handleGameEvent(ServerLevel pLevel, GameEvent.Message message) {
+            if (message.gameEvent() == GameEvent.ENTITY_DIE) {
+                Entity entity = message.context().sourceEntity();
+                if (entity instanceof LivingEntity livingEntity) {
+                    this.tryAdvancement(livingEntity);
+                }
+            }
+            return false;
+        }
+
+        private void tryAdvancement(LivingEntity entity) {
+            LivingEntity livingentity = entity.getLastHurtByMob();
+            if (livingentity instanceof ServerPlayer serverplayer) {
+                if (entity instanceof EntityNamelessGuardian guardian && guardian.isChallengeMode()) {
+                    DamageSource damagesource = entity.getLastDamageSource() == null ? DamageSource.playerAttack(serverplayer) : entity.getLastDamageSource();
+                    EECriteriaTriggers.KILL_BOSS_IN_CHALLENGE_MODE.trigger(serverplayer, entity, damagesource);
+                }
+            }
+
+        }
+    }
+
+    @Override
+    public void updateDynamicGameEventListener(BiConsumer<DynamicGameEventListener<?>, ServerLevel> listenerConsumer) {
+        Level level = this.level;
+        if (level instanceof ServerLevel serverLevel) {
+            listenerConsumer.accept(this.dynamicListener, serverLevel);
+        }
     }
 }

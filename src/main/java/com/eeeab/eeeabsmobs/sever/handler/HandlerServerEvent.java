@@ -14,8 +14,10 @@ import com.eeeab.eeeabsmobs.sever.message.MessageVertigoEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.AbstractGolem;
 import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.npc.AbstractVillager;
@@ -60,9 +62,6 @@ public final class HandlerServerEvent {
         if (entity instanceof Raider raider && !(raider instanceof SpellcasterIllager)) {
             raider.goalSelector.addGoal(5, new NearestAttackableTargetGoal<>(raider, EntityImmortal.class, 5, true, false, null));
         }
-        //if (entity instanceof Evoker) {
-        //    ((PathfinderMob) entity).targetSelector.addGoal(5, (new NearestAttackableTargetGoal<>((PathfinderMob) entity, EntityImmortalShaman.class, true)).setUnseenMemoryTicks(300));
-        //}
     }
 
     //实体游戏刻
@@ -87,26 +86,8 @@ public final class HandlerServerEvent {
     @SubscribeEvent
     public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.START || event.player == null) {
-            return;
         }
-
-        //Player player = event.player;
-        //Ability<?> ability = AbilityHandler.INSTANCE.getAbility(player, AbilityHandler.IMMORTAL_STAFF_ABILITY_TYPE);
-        //if (ability != null && !ability.isUsing()) {
-        //    for (ItemStack item : player.getInventory().items) {
-        //        repairStaff(item);
-        //    }
-        //    for (ItemStack item : player.getInventory().offhand) {
-        //        repairStaff(item);
-        //    }
-        //}
     }
-
-    //private void repairStaff(ItemStack stack) {
-    //    if (stack.getItem() == ItemInit.IMMORTAL_STAFF.get()) {
-    //        stack.setDamageValue(Math.max(stack.getDamageValue() - 1, 0));
-    //    }
-    //}
 
     //新效果或者已存在但是等级更高或时间更长的效果 添加到实体触发
     @SubscribeEvent
@@ -165,52 +146,36 @@ public final class HandlerServerEvent {
     public void onPlayerAttack(AttackEntityEvent event) {
         if (event.isCancelable() && event.getEntity().hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
             event.setCanceled(true);
-            return;
         }
     }
 
     //玩家右键物品时
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent.RightClickItem event) {
-//        if (!event.getEntity().level.isClientSide)
-//            System.out.println("事件:玩家右键物品...");
-
         if (event.isCancelable() && event.getEntity().hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
             event.setCanceled(true);
-            return;
         }
     }
 
     //玩家右键方块时
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent.RightClickBlock event) {
-//        if (!event.getEntity().level.isClientSide)
-//            System.out.println("事件:玩家右键方块...");
-
         if (event.isCancelable() && event.getEntity().hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
             event.setCanceled(true);
-            return;
         }
     }
 
     //玩家右键实体时
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent.EntityInteract event) {
-//        if (!event.getEntity().level.isClientSide)
-//            System.out.println("事件:玩家右键实体...");
-
         if (event.isCancelable() && event.getEntity().hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
             event.setCanceled(true);
-            return;
         }
     }
 
     //玩家右键空白区域时
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent.RightClickEmpty event) {
-//        if (!event.getEntity().level.isClientSide)
-//            System.out.println("事件:玩家右键空白区域...");
-
         Player entity = event.getEntity();
         if (event.isCancelable() && entity.hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
             event.setCanceled(true);
@@ -233,12 +198,8 @@ public final class HandlerServerEvent {
     //玩家将要打破方块时
     @SubscribeEvent
     public void onBreakBlock(BlockEvent.BreakEvent event) {
-//        if (!event.getPlayer().level.isClientSide)
-//            System.out.println("事件:破坏方块前...");
-
         if (event.isCancelable() && event.getPlayer().hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
             event.setCanceled(true);
-            return;
         }
     }
 
@@ -246,14 +207,9 @@ public final class HandlerServerEvent {
     @SubscribeEvent
     public void onPlaceBlock(BlockEvent.EntityPlaceEvent event) {
         Entity entity = event.getEntity();
-
-//        if (entity != null && !entity.level.isClientSide)
-//            System.out.println("事件:放置方块前...");
-
         if (entity instanceof LivingEntity living) {
             if (event.isCancelable() && living.hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
                 event.setCanceled(true);
-                return;
             }
         }
     }
@@ -262,13 +218,8 @@ public final class HandlerServerEvent {
     @SubscribeEvent
     public void onUseItem(LivingEntityUseItemEvent event) {
         LivingEntity living = event.getEntity();
-
-//        if (!living.level.isClientSide)
-//            System.out.println("事件:使用物品...");
-
         if (event.isCancelable() && living.hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
             event.setCanceled(true);
-            return;
         }
     }
 
@@ -294,16 +245,17 @@ public final class HandlerServerEvent {
         }
     }
 
-
-    ////附加功能事件
-    //@SubscribeEvent
-    //public void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
-    //    Entity entity = event.getObject();
-    //    if (entity instanceof LivingEntity) {
-    //        event.addCapability(VertigoCapability.ID, new VertigoCapability.VertigoCapabilityProvider());
-    //        if (entity instanceof Player) {
-    //            event.addCapability(AbilityCapability.ID, new AbilityCapability.AbilityCapabilityProvider());
-    //        }
-    //    }
-    //}
+    //实体设置目标时
+    @SubscribeEvent
+    public void onLivingEntityChangeTarget(LivingChangeTargetEvent event) {
+        LivingEntity entity = event.getEntity();
+        VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
+        if (capability != null) {
+            if (event.isCancelable() && entity instanceof Mob && capability.isVertigo()) {
+                if (event.getOriginalTarget() != null || entity.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET)) {
+                    event.setCanceled(true);
+                }
+            }
+        }
+    }
 }

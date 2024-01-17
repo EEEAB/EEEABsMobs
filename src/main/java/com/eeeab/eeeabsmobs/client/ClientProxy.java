@@ -1,6 +1,5 @@
 package com.eeeab.eeeabsmobs.client;
 
-import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.render.util.EEItemStackRenderProperties;
 import com.eeeab.eeeabsmobs.sever.ServerProxy;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerClientEvent;
@@ -16,6 +15,11 @@ public class ClientProxy extends ServerProxy {
     public void init(IEventBus bus) {
         super.init(bus);
         MinecraftForge.EVENT_BUS.register(new HandlerClientEvent());
+    }
+
+    @Override
+    public void onLateInit(IEventBus bus) {
+        super.onLateInit(bus);
     }
 
     @Override

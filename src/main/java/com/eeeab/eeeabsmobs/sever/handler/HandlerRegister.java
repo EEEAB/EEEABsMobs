@@ -38,7 +38,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.IMMORTAL_SHAMAN.get(), RenderImmortalShaman::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_GOLEM.get(), RenderImmortalGolem::new);
         event.registerEntityRenderer(EntityInit.NAMELESS_GUARDIAN.get(), RenderNamelessGuardian::new);
-        //event.registerEntityRenderer(EntityInit.TESTLLAGER.get(), RenderTestllager::new);
+        event.registerEntityRenderer(EntityInit.TESTER.get(), RenderTester::new);
 
         event.registerEntityRenderer(EntityInit.GUARDIAN_BLADE.get(),RenderGuardianBlade::new);
         event.registerEntityRenderer(EntityInit.SHAMAN_BOMB.get(), RenderShamanBomb::new);

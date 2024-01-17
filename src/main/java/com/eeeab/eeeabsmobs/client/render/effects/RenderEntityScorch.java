@@ -22,7 +22,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderEntityScorch extends EntityRenderer<EntityScorch> {
-    private final ResourceLocation SCORCH_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/scorch.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/scorch.png");
     private static final float TEXTURE_WIDTH = 32;
     private static final float TEXTURE_HEIGHT = 32;
     private static final float RING_FRAME_SIZE = 16;
@@ -44,7 +44,7 @@ public class RenderEntityScorch extends EntityRenderer<EntityScorch> {
         if (opacity > 1) {
             opacity = 1;
         }
-        VertexConsumer vertexConsumer = bufferIn.getBuffer(EERenderType.getGlowingEffect(SCORCH_TEXTURE));
+        VertexConsumer vertexConsumer = bufferIn.getBuffer(EERenderType.getGlowingEffect(TEXTURE));
         drawScorch(scorch, delta, poseStack, vertexConsumer, packedLight, opacity);
         poseStack.popPose();
     }
@@ -99,6 +99,6 @@ public class RenderEntityScorch extends EntityRenderer<EntityScorch> {
 
     @Override
     public ResourceLocation getTextureLocation(EntityScorch entity) {
-        return SCORCH_TEXTURE;
+        return TEXTURE;
     }
 }

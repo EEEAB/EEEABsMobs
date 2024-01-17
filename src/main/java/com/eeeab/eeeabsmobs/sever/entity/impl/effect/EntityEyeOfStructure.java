@@ -1,8 +1,9 @@
 package com.eeeab.eeeabsmobs.sever.entity.impl.effect;
 
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
-import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.sever.init.EntityInit;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
@@ -75,11 +76,7 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier {
     }
 
     public void setItem(ItemStack itemStack) {
-        if (!itemStack.isEmpty()) {
-            ItemStack copied = itemStack.copy();
-            copied.setCount(1);
-            this.getEntityData().set(DATA_ITEM_STACK, copied);
-        }
+        this.getEntityData().set(DATA_ITEM_STACK, Util.make(itemStack.copy(), stack -> stack.setCount(1)));
     }
 
     @Override
@@ -208,7 +205,7 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier {
     public void handleEntityEvent(byte id) {
         if (id == 5) {
             ModParticleUtils.roundParticleOutburst(level, 30, new ParticleOptions[]{new ParticleOrb.OrbData(getR(), getG(), getB(), 3, 40)}, getX(), getY(), getZ(), 1);
-            ModParticleUtils.randomAnnularParticleOutburst(level, 10, 0.45F, new ParticleOptions[]{new ItemParticleOption(ParticleTypes.ITEM, getItem())}, getX(), getY(), getZ());
+            ModParticleUtils.randomAnnularParticleOutburst(level, 10, new ParticleOptions[]{new ItemParticleOption(ParticleTypes.ITEM, getItem())}, getX(), getY(), getZ(), 0.45F);
         }
         super.handleEntityEvent(id);
     }

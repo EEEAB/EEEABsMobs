@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.impl.projectile;
 
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
-import com.eeeab.eeeabsmobs.sever.util.ModDamageSource;
+import com.eeeab.eeeabsmobs.sever.util.EEDamageSource;
 import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityCameraShake;
@@ -73,7 +73,7 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
             Entity ownerEntity = this.getOwner();//(发射|反弹)弹射物的实体
             boolean flag;
             if (ownerEntity instanceof LivingEntity owner && resultEntity instanceof LivingEntity livingEntity) {
-                flag = resultEntity.hurt(ModDamageSource.shamanBombing(this, owner), (livingEntity.getMaxHealth() * 0.1F * (isPlayer() ? 0 : 1F)) + BASE_DAMAGE);
+                flag = resultEntity.hurt(EEDamageSource.shamanBombing(this, owner), (livingEntity.getMaxHealth() * 0.1F * (isPlayer() ? 0 : 1F)) + BASE_DAMAGE);
                 if (flag && resultEntity.isAlive()) {
                     this.doEnchantDamageEffects(owner, resultEntity);
                 }

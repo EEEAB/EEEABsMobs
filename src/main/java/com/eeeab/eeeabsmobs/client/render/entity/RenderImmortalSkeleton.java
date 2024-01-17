@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 
 public class RenderImmortalSkeleton extends MobRenderer<AbstractImmortalSkeleton, ModelImmortalSkeleton> {
+    private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal_skeleton/immortal_skeleton.png");
 
     public RenderImmortalSkeleton(EntityRendererProvider.Context context) {
         super(context, new ModelImmortalSkeleton(), 0.5F);
@@ -40,6 +41,6 @@ public class RenderImmortalSkeleton extends MobRenderer<AbstractImmortalSkeleton
 
     @Override
     public ResourceLocation getTextureLocation(AbstractImmortalSkeleton entity) {
-        return new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal_skeleton/immortal_skeleton.png");
+        return TEXTURE;
     }
 }
