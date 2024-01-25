@@ -15,6 +15,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix3f;
@@ -26,7 +27,7 @@ public class RenderEntityScorch extends EntityRenderer<EntityScorch> {
     private static final float TEXTURE_WIDTH = 32;
     private static final float TEXTURE_HEIGHT = 32;
     private static final float RING_FRAME_SIZE = 16;
-    private static final float LINGER_RADIUS = 1.1f;
+    private static final float LINGER_RADIUS = 1f;
     private static final float SCORCH_MIN_U = 0f / TEXTURE_WIDTH;
     private static final float SCORCH_MAX_U = SCORCH_MIN_U + RING_FRAME_SIZE / TEXTURE_WIDTH;
     private static final float SCORCH_MIN_V = 0f / TEXTURE_HEIGHT;
@@ -76,20 +77,28 @@ public class RenderEntityScorch extends EntityRenderer<EntityScorch> {
         if (block.isRedstoneConductor(world, pos)) {
             int bx = pos.getX(), by = pos.getY(), bz = pos.getZ();
             //渲染偏移(用于适应在不同高低差)
-            AABB aabb = block.getBlockSupportShape(world, pos).bounds();
-            float minX = (float) (bx + aabb.minX - ex);
-            float maxX = (float) (bx + aabb.maxX - ex);
-            float y = (float) (by + aabb.minY - ey + 0.015625f);
-            float minZ = (float) (bz + aabb.minZ - ez);
-            float maxZ = (float) (bz + aabb.maxZ - ez);
-            float minU = (minX / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_U - SCORCH_MIN_U) + SCORCH_MIN_U;
-            float maxU = (maxX / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_U - SCORCH_MIN_U) + SCORCH_MIN_U;
-            float minV = (minZ / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_V - SCORCH_MIN_V) + SCORCH_MIN_V;
-            float maxV = (maxZ / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_V - SCORCH_MIN_V) + SCORCH_MIN_V;
-            drawVertex(matrix4f, matrix3f, builder, minX, y, minZ, minU, minV, opacity, packedLightIn);
-            drawVertex(matrix4f, matrix3f, builder, minX, y, maxZ, minU, maxV, opacity, packedLightIn);
-            drawVertex(matrix4f, matrix3f, builder, maxX, y, maxZ, maxU, maxV, opacity, packedLightIn);
-            drawVertex(matrix4f, matrix3f, builder, maxX, y, minZ, maxU, minV, opacity, packedLightIn);
+            VoxelShape shape = block.getBlockSupportShape(world, pos);
+            float minX;
+            float maxX;
+            float y;
+            float minZ;
+            float maxZ;
+            if (!shape.isEmpty()) {//fix #6 极端情况下导致崩溃
+                AABB aabb = shape.bounds();
+                minX = (float) (bx + aabb.minX - ex);
+                maxX = (float) (bx + aabb.maxX - ex);
+                y = (float) (by + aabb.minY - ey + 0.015625f);
+                minZ = (float) (bz + aabb.minZ - ez);
+                maxZ = (float) (bz + aabb.maxZ - ez);
+                float minU = (minX / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_U - SCORCH_MIN_U) + SCORCH_MIN_U;
+                float maxU = (maxX / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_U - SCORCH_MIN_U) + SCORCH_MIN_U;
+                float minV = (minZ / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_V - SCORCH_MIN_V) + SCORCH_MIN_V;
+                float maxV = (maxZ / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_V - SCORCH_MIN_V) + SCORCH_MIN_V;
+                drawVertex(matrix4f, matrix3f, builder, minX, y, minZ, minU, minV, opacity, packedLightIn);
+                drawVertex(matrix4f, matrix3f, builder, minX, y, maxZ, minU, maxV, opacity, packedLightIn);
+                drawVertex(matrix4f, matrix3f, builder, maxX, y, maxZ, maxU, maxV, opacity, packedLightIn);
+                drawVertex(matrix4f, matrix3f, builder, maxX, y, minZ, maxU, minV, opacity, packedLightIn);
+            }
         }
     }
 
