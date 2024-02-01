@@ -104,7 +104,7 @@ public class EntityGuardianLaser extends EntityMagicEffects {
             //xHeadRotAngle = (float) (-caster.getXRot() * Math.PI / 180.0d);
         }
 
-        if (!ON && displayControlled.getTimer() == 0) {
+        if (!ON && displayControlled.isStop()) {
             this.discard();
         }
         if (ON && tickCount > 20) {
@@ -140,7 +140,6 @@ public class EntityGuardianLaser extends EntityMagicEffects {
             if (!level().isClientSide) {
                 for (LivingEntity target : hit) {
                     if (caster instanceof EntityNamelessGuardian guardian) {
-                        //guardian.guardianHurtTarget(this.damageSources().indirectMagic(this, guardian), guardian, target, 0.02F, 0.4F, 1F, true, false);
                         guardian.guardianHurtTarget(EEDamageSource.guardianLaserAttack(this, guardian), guardian, target, 0.03F, 0.1F, 1F, true, false);
                     } else {
                         target.hurt(this.damageSources().magic(), 1.5f);
@@ -242,16 +241,6 @@ public class EntityGuardianLaser extends EntityMagicEffects {
     }
 
 
-    //@Override
-    //protected void readAdditionalSaveData(CompoundTag nbt) {
-    //    super.readAdditionalSaveData(nbt);
-    //}
-    //
-    //@Override
-    //protected void addAdditionalSaveData(CompoundTag nbt) {
-    //    super.addAdditionalSaveData(nbt);
-    //}
-
     private void calculateEndPos() {
         double radius = isPlayer() ? PLAYER_RADIUS : GUARDIAN_RADIUS;
         if (level().isClientSide()) {
@@ -316,7 +305,7 @@ public class EntityGuardianLaser extends EntityMagicEffects {
         this.setYHeadRotAngle((float) Math.toRadians(caster.yHeadRot + 90));
         this.setXHeadRotAngle((float) Math.toRadians(-caster.getXRot()));
         Vec3 vecOffset1 = new Vec3(0, 0, 1).yRot((float) Math.toRadians(-caster.getYRot()));
-        Vec3 vecOffset2 = new Vec3(0, 0, 0).yRot(-getYHeadRotAngle()).xRot(getXHeadRotAngle());
+        Vec3 vecOffset2 = new Vec3(0.6, 0, 0).yRot(-getYHeadRotAngle()).xRot(getXHeadRotAngle());
         this.setPos(caster.getX() + vecOffset1.x() + vecOffset2.x(), caster.getY() + (caster.getBbHeight() * 0.76f) + vecOffset1.y() + vecOffset2.y(), caster.getZ() + vecOffset1.z() + vecOffset2.z());
     }
 
