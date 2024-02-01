@@ -12,7 +12,6 @@ public abstract class Ability<T extends LivingEntity> {
     private final AbilityCapability.IAbilityCapability abilityCapability;
     private final AbilityType<T, ? extends Ability<?>> abilityType;
     private final int maxCoolingTick;
-    private final Random random;
     private int sectionTick;
     private int sectionIndex;
     private int coolingTimer;
@@ -25,7 +24,6 @@ public abstract class Ability<T extends LivingEntity> {
         this.abilityCapability = AbilityHandler.INSTANCE.getAbilityCapability(user);
         this.abilityType = abilityType;
         this.user = user;
-        this.random = new Random();
         this.abilityPeriods = abilityPeriods;
         this.maxCoolingTick = maxCoolingTick;
     }
