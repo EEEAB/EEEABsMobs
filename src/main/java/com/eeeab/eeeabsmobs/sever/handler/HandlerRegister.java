@@ -3,6 +3,7 @@ package com.eeeab.eeeabsmobs.sever.handler;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.ParticleGuardianSpark;
+import com.eeeab.eeeabsmobs.client.particle.ParticlePoison;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
@@ -26,10 +27,10 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = EEEABMobs.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class HandlerRegister {
 
-//    @SubscribeEvent
-//    public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event){
-//
-//    }
+    //@SubscribeEvent
+    //public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event){
+    //
+    //}
 
     @SubscribeEvent
     public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
@@ -48,15 +49,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.GUARDIAN_LASER.get(), RenderGuardianLaser::new);
         event.registerEntityRenderer(EntityInit.SCORCH.get(), RenderEntityScorch::new);
         event.registerEntityRenderer(EntityInit.EYE_OF_STRUCTURE.get(), (context) -> new ThrownItemRenderer<>(context, 1.5F, true));
-//        event.registerEntityRenderer(EntityInit.TEST.get(), RenderTest::new);
 
-        //event.registerEntityRenderer(EntityInit.IMMORTAL_SKELETON.get(), GeoRenderImmortalSkeleton::new);
-        //event.registerEntityRenderer(EntityInit.IMMORTAL_KNIGHT.get(), GeoRenderImmortalKnight::new);
-        //event.registerEntityRenderer(EntityInit.IMMORTAL_SHAMAN.get(), GeoRenderImmortalShaman::new);
-        //event.registerEntityRenderer(EntityInit.IMMORTAL.get(), RenderTheImmortal::new);
-        //event.registerEntityRenderer(EntityInit.TESTLLAGER.get(), GeoRenderTestllager::new);
-        //event.registerEntityRenderer(EntityInit.GUARDIAN_BLADE.get(),EmptyRender::new);
-        //event.registerEntityRenderer(EntityInit.FALLING_BLOCK.get(), EEFallingBlockRender::new);
         event.registerBlockEntityRenderer(BlockEntityInit.ENTITY_TOMBSTONE.get(), RenderBlockTombstone::new);
     }
 
@@ -68,6 +61,7 @@ public class HandlerRegister {
         event.registerSpriteSet(ParticleInit.DUST.get(), ParticleDust.DustFactory::new);
         event.registerSpriteSet(ParticleInit.ORB.get(), ParticleOrb.OrbFactory::new);
         event.registerSpriteSet(ParticleInit.GUARDIAN_SPARK.get(), ParticleGuardianSpark.GuardianSparkFactory::new);
+        event.registerSpriteSet(ParticleInit.POISON.get(), ParticlePoison.PoisonFactory::new);
         event.registerSpriteSet(ParticleInit.RING.get(), ParticleRing.RingFactory::new);
     }
 }
