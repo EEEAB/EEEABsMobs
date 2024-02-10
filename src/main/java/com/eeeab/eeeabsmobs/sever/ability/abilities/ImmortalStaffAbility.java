@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs.sever.ability.abilities;
 import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityPeriod;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityType;
-import com.eeeab.eeeabsmobs.sever.entity.impl.projectile.EntityShamanBomb;
+import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 
