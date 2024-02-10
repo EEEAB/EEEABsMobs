@@ -1,8 +1,8 @@
-package com.eeeab.eeeabsmobs.sever.entity.impl.immortal;
+package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
-import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IBoss;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EELookAtGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.EnumSet;
 
 //创建于 2023/1/17
-public class EntityTheImmortal extends EntityImmortal implements IBoss {
+public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
     public static final Animation SUMMONER_MOB_ANIMATION = Animation.create(40);
     private static final Animation[] ANIMATIONS = {
             SUMMONER_MOB_ANIMATION
@@ -40,7 +40,7 @@ public class EntityTheImmortal extends EntityImmortal implements IBoss {
     private int circleTick;
     private static final EntityDataAccessor<Integer> DATA_MOVING_TYPE = SynchedEntityData.defineId(EntityTheImmortal.class, EntityDataSerializers.INT);
 
-    public EntityTheImmortal(EntityType<? extends EntityImmortal> type, Level level) {
+    public EntityTheImmortal(EntityType<? extends EntityAbsImmortal> type, Level level) {
         super(type, level);
         this.xpReward = 30;
         this.active = true;
@@ -64,8 +64,8 @@ public class EntityTheImmortal extends EntityImmortal implements IBoss {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 0, false, false, null));
-        this.goalSelector.addGoal(7, new EELookAtGoal(this, Player.class, 8F));
-        this.goalSelector.addGoal(8, new EELookAtGoal(this, Mob.class, 8F));
+        this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8F));
+        this.goalSelector.addGoal(8, new EMLookAtGoal(this, Mob.class, 8F));
     }
 
     @Override
@@ -168,13 +168,13 @@ public class EntityTheImmortal extends EntityImmortal implements IBoss {
     }
 
     @Override
-    protected EEConfigHandler.AttributeConfig getAttributeConfig() {
-        return EEConfigHandler.COMMON.MOB.IMMORTAL.THE_IMMORTAL.combatConfig;
+    protected EMConfigHandler.AttributeConfig getAttributeConfig() {
+        return EMConfigHandler.COMMON.MOB.IMMORTAL.THE_IMMORTAL.combatConfig;
     }
 
     @Override
     protected boolean showBossBloodBars() {
-        return EEConfigHandler.COMMON.OTHER.enableShowBloodBars.get();
+        return EMConfigHandler.COMMON.OTHER.enableShowBloodBars.get();
     }
 
     @Override
@@ -301,6 +301,7 @@ public class EntityTheImmortal extends EntityImmortal implements IBoss {
         public void tick() {
             LivingEntity target = this.immortal.getTarget();
             if (target != null) {
+                //TODO 可以优化成工厂模式
                 float distanceToTarget = this.immortal.distanceTo(target);
 
                 if (inside && distanceToTarget >= safeRange + 2) {

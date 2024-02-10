@@ -1,11 +1,10 @@
-package com.eeeab.eeeabsmobs.sever.entity.impl.immortal;
+package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
-import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
-import com.eeeab.eeeabsmobs.sever.entity.impl.EEEABMobLibrary;
+import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.util.EEMobType;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
-import com.eeeab.eeeabsmobs.sever.entity.impl.projectile.EntityShamanBomb;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -30,17 +29,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public abstract class EntityImmortal extends EEEABMobLibrary implements GlowEntity, VenerableEntity<EntityImmortal> {
+public abstract class EntityAbsImmortal extends EEEABMobLibrary implements GlowEntity, VenerableEntity<EntityAbsImmortal> {
     protected int attackTick;
     protected boolean attacking;
     private boolean isSummon;
     private int countdown = -1;
     @Nullable
-    private EntityImmortal owner;
+    private EntityAbsImmortal owner;
     private UUID ownerUUID;
-    private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EntityImmortal.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EntityAbsImmortal.class, EntityDataSerializers.BOOLEAN);
 
-    public EntityImmortal(EntityType<? extends EntityImmortal> type, Level level) {
+    public EntityAbsImmortal(EntityType<? extends EntityAbsImmortal> type, Level level) {
         super(type, level);
     }
 
@@ -98,7 +97,6 @@ public abstract class EntityImmortal extends EEEABMobLibrary implements GlowEnti
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, AbstractSkeleton.class, 5, false, false, null));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Zombie.class, 5, false, false, (zombie) -> !(zombie instanceof ZombifiedPiglin)));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, AbstractIllager.class, 5, false, false, (illager) -> !(illager instanceof SpellcasterIllager)));
-        //this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, EntityTestllager.class, 0, true, false, null));//Only test
     }
 
     @Override
@@ -106,17 +104,7 @@ public abstract class EntityImmortal extends EEEABMobLibrary implements GlowEnti
         if (level().isClientSide) {
             return false;
         } else {
-            if (source.getDirectEntity() instanceof EntityShamanBomb shamanBomb) {
-                Entity ownerEntity = shamanBomb.getOwner();
-                if (ownerEntity instanceof LivingEntity livingEntity) {
-                    if (livingEntity.getMobType() == this.getMobType()) {
-                        if (EEConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()) return false;
-                    } else if (!shamanBomb.isPlayer()) {
-                        this.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), 100, 0, false, false));
-                    }
-                }
-            }
-            if (source.getEntity() instanceof LivingEntity livingEntity && livingEntity.getMobType() == getMobType() && EEConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()) {
+            if (source.getEntity() instanceof LivingEntity livingEntity && livingEntity.getMobType() == getMobType() && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()) {
                 return false;
             }
             return super.hurt(source, damage);
@@ -213,12 +201,12 @@ public abstract class EntityImmortal extends EEEABMobLibrary implements GlowEnti
 
     @Nullable
     @Override
-    public EntityImmortal getOwner() {
+    public EntityAbsImmortal getOwner() {
         return owner;
     }
 
     @Override
-    public void setOwner(@Nullable EntityImmortal owner) {
+    public void setOwner(@Nullable EntityAbsImmortal owner) {
         this.owner = owner;
     }
 

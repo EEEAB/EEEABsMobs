@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.entity.impl;
+package com.eeeab.eeeabsmobs.sever.entity;
 
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
@@ -7,11 +7,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class EEBossInfoServer extends ServerBossEvent {
+public class EMBossInfoServer extends ServerBossEvent {
     private final EEEABMobEntity boss;
     private final Set<ServerPlayer> playerSet = new HashSet<>();
 
-    public EEBossInfoServer(EEEABMobEntity entity) {
+    public EMBossInfoServer(EEEABMobEntity entity) {
         super(entity.getDisplayName(), entity.bossBloodBarsColor(), BossBarOverlay.PROGRESS);
         this.setVisible(entity.showBossBloodBars());
         this.boss = entity;

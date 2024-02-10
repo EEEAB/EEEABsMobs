@@ -1,7 +1,8 @@
-package com.eeeab.eeeabsmobs.sever.entity.impl.immortal;
+package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EELookAtGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.*;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationMeleeAttackGoal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -31,7 +32,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 
 import javax.annotation.Nullable;
 
-public abstract class AbstractImmortalSkeleton extends EntityImmortal implements RangedAttackMob {
+public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implements RangedAttackMob {
     public static final Animation DIE_ANIMATION = Animation.create(60);
     public static final Animation HURT_ANIMATION = Animation.create(8);
     public static final Animation MELEE_ATTACK_1_ANIMATION = Animation.create(14);
@@ -52,11 +53,11 @@ public abstract class AbstractImmortalSkeleton extends EntityImmortal implements
             SPAWN_ANIMATION,
             ROAR_ANIMATION,
     };
-    private static final EntityDataAccessor<Integer> DATA_HANDED_STATE = SynchedEntityData.defineId(AbstractImmortalSkeleton.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_HANDED_STATE = SynchedEntityData.defineId(EntityAbsImmortalSkeleton.class, EntityDataSerializers.INT);
 
     private boolean moveLeftOrRight = false;
 
-    public AbstractImmortalSkeleton(EntityType<? extends EntityImmortal> type, Level level) {
+    public EntityAbsImmortalSkeleton(EntityType<? extends EntityAbsImmortal> type, Level level) {
         super(type, level);
         this.reassessAttackModeGoal();
     }
@@ -87,7 +88,7 @@ public abstract class AbstractImmortalSkeleton extends EntityImmortal implements
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null));
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this).setAlertOthers());
-        this.goalSelector.addGoal(8, new EELookAtGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new EMLookAtGoal(this, Player.class, 8.0F));
     }
 
 
@@ -101,100 +102,57 @@ public abstract class AbstractImmortalSkeleton extends EntityImmortal implements
         this.goalSelector.addGoal(1, new AnimationAttackGoal<>(this, MELEE_ATTACK_2_ANIMATION, 8, 3.0f, 1.0f, 15.0f));
         this.goalSelector.addGoal(1, new AnimationAttackGoal<>(this, MELEE_ATTACK_3_ANIMATION, 12, 2.5f, 1.0f, 1.0f));
         this.goalSelector.addGoal(1, new AnimationBlockGoal<>(this, BLOCK_ANIMATION));
+        this.goalSelector.addGoal(2, new AnimationMeleeAttackGoal<>(this, 1D, e -> e.getWeaponType() == AttackType.MAIN_HANDED || e.getWeaponType() == AttackType.MAIN_HANDED_SHIELD, MELEE_ATTACK_1_ANIMATION, MELEE_ATTACK_2_ANIMATION));
+        this.goalSelector.addGoal(2, new AnimationMeleeAttackGoal<>(this, 1D, 5, e -> e.getWeaponType() == AttackType.NONE || e.getWeaponType() == AttackType.NONE_SHIELD, MELEE_ATTACK_3_ANIMATION));
     }
-
-    protected void MeleeAttackAI() {
-        if (!this.level().isClientSide && this.getTarget() != null && !this.getTarget().isAlive()) setTarget(null);
-
-        if (this.getTarget() != null && !isNoAi() && isActive()) {
-            LivingEntity target = getTarget();
-            this.getLookControl().setLookAt(target, 30F, 30F);
-            if (targetDistance > 6) {
-                this.getNavigation().moveTo(target, 1.0D);
-            }
-            if (attackTick == 0 && getSensing().hasLineOfSight(target)) {
-                attacking = true;
-                if (getAnimation() == NO_ANIMATION) {
-                    this.getNavigation().moveTo(target, 1.0D);
-                }
-            }
-
-            if (attacking && getAnimation() == NO_ANIMATION && getSensing().hasLineOfSight(target)) {
-                if (targetDistance < 2.5) {
-                    if (target.getY() - this.getY() >= -2.0 && target.getY() - this.getY() <= 2.0) {
-                        if (this.getWeaponType() == AttackType.MAIN_HANDED || this.getWeaponType() == AttackType.MAIN_HANDED_SHIELD) {
-                            this.playAnimation(random.nextBoolean() ? MELEE_ATTACK_1_ANIMATION : MELEE_ATTACK_2_ANIMATION);
-                        } else if (this.getWeaponType() == AttackType.NONE || this.getWeaponType() == AttackType.NONE_SHIELD) {
-                            this.playAnimation(MELEE_ATTACK_3_ANIMATION);
-                        }
-                        attackTick = 20;
-                        attacking = false;
-                    } else if (target.getY() - this.getY() >= 2.1 && target.getY() - this.getY() <= 3.0 && this.getRandom().nextFloat() < 0.45F) {
-                        this.getJumpControl().jump();
-                    }
-                }
-            }
-        } else {
-            attacking = false;
-        }
-    }
-
-    protected void RangeAttackAI() {
-        if (!this.level().isClientSide && this.getTarget() != null && !this.getTarget().isAlive()) setTarget(null);
-
-        if (this.getTarget() != null && !isNoAi() && isActive()) {
-            LivingEntity target = getTarget();
-            final double attackRange = 9.0D;
-            this.getLookControl().setLookAt(target, 30F, 30F);
-            if (targetDistance <= 4) {
-                this.getMoveControl().strafe(-0.5F, 0.0F);
-            } else if (!(targetDistance > attackRange)) {
-                if (tickCount % 20 == 0 && this.getRandom().nextFloat() < 0.25F) {
-                    moveLeftOrRight = !moveLeftOrRight;
-                }
-                if (tickCount % 2 == 0) this.getMoveControl().strafe(0.0F, moveLeftOrRight ? 0.5F : -0.5F);
-            }
-            if (targetDistance >= attackRange) {
-                //this.getMoveControl().strafe(0.0F, 0.0F);
-                this.getNavigation().moveTo(target, 1.0D);
-            }
-
-            if (attackTick == 0 && getSensing().hasLineOfSight(target)) {
-                attacking = true;
-            }
-            if (attacking && getAnimation() == NO_ANIMATION && getSensing().hasLineOfSight(target)) {
-                if (targetDistance <= attackRange) {
-                    if (!(targetDistance < 2.5 || targetDistance < 3.5 && ModEntityUtils.checkTargetComingCloser(this, target))) {
-                        this.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof BowItem));
-                        this.playAnimation(RANGED_ATTACK_ANIMATION);
-                        attackTick = 40;
-                        //attacking = false;
-                    }
-                }
-            }
-            if (attacking && getSensing().hasLineOfSight(target)) {
-                if (targetDistance < 2.5 || targetDistance < 3.5 && ModEntityUtils.checkTargetComingCloser(this, target)) {
-                    if (this.isUsingItem()) this.stopUsingItem();
-                    this.playAnimation(MELEE_ATTACK_2_ANIMATION);
-                    attackTick = 20;
-                    attacking = false;
-                }
-            }
-        } else {
-            attacking = false;
-        }
-    }
-
 
     @Override
     public void tick() {
         super.tick();
+        if (!this.level().isClientSide && this.getTarget() != null && !this.getTarget().isAlive()) setTarget(null);
         AnimationHandler.INSTANCE.updateAnimations(this);
-        //this.setYRot(this.yBodyRot);
         if (this.getWeaponType() == AttackType.BOW || this.getWeaponType() == AttackType.BOW_SHIELD) {
-            RangeAttackAI();
-        } else {
-            MeleeAttackAI();
+            if (this.getTarget() != null && !isNoAi() && isActive()) {
+                LivingEntity target = getTarget();
+                final double attackRange = 9.0D;
+                this.getLookControl().setLookAt(target, 30F, 30F);
+                if (targetDistance <= 4) {
+                    this.getMoveControl().strafe(-0.5F, 0.0F);
+                } else if (!(targetDistance > attackRange)) {
+                    if (tickCount % 20 == 0 && this.getRandom().nextFloat() < 0.25F) {
+                        moveLeftOrRight = !moveLeftOrRight;
+                    }
+                    if (tickCount % 2 == 0) this.getMoveControl().strafe(0.0F, moveLeftOrRight ? 0.5F : -0.5F);
+                }
+                if (targetDistance >= attackRange) {
+                    //this.getMoveControl().strafe(0.0F, 0.0F);
+                    this.getNavigation().moveTo(target, 1.0D);
+                }
+
+                if (attackTick == 0 && getSensing().hasLineOfSight(target)) {
+                    attacking = true;
+                }
+                if (attacking && getAnimation() == NO_ANIMATION && getSensing().hasLineOfSight(target)) {
+                    if (targetDistance <= attackRange) {
+                        if (!(targetDistance < 2.5 || targetDistance < 3.5 && ModEntityUtils.checkTargetComingCloser(this, target))) {
+                            this.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof BowItem));
+                            this.playAnimation(RANGED_ATTACK_ANIMATION);
+                            attackTick = 50 + this.random.nextInt(20);
+                            attacking = false;
+                        }
+                    }
+                }
+                if (attacking && getSensing().hasLineOfSight(target)) {
+                    if (targetDistance < 2.5 || targetDistance < 3.5 && ModEntityUtils.checkTargetComingCloser(this, target)) {
+                        if (this.isUsingItem()) this.stopUsingItem();
+                        this.playAnimation(MELEE_ATTACK_2_ANIMATION);
+                        attackTick = 20;
+                        attacking = false;
+                    }
+                }
+            } else {
+                attacking = false;
+            }
         }
         if (getAnimation() != NO_ANIMATION) {
             getNavigation().stop();

@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.entity.impl.effect;
+package com.eeeab.eeeabsmobs.sever.entity.effects;
 
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import net.minecraft.nbt.CompoundTag;

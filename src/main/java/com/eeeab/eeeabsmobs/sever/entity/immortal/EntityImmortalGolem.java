@@ -1,12 +1,13 @@
-package com.eeeab.eeeabsmobs.sever.entity.impl.immortal;
+package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationMeleeAttackGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerDieGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerResetGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerCopyTargetGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EELookAtGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationActivateGoal;
-import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationAttackGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationHurtGoal;
@@ -35,8 +36,7 @@ import com.github.alexthe666.citadel.animation.Animation;
 
 import javax.annotation.Nullable;
 
-//基本AI完成
-public class EntityImmortalGolem extends EntityImmortal implements IEntity {
+public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
     public static final Animation DIE_ANIMATION = Animation.create(30);
     public static final Animation ATTACK_ANIMATION = Animation.create(12);
     public static final Animation HURT_ANIMATION = Animation.create(10);
@@ -56,8 +56,8 @@ public class EntityImmortalGolem extends EntityImmortal implements IEntity {
     }
 
     @Override
-    protected EEConfigHandler.AttributeConfig getAttributeConfig() {
-        return EEConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_GOLEM.combatConfig;
+    protected EMConfigHandler.AttributeConfig getAttributeConfig() {
+        return EMConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_GOLEM.combatConfig;
     }
 
 
@@ -66,8 +66,8 @@ public class EntityImmortalGolem extends EntityImmortal implements IEntity {
         super.registerGoals();
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null));
-        this.goalSelector.addGoal(7, new EELookAtGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(8, new EELookAtGoal(this, EntityImmortalShaman.class, 6.0F));
+        this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(8, new EMLookAtGoal(this, EntityImmortalShaman.class, 6.0F));
     }
 
     @Override
@@ -75,6 +75,7 @@ public class EntityImmortalGolem extends EntityImmortal implements IEntity {
         this.goalSelector.addGoal(1, new AnimationActivateGoal<>(this, SPAWN_ANIMATION));
         this.goalSelector.addGoal(1, new AnimationAttackGoal<>(this, ATTACK_ANIMATION, 7, 1.5f, 1.0f, 1.0f));
         this.goalSelector.addGoal(1, new AnimationHurtGoal<>(this, false));
+        this.goalSelector.addGoal(2, new AnimationMeleeAttackGoal<>(this, 1.0D, ATTACK_ANIMATION));
         this.goalSelector.addGoal(1, new OwnerResetGoal<>(this, EntityImmortalShaman.class, 20D));
         this.targetSelector.addGoal(2, new OwnerCopyTargetGoal<>(this));
         this.goalSelector.addGoal(3, new OwnerDieGoal<>(this));
@@ -85,7 +86,6 @@ public class EntityImmortalGolem extends EntityImmortal implements IEntity {
     public void tick() {
         super.tick();
         AnimationHandler.INSTANCE.updateAnimations(this);
-        meleeAttackAI();
         if (this.isDangerous() && this.getAnimation() == ATTACK_ANIMATION) {
             if (this.getAnimationTick() == 6) this.boom();
         }
@@ -103,7 +103,6 @@ public class EntityImmortalGolem extends EntityImmortal implements IEntity {
         }
     }
 
-
     @Override
     public void handleEntityEvent(byte id) {
         if (id == 5) {
@@ -117,43 +116,6 @@ public class EntityImmortalGolem extends EntityImmortal implements IEntity {
     @Override
     protected void makePoofParticles() {
         if (!isDangerous()) super.makePoofParticles();
-    }
-
-    private void meleeAttackAI() {
-        if (!this.level().isClientSide && ((this.getTarget() != null && !this.getTarget().isAlive()) || this.getTarget() == getOwner()))
-            setTarget(null);
-
-        if (attackTick > 0) {
-            attackTick--;
-        }
-
-        if (this.getTarget() != null && isActive() && !isNoAi()) {
-            LivingEntity target = getTarget();
-            this.getLookControl().setLookAt(target, 30F, 30F);
-            if (targetDistance > 6) {
-                this.getNavigation().moveTo(target, (isDangerous() ? 1.1D : 1.0D));
-            }
-            if (attackTick <= 0 && getSensing().hasLineOfSight(target)) {
-                attacking = true;
-                if (getAnimation() == NO_ANIMATION) {
-                    this.getNavigation().moveTo(target, (isDangerous() ? 1.1D : 1.0D));
-                }
-            }
-
-            if (attacking && getAnimation() == NO_ANIMATION && getSensing().hasLineOfSight(target)) {
-                if (targetDistance < 2.5) {
-                    if (target.getY() - this.getY() >= -2.0 && target.getY() - this.getY() <= 2.0) {
-                        this.playAnimation(ATTACK_ANIMATION);
-                        attackTick = 20;
-                        attacking = false;
-                    } else if (target.getY() - this.getY() >= 2.1 && target.getY() - this.getY() <= 3.0 && this.getRandom().nextFloat() < 0.6F) {
-                        this.getJumpControl().jump();
-                    }
-                }
-            }
-        } else {
-            attacking = false;
-        }
     }
 
     @Override
@@ -182,7 +144,7 @@ public class EntityImmortalGolem extends EntityImmortal implements IEntity {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         RandomSource randomsource = worldIn.getRandom();
         this.populateDefaultEquipmentSlots(randomsource, difficultyIn);
-        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+        return spawnDataIn;
     }
 
     @Override

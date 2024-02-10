@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.entity.impl.effect;
+package com.eeeab.eeeabsmobs.sever.entity.effects;
 
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
@@ -9,7 +9,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 public class EntityScorch extends EntityMagicEffects {
-    //private static final int ALIVE_TIME = EEConfigHandler.COMMON.EXPERIMENTAL_ENTITY.SCORCH.existTimer.get() * 20;
     private static final int ALIVE_TIME = 20;
     public final ControlledAnimation controlled = new ControlledAnimation(20);
 
@@ -40,7 +39,7 @@ public class EntityScorch extends EntityMagicEffects {
                 level().addParticle(ParticleTypes.LARGE_SMOKE, getX(), getY() + 0.05F, getZ(), motionX, motionY * 1.2F, motionZ);
             }
         }
-        if (controlled.getTimer() == 0 || isInFluidType()) {
+        if (controlled.isStop() || isInFluidType()) {
             discard();
         }
     }

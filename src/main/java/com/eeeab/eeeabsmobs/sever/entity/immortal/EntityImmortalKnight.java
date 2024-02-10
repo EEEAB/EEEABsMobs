@@ -1,6 +1,6 @@
-package com.eeeab.eeeabsmobs.sever.entity.impl.immortal;
+package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
-import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
@@ -33,7 +33,7 @@ import net.minecraft.world.phys.AABB;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 
-public class EntityImmortalKnight extends AbstractImmortalSkeleton implements IEntity {
+public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements IEntity {
     private static final UniformInt ALERT_INTERVAL = TimeUtil.rangeOfSeconds(3, 5);
     private static final UniformInt ROAR_INTERVAL = TimeUtil.rangeOfSeconds(15, 30);
     private int ticksUntilNextAlert;
@@ -74,8 +74,8 @@ public class EntityImmortalKnight extends AbstractImmortalSkeleton implements IE
     }
 
     @Override
-    protected EEConfigHandler.AttributeConfig getAttributeConfig() {
-        return EEConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_KNIGHT.combatConfig;
+    protected EMConfigHandler.AttributeConfig getAttributeConfig() {
+        return EMConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_KNIGHT.combatConfig;
     }
 
     @Override
@@ -127,7 +127,7 @@ public class EntityImmortalKnight extends AbstractImmortalSkeleton implements IE
         double range = this.getAttributeValue(Attributes.FOLLOW_RANGE);
         AABB aabb = AABB.unitCubeFromLowerCorner(this.position()).inflate(range, 5.0D, range);
         if (getTarget() != null) {
-            this.level().getEntitiesOfClass(AbstractImmortalSkeleton.class, aabb, EntitySelector.NO_SPECTATORS).
+            this.level().getEntitiesOfClass(EntityAbsImmortalSkeleton.class, aabb, EntitySelector.NO_SPECTATORS).
                     stream().
                     filter(skeleton -> !(skeleton instanceof EntityImmortalKnight))
                     .forEach(skeleton -> skeleton.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 200, 0), this
@@ -184,11 +184,11 @@ public class EntityImmortalKnight extends AbstractImmortalSkeleton implements IE
 
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficultyIn) {
-        this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.IMMORTAL_SWORD.get()));
-        this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.SHIELD));
+        ItemStack weapon = randomSource.nextBoolean() ? new ItemStack(ItemInit.IMMORTAL_SWORD.get()) : new ItemStack(ItemInit.IMMORTAL_AXE.get());
+        this.setItemSlot(EquipmentSlot.MAINHAND, weapon);
+        if (randomSource.nextBoolean()) this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.SHIELD));
         this.setDropChance(EquipmentSlot.MAINHAND, 0);
         this.setDropChance(EquipmentSlot.OFFHAND, 0);
-
     }
 
     public static AttributeSupplier.Builder setAttributes() {

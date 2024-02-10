@@ -1,30 +1,30 @@
-package com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian;
+package com.eeeab.eeeabsmobs.sever.entity.namelessguardian;
 
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
-import com.eeeab.eeeabsmobs.sever.advancements.EECriteriaTriggers;
-import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
+import com.eeeab.eeeabsmobs.sever.advancements.EMCriteriaTriggers;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
 import com.eeeab.eeeabsmobs.sever.entity.IBoss;
 import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
-import com.eeeab.eeeabsmobs.sever.entity.ai.control.EEBodyRotationControl;
+import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.*;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.*;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationAbstractGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EEPathNavigateGround;
-import com.eeeab.eeeabsmobs.sever.entity.impl.EEEABMobLibrary;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityCameraShake;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityFallingBlock;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityGuardianLaser;
+import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityFallingBlock;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianLaser;
+import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.EEDamageSource;
-import com.eeeab.eeeabsmobs.sever.util.EETagKey;
+import com.eeeab.eeeabsmobs.sever.util.EMDamageSource;
+import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.AnimationHandler;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
@@ -63,6 +63,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -137,7 +138,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             SHAKE_GROUND_ATTACK_ANIMATION_3
     };
 
-    private final EELookAtGoal lookAtPlayerGoal = new EELookAtGoal(this, Player.class, 8.0F);
+    private final EMLookAtGoal lookAtPlayerGoal = new EMLookAtGoal(this, Player.class, 8.0F);
     private final WaterAvoidingRandomStrollGoal waterAvoidingRandomStrollGoal = new WaterAvoidingRandomStrollGoal(this, 1.0D);
     private final RandomLookAroundGoal randomLookAroundGoal = new RandomLookAroundGoal(this);
     private static final EntityDataAccessor<Boolean> DATA_POWER = SynchedEntityData.defineId(EntityNamelessGuardian.class, EntityDataSerializers.BOOLEAN);
@@ -185,9 +186,9 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             {0.5F, -0.5F}
     };
 
-    public boolean inShoot = false;
     public final ControlledAnimation coreControlled = new ControlledAnimation(10);
     public final ControlledAnimation explodeControlled = new ControlledAnimation(30);
+    public final ControlledAnimation accumulationControlled = new ControlledAnimation(10);
 
     public EntityNamelessGuardian(EntityType<? extends EntityNamelessGuardian> type, Level level) {
         super(type, level);
@@ -241,6 +242,12 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         return false;
     }
 
+    @Override//被方块阻塞
+    public void makeStuckInBlock(BlockState state, Vec3 motionMultiplier) {
+        if (!state.is(Blocks.COBWEB)) {
+            super.makeStuckInBlock(state, motionMultiplier);
+        }
+    }
 
     @Override
     public boolean removeWhenFarAway(double distance) {
@@ -260,24 +267,24 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     @Override
     @NotNull
     protected BodyRotationControl createBodyControl() {
-        return new EEBodyRotationControl(this);
+        return new EMBodyRotationControl(this);
     }
 
     @Override
     @NotNull
     protected PathNavigation createNavigation(Level level) {
-        return new EEPathNavigateGround(this, level);
+        return new EMPathNavigateGround(this, level);
     }
 
 
     @Override
-    protected EEConfigHandler.AttributeConfig getAttributeConfig() {
-        return EEConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.combatConfig;
+    protected EMConfigHandler.AttributeConfig getAttributeConfig() {
+        return EMConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.combatConfig;
     }
 
     @Override
     protected boolean showBossBloodBars() {
-        return EEConfigHandler.COMMON.OTHER.enableShowBloodBars.get();
+        return EMConfigHandler.COMMON.OTHER.enableShowBloodBars.get();
     }
 
     @Override
@@ -292,7 +299,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
 
     @Override
     public int getMaxHeadXRot() {
-        return 35;
+        return 30;
     }
 
     @Override
@@ -418,16 +425,13 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         floatGuardian();
         this.coreControlled.updatePrevTimer();
         this.explodeControlled.updatePrevTimer();
+        this.accumulationControlled.updatePrevTimer();
 
         AnimationHandler.INSTANCE.updateAnimations(this);
 
         if (!this.level().isClientSide) {
             if (this.getTarget() != null && !this.getTarget().isAlive()) this.setTarget(null);
 
-            //if (this.isActive() && this.getAnimation() == NO_ANIMATION && !this.isNoAi())
-            //    this.playAnimation(ATTACK2_ANIMATION_3);
-            //this.playAnimation(ROBUST_ATTACK_ANIMATION);
-            //this.playAnimation(WEAK_ANIMATION_1);
             if (this.getTarget() != null && this.isActive() && !this.isPowered() && this.noConflictingTasks() && (this.isChallengeMode() || (this.FIRST && this.getHealthPercentage() <= 60) || (!this.FIRST && this.getNextMadnessTick() <= 0))) {
                 this.removeAllEffects();
                 this.setNoAi(false);
@@ -450,22 +454,13 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             }
 
             if (!this.isUnnatural()) {
-                //this.setYRot(this.yBodyRot);
                 if (this.noConflictingTasks() && this.getTarget() == null && this.getNavigation().isDone() && !this.isAtRestPos() && this.isActive()) {
                     this.moveToRestPos();
                 }
             }
 
             if (!this.active && this.getAnimation() != ACTIVATE_ANIMATION) {
-                if (EEConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.enableNonCombatHeal.get()) this.heal(0.5F);
-            }
-            if (this.active && getTarget() != null && this.targetDistance < 6.0f && this.isPowered()) {
-                if (this.laserTick <= 0) {
-                    this.noUseSkillFromLongTick++;
-                }
-                if (this.pounceTick <= 0) {
-                    this.noUseSkillFromLongTick++;
-                }
+                if (EMConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.enableNonCombatHeal.get()) this.heal(0.5F);
             }
 
             if (this.getTarget() != null && this.active && this.isTimeOutToUseSkill() && !this.shouldUseSkill && this.getAnimation() == NO_ANIMATION && !this.isNoAi()) {
@@ -478,12 +473,6 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
 
         if (!this.isActive()) {
             this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
-        }
-
-        if (this.isGlow()) {
-            this.coreControlled.increaseTimer();
-        } else {
-            this.coreControlled.decreaseTimer();
         }
 
         if (this.getAnimation() != NO_ANIMATION
@@ -534,9 +523,6 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             if (this.level().isClientSide && tick % 5 == 0) {
                 this.level().addParticle(ParticleTypes.LARGE_SMOKE, this.getRandomX(0.5D), this.getRandomY() - 1.5F, this.getRandomZ(0.5D), -0.15D + this.random.nextDouble() * 0.15D, -0.15D + this.random.nextDouble() * 0.15D, -0.15D + this.random.nextDouble() * 0.15D);
             }
-        } else if (this.getAnimation() == LASER_ANIMATION) {
-            if (tick == 22) this.playSound(SoundInit.LASER.get(), 2f, 1.0f);
-            else if (this.level().isClientSide) this.inShoot = tick > 23 && tick < 99;
         } else if (this.getAnimation() == LEAP_ANIMATION && tick == 13) {
             if (!this.level().isClientSide) this.level().broadcastEntityEvent(this, (byte) 7);
         } else if (this.getAnimation() == SMASH_DOWN_ANIMATION && tick == 4) {
@@ -544,7 +530,6 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         } else if (this.getAnimation() == ACTIVATE_ANIMATION) {
             LivingEntity target = getTarget();
             if (target != null && tick > 40) {
-                //this.getLookControl().setLookAt(target, 30F, 30F);
                 this.lookAt(target, 30F, 30F);
             }
         }
@@ -689,7 +674,21 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             if (this.robustTick > 0) {
                 this.robustTick--;
             }
+
+            if (this.active && this.isPowered() && getTarget() != null && this.targetDistance < 6.0f) {
+                if (this.laserTick <= 0) {
+                    this.noUseSkillFromLongTick++;
+                }
+                if (this.pounceTick <= 0) {
+                    this.noUseSkillFromLongTick++;
+                }
+            }
         }
+
+        this.coreControlled.incrementOrDecreaseTimer(this.isGlow());
+
+        int tick = this.getAnimationTick();
+        this.accumulationControlled.incrementOrDecreaseTimer(this.getAnimation() == LASER_ANIMATION && tick > 8 && tick < 99);
 
         //并无实际用途,仅作为测试 复制自EndDragon
         if (!this.isNoAi()) {
@@ -722,7 +721,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     public boolean hurt(DamageSource source, float damage) {
         if (!this.level().isClientSide/* 在服务端进行判断 */) {
             Entity entity = source.getEntity();
-            float maximumDamageCap = (float) (EEConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.maximumDamageCap.damageCap.get() * 1F);
+            float maximumDamageCap = (float) (EMConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.maximumDamageCap.damageCap.get() * 1F);
             float maxHurtDamage = getMaxHealth() * maximumDamageCap;
             if ((!active || getTarget() == null) && entity instanceof LivingEntity livingEntity
                     && !(livingEntity instanceof Player player && player.isCreative() || this.level().getDifficulty() == Difficulty.PEACEFUL)
@@ -736,12 +735,12 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
                     if (ModEntityUtils.isProjectileSource(source)) return false;
                 }
                 if (this.getAnimation() == WEAK_ANIMATION_2) {
-                    maxHurtDamage = /* 如果伤害源是magic类型 则没有限制伤害,反之则受到最大伤害上限2倍伤害*/source.is(EETagKey.MAGIC_UNRESISTANT_TO) ? damage : getMaxHealth() * (maximumDamageCap * 2);
+                    maxHurtDamage = /* 如果伤害源是magic类型 则没有限制伤害,反之则受到最大伤害上限2倍伤害*/source.is(EMTagKey.MAGIC_UNRESISTANT_TO) ? damage : getMaxHealth() * (maximumDamageCap * 2);
                     maxHurtDamage = /* 防止超过生命值上限 */Math.min(maxHurtDamage, getMaxHealth());
                 }
                 damage = Math.min(damage, maxHurtDamage);
                 return super.hurt(source, damage);
-            } else if (source.is(EETagKey.GENERAL_UNRESISTANT_TO)) {
+            } else if (source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
                 return super.hurt(source, damage);
             }
         }
@@ -815,9 +814,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         this.setUnnatural(compound.getBoolean("isUnnatural"));
         this.setMadnessTick(compound.getInt("madnessCountdownTick"));
         this.setNextMadnessTick(compound.getInt("nextMadnessTick"));
-        this.coreControlled.setTimer(compound.getInt("coreLighting"));
         active = isActive();
-        //this.setExecuteWeak(compound.getBoolean("executeWeak"));
     }
 
     @Override
@@ -832,8 +829,6 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         compound.putBoolean("isUnnatural", this.entityData.get(DATA_IS_UNNATURAL));
         compound.putBoolean("isActive", this.entityData.get(DATA_ACTIVE));
         compound.putInt("nextMadnessTick", this.nextMadnessTick);
-        compound.putInt("coreLighting", this.coreControlled.getTimer());
-        //compound.putBoolean("executeWeak", this.executeWeak);
     }
 
     public static AttributeSupplier.Builder setAttributes() {
@@ -851,7 +846,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor accessor, DifficultyInstance difficultyInstance, MobSpawnType spawnType, @Nullable SpawnGroupData groupData, @Nullable CompoundTag compoundTag) {
         this.setUnnatural(spawnType == MobSpawnType.SPAWN_EGG);
         this.setRestPos(this.blockPosition());
-        return super.finalizeSpawn(accessor, difficultyInstance, spawnType, groupData, compoundTag);
+        return groupData;
     }
 
     public float getAttackDamageAttributeValue() {
@@ -987,6 +982,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         List<Entity> entities = getNearByEntities(Entity.class, 16, 16, 16, 16);
         for (Entity inRangeEntity : entities) {
             if (inRangeEntity instanceof Player player && player.getAbilities().invulnerable) continue;
+            if (!(inRangeEntity instanceof LivingEntity)) continue;
             Vec3 diff = inRangeEntity.position().subtract(this.position().add(Math.cos(Math.toRadians(this.yBodyRot + 90)) * 3.2F, 0, Math.sin(Math.toRadians(this.yBodyRot + 90)) * 3.2F));
             diff = diff.normalize().scale(0.08);
             inRangeEntity.setDeltaMovement(inRangeEntity.getDeltaMovement().subtract(diff));
@@ -1020,20 +1016,19 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
                         continue;
                     }
                     if (hit instanceof LivingEntity livingEntity) {
-                        this.guardianHurtTarget(EEDamageSource.guardianRobustAttack(this), this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, shouldHeal, false);
+                        this.guardianHurtTarget(EMDamageSource.guardianRobustAttack(this), this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, shouldHeal, false);
                     }
                     double magnitude = level().random.nextGaussian() * 0.15 + 0.1;
                     double angle = this.getAngleBetweenEntities(this, hit);
                     double x1 = Math.cos(Math.toRadians(angle - 90));
                     double z1 = Math.sin(Math.toRadians(angle - 90));
-                    float x = 0F, y = 0F, z = 0F;
+                    float x = 0F, z = 0F;
                     x += x1 * magnitude * 0.15;
-                    y += 0.1 + 0.2 * magnitude * 0.1;
                     z += z1 * magnitude * 0.15;
                     if (hit instanceof ServerPlayer) {
                         ((ServerPlayer) hit).connection.send(new ClientboundSetEntityMotionPacket(hit));
                     }
-                    hit.setDeltaMovement(hit.getDeltaMovement().add(x, y, z));
+                    hit.setDeltaMovement(hit.getDeltaMovement().add(x, 0.1, z));
                 }
             }
             int hitX = Mth.floor(px);
@@ -1264,7 +1259,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     public boolean guardianHurtTarget(DamageSource damageSource, EntityNamelessGuardian guardian, LivingEntity hitEntity, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier, boolean shouldHeal, boolean disableShield) {
         float finalDamage = ((guardian.getAttackDamageAttributeValue() * baseDamageMultiplier) + hitEntity.getMaxHealth() * hitEntityMaxHealth) * damageMultiplier;
         boolean flag = hitEntity.hurt(damageSource, finalDamage);
-        double suckBloodCap = EEConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.suckBloodFactor.get();
+        double suckBloodCap = EMConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.suckBloodFactor.get();
         if (flag && shouldHeal)
             guardian.heal((float) Mth.clamp(finalDamage * 0.22F, 0F, getMaxHealth() * suckBloodCap));
         if (disableShield && hitEntity instanceof Player player && player.isBlocking()) {
@@ -1310,7 +1305,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     }
 
     public boolean isChallengeMode() {
-        return EEConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.challengeMode.get();
+        return EMConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.challengeMode.get();
     }
 
     public void setExecuteWeak(boolean executeWeak) {
@@ -1515,7 +1510,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
             if (livingentity instanceof ServerPlayer serverplayer) {
                 if (entity instanceof EntityNamelessGuardian guardian && guardian.isChallengeMode()) {
                     DamageSource damagesource = entity.getLastDamageSource() == null ? level.damageSources().playerAttack(serverplayer) : entity.getLastDamageSource();
-                    EECriteriaTriggers.KILL_BOSS_IN_CHALLENGE_MODE.trigger(serverplayer, entity, damagesource);
+                    EMCriteriaTriggers.KILL_BOSS_IN_CHALLENGE_MODE.trigger(serverplayer, entity, damagesource);
                 }
             }
 

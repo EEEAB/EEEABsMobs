@@ -1,9 +1,9 @@
-package com.eeeab.eeeabsmobs.sever.entity.impl.test;
+package com.eeeab.eeeabsmobs.sever.entity.test;
 
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EELookAtGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationActivateGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationDeactivateGoal;
-import com.eeeab.eeeabsmobs.sever.entity.impl.EEEABMobLibrary;
+import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.util.MTUtils;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -46,8 +46,8 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        goalSelector.addGoal(7, new EELookAtGoal(this, Player.class, 6.0F, true));
-        goalSelector.addGoal(8, new EELookAtGoal(this, Mob.class, 8.0F));
+        goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 6.0F, true));
+        goalSelector.addGoal(8, new EMLookAtGoal(this, Mob.class, 8.0F));
     }
 
     @Override

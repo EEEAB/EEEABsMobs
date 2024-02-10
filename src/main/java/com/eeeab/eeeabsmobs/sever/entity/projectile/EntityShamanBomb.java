@@ -1,11 +1,11 @@
-package com.eeeab.eeeabsmobs.sever.entity.impl.projectile;
+package com.eeeab.eeeabsmobs.sever.entity.projectile;
 
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
-import com.eeeab.eeeabsmobs.sever.util.EEDamageSource;
-import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
+import com.eeeab.eeeabsmobs.sever.util.EMDamageSource;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityCameraShake;
-import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.EntityImmortal;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import net.minecraft.core.particles.ParticleOptions;
@@ -33,7 +33,7 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
     private static final float INERTIA_DEFAULT = 0.95F;
     private static final int DANGEROUS_TIMER = 40;
     private static final int NO_DANGEROUS_TIMER = 50;
-    //private boolean reboundFlag;
+    public boolean reboundFlag;
     private static final EntityDataAccessor<Boolean> DANGEROUS = SynchedEntityData.defineId(EntityShamanBomb.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> IS_PLAYER = SynchedEntityData.defineId(EntityShamanBomb.class, EntityDataSerializers.BOOLEAN);
     public final ControlledAnimation scaleControlled = new ControlledAnimation(20);
@@ -72,7 +72,7 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
             Entity ownerEntity = this.getOwner();//(发射|反弹)弹射物的实体
             boolean flag;
             if (ownerEntity instanceof LivingEntity owner && resultEntity instanceof LivingEntity livingEntity) {
-                flag = resultEntity.hurt(EEDamageSource.shamanBombing(this, owner), (livingEntity.getMaxHealth() * 0.1F * (isPlayer() ? 0 : 1F)) + BASE_DAMAGE);
+                flag = resultEntity.hurt(EMDamageSource.shamanBombing(this, owner), (livingEntity.getMaxHealth() * 0.1F * (isPlayer() ? 0 : 1F)) + BASE_DAMAGE);
                 if (flag && resultEntity.isAlive()) {
                     this.doEnchantDamageEffects(owner, resultEntity);
                 }
@@ -103,8 +103,8 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
 
     @Override
     public boolean hurt(DamageSource source, float damage) {
-        //if (!isDangerous() && !isPlayer()) reboundFlag = true;
-        return super.hurt(source, damage);
+        this.reboundFlag = super.hurt(source, damage);
+        return this.reboundFlag;
     }
 
     @Override
@@ -117,8 +117,8 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
 
     @Override
     protected boolean canHitEntity(Entity entity) {
-        if (entity instanceof EntityImmortal) {
-            return !EEConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() || isPlayer() || !(getOwner() instanceof EntityImmortal);
+        if (entity instanceof EntityAbsImmortal) {
+            return !EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() || isPlayer() || !(getOwner() instanceof EntityAbsImmortal);
         } else if (entity instanceof Player) {
             return getOwner() != entity;
         } else {

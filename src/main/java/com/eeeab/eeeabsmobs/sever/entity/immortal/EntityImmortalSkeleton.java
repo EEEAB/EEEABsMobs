@@ -1,15 +1,14 @@
-package com.eeeab.eeeabsmobs.sever.entity.impl.immortal;
+package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
-import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
-import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -18,7 +17,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import javax.annotation.Nullable;
 
 //基本AI完成
-public class EntityImmortalSkeleton extends AbstractImmortalSkeleton implements IEntity {
+public class EntityImmortalSkeleton extends EntityAbsImmortalSkeleton implements IEntity {
     public EntityImmortalSkeleton(EntityType<? extends EntityImmortalSkeleton> type, Level level) {
         super(type, level);
         this.xpReward = 5;
@@ -27,8 +26,8 @@ public class EntityImmortalSkeleton extends AbstractImmortalSkeleton implements 
     }
 
     @Override
-    protected EEConfigHandler.AttributeConfig getAttributeConfig() {
-        return EEConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SKELETON.combatConfig;
+    protected EMConfigHandler.AttributeConfig getAttributeConfig() {
+        return EMConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SKELETON.combatConfig;
     }
 
 
@@ -43,7 +42,7 @@ public class EntityImmortalSkeleton extends AbstractImmortalSkeleton implements 
         if (randomSource.nextInt(10) <= difficultyIn.getDifficulty().getId()) {
             this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
         } else {
-            this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.IMMORTAL_AXE.get()));
+            this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_SWORD));
         }
     }
 

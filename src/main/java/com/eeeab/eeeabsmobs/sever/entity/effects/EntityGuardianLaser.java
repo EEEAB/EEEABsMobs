@@ -1,13 +1,13 @@
-package com.eeeab.eeeabsmobs.sever.entity.impl.effect;
+package com.eeeab.eeeabsmobs.sever.entity.effects;
 
 import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
 import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
-import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
-import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
-import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
-import com.eeeab.eeeabsmobs.sever.util.EEDamageSource;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
+import com.eeeab.eeeabsmobs.sever.util.EMDamageSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -33,6 +33,7 @@ import java.util.Optional;
 public class EntityGuardianLaser extends EntityMagicEffects {
     public static final double GUARDIAN_RADIUS = 32;
     public static final double PLAYER_RADIUS = 16;
+    public static final int PRE_SHOOT_DURATION = 20;
     public double endPosX, endPosY, endPosZ;
     public double collidePosX, collidePosY, collidePosZ;
     public double prevCollidePosX, prevCollidePosY, prevCollidePosZ;
@@ -100,14 +101,12 @@ public class EntityGuardianLaser extends EntityMagicEffects {
         if (caster != null) {
             yHeadRotAngle = (float) Math.toRadians(caster.yHeadRot + 90);
             xHeadRotAngle = (float) -Math.toRadians(caster.getXRot());
-            //yHeadRotAngle = (float) ((caster.yHeadRot + 90.0d) * Math.PI / 180.0d);
-            //xHeadRotAngle = (float) (-caster.getXRot() * Math.PI / 180.0d);
         }
 
         if (!ON && displayControlled.isStop()) {
             this.discard();
         }
-        if (ON && tickCount > 20) {
+        if (ON && !this.isAccumulating()) {
             displayControlled.increaseTimer();
         } else {
             displayControlled.decreaseTimer();
@@ -115,7 +114,7 @@ public class EntityGuardianLaser extends EntityMagicEffects {
 
         if (caster != null && !caster.isAlive()) discard();
 
-        if (level().isClientSide && tickCount <= 10 && caster != null) {
+        if (level().isClientSide && tickCount <= PRE_SHOOT_DURATION / 2 && caster != null) {
             double rootX = caster.getX();
             double rootY = caster.getY() + caster.getBbHeight() / 2f + 0.3f;
             double rootZ = caster.getZ();
@@ -125,64 +124,37 @@ public class EntityGuardianLaser extends EntityMagicEffects {
                     new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, AnimData.KeyTrack.startAndEnd(0f, 0.6f), false),
                     new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, AnimData.KeyTrack.startAndEnd(6f, 3f), false),
                     new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.RED, AnimData.KeyTrack.startAndEnd(1f, 0.3f), false),
-            },false);
+            }, false);
         }
-        if (tickCount > 20) {
+        if (tickCount > PRE_SHOOT_DURATION) {
             this.calculateEndPos();
             List<LivingEntity> hit = raytraceEntities(level(), new Vec3(getX(), getY(), getZ()), new Vec3(endPosX, endPosY, endPosZ)).entities;
             if (blockSide != null) {
                 spawnExplosionParticles(2);
-                if (!level().isClientSide && !isPlayer() && EEConfigHandler.COMMON.EXPERIMENTAL_ENTITY.GUARDIAN_LASER.enableGenerateScorchEntity.get()) {
+                if (!level().isClientSide && !isPlayer() && EMConfigHandler.COMMON.EXPERIMENTAL_ENTITY.GUARDIAN_LASER.enableGenerateScorchEntity.get()) {
                     EntityScorch scorch = new EntityScorch(level(), prevCollidePosX, prevCollidePosY, prevCollidePosZ);
                     level().addFreshEntity(scorch);
                 }
             }
             if (!level().isClientSide) {
                 for (LivingEntity target : hit) {
-                    if (caster instanceof EntityNamelessGuardian guardian) {
-                        guardian.guardianHurtTarget(EEDamageSource.guardianLaserAttack(this, guardian), guardian, target, 0.03F, 0.1F, 1F, true, false);
-                    } else {
-                        target.hurt(this.damageSources().magic(), 1.5f);
-                    }
                     target.setSecondsOnFire(3);
+                    if (caster instanceof EntityNamelessGuardian guardian) {
+                        guardian.guardianHurtTarget(EMDamageSource.guardianLaserAttack(this, guardian), guardian, target, 0.03F, 0.1F, 1F, true, false);
+                    } else if (caster != null) {
+                        target.hurt(this.damageSources().mobAttack(caster), 5F + target.getMaxHealth() * 0.01F);
+                    }
                 }
             }
-
-//            else {
-//                if (tickCount - 15 < getDuration()) {
-//                    int particleCount = 4;
-//                    while (particleCount-- > 0) {
-//                        double radius = 1f;
-//                        double yaw = (float) (random.nextFloat() * 2 * Math.PI);
-//                        double pitch = (float) (random.nextFloat() * 2 * Math.PI);
-//                        double ox = (float) (radius * Math.sin(yaw) * Math.sin(pitch));
-//                        double oy = (float) (radius * Math.cos(pitch));
-//                        double oz = (float) (radius * Math.cos(yaw) * Math.sin(pitch));
-//                        double o2x = (float) (-1 * Math.cos(getYaw()) * Math.cos(getPitch()));
-//                        double o2y = (float) (-1 * Math.sin(getPitch()));
-//                        double o2z = (float) (-1 * Math.sin(getYaw()) * Math.cos(getPitch()));
-//                        level().addParticle(new ParticleOrb.OrbData((float) (collidePosX + o2x + ox), (float) (collidePosY + o2y + oy), (float) (collidePosZ + o2z + oz), 15), getX() + o2x + ox, getY() + o2y + oy, getZ() + o2z + oz, 0, 0, 0);
-//                    }
-//                    particleCount = 4;
-//                    while (particleCount-- > 0) {
-//                        double radius = 2f;
-//                        double yaw = random.nextFloat() * 2 * Math.PI;
-//                        double pitch = random.nextFloat() * 2 * Math.PI;
-//                        double ox = radius * Math.sin(yaw) * Math.sin(pitch);
-//                        double oy = radius * Math.cos(pitch);
-//                        double oz = radius * Math.cos(yaw) * Math.sin(pitch);
-//                        double o2x = -1 * Math.cos(getYaw()) * Math.cos(getPitch());
-//                        double o2y = -1 * Math.sin(getPitch());
-//                        double o2z = -1 * Math.sin(getYaw()) * Math.cos(getPitch());
-//                        level().addParticle(new ParticleOrb.OrbData((float) (collidePosX + o2x + ox), (float) (collidePosY + o2y + oy), (float) (collidePosZ + o2z + oz), 20), collidePosX + o2x, collidePosY + o2y, collidePosZ + o2z, 0, 0, 0);
-//                    }
-//                }
-//            }
         }
 
-        if (tickCount - 20 > getDuration()) {
+        if (tickCount - PRE_SHOOT_DURATION > getDuration()) {
             ON = false;
         }
+    }
+
+    public boolean isAccumulating() {
+        return this.tickCount <= PRE_SHOOT_DURATION;
     }
 
     private void spawnExplosionParticles(int amount) {
@@ -302,11 +274,12 @@ public class EntityGuardianLaser extends EntityMagicEffects {
     }
 
     private void updateWithGuardian() {
-        this.setYHeadRotAngle((float) Math.toRadians(caster.yHeadRot + 90));
-        this.setXHeadRotAngle((float) Math.toRadians(-caster.getXRot()));
-        Vec3 vecOffset1 = new Vec3(0, 0, 1).yRot((float) Math.toRadians(-caster.getYRot()));
-        Vec3 vecOffset2 = new Vec3(0.6, 0, 0).yRot(-getYHeadRotAngle()).xRot(getXHeadRotAngle());
-        this.setPos(caster.getX() + vecOffset1.x() + vecOffset2.x(), caster.getY() + (caster.getBbHeight() * 0.76f) + vecOffset1.y() + vecOffset2.y(), caster.getZ() + vecOffset1.z() + vecOffset2.z());
+        double radians = Math.toRadians(this.caster.yHeadRot + 90);
+        this.setYHeadRotAngle((float) radians);
+        this.setXHeadRotAngle((float) ((double) (-this.caster.getXRot()) * Math.PI / 180.0));
+        double offsetX = Math.cos(radians) * 1.35;
+        double offsetZ = Math.sin(radians) * 1.35;
+        this.setPos(this.caster.getX() + offsetX, this.caster.getY() + (caster.getBbHeight() * 0.75f), this.caster.getZ() + offsetZ);
     }
 
     public static class LaserHitResult {

@@ -1,13 +1,13 @@
-package com.eeeab.eeeabsmobs.sever.entity.impl.effect;
+package com.eeeab.eeeabsmobs.sever.entity.effects;
 
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
-import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
+import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
@@ -20,12 +20,11 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class EntityGuardianBlade extends EntityMagicEffects {
-    public final ControlledAnimation alphaControlled = new ControlledAnimation(20);
+    public final ControlledAnimation controlled = new ControlledAnimation(100);
     private static final float MAX_DAMAGE = 30F;
-    private static final int PLAY_DURATION = 32;
-    private static final int GUARDIAN_DURATION = 40;
+    private static final int DURATION = 35;
     private boolean moveOffset;
-    private int aliveTick;
+    private double damage = 1D;
     private static final float[][] BLOCK_OFFSETS = {
             {-0.5F, -0.5F},
             {-0.5F, 0.5F},
@@ -51,31 +50,27 @@ public class EntityGuardianBlade extends EntityMagicEffects {
     @Override
     public void tick() {
         super.tick();
-        alphaControlled.updatePrevTimer();
+        this.controlled.updatePrevTimer();
         this.move(MoverType.SELF, this.getDeltaMovement());
-        int duration = caster instanceof EntityNamelessGuardian ? GUARDIAN_DURATION : PLAY_DURATION;
-        if (this.aliveTick == 0) {
+        if (this.controlled.isStop()) {
             Vec3 lookAngle = this.getLookAngle();
-            float speed = 1.4F;
+            float speed = 1.35F;
             if (moveOffset) speed += this.random.nextFloat() * 0.5F;
             this.shoot(lookAngle.x, lookAngle.y, lookAngle.z, speed);
-        } else if (this.aliveTick <= duration) {
-            //移动速度会随着时间衰减
-            if (this.aliveTick % 5 == 0) {
-                this.setDeltaMovement(this.getDeltaMovement().multiply(0.4, 0.4, 0.4));
-                this.alphaControlled.increaseTimer(2);
+            if (this.caster != null) this.damage = this.caster.getAttributeValue(Attributes.ATTACK_DAMAGE);
+            this.controlled.increaseTimer(1);
+        } else if (this.controlled.increaseTimerChain().getTimer() <= DURATION) {
+            if (this.controlled.getTimer() % 5 == 0) {
+                double ac = DURATION / 70D;
+                this.setDeltaMovement(this.getDeltaMovement().multiply(ac, ac, ac));
             }
+        }
+        if (this.controlled.getTimer() > DURATION || this.tickCount > this.controlled.getDuration()) {
+            this.discard();
+        } else {
             this.breakBlockEffect();
             this.doHurtTarget();
-        } else {
-            this.alphaControlled.increaseTimer(2);
         }
-
-        if (this.alphaControlled.getTimer() >= 20) {
-            this.discard();
-        }
-
-        this.aliveTick++;
     }
 
     private void shoot(double x, double y, double z, double speed) {
@@ -84,21 +79,14 @@ public class EntityGuardianBlade extends EntityMagicEffects {
 
     private void doHurtTarget() {
         if (!this.level().isClientSide) {
-            if (caster != null) {
-                double attackValue;
-                double duration = caster instanceof EntityNamelessGuardian ? GUARDIAN_DURATION : PLAY_DURATION;
-                attackValue = caster.getAttributeValue(Attributes.ATTACK_DAMAGE);
-                attackValue = Mth.clamp(attackValue, 0, MAX_DAMAGE);
-                List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.2));
-                for (LivingEntity target : entities) {
-                    if (target == caster) continue;
-                    if (caster instanceof EntityNamelessGuardian) {
-                        attackValue += target.getMaxHealth() * 0.05F;
-                    }
-                    //伤害会随着时间衰减
-                    double damage = Math.abs(attackValue * (((double) this.aliveTick - duration) / duration));
-                    target.hurt(this.damageSources().indirectMagic(target, caster), (float) damage);
-                }
+            float progress = this.controlled.getAnimationProgressTemporaryInvesed();
+            if (progress < 0.2) return;
+            List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.2));
+            for (LivingEntity target : entities) {
+                if (target == caster) continue;
+                if (caster instanceof EntityNamelessGuardian) damage += target.getMaxHealth() * 0.05D;
+                damage = Mth.clamp(damage * progress, 1, MAX_DAMAGE);
+                target.hurt(this.damageSources().indirectMagic(target, caster), (float) damage);
             }
         }
     }
@@ -122,7 +110,7 @@ public class EntityGuardianBlade extends EntityMagicEffects {
                 BlockPos hit = new BlockPos(hitX, hitY, hitZ);
                 BlockState block = level().getBlockState(hit);
                 if (block.getRenderShape() != RenderShape.INVISIBLE) {
-                    int count = 14 - (int) (this.tickCount * 0.75);
+                    double count = Math.max(0, Math.floor(15 * this.controlled.getAnimationProgressTemporaryInvesed()) - 2);
                     for (int n = 0; n < count; n++) {
                         double pa = random.nextDouble() * 2 * Math.PI;
                         double pd = random.nextDouble() * 0.6 - 0.1;
@@ -139,6 +127,9 @@ public class EntityGuardianBlade extends EntityMagicEffects {
                         level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, block), px, y, pz, velX, velY, velZ);
                     }
                 }
+            }
+            if (this.controlled.getTimer() % 6 == 0) {
+                level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), getRandomX(0.5F), getRandomY(), getRandomZ(0.5F), 0, this.random.nextFloat() * 0.05F, 0);
             }
         }
     }

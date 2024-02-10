@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.entity.impl;
+package com.eeeab.eeeabsmobs.sever.entity;
 
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.AnimationHandler;

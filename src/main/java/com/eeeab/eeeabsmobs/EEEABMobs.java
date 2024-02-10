@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs;
 import com.eeeab.eeeabsmobs.client.ClientProxy;
 import com.eeeab.eeeabsmobs.sever.ServerProxy;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerServerEvent;
-import com.eeeab.eeeabsmobs.sever.util.EETabGroup;
+import com.eeeab.eeeabsmobs.sever.init.CreativeTabInit;
 import com.eeeab.eeeabsmobs.sever.init.*;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.init.StructuresInit;
@@ -33,7 +33,7 @@ public class EEEABMobs {
         BlockInit.register(bus);
         BlockEntityInit.register(bus);
         EntityInit.register(bus);
-        EETabGroup.register(bus);
+        CreativeTabInit.register(bus);
         EffectInit.register(bus);
         ParticleInit.register(bus);
         SoundInit.register(bus);
@@ -43,6 +43,7 @@ public class EEEABMobs {
         bus.<FMLCommonSetupEvent>addListener(this::init);
         bus.<FMLLoadCompleteEvent>addListener(this::init);
         bus.addListener(HandlerCapability::registerCapabilities);
+        bus.addListener(PROXY::register);
 
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new HandlerServerEvent());

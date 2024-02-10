@@ -1,7 +1,7 @@
-package com.eeeab.eeeabsmobs.sever.entity.impl;
+package com.eeeab.eeeabsmobs.sever.entity;
 
 import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
-import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.util.MobSkinStyle;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -34,7 +34,7 @@ import java.util.UUID;
  * <b>EEEABMobEntity</b><br/>
  */
 public abstract class EEEABMobEntity extends PathfinderMob {
-    private final EEBossInfoServer bossInfo = new EEBossInfoServer(this);
+    private final EMBossInfoServer bossInfo = new EMBossInfoServer(this);
     private DamageSource killDataCause;//死亡的伤害源
     public Player killDataAttackingPlayer;
     public float targetDistance = -1;//与实体距离
@@ -50,16 +50,12 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     private static final byte STOP_BOSS_MUSIC_ID = 78;
     private static final UUID HEALTH_UUID = UUID.fromString("cca33d36-6842-43d8-b615-0cad4460a18a");
     private static final UUID ATTACK_UUID = UUID.fromString("e1b02986-1699-4120-a687-40419a294482");
-
     private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(EEEABMobEntity.class, EntityDataSerializers.INT);
-    //private static final EntityDataAccessor<Boolean> DATA_FOUND_TARGET = SynchedEntityData.defineId(EEEABMobEntity.class, EntityDataSerializers.BOOLEAN);
-    //private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EEEABMobEntity.class, EntityDataSerializers.BOOLEAN);
-    //private static final EntityDataAccessor<Boolean> DATA_STARTING_SPAWN = SynchedEntityData.defineId(EEEABMobEntity.class, EntityDataSerializers.BOOLEAN);
 
     public EEEABMobEntity(EntityType<? extends EEEABMobEntity> type, Level level) {
         super(type, level);
         //加载配置文件并修改值
-        EEConfigHandler.AttributeConfig config = getAttributeConfig();
+        EMConfigHandler.AttributeConfig config = getAttributeConfig();
         if (config != null) {
             AttributeInstance healthAttribute = getAttribute(Attributes.MAX_HEALTH);
             if (healthAttribute != null) {
@@ -75,7 +71,7 @@ public abstract class EEEABMobEntity extends PathfinderMob {
         }
     }
 
-    protected EEConfigHandler.AttributeConfig getAttributeConfig() {
+    protected EMConfigHandler.AttributeConfig getAttributeConfig() {
         return null;
     }
 
@@ -302,9 +298,6 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_VARIANT, 0);
-        //this.entityData.define(DATA_FOUND_TARGET, false);
-        //this.entityData.define(DATA_STARTING_SPAWN, false);
-        //this.entityData.define(DATA_ACTIVE, true);
     }
 
 
@@ -312,9 +305,6 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putInt("DATA_VARIANT", this.entityData.get(DATA_VARIANT));
-        //compound.putBoolean("DATA_FOUND_TARGET", this.entityData.get(DATA_FOUND_TARGET));
-        //compound.putBoolean("DATA_ACTIVE", this.entityData.get(DATA_ACTIVE));
-        //compound.putBoolean("DATA_STARTING_SPAWN", this.entityData.get(DATA_STARTING_SPAWN));
     }
 
 
@@ -322,9 +312,6 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.entityData.set(DATA_VARIANT, compound.getInt("DATA_VARIANT"));
-        //this.entityData.set(DATA_FOUND_TARGET, compound.getBoolean("DATA_FOUND_TARGET"));
-        //this.entityData.set(DATA_ACTIVE, compound.getBoolean("DATA_ACTIVE"));
-        //this.entityData.set(DATA_STARTING_SPAWN, compound.getBoolean("DATA_STARTING_SPAWN"));
 
     }
 
@@ -394,31 +381,6 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     public float getHealthPercentage() {
         return (this.getHealth() / this.getMaxHealth()) * 100;
     }
-
-//    public void setInitializing(boolean flag, int initializingTick) {
-//        this.initializingTick = initializingTick;
-//        this.entityData.set(DATA_STARTING_SPAWN, flag);
-//    }
-
-//    public boolean isInitializing() {
-//        return this.entityData.get(DATA_STARTING_SPAWN);
-//    }
-
-    //public void setActive(boolean flag) {
-    //    this.entityData.set(DATA_ACTIVE, flag);
-    //}
-    //
-    //public boolean isActive() {
-    //    return this.entityData.get(DATA_ACTIVE);
-    //}
-
-    //public void setFoundTarget(boolean flag) {
-    //    this.entityData.set(DATA_FOUND_TARGET, flag);
-    //}
-    //
-    //public boolean isFoundTarget() {
-    //    return this.entityData.get(DATA_FOUND_TARGET);
-    //}
 
     public MobSkinStyle getStyle() {
         return MobSkinStyle.byId(this.entityData.get(DATA_VARIANT));
