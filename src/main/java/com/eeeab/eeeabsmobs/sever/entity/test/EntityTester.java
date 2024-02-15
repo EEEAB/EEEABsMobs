@@ -1,11 +1,12 @@
 package com.eeeab.eeeabsmobs.sever.entity.test;
 
+import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationActivateGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationDeactivateGoal;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
-import com.eeeab.eeeabsmobs.sever.util.MTUtils;
+import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.AnimationHandler;
 import net.minecraft.nbt.CompoundTag;
@@ -41,6 +42,11 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
     public EntityTester(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
         active = true;
+    }
+
+    @Override
+    protected XpReward getEntityReward() {
+        return XpReward.XP_REWARD_NONE;
     }
 
     @Override
@@ -140,7 +146,7 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
         if (player.isShiftKeyDown()) {
             this.setDamage(0.0);
             this.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP);
-            player.displayClientMessage(Component.keybind("reset success").setStyle(MTUtils.STYLE_GREEN), true);
+            player.displayClientMessage(Component.keybind("reset success").setStyle(EMTUtils.STYLE_GREEN), true);
             return InteractionResult.SUCCESS;
         }
         if (getAnimation() == NO_ANIMATION) {

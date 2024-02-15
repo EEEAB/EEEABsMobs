@@ -20,7 +20,6 @@ import javax.annotation.Nullable;
 public class EntityImmortalSkeleton extends EntityAbsImmortalSkeleton implements IEntity {
     public EntityImmortalSkeleton(EntityType<? extends EntityImmortalSkeleton> type, Level level) {
         super(type, level);
-        this.xpReward = 5;
         this.dropAfterDeathAnim = true;
         this.active = true;
     }

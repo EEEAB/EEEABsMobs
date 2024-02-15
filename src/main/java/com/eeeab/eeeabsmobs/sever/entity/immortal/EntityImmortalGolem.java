@@ -1,7 +1,8 @@
 package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationMeleeAttackGoal;
+import com.eeeab.eeeabsmobs.sever.entity.XpReward;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationMeleeAIGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerDieGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerResetGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerCopyTargetGoal;
@@ -56,6 +57,11 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
     }
 
     @Override
+    protected XpReward getEntityReward() {
+        return XpReward.XP_REWARD_NONE;
+    }
+
+    @Override
     protected EMConfigHandler.AttributeConfig getAttributeConfig() {
         return EMConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_GOLEM.combatConfig;
     }
@@ -75,7 +81,7 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
         this.goalSelector.addGoal(1, new AnimationActivateGoal<>(this, SPAWN_ANIMATION));
         this.goalSelector.addGoal(1, new AnimationAttackGoal<>(this, ATTACK_ANIMATION, 7, 1.5f, 1.0f, 1.0f));
         this.goalSelector.addGoal(1, new AnimationHurtGoal<>(this, false));
-        this.goalSelector.addGoal(2, new AnimationMeleeAttackGoal<>(this, 1.0D, ATTACK_ANIMATION));
+        this.goalSelector.addGoal(2, new AnimationMeleeAIGoal<>(this, 1.0D, ATTACK_ANIMATION));
         this.goalSelector.addGoal(1, new OwnerResetGoal<>(this, EntityImmortalShaman.class, 20D));
         this.targetSelector.addGoal(2, new OwnerCopyTargetGoal<>(this));
         this.goalSelector.addGoal(3, new OwnerDieGoal<>(this));
