@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/orientable_vertical",
+  "textures": {
+    "front": "eeeabsmobs:block/tomb_arrows_trap_front_off",
+    "side": "eeeabsmobs:block/tomb_arrows_trap_side"
+  }
+}

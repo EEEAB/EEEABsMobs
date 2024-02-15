@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "eeeabsmobs:block/erosion_portal_ns"
+    },
+    "axis=z": {
+      "model": "eeeabsmobs:block/erosion_portal_ew"
+    }
+  }
+}
