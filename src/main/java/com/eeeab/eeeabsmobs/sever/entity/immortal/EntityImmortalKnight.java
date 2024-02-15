@@ -41,7 +41,6 @@ public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements I
 
     public EntityImmortalKnight(EntityType<? extends EntityImmortalKnight> type, Level level) {
         super(type, level);
-        this.xpReward = 10;
         active = true;
     }
 
