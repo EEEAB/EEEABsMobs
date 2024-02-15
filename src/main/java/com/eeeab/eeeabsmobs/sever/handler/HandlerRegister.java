@@ -34,14 +34,17 @@ public class HandlerRegister {
 
     @SubscribeEvent
     public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(EntityInit.IMMORTAL_SKELETON.get(), RenderImmortalSkeleton::new);
-        event.registerEntityRenderer(EntityInit.IMMORTAL_KNIGHT.get(), RenderImmortalSkeleton::new);
+        event.registerEntityRenderer(EntityInit.IMMORTAL_SKELETON.get(), RenderAbsImmortalSkeleton::new);
+        event.registerEntityRenderer(EntityInit.IMMORTAL_KNIGHT.get(), RenderAbsImmortalSkeleton::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_SHAMAN.get(), RenderImmortalShaman::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_GOLEM.get(), RenderImmortalGolem::new);
+        event.registerEntityRenderer(EntityInit.CORPSE.get(), RenderCorpse::new);
+        event.registerEntityRenderer(EntityInit.CORPSE_VILLAGER.get(), RenderCorpseVillager::new);
+        event.registerEntityRenderer(EntityInit.CORPSE_SLAVERY.get(), RenderCorpseSlavery::new);
         event.registerEntityRenderer(EntityInit.NAMELESS_GUARDIAN.get(), RenderNamelessGuardian::new);
         event.registerEntityRenderer(EntityInit.TESTER.get(), RenderTester::new);
 
-        event.registerEntityRenderer(EntityInit.GUARDIAN_BLADE.get(),RenderGuardianBlade::new);
+        event.registerEntityRenderer(EntityInit.GUARDIAN_BLADE.get(), RenderGuardianBlade::new);
         event.registerEntityRenderer(EntityInit.SHAMAN_BOMB.get(), RenderShamanBomb::new);
         event.registerEntityRenderer(EntityInit.CAMERA_SHAKE.get(), EmptyRender::new);
         event.registerEntityRenderer(EntityInit.MOVING_CONTROLLER.get(), EmptyRender::new);
@@ -49,6 +52,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.GUARDIAN_LASER.get(), RenderGuardianLaser::new);
         event.registerEntityRenderer(EntityInit.SCORCH.get(), RenderEntityScorch::new);
         event.registerEntityRenderer(EntityInit.EYE_OF_STRUCTURE.get(), (context) -> new ThrownItemRenderer<>(context, 1.5F, true));
+        event.registerEntityRenderer(EntityInit.POISON_ARROW.get(), RenderPoisonArrow::new);
 
         event.registerBlockEntityRenderer(BlockEntityInit.ENTITY_TOMBSTONE.get(), RenderBlockTombstone::new);
     }
