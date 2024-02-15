@@ -1,9 +1,9 @@
 package com.eeeab.eeeabsmobs.sever.world.structure;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.EntityImmortalKnight;
-import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.EntityImmortalShaman;
-import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalKnight;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalShaman;
+import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.StructuresInit;
 import com.google.common.collect.ImmutableMap;
@@ -17,7 +17,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Display;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.decoration.PaintingVariants;
@@ -60,13 +63,11 @@ public class AncientTombStructure extends Structure {
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
         BlockPos blockPos = new BlockPos(context.chunkPos().getMinBlockX(), -64, context.chunkPos().getMinBlockZ());
         return Optional.of(new GenerationStub(blockPos, (value) -> {
-            generatePieces(value, context);
+            generatePieces(value, context, blockPos);
         }));
     }
 
-    private static void generatePieces(StructurePiecesBuilder builder, GenerationContext context) {
-        BlockPos blockpos = new BlockPos(context.chunkPos().getMinBlockX(), -64, context.chunkPos().getMinBlockZ());
-        //Rotation rotation = Rotation.getRandom(context.random());
+    private static void generatePieces(StructurePiecesBuilder builder, GenerationContext context, BlockPos blockpos) {
         Rotation rotation = Rotation.NONE;
         start(context.structureTemplateManager(), blockpos, rotation, builder, context.random());
     }
@@ -135,53 +136,24 @@ public class AncientTombStructure extends Structure {
 
         @Override
         protected void handleDataMarker(String function, BlockPos blockPos, ServerLevelAccessor levelAccessor, RandomSource source, BoundingBox box) {
-            if ("nameless_guardian_spawn".equals(function)) {
+            if ("boss_spawn".equals(function)) {
                 levelAccessor.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2);
                 EntityNamelessGuardian guardian = (EntityInit.NAMELESS_GUARDIAN.get()).create(levelAccessor.getLevel());
                 if (guardian != null) {
-                    guardian.moveTo(blockPos, 180, 180);
-                    //guardian.moveTo(blockPos.getCenter());
+                    guardian.moveTo(blockPos, 0, 0);
                     guardian.finalizeSpawn(levelAccessor, levelAccessor.getCurrentDifficultyAt(blockPos), MobSpawnType.STRUCTURE, null, null);
                     levelAccessor.addFreshEntity(guardian);
                 }
             }
 
-            if ("painting".equals(function)) {
-                levelAccessor.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2);
-                ResourceKey<PaintingVariant>[] variants = new ResourceKey[]{PaintingVariants.SKULL_AND_ROSES, PaintingVariants.WITHER, PaintingVariants.FIRE};
-                Optional<Holder.Reference<PaintingVariant>> holder = BuiltInRegistries.PAINTING_VARIANT.getHolder(variants[levelAccessor.getRandom().nextInt(variants.length)]);
-                if (holder.isPresent()) {
-                    Painting painting = new Painting(levelAccessor.getLevel(), blockPos, this.placeSettings.getRotation().rotate(Direction.EAST), holder.get());
-                    levelAccessor.addFreshEntity(painting);
-                }
-            }
-
-            if ("immortal_shaman_spawn".equals(function)) {
+            if ("elite_spawn".equals(function)) {
                 levelAccessor.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2);
                 EntityImmortalShaman shaman = (EntityInit.IMMORTAL_SHAMAN.get()).create(levelAccessor.getLevel());
                 if (shaman != null) {
-                    shaman.moveTo(blockPos.getCenter());
+                    shaman.moveTo(blockPos, 0, 0);
                     shaman.finalizeSpawn(levelAccessor, levelAccessor.getCurrentDifficultyAt(blockPos), MobSpawnType.STRUCTURE, null, null);
-                    shaman.setYRot(shaman.getYRot() + 180);
                     levelAccessor.addFreshEntity(shaman);
                 }
-            }
-
-            if ("immortal_knight_spawn".equals(function)) {
-                levelAccessor.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2);
-                EntityImmortalKnight knight = (EntityInit.IMMORTAL_KNIGHT.get()).create(levelAccessor.getLevel());
-                if (knight != null) {
-                    knight.moveTo(blockPos.getCenter());
-                    knight.finalizeSpawn(levelAccessor, levelAccessor.getCurrentDifficultyAt(blockPos), MobSpawnType.STRUCTURE, null, null);
-                    knight.setYRot(knight.getYRot() + 180);
-                    levelAccessor.addFreshEntity(knight);
-                }
-            }
-
-            //TODO 暂未实装方块
-            if ("key".equals(function)) {
-                levelAccessor.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2);
-
             }
         }
 

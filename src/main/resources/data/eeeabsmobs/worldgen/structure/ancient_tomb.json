@@ -1,6 +1,6 @@
 {
   "type": "eeeabsmobs:ancient_tomb",
-  "biomes": "#eeeabsmobs:has_structure/ancient_tomb_biomes",
+  "biomes": "#eeeabsmobs:ancient_tomb_biomes",
   "step": "underground_decoration",
   "start_height": {
     "absolute": 0
