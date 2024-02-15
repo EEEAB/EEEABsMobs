@@ -2,7 +2,8 @@ package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.*;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationMeleeAttackGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationMeleeAIGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationRangeAIGoal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -55,8 +56,6 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     };
     private static final EntityDataAccessor<Integer> DATA_HANDED_STATE = SynchedEntityData.defineId(EntityAbsImmortalSkeleton.class, EntityDataSerializers.INT);
 
-    private boolean moveLeftOrRight = false;
-
     public EntityAbsImmortalSkeleton(EntityType<? extends EntityAbsImmortal> type, Level level) {
         super(type, level);
         this.reassessAttackModeGoal();
@@ -71,11 +70,10 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
             float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this, entity.position());
             hitFlag = (entityRelativeAngle <= attackArc / 2f && entityRelativeAngle >= -attackArc / 2f) || (entityRelativeAngle >= 360 - attackArc / 2f || entityRelativeAngle <= -attackArc + 90f / 2f);
         }
-        if (hitFlag && this.getWeaponType().CanBlock() && entity instanceof LivingEntity livingEntity && !source.is(DamageTypeTags.BYPASSES_ARMOR)
-                && (this.getAnimation() == NO_ANIMATION || this.getAnimation() == HURT_ANIMATION || this.getAnimation() == BLOCK_ANIMATION)) {
+        if (hitFlag && this.getWeaponType().canBlock() && entity instanceof LivingEntity livingEntity && !source.is(DamageTypeTags.BYPASSES_ARMOR) && (this.getAnimation() == NO_ANIMATION || this.getAnimation() == HURT_ANIMATION || this.getAnimation() == BLOCK_ANIMATION)) {
             this.blockEntity = livingEntity;
             this.playSound(SoundEvents.SHIELD_BLOCK);
-            this.playAnimation(BLOCK_ANIMATION);
+            if (this.getAnimation() != BLOCK_ANIMATION) this.playAnimation(BLOCK_ANIMATION);
             return false;
         }
         return super.hurt(source, damage);
@@ -102,49 +100,24 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         this.goalSelector.addGoal(1, new AnimationAttackGoal<>(this, MELEE_ATTACK_2_ANIMATION, 8, 3.0f, 1.0f, 15.0f));
         this.goalSelector.addGoal(1, new AnimationAttackGoal<>(this, MELEE_ATTACK_3_ANIMATION, 12, 2.5f, 1.0f, 1.0f));
         this.goalSelector.addGoal(1, new AnimationBlockGoal<>(this, BLOCK_ANIMATION));
-        this.goalSelector.addGoal(2, new AnimationMeleeAttackGoal<>(this, 1D, e -> e.getWeaponType() == AttackType.MAIN_HANDED || e.getWeaponType() == AttackType.MAIN_HANDED_SHIELD, MELEE_ATTACK_1_ANIMATION, MELEE_ATTACK_2_ANIMATION));
-        this.goalSelector.addGoal(2, new AnimationMeleeAttackGoal<>(this, 1D, 5, e -> e.getWeaponType() == AttackType.NONE || e.getWeaponType() == AttackType.NONE_SHIELD, MELEE_ATTACK_3_ANIMATION));
+        this.goalSelector.addGoal(2, new AnimationMeleeAIGoal<>(this, 1D, e -> e.getWeaponType() == AttackType.MAIN_HANDED || e.getWeaponType() == AttackType.MAIN_HANDED_SHIELD, MELEE_ATTACK_1_ANIMATION, MELEE_ATTACK_2_ANIMATION));
+        this.goalSelector.addGoal(2, new AnimationMeleeAIGoal<>(this, 1D, 5, e -> e.getWeaponType() == AttackType.NONE || e.getWeaponType() == AttackType.NONE_SHIELD, MELEE_ATTACK_3_ANIMATION));
+        this.goalSelector.addGoal(2, new AnimationRangeAIGoal<>(this, 1D, 20, 12F, Items.BOW, e -> this.getWeaponType() == AttackType.BOW || this.getWeaponType() == AttackType.BOW_SHIELD, RANGED_ATTACK_ANIMATION));
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (!this.level().isClientSide && this.getTarget() != null && !this.getTarget().isAlive()) setTarget(null);
         AnimationHandler.INSTANCE.updateAnimations(this);
         if (this.getWeaponType() == AttackType.BOW || this.getWeaponType() == AttackType.BOW_SHIELD) {
             if (this.getTarget() != null && !isNoAi() && isActive()) {
                 LivingEntity target = getTarget();
-                final double attackRange = 9.0D;
-                this.getLookControl().setLookAt(target, 30F, 30F);
-                if (targetDistance <= 4) {
-                    this.getMoveControl().strafe(-0.5F, 0.0F);
-                } else if (!(targetDistance > attackRange)) {
-                    if (tickCount % 20 == 0 && this.getRandom().nextFloat() < 0.25F) {
-                        moveLeftOrRight = !moveLeftOrRight;
-                    }
-                    if (tickCount % 2 == 0) this.getMoveControl().strafe(0.0F, moveLeftOrRight ? 0.5F : -0.5F);
-                }
-                if (targetDistance >= attackRange) {
-                    //this.getMoveControl().strafe(0.0F, 0.0F);
-                    this.getNavigation().moveTo(target, 1.0D);
-                }
-
                 if (attackTick == 0 && getSensing().hasLineOfSight(target)) {
                     attacking = true;
                 }
-                if (attacking && getAnimation() == NO_ANIMATION && getSensing().hasLineOfSight(target)) {
-                    if (targetDistance <= attackRange) {
-                        if (!(targetDistance < 2.5 || targetDistance < 3.5 && ModEntityUtils.checkTargetComingCloser(this, target))) {
-                            this.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof BowItem));
-                            this.playAnimation(RANGED_ATTACK_ANIMATION);
-                            attackTick = 50 + this.random.nextInt(20);
-                            attacking = false;
-                        }
-                    }
-                }
                 if (attacking && getSensing().hasLineOfSight(target)) {
-                    if (targetDistance < 2.5 || targetDistance < 3.5 && ModEntityUtils.checkTargetComingCloser(this, target)) {
-                        if (this.isUsingItem()) this.stopUsingItem();
+                    if (targetDistance < 1.5 || targetDistance < 2.5 && ModEntityUtils.checkTargetComingCloser(this, target)) {
+                        this.stopUsingItem();
                         this.playAnimation(MELEE_ATTACK_2_ANIMATION);
                         attackTick = 20;
                         attacking = false;
@@ -157,6 +130,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         if (getAnimation() != NO_ANIMATION) {
             getNavigation().stop();
         }
+
 
     }
 
@@ -183,8 +157,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
 
         //将实体箭发射到指定坐标 shoot(x轴 y轴 z轴 速度 误差)
         abstractarrow.setBaseDamage(abstractarrow.getBaseDamage() + (1.0D * level().getDifficulty().getId()));
-        // abstractarrow.setKnockback(abstractarrow.getKnockback() + 1);
-        abstractarrow.shoot(x, y + d0, z, 1.6F, (float) 1);
+        abstractarrow.shoot(x, y + d0, z, 1.6F, (float) 2);
         this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
         this.level().addFreshEntity(abstractarrow);
     }
@@ -326,7 +299,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
             this.canBlock = canBlock;
         }
 
-        public boolean CanBlock() {
+        public boolean canBlock() {
             return canBlock;
         }
 
