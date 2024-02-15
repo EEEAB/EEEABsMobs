@@ -3,6 +3,7 @@ buildscript {
         maven { url = "https://files.minecraftforge.net/maven" }
         maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "5.1.+", changing: true
@@ -77,6 +78,14 @@ minecraft {
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
+
+    config "${mod_id}.mixins.json"
+    debug.export = true
+
+}
 
 repositories {
     maven {

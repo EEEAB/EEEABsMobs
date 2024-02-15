@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.eeeab.eeeabsmobs.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "eeeabsmobs.refmap.json",
+  "mixins": [
+    "ServerLoadMixin"
+],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
