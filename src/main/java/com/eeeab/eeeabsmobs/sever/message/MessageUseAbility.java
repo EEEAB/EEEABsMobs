@@ -25,7 +25,7 @@ public class MessageUseAbility {
 
     public static void serialize(final MessageUseAbility message, final FriendlyByteBuf buf) {
         buf.writeVarInt(message.entityID);
-        buf.writeInt(message.index);
+        buf.writeVarInt(message.index);
     }
 
     public static MessageUseAbility deserialize(final FriendlyByteBuf buf) {
