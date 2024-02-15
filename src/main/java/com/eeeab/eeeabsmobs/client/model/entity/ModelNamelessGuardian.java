@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.model.AdvancedModelBox;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
@@ -8,7 +8,7 @@ import com.github.alexthe666.citadel.client.model.basic.BasicModelPart;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.Mth;
 
-public class ModelNamelessGuardian extends EEAdvancedEntityModel<EntityNamelessGuardian> {
+public class ModelNamelessGuardian extends EMAdvancedEntityModel<EntityNamelessGuardian> {
     private final AdvancedModelBox root;
     private final AdvancedModelBox upper;
     private final AdvancedModelBox head;
@@ -70,7 +70,7 @@ public class ModelNamelessGuardian extends EEAdvancedEntityModel<EntityNamelessG
         cube_r1 = new AdvancedModelBox(this, "cube_r1");
         offsetAndRotation(cube_r1, 0.2563F, -3.9949F, -0.6028F, 0.0F, 0.7854F, 0.0F);
         head.addChild(cube_r1);
-        cube_r1.setTextureOffset(141, -1).addBox(-6.3297F, -12.551F, -5.6703F, 12.0F, 15.0F, 12.0F, false)
+        cube_r1.setTextureOffset(141, 0).addBox(-6.3297F, -12.551F, -5.6703F, 12.0F, 16.0F, 12.0F, false)
                 .setTextureOffset(149, 31).addBox(-4.0297F, -10.0551F, -3.9703F, 8.0F, 11.0F, 8.0F, 1.5F);
 
         tooth = new AdvancedModelBox(this, "tooth");
@@ -115,7 +115,7 @@ public class ModelNamelessGuardian extends EEAdvancedEntityModel<EntityNamelessG
         rightArmAbove = new AdvancedModelBox(this, "rightArmAbove");
         offsetAndRotation(rightArmAbove, 1.3723F, -1.5426F, -3.0851F, -0.2618F, 0.2618F, 0.0F);
         rightArm.addChild(rightArmAbove);
-        rightArmAbove.setTextureOffset(196, 0).addBox(-7.849F, -5.4852F, -5.3222F, 15.0F, 12.0F, 15.0F, false)
+        rightArmAbove.setTextureOffset(196, 2).addBox(-7.849F, -5.4852F, -5.3222F, 15.0F, 12.0F, 15.0F, false)
                 .setTextureOffset(190, 111).addBox(-8.849F, 5.0148F, -6.3222F, 16.0F, 2.0F, 17.0F, 0.0F);
 
         cube_r6 = new AdvancedModelBox(this, "cube_r6");
@@ -190,7 +190,7 @@ public class ModelNamelessGuardian extends EEAdvancedEntityModel<EntityNamelessG
         leftArmAbove = new AdvancedModelBox(this, "leftArmAbove");
         offsetAndRotation(leftArmAbove, -1.3723F, -1.5426F, -3.0851F, -0.2618F, -0.2618F, 0.0F);
         leftArm.addChild(leftArmAbove);
-        leftArmAbove.setTextureOffset(196, 0).addBox(-6.1277F, -5.4852F, -5.3222F, 15.0F, 12.0F, 15.0F, true)
+        leftArmAbove.setTextureOffset(196, 2).addBox(-6.1277F, -5.4852F, -5.3222F, 15.0F, 12.0F, 15.0F, true)
                 .setTextureOffset(190, 111).addBox(-6.1277F, 5.0148F, -6.3222F, 16.0F, 2.0F, 17.0F, true);
 
         cube_r13 = new AdvancedModelBox(this, "cube_r13");
