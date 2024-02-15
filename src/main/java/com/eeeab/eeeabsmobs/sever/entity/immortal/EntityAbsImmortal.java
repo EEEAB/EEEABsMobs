@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs.sever.entity.immortal;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
-import com.eeeab.eeeabsmobs.sever.entity.util.EEMobType;
+import com.eeeab.eeeabsmobs.sever.entity.util.ModMobType;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -51,14 +51,19 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements GlowE
     @Override
     protected void onAnimationFinish(Animation animation) {
         if (animation == getSpawnAnimation()) {
-            setActive(true);
-            active = true;
+            this.setActive(true);
+            this.active = true;
         }
     }
 
     @Override//应该禁用和平模式生成
     protected boolean shouldDespawnInPeaceful() {
         return true;
+    }
+
+    @Override//是否被流体推动
+    public boolean isPushedByFluid() {
+        return this.isActive();
     }
 
     @Override
@@ -119,7 +124,7 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements GlowE
 
     @Override
     public @NotNull MobType getMobType() {
-        return EEMobType.IMMORTAL;
+        return ModMobType.IMMORTAL;
     }
 
     @Override
@@ -148,7 +153,7 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements GlowE
     public boolean isAlliedTo(Entity entity) {
         if (super.isAlliedTo(entity)) {
             return true;
-        } else if (entity instanceof LivingEntity && ((LivingEntity) entity).getMobType() == EEMobType.IMMORTAL) {
+        } else if (entity instanceof LivingEntity && ((LivingEntity) entity).getMobType() == ModMobType.IMMORTAL) {
             return this.getTeam() == null && entity.getTeam() == null;
         } else {
             return false;
@@ -194,7 +199,7 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements GlowE
     }
 
     //设置该生物初始生成
-    protected void setInitSpawn() {
+    public void setInitSpawn() {
         this.active = false;
         this.setActive(false);
     }
