@@ -7,6 +7,8 @@ import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.ProjectileWeaponItem;
 
 public class AnimationProjectileAttackGoal<T extends EEEABMobLibrary & IAnimatedEntity & RangedAttackMob> extends AnimationCommonGoal<T> {
     private final int attackFrame;
@@ -21,6 +23,12 @@ public class AnimationProjectileAttackGoal<T extends EEEABMobLibrary & IAnimated
         super(entity, animation, canStopGoal, hurtInterruptsAnimation);
         this.attackFrame = attackFrame;
         this.attackSound = attackSound;
+    }
+
+    @Override
+    public void start() {
+        super.start();
+        entity.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.entity, item -> item instanceof ProjectileWeaponItem));
     }
 
     @Override
