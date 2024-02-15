@@ -9,16 +9,16 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class LayerGuardianCore extends LayerGlow<EntityNamelessGuardian, ModelNamelessGuardian> {
-    private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/nameless_guardian/nameless_guardian_core.png");
+public class LayerGuardianLaser extends LayerGlow<EntityNamelessGuardian, ModelNamelessGuardian> {
+    private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/nameless_guardian/nameless_guardian_shoot.png");
 
-    public LayerGuardianCore(RenderLayerParent<EntityNamelessGuardian, ModelNamelessGuardian> renderLayerParent) {
-        super(renderLayerParent, GLOW_LAYER, 0.8F, guardian -> !guardian.coreControlled.isStop());
+    public LayerGuardianLaser(RenderLayerParent<EntityNamelessGuardian, ModelNamelessGuardian> renderLayerParent) {
+        super(renderLayerParent, GLOW_LAYER);
     }
 
     @Override
     protected float getBrightness(EntityNamelessGuardian entity) {
-        float timer = entity.coreControlled.getPrevTimer();
-        return timer * 0.08F;
+        float timer = entity.accumulationControlled.getPrevTimer();
+        return timer * 0.1F;
     }
 }
