@@ -6,9 +6,7 @@ import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.advancements.EMCriteriaTriggers;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
-import com.eeeab.eeeabsmobs.sever.entity.IBoss;
-import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
+import com.eeeab.eeeabsmobs.sever.entity.*;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.*;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.*;
@@ -18,7 +16,6 @@ import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityFallingBlock;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianLaser;
-import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
@@ -192,7 +189,6 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
 
     public EntityNamelessGuardian(EntityType<? extends EntityNamelessGuardian> type, Level level) {
         super(type, level);
-        this.xpReward = 30;
         this.active = false;
         this.core = new EntityNamelessGuardianPart(this, "core", 0.6F, 0.6F);
         this.subEntities = new EntityNamelessGuardianPart[]{this.core};
@@ -205,6 +201,11 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         this.setPathfindingMalus(BlockPathTypes.LAVA, 0.0F);
         this.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, 0.0F);
         this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 0.0F);
+    }
+
+    @Override
+    protected XpReward getEntityReward() {
+        return XpReward.XP_REWARD_BOSS;
     }
 
     @Override
@@ -422,7 +423,7 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     @Override
     public void tick() {
         super.tick();
-        floatGuardian();
+        this.floatGuardian();
         this.coreControlled.updatePrevTimer();
         this.explodeControlled.updatePrevTimer();
         this.accumulationControlled.updatePrevTimer();
@@ -759,14 +760,21 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource pSource, int pLooting, boolean pRecentlyHit) {
-        super.dropCustomDeathLoot(pSource, pLooting, pRecentlyHit);
-        Entity entity = pSource.getEntity();
+    protected void dropCustomDeathLoot(DamageSource source, int pLooting, boolean pRecentlyHit) {
+        super.dropCustomDeathLoot(source, pLooting, pRecentlyHit);
+        Entity entity = source.getEntity();
         if (entity instanceof Player) {
-            ItemEntity itementity = this.spawnAtLocation(ItemInit.GUARDIAN_AXE.get());
+            ItemEntity itementity = this.spawnAtLocation(ItemInit.GUARDIAN_CORE.get());
             if (itementity != null) {
                 itementity.setExtendedLifetime();
                 itementity.setGlowingTag(true);
+            }
+            if (this.isChallengeMode() || this.random.nextBoolean()) {
+                itementity = this.spawnAtLocation(ItemInit.GUARDIAN_AXE.get());
+                if (itementity != null) {
+                    itementity.setExtendedLifetime();
+                    itementity.setGlowingTag(true);
+                }
             }
         }
     }
