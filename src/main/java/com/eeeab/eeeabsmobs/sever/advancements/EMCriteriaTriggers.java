@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * 自定义成就触发条件
  */
-public class EECriteriaTriggers {
+public class EMCriteriaTriggers {
     public static final KilledTrigger KILL_BOSS_IN_CHALLENGE_MODE = CriteriaTriggers.register(new KilledTrigger(new ResourceLocation(EEEABMobs.MOD_ID, "kill_boss_in_challenge_mode")));
 
 

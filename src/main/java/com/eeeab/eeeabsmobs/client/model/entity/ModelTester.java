@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.eeeabsmobs.sever.entity.impl.test.EntityTester;
+import com.eeeab.eeeabsmobs.sever.entity.test.EntityTester;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedModelBox;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;

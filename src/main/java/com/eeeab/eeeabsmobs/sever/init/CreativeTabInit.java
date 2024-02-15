@@ -1,8 +1,6 @@
-package com.eeeab.eeeabsmobs.sever.util;
+package com.eeeab.eeeabsmobs.sever.init;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.init.BlockInit;
-import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -11,7 +9,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
-public class EETabGroup {
+public class CreativeTabInit {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, EEEABMobs.MOD_ID);
 
     public static final RegistryObject<CreativeModeTab> EEEAB_MOBS_TAB = TABS.register("eeeabmobs_tab", () -> CreativeModeTab.builder()
@@ -21,15 +19,19 @@ public class EETabGroup {
                 /* Block Item */
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.IMMORTAL_BLOCK));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.SOUL_LIGHT));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.TOMB_GAS_TRAP));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.TOMB_SUMMON_TRAP));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.TOMB_ARROWS_TRAP));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_DEEPSLATE_BRICKS));
 
-                /* misc Item */
+                /* Misc Item */
                 entries.accept(ItemInit.REMOVE_MOB.get());
                 entries.accept(ItemInit.IMMORTAL_BONE.get());
                 entries.accept(ItemInit.IMMORTAL_DEBRIS.get());
                 entries.accept(ItemInit.IMMORTAL_INGOT.get());
                 entries.accept(ItemInit.ANCIENT_TOMB_EYE.get());
 
-                /* fight Item */
+                /* Fight Item */
                 entries.accept(ItemInit.IMMORTAL_HELMET.get());
                 entries.accept(ItemInit.IMMORTAL_CHEST_PLATE.get());
                 entries.accept(ItemInit.IMMORTAL_LEGGINGS.get());
@@ -38,6 +40,7 @@ public class EETabGroup {
                 entries.accept(ItemInit.IMMORTAL_SWORD.get());
                 entries.accept(ItemInit.IMMORTAL_STAFF.get());
                 entries.accept(ItemInit.GUARDIAN_AXE.get());
+                entries.accept(ItemInit.GUARDIAN_CORE.get());
 
                 /* Disc Item */
                 entries.accept(ItemInit.GUARDIANS_MUSIC_DISC.get());
@@ -47,6 +50,8 @@ public class EETabGroup {
                 entries.accept(ItemInit.IMMORTAL_KNIGHT_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_SHAMAN_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_GOLEM_EGG.get());
+                entries.accept(ItemInit.CORPSE_EGG.get());
+                entries.accept(ItemInit.CORPSE_VILLAGER_EGG.get());
                 entries.accept(ItemInit.NAMELESS_GUARDIAN_EGG.get());
             }).build());
 

@@ -18,6 +18,7 @@ public class EMBossInfoServer extends ServerBossEvent {
     }
 
     public void update() {
+        if (!this.boss.showBossBloodBars()) return;
         this.setProgress(boss.getHealth() / boss.getMaxHealth());
         this.setDarkenScreen(this.boss.setDarkenScreen());
         Iterator<ServerPlayer> iterator = playerSet.iterator();
@@ -32,6 +33,7 @@ public class EMBossInfoServer extends ServerBossEvent {
 
     @Override
     public void addPlayer(ServerPlayer player) {
+        if (!this.boss.showBossBloodBars()) return;
         if (this.boss.getSensing().hasLineOfSight(player)) {
             super.addPlayer(player);
         } else {

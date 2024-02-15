@@ -4,13 +4,13 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
 
-public class EEBodyRotationControl extends BodyRotationControl {
+public class EMBodyRotationControl extends BodyRotationControl {
     private static final float MAX_ROTATE = 75;
     private final Mob mob;
     private int headStableTime;
     private float lastStableYHeadRot;
 
-    public EEBodyRotationControl(Mob mob) {
+    public EMBodyRotationControl(Mob mob) {
         super(mob);
         this.mob = mob;
     }

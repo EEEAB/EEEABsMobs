@@ -3,10 +3,13 @@ package com.eeeab.eeeabsmobs.client.util;
 import net.minecraft.util.Mth;
 
 /**
- * This is a timer that can be used to easily animate models between poses. You have to set the number of
+ * English:This is a timer that can be used to easily animate models between poses. You have to set the number of
  * ticks between poses, increase or decrease the timer, and get the percentage using a specific function.
+ * <br>
+ * 中文:这是一个计时器，可用于在姿势之间轻松为模型制作动画。您必须设置在姿势之间Tick作响，增加或减少计时器，并使用特定函数获取百分比。
  *
  * @author RafaMv
+ * @author EEEAB
  */
 public class ControlledAnimation {
     /**
@@ -47,12 +50,72 @@ public class ControlledAnimation {
         return timer;
     }
 
+    /**
+     * @return 判断是否停止计时
+     */
+    public boolean isStop() {
+        return timer == 0 && prevtimer == 0;
+    }
+
+    /**
+     * @return 判断是否计时结束
+     */
+    public boolean isEnd() {
+        return timer == duration || prevtimer == duration;
+    }
+
+    /**
+     * @return 获取前一刻Tick
+     */
     public int getPrevTimer() {
         return prevtimer;
     }
 
+    /**
+     * @return 计时器的最大值
+     */
     public int getDuration() {
         return duration;
+    }
+
+    /**
+     * 基于布尔值控制时间的增减
+     *
+     * @param flag 控制器
+     */
+    public void incrementOrDecreaseTimer(boolean flag) {
+        incrementOrDecreaseTimer(flag, 1);
+    }
+
+    /**
+     * 基于布尔值控制时间的增减
+     *
+     * @param flag 控制器
+     * @param time is the number of ticks to be set.
+     */
+    public void incrementOrDecreaseTimer(boolean flag, int time) {
+        if (flag) {
+            increaseTimer(time);
+        } else {
+            decreaseTimer(time);
+        }
+    }
+
+    /**
+     * 更新前一刻Tick
+     */
+    public void updatePrevTimer() {
+        prevtimer = timer;
+    }
+
+    /**
+     * Increases the timer by a specific value.
+     * <br/>
+     * 支持链式编程
+     */
+    public ControlledAnimation increaseTimerChain(){
+        increaseTimer();
+        return this;
     }
 
     /**
@@ -304,9 +367,5 @@ public class ControlledAnimation {
     public float getAnimationProgressTemporaryInvesed() {
         float x = 6.28318530718F * getAnimationFraction();
         return 0.5F + 0.5F * Mth.cos(x + Mth.sin(x));
-    }
-
-    public void updatePrevTimer() {
-        prevtimer = timer;
     }
 }

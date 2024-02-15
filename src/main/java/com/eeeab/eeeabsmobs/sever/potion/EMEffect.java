@@ -4,10 +4,10 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 
-public class EffectBase extends MobEffect {
+public class EMEffect extends MobEffect {
     private final boolean instant;
 
-    public EffectBase(MobEffectCategory type, int color, boolean isInstant) {
+    public EMEffect(MobEffectCategory type, int color, boolean isInstant) {
         super(type, color);
         this.instant = isInstant;
     }

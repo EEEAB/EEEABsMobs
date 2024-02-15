@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs.sever.potion;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.ai.attributes.*;
 
-public class EffectArmorLower extends EffectBase {
+public class EffectArmorLower extends EMEffect {
     private final double multiplier;
 
     public EffectArmorLower(MobEffectCategory type, int color, boolean isInstant, double multiplier) {

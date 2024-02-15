@@ -16,7 +16,7 @@ import java.util.EnumMap;
 import java.util.function.Supplier;
 
 //盔甲级别
-public enum EEArmorMaterial implements net.minecraft.world.item.ArmorMaterial {
+public enum EMArmorMaterial implements net.minecraft.world.item.ArmorMaterial {
     IMMORTAL_MATERIAL("immortal", 15, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
         map.put(ArmorItem.Type.BOOTS, 2);
         map.put(ArmorItem.Type.LEGGINGS, 5);
@@ -41,7 +41,7 @@ public enum EEArmorMaterial implements net.minecraft.world.item.ArmorMaterial {
         map.put(ArmorItem.Type.HELMET, 11);
     });
 
-    EEArmorMaterial(String name, int durabilityMultiplier, EnumMap<ArmorItem.Type, Integer> protectionFunctionForType, int enchantability, SoundEvent soundEvent, float toughness, float knockbackResistance, Supplier<Ingredient> repairMaterial) {
+    EMArmorMaterial(String name, int durabilityMultiplier, EnumMap<ArmorItem.Type, Integer> protectionFunctionForType, int enchantability, SoundEvent soundEvent, float toughness, float knockbackResistance, Supplier<Ingredient> repairMaterial) {
         this.name = name;
         this.durabilityMultiplier = durabilityMultiplier;
         this.protectionFunctionForType = protectionFunctionForType;

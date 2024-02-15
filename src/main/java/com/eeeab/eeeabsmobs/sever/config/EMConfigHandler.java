@@ -2,8 +2,7 @@ package com.eeeab.eeeabsmobs.sever.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
-//TODO 未完成
-public class EEConfigHandler {
+public class EMConfigHandler {
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     public static final ForgeConfigSpec SPEC;
     public static final Common COMMON;
@@ -30,7 +29,6 @@ public class EEConfigHandler {
         public ExperimentalEntity(final ForgeConfigSpec.Builder builder) {
             builder.push("Experimental Entity");
             GUARDIAN_LASER = new GuardianLaser(builder);
-            //SCORCH = new Scorch(builder);
             builder.pop();
         }
 
@@ -68,6 +66,7 @@ public class EEConfigHandler {
             IMMORTAL_KNIGHT = new ImmortalKnight(builder);
             IMMORTAL_SHAMAN = new ImmortalShaman(builder);
             IMMORTAL_GOLEM = new ImmortalGolem(builder);
+            CORPSE = new Corpse(builder);
             THE_IMMORTAL = new Immortal(builder);
             builder.pop();
         }
@@ -76,6 +75,7 @@ public class EEConfigHandler {
         public final ImmortalKnight IMMORTAL_KNIGHT;
         public final ImmortalShaman IMMORTAL_SHAMAN;
         public final ImmortalGolem IMMORTAL_GOLEM;
+        public final Corpse CORPSE;
         public final Immortal THE_IMMORTAL;
     }
 
@@ -126,6 +126,20 @@ public class EEConfigHandler {
         }
 
         public final AttributeConfig combatConfig;
+    }
+
+    //死尸
+    public static class Corpse {
+        public Corpse(final ForgeConfigSpec.Builder builder) {
+            builder.push("Corpse");
+            combatConfig = new AttributeConfig();
+            enableConvertToCorpse = BUILDER.comment("If False, it will not be converted to corpse").
+                    define("Converted to corpse", true);
+            builder.pop();
+        }
+
+        public final AttributeConfig combatConfig;
+        public final ForgeConfigSpec.BooleanValue enableConvertToCorpse;
     }
 
     //无名守卫者
@@ -198,6 +212,7 @@ public class EEConfigHandler {
         public AttributeConfig() {
             this(1.0F, 1.0F);
         }
+
         public AttributeConfig(float healthMultiplier, float attackMultiplier) {
             this.healthMultiplier = BUILDER.comment("Set this mob health multiplier")
                     .defineInRange("Health multiplier", healthMultiplier, 0D, Double.MAX_VALUE);

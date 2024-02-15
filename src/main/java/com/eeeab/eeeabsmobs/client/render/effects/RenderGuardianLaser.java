@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.client.render.effects;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.render.EERenderType;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityGuardianLaser;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianLaser;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -41,7 +41,7 @@ public class RenderGuardianLaser extends EntityRenderer<EntityGuardianLaser> {
 
     @Override
     public ResourceLocation getTextureLocation(EntityGuardianLaser entity) {
-        return RenderGuardianLaser.TEXTURE;
+        return TEXTURE;
     }
 
     @Override
@@ -62,6 +62,7 @@ public class RenderGuardianLaser extends EntityRenderer<EntityGuardianLaser> {
         if (frame < 0) {
             frame = 6;
         }
+        if (laser.isAccumulating()) return;
         VertexConsumer vertex$builder = bufferIn.getBuffer(EERenderType.getGlowingEffect(getTextureLocation(laser)));
         renderStart(frame, matrixStackIn, vertex$builder, packedLightIn);
         renderBeam(length, 180f / (float) Math.PI * yaw, 180f / (float) Math.PI * pitch, frame, matrixStackIn, vertex$builder, packedLightIn);

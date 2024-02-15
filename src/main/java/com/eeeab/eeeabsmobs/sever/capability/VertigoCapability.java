@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class VertigoCapability {
-    public static ResourceLocation ID = new ResourceLocation(EEEABMobs.MOD_ID, "vertigo_capability");
+    public static ResourceLocation ID = new ResourceLocation(EEEABMobs.MOD_ID, "vertigo_processor_cap");
 
     public interface IVertigoCapability extends INBTSerializable<CompoundTag> {
         boolean isVertigo();

@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.item;
 
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
-import com.eeeab.eeeabsmobs.sever.util.MTUtils;
+import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -53,7 +53,7 @@ public class ItemRemoveMob extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.addAll(MTUtils.complexText(MTUtils.ITEM_PREFIX, 2, MTUtils.STYLE_GRAY, "remove_mob"));
+        tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, EMTUtils.STYLE_GRAY, this.getDescriptionId()));
     }
 
     private static List<Entity> getNearByEntities(Entity entity, double size) {

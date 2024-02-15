@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs.client.render.effects;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelGuardianBlade;
 import com.eeeab.eeeabsmobs.client.render.EERenderType;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityGuardianBlade;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianBlade;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -27,25 +27,24 @@ public class RenderGuardianBlade extends EntityRenderer<EntityGuardianBlade> {
     }
 
     @Override
-    public void render(EntityGuardianBlade blade, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
+    public void render(EntityGuardianBlade entity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
         pPoseStack.pushPose();
         pPoseStack.translate(0F, 2.0F, 0F);
         pPoseStack.scale(1F, -1.0F, -1.0F);
-        int timer = blade.alphaControlled.getPrevTimer();
-        float alpha = Mth.clamp(1F - (timer * 0.1F), 0.01F, 0.8F);
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(blade.getYRot()));
-        MODEL.renderToBuffer(pPoseStack, pBuffer.getBuffer(EERenderType.getGlowingCutOutEffect(getTextureLocation(blade))), pPackedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, alpha);
+        float f = entity.controlled.getAnimationProgressTemporaryInvesed();
+        pPoseStack.mulPose(Axis.YP.rotationDegrees(entity.getYRot()));
+        MODEL.renderToBuffer(pPoseStack, pBuffer.getBuffer(EERenderType.getGlowingCutOutEffect(getTextureLocation(entity))), pPackedLight, OverlayTexture.NO_OVERLAY, f, f, f, f);
         pPoseStack.popPose();
-        super.render(blade, pEntityYaw, pPartialTick, pPoseStack, pBuffer, pPackedLight);
+        super.render(entity, pEntityYaw, pPartialTick, pPoseStack, pBuffer, pPackedLight);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(EntityGuardianBlade blade) {
-        return TEXTURES[Mth.clamp((int) (blade.tickCount * 0.5 % TEXTURES.length), 0, TEXTURES.length - 1)];
+    public ResourceLocation getTextureLocation(EntityGuardianBlade entity) {
+        return TEXTURES[Mth.clamp((int) (entity.tickCount * 0.5 % TEXTURES.length), 0, TEXTURES.length - 1)];
     }
 
     @Override
-    protected int getBlockLightLevel(EntityGuardianBlade pEntity, BlockPos pPos) {
+    protected int getBlockLightLevel(EntityGuardianBlade entity, BlockPos pos) {
         return 15;
     }
 }

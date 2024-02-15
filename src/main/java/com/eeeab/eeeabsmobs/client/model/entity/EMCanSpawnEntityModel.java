@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.EntityImmortal;
+import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.model.AdvancedModelBox;
@@ -9,7 +10,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public abstract class ModelImmortalBase<T extends EntityImmortal & IAnimatedEntity> extends EEAdvancedEntityModel<T> {
+public abstract class EMCanSpawnEntityModel<T extends EEEABMobLibrary & IAnimatedEntity> extends EMAdvancedEntityModel<T> {
     protected AdvancedModelBox root;
     protected AdvancedModelBox upper;
     protected AdvancedModelBox lower;

@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.client.render.effects;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.render.EERenderType;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityScorch;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityScorch;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;

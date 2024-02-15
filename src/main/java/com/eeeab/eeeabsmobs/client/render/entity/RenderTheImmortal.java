@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.client.render.entity;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelTheImmortal;
-import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.EntityTheImmortal;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityTheImmortal;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;

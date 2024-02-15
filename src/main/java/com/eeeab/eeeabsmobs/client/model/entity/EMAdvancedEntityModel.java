@@ -1,11 +1,11 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.eeeabsmobs.sever.entity.impl.EEEABMobEntity;
+import com.eeeab.eeeabsmobs.sever.entity.EEEABMobEntity;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedModelBox;
 
-public abstract class EEAdvancedEntityModel<T extends EEEABMobEntity & IAnimatedEntity> extends AdvancedEntityModel<T> {
+public abstract class EMAdvancedEntityModel<T extends EEEABMobEntity & IAnimatedEntity> extends AdvancedEntityModel<T> {
 
     @Override
     public abstract void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch);

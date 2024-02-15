@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.AbstractImmortalSkeleton;
-import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.EntityImmortalKnight;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortalSkeleton;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalKnight;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.model.AdvancedModelBox;
@@ -12,7 +12,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.world.entity.HumanoidArm;
 
-public class ModelImmortalSkeleton extends ModelImmortalBase<AbstractImmortalSkeleton> implements ArmedModel {
+public class ModelAbsImmortalSkeleton extends EMCanSpawnEntityModel<EntityAbsImmortalSkeleton> implements ArmedModel {
     private final AdvancedModelBox outerHead;
     private final AdvancedModelBox armorHead;
     private final AdvancedModelBox lowerJaw;
@@ -23,15 +23,13 @@ public class ModelImmortalSkeleton extends ModelImmortalBase<AbstractImmortalSke
     private final AdvancedModelBox outerBody;
     private final AdvancedModelBox armorBody;
     private final AdvancedModelBox armorLeftArm;
-    //private final AdvancedModelBox handLeftArm;
-    //private final AdvancedModelBox handRightArm;
     private final AdvancedModelBox armorRightArm;
     private final AdvancedModelBox armorLeftLeg;
     private final AdvancedModelBox armorRightLeg;
     private final AdvancedModelBox armorLeftFoot;
     private final AdvancedModelBox armorRightFoot;
 
-    public ModelImmortalSkeleton() {
+    public ModelAbsImmortalSkeleton() {
         texHeight = 128;
         texWidth = 128;
 
@@ -100,30 +98,19 @@ public class ModelImmortalSkeleton extends ModelImmortalBase<AbstractImmortalSke
         leftArm = new AdvancedModelBox(this, "leftArm");
         offsetAndRotation(leftArm, 5.1F, -10.5F, 0.0F, 0.0F, 0.0F, -0.0873F);
         upper.addChild(leftArm);
-        leftArm.mirror = true;
-        leftArm.setTextureOffset(34, 1).addBox(-1.1F, -2.0F, -1.0F, 2.0F, 12.5F, 2.0F, 0.4F);
-
-        //handLeftArm = new AdvancedModelBox(this, "handLeftArm");
-        //handLeftArm.setPos(-0.1F, 10.5F, -1.1F);
-        //leftArm.addChild(handLeftArm);
-        ////handLeftArm.mirror=true;
-        //handLeftArm.setTextureOffset(-1, -1).addBox(-1.1F, -1.0F, 0.1F, 1.0F, 1.0F, 1.0F, 0.4F);
+        leftArm.setTextureOffset(34, 1).addBox(-1.1F, -2.0F, -1.0F, 2.0F, 12.5F, 2.0F, 0.4F, true);
+        setRotationAngle(leftArm, toRadians(-5), 0, toRadians(-10));
 
         armorLeftArm = new AdvancedModelBox(this, "armorLeftArm");
         armorLeftArm.setPos(0.0F, 0.0F, 0.0F);
         leftArm.addChild(armorLeftArm);
-        //armorLeftArm.mirror=true;
-        armorLeftArm.setTextureOffset(60, 1).addBox(-1.1F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.75F);
+        armorLeftArm.setTextureOffset(60, 1).addBox(-1.1F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.75F, true);
 
         rightArm = new AdvancedModelBox(this, "rightArm");
         offsetAndRotation(rightArm, -6.0F, -10.5F, 0.0F, 0.0F, 0.0F, 0.0873F);
         upper.addChild(rightArm);
         rightArm.setTextureOffset(34, 1).addBox(-1.0F, -2.0F, -1.0F, 2.0F, 12.5F, 2.0F, 0.4F);
-
-        //handRightArm = new AdvancedModelBox(this, "handRightArm");
-        //handRightArm.setPos(0.0F, 10.5F, -1.1F);
-        //rightArm.addChild(handRightArm);
-        //handRightArm.setTextureOffset(-1, 0).addBox(-1.4F, -1.0F, 0.1F, 1.0F, 1.0F, 1.0F, 0.4F);
+        setRotationAngle(rightArm, toRadians(-5), 0, toRadians(10));
 
         armorRightArm = new AdvancedModelBox(this, "armorRightArm");
         armorRightArm.setPos(0.0F, 0.0F, 0.0F);
@@ -150,7 +137,7 @@ public class ModelImmortalSkeleton extends ModelImmortalBase<AbstractImmortalSke
         armorLeftFoot.setPos(-0.2F, 0.0F, 0.0F);
         leftLeg.addChild(armorLeftFoot);
         armorLeftFoot.mirror = true;
-        armorLeftFoot.setTextureOffset(43, 1).addBox(-2.5F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.75F);
+        armorLeftFoot.setTextureOffset(43, 1).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.75F);
 
         rightLeg = new AdvancedModelBox(this, "rightLeg");
         rightLeg.setPos(-2.0F, -12.0F, 0.0F);
@@ -173,22 +160,23 @@ public class ModelImmortalSkeleton extends ModelImmortalBase<AbstractImmortalSke
 
     @Override
     protected Animation getSpawnAnimation() {
-        return AbstractImmortalSkeleton.SPAWN_ANIMATION;
+        return EntityAbsImmortalSkeleton.SPAWN_ANIMATION;
     }
 
     @Override
     public Iterable<AdvancedModelBox> getAllParts() {
         return ImmutableList.of(this.root, this.upper, this.lower, this.head, this.body, this.leftArm, this.rightArm,
                 this.leftLeg, this.rightLeg, this.outerHead, this.armorHead, this.lowerJaw, this.cube_r1, this.hemal, this.hemal_r1,
-                this.heart, this.outerBody, this.armorBody, /*this.handLeftArm,*/ this.armorLeftArm/*, this.handRightArm*/, this.armorRightArm,
+                this.heart, this.outerBody, this.armorBody, this.armorLeftArm, this.armorRightArm,
                 this.armorLeftLeg, this.armorRightLeg, this.armorLeftFoot, this.armorRightFoot);
     }
 
     @Override
-    protected void setupAnim(AbstractImmortalSkeleton entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float frame) {
+    protected void setupAnim(EntityAbsImmortalSkeleton entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float frame) {
         this.animate(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, frame);
         //LookAt
         this.faceTarget(netHeadYaw, headPitch, 1.0F, this.head);
+
         //Walk
         float walkSpeed = 0.8F;
         float walkDegree = 0.8F;
@@ -200,21 +188,25 @@ public class ModelImmortalSkeleton extends ModelImmortalBase<AbstractImmortalSke
         this.bob(this.head, walkSpeed, walkDegree * 0.6F, false, limbSwing, limbSwingAmount);
         this.bob(this.root, walkSpeed, walkDegree * 0.6F, true, limbSwing, limbSwingAmount);
         this.bob(this.heart, walkSpeed, walkDegree * 1.2F, true, limbSwing, limbSwingAmount);
-        if (entity.getAnimation() == IAnimatedEntity.NO_ANIMATION || entity.getAnimation() == AbstractImmortalSkeleton.HURT_ANIMATION) {
+        if (entity.getAnimation() == IAnimatedEntity.NO_ANIMATION || entity.getAnimation() == EntityAbsImmortalSkeleton.HURT_ANIMATION) {
             this.walk(this.leftArm, walkSpeed, walkDegree * 1.2F, false, 0.0F, -0.05F, limbSwing, limbSwingAmount);
             this.walk(this.rightArm, walkSpeed, walkDegree * 1.2F, true, 0.0F, -0.05F, limbSwing, limbSwingAmount);
         }
+
         //Idle
         if (entity.isAlive()) {
-            this.bob(this.upper, walkSpeed * 0.3F, walkDegree * 0.3F, false, frame, 1);
+            this.walk(this.upper, 0.1F, 0.005F, true, 0, -0.005F, frame, 1);
+            this.walk(this.leftArm, 0.15F, 0.05F, true, 0, 0, frame, 1);
+            this.walk(this.rightArm, 0.15F, 0.05F, false, 0, 0, frame, 1);
+            this.bob(this.upper, walkSpeed * 0.2F, walkDegree * 0.2F, false, frame, 1);
             this.bob(this.leftArm, walkSpeed * 0.2F, walkDegree * 0.2F, false, frame, 1);
             this.bob(this.rightArm, walkSpeed * 0.2F, walkDegree * 0.2F, false, frame, 1);
             this.bob(this.head, walkSpeed * -0.2F, walkDegree * -0.2F, false, frame, 1);
         }
     }
 
-    private void animate(AbstractImmortalSkeleton entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float frame) {
-        if (animator.setAnimation(AbstractImmortalSkeleton.HURT_ANIMATION)) {
+    private void animate(EntityAbsImmortalSkeleton entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float frame) {
+        if (animator.setAnimation(EntityAbsImmortalSkeleton.HURT_ANIMATION)) {
             animator.startKeyframe(2);
             animator.rotate(lowerJaw, toRadians(24), 0, 0);
             animator.rotate(upper, toRadians(4), toRadians(5), toRadians(1));
@@ -228,7 +220,7 @@ public class ModelImmortalSkeleton extends ModelImmortalBase<AbstractImmortalSke
             animator.setStaticKeyframe(2);
             animator.resetKeyframe(2);
             animator.setStaticKeyframe(2);
-        } else if (animator.setAnimation(AbstractImmortalSkeleton.DIE_ANIMATION)) {
+        } else if (animator.setAnimation(EntityAbsImmortalSkeleton.DIE_ANIMATION)) {
             animator.startKeyframe(2);//0.16
             animator.rotate(rightArm, 0, 0, toRadians(10));
             animator.rotate(leftArm, 0, 0, toRadians(-10));
@@ -278,7 +270,7 @@ public class ModelImmortalSkeleton extends ModelImmortalBase<AbstractImmortalSke
             animator.endKeyframe();
 
             animator.setStaticKeyframe(34);
-        } else if (animator.setAnimation(AbstractImmortalSkeleton.MELEE_ATTACK_1_ANIMATION)) {
+        } else if (animator.setAnimation(EntityAbsImmortalSkeleton.MELEE_ATTACK_1_ANIMATION)) {
             animator.startKeyframe(0);
             animator.rotate(root, 0, 0, 0);
             animator.rotate(upper, 0, 0, 0);
@@ -314,7 +306,7 @@ public class ModelImmortalSkeleton extends ModelImmortalBase<AbstractImmortalSke
 
             animator.resetKeyframe(6);
 
-        } else if (animator.setAnimation(AbstractImmortalSkeleton.MELEE_ATTACK_2_ANIMATION)) {
+        } else if (animator.setAnimation(EntityAbsImmortalSkeleton.MELEE_ATTACK_2_ANIMATION)) {
             animator.startKeyframe(0);
             animator.rotate(root, 0, 0, 0);
             animator.rotate(upper, 0, 0, 0);
@@ -355,7 +347,7 @@ public class ModelImmortalSkeleton extends ModelImmortalBase<AbstractImmortalSke
             animator.endKeyframe();
 
             animator.resetKeyframe(4);
-        } else if (animator.setAnimation(AbstractImmortalSkeleton.MELEE_ATTACK_3_ANIMATION)) {
+        } else if (animator.setAnimation(EntityAbsImmortalSkeleton.MELEE_ATTACK_3_ANIMATION)) {
             animator.setStaticKeyframe(5);
             animator.startKeyframe(5);
             animator.rotate(root, toRadians(-6), 0, 0);
@@ -372,7 +364,7 @@ public class ModelImmortalSkeleton extends ModelImmortalBase<AbstractImmortalSke
             animator.setStaticKeyframe(3);
             animator.resetKeyframe(4);
         }
-        if (animator.setAnimation(AbstractImmortalSkeleton.RANGED_ATTACK_ANIMATION)) {
+        if (animator.setAnimation(EntityAbsImmortalSkeleton.RANGED_ATTACK_ANIMATION)) {
             animator.startKeyframe(0);
             animator.rotate(root, 0, 0, 0);
             animator.rotate(upper, 0, 0, 0);
@@ -406,7 +398,7 @@ public class ModelImmortalSkeleton extends ModelImmortalBase<AbstractImmortalSke
             animator.endKeyframe();
 
             animator.resetKeyframe(8);
-        } else if (animator.setAnimation(AbstractImmortalSkeleton.BLOCK_ANIMATION)) {
+        } else if (animator.setAnimation(EntityAbsImmortalSkeleton.BLOCK_ANIMATION)) {
             animator.startKeyframe(2);
             animator.rotate(head, toRadians(-7.5), toRadians(-12.5), 0);
             animator.rotate(upper, toRadians(5), toRadians(15), 0);

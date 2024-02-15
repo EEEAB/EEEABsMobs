@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.navigate;
 
-import com.eeeab.eeeabsmobs.sever.entity.ai.pathfinder.EEPathFinder;
-import com.eeeab.eeeabsmobs.sever.entity.impl.EEEABMobEntity;
+import com.eeeab.eeeabsmobs.sever.entity.ai.pathfinder.EMPathFinder;
+import com.eeeab.eeeabsmobs.sever.entity.EEEABMobEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
@@ -13,10 +13,10 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Objects;
 
 //参考自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/server/ai/MMPathNavigateGround.java
-public class EEPathNavigateGround extends GroundPathNavigation {
+public class EMPathNavigateGround extends GroundPathNavigation {
     private static final float EPSILON = 1.0E-8F;
 
-    public EEPathNavigateGround(EEEABMobEntity entity, Level world) {
+    public EMPathNavigateGround(EEEABMobEntity entity, Level world) {
         super(entity, world);
     }
 
@@ -24,7 +24,7 @@ public class EEPathNavigateGround extends GroundPathNavigation {
     protected net.minecraft.world.level.pathfinder.PathFinder createPathFinder(int maxVisitedNodes) {
         this.nodeEvaluator = new WalkNodeEvaluator();
         this.nodeEvaluator.setCanPassDoors(true);
-        return new EEPathFinder(this.nodeEvaluator, maxVisitedNodes);
+        return new EMPathFinder(this.nodeEvaluator, maxVisitedNodes);
     }
 
     @Override

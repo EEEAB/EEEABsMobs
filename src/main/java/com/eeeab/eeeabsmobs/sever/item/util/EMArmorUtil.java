@@ -5,8 +5,8 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 
-public class EEArmorUtil {
-    private EEArmorUtil(){}
+public class EMArmorUtil {
+    private EMArmorUtil(){}
 
     //检查玩家是否穿戴全套盔甲
     public static boolean checkFullSuitOfArmor(ArmorMaterial material, Player player) {

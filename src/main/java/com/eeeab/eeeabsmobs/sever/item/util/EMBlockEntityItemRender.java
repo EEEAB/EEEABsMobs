@@ -7,9 +7,9 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.function.Consumer;
 
-public class EEBlockEntityItemRender extends BlockItem {
+public class EMBlockEntityItemRender extends BlockItem {
 
-    public EEBlockEntityItemRender(Block pBlock, Properties pProperties) {
+    public EMBlockEntityItemRender(Block pBlock, Properties pProperties) {
         super(pBlock, pProperties);
     }
 

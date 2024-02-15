@@ -14,10 +14,11 @@ import java.util.List;
  * 翻译字段工具类
  *
  * @author EEEAB
+ * @version 1.1
  */
-public class MTUtils {
+public class EMTUtils {
 
-    private MTUtils() {
+    private EMTUtils() {
     }
 
     //text style
@@ -34,7 +35,7 @@ public class MTUtils {
 
     public static final String MOD_ID = EEEABMobs.MOD_ID + ".";
 
-    public static final Component UNABLE_BREAKS = simpleText(OTHER_PREFIX, "unable_breaks", MTUtils.STYLE_GRAY);//无法破坏
+    public static final Component UNABLE_BREAKS = simpleText(OTHER_PREFIX, "unable_breaks", EMTUtils.STYLE_GRAY);//无法破坏
 
     //item
     public static final String ITEM_PREFIX = "item.";
@@ -67,6 +68,7 @@ public class MTUtils {
         if (key == null) {
             component = Component.translatable(finalPrefix + TIP_SUFFIX.substring(1)).setStyle(style);
         } else {
+            key = subDescriptionId(key);
             component = Component.translatable(finalPrefix + key + TIP_SUFFIX).setStyle(style);
         }
         return component;
@@ -100,6 +102,14 @@ public class MTUtils {
         return simpleText(LEFT_CLICK, key, style);
     }
 
+    /**
+     * 批量生成键<br>
+     * 示例:<br>
+     * prefix.modId.descriptionId.tip_1<br>
+     * prefix.modId.descriptionId.tip_2<br>
+     * prefix.modId.descriptionId.tip_n<br>
+     * ...
+     */
     public static List<Component> complexText(String prefix, int count, Style style, String key) {
         List<Component> components = new ArrayList<>();
         if (style == null) style = Style.EMPTY;
@@ -108,7 +118,7 @@ public class MTUtils {
             components.add(Component.translatable(sb
                     .append(prefix)
                     .append(MOD_ID)
-                    .append(key)
+                    .append(subDescriptionId(key))
                     .append(TIP_SUFFIX)
                     .append("_")
                     .append(i)
@@ -118,6 +128,12 @@ public class MTUtils {
         return components;
     }
 
+    /**
+     * 批量生成键<br>
+     * 示例:<br>
+     * prefix.modId.XXX.tip<br>
+     * ...
+     */
     public static List<Component> complexText(String prefix, boolean hasIndex, Style style, String... keys) {
         List<Component> components = new ArrayList<>();
         if (style == null) style = Style.EMPTY;
@@ -125,11 +141,17 @@ public class MTUtils {
             StringBuilder sb = new StringBuilder();
             sb.append(prefix)
                     .append(MOD_ID)
-                    .append(keys[i])
+                    .append(subDescriptionId(keys[i]))
                     .append(TIP_SUFFIX);
             if (hasIndex) sb.append("_").append(i + 1);
             components.add(Component.translatable(sb.toString()).setStyle(style));
         }
         return components;
+    }
+
+    public static String subDescriptionId(String descriptionId) {
+        int i = descriptionId.lastIndexOf(".");
+        if (i == -1) return descriptionId;
+        return descriptionId.substring(i + 1);
     }
 }

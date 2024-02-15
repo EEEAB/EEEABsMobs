@@ -20,13 +20,9 @@ public class DataGenerators {
         PackOutput packOutput = generator.getPackOutput();
         ExistingFileHelper helper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> provider = event.getLookupProvider();
-        generator.addProvider(true, new EEDamageTypeProvider(packOutput, provider, helper));
-        generator.addProvider(true, new EEStructureProvider(packOutput, provider, helper));
-
-        //generator.addProvider(true, new EERecipeProvider(packOutput));
-        //generator.addProvider(true, EELootTableProvider.create(packOutput));
-        //generator.addProvider(true, new EEItemModelProvider(packOutput, helper));
-        //generator.addProvider(true, new EEBlockStateProvider(packOutput, helper));
-
+        generator.addProvider(true, new EMDamageTypeProvider(packOutput, provider, helper));
+        generator.addProvider(true, new EMStructureTagsProvider(packOutput, provider, helper));
+        generator.addProvider(true, new EMBiomeTagsProvider(packOutput, provider, helper));
+        generator.addProvider(true, new EMEntityTypeTagsProvider(packOutput, provider, helper));
     }
 }

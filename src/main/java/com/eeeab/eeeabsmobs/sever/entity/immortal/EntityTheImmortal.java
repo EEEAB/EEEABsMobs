@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.IBoss;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
@@ -42,21 +43,16 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
 
     public EntityTheImmortal(EntityType<? extends EntityAbsImmortal> type, Level level) {
         super(type, level);
-        this.xpReward = 30;
         this.active = true;
         this.circleTick += this.random.nextInt(200);
         this.setMovingType(MoveType.CIRCLE);
         //this.moveControl = new FlyingMoveControl(this, 10, false);
     }
 
-    //@Override
-    //protected PathNavigation createNavigation(Level pLevel) {
-    //    FlyingPathNavigation flyingpathnavigation = new FlyingPathNavigation(this, pLevel);
-    //    flyingpathnavigation.setCanOpenDoors(false);
-    //    flyingpathnavigation.setCanFloat(true);
-    //    flyingpathnavigation.setCanPassDoors(true);
-    //    return flyingpathnavigation;
-    //}
+    @Override
+    protected XpReward getEntityReward() {
+        return XpReward.XP_REWARD_BOSS;
+    }
 
     @Override
     protected void registerGoals() {

@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.util;
 
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityFallingBlock;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityFallingBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;

@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.render.effects;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.entity.impl.projectile.EntityShamanBomb;
+import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;

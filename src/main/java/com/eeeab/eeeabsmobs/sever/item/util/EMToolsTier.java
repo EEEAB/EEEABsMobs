@@ -9,7 +9,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import java.util.function.Supplier;
 
 //工具级别
-public enum EEToolsTier implements Tier {
+public enum EMToolsTier implements Tier {
     IMMORTAL_TIER(2, 1, 5.0F, 0.0F, 10, () -> {
         return Ingredient.of(ItemInit.IMMORTAL_INGOT.get());
     }),
@@ -22,7 +22,7 @@ public enum EEToolsTier implements Tier {
     private final int enchantability;//附魔亲和力
     private final LazyLoadedValue<Ingredient> repairMaterial;//修复材料
 
-    EEToolsTier(int harvestLevelIn, int maxUsesIn, float efficiencyIn, float attackDamageIn, int enchantabilityIn, Supplier<Ingredient> repairMaterialIn) {
+    EMToolsTier(int harvestLevelIn, int maxUsesIn, float efficiencyIn, float attackDamageIn, int enchantabilityIn, Supplier<Ingredient> repairMaterialIn) {
         this.harvestLevel = harvestLevelIn;
         this.maxUses = maxUsesIn;
         this.efficiency = efficiencyIn;

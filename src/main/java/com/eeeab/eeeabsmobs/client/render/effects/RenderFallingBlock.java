@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.render.effects;
 
-import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityFallingBlock;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityFallingBlock;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -44,7 +44,7 @@ public class RenderFallingBlock extends EntityRenderer<EntityFallingBlock> {
 
     @Override
     public void render(EntityFallingBlock entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
-        if (EEConfigHandler.COMMON.OTHER.enableRenderFallingBlock.get()) {
+        if (EMConfigHandler.COMMON.OTHER.enableRenderFallingBlock.get()) {
             BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
             matrixStackIn.pushPose();
             if (entityIn.getMode() == EntityFallingBlock.FallingMoveType.OVERALL_MOVE) {

@@ -54,16 +54,17 @@ public abstract class EEEABMobEntity extends PathfinderMob {
 
     public EEEABMobEntity(EntityType<? extends EEEABMobEntity> type, Level level) {
         super(type, level);
+        this.xpReward = this.getEntityReward().getXp();
         //加载配置文件并修改值
-        EMConfigHandler.AttributeConfig config = getAttributeConfig();
+        EMConfigHandler.AttributeConfig config = this.getAttributeConfig();
         if (config != null) {
-            AttributeInstance healthAttribute = getAttribute(Attributes.MAX_HEALTH);
+            AttributeInstance healthAttribute = this.getAttribute(Attributes.MAX_HEALTH);
             if (healthAttribute != null) {
                 double finalValue = healthAttribute.getBaseValue() * config.healthMultiplier.get() - healthAttribute.getBaseValue();
                 healthAttribute.addTransientModifier(new AttributeModifier(HEALTH_UUID, "Reset health by config", finalValue, AttributeModifier.Operation.ADDITION));
                 this.setHealth(this.getMaxHealth());
             }
-            AttributeInstance attackAttribute = getAttribute(Attributes.ATTACK_DAMAGE);
+            AttributeInstance attackAttribute = this.getAttribute(Attributes.ATTACK_DAMAGE);
             if (attackAttribute != null) {
                 double finalValue = attackAttribute.getBaseValue() * config.attackMultiplier.get() - attackAttribute.getBaseValue();
                 attackAttribute.addTransientModifier(new AttributeModifier(ATTACK_UUID, "Reset attack damage by config", finalValue, AttributeModifier.Operation.ADDITION));
@@ -365,6 +366,9 @@ public abstract class EEEABMobEntity extends PathfinderMob {
         this.bossInfo.removePlayer(player);
     }
 
+    protected XpReward getEntityReward() {
+        return XpReward.XP_REWARD_NORMAL;
+    }
 
     protected boolean setDarkenScreen() {
         return false;
