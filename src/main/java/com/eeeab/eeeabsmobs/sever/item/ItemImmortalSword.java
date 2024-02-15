@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.item;
 
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
-import com.eeeab.eeeabsmobs.sever.util.MTUtils;
+import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import net.minecraft.network.chat.*;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,16 +13,16 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-public class ImmortalSword extends SwordItem {
-    public ImmortalSword(Tier tier, int attackDamageModifier, float attackSpeedModifier, Properties properties) {
+public class ItemImmortalSword extends SwordItem {
+    public ItemImmortalSword(Tier tier, int attackDamageModifier, float attackSpeedModifier, Properties properties) {
         super(tier, attackDamageModifier, attackSpeedModifier, properties);
     }
 
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.add(MTUtils.UNABLE_BREAKS);
-        tooltip.add(MTUtils.simpleWeaponText("immortal_sword", MTUtils.STYLE_GRAY));
+        tooltip.add(EMTUtils.UNABLE_BREAKS);
+        tooltip.add(EMTUtils.simpleWeaponText(this.getDescriptionId(), EMTUtils.STYLE_GRAY));
     }
 
     @Override

@@ -2,8 +2,7 @@ package com.eeeab.eeeabsmobs.sever.item;
 
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
-import com.eeeab.eeeabsmobs.sever.item.util.EEToolTipItem;
-import com.eeeab.eeeabsmobs.sever.util.MTUtils;
+import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -15,25 +14,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class ItemImmortalStaff extends EEToolTipItem {
+public class ItemImmortalStaff extends Item {
     public ItemImmortalStaff() {
         super(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant());
-    }
-
-    @Override
-    protected void detailsTooltip(List<Component> tooltip) {
-        tooltip.add(MTUtils.simpleWeaponText("immortal_staff", MTUtils.STYLE_GRAY));
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
-        tooltip.add(MTUtils.UNABLE_BREAKS);
-        super.appendHoverText(stack, level, tooltip, flagIn);
-    }
-
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        return ItemUtils.startUsingInstantly(level, player, hand);
     }
 
     @Override
@@ -56,7 +39,6 @@ public class ItemImmortalStaff extends EEToolTipItem {
         return UseAnim.BOW;
     }
 
-
     @Override
     public boolean isEnchantable(ItemStack stack) {
         return false;
@@ -64,5 +46,17 @@ public class ItemImmortalStaff extends EEToolTipItem {
 
     public int getUseDuration(ItemStack stack) {
         return 72000;
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        return ItemUtils.startUsingInstantly(level, player, hand);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
+        super.appendHoverText(stack, level, tooltip, flagIn);
+        tooltip.add(EMTUtils.UNABLE_BREAKS);
+        tooltip.add(EMTUtils.simpleWeaponText(this.getDescriptionId(), EMTUtils.STYLE_GRAY));
     }
 }
