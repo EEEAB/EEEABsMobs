@@ -8,7 +8,7 @@ import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.message.MessagePlayerUseAbility;
 import com.eeeab.eeeabsmobs.sever.message.MessageUseAbility;
-import com.eeeab.eeeabsmobs.sever.util.MTUtils;
+import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -44,9 +44,10 @@ public enum AbilityHandler {
         }
         AbilityCapability.IAbilityCapability abilityCapability = getAbilityCapability(entity);
         if (abilityCapability != null) {
-            Ability instance = abilityCapability.getAbilitiesMap().get(abilityType);
+            Ability<?> instance = abilityCapability.getAbilitiesMap().get(abilityType);
+            if (instance == null) return;
             if (instance.isCooling() && entity instanceof Player player) {
-                player.displayClientMessage(MTUtils.simpleText(MTUtils.OTHER_PREFIX, "cooling", null),true);
+                player.displayClientMessage(EMTUtils.simpleText(EMTUtils.OTHER_PREFIX, "cooling", null), true);
             }
             if (instance.canUse()) {
                 abilityCapability.onActive(entity, abilityType);

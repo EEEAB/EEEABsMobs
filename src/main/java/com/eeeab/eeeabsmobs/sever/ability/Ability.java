@@ -5,8 +5,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.util.Random;
-
 public abstract class Ability<T extends LivingEntity> {
     private final AbilityPeriod[] abilityPeriods;
     private final AbilityCapability.IAbilityCapability abilityCapability;
@@ -38,6 +36,7 @@ public abstract class Ability<T extends LivingEntity> {
 
     public void tick() {
         if (isUsing()) {
+            tickUsing();
             tick++;
             sectionTick++;
             AbilityPeriod section = getSection();
@@ -49,6 +48,10 @@ public abstract class Ability<T extends LivingEntity> {
         } else {
             if (coolingTimer > 0) coolingTimer--;
         }
+    }
+
+    protected void tickUsing() {
+
     }
 
     public void end() {
@@ -100,7 +103,7 @@ public abstract class Ability<T extends LivingEntity> {
         }
     }
 
-    private AbilityPeriod getSection() {
+    public AbilityPeriod getSection() {
         if (sectionIndex >= abilityPeriods.length) return null;
         return abilityPeriods[sectionIndex];
     }

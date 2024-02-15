@@ -23,10 +23,11 @@ import java.util.*;
 
 //能力处理器
 public class AbilityCapability {
-    public static ResourceLocation ID = new ResourceLocation(EEEABMobs.MOD_ID, "ability_processor");
+    public static ResourceLocation ID = new ResourceLocation(EEEABMobs.MOD_ID, "ability_processor_cap");
 
     public interface IAbilityCapability extends INBTSerializable<CompoundTag> {
         void onActive(LivingEntity entity, AbilityType<?, ?> type);
+
         //能力初始化数据
         void onInit(LivingEntity entity);
 
