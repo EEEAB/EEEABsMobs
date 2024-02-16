@@ -1,18 +1,21 @@
 package com.eeeab.eeeabsmobs.sever.item;
 
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityCameraShake;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityGuardianBlade;
+import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
+import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.MTUtils;
+import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -22,11 +25,16 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
+//TODO 待优化:部分参数由配置文件控制
 public class ItemGuardianAxe extends AxeItem {
     private final Multimap<Attribute, AttributeModifier> defaultModifiers;
     private static final UUID GUARDIAN_BASE_KNOCKBACK_RESISTANCE_UUID = UUID.fromString("BFF48EEA-FF5B-45B6-88FC-3C8FBBAF78FA");
@@ -41,69 +49,33 @@ public class ItemGuardianAxe extends AxeItem {
     }
 
     @Override
-    public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int remainingUseDuration) {
-        if (livingEntity instanceof Player player) {
-            ItemStack itemStack = player.getProjectile(stack);
-            int i = this.getUseDuration(itemStack) - remainingUseDuration;
-            if (i >= 20) {
-                if (level.isClientSide) {
-                    doWeaponEffect(level, player, Mth.clamp((int) Math.round(i * 0.1), 3, 6));
-                }
-            }
-        }
-    }
-
-    @Override
-    public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int remainingUseDuration) {
-        if (entity instanceof Player player) {
-            ItemStack itemStack = player.getProjectile(stack);
-            int i = this.getUseDuration(itemStack) - remainingUseDuration;
-            if (i >= 20) {
-                InteractionHand hand = player.getUsedItemHand();
-                player.swing(hand, true);
-                int round = (int) Math.round(i * 0.1);
-                doSpawnBlade(player, Mth.clamp(round, 3, 6), player.getRandom().nextFloat());
-                player.getCooldowns().addCooldown(this, 100);
-                player.playSound(SoundEvents.GENERIC_EXPLODE, 1.5F, 1F + player.getRandom().nextFloat() * 0.1F);
-                EntityCameraShake.cameraShake(level, player.position(), 8, 0.2F + round * 0.01F, 0, 20);
-            }
-        }
-    }
-
-    private void doSpawnBlade(Player player, int spawnQuantity, float offset) {
-        for (int i = 0; i < spawnQuantity; ++i) {
-            float f1 = (float) (player.getYRot() + (i + offset) * (float) Math.PI * (2.0 / spawnQuantity));
-            double x = player.getX() + Mth.cos(f1) * 1.5D;
-            double y = player.getY();
-            double z = player.getZ() + Mth.sin(f1) * 1.5D;
-            EntityGuardianBlade blade = new EntityGuardianBlade(player.level, player, x, y, z, f1, false);
-            player.level.addFreshEntity(blade);
-        }
-    }
-
-    private void doWeaponEffect(Level level, Player player, int spawnQuantity) {
-        RandomSource random = player.getRandom();
-        for (int i = 0; i < spawnQuantity; i++) {
-            double x = player.getX() + random.nextGaussian();
-            double y = player.getY() + 0.1F;
-            double z = player.getZ() + random.nextGaussian();
-            level.addParticle(ParticleTypes.GLOW, x, y, z, 0, 0.01, 0);
-        }
-    }
-
-    @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        return ItemUtils.startUsingInstantly(level, player, hand);
+        ItemStack itemStack = player.getItemInHand(hand);
+        BlockHitResult result = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
+        if (Objects.equals(hand, InteractionHand.MAIN_HAND) && HitResult.Type.BLOCK == result.getType() && Direction.UP == result.getDirection()) {
+            BlockPos blockPos = result.getBlockPos();
+            player.swing(hand, true);
+            AbilityCapability.IAbilityCapability capability = AbilityHandler.INSTANCE.getAbilityCapability(player);
+            if (capability != null) {
+                player.playSound(SoundEvents.GENERIC_EXPLODE, 1.5F, 1F + player.getRandom().nextFloat() * 0.1F);
+                EntityCameraShake.cameraShake(level, player.position(), 8, 0.125F, 0, 20);
+                if (level.isClientSide) ModParticleUtils.roundParticleOutburst(level, 50, new ParticleOptions[]{ParticleInit.GUARDIAN_SPARK.get()}, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 0.5F);
+                AbilityHandler.INSTANCE.sendPlayerAbilityMessage(player, AbilityHandler.GUARDIAN_AXE_ABILITY_TYPE);
+                player.getCooldowns().addCooldown(this, 100);
+                return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide);
+            }
+        }
+        return InteractionResultHolder.fail(itemStack);
     }
 
     @Override
-    public int getUseDuration(ItemStack pStack) {
+    public int getUseDuration(ItemStack stack) {
         return 72000;
     }
 
     @Override
-    public UseAnim getUseAnimation(ItemStack pStack) {
-        return UseAnim.BOW;
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.NONE;
     }
 
     @Override
@@ -121,11 +93,11 @@ public class ItemGuardianAxe extends AxeItem {
 
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.add(MTUtils.UNABLE_BREAKS);
+        tooltip.add(EMTUtils.UNABLE_BREAKS);
         if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340)) {
-            tooltip.add(MTUtils.simpleShiftDownText(null, MTUtils.STYLE_GREEN));
+            tooltip.add(EMTUtils.simpleShiftDownText(null, EMTUtils.STYLE_GREEN));
         } else {
-            tooltip.add(MTUtils.simpleWeaponText("guardian_axe", MTUtils.STYLE_GRAY));
+            tooltip.add(EMTUtils.simpleWeaponText(this.getDescriptionId(), EMTUtils.STYLE_GRAY));
         }
     }
 

@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.sound;
 
-import com.eeeab.eeeabsmobs.sever.entity.impl.EEEABMobEntity;
+import com.eeeab.eeeabsmobs.sever.entity.EEEABMobEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;

@@ -1,8 +1,7 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.EntityImmortalShaman;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalShaman;
 import com.github.alexthe666.citadel.animation.Animation;
-import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.model.AdvancedModelBox;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import com.github.alexthe666.citadel.client.model.basic.BasicModelPart;
@@ -11,7 +10,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.world.entity.HumanoidArm;
 
-public class ModelImmortalShaman extends ModelImmortalBase<EntityImmortalShaman> implements ArmedModel {
+public class ModelImmortalShaman extends EMCanSpawnEntityModel<EntityImmortalShaman> implements ArmedModel {
     private final AdvancedModelBox capeHead;
     private final AdvancedModelBox armHead;
     private final AdvancedModelBox kok;
@@ -29,8 +28,6 @@ public class ModelImmortalShaman extends ModelImmortalBase<EntityImmortalShaman>
     private final AdvancedModelBox armBody;
     private final AdvancedModelBox armLeftArm;
     private final AdvancedModelBox armRightArm;
-    //private final AdvancedModelBox handRightArm;
-    //private final AdvancedModelBox handLeftArm;
     private final AdvancedModelBox armleftLeg;
     private final AdvancedModelBox armRightLeg;
 
@@ -48,56 +45,56 @@ public class ModelImmortalShaman extends ModelImmortalBase<EntityImmortalShaman>
         root.addChild(upper);
 
         head = new AdvancedModelBox(this, "head");
-        head.setPos(0.0F, -10.0F, 0.0F);
+        head.setPos(0.0F, -8.5F, 0.0F);
         upper.addChild(head);
-        head.setTextureOffset(96, 94).addBox(-4.0F, -6.0F, -4.0F, 8.0F, 8.0F, 8.0F, -1.2F);
+        head.setTextureOffset(96, 94).addBox(-4.0F, -7.0F, -4.0F, 8.0F, 8.0F, 8.0F, -1.5F);
 
         capeHead = new AdvancedModelBox(this, "capeHead");
-        capeHead.setPos(0.0F, -0.5F, 0.0F);
+        capeHead.setPos(0.0F, -1.5F, 0.0F);
         head.addChild(capeHead);
-        capeHead.setTextureOffset(43, 95).addBox(-4.0F, -5.5F, -4.0F, 8.0F, 8.0F, 8.0F, -0.2F);
+        capeHead.setTextureOffset(43, 95).addBox(-4.0F, -5.5F, -4.0F, 8.0F, 8.0F, 8.0F, -0.5F);
 
         armHead = new AdvancedModelBox(this, "armHead");
-        armHead.setPos(0.0F, -0.5F, 0.0F);
+        armHead.setPos(0.0F, -1.5F, 0.0F);
         head.addChild(armHead);
-        armHead.setTextureOffset(0, 112).addBox(-4.0F, -5.5F, -4.0F, 8.0F, 8.0F, 8.0F, -0.5F);
+        armHead.setTextureOffset(0, 112).addBox(-4.0F, -5.5F, -4.0F, 8.0F, 8.0F, 8.0F, -0.8F);
 
         kok = new AdvancedModelBox(this, "kok");
-        kok.setPos(0.0373F, -7.522F, -3.8179F);
+        kok.setPos(0.0373F, -7.522F, -4.2179F);
         armHead.addChild(kok);
 
         bone_r1 = new AdvancedModelBox(this, "bone_r1");
         offsetAndRotation(bone_r1, -4.2614F, 1.9855F, 0.7179F, 0.2618F, 0.0F, -0.2618F);
         kok.addChild(bone_r1);
         bone_r1.mirror = true;
-        bone_r1.setTextureOffset(18, 99).addBox(-0.1759F, -1.4319F, -1.0F, 2.0F, 4.0F, 2.0F, -0.2F);
+        bone_r1.setTextureOffset(18, 99).addBox(-0.1759F, -1.4319F, -1.0F, 2.0F, 4.0F, 2.0F, -0.3F);
 
         bone_r2 = new AdvancedModelBox(this, "bone_r2");
         offsetAndRotation(bone_r2, 1.9627F, 1.522F, -0.6821F, 0.0801F, -0.1796F, -0.1381F);
         kok.addChild(bone_r2);
-        bone_r2.setTextureOffset(0, 92).addBox(1.0F, -3.0F, 0.0F, 2.0F, 3.0F, 2.0F, -0.2F);
+        bone_r2.setTextureOffset(0, 92).addBox(1.0F, -3.0F, 0.0F, 2.0F, 3.0F, 2.0F, -0.3F);
 
         bone_r3 = new AdvancedModelBox(this, "bone_r3");
         offsetAndRotation(bone_r3, 3.7869F, 1.9855F, 0.7179F, 0.2618F, 0.0F, 0.2618F);
         kok.addChild(bone_r3);
-        bone_r3.setTextureOffset(18, 99).addBox(-1.4241F, -1.4319F, -1.0F, 2.0F, 4.0F, 2.0F, -0.2F);
+        bone_r3.setTextureOffset(18, 99).addBox(-1.4241F, -1.4319F, -1.0F, 2.0F, 4.0F, 2.0F, -0.3F);
 
         mouthKok = new AdvancedModelBox(this, "mouthKok");
-        offsetAndRotation(mouthKok, 0.0708F, 2.1761F, -3.1983F, 0.5236F, 0.0F, 0.0F);
+        offsetAndRotation(mouthKok, 0.0708F, 1.5761F, -2.5983F, 0.5236F, 0.0F, 0.0F);
         armHead.addChild(mouthKok);
 
         bone_r4 = new AdvancedModelBox(this, "bone_r4");
         offsetAndRotation(bone_r4, 3.6357F, -2.9162F, 1.2F, 0.0F, 0.0F, 0.1745F);
         mouthKok.addChild(bone_r4);
-        bone_r4.setTextureOffset(9, 99).addBox(-1.1F, -0.2599F, -2.0017F, 2.0F, 4.0F, 2.0F, -0.4F);
+        bone_r4.setTextureOffset(9, 99).addBox(-1.1F, -0.2599F, -2.0017F, 2.0F, 4.0F, 2.0F, -0.5F);
 
         bone_r5 = new AdvancedModelBox(this, "bone_r5");
         offsetAndRotation(bone_r5, -4.7773F, -4.9162F, 1.2F, 0.0F, 0.0F, -0.1745F);
         mouthKok.addChild(bone_r5);
-        bone_r5.setTextureOffset(0, 99).addBox(-0.2935F, 1.7401F, -2.0017F, 2.0F, 4.0F, 2.0F, -0.4F);
+        bone_r5.setTextureOffset(0, 99).addBox(-0.2935F, 1.7401F, -2.0017F, 2.0F, 4.0F, 2.0F, -0.5F);
 
         lowerJaw = new AdvancedModelBox(this, "lowerJaw");
-        lowerJaw.setPos(0.1F, 1.6852F, -1.9832F);
+        lowerJaw.setPos(0.1F, -0.3148F, -1.4832F);
         head.addChild(lowerJaw);
 
         cube_r1 = new AdvancedModelBox(this, "cube_r1");
@@ -108,25 +105,16 @@ public class ModelImmortalShaman extends ModelImmortalBase<EntityImmortalShaman>
         body = new AdvancedModelBox(this, "body");
         body.setPos(0.0F, 0.0F, 0.0F);
         upper.addChild(body);
-        body.setTextureOffset(104, 59).addBox(-3.5F, -8.0F, -2.0F, 7.0F, 9.0F, 3.5F, 0.0F);
-
-        //		PartDefinition hemal = body.addOrReplaceChild("hemal", CubeListBuilder.create().texOffs(67, 78).addBox(-1.0F, -20.0F, -1.0F, 1.0F, 11.0F, 1.0F, new CubeDeformation(0.0F))
-        //		.texOffs(86, 88).addBox(-4.1F, -19.0F, -1.0F, 7.5F, 1.0F, 1.0F, new CubeDeformation(-0.1F)), PartPose.offset(0.0F, 10.0F, 0.0F));
-        //
-        //		PartDefinition heart = body.addOrReplaceChild("heart", CubeListBuilder.create().texOffs(75, 85).addBox(-1.2F, -0.5F, -0.8F, 2.4F, 3.5F, 1.6F, new CubeDeformation(0.0F)), PartPose.offset(1.0F, -8.0F, -0.5F));
-        //
-        //		PartDefinition cape = body.addOrReplaceChild("cape", CubeListBuilder.create(), PartPose.offset(0.0F, -9.5988F, 2.6548F));
-        //
-        //		PartDefinition bone_r6 = cape.addOrReplaceChild("bone_r6", CubeListBuilder.create().texOffs(60, 112).addBox(-4.8F, 0.2F, -0.25F, 10.0F, 15.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.2F, 0.304F, -0.2518F, 0.0436F, 0.0F, 0.0F));
+        body.setTextureOffset(106, 77).addBox(-3.5F, -9.0F, -2.0F, 7.0F, 10.0F, 4.0F, 0.3F);
 
         hemal = new AdvancedModelBox(this, "hemal");
-        hemal.setPos(0.0F, 10.0F, 0.0F);
+        hemal.setPos(0.0F, 11.0F, 0.0F);
         body.addChild(hemal);
         hemal.setTextureOffset(67, 78).addBox(-1.0F, -20.0F, -1.0F, 1.0F, 11.0F, 1.0F)
                 .setTextureOffset(86, 88).addBox(-4.1F, -19.0F, -1.0F, 7.5F, 1.0F, 1.0F, -0.1F);
 
         heart = new AdvancedModelBox(this, "heart");
-        heart.setPos(1.0F, -8.0F, -0.5F);
+        heart.setPos(1.0F, -7.0F, -0.5F);
         body.addChild(heart);
         heart.setTextureOffset(75, 85).addBox(-1.2F, -0.5F, -0.8F, 2.4F, 3.5F, 1.6F, 0.0F);
 
@@ -135,9 +123,9 @@ public class ModelImmortalShaman extends ModelImmortalBase<EntityImmortalShaman>
         body.addChild(cape);
 
         bone_r6 = new AdvancedModelBox(this, "bone_r6");
-        offsetAndRotation(bone_r6, -0.2F, 0.304F, -0.2518F, 0.0436F, 0.0F, 0.0F);
+        offsetAndRotation(bone_r6, 1.0F, 0.219F, -3.1119F, 0.0436F, 0.0F, 0.0F);
         cape.addChild(bone_r6);
-        bone_r6.setTextureOffset(60, 112).addBox(-4.8F, 0.2F, -0.25F, 10.0F, 15.0F, 0.0F, 0.0F);
+        bone_r6.setTextureOffset(60, 112).addBox(-6.3F, 0.2F, 2.75F, 10.0F, 15.0F, 0.0F);
 
         armBody = new AdvancedModelBox(this, "armBody");
         armBody.setPos(0.0F, 10.0F, 0.0F);
@@ -148,7 +136,8 @@ public class ModelImmortalShaman extends ModelImmortalBase<EntityImmortalShaman>
         offsetAndRotation(leftArm, 4.0F, -8.0F, 0.0F, 0.0F, 0.0F, -0.0349F);
         upper.addChild(leftArm);
         leftArm.mirror = true;
-        leftArm.setTextureOffset(95, 114).addBox(-0.9811F, -0.9319F, -1.5F, 3.5F, 10.5F, 3.5F, -0.2F);
+        leftArm.setTextureOffset(96, 115).addBox(-0.4811F, -0.4319F, -1.5F, 3.0F, 10.0F, 3.0F, -0.2F);
+        setRotationAngle(leftArm, 0, 0, toRadians(-5));
 
         armLeftArm = new AdvancedModelBox(this, "armLeftArm");
         armLeftArm.setPos(0.0F, 0.0F, 0.0F);
@@ -156,32 +145,22 @@ public class ModelImmortalShaman extends ModelImmortalBase<EntityImmortalShaman>
         armLeftArm.mirror = true;
         armLeftArm.setTextureOffset(80, 113).addBox(-0.7311F, -1.4319F, -1.5F, 3.5F, 11.0F, 3.5F, 0.0F);
 
-        //		PartDefinition handLeftArm = leftArm.addOrReplaceChild("handLeftArm", CubeListBuilder.create().texOffs(0, 0).addBox(9.5378F, -0.2018F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(-9.5189F, 8.7699F, -0.5F));
-        //handLeftArm = new AdvancedModelBox(this, "handLeftArm");
-        //handLeftArm.setPos(-9.5189F, 8.7699F, -0.5F);
-        //leftArm.addChild(handLeftArm);
-        //handLeftArm.setTextureOffset(0, 0).addBox(9.5378F, -0.2018F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F);
-
         rightArm = new AdvancedModelBox(this, "rightArm");
         offsetAndRotation(rightArm, -4.0F, -8.0F, 0.0F, 0.0F, 0.0F, 0.0349F);
         upper.addChild(rightArm);
-        rightArm.setTextureOffset(95, 114).addBox(-3.0189F, -0.9319F, -1.5F, 3.5F, 10.5F, 3.5F, -0.2F);
+        rightArm.setTextureOffset(96, 115).addBox(-2.5189F, -0.4319F, -1.5F, 3.0F, 10.0F, 3.0F, -0.2F);
+        setRotationAngle(rightArm, 0, 0, toRadians(5));
 
         armRightArm = new AdvancedModelBox(this, "armRightArm");
         armRightArm.setPos(0.0F, 0.0F, 0.0F);
         rightArm.addChild(armRightArm);
         armRightArm.setTextureOffset(80, 113).addBox(-3.2689F, -1.4319F, -1.5F, 3.5F, 11.0F, 3.5F, 0.0F);
 
-        //handRightArm = new AdvancedModelBox(this, "handRightArm");
-        //handRightArm.setPos(-1.5189F, 8.7699F, -0.5F);
-        //rightArm.addChild(handRightArm);
-        //handRightArm.setTextureOffset(0, 0).addBox(-0.5F, -0.2018F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F);
-
         leftLeg = new AdvancedModelBox(this, "leftLeg");
         leftLeg.setPos(1.9F, -10.0F, 0.0F);
         root.addChild(leftLeg);
         leftLeg.mirror = true;
-        leftLeg.setTextureOffset(113, 114).addBox(-1.4F, -1.0F, -1.25F, 3.5F, 11.0F, 3.0F, -0.2F);
+        leftLeg.setTextureOffset(113, 114).addBox(-1.9F, -1.0F, -1.5F, 3.5F, 11.0F, 3.0F, -0.2F);
 
         armleftLeg = new AdvancedModelBox(this, "armleftLeg");
         armleftLeg.setPos(1.9F, -10.0F, 0.0F);
@@ -192,7 +171,7 @@ public class ModelImmortalShaman extends ModelImmortalBase<EntityImmortalShaman>
         rightLeg = new AdvancedModelBox(this, "rightLeg");
         rightLeg.setPos(-1.9F, -10.0F, 0.0F);
         root.addChild(rightLeg);
-        rightLeg.setTextureOffset(113, 114).addBox(-2.0F, -1.0F, -1.25F, 3.5F, 11.0F, 3.0F, -0.2F);
+        rightLeg.setTextureOffset(113, 114).addBox(-1.6F, -1.0F, -1.5F, 3.5F, 11.0F, 3.0F, -0.2F);
 
 
         armRightLeg = new AdvancedModelBox(this, "armRightLeg");
@@ -426,33 +405,16 @@ public class ModelImmortalShaman extends ModelImmortalBase<EntityImmortalShaman>
         if (entity.getAnimation() == EntityImmortalShaman.SPELL_CASTING_SUMMON_ANIMATION) {
             if (tick < 34) {
                 generalShake(frame);
-                //this.walk(head, 0.8F, 0.04F, false, 0, 0, frame, 1);
-                //this.swing(head, 1.0F, 0.08F, false, 0, 0, frame, 1);
-                //this.walk(leftArm, 0.45F, 0.2F, false, 0, 0, frame, 1);
-                //this.walk(rightArm, 0.45F, 0.2F, false, 0, 0, frame, 1);
-                //this.bob(root, 0.4F, 1.2F, false, frame, 1);
             }
-            //}
         } else if (entity.getAnimation() == EntityImmortalShaman.SPELL_CASTING_HEAL_ANIMATION) {
             if (tick < 50) {
                 generalShake(frame);
-                //this.walk(head, 0.8F, 0.04F, false, 0, 0, frame, 1);
-                //this.swing(head, 1.0F, 0.08F, false, 0, 0, frame, 1);
-                //this.walk(leftArm, 0.45F, 0.2F, false, 0, 0, frame, 1);
-                //this.walk(rightArm, 0.45F, 0.2F, false, 0, 0, frame, 1);
-                //this.bob(root, 0.4F, 1.2F, false, frame, 1);
             }
 
         } else if (entity.getAnimation() == EntityImmortalShaman.SPELL_CASTING_WOLOLO_ANIMATION) {
             if (tick < 30) {
                 generalShake(frame);
-                //this.walk(head, 0.8F, 0.04F, false, 0, 0, frame, 1);
-                //this.swing(head, 1.0F, 0.08F, false, 0, 0, frame, 1);
-                //this.walk(leftArm, 0.45F, 0.2F, false, 0, 0, frame, 1);
-                //this.walk(rightArm, 0.45F, 0.2F, false, 0, 0, frame, 1);
-                //this.bob(root, 0.4F, 1.2F, false, frame, 1);
             }
-            //}
         } else if (entity.getAnimation() == EntityImmortalShaman.SPELL_CASTING_FR_ATTACK_ANIMATION) {
             if (tick < 12) {
                 this.walk(root, 2.5F, 0.125F - tick * 0.01F, false, 0, 0, frame, 1);
@@ -464,11 +426,6 @@ public class ModelImmortalShaman extends ModelImmortalBase<EntityImmortalShaman>
                 this.walk(head, 1.2F, 0.08F, false, 0, 0, frame, 1);
                 this.swing(head, 1.4F, 0.1F, false, 0, 0, frame, 1);
             }
-
-        } else if (entity.getAnimation() == IAnimatedEntity.NO_ANIMATION) {
-            //if (entity.tickCount % 40 == 0 && entity.getRandom().nextFloat() < 0.2F) {
-            //    twitchHead(frame);
-            //}
         }
 
     }
@@ -490,7 +447,7 @@ public class ModelImmortalShaman extends ModelImmortalBase<EntityImmortalShaman>
     @Override
     protected void setupAnim(EntityImmortalShaman entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float frame) {
         this.animate(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, frame);
-        if (entity.isWeakness()) {
+        if (entity.isAlive() && entity.isWeakness()) {
             this.setStaticRotationAngle(head, toRadians(1.5), 0, 0);
             this.walk(head, 0.2F, 0.15F, false, 0, 0, frame, 1);
             this.walk(root, 0.1F, 0.1F, false, 0, 0, frame, 1);
@@ -513,7 +470,7 @@ public class ModelImmortalShaman extends ModelImmortalBase<EntityImmortalShaman>
         //Idle
         float speed = 0.16F;
         float degree = 0.04F;
-        if (entity.isAlive()) {
+        if (entity.isAlive() && !entity.isWeakness()) {
             this.walk(head, speed, degree, false, 0.5F, -0.05F, frame, 1);
             this.walk(lowerJaw, speed, degree * 2F, false, 0, 0, frame, 1);
             this.flap(rightArm, speed, degree * 0.5F, true, 0, 0, frame, 1);

@@ -2,15 +2,20 @@ package com.eeeab.eeeabsmobs.sever.handler;
 
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
+import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
 import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
-import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.EntityImmortal;
-import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityAbsCorpse;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
+import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
-import com.eeeab.eeeabsmobs.sever.item.util.EEArmorMaterial;
-import com.eeeab.eeeabsmobs.sever.item.util.EEArmorUtil;
+import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.eeeab.eeeabsmobs.sever.item.util.EMArmorMaterial;
+import com.eeeab.eeeabsmobs.sever.item.util.EMArmorUtil;
 import com.eeeab.eeeabsmobs.sever.message.MessageVertigoEffect;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,6 +28,8 @@ import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.raid.Raider;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.*;
@@ -35,32 +42,46 @@ import net.minecraftforge.network.PacketDistributor;
 //服务端事件处理器
 public final class HandlerServerEvent {
 
+    @SubscribeEvent
+    public void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+        if (event.getObject() instanceof LivingEntity) {
+            event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "vertigo_processor"), new VertigoCapability.VertigoCapabilityProvider());
+        }
+        if (event.getObject() instanceof Player) {
+            event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "ability_processor"), new AbilityCapability.AbilityCapabilityProvider());
+        }
+    }
+
     //实体加载到世界时
     @SubscribeEvent
     public void onJoinWorld(final EntityJoinLevelEvent event) {
-        if (event.getLevel().isClientSide) {
-            return;
-        }
         Entity entity = event.getEntity();
         if (entity instanceof Player) {
             AbilityCapability.IAbilityCapability capability = AbilityHandler.INSTANCE.getAbilityCapability((LivingEntity) entity);
             if (capability != null) capability.onInit((LivingEntity) entity);
         }
 
+        if (event.getLevel().isClientSide) {
+            return;
+        }
+
         if (entity instanceof AbstractGolem abstractGolem && !(abstractGolem instanceof Shulker)) {
-            abstractGolem.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(abstractGolem, EntityImmortal.class, 5, false, false, null));
+            abstractGolem.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(abstractGolem, EntityAbsImmortal.class, 5, false, false, null));
+            abstractGolem.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(abstractGolem, EntityAbsCorpse.class, 5, false, false, null));
         }
         if (entity instanceof AbstractSkeleton abstractSkeleton) {
-            abstractSkeleton.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(abstractSkeleton, EntityImmortal.class, 0, true, false, null));
+            abstractSkeleton.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(abstractSkeleton, EntityAbsImmortal.class, 0, true, false, null));
         }
         if (entity instanceof Zombie zombie && !(zombie instanceof ZombifiedPiglin)) {
-            zombie.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(zombie, EntityImmortal.class, 0, true, false, null));
+            zombie.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(zombie, EntityAbsImmortal.class, 0, true, false, null));
+            zombie.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(zombie, EntityAbsCorpse.class, 0, true, false, null));
         }
         if (entity instanceof AbstractVillager villager) {
-            villager.goalSelector.addGoal(3, new AvoidEntityGoal<>(villager, EntityImmortal.class, 6.0F, 1.0D, 1.2D));
+            villager.goalSelector.addGoal(3, new AvoidEntityGoal<>(villager, EntityAbsImmortal.class, 6.0F, 1.0D, 1.2D));
+            villager.goalSelector.addGoal(3,new AvoidEntityGoal<>(villager, EntityAbsCorpse.class,6.0F,1.0D,1.2D));
         }
         if (entity instanceof Raider raider && !(raider instanceof SpellcasterIllager)) {
-            raider.goalSelector.addGoal(5, new NearestAttackableTargetGoal<>(raider, EntityImmortal.class, 5, true, false, null));
+            raider.goalSelector.addGoal(5, new NearestAttackableTargetGoal<>(raider, EntityAbsImmortal.class, 5, true, false, null));
         }
     }
 
@@ -80,14 +101,44 @@ public final class HandlerServerEvent {
                 abilityCapability.tick(entity);
             }
         }
-
     }
 
+    //玩家游戏刻
     @SubscribeEvent
     public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.START || event.player == null) {
+            return;
+        }
+        useGuardianCoreStack(event);
+    }
+
+    /**
+     * 守卫者核心的耐久减少或恢复
+     */
+    private void useGuardianCoreStack(TickEvent.PlayerTickEvent event) {
+        Player player = event.player;
+        Ability<?> ability = AbilityHandler.INSTANCE.getAbility(player, AbilityHandler.GUARDIAN_LASER_ABILITY_TYPE);
+        ItemStack itemStack = player.getUseItem();
+        if (ability != null) {
+            if (!ability.isUsing()) {
+                for (ItemStack stack : player.getInventory().items) {
+                    if (stack.is(ItemInit.GUARDIAN_CORE.get()))
+                        stack.setDamageValue(Math.max(stack.getDamageValue() - 1, 0));
+                }
+                for (ItemStack stack : player.getInventory().offhand) {
+                    if (stack.is(ItemInit.GUARDIAN_CORE.get()))
+                        stack.setDamageValue(Math.max(stack.getDamageValue() - 1, 0));
+                }
+            } else if (itemStack.is(ItemInit.GUARDIAN_CORE.get())) {
+                if (itemStack.getDamageValue() + 1 < itemStack.getMaxDamage()) {
+                    itemStack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(player.getUsedItemHand()));
+                } else {
+                    ability.end();
+                }
+            }
         }
     }
+
 
     //新效果或者已存在但是等级更高或时间更长的效果 添加到实体触发
     @SubscribeEvent
@@ -179,20 +230,7 @@ public final class HandlerServerEvent {
         Player entity = event.getEntity();
         if (event.isCancelable() && entity.hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
             event.setCanceled(true);
-            return;
         }
-
-        //AbilityCapability.IAbilityCapability capability = AbilityHandler.INSTANCE.getAbilityCapability(entity);
-        //if (capability != null && event.isCancelable() && capability.checkConflicting()) {
-        //    event.setCanceled(true);
-        //    return;
-        //}
-        //
-        //if (event.getlevel.isClientSide && entity.getInventory().getSelected().isEmpty() && entity.hasEffect(EffectInit.ERODE_EFFECT.get())) {
-        //    if (entity.isShiftKeyDown()) {
-        //        AbilityHandler.INSTANCE.sendPlayerAbilityMessage(entity, AbilityHandler.GUARDIAN_LASER_ABILITY_TYPE);
-        //    }
-        //}
     }
 
     //玩家将要打破方块时
@@ -232,12 +270,21 @@ public final class HandlerServerEvent {
         }
     }
 
+    //实体受伤时
     @SubscribeEvent
     public void onLivingEntityHurt(LivingHurtEvent event) {
-        LivingEntity hurtEntity = event.getEntity();
+        Entity directEntity = event.getSource().getDirectEntity();
         Entity attacker = event.getSource().getEntity();
-        if (hurtEntity instanceof Player player && attacker instanceof EntityImmortal) {
-            if (EEArmorUtil.checkFullSuitOfArmor(EEArmorMaterial.IMMORTAL_MATERIAL, player)) {
+        LivingEntity hurtEntity = event.getEntity();
+
+        if (directEntity instanceof EntityShamanBomb shamanBomb) {
+            if (shamanBomb.reboundFlag && !shamanBomb.isPlayer()) {
+                hurtEntity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), 100, 0, false, false));
+            }
+        }
+
+        if (hurtEntity instanceof Player player && attacker instanceof EntityAbsImmortal) {
+            if (EMArmorUtil.checkFullSuitOfArmor(EMArmorMaterial.IMMORTAL_MATERIAL, player)) {
                 float damage = event.getAmount();
                 damage -= damage * 0.1F;//减少10%伤害
                 event.setAmount(damage);

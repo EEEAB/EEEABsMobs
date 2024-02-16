@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.sever.init;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.world.structure.AncientTombStructure;
-import com.eeeab.eeeabsmobs.sever.world.structure.EEConfigurationStructure;
+import com.eeeab.eeeabsmobs.sever.world.structure.EMConfigurationStructure;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -18,7 +18,7 @@ public class StructuresInit {
     private static final DeferredRegister<StructureType<?>> STRUCTURES = DeferredRegister.create(Registry.STRUCTURE_TYPE_REGISTRY, EEEABMobs.MOD_ID);
     private static final DeferredRegister<StructurePieceType> PIECE_TYPE = DeferredRegister.create(Registry.STRUCTURE_PIECE_REGISTRY, EEEABMobs.MOD_ID);
 
-    public static final RegistryObject<StructureType<EEConfigurationStructure>> CONFIG_STRUCTURES = STRUCTURES.register("ee_config", () -> explicitStructureTypeTyping(EEConfigurationStructure.CODEC));
+    public static final RegistryObject<StructureType<EMConfigurationStructure>> CONFIG_STRUCTURES = STRUCTURES.register("ee_config", () -> explicitStructureTypeTyping(EMConfigurationStructure.CODEC));
     public static final RegistryObject<StructureType<AncientTombStructure>> ANCIENT_TOMB_STRUCTURE = STRUCTURES.register("ancient_tomb", () -> explicitStructureTypeTyping(AncientTombStructure.CODEC));
 
     //PIECE

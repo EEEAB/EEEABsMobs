@@ -1,8 +1,8 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationAbstractGoal;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityCameraShake;
-import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -13,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-import static com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian.*;
+import static com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian.*;
 
 public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuardian> {
     private boolean isPowered;

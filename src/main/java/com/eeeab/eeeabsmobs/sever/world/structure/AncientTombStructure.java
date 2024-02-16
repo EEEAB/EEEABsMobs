@@ -1,40 +1,34 @@
 package com.eeeab.eeeabsmobs.sever.world.structure;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.EntityImmortalKnight;
-import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.EntityImmortalShaman;
-import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalShaman;
+import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.StructuresInit;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.decoration.Painting;
-import net.minecraft.world.entity.decoration.PaintingVariant;
-import net.minecraft.world.entity.decoration.PaintingVariants;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
-import net.minecraft.world.level.levelgen.structure.*;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureType;
+import net.minecraft.world.level.levelgen.structure.TemplateStructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePiecesBuilder;
 import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.ProtectedBlockProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.Map;
 import java.util.Optional;
@@ -61,13 +55,11 @@ public class AncientTombStructure extends Structure {
     public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
         BlockPos blockPos = new BlockPos(context.chunkPos().getMinBlockX(), -64, context.chunkPos().getMinBlockZ());
         return Optional.of(new GenerationStub(blockPos, (value) -> {
-            generatePieces(value, context);
+            generatePieces(value, context, blockPos);
         }));
     }
 
-    private static void generatePieces(StructurePiecesBuilder builder, GenerationContext context) {
-        BlockPos blockpos = new BlockPos(context.chunkPos().getMinBlockX(), -64, context.chunkPos().getMinBlockZ());
-        //Rotation rotation = Rotation.getRandom(context.random());
+    private static void generatePieces(StructurePiecesBuilder builder, GenerationContext context, BlockPos blockpos) {
         Rotation rotation = Rotation.NONE;
         start(context.structureTemplateManager(), blockpos, rotation, builder, context.random());
     }
@@ -136,53 +128,24 @@ public class AncientTombStructure extends Structure {
 
         @Override
         protected void handleDataMarker(String function, BlockPos blockPos, ServerLevelAccessor levelAccessor, RandomSource source, BoundingBox box) {
-            if ("nameless_guardian_spawn".equals(function)) {
+            if ("boss_spawn".equals(function)) {
                 levelAccessor.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2);
                 EntityNamelessGuardian guardian = (EntityInit.NAMELESS_GUARDIAN.get()).create(levelAccessor.getLevel());
                 if (guardian != null) {
-                    guardian.moveTo(blockPos, 180, 180);
-                    //guardian.moveTo(blockPos.getCenter());
+                    guardian.moveTo(blockPos, 0, 0);
                     guardian.finalizeSpawn(levelAccessor, levelAccessor.getCurrentDifficultyAt(blockPos), MobSpawnType.STRUCTURE, null, null);
                     levelAccessor.addFreshEntity(guardian);
                 }
             }
 
-            if ("painting".equals(function)) {
-                levelAccessor.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2);
-                ResourceKey<PaintingVariant>[] variants = new ResourceKey[]{PaintingVariants.SKULL_AND_ROSES, PaintingVariants.WITHER, PaintingVariants.FIRE};
-                Optional<Holder<PaintingVariant>> holder = Registry.PAINTING_VARIANT.getHolder(variants[levelAccessor.getRandom().nextInt(variants.length)]);
-                if (holder.isPresent()) {
-                    Painting painting = new Painting(levelAccessor.getLevel(), blockPos, this.placeSettings.getRotation().rotate(Direction.EAST), holder.get());
-                    levelAccessor.addFreshEntity(painting);
-                }
-            }
-
-            if ("immortal_shaman_spawn".equals(function)) {
+            if ("elite_spawn".equals(function)) {
                 levelAccessor.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2);
                 EntityImmortalShaman shaman = (EntityInit.IMMORTAL_SHAMAN.get()).create(levelAccessor.getLevel());
                 if (shaman != null) {
-                    shaman.moveTo(Vec3.atCenterOf(blockPos));
+                    shaman.moveTo(blockPos, 0, 0);
                     shaman.finalizeSpawn(levelAccessor, levelAccessor.getCurrentDifficultyAt(blockPos), MobSpawnType.STRUCTURE, null, null);
-                    shaman.setYRot(shaman.getYRot() + 180);
                     levelAccessor.addFreshEntity(shaman);
                 }
-            }
-
-            if ("immortal_knight_spawn".equals(function)) {
-                levelAccessor.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2);
-                EntityImmortalKnight knight = (EntityInit.IMMORTAL_KNIGHT.get()).create(levelAccessor.getLevel());
-                if (knight != null) {
-                    knight.moveTo(Vec3.atCenterOf(blockPos));
-                    knight.finalizeSpawn(levelAccessor, levelAccessor.getCurrentDifficultyAt(blockPos), MobSpawnType.STRUCTURE, null, null);
-                    knight.setYRot(knight.getYRot() + 180);
-                    levelAccessor.addFreshEntity(knight);
-                }
-            }
-
-            //TODO 暂未实装方块
-            if ("key".equals(function)) {
-                levelAccessor.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2);
-
             }
         }
 

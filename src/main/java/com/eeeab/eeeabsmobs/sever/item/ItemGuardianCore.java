@@ -1,0 +1,115 @@
+package com.eeeab.eeeabsmobs.sever.item;
+
+import com.eeeab.eeeabsmobs.sever.ability.Ability;
+import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
+import com.eeeab.eeeabsmobs.sever.block.BlockErosionPortal;
+import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
+import com.eeeab.eeeabsmobs.sever.init.SoundInit;
+import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+
+import java.util.List;
+import java.util.Optional;
+
+//TODO 待优化:部分参数由配置文件控制
+public class ItemGuardianCore extends Item {
+
+    public ItemGuardianCore(Properties properties) {
+        super(properties);
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        AbilityCapability.IAbilityCapability capability = AbilityHandler.INSTANCE.getAbilityCapability(player);
+        ItemStack itemStack = player.getItemInHand(hand);
+        if (capability != null) {
+            player.startUsingItem(hand);
+            if (itemStack.getDamageValue() + 1 < itemStack.getMaxDamage()) {
+                if (!level.isClientSide)
+                    AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.GUARDIAN_LASER_ABILITY_TYPE);
+                itemStack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+                player.startUsingItem(hand);
+                player.playSound(SoundInit.NAMELESS_GUARDIAN_ACCUMULATING.get(), 1.5F, (player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.2F + 3.5F);
+                return InteractionResultHolder.consume(itemStack);
+            } else {
+                try {
+                    Optional.ofNullable(capability.getAbilitiesMap().get(AbilityHandler.GUARDIAN_LASER_ABILITY_TYPE)).orElseThrow().end();
+                } catch (Exception ignored) {
+                    //EEEABMobs.LOGGER.error("An unforeseen error has occurred! Item Id: '{}', Exception Stack Msg: ", this.getDescriptionId(itemStack), e);
+                }
+            }
+        }
+        return InteractionResultHolder.pass(itemStack);
+    }
+
+    @Override
+    public void releaseUsing(ItemStack stack, Level level, LivingEntity livingEntity, int timeCharged) {
+        if (livingEntity instanceof Player player) {
+            Ability<?> guardianLaserAbility = AbilityHandler.INSTANCE.getAbility(player, AbilityHandler.GUARDIAN_LASER_ABILITY_TYPE);
+            if (guardianLaserAbility != null && guardianLaserAbility.isUsing()) {
+                guardianLaserAbility.end();
+            }
+        }
+        super.releaseUsing(stack, level, livingEntity, timeCharged);
+    }
+
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+        Player entity = context.getPlayer();
+        BlockPos pos = context.getClickedPos().relative(context.getClickedFace());
+        ItemStack itemstack = context.getItemInHand();
+        Level world = context.getLevel();
+        if (entity == null || !entity.mayUseItemAt(pos, context.getClickedFace(), itemstack) || itemstack.getDamageValue() != 0) {
+            return InteractionResult.FAIL;
+        } else {
+            boolean success = false;
+            if (world.isEmptyBlock(pos)) {
+                BlockErosionPortal.portalSpawn(world, pos);
+                success = true;
+            }
+            return success ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+        }
+    }
+
+    @Override
+    public boolean canBeDepleted() {
+        return true;
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack) {
+        return 72000;
+    }
+
+    @Override
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.CUSTOM;
+    }
+
+    @Override
+    public boolean isEnchantable(ItemStack stack) {
+        return false;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
+        super.appendHoverText(stack, level, tooltip, flagIn);
+        tooltip.add(EMTUtils.UNABLE_BREAKS);
+        if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340)) {
+            tooltip.add(EMTUtils.simpleShiftDownText(null, EMTUtils.STYLE_GREEN));
+        } else {
+            tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, EMTUtils.STYLE_GRAY, this.getDescriptionId()));
+        }
+    }
+}

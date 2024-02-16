@@ -1,0 +1,48 @@
+{
+  "variants": {
+    "facing=down,lit=false": {
+      "model": "eeeabsmobs:block/tomb_arrows_trap_vertical_off",
+      "x": 180
+    },
+    "facing=down,lit=true": {
+      "model": "eeeabsmobs:block/tomb_arrows_trap_vertical_on",
+      "x": 180
+    },
+    "facing=up,lit=false": {
+      "model": "eeeabsmobs:block/tomb_arrows_trap_vertical_off"
+    },
+    "facing=up,lit=true": {
+      "model": "eeeabsmobs:block/tomb_arrows_trap_vertical_on"
+    },
+    "facing=east,lit=false": {
+      "model": "eeeabsmobs:block/tomb_arrows_trap_off",
+      "y": 90
+    },
+    "facing=east,lit=true": {
+      "model": "eeeabsmobs:block/tomb_arrows_trap_on",
+      "y": 90
+    },
+    "facing=north,lit=false": {
+      "model": "eeeabsmobs:block/tomb_arrows_trap_off"
+    },
+    "facing=north,lit=true": {
+      "model": "eeeabsmobs:block/tomb_arrows_trap_on"
+    },
+    "facing=south,lit=false": {
+      "model": "eeeabsmobs:block/tomb_arrows_trap_off",
+      "y": 180
+    },
+    "facing=south,lit=true": {
+      "model": "eeeabsmobs:block/tomb_arrows_trap_on",
+      "y": 180
+    },
+    "facing=west,lit=false": {
+      "model": "eeeabsmobs:block/tomb_arrows_trap_off",
+      "y": 270
+    },
+    "facing=west,lit=true": {
+      "model": "eeeabsmobs:block/tomb_arrows_trap_on",
+      "y": 270
+    }
+  }
+}

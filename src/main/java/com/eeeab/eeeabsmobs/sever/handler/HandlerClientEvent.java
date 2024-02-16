@@ -1,16 +1,21 @@
 package com.eeeab.eeeabsmobs.sever.handler;
 
 import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
-import com.eeeab.eeeabsmobs.sever.config.EEConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
+import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -26,7 +31,7 @@ public class HandlerClientEvent {
         float delta = Minecraft.getInstance().getFrameTime();
         if (player != null) {
             float ticksExistedDelta = player.tickCount + delta;
-            if (EEConfigHandler.COMMON.OTHER.enableCameraShake.get() && !Minecraft.getInstance().isPaused()) {
+            if (EMConfigHandler.COMMON.OTHER.enableCameraShake.get() && !Minecraft.getInstance().isPaused()) {
                 float shakeAmplitude = 0;
                 for (EntityCameraShake cameraShake : player.level.getEntitiesOfClass(EntityCameraShake.class, player.getBoundingBox().inflate(20, 20, 20))) {
                     if (cameraShake.distanceTo(player) < cameraShake.getRadius()) {
@@ -72,4 +77,17 @@ public class HandlerClientEvent {
             entity.setXRot(entity.xRotO = capability.getPitch());
         }
     }
+
+    //渲染玩家
+    @SubscribeEvent
+    public void onRenderPlayer(RenderPlayerEvent event) {
+        Player player = event.getEntity();
+        ItemStack itemStack = player.getUseItem();
+        if (event.isCancelable() && itemStack.is(ItemInit.GUARDIAN_CORE.get())) {
+            PlayerRenderer renderer = event.getRenderer();
+            renderer.getModel().leftArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
+            renderer.getModel().rightArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
+        }
+    }
+
 }

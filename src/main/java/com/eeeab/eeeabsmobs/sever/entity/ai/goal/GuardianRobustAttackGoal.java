@@ -1,12 +1,12 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityCameraShake;
-import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.EEDamageSource;
+import com.eeeab.eeeabsmobs.sever.util.EMDamageSource;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.Difficulty;
@@ -52,7 +52,7 @@ public class GuardianRobustAttackGoal extends AnimationCommonGoal<EntityNameless
                     } else if (!(hitEntity instanceof Player) && !hitEntity.isBlocking()) {
                         hitEntity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), (int) (duration * 20), 0, false, false, true));
                     }
-                    entity.guardianHurtTarget(EEDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.03F, 1.85F, 1.4F, true, true);
+                    entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.03F, 1.85F, 1.4F, true, true);
                 }
             }
         } else if (tick == 36) {

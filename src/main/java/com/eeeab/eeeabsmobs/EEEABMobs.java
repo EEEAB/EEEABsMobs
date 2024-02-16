@@ -2,11 +2,12 @@ package com.eeeab.eeeabsmobs;
 
 import com.eeeab.eeeabsmobs.client.ClientProxy;
 import com.eeeab.eeeabsmobs.sever.ServerProxy;
+import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerServerEvent;
 import com.eeeab.eeeabsmobs.sever.init.*;
-import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
-import com.eeeab.eeeabsmobs.sever.init.StructuresInit;
+import com.eeeab.eeeabsmobs.sever.util.EMTabGroup;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
@@ -41,6 +42,7 @@ public class EEEABMobs {
         bus.<FMLCommonSetupEvent>addListener(this::init);
         bus.<FMLLoadCompleteEvent>addListener(this::init);
         bus.addListener(HandlerCapability::registerCapabilities);
+        bus.addListener(PROXY::register);
 
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new HandlerServerEvent());
@@ -57,5 +59,4 @@ public class EEEABMobs {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         PROXY.onLateInit(bus);
     }
-
 }

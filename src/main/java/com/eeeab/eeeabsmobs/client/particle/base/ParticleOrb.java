@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.particle.base;
 
-import com.eeeab.eeeabsmobs.client.render.EERenderType;
+import com.eeeab.eeeabsmobs.client.render.EMRenderType;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.brigadier.StringReader;
@@ -35,7 +35,7 @@ public class ParticleOrb extends TextureSheetParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return EERenderType.PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH;
+        return EMRenderType.PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH;
     }
 
     @Override

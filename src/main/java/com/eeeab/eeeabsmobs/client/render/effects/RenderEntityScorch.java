@@ -1,8 +1,8 @@
 package com.eeeab.eeeabsmobs.client.render.effects;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.client.render.EERenderType;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityScorch;
+import com.eeeab.eeeabsmobs.client.render.EMRenderType;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityScorch;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix3f;
@@ -17,6 +17,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -26,7 +27,7 @@ public class RenderEntityScorch extends EntityRenderer<EntityScorch> {
     private static final float TEXTURE_WIDTH = 32;
     private static final float TEXTURE_HEIGHT = 32;
     private static final float RING_FRAME_SIZE = 16;
-    private static final float LINGER_RADIUS = 1.1f;
+    private static final float LINGER_RADIUS = 1f;
     private static final float SCORCH_MIN_U = 0f / TEXTURE_WIDTH;
     private static final float SCORCH_MAX_U = SCORCH_MIN_U + RING_FRAME_SIZE / TEXTURE_WIDTH;
     private static final float SCORCH_MIN_V = 0f / TEXTURE_HEIGHT;
@@ -44,7 +45,7 @@ public class RenderEntityScorch extends EntityRenderer<EntityScorch> {
         if (opacity > 1) {
             opacity = 1;
         }
-        VertexConsumer vertexConsumer = bufferIn.getBuffer(EERenderType.getGlowingEffect(TEXTURE));
+        VertexConsumer vertexConsumer = bufferIn.getBuffer(EMRenderType.getGlowingEffect(TEXTURE));
         drawScorch(scorch, delta, poseStack, vertexConsumer, packedLight, opacity);
         poseStack.popPose();
     }
@@ -76,20 +77,23 @@ public class RenderEntityScorch extends EntityRenderer<EntityScorch> {
         if (block.isRedstoneConductor(world, pos)) {
             int bx = pos.getX(), by = pos.getY(), bz = pos.getZ();
             //渲染偏移(用于适应在不同高低差)
-            AABB aabb = block.getBlockSupportShape(world, pos).bounds();
-            float minX = (float) (bx + aabb.minX - ex);
-            float maxX = (float) (bx + aabb.maxX - ex);
-            float y = (float) (by + aabb.minY - ey + 0.015625f);
-            float minZ = (float) (bz + aabb.minZ - ez);
-            float maxZ = (float) (bz + aabb.maxZ - ez);
-            float minU = (minX / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_U - SCORCH_MIN_U) + SCORCH_MIN_U;
-            float maxU = (maxX / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_U - SCORCH_MIN_U) + SCORCH_MIN_U;
-            float minV = (minZ / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_V - SCORCH_MIN_V) + SCORCH_MIN_V;
-            float maxV = (maxZ / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_V - SCORCH_MIN_V) + SCORCH_MIN_V;
-            drawVertex(matrix4f, matrix3f, builder, minX, y, minZ, minU, minV, opacity, packedLightIn);
-            drawVertex(matrix4f, matrix3f, builder, minX, y, maxZ, minU, maxV, opacity, packedLightIn);
-            drawVertex(matrix4f, matrix3f, builder, maxX, y, maxZ, maxU, maxV, opacity, packedLightIn);
-            drawVertex(matrix4f, matrix3f, builder, maxX, y, minZ, maxU, minV, opacity, packedLightIn);
+            VoxelShape shape = block.getBlockSupportShape(world, pos);
+            if (!shape.isEmpty()) {//fix #6 极端情况下导致崩溃
+                AABB aabb = shape.bounds();
+                float minX = (float) (bx + aabb.minX - ex);
+                float maxX = (float) (bx + aabb.maxX - ex);
+                float y = (float) (by + aabb.minY - ey + 0.015625f);
+                float minZ = (float) (bz + aabb.minZ - ez);
+                float maxZ = (float) (bz + aabb.maxZ - ez);
+                float minU = (minX / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_U - SCORCH_MIN_U) + SCORCH_MIN_U;
+                float maxU = (maxX / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_U - SCORCH_MIN_U) + SCORCH_MIN_U;
+                float minV = (minZ / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_V - SCORCH_MIN_V) + SCORCH_MIN_V;
+                float maxV = (maxZ / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_V - SCORCH_MIN_V) + SCORCH_MIN_V;
+                drawVertex(matrix4f, matrix3f, builder, minX, y, minZ, minU, minV, opacity, packedLightIn);
+                drawVertex(matrix4f, matrix3f, builder, minX, y, maxZ, minU, maxV, opacity, packedLightIn);
+                drawVertex(matrix4f, matrix3f, builder, maxX, y, maxZ, maxU, maxV, opacity, packedLightIn);
+                drawVertex(matrix4f, matrix3f, builder, maxX, y, minZ, maxU, minV, opacity, packedLightIn);
+            }
         }
     }
 

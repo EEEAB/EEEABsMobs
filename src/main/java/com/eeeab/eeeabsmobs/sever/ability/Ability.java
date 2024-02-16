@@ -5,14 +5,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.util.Random;
-
 public abstract class Ability<T extends LivingEntity> {
     private final AbilityPeriod[] abilityPeriods;
     private final AbilityCapability.IAbilityCapability abilityCapability;
     private final AbilityType<T, ? extends Ability<?>> abilityType;
     private final int maxCoolingTick;
-    private final Random random;
     private int sectionTick;
     private int sectionIndex;
     private int coolingTimer;
@@ -25,7 +22,6 @@ public abstract class Ability<T extends LivingEntity> {
         this.abilityCapability = AbilityHandler.INSTANCE.getAbilityCapability(user);
         this.abilityType = abilityType;
         this.user = user;
-        this.random = new Random();
         this.abilityPeriods = abilityPeriods;
         this.maxCoolingTick = maxCoolingTick;
     }
@@ -40,6 +36,7 @@ public abstract class Ability<T extends LivingEntity> {
 
     public void tick() {
         if (isUsing()) {
+            tickUsing();
             tick++;
             sectionTick++;
             AbilityPeriod section = getSection();
@@ -51,6 +48,10 @@ public abstract class Ability<T extends LivingEntity> {
         } else {
             if (coolingTimer > 0) coolingTimer--;
         }
+    }
+
+    protected void tickUsing() {
+
     }
 
     public void end() {
@@ -102,7 +103,7 @@ public abstract class Ability<T extends LivingEntity> {
         }
     }
 
-    private AbilityPeriod getSection() {
+    public AbilityPeriod getSection() {
         if (sectionIndex >= abilityPeriods.length) return null;
         return abilityPeriods[sectionIndex];
     }

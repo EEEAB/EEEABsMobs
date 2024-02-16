@@ -3,6 +3,7 @@ buildscript {
         maven { url = "https://files.minecraftforge.net/maven" }
         maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "5.1.+", changing: true
@@ -77,6 +78,14 @@ minecraft {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
+
+    config "${mod_id}.mixins.json"
+    debug.export = true
+
+}
+
 repositories {
     maven {
         name = "ModMaven"
@@ -101,7 +110,8 @@ dependencies {
     //Mob battle
     implementation fg.deobf("curse.maven:mob-battle-mod-268746:3952789")//用于调试
     //L_Ender's Cataclysm
-    implementation fg.deobf("curse.maven:l_ender-s-cataclysm-551586:4777595")//用于调试
+    implementation fg.deobf("curse.maven:curios-309927:5066842")
+    implementation fg.deobf("curse.maven:l_ender-s-cataclysm-551586:5070401")//用于调试
     //Citadel
     implementation fg.deobf("curse.maven:citadel-331936:4556677")
     //Jei

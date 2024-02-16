@@ -1,13 +1,10 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityGuardianBlade;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianBlade;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedModelBox;
-import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import com.github.alexthe666.citadel.client.model.basic.BasicModelPart;
 import com.google.common.collect.ImmutableList;
-
-import static net.minecraft.client.model.geom.PartPose.offsetAndRotation;
 
 public class ModelGuardianBlade extends AdvancedEntityModel<EntityGuardianBlade> {
     public AdvancedModelBox root;

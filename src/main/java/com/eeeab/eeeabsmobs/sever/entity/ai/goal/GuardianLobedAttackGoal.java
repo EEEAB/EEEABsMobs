@@ -1,8 +1,8 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityCameraShake;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityGuardianBlade;
-import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianBlade;
+import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.sounds.SoundEvents;

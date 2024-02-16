@@ -1,5 +1,8 @@
 {
   "values": [
-    "eeeabsmobs:immortal_block"
+    "eeeabsmobs:immortal_block",
+    "eeeabsmobs:tomb_gas_trap",
+    "eeeabsmobs:tomb_summon_trap",
+    "eeeabsmobs:tomb_arrows_trap"
   ]
 }

@@ -14,15 +14,15 @@
   "immortal.skeleton.hurt": {
     "subtitle": "subtitles.immortal.skeleton.hurt",
     "sounds": [
-      "eeeabsmobs:entity/immortal_skeleton/hurt1",
-      "eeeabsmobs:entity/immortal_skeleton/hurt2",
-      "eeeabsmobs:entity/immortal_skeleton/hurt3"
+      "eeeabsmobs:generic/entity/skeleton_hurt1",
+      "eeeabsmobs:generic/entity/skeleton_hurt2",
+      "eeeabsmobs:generic/entity/skeleton_hurt3"
     ]
   },
   "immortal.skeleton.death": {
     "subtitle": "subtitles.immortal.skeleton.death",
     "sounds": [
-      "eeeabsmobs:entity/immortal_skeleton/death"
+      "eeeabsmobs:generic/entity/skeleton_death"
     ]
   },
   "immortal.shaman.prepare_shoot": {
@@ -68,6 +68,26 @@
       "eeeabsmobs:generic/entity/skeleton_death"
     ]
   },
+  "corpse.hurt": {
+    "subtitle": "subtitles.corpse.hurt",
+    "sounds": [
+      "eeeabsmobs:entity/corpse/hurt1",
+      "eeeabsmobs:entity/corpse/hurt2"
+    ]
+  },
+  "corpse.death": {
+    "subtitle": "subtitles.corpse.death",
+    "sounds": [
+      "eeeabsmobs:entity/corpse/death"
+    ]
+  },
+  "corpse.idle": {
+    "subtitle": "subtitles.corpse.idle",
+    "sounds": [
+      "eeeabsmobs:entity/corpse/idle1",
+      "eeeabsmobs:entity/corpse/idle2"
+    ]
+  },
   "nameless.guardian.step": {
     "subtitle": "subtitles.nameless.guardian.step",
     "sounds": [
@@ -79,6 +99,12 @@
     "subtitle": "subtitles.nameless.guardian.accumulating",
     "sounds": [
       "eeeabsmobs:entity/nameless_guardian/accumulating"
+    ]
+  },
+  "nameless.guardian.accumulating_end": {
+    "subtitle": "subtitles.nameless.guardian.accumulating_end",
+    "sounds": [
+      "eeeabsmobs:entity/nameless_guardian/accumulating_end"
     ]
   },
   "nameless.guardian.whoosh": {

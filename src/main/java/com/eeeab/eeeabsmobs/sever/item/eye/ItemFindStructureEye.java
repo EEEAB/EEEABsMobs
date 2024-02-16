@@ -1,8 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.item.eye;
 
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityEyeOfStructure;
-import com.eeeab.eeeabsmobs.sever.item.util.EEToolTipItem;
-import com.eeeab.eeeabsmobs.sever.util.MTUtils;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityEyeOfStructure;
+import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -15,15 +14,18 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 //参考自: net.minecraft.world.item.EnderEyeItem
-public abstract class ItemFindStructureEye extends EEToolTipItem {
+public abstract class ItemFindStructureEye extends Item {
     private static final int FIND_MAX_HEIGHT = 100;
     private final TagKey<Structure> FIND_STRUCTURE;
     private final float r;
@@ -71,8 +73,8 @@ public abstract class ItemFindStructureEye extends EEToolTipItem {
     }
 
     @Override
-    protected void detailsTooltip(List<Component> tooltip) {
-        tooltip.add(MTUtils.simpleText(MTUtils.STRUCTURE_PREFIX, FIND_STRUCTURE.location().getPath(), MTUtils.STYLE_GRAY));
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
+        super.appendHoverText(stack, level, tooltip, flagIn);
+        tooltip.add(EMTUtils.simpleText(EMTUtils.STRUCTURE_PREFIX, FIND_STRUCTURE.location().getPath(), EMTUtils.STYLE_GRAY));
     }
-
 }

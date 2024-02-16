@@ -1,12 +1,14 @@
 package com.eeeab.eeeabsmobs.sever.ability;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
+import com.eeeab.eeeabsmobs.sever.ability.abilities.GuardianAxeAbility;
 import com.eeeab.eeeabsmobs.sever.ability.abilities.GuardianLaserAbility;
 import com.eeeab.eeeabsmobs.sever.ability.abilities.ImmortalStaffAbility;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.message.MessagePlayerUseAbility;
 import com.eeeab.eeeabsmobs.sever.message.MessageUseAbility;
+import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -17,9 +19,11 @@ public enum AbilityHandler {
     INSTANCE;
     public static final AbilityType<Player, ImmortalStaffAbility> IMMORTAL_STAFF_ABILITY_TYPE = new AbilityType<>(ImmortalStaffAbility::new, "immortal_staff_ability");
     public static final AbilityType<Player, GuardianLaserAbility> GUARDIAN_LASER_ABILITY_TYPE = new AbilityType<>(GuardianLaserAbility::new, "guardian_laser_ability");
+    public static final AbilityType<Player, GuardianAxeAbility> GUARDIAN_AXE_ABILITY_TYPE = new AbilityType<>(GuardianAxeAbility::new, "guardian_axe_ability");
     public static final AbilityType<Player, ? extends Ability<?>>[] PLAYER_ABILITY_TYPES = new AbilityType[]{
             IMMORTAL_STAFF_ABILITY_TYPE,
-            GUARDIAN_LASER_ABILITY_TYPE
+            GUARDIAN_LASER_ABILITY_TYPE,
+            GUARDIAN_AXE_ABILITY_TYPE
     };
 
     public AbilityCapability.IAbilityCapability getAbilityCapability(LivingEntity entity) {
@@ -40,7 +44,11 @@ public enum AbilityHandler {
         }
         AbilityCapability.IAbilityCapability abilityCapability = getAbilityCapability(entity);
         if (abilityCapability != null) {
-            Ability instance = abilityCapability.getAbilitiesMap().get(abilityType);
+            Ability<?> instance = abilityCapability.getAbilitiesMap().get(abilityType);
+            if (instance == null) return;
+            if (instance.isCooling() && entity instanceof Player player) {
+                player.displayClientMessage(EMTUtils.simpleText(EMTUtils.OTHER_PREFIX, "cooling", null), true);
+            }
             if (instance.canUse()) {
                 abilityCapability.onActive(entity, abilityType);
                 EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new MessageUseAbility(entity, ArrayUtils.indexOf(abilityCapability.getAbilityTypeByEntity(entity), abilityType)));

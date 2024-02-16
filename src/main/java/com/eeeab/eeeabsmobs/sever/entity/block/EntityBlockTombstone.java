@@ -43,7 +43,7 @@ public class EntityBlockTombstone extends BaseContainerBlockEntity {
     }
 
     @Override
-    protected AbstractContainerMenu createMenu(int p_58627_, Inventory p_58628_) {
+    protected AbstractContainerMenu createMenu(int p_58627_, Inventory inventory) {
         return null;
     }
 
@@ -98,9 +98,6 @@ public class EntityBlockTombstone extends BaseContainerBlockEntity {
     @Override
     public void load(CompoundTag compoundTag) {
         super.load(compoundTag);
-        //if (compoundTag.contains("itemFromTombstone")) {
-        //    this.items.set(0, ItemStack.of(compoundTag.getCompound("itemFromTombstone")));
-        //}
         this.tick = compoundTag.getInt("tickCount");
         ContainerHelper.loadAllItems(compoundTag, this.items);
     }
@@ -108,9 +105,6 @@ public class EntityBlockTombstone extends BaseContainerBlockEntity {
     @Override
     protected void saveAdditional(CompoundTag compoundTag) {
         super.saveAdditional(compoundTag);
-        //if (!this.getItem(0).isEmpty()) {
-        //    compoundTag.put("itemFromTombstone", this.items.get(0).save(compoundTag));
-        //}
         ContainerHelper.saveAllItems(compoundTag, this.items);
         compoundTag.putInt("tickCount", this.tick);
     }

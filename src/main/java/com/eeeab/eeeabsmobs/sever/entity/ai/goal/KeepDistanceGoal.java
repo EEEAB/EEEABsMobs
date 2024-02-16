@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
-import com.eeeab.eeeabsmobs.sever.entity.impl.EEEABMobEntity;
+import com.eeeab.eeeabsmobs.sever.entity.EEEABMobEntity;
 import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;

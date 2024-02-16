@@ -1,11 +1,11 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityGuardianLaser;
-import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianLaser;
+import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
+import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.github.alexthe666.citadel.animation.Animation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.EnumSet;
@@ -36,9 +36,16 @@ public class GuardianShootLaserGoal extends AnimationCommonGoal<EntityNamelessGu
                 this.entity.lookAt(entityTarget, 30F, 30F);
             }
         } else if (tick >= 22 && tick < 100) {
+            if (tick == 22) this.entity.playSound(SoundInit.LASER.get(), 2F, 1.0F);
             this.entity.setYRot(this.entity.yBodyRot);
-            float targetDistance = this.entity.targetDistance;
-            float yMaxRotSpeed = 1F + Mth.clamp((1.5F - Math.abs(targetDistance) * 0.1F) + (targetDistance >= 5 ? 1.0F : 0.0F), 0F, 2.0F);
+            float speed = 0F;
+            try {
+                if (this.entity.getTarget() != null) {
+                    float distance = this.entity.distanceTo(this.entity.getTarget());
+                    speed = Math.max(0F, 1F / Math.abs(distance * 0.08F));
+                }
+            } catch (ArithmeticException ignored) {}
+            float yMaxRotSpeed = 1F + speed;
             float xMaxRotAngle = 90F;
             if (entityTarget != null) {
                 this.entity.getLookControl().setLookAt(entityTarget.getX(), entityTarget.getY() + entityTarget.getBbHeight() / 2, entityTarget.getZ(), yMaxRotSpeed, xMaxRotAngle);

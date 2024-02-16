@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationAbstractGoal;
-import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.github.alexthe666.citadel.animation.Animation;

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "open=false": {
+      "model": "eeeabsmobs:block/tomb_summon_trap_off"
+    },
+    "open=true": {
+      "model": "eeeabsmobs:block/tomb_summon_trap_on"
+    }
+  }
+}

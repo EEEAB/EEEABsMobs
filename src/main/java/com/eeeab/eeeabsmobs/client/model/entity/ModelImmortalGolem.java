@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.eeeabsmobs.sever.entity.impl.immortal.EntityImmortalGolem;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalGolem;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.client.model.AdvancedModelBox;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
@@ -10,7 +10,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.world.entity.HumanoidArm;
 
-public class ModelImmortalGolem extends ModelImmortalBase<EntityImmortalGolem> implements ArmedModel {
+public class ModelImmortalGolem extends EMCanSpawnEntityModel<EntityImmortalGolem> implements ArmedModel {
 
     public ModelImmortalGolem() {
         texHeight = 128;
@@ -32,18 +32,18 @@ public class ModelImmortalGolem extends ModelImmortalBase<EntityImmortalGolem> i
         body = new AdvancedModelBox(this, "body");
         body.setPos(0.0F, -18.0F, 0.0F);
         upper.addChild(body);
-        body.setTextureOffset(11, 18).addBox(-3.5F, 0.0F, -2.0F, 7.0F, 10.0F, 4.0F, false);
+        body.setTextureOffset(11, 18).addBox(-3.5F, 0.0F, -2.0F, 7.0F, 10.0F, 4.0F);
 
         leftArm = new AdvancedModelBox(this, "leftArm");
         leftArm.setPos(5.0F, 1.0F, 0.0F);
         body.addChild(leftArm);
-        leftArm.setTextureOffset(35, 20).addBox(-1.5F, -1.0F, -1.0F, 2.0F, 10.0F, 2.0F, false);
+        leftArm.setTextureOffset(35, 20).addBox(-1.5F, -1.0F, -1.0F, 2.0F, 10.0F, 2.0F, true);
         setRotationAngle(leftArm, toRadians(-90), 0, 0);
 
         rightArm = new AdvancedModelBox(this, "rightArm");
         rightArm.setPos(-5.0F, 1.0F, 0.0F);
         body.addChild(rightArm);
-        rightArm.setTextureOffset(35, 20).addBox(-0.5F, -1.0F, -1.0F, 2.0F, 10.0F, 2.0F, false);
+        rightArm.setTextureOffset(35, 20).addBox(-0.5F, -1.0F, -1.0F, 2.0F, 10.0F, 2.0F);
         setRotationAngle(rightArm, toRadians(-90), 0, 0);
 
 
@@ -54,12 +54,12 @@ public class ModelImmortalGolem extends ModelImmortalBase<EntityImmortalGolem> i
         leftLeg = new AdvancedModelBox(this, "leftLeg");
         leftLeg.setPos(2.0F, -9.0F, 0.1F);
         lower.addChild(leftLeg);
-        leftLeg.setTextureOffset(1, 22).addBox(-1.0F, 1.0F, -1.1F, 2.0F, 8.0F, 2.0F, false);
+        leftLeg.setTextureOffset(1, 22).addBox(-1.0F, 1.0F, -1.1F, 2.0F, 8.0F, 2.0F, true);
 
         rightLeg = new AdvancedModelBox(this, "rightLeg");
         rightLeg.setPos(-2.0F, -9.0F, 0.1F);
         lower.addChild(rightLeg);
-        rightLeg.setTextureOffset(1, 22).addBox(-1.0F, 1.0F, -1.1F, 2.0F, 8.0F, 2.0F, false);
+        rightLeg.setTextureOffset(1, 22).addBox(-1.0F, 1.0F, -1.1F, 2.0F, 8.0F, 2.0F);
 
         animator = ModelAnimator.create();
         updateDefaultPose();
@@ -67,8 +67,6 @@ public class ModelImmortalGolem extends ModelImmortalBase<EntityImmortalGolem> i
 
 
     private void animate(EntityImmortalGolem entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float frame) {
-        //this.resetToDefaultPose();
-        //animator.update(entity);
         if (this.animator.setAnimation(EntityImmortalGolem.ATTACK_ANIMATION)) {
             this.animator.setStaticKeyframe(2);
             this.animator.startKeyframe(5);

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "open=false": {
+      "model": "eeeabsmobs:block/tomb_gas_trap_off"
+    },
+    "open=true": {
+      "model": "eeeabsmobs:block/tomb_gas_trap_on"
+    }
+  }
+}

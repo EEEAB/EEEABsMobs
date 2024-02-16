@@ -1,13 +1,13 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationAbstractGoal;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityCameraShake;
-import com.eeeab.eeeabsmobs.sever.entity.impl.effect.EntityGuardianBlade;
-import com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianBlade;
+import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.EEDamageSource;
+import com.eeeab.eeeabsmobs.sever.util.EMDamageSource;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
@@ -19,7 +19,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-import static com.eeeab.eeeabsmobs.sever.entity.impl.namelessguardian.EntityNamelessGuardian.*;
+import static com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian.*;
 
 public class GuardianShakeGroundAttackGoal extends AnimationAbstractGoal<EntityNamelessGuardian> {
 
@@ -56,7 +56,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAbstractGoal<EntityN
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
                     float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
                     if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                        entity.guardianHurtTarget(EEDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1F, 1.2F, true, true);
+                        entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1F, 1.2F, true, true);
                     }
                 }
                 doSpawnBlade(2, 0.4F);
@@ -85,7 +85,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAbstractGoal<EntityN
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
                     float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
                     if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                        entity.guardianHurtTarget(EEDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1F, 1.0F, true, true);
+                        entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1F, 1.0F, true, true);
                     }
                 }
                 doSpawnBlade(2, 0.4F);
@@ -121,7 +121,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAbstractGoal<EntityN
                         } else if (!(hitEntity instanceof Player) && !hitEntity.isBlocking()) {
                             hitEntity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), (int) (duration * 20), 0, false, false, true));
                         }
-                        entity.guardianHurtTarget(EEDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1.5F, 1.2F, true, true);
+                        entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1.5F, 1.2F, true, true);
                     }
                 }
                 doSpawnBlade(3, 0.35F);
