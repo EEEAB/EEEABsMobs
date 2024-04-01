@@ -2,7 +2,6 @@ package com.eeeab.eeeabsmobs.sever.init;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
-import com.eeeab.eeeabsmobs.client.particle.ParticlePoison;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleData;
@@ -41,6 +40,8 @@ public class ParticleInit {
 
     public static final RegistryObject<ParticleType<AdvancedParticleData>> SPELL_CASTING = ParticleInit.registerAdvancedParticle("spell_casting", AdvancedParticleData.DESERIALIZER);
     public static final RegistryObject<ParticleType<AdvancedParticleData>> ADV_ORB = ParticleInit.registerAdvancedParticle("adv_orb", AdvancedParticleData.DESERIALIZER);
+    public static final RegistryObject<ParticleType<AdvancedParticleData>> CRIMSON = ParticleInit.registerAdvancedParticle("crimson", AdvancedParticleData.DESERIALIZER);
+    public static final RegistryObject<ParticleType<AdvancedParticleData>> CRIMSON_EYE = ParticleInit.registerAdvancedParticle("crimson_eye", AdvancedParticleData.DESERIALIZER);
 
     private static RegistryObject<ParticleType<AdvancedParticleData>> registerAdvancedParticle(String key, ParticleOptions.Deserializer<AdvancedParticleData> deserializer) {
         return PARTICLES.register(key, () -> new ParticleType<AdvancedParticleData>(false, deserializer) {
