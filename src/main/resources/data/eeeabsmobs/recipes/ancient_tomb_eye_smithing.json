@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": {
+    "item": "eeeabsmobs:heart_of_pagan"
+  },
+  "base": {
+    "item": "minecraft:ender_eye"
+  },
+  "addition": {
+    "item": "minecraft:diamond"
+  },
+  "result": {
+    "item": "eeeabsmobs:ancient_tomb_eye"
+  }
+}
