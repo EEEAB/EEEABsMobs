@@ -1,8 +1,8 @@
 package com.eeeab.eeeabsmobs.client.render.effects;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.client.model.entity.ModelGuardianBlade;
-import com.eeeab.eeeabsmobs.client.render.EERenderType;
+import com.eeeab.eeeabsmobs.client.model.effects.ModelGuardianBlade;
+import com.eeeab.eeeabsmobs.client.render.EMRenderType;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianBlade;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -33,7 +33,7 @@ public class RenderGuardianBlade extends EntityRenderer<EntityGuardianBlade> {
         pPoseStack.scale(1F, -1.0F, -1.0F);
         float f = entity.controlled.getAnimationProgressTemporaryInvesed();
         pPoseStack.mulPose(Axis.YP.rotationDegrees(entity.getYRot()));
-        MODEL.renderToBuffer(pPoseStack, pBuffer.getBuffer(EERenderType.getGlowingCutOutEffect(getTextureLocation(entity))), pPackedLight, OverlayTexture.NO_OVERLAY, f, f, f, f);
+        MODEL.renderToBuffer(pPoseStack, pBuffer.getBuffer(EMRenderType.getGlowingCutOutEffect(getTextureLocation(entity))), pPackedLight, OverlayTexture.NO_OVERLAY, f, f, f, f);
         pPoseStack.popPose();
         super.render(entity, pEntityYaw, pPartialTick, pPoseStack, pBuffer, pPackedLight);
     }
