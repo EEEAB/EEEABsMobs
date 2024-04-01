@@ -1,28 +1,36 @@
 package com.eeeab.eeeabsmobs.sever.handler;
 
+import com.eeeab.eeeabsmobs.EEEABMobs;
+import com.eeeab.eeeabsmobs.sever.capability.FrenzyCapability;
 import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.client.event.ViewportEvent;
+import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 //客户端事件处理器
 @OnlyIn(Dist.CLIENT)
 public class HandlerClientEvent {
+    private static final ResourceLocation FRENZY_OUTLINE_LOCATION = new ResourceLocation(EEEABMobs.MOD_ID,"textures/gui/frenzy_outline.png");
+
     //改变玩家相机角度
     @SubscribeEvent
     public void onSetupCamera(ViewportEvent.ComputeCameraAngles event) {
@@ -42,6 +50,21 @@ public class HandlerClientEvent {
                 event.setPitch((float) (event.getPitch() + shakeAmplitude * Math.cos(ticksExistedDelta * 3 + 2) * 25));
                 event.setYaw((float) (event.getYaw() + shakeAmplitude * Math.cos(ticksExistedDelta * 5 + 1) * 25));
                 event.setRoll((float) (event.getRoll() + shakeAmplitude * Math.cos(ticksExistedDelta * 4) * 25));
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onRenderGuiOverlay(RenderGuiOverlayEvent.Post event) {
+        if (event.getOverlay().overlay() == VanillaGuiOverlay.FROSTBITE.type().overlay()) {
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player != null) {
+                FrenzyCapability.IFrenzyCapability capability = HandlerCapability.getCapability(player, HandlerCapability.FRENZY_CAPABILITY_CAPABILITY);
+                if (capability != null && capability.isFrenzy() && Minecraft.getInstance().options.getCameraType() == CameraType.FIRST_PERSON) {
+                    RenderSystem.setShaderTexture(0, FRENZY_OUTLINE_LOCATION);
+                    Window res = event.getWindow();
+                    event.getGuiGraphics().blit(FRENZY_OUTLINE_LOCATION, 0, 0, 0, 0, res.getGuiScaledWidth(), res.getGuiScaledHeight(), res.getGuiScaledWidth(), res.getGuiScaledHeight());
+                }
             }
         }
     }
