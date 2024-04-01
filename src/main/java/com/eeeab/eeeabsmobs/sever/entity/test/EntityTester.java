@@ -101,16 +101,13 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
 
     @Override
     public boolean hurt(DamageSource source, float damage) {
-        Entity entity = source.getEntity();
         if (this.level().isClientSide) {
             return false;
-        } else if (entity != null) {
+        } else if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             this.setDamage(damage);
-            super.hurt(source, 0);
-        } else if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            return super.hurt(source, damage);
+            damage = 0;
         }
-        return false;
+        return super.hurt(source, damage);
     }
 
     @Nullable
