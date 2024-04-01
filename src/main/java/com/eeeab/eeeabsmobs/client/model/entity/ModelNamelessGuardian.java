@@ -70,7 +70,7 @@ public class ModelNamelessGuardian extends EMAdvancedEntityModel<EntityNamelessG
         cube_r1 = new AdvancedModelBox(this, "cube_r1");
         offsetAndRotation(cube_r1, 0.2563F, -3.9949F, -0.6028F, 0.0F, 0.7854F, 0.0F);
         head.addChild(cube_r1);
-        cube_r1.setTextureOffset(141, 0).addBox(-6.3297F, -12.551F, -5.6703F, 12.0F, 16.0F, 12.0F, false)
+        cube_r1.setTextureOffset(141, 1).addBox(-6.3297F, -12.551F, -5.6703F, 12.0F, 16.0F, 12.0F, false)
                 .setTextureOffset(149, 31).addBox(-4.0297F, -10.0551F, -3.9703F, 8.0F, 11.0F, 8.0F, 1.5F);
 
         tooth = new AdvancedModelBox(this, "tooth");
