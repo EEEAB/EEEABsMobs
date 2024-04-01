@@ -1,0 +1,30 @@
+{
+  "parent": "eeeabsmobs:eeeabsmobs/root",
+  "display": {
+    "icon": {
+      "item": "minecraft:blackstone"
+    },
+    "title": {
+      "translate": "advancements.eeeabsmobs.bloody_altar.title"
+    },
+    "description": {
+      "translate": "advancements.eeeabsmobs.bloody_altar.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "location": {
+            "structure": "eeeabsmobs:bloody_altar"
+          }
+        }
+      }
+    }
+  }
+}

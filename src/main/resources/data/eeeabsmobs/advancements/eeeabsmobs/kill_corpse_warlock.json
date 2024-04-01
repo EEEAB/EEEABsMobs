@@ -1,0 +1,34 @@
+{
+  "parent": "eeeabsmobs:eeeabsmobs/bloody_altar",
+  "display": {
+    "icon": {
+      "item": "eeeabsmobs:heart_of_pagan"
+    },
+    "title": {
+      "translate": "advancements.eeeabsmobs.kill_corpse_warlock.title"
+    },
+    "description": {
+      "translate": "advancements.eeeabsmobs.kill_corpse_warlock.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "eeeabsmobs:corpse_warlock"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
