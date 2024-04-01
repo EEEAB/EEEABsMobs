@@ -1,5 +1,5 @@
 {
-  "parent": "eeeabsmobs:eeeabsmobs/origin",
+  "parent": "eeeabsmobs:eeeabsmobs/root",
   "display": {
     "icon": {
       "item": "minecraft:deepslate_bricks"

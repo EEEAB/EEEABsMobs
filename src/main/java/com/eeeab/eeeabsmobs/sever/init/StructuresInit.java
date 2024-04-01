@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.sever.init;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.world.structure.AncientTombStructure;
+import com.eeeab.eeeabsmobs.sever.world.structure.BloodyAltarStructure;
 import com.eeeab.eeeabsmobs.sever.world.structure.EMConfigurationStructure;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.Registries;
@@ -15,9 +16,11 @@ import net.minecraftforge.registries.RegistryObject;
 public class StructuresInit {
     private static final DeferredRegister<StructureType<?>> STRUCTURES = DeferredRegister.create(Registries.STRUCTURE_TYPE, EEEABMobs.MOD_ID);
     private static final DeferredRegister<StructurePieceType> PIECE_TYPE = DeferredRegister.create(Registries.STRUCTURE_PIECE, EEEABMobs.MOD_ID);
-    public static final RegistryObject<StructureType<EMConfigurationStructure>> CONFIG_STRUCTURES = STRUCTURES.register("ee_config", () -> explicitStructureTypeTyping(EMConfigurationStructure.CODEC));
+    public static final RegistryObject<StructureType<EMConfigurationStructure>> CONFIG_STRUCTURES = STRUCTURES.register("em_config", () -> explicitStructureTypeTyping(EMConfigurationStructure.CODEC));
     public static final RegistryObject<StructureType<AncientTombStructure>> ANCIENT_TOMB_STRUCTURE = STRUCTURES.register("ancient_tomb", () -> explicitStructureTypeTyping(AncientTombStructure.CODEC));
+    public static final RegistryObject<StructureType<BloodyAltarStructure>> BLOODY_ALTAR_STRUCTURE = STRUCTURES.register("bloody_altar", () -> explicitStructureTypeTyping(BloodyAltarStructure.CODEC));
     public static final RegistryObject<StructurePieceType> ATP = PIECE_TYPE.register("ancient_tomb", () -> AncientTombStructure.Piece::new);
+    public static final RegistryObject<StructurePieceType> BA = PIECE_TYPE.register("bloody_altar", () -> BloodyAltarStructure.Piece::new);
 
     /**
      * Originally, I had a double lambda ()->()-> for the RegistryObject line above, but it turns out that
