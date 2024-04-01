@@ -29,7 +29,9 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.IMMORTAL_BONE.get());
                 entries.accept(ItemInit.IMMORTAL_DEBRIS.get());
                 entries.accept(ItemInit.IMMORTAL_INGOT.get());
+                entries.accept(ItemInit.BLOODY_ALTAR_EYE.get());
                 entries.accept(ItemInit.ANCIENT_TOMB_EYE.get());
+                entries.accept(ItemInit.HEART_OF_PAGAN.get());
 
                 /* Fight Item */
                 entries.accept(ItemInit.IMMORTAL_HELMET.get());
@@ -46,13 +48,15 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.GUARDIANS_MUSIC_DISC.get());
 
                 /* Spawn Egg */
+                entries.accept(ItemInit.TESTER.get());
                 entries.accept(ItemInit.IMMORTAL_SKELETON_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_KNIGHT_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_SHAMAN_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_GOLEM_EGG.get());
+                entries.accept(ItemInit.NAMELESS_GUARDIAN_EGG.get());
                 entries.accept(ItemInit.CORPSE_EGG.get());
                 entries.accept(ItemInit.CORPSE_VILLAGER_EGG.get());
-                entries.accept(ItemInit.NAMELESS_GUARDIAN_EGG.get());
+                entries.accept(ItemInit.CORPSE_WARLOCK_EGG.get());
             }).build());
 
 

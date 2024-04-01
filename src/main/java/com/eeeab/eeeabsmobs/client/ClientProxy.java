@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.client;
 
-import com.eeeab.eeeabsmobs.client.render.util.EEItemStackRenderProperties;
+import com.eeeab.eeeabsmobs.client.model.EMItemModels;
+import com.eeeab.eeeabsmobs.client.render.util.EMItemStackRenderProperties;
 import com.eeeab.eeeabsmobs.client.sound.ability.GuardianLaserSoundInstance;
 import com.eeeab.eeeabsmobs.sever.ServerProxy;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerClientEvent;
@@ -18,6 +19,7 @@ public class ClientProxy extends ServerProxy {
     @Override
     public void init(IEventBus bus) {
         super.init(bus);
+        bus.register(EMItemModels.class);
         MinecraftForge.EVENT_BUS.register(new HandlerClientEvent());
     }
 
@@ -27,13 +29,13 @@ public class ClientProxy extends ServerProxy {
     }
 
     @Override
-    public void onLateInit(IEventBus bus) {
-        super.onLateInit(bus);
+    public void loadComplete(IEventBus bus) {
+        super.loadComplete(bus);
     }
 
     @Override
     public Object getISTERProperties() {
-        return new EEItemStackRenderProperties();
+        return new EMItemStackRenderProperties();
     }
 
     @Override
