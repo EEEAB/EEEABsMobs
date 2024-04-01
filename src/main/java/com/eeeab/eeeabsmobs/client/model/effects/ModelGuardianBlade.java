@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.client.model.entity;
+package com.eeeab.eeeabsmobs.client.model.effects;
 
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianBlade;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;

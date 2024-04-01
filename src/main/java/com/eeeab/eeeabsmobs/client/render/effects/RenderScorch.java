@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.render.effects;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.client.render.EERenderType;
+import com.eeeab.eeeabsmobs.client.render.EMRenderType;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityScorch;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -22,7 +22,7 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 @OnlyIn(Dist.CLIENT)
-public class RenderEntityScorch extends EntityRenderer<EntityScorch> {
+public class RenderScorch extends EntityRenderer<EntityScorch> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/scorch.png");
     private static final float TEXTURE_WIDTH = 32;
     private static final float TEXTURE_HEIGHT = 32;
@@ -34,7 +34,7 @@ public class RenderEntityScorch extends EntityRenderer<EntityScorch> {
     private static final float SCORCH_MAX_V = SCORCH_MIN_V + RING_FRAME_SIZE / TEXTURE_HEIGHT;
 
 
-    public RenderEntityScorch(EntityRendererProvider.Context context) {
+    public RenderScorch(EntityRendererProvider.Context context) {
         super(context);
     }
 
@@ -45,7 +45,7 @@ public class RenderEntityScorch extends EntityRenderer<EntityScorch> {
         if (opacity > 1) {
             opacity = 1;
         }
-        VertexConsumer vertexConsumer = bufferIn.getBuffer(EERenderType.getGlowingEffect(TEXTURE));
+        VertexConsumer vertexConsumer = bufferIn.getBuffer(EMRenderType.entityTranslucent(TEXTURE));
         drawScorch(scorch, delta, poseStack, vertexConsumer, packedLight, opacity);
         poseStack.popPose();
     }
@@ -78,18 +78,13 @@ public class RenderEntityScorch extends EntityRenderer<EntityScorch> {
             int bx = pos.getX(), by = pos.getY(), bz = pos.getZ();
             //渲染偏移(用于适应在不同高低差)
             VoxelShape shape = block.getBlockSupportShape(world, pos);
-            float minX;
-            float maxX;
-            float y;
-            float minZ;
-            float maxZ;
             if (!shape.isEmpty()) {//fix #6 极端情况下导致崩溃
                 AABB aabb = shape.bounds();
-                minX = (float) (bx + aabb.minX - ex);
-                maxX = (float) (bx + aabb.maxX - ex);
-                y = (float) (by + aabb.minY - ey + 0.015625f);
-                minZ = (float) (bz + aabb.minZ - ez);
-                maxZ = (float) (bz + aabb.maxZ - ez);
+                float minX = (float) (bx + aabb.minX - ex);
+                float maxX = (float) (bx + aabb.maxX - ex);
+                float y = (float) (by + aabb.minY - ey + 0.015625f);
+                float minZ = (float) (bz + aabb.minZ - ez);
+                float maxZ = (float) (bz + aabb.maxZ - ez);
                 float minU = (minX / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_U - SCORCH_MIN_U) + SCORCH_MIN_U;
                 float maxU = (maxX / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_U - SCORCH_MIN_U) + SCORCH_MIN_U;
                 float minV = (minZ / 2f / LINGER_RADIUS + 0.5f) * (SCORCH_MAX_V - SCORCH_MIN_V) + SCORCH_MIN_V;

@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.particle.util;
 
-import com.eeeab.eeeabsmobs.client.render.EERenderType;
+import com.eeeab.eeeabsmobs.client.render.EMRenderType;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -88,7 +88,7 @@ public class AdvancedParticleBase extends TextureSheetParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return EERenderType.PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH;
+        return EMRenderType.PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH;
     }
 
     public int getLightColor(float partialTick) {

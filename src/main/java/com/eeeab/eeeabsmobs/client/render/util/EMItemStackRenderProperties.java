@@ -3,12 +3,12 @@ package com.eeeab.eeeabsmobs.client.render.util;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
-public class EEItemStackRenderProperties implements IClientItemExtensions {
-    public EEItemStackRenderProperties() {
+public class EMItemStackRenderProperties implements IClientItemExtensions {
+    public EMItemStackRenderProperties() {
     }
 
     @Override
     public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-        return new EEItemStackRender();
+        return new EMItemStackRender();
     }
 }
