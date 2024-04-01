@@ -2,10 +2,11 @@ package com.eeeab.eeeabsmobs.client.model.entity;
 
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseVillager;
-import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.model.AdvancedModelBox;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
+import com.github.alexthe666.citadel.client.model.basic.BasicModelPart;
+import com.google.common.collect.ImmutableList;
 
 public class ModelCorpseVillager extends ModelAbsCorpse<EntityCorpseVillager> {
 
@@ -63,6 +64,16 @@ public class ModelCorpseVillager extends ModelAbsCorpse<EntityCorpseVillager> {
 
         animator = ModelAnimator.create();
         updateDefaultPose();
+    }
+
+    @Override
+    public Iterable<AdvancedModelBox> getAllParts() {
+        return ImmutableList.of(this.root, this.upper, this.lower, this.head, this.rightArm, this.leftArm, this.body, this.rightLeg, this.leftLeg);
+    }
+
+    @Override
+    public Iterable<BasicModelPart> parts() {
+        return ImmutableList.of(this.root);
     }
 
     @Override
@@ -143,10 +154,5 @@ public class ModelCorpseVillager extends ModelAbsCorpse<EntityCorpseVillager> {
             animator.endKeyframe();
             animator.resetKeyframe(5);
         }
-    }
-
-    @Override
-    protected Animation getSpawnAnimation() {
-        return null;
     }
 }
