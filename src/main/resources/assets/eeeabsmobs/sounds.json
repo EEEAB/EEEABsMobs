@@ -68,26 +68,6 @@
       "eeeabsmobs:generic/entity/skeleton_death"
     ]
   },
-  "corpse.hurt": {
-    "subtitle": "subtitles.corpse.hurt",
-    "sounds": [
-      "eeeabsmobs:entity/corpse/hurt1",
-      "eeeabsmobs:entity/corpse/hurt2"
-    ]
-  },
-  "corpse.death": {
-    "subtitle": "subtitles.corpse.death",
-    "sounds": [
-      "eeeabsmobs:entity/corpse/death"
-    ]
-  },
-  "corpse.idle": {
-    "subtitle": "subtitles.corpse.idle",
-    "sounds": [
-      "eeeabsmobs:entity/corpse/idle1",
-      "eeeabsmobs:entity/corpse/idle2"
-    ]
-  },
   "nameless.guardian.step": {
     "subtitle": "subtitles.nameless.guardian.step",
     "sounds": [
@@ -150,6 +130,39 @@
     "subtitle": "subtitles.immortal.guardian.creak",
     "sounds": [
       "eeeabsmobs:entity/nameless_guardian/creak"
+    ]
+  },
+  "corpse.hurt": {
+    "subtitle": "subtitles.corpse.hurt",
+    "sounds": [
+      "eeeabsmobs:entity/corpse/hurt1",
+      "eeeabsmobs:entity/corpse/hurt2"
+    ]
+  },
+  "corpse.death": {
+    "subtitle": "subtitles.corpse.death",
+    "sounds": [
+      "eeeabsmobs:entity/corpse/death"
+    ]
+  },
+  "corpse.idle": {
+    "subtitle": "subtitles.corpse.idle",
+    "sounds": [
+      "eeeabsmobs:entity/corpse/idle1",
+      "eeeabsmobs:entity/corpse/idle2"
+    ]
+  },
+  "corpse_warlock.hurt": {
+    "subtitle": "subtitles.corpse_warlock.hurt",
+    "sounds": [
+      "eeeabsmobs:entity/corpse_warlock/hurt1"
+    ]
+  },
+  "corpse_warlock_tear": {
+    "subtitle": "subtitles.corpse_warlock_tear",
+    "sounds": [
+      "eeeabsmobs:entity/corpse_warlock/tear1",
+      "eeeabsmobs:entity/corpse_warlock/tear2"
     ]
   },
   "giant_axe_hit": {

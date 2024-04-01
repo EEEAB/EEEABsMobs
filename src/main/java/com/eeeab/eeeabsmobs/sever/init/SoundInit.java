@@ -31,11 +31,6 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> IMMORTAL_GOLEM_HURT = create("immortal.golem.hurt");
     public static final RegistryObject<SoundEvent> IMMORTAL_GOLEM_DEATH = create("immortal.golem.death");
 
-    //Corpse
-    public static final RegistryObject<SoundEvent> CORPSE_HURT = create("corpse.hurt");
-    public static final RegistryObject<SoundEvent> CORPSE_DEATH = create("corpse.death");
-    public static final RegistryObject<SoundEvent> CORPSE_IDLE = create("corpse.idle");
-
     //Nameless Guardian
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_STEP = create("nameless.guardian.step");
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_IDLE = create("nameless.guardian.idle");
@@ -48,6 +43,15 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_MADNESS = create("nameless.guardian.madness");
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_HURT = create("nameless.guardian.hurt");
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_DEATH = create("nameless.guardian.death");
+
+    //Corpse
+    public static final RegistryObject<SoundEvent> CORPSE_HURT = create("corpse.hurt");
+    public static final RegistryObject<SoundEvent> CORPSE_DEATH = create("corpse.death");
+    public static final RegistryObject<SoundEvent> CORPSE_IDLE = create("corpse.idle");
+
+    //Corpse Warlock
+    public static final RegistryObject<SoundEvent> CORPSE_WARLOCK_HURT = create("corpse_warlock.hurt");
+    public static final RegistryObject<SoundEvent> CORPSE_WARLOCK_TEAR = create("corpse_warlock_tear");
 
     //Music
     public static final RegistryObject<SoundEvent> GUARDIANS = create("music.guardians");
