@@ -223,9 +223,19 @@ public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, Gl
         return false;
     }
 
-    @Override//是否免疫药水效果
+    @Override//添加药水效果
     public boolean addEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
         return this.isActive() && !this.isPowered() && super.addEffect(effectInstance, entity);
+    }
+
+    @Override//强制添加药水效果
+    public void forceAddEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
+        if (this.isActive() && !this.isPowered()) super.forceAddEffect(effectInstance, entity);
+    }
+
+    @Override//添加效果时额外条件
+    public boolean canBeAffected(MobEffectInstance effectInstance) {
+        return this.isActive() && !this.isPowered() && super.canBeAffected(effectInstance);
     }
 
     @Override//是否在实体上渲染着火效果
