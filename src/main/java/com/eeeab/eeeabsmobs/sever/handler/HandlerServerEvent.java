@@ -1,12 +1,14 @@
 package com.eeeab.eeeabsmobs.sever.handler;
 
-
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
+import com.eeeab.eeeabsmobs.sever.capability.FrenzyCapability;
 import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
+import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityAbsCorpse;
+import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
@@ -14,15 +16,22 @@ import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.item.util.EMArmorMaterial;
 import com.eeeab.eeeabsmobs.sever.item.util.EMArmorUtil;
+import com.eeeab.eeeabsmobs.sever.message.MessageFrenzyEffect;
 import com.eeeab.eeeabsmobs.sever.message.MessageVertigoEffect;
+import com.eeeab.eeeabsmobs.sever.potion.EffectFrenzy;
+import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.AbstractGolem;
 import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.npc.AbstractVillager;
@@ -34,6 +43,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -46,6 +56,7 @@ public final class HandlerServerEvent {
     public void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof LivingEntity) {
             event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "vertigo_processor"), new VertigoCapability.VertigoCapabilityProvider());
+            event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "frenzy_processor"), new FrenzyCapability.FrenzyCapabilityProvider());
         }
         if (event.getObject() instanceof Player) {
             event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "ability_processor"), new AbilityCapability.AbilityCapabilityProvider());
@@ -78,7 +89,7 @@ public final class HandlerServerEvent {
         }
         if (entity instanceof AbstractVillager villager) {
             villager.goalSelector.addGoal(3, new AvoidEntityGoal<>(villager, EntityAbsImmortal.class, 6.0F, 1.0D, 1.2D));
-            villager.goalSelector.addGoal(3,new AvoidEntityGoal<>(villager, EntityAbsCorpse.class,6.0F,1.0D,1.2D));
+            villager.goalSelector.addGoal(3, new AvoidEntityGoal<>(villager, EntityAbsCorpse.class, 6.0F, 1.0D, 1.2D));
         }
         if (entity instanceof Raider raider && !(raider instanceof SpellcasterIllager)) {
             raider.goalSelector.addGoal(5, new NearestAttackableTargetGoal<>(raider, EntityAbsImmortal.class, 5, true, false, null));
@@ -99,6 +110,11 @@ public final class HandlerServerEvent {
             AbilityCapability.IAbilityCapability abilityCapability = HandlerCapability.getCapability(entity, HandlerCapability.CUSTOM_ABILITY_CAPABILITY);
             if (abilityCapability != null) {
                 abilityCapability.tick(entity);
+            }
+
+            FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(entity, HandlerCapability.FRENZY_CAPABILITY_CAPABILITY);
+            if (frenzyCapability != null) {
+                frenzyCapability.tick(entity);
             }
         }
     }
@@ -143,26 +159,18 @@ public final class HandlerServerEvent {
     //新效果或者已存在但是等级更高或时间更长的效果 添加到实体触发
     @SubscribeEvent
     public void onAddPointEffect(MobEffectEvent.Added event) {
-        if (event.getEffectInstance().getEffect() == EffectInit.VERTIGO_EFFECT.get()) {
-            if (!event.getEntity().level.isClientSide) {
-                EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(event::getEntity), new MessageVertigoEffect(event.getEntity(), true));
-                VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(event.getEntity(), HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
-                if (capability != null) {
-                    capability.onStart(event.getEntity());
-                }
-            }
+        MobEffectInstance effectInstance = event.getEffectInstance();
+        if (!event.getEntity().level.isClientSide()) {
+            doCRCapabilityWithEffect(effectInstance, event.getEntity(), true);
         }
     }
 
     //效果被移除时
     @SubscribeEvent
     public void onRemovePotionEffect(MobEffectEvent.Remove event) {
-        if (!event.getEntity().level.isClientSide() && event.getEffect() == EffectInit.VERTIGO_EFFECT.get()) {
-            EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(event::getEntity), new MessageVertigoEffect(event.getEntity(), false));
-            VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(event.getEntity(), HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
-            if (capability != null) {
-                capability.onEnd(event.getEntity());
-            }
+        MobEffectInstance effectInstance = event.getEffectInstance();
+        if (!event.getEntity().level.isClientSide() && effectInstance != null) {
+            doCRCapabilityWithEffect(effectInstance, event.getEntity(), false);
         }
     }
 
@@ -171,12 +179,30 @@ public final class HandlerServerEvent {
     public void onExpirePotionEffect(MobEffectEvent.Expired event) {
         MobEffectInstance effectInstance = event.getEffectInstance();
         if (!event.getEntity().level.isClientSide() && effectInstance != null) {
-            if (effectInstance.getEffect() == EffectInit.VERTIGO_EFFECT.get()) {
-                EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(event::getEntity), new MessageVertigoEffect(event.getEntity(), false));
-                VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(event.getEntity(), HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
-                if (capability != null) {
-                    capability.onEnd(event.getEntity());
-                }
+            doCRCapabilityWithEffect(effectInstance, event.getEntity(), false);
+        }
+    }
+
+    private void doCRCapabilityWithEffect(MobEffectInstance effectInstance, LivingEntity entity, boolean flag) {
+        if (effectInstance.getEffect() == EffectInit.VERTIGO_EFFECT.get()) {
+            EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new MessageVertigoEffect(entity, flag));
+            VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
+            if (capability != null) {
+                if (flag)
+                    capability.onStart(entity);
+                else
+                    capability.onEnd(entity);
+            }
+        }
+        if (effectInstance.getEffect() == EffectInit.FRENZY_EFFECT.get()) {
+            EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new MessageFrenzyEffect(entity, flag));
+            FrenzyCapability.IFrenzyCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.FRENZY_CAPABILITY_CAPABILITY);
+            if (capability != null) {
+                capability.setLevel(effectInstance.getAmplifier());
+                if (flag)
+                    capability.onStart(entity);
+                else
+                    capability.onEnd(entity);
             }
         }
     }
@@ -273,8 +299,9 @@ public final class HandlerServerEvent {
     //实体受伤时
     @SubscribeEvent
     public void onLivingEntityHurt(LivingHurtEvent event) {
-        Entity directEntity = event.getSource().getDirectEntity();
-        Entity attacker = event.getSource().getEntity();
+        DamageSource source = event.getSource();
+        Entity directEntity = source.getDirectEntity();
+        Entity attacker = source.getEntity();
         LivingEntity hurtEntity = event.getEntity();
 
         if (directEntity instanceof EntityShamanBomb shamanBomb) {
@@ -290,6 +317,13 @@ public final class HandlerServerEvent {
                 event.setAmount(damage);
             }
         }
+
+        FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(hurtEntity, HandlerCapability.FRENZY_CAPABILITY_CAPABILITY);
+        if (frenzyCapability != null && frenzyCapability.isFrenzy() && !(source == DamageSource.OUT_OF_WORLD || source == DamageSource.GENERIC)) {
+            float damage = event.getAmount();
+            damage -= damage * (Math.min((frenzyCapability.getLevel() + 1F), 5)) * 0.1F;//至多减少50%伤害
+            event.setAmount(damage);
+        }
     }
 
     //实体设置目标时
@@ -304,5 +338,11 @@ public final class HandlerServerEvent {
                 }
             }
         }
+    }
+
+    //玩家攻击产生暴击时
+    @SubscribeEvent
+    public void onCriticalHit(CriticalHitEvent event) {
+
     }
 }

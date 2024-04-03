@@ -2,11 +2,10 @@ package com.eeeab.eeeabsmobs.sever.init;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.world.structure.AncientTombStructure;
+import com.eeeab.eeeabsmobs.sever.world.structure.BloodyAltarStructure;
 import com.eeeab.eeeabsmobs.sever.world.structure.EMConfigurationStructure;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
@@ -17,14 +16,11 @@ import net.minecraftforge.registries.RegistryObject;
 public class StructuresInit {
     private static final DeferredRegister<StructureType<?>> STRUCTURES = DeferredRegister.create(Registry.STRUCTURE_TYPE_REGISTRY, EEEABMobs.MOD_ID);
     private static final DeferredRegister<StructurePieceType> PIECE_TYPE = DeferredRegister.create(Registry.STRUCTURE_PIECE_REGISTRY, EEEABMobs.MOD_ID);
-
-    public static final RegistryObject<StructureType<EMConfigurationStructure>> CONFIG_STRUCTURES = STRUCTURES.register("ee_config", () -> explicitStructureTypeTyping(EMConfigurationStructure.CODEC));
+    public static final RegistryObject<StructureType<EMConfigurationStructure>> CONFIG_STRUCTURES = STRUCTURES.register("em_config", () -> explicitStructureTypeTyping(EMConfigurationStructure.CODEC));
     public static final RegistryObject<StructureType<AncientTombStructure>> ANCIENT_TOMB_STRUCTURE = STRUCTURES.register("ancient_tomb", () -> explicitStructureTypeTyping(AncientTombStructure.CODEC));
-
-    //PIECE
+    public static final RegistryObject<StructureType<BloodyAltarStructure>> BLOODY_ALTAR_STRUCTURE = STRUCTURES.register("bloody_altar", () -> explicitStructureTypeTyping(BloodyAltarStructure.CODEC));
     public static final RegistryObject<StructurePieceType> ATP = PIECE_TYPE.register("ancient_tomb", () -> AncientTombStructure.Piece::new);
-    //KEY
-    private static final ResourceKey<Structure> ANCIENT_TOMB_KEY = ResourceKey.create(Registry.STRUCTURE_REGISTRY, new ResourceLocation(EEEABMobs.MOD_ID, "ancient_tomb"));
+    public static final RegistryObject<StructurePieceType> BA = PIECE_TYPE.register("bloody_altar", () -> BloodyAltarStructure.Piece::new);
 
     /**
      * Originally, I had a double lambda ()->()-> for the RegistryObject line above, but it turns out that

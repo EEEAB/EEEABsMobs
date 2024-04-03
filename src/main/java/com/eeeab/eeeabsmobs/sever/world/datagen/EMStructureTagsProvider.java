@@ -16,5 +16,6 @@ public class EMStructureTagsProvider extends StructureTagsProvider {
     @Override
     protected void addTags() {
         this.tag(EMTagKey.EYE_OF_ANCIENT_TOMB).add(EMResourceKey.ANCIENT_TOMB);
+        this.tag(EMTagKey.EYE_OF_BLOODY_ALTAR).add(EMResourceKey.BLOODY_ALTAR);
     }
 }

@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.render.effects;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.client.model.entity.ModelGuardianBlade;
+import com.eeeab.eeeabsmobs.client.model.effects.ModelGuardianBlade;
 import com.eeeab.eeeabsmobs.client.render.EMRenderType;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianBlade;
 import com.mojang.blaze3d.vertex.PoseStack;

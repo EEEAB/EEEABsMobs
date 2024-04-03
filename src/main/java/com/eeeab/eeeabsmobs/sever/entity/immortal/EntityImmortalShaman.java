@@ -119,11 +119,10 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.targetSelector.addGoal(1, (new NearestAttackableTargetGoal<>(this, Player.class, true)).setUnseenMemoryTicks(300));
-        this.targetSelector.addGoal(2, (new HurtByTargetGoal(this)).setAlertOthers());
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.targetSelector.addGoal(1, (new HurtByTargetGoal(this)).setAlertOthers());
+        this.targetSelector.addGoal(2, (new NearestAttackableTargetGoal<>(this, Player.class, true)).setUnseenMemoryTicks(300));
         this.targetSelector.addGoal(3, (new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false)).setUnseenMemoryTicks(300));
-        //this.targetSelector.addGoal(4, (new NearestAttackableTargetGoal<>(this, Evoker.class, true)).setUnseenMemoryTicks(300));
         this.goalSelector.addGoal(8, new EMLookAtGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(9, new EMLookAtGoal(this, EntityImmortalGolem.class, 6.0F));
     }
@@ -157,10 +156,10 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
                 return entity instanceof EntityAbsImmortal && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get();
             }
         });
-        this.goalSelector.addGoal(2, new EntityImmortalShaman.ShamanSummonGoal(this));
-        this.goalSelector.addGoal(3, new EntityImmortalShaman.ShamanAvoid(this));
-        this.goalSelector.addGoal(4, new EntityImmortalShaman.ShamanBombing(this));
-        this.goalSelector.addGoal(5, new EntityImmortalShaman.ShamanWololo(this));
+        this.goalSelector.addGoal(2, new ShamanSummonGoal(this));
+        this.goalSelector.addGoal(3, new ShamanAvoid(this));
+        this.goalSelector.addGoal(4, new ShamanBombing(this));
+        this.goalSelector.addGoal(5, new ShamanWololo(this));
         this.goalSelector.addGoal(6, new KeepDistanceGoal<>(this, 1.0D, 16.0F, 1.5F));
     }
 
@@ -200,7 +199,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
             } else if (animation == SPELL_CASTING_HEAL_ANIMATION) {
                 int timer;
                 if (this.hurtCountBeforeHeal < CAN_STOP_HEAL_COUNT && !this.isWeakness()) {
-                    this.heal((float) (EMConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SHAMAN.healValue.get() * 1F));
+                    this.heal((float) (this.getMaxHealth() * EMConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SHAMAN.healPercentage.get()));
                     this.level.broadcastEntityEvent(this, (byte) 12);
                     timer = 15;
                 } else {
@@ -364,7 +363,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
 
 
     public static AttributeSupplier.Builder setAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 40.0D).
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 60.0D).
                 add(Attributes.ATTACK_DAMAGE, 1.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.35D).
                 add(Attributes.FOLLOW_RANGE, 32.0D).

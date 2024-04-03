@@ -4,6 +4,7 @@ import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationAbstrac
 import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -74,7 +75,7 @@ public class GuardianPounceAttackGoal extends AnimationAbstractGoal<EntityNamele
             }
             int tick = this.entity.getAnimationTick();
             if (tick == 1) {
-                //entity.playSound(SoundInit.NAMELESS_GUARDIAN_PRE_POUNCE.get(), 1.5F, entity.getVoicePitch());
+                entity.playSound(SoundInit.NAMELESS_GUARDIAN_PRE_POUNCE.get(), 1.5F, entity.getVoicePitch());
             } else if (tick >= animationDuration - 1) {
                 if (target != null) {
                     this.pounceVec = findTargetPoint(this.entity, target);

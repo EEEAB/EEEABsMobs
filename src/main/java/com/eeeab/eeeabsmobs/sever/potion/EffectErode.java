@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.Random;
 
+//减防
 public class EffectErode extends EMEffect {
     private final Random random = new Random();
 

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "minecraft:ender_eye"
+  },
+  "addition": {
+    "item": "minecraft:rotten_flesh"
+  },
+  "result": {
+    "item": "eeeabsmobs:bloody_altar_eye"
+  }
+}

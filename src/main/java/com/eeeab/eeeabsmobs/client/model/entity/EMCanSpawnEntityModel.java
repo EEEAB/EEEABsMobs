@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.model.AdvancedModelBox;
@@ -37,14 +38,14 @@ public abstract class EMCanSpawnEntityModel<T extends EEEABMobLibrary & IAnimate
     protected void spawnAnimate(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float delta) {
         this.resetToDefaultPose();
         animator.update(entity);
-        if (animator.setAnimation(getSpawnAnimation())) {
+        if (getSpawnAnimation() != null && animator.setAnimation(getSpawnAnimation())) {
             animator.startKeyframe(0);
             animator.move(root, 0, 35, 0);
             animator.rotate(head, toRadians(-50), 0, 0);
             animator.rotate(leftArm, toRadians(handsOffset()), 0, 0);
             animator.rotate(rightArm, toRadians(handsOffset()), 0, 0);
             animator.endKeyframe();
-            animator.startKeyframe(35);
+            animator.startKeyframe(getSpawnAnimation().getDuration() - 5);
             animator.move(root, 0, 0, 0);
             animator.rotate(head, toRadians(-40), 0, 0);
             animator.rotate(leftArm, toRadians(handsOffset()), 0, 0);

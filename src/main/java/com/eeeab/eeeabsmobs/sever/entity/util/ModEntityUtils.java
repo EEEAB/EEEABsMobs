@@ -7,6 +7,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -179,5 +181,21 @@ public class ModEntityUtils {
             entityAttackingAngle += 360;
         }
         return entityHitAngle - entityAttackingAngle;
+    }
+
+    //添加药水效果(可堆叠等级 上限5级)
+    public static void addEffectStackingAmplifier(LivingEntity target, MobEffect mobEffect, int duration, boolean ambient, boolean visible, boolean showIcon) {
+        if (!target.hasEffect(mobEffect)) {
+            target.addEffect(new MobEffectInstance(mobEffect, duration, 0, ambient, visible, showIcon));
+        } else {
+            MobEffectInstance instance = target.getEffect(mobEffect);
+            if (instance != null) {
+                int level = instance.getAmplifier();
+                if (level < 4) {
+                    level++;
+                }
+                target.addEffect(new MobEffectInstance(mobEffect, duration, level, ambient, visible, showIcon));
+            }
+        }
     }
 }

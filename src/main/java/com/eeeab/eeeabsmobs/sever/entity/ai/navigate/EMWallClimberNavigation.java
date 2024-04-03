@@ -1,13 +1,15 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.navigate;
 
-import net.minecraft.network.protocol.game.DebugPackets;
-import net.minecraft.util.Mth;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.navigation.WallClimberNavigation;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class EMWallClimberNavigation extends WallClimberNavigation {
+public class EMWallClimberNavigation extends GroundPathNavigation {
 
     public EMWallClimberNavigation(Mob mob, Level level) {
         super(mob, level);
@@ -15,29 +17,15 @@ public class EMWallClimberNavigation extends WallClimberNavigation {
 
     @Override
     public void tick() {
-        if (this.mob.getTarget() != null) {
-            super.tick();
-        } else {
-            ++this.tick;
-            if (this.hasDelayedRecomputation) {
-                this.recomputePath();
-            }
-
-            if (!this.isDone()) {
-                if (this.canUpdatePath()) {
-                    this.followThePath();
-                } else if (this.path != null && !this.path.isDone()) {
-                    Vec3 vec3 = this.getTempMobPos();
-                    Vec3 vec31 = this.path.getNextEntityPos(this.mob);
-                    if (vec3.y > vec31.y && !this.mob.isOnGround() && Mth.floor(vec3.x) == Mth.floor(vec31.x) && Mth.floor(vec3.z) == Mth.floor(vec31.z)) {
-                        this.path.advance();
-                    }
-                }
-
-                DebugPackets.sendPathFindingPacket(this.level, this.mob, this.path, this.maxDistanceToWaypoint);
-                if (!this.isDone()) {
-                    Vec3 vec32 = this.path.getNextEntityPos(this.mob);
-                    this.mob.getMoveControl().setWantedPosition(vec32.x, this.getGroundY(vec32), vec32.z, this.speedModifier);
+        super.tick();
+        LivingEntity target = this.mob.getTarget();
+        if (target != null) {
+            if (target.getY() - 3 >= this.mob.getY()) {
+                BlockHitResult result = this.level.clip(new ClipContext(this.mob.getEyePosition(), this.mob.getEyePosition().add(this.mob.getViewVector(1F).scale(1F)), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this.mob));
+                BlockPos pos = result.getBlockPos();
+                if (this.level.getBlockState(pos).canOcclude()) {
+                    Vec3 vec3 = new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+                    this.mob.getMoveControl().setWantedPosition(vec3.x, this.getGroundY(vec3), vec3.z, this.speedModifier);
                 }
             }
         }

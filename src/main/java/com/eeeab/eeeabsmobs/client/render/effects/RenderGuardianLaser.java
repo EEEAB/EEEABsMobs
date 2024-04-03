@@ -63,7 +63,7 @@ public class RenderGuardianLaser extends EntityRenderer<EntityGuardianLaser> {
             frame = 6;
         }
         if (laser.isAccumulating()) return;
-        VertexConsumer vertex$builder = bufferIn.getBuffer(EMRenderType.getGlowingEffect(getTextureLocation(laser)));
+        VertexConsumer vertex$builder = bufferIn.getBuffer(EMRenderType.getStrongGlowingEffect(getTextureLocation(laser)));
         renderStart(frame, matrixStackIn, vertex$builder, packedLightIn);
         renderBeam(length, 180f / (float) Math.PI * yaw, 180f / (float) Math.PI * pitch, frame, matrixStackIn, vertex$builder, packedLightIn);
 

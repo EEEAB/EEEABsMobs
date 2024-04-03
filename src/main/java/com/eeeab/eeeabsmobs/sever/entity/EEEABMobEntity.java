@@ -158,7 +158,7 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     protected final void tickDeath() {
         ++this.deathTime;
         int deathDuration = getDeathDuration();
-        if (this.deathTime == deathDuration && !this.level.isClientSide()) {
+        if (this.deathTime >= deathDuration && !this.level.isClientSide()) {
             lastHurtByPlayer = killDataAttackingPlayer;
             lastHurtByPlayerTime = killDataRecentlyHit;
             if (dropAfterDeathAnim && killDataCause != null) {
