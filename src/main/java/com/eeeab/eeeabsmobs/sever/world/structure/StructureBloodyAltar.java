@@ -31,14 +31,14 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.*;
 import java.util.Map;
 import java.util.Optional;
 
-public class BloodyAltarStructure extends Structure {
-    public static final Codec<BloodyAltarStructure> CODEC = simpleCodec(BloodyAltarStructure::new);
+public class StructureBloodyAltar extends Structure {
+    public static final Codec<StructureBloodyAltar> CODEC = simpleCodec(StructureBloodyAltar::new);
     private static final ResourceLocation BLOODY_ALTAR = new ResourceLocation(EEEABMobs.MOD_ID, "bloody_altar");
     private static final Map<ResourceLocation, BlockPos> OFFSET = new ImmutableMap.Builder<ResourceLocation, BlockPos>()
             .put(BLOODY_ALTAR, new BlockPos(0, 1, 0))
             .build();
 
-    protected BloodyAltarStructure(StructureSettings settings) {
+    protected StructureBloodyAltar(StructureSettings settings) {
         super(settings);
     }
 
@@ -115,7 +115,7 @@ public class BloodyAltarStructure extends Structure {
         }
 
         private static BlockPos makePosition(ResourceLocation location, BlockPos blockPos) {
-            return blockPos.offset(BloodyAltarStructure.OFFSET.get(location));
+            return blockPos.offset(StructureBloodyAltar.OFFSET.get(location));
         }
 
         private static StructurePlaceSettings makeSettings(Rotation rotation) {

@@ -18,17 +18,17 @@ import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import java.util.Optional;
 
 //参考自: https://github.com/TelepathicGrunt/StructureTutorialMod
-public class EMConfigurationStructure extends Structure {
+public class StructureEMCustom extends Structure {
 
-    public static final Codec<EMConfigurationStructure> CODEC = RecordCodecBuilder.<EMConfigurationStructure>mapCodec(instance ->
-            instance.group(EMConfigurationStructure.settingsCodec(instance),
+    public static final Codec<StructureEMCustom> CODEC = RecordCodecBuilder.<StructureEMCustom>mapCodec(instance ->
+            instance.group(StructureEMCustom.settingsCodec(instance),
                     StructureTemplatePool.CODEC.fieldOf("start_pool").forGetter(structure -> structure.startPool),
                     ResourceLocation.CODEC.optionalFieldOf("start_jigsaw_name").forGetter(structure -> structure.startJigsawName),
                     Codec.intRange(0, 30).fieldOf("size").forGetter(structure -> structure.size),
                     HeightProvider.CODEC.fieldOf("start_height").forGetter(structure -> structure.startHeight),
                     Heightmap.Types.CODEC.optionalFieldOf("project_start_to_heightmap").forGetter(structure -> structure.projectStartToHeightmap),
                     Codec.intRange(1, 128).fieldOf("max_distance_from_center").forGetter(structure -> structure.maxDistanceFromCenter)
-            ).apply(instance, EMConfigurationStructure::new)).codec();
+            ).apply(instance, StructureEMCustom::new)).codec();
 
     private final Holder<StructureTemplatePool> startPool;
     private final Optional<ResourceLocation> startJigsawName;
@@ -37,13 +37,13 @@ public class EMConfigurationStructure extends Structure {
     private final Optional<Heightmap.Types> projectStartToHeightmap;
     private final int maxDistanceFromCenter;
 
-    public EMConfigurationStructure(Structure.StructureSettings config,
-                                    Holder<StructureTemplatePool> startPool,
-                                    Optional<ResourceLocation> startJigsawName,
-                                    int size,
-                                    HeightProvider startHeight,
-                                    Optional<Heightmap.Types> projectStartToHeightmap,
-                                    int maxDistanceFromCenter) {
+    public StructureEMCustom(Structure.StructureSettings config,
+                             Holder<StructureTemplatePool> startPool,
+                             Optional<ResourceLocation> startJigsawName,
+                             int size,
+                             HeightProvider startHeight,
+                             Optional<Heightmap.Types> projectStartToHeightmap,
+                             int maxDistanceFromCenter) {
         super(config);
         this.startPool = startPool;
         this.startJigsawName = startJigsawName;
@@ -66,7 +66,7 @@ public class EMConfigurationStructure extends Structure {
 
     @Override
     public Optional<Structure.GenerationStub> findGenerationPoint(Structure.GenerationContext context) {
-        if (!EMConfigurationStructure.extraSpawningChecks(context)) {
+        if (!StructureEMCustom.extraSpawningChecks(context)) {
             return Optional.empty();
         }
         int startY = this.startHeight.sample(context.random(), new WorldGenerationContext(context.chunkGenerator(), context.heightAccessor()));
