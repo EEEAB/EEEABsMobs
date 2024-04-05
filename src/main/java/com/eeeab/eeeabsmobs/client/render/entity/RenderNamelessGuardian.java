@@ -6,7 +6,7 @@ import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGuardianCore;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGuardianExplode;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGuardianLaser;
-import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;

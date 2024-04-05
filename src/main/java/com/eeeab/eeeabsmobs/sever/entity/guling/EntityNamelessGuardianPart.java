@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.entity.namelessguardian;
+package com.eeeab.eeeabsmobs.sever.entity.guling;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;

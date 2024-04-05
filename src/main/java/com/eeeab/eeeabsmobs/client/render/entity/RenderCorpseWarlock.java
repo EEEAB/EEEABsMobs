@@ -5,8 +5,6 @@ import com.eeeab.eeeabsmobs.client.model.entity.ModelCorpseWarlock;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerOuter;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalGolem;
-import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;

@@ -6,7 +6,7 @@ import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseVillager;
 import com.eeeab.eeeabsmobs.sever.entity.effects.*;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.*;
-import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityPoisonArrow;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;

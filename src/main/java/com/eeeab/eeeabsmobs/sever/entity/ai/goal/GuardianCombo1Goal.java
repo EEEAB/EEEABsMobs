@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationAbstractGoal;
-import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
@@ -15,7 +15,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-import static com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian.*;
+import static com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian.*;
 
 public class GuardianCombo1Goal extends AnimationAbstractGoal<EntityNamelessGuardian> {
     private final float range;

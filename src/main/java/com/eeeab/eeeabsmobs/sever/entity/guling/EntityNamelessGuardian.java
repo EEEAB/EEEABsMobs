@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.entity.namelessguardian;
+package com.eeeab.eeeabsmobs.sever.entity.guling;
 
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
@@ -79,7 +79,7 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 
 //创建于 2023/1/17
-public class EntityNamelessGuardian extends EEEABMobLibrary implements IBoss, GlowEntity, PowerableMob, NeedStopAiEntity {
+public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, GlowEntity, PowerableMob, NeedStopAiEntity {
     public static final Animation DIE_ANIMATION = Animation.create(60);
     public static final Animation DIE_WORDS_ANIMATION = Animation.create(70);
     public static final Animation ROAR_ANIMATION = Animation.create(80);

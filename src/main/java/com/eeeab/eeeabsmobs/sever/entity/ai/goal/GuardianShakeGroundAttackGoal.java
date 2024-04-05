@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationAbstractGoal;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianBlade;
-import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
@@ -19,7 +19,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-import static com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian.*;
+import static com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian.*;
 
 public class GuardianShakeGroundAttackGoal extends AnimationAbstractGoal<EntityNamelessGuardian> {
 
