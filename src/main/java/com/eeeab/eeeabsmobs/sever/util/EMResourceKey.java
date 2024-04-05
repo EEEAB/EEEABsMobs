@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
 public class EMResourceKey {
-    public static ResourceKey<Structure> ANCIENT_TOMB = registerResourceKey(Registries.STRUCTURE, "ancient_tomb");
+    public static ResourceKey<Structure> GULING = registerResourceKey(Registries.STRUCTURE, "guling");
     public static ResourceKey<Structure> BLOODY_ALTAR = registerResourceKey(Registries.STRUCTURE, "bloody_altar");
     public static final ResourceKey<DamageType> SHAMAN_BOMBING = registerResourceKey(Registries.DAMAGE_TYPE, "shaman_bomb");
     public static final ResourceKey<DamageType> ROBUST_ATTACK = registerResourceKey(Registries.DAMAGE_TYPE, "guardian_robust_attack");

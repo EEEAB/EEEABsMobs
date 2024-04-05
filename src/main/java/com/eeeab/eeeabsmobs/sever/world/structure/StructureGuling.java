@@ -1,29 +1,18 @@
 package com.eeeab.eeeabsmobs.sever.world.structure;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalKnight;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalShaman;
-import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.StructuresInit;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.Display;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.ai.attributes.AttributeMap;
-import net.minecraft.world.entity.decoration.Painting;
-import net.minecraft.world.entity.decoration.PaintingVariant;
-import net.minecraft.world.entity.decoration.PaintingVariants;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
@@ -41,12 +30,12 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import java.util.Map;
 import java.util.Optional;
 
-public class AncientTombStructure extends Structure {
-    public static final Codec<AncientTombStructure> CODEC = simpleCodec(AncientTombStructure::new);
-    private static final ResourceLocation ANCIENT_TOMB_1 = new ResourceLocation(EEEABMobs.MOD_ID, "ancient_tomb_1");
-    private static final ResourceLocation ANCIENT_TOMB_2 = new ResourceLocation(EEEABMobs.MOD_ID, "ancient_tomb_2");
-    private static final ResourceLocation ANCIENT_TOMB_3 = new ResourceLocation(EEEABMobs.MOD_ID, "ancient_tomb_3");
-    private static final ResourceLocation ANCIENT_TOMB_4 = new ResourceLocation(EEEABMobs.MOD_ID, "ancient_tomb_4");
+public class StructureGuling extends Structure {
+    public static final Codec<StructureGuling> CODEC = simpleCodec(StructureGuling::new);
+    private static final ResourceLocation ANCIENT_TOMB_1 = new ResourceLocation(EEEABMobs.MOD_ID, "guling_1");
+    private static final ResourceLocation ANCIENT_TOMB_2 = new ResourceLocation(EEEABMobs.MOD_ID, "guling_2");
+    private static final ResourceLocation ANCIENT_TOMB_3 = new ResourceLocation(EEEABMobs.MOD_ID, "guling_3");
+    private static final ResourceLocation ANCIENT_TOMB_4 = new ResourceLocation(EEEABMobs.MOD_ID, "guling_4");
     private static final Map<ResourceLocation, BlockPos> OFFSET = new ImmutableMap.Builder<ResourceLocation, BlockPos>()
             .put(ANCIENT_TOMB_1, new BlockPos(0, 1, 0))
             .put(ANCIENT_TOMB_2, new BlockPos(0, 1, 0))
@@ -55,7 +44,7 @@ public class AncientTombStructure extends Structure {
             .build();
 
 
-    protected AncientTombStructure(StructureSettings settings) {
+    protected StructureGuling(StructureSettings settings) {
         super(settings);
     }
 
@@ -96,7 +85,7 @@ public class AncientTombStructure extends Structure {
 
     @Override
     public StructureType<?> type() {
-        return StructuresInit.ANCIENT_TOMB_STRUCTURE.get();
+        return StructuresInit.GULING_STRUCTURE.get();
     }
 
     @Override
@@ -106,11 +95,11 @@ public class AncientTombStructure extends Structure {
 
     public static class Piece extends TemplateStructurePiece {
         public Piece(StructureTemplateManager manager, ResourceLocation location, Rotation rotation, BlockPos blockPos) {
-            super(StructuresInit.ATP.get(), 0, manager, location, location.toString(), makeSettings(rotation), makePosition(location, blockPos));
+            super(StructuresInit.GUL.get(), 0, manager, location, location.toString(), makeSettings(rotation), makePosition(location, blockPos));
         }
 
         public Piece(StructureTemplateManager templateManagerIn, CompoundTag tagCompound) {
-            super(StructuresInit.ATP.get(), tagCompound, templateManagerIn, (location) -> makeSettings(Rotation.valueOf(tagCompound.getString("Rot"))));
+            super(StructuresInit.GUL.get(), tagCompound, templateManagerIn, (location) -> makeSettings(Rotation.valueOf(tagCompound.getString("Rot"))));
         }
 
         public Piece(StructurePieceSerializationContext context, CompoundTag tag) {
@@ -124,7 +113,7 @@ public class AncientTombStructure extends Structure {
         }
 
         private static BlockPos makePosition(ResourceLocation location, BlockPos blockPos) {
-            return blockPos.offset(AncientTombStructure.OFFSET.get(location));
+            return blockPos.offset(StructureGuling.OFFSET.get(location));
         }
 
         @Override

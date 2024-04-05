@@ -20,7 +20,7 @@ public class EMBiomeTagsProvider extends BiomeTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        tag(EMTagKey.ANCIENT_TOMB_BIOMES).addTag(Tags.Biomes.IS_UNDERGROUND);
+        tag(EMTagKey.GULING_BIOMES).addTag(Tags.Biomes.IS_UNDERGROUND);
         tag(EMTagKey.BLOODY_ALTAR_BIOMES).addTag(BiomeTags.IS_NETHER);
     }
 }

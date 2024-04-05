@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs.sever.init;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.item.*;
 import com.eeeab.eeeabsmobs.sever.item.ItemArmorImmortal;
-import com.eeeab.eeeabsmobs.sever.item.eye.ItemAncientTombEye;
+import com.eeeab.eeeabsmobs.sever.item.eye.ItemGulingEye;
 import com.eeeab.eeeabsmobs.sever.item.eye.ItemBloodyAltarEye;
 import com.eeeab.eeeabsmobs.sever.item.util.EMToolsTier;
 import net.minecraft.world.entity.EntityType;
@@ -37,7 +37,7 @@ public class ItemInit {
     public static final RegistryObject<Item> IMMORTAL_BONE = ITEMS.register("immortal_bone", ItemImmortalBone::new);
     public static final RegistryObject<Item> IMMORTAL_STAFF = ITEMS.register("immortal_staff", ItemImmortalStaff::new);
     public static final RegistryObject<Item> IMMORTAL_DEBRIS = ITEMS.register("immortal_debris", ItemImmortalDebris::new);
-    public static final RegistryObject<Item> ANCIENT_TOMB_EYE = ITEMS.register("ancient_tomb_eye", ItemAncientTombEye::new);
+    public static final RegistryObject<Item> ANCIENT_TOMB_EYE = ITEMS.register("guling_eye", ItemGulingEye::new);
     public static final RegistryObject<Item> BLOODY_ALTAR_EYE = ITEMS.register("bloody_altar_eye", ItemBloodyAltarEye::new);
     public static final RegistryObject<Item> GUARDIAN_CORE = ITEMS.register("guardian_core", ItemGuardianCore::new);
     public static final RegistryObject<Item> IMMORTAL_INGOT = ITEMS.register("immortal_ingot", () -> new Item(new Item.Properties()));
