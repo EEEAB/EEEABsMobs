@@ -10,7 +10,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class LayerGuardianLaser extends LayerGlow<EntityNamelessGuardian, ModelNamelessGuardian> {
-    private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/nameless_guardian/nameless_guardian_shoot.png");
+    private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/guling_sentinel/nameless_guardian/nameless_guardian_shoot.png");
 
     public LayerGuardianLaser(RenderLayerParent<EntityNamelessGuardian, ModelNamelessGuardian> renderLayerParent) {
         super(renderLayerParent, GLOW_LAYER);
