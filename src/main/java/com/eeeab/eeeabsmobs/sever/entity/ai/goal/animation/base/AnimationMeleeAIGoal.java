@@ -127,10 +127,4 @@ public class AnimationMeleeAIGoal<T extends EEEABMobLibrary & IAnimatedEntity> e
         if (animations == null || animations.length == 0) return IAnimatedEntity.NO_ANIMATION;
         return animations[this.attacker.getRandom().nextInt(animations.length)];
     }
-
-    //轮询获得动画
-    private Animation getAnimationByPolling() {
-        if (animations == null || animations.length == 0) return IAnimatedEntity.NO_ANIMATION;
-        return animations[this.attacker.tickCount % animations.length];
-    }
 }
