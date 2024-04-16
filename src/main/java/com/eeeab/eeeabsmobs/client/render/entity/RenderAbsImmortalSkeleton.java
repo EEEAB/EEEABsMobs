@@ -14,10 +14,10 @@ import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 
 public class RenderAbsImmortalSkeleton extends MobRenderer<EntityAbsImmortalSkeleton, ModelAbsImmortalSkeleton> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal_skeleton/immortal_skeleton.png");
-    private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal_skeleton/immortal_skeleton_glow.png");
-    private static final ResourceLocation ARMOR_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal_skeleton/immortal_skeleton_armor.png");
-    private static final ResourceLocation PLAINS_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal_skeleton/immortal_skeleton_plains.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/immortal_skeleton.png");
+    private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/immortal_skeleton_glow.png");
+    private static final ResourceLocation ARMOR_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/immortal_skeleton_armor.png");
+    private static final ResourceLocation PLAINS_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/immortal_skeleton_plains.png");
 
     public RenderAbsImmortalSkeleton(EntityRendererProvider.Context context) {
         super(context, new ModelAbsImmortalSkeleton(), 0.5F);
