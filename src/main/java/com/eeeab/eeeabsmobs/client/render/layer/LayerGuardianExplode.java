@@ -16,7 +16,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class LayerGuardianExplode extends RenderLayer<EntityNamelessGuardian, ModelNamelessGuardian> {
-    private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/guling_sentinel/nameless_guardian/nameless_guardian.png");
+    private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/guling/nameless_guardian/nameless_guardian.png");
 
     public LayerGuardianExplode(RenderLayerParent<EntityNamelessGuardian, ModelNamelessGuardian> pRenderer) {
         super(pRenderer);
