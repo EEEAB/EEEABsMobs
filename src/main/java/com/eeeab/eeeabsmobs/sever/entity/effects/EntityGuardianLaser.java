@@ -131,7 +131,7 @@ public class EntityGuardianLaser extends EntityMagicEffects {
             List<LivingEntity> hit = raytraceEntities(level(), new Vec3(getX(), getY(), getZ()), new Vec3(endPosX, endPosY, endPosZ)).entities;
             if (blockSide != null) {
                 spawnExplosionParticles(2);
-                if (!level().isClientSide && !isPlayer() && EMConfigHandler.COMMON.EXPERIMENTAL_ENTITY.GUARDIAN_LASER.enableGenerateScorchEntity.get()) {
+                if (!level().isClientSide && !isPlayer() && EMConfigHandler.COMMON.ENTITY.GUARDIAN_LASER.enableGenerateScorchEntity.get()) {
                     EntityScorch scorch = new EntityScorch(level(), prevCollidePosX, prevCollidePosY, prevCollidePosZ);
                     level().addFreshEntity(scorch);
                 }

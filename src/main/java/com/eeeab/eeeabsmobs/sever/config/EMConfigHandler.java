@@ -1,11 +1,17 @@
 package com.eeeab.eeeabsmobs.sever.config;
 
+import com.eeeab.eeeabsmobs.EEEABMobs;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.common.Mod;
 
-public class EMConfigHandler {
+@Mod.EventBusSubscriber(modid = EEEABMobs.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+public final class EMConfigHandler {
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     public static final ForgeConfigSpec SPEC;
     public static final Common COMMON;
+
+    private EMConfigHandler() {
+    }
 
     //必须使用静态代码块
     static {
@@ -16,34 +22,33 @@ public class EMConfigHandler {
     public static class Common {
         public Common(final ForgeConfigSpec.Builder builder) {
             MOB = new Mob(builder);
-            EXPERIMENTAL_ENTITY = new ExperimentalEntity(builder);
+            ENTITY = new Entity(builder);
+            ITEM = new Item(builder);
             OTHER = new Other(builder);
         }
 
         public final Mob MOB;
-        public final ExperimentalEntity EXPERIMENTAL_ENTITY;
+        public final Entity ENTITY;
+        public final Item ITEM;
         public final Other OTHER;
     }
 
-    public static class ExperimentalEntity {
-        public ExperimentalEntity(final ForgeConfigSpec.Builder builder) {
-            builder.push("Experimental Entity");
-            GUARDIAN_LASER = new GuardianLaser(builder);
+    public static class Item {
+        public Item(final ForgeConfigSpec.Builder builder) {
+            builder.push("Items");
+            enableImmortalArmorItemDurability = BUILDER.comment("If 'True' the 'Immortal Armor' will be damaged due to durability").define("Enable immortal armor durability", false);
+            enableImmortalItemDurability = BUILDER.comment("If 'True' the 'Immortal Item' will be damaged due to durability").define("Enable immortal item durability", false);
+            //{
+            //    builder.push("Guardian Axe");
+            //    GUARDIAN_AXE_TOOL = new ToolConfig(10F, 1F);
+            //    builder.pop();
+            //}
             builder.pop();
         }
 
-        public final GuardianLaser GUARDIAN_LASER;
-    }
-
-    public static class GuardianLaser {
-        public GuardianLaser(final ForgeConfigSpec.Builder builder) {
-            builder.push("Guardian Laser");
-            this.enableGenerateScorchEntity = BUILDER.comment("If 'False' disable scorch generate on the ground").define("Enable scorch generate", true);
-            builder.pop();
-        }
-
-        //生成烧焦的地面实体
-        public final ForgeConfigSpec.BooleanValue enableGenerateScorchEntity;
+        public final ForgeConfigSpec.BooleanValue enableImmortalArmorItemDurability;
+        public final ForgeConfigSpec.BooleanValue enableImmortalItemDurability;
+        //public final ToolConfig GUARDIAN_AXE_TOOL;
     }
 
     public static class Mob {
@@ -51,13 +56,13 @@ public class EMConfigHandler {
             builder.push("Mobs");
             IMMORTAL = new ImmortalMobs(builder);
             CORPSES = new CorpseMobs(builder);
-            NAMELESS_GUARDIAN = new NamelessGuardian(builder);
+            GULING = new GulingMobs(builder);
             builder.pop();
         }
 
         public final CorpseMobs CORPSES;
         public final ImmortalMobs IMMORTAL;
-        public final NamelessGuardian NAMELESS_GUARDIAN;
+        public final GulingMobs GULING;
     }
 
     public static class ImmortalMobs {
@@ -126,6 +131,17 @@ public class EMConfigHandler {
         public final AttributeConfig combatConfig;
     }
 
+    //不朽
+    public static class Immortal {
+        public Immortal(final ForgeConfigSpec.Builder builder) {
+            builder.push("Immortal Boss");
+            combatConfig = new AttributeConfig();
+            builder.pop();
+        }
+
+        public final AttributeConfig combatConfig;
+    }
+
     public static class CorpseMobs {
         public CorpseMobs(final ForgeConfigSpec.Builder builder) {
             builder.push("Corpse Mobs");
@@ -164,6 +180,31 @@ public class EMConfigHandler {
         public final GeneralDamageCap maximumDamageCap;
     }
 
+    public static class GulingMobs {
+        public GulingMobs(final ForgeConfigSpec.Builder builder) {
+            builder.push("Structure-Guling");
+            GULING_SENTINEL_HEAVY = new GulingSentinelHeavy(builder);
+            NAMELESS_GUARDIAN = new NamelessGuardian(builder);
+            builder.pop();
+        }
+
+        public final NamelessGuardian NAMELESS_GUARDIAN;
+        public final GulingSentinelHeavy GULING_SENTINEL_HEAVY;
+    }
+
+    //古陵哨兵-重型
+    public static class GulingSentinelHeavy {
+        public GulingSentinelHeavy(final ForgeConfigSpec.Builder builder) {
+            builder.push("Guling Sentinel-Heavy");
+            enableNonCombatHeal = BUILDER.comment("If 'False' disable non-combat heal").define("Enable non-combat heal", true);
+            combatConfig = new AttributeConfig();
+            builder.pop();
+        }
+
+        public final ForgeConfigSpec.BooleanValue enableNonCombatHeal;//启用脱战治疗
+        public final AttributeConfig combatConfig;
+    }
+
     //无名守卫者
     public static class NamelessGuardian {
         public NamelessGuardian(final ForgeConfigSpec.Builder builder) {
@@ -183,15 +224,25 @@ public class EMConfigHandler {
         public final GeneralDamageCap maximumDamageCap;
     }
 
-    //不朽
-    public static class Immortal {
-        public Immortal(final ForgeConfigSpec.Builder builder) {
-            builder.push("Immortal Boss");
-            combatConfig = new AttributeConfig();
+    public static class Entity {
+        public Entity(final ForgeConfigSpec.Builder builder) {
+            builder.push("Entity");
+            GUARDIAN_LASER = new GuardianLaser(builder);
             builder.pop();
         }
 
-        public final AttributeConfig combatConfig;
+        public final GuardianLaser GUARDIAN_LASER;
+    }
+
+    public static class GuardianLaser {
+        public GuardianLaser(final ForgeConfigSpec.Builder builder) {
+            builder.push("Guardian Laser");
+            this.enableGenerateScorchEntity = BUILDER.comment("If 'False' disable scorch generate on the ground").define("Enable scorch generate", true);
+            builder.pop();
+        }
+
+        //生成烧焦的地面实体
+        public final ForgeConfigSpec.BooleanValue enableGenerateScorchEntity;
     }
 
     //其他设置
@@ -236,5 +287,16 @@ public class EMConfigHandler {
         }
 
         public final ForgeConfigSpec.DoubleValue damageCap;
+    }
+
+    //通用物品配置
+    public static class ToolConfig {
+        ToolConfig(float attackDamage, float attackSpeed) {
+            this.attackDamage = BUILDER.comment("Set tool attack damage").defineInRange("Attack damage", attackDamage, 0d, Double.MAX_VALUE);
+            this.attackSpeed = BUILDER.comment("Set tool attack speed").defineInRange("Attack speed", attackSpeed, 0d, Double.MAX_VALUE);
+        }
+
+        public final ForgeConfigSpec.DoubleValue attackDamage;
+        public final ForgeConfigSpec.DoubleValue attackSpeed;
     }
 }
