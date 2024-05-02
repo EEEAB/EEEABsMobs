@@ -3,7 +3,6 @@ package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -43,7 +42,7 @@ public class AnimationMeleeAIGoal<T extends EEEABMobLibrary & IAnimatedEntity> e
         this.speed = speed;
         this.customFlag = customFlag;
         this.animations = animations;
-        this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
     @Override
@@ -127,11 +126,5 @@ public class AnimationMeleeAIGoal<T extends EEEABMobLibrary & IAnimatedEntity> e
     private Animation getAnimationByRandom() {
         if (animations == null || animations.length == 0) return IAnimatedEntity.NO_ANIMATION;
         return animations[this.attacker.getRandom().nextInt(animations.length)];
-    }
-
-    //轮询获得动画
-    private Animation getAnimationByPolling() {
-        if (animations == null || animations.length == 0) return IAnimatedEntity.NO_ANIMATION;
-        return animations[this.attacker.tickCount % animations.length];
     }
 }

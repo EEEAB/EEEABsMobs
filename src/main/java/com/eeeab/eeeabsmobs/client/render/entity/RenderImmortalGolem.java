@@ -11,8 +11,8 @@ import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 
 public class RenderImmortalGolem extends MobRenderer<EntityImmortalGolem, ModelImmortalGolem> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal_golem/immortal_golem.png");
-    private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal_golem/immortal_golem_eyes.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_golem/immortal_golem.png");
+    private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_golem/immortal_golem_eyes.png");
 
     public RenderImmortalGolem(EntityRendererProvider.Context context) {
         super(context, new ModelImmortalGolem(), 0.3f);

@@ -2,9 +2,8 @@ package com.eeeab.eeeabsmobs.sever.init;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.item.*;
-import com.eeeab.eeeabsmobs.sever.item.eye.ItemAncientTombEye;
+import com.eeeab.eeeabsmobs.sever.item.eye.ItemGulingEye;
 import com.eeeab.eeeabsmobs.sever.item.eye.ItemBloodyAltarEye;
-import com.eeeab.eeeabsmobs.sever.item.util.EMBlockEntityItemRender;
 import com.eeeab.eeeabsmobs.sever.item.util.EMToolsTier;
 import com.eeeab.eeeabsmobs.sever.util.EMTabGroup;
 import net.minecraft.world.entity.EntityType;
@@ -28,8 +27,8 @@ public class ItemInit {
     public static final RegistryObject<Item> IMMORTAL_BONE = ITEMS.register("immortal_bone", () -> new ItemImmortalBone(new Item.Properties().tab(EMTabGroup.TABS)));
     public static final RegistryObject<Item> IMMORTAL_DEBRIS = ITEMS.register("immortal_debris", () -> new ItemImmortalDebris(new Item.Properties().tab(EMTabGroup.TABS)));
     public static final RegistryObject<Item> IMMORTAL_INGOT = ITEMS.register("immortal_ingot", () -> new Item(new Item.Properties().tab(EMTabGroup.TABS)));
-    public static final RegistryObject<Item> ANCIENT_TOMB_EYE = ITEMS.register("ancient_tomb_eye", () -> new ItemAncientTombEye(new Item.Properties().tab(EMTabGroup.TABS).rarity(Rarity.RARE).stacksTo(16).fireResistant()));
     public static final RegistryObject<Item> BLOODY_ALTAR_EYE = ITEMS.register("bloody_altar_eye", () -> new ItemBloodyAltarEye(new Item.Properties().tab(EMTabGroup.TABS).rarity(Rarity.RARE).stacksTo(16).fireResistant()));
+    public static final RegistryObject<Item> GULING_EYE = ITEMS.register("guling_eye", () -> new ItemGulingEye(new Item.Properties().tab(EMTabGroup.TABS).rarity(Rarity.RARE).stacksTo(16).fireResistant()));
     public static final RegistryObject<Item> HEART_OF_PAGAN = ITEMS.register("heart_of_pagan", () -> new Item(new Item.Properties().tab(EMTabGroup.TABS).stacksTo(1).fireResistant()));
     //防具
     public static final RegistryObject<Item> IMMORTAL_HELMET = ITEMS.register("immortal_helmet", () -> new ItemArmorImmortal(EquipmentSlot.HEAD, new Item.Properties().tab(EMTabGroup.TABS)));
@@ -51,6 +50,7 @@ public class ItemInit {
     public static final RegistryObject<Item> IMMORTAL_SHAMAN_EGG = registerEgg("immortal_shaman_egg", EntityInit.IMMORTAL_SHAMAN, new Item.Properties().tab(EMTabGroup.TABS), IMMORTAL_BACK_COLOR, rgb2dec(56, 195, 255));
     public static final RegistryObject<Item> IMMORTAL_GOLEM_EGG = registerEgg("immortal_golem_egg", EntityInit.IMMORTAL_GOLEM, new Item.Properties().tab(EMTabGroup.TABS), IMMORTAL_BACK_COLOR, rgb2dec(158, 226, 255));
     public static final RegistryObject<Item> NAMELESS_GUARDIAN_EGG = registerEgg("nameless_guardian_egg", EntityInit.NAMELESS_GUARDIAN, new Item.Properties().tab(EMTabGroup.TABS), rgb2dec(15, 15, 15), rgb2dec(100, 100, 105));
+    public static final RegistryObject<Item> GULING_SENTINEL_HEAVY_EGG = registerEgg("guling_sentinel_heavy_egg", EntityInit.GULING_SENTINEL_HEAVY, new Item.Properties().tab(EMTabGroup.TABS), rgb2dec(15, 15, 15), rgb2dec(56, 145, 200));
     public static final RegistryObject<Item> CORPSE_EGG = registerEgg("corpse_egg", EntityInit.CORPSE, new Item.Properties().tab(EMTabGroup.TABS), CORPSE_GREEN_COLOR, rgb2dec(72, 135, 115));
     public static final RegistryObject<Item> CORPSE_VILLAGER_EGG = registerEgg("corpse_villager_egg", EntityInit.CORPSE_VILLAGER, new Item.Properties().tab(EMTabGroup.TABS), CORPSE_GREEN_COLOR, rgb2dec(72, 129, 125));
     public static final RegistryObject<Item> CORPSE_WARLOCK_EGG = registerEgg("corpse_warlock_egg", EntityInit.CORPSE_WARLOCK, new Item.Properties().tab(EMTabGroup.TABS), rgb2dec(49, 47, 50), rgb2dec(222, 16, 16));

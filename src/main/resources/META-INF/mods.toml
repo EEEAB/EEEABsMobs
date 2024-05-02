@@ -4,7 +4,7 @@ license = "GNU LESSER GENERAL PUBLIC LICENSE"
 
 [[mods]]
 modId = "eeeabsmobs"
-version = "0.7"
+version = "0.8"
 displayName = "EEEAB's Mobs"
 displayURL = "https://www.curseforge.com/minecraft/mc-mods/eeeabs-mobs"
 logoFile = "banner.png"

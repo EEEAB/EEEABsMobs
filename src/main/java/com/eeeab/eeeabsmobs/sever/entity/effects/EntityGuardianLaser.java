@@ -5,7 +5,7 @@ import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.util.EMDamageSource;
 import net.minecraft.core.Direction;
@@ -132,7 +132,7 @@ public class EntityGuardianLaser extends EntityMagicEffects {
             List<LivingEntity> hit = raytraceEntities(level, new Vec3(getX(), getY(), getZ()), new Vec3(endPosX, endPosY, endPosZ)).entities;
             if (blockSide != null) {
                 spawnExplosionParticles(2);
-                if (!level.isClientSide && !isPlayer() && EMConfigHandler.COMMON.EXPERIMENTAL_ENTITY.GUARDIAN_LASER.enableGenerateScorchEntity.get()) {
+                if (!level.isClientSide && !isPlayer() && EMConfigHandler.COMMON.ENTITY.GUARDIAN_LASER.enableGenerateScorchEntity.get()) {
                     EntityScorch scorch = new EntityScorch(level, prevCollidePosX, prevCollidePosY, prevCollidePosZ);
                     level.addFreshEntity(scorch);
                 }

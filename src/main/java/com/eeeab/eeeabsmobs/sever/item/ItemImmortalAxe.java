@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.item;
 
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.AxeItem;
@@ -17,12 +18,12 @@ public class ItemImmortalAxe extends AxeItem {
 
     @Override
     public boolean canBeDepleted() {
-        return false;
+        return EMConfigHandler.COMMON.ITEM.enableImmortalItemDurability.get() && super.canBeDepleted();
     }
 
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.add(EMTUtils.UNABLE_BREAKS);
+        if (!EMConfigHandler.COMMON.ITEM.enableImmortalItemDurability.get()) tooltip.add(EMTUtils.UNABLE_BREAKS);
     }
 }

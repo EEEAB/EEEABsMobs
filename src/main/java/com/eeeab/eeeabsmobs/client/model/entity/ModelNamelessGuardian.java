@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.eeeabsmobs.sever.entity.namelessguardian.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.model.AdvancedModelBox;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
@@ -93,14 +93,13 @@ public class ModelNamelessGuardian extends EMAdvancedEntityModel<EntityNamelessG
         body.setTextureOffset(7, 36).addBox(-10.8532F, -13.2245F, -7.5671F, 22.0F, 14.0F, 12.0F, false)
                 .setTextureOffset(81, 1).addBox(-8.8958F, 0.6606F, -6.0245F, 18.5F, 3.0F, 9.0F, 0.0F);
 
-
         cube_r4 = new AdvancedModelBox(this, "cube_r4");
         offsetAndRotation(cube_r4, 0.2319F, -19.0651F, -2.4809F, 0.1745F, 0.0F, 0.0F);
         body.addChild(cube_r4);
         cube_r4.setTextureOffset(0, 1).addBox(-14.0F, -7.5F, -8.5F, 28.0F, 15.0F, 17.0F, false);
 
         heart = new AdvancedModelBox(this, "heart");
-        heart.setPos(-0.5F, -4.9952F, 0.2181F);
+        heart.setPos(-0.1F, -4.9952F, 0.2181F);
         body.addChild(heart);
 
         cube_r5 = new AdvancedModelBox(this, "cube_r5");
@@ -148,8 +147,8 @@ public class ModelNamelessGuardian extends EMAdvancedEntityModel<EntityNamelessG
                 .setTextureOffset(60, 198).addBox(2.0801F, 1.1444F, -39.6786F, 5.0F, 5.0F, 14.0F, false)
                 .setTextureOffset(19, 205).addBox(2.7801F, 3.5444F, 19.1214F, 4.0F, 5.0F, 6.0F, false)
                 .setTextureOffset(3, 209).addBox(3.1801F, 4.6444F, 25.1214F, 3.0F, 3.0F, 4.0F, false)
-                .setTextureOffset(88, 201).addBox(3.1801F, 2.2444F, -42.2786F, 3.0F, 3.0F, 3.0F, false)
-                .setTextureOffset(42, 204).addBox(4.0801F, 1.0944F, -48.7786F, 1.0F, 5.0F, 7.0F, false);
+                /*.setTextureOffset(88, 201).addBox(3.1801F, 2.2444F, -42.2786F, 3.0F, 3.0F, 3.0F, false)
+                .setTextureOffset(42, 204).addBox(4.0801F, 1.0944F, -48.7786F, 1.0F, 5.0F, 7.0F, false)*/;
 
         cube_r8 = new AdvancedModelBox(this, "cube_r8");
         offsetAndRotation(cube_r8, 4.7303F, 0.6472F, -11.2938F, -0.4363F, 0.0F, 0.0F);
@@ -181,7 +180,7 @@ public class ModelNamelessGuardian extends EMAdvancedEntityModel<EntityNamelessG
         cube_r12 = new AdvancedModelBox(this, "cube_r12");
         offsetAndRotation(cube_r12, 4.6F, 16.0029F, -31.8596F, 2.2078F, 0.0F, 0.0F);
         blade.addChild(cube_r12);
-        cube_r12.setTextureOffset(156, 191).addBox(-1.8949F, -6.3321F, -9.8793F, 4.0F, 18.0F, 8.0F, false);
+        cube_r12.setTextureOffset(156, 191).addBox(-1.8949F, -6.3321F, -9.8793F, 4.0F, 18.0F, 8.0F, -0.1F, false);
 
         leftArm = new AdvancedModelBox(this, "leftArm");
         offsetAndRotation(leftArm, 18.3405F, -21.4257F, 0.0F, 0.0F, 0.0F, -0.0873F);

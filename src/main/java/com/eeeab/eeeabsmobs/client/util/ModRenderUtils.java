@@ -20,7 +20,7 @@ public class ModRenderUtils {
     public static Vec3 getWorldPosition(Entity entity, float entityYaw, AdvancedModelBox box) {
         PoseStack poseStack = new PoseStack();
         poseStack.translate(entity.getX(), entity.getY(), entity.getZ());
-        poseStack.mulPose(new Quaternion(0,(float) ((-entityYaw + 180F) * Math.PI / 180F),0,true));
+        poseStack.mulPose(new Quaternion(0, -entityYaw + 180F,0,true));
         poseStack.scale(-1F, -1F, 1F);
         poseStack.translate(0, -1.5F, 0);
         ModRenderUtils.poseStackFromModel(poseStack, box);

@@ -1,0 +1,18 @@
+{
+  "structures": [
+    {
+      "structure": "eeeabsmobs:guling",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 1210042404,
+    "spacing": 114,
+    "separation": 51,
+    "exclusion_zone": {
+      "chunk_count": 5,
+      "other_set": "minecraft:ancient_cities"
+    }
+  }
+}

@@ -10,9 +10,9 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
 public class EMTagKey {
-    public static final TagKey<Structure> EYE_OF_ANCIENT_TOMB = registerTagKey(Registry.STRUCTURE_REGISTRY, "eye_of_ancient_tomb");
+    public static final TagKey<Structure> EYE_OF_GULING = registerTagKey(Registry.STRUCTURE_REGISTRY, "eye_of_guling");
     public static final TagKey<Structure> EYE_OF_BLOODY_ALTAR = registerTagKey(Registry.STRUCTURE_REGISTRY, "eye_of_bloody_altar");
-    public static final TagKey<Biome> ANCIENT_TOMB_BIOMES = registerTagKey(Registry.BIOME_REGISTRY, "ancient_tomb_biomes");
+    public static final TagKey<Biome> GULING_BIOMES = registerTagKey(Registry.BIOME_REGISTRY, "guling_biomes");
     public static final TagKey<Biome> BLOODY_ALTAR_BIOMES = registerTagKey(Registry.BIOME_REGISTRY, "bloody_altar_biomes");
     public static final TagKey<EntityType<?>> TRAP_WHITELIST = registerTagKey(Registry.ENTITY_TYPE_REGISTRY, "trap_whitelist");
 

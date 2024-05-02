@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
 public class EMResourceKey {
-    public static ResourceKey<Structure> ANCIENT_TOMB = registerResourceKey(Registry.STRUCTURE_REGISTRY, "ancient_tomb");
+    public static ResourceKey<Structure> GULING = registerResourceKey(Registry.STRUCTURE_REGISTRY, "guling");
     public static ResourceKey<Structure> BLOODY_ALTAR = registerResourceKey(Registry.STRUCTURE_REGISTRY, "bloody_altar");
     public static final ResourceKey<PoiType> EROSION_PORTAL = registerResourceKey(Registry.POINT_OF_INTEREST_TYPE_REGISTRY, "erosion_portal");
     public static final ResourceKey<Level> EROSION = registerResourceKey(Registry.DIMENSION_REGISTRY, "erosion");

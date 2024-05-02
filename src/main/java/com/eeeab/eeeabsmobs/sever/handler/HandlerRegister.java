@@ -46,6 +46,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.CORPSE_VILLAGER.get(), RenderCorpseVillager::new);
         event.registerEntityRenderer(EntityInit.CORPSE_WARLOCK.get(), RenderCorpseWarlock::new);
         event.registerEntityRenderer(EntityInit.NAMELESS_GUARDIAN.get(), RenderNamelessGuardian::new);
+        event.registerEntityRenderer(EntityInit.GULING_SENTINEL_HEAVY.get(), RenderGulingSentinelHeavy::new);
         event.registerEntityRenderer(EntityInit.TESTER.get(), RenderTester::new);
 
         event.registerEntityRenderer(EntityInit.GUARDIAN_BLADE.get(), RenderGuardianBlade::new);
@@ -59,6 +60,8 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.POISON_ARROW.get(), RenderPoisonArrow::new);
         event.registerEntityRenderer(EntityInit.BLOOD_BALL.get(), RendererBloodBall::new);
         event.registerEntityRenderer(EntityInit.CRIMSON_CRACK.get(), RenderCrimsonCrack::new);
+        event.registerEntityRenderer(EntityInit.CRIMSON_RAY.get(), RenderCrimsonRay::new);
+        event.registerEntityRenderer(EntityInit.GRENADE.get(), EmptyRender::new);
 
         event.registerBlockEntityRenderer(BlockEntityInit.ENTITY_TOMBSTONE.get(), RenderBlockTombstone::new);
     }

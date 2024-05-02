@@ -68,6 +68,67 @@
       "eeeabsmobs:generic/entity/skeleton_death"
     ]
   },
+  "gsh.step": {
+    "subtitle": "subtitles.gsh.step",
+    "sounds": [
+      "eeeabsmobs:entity/guling_sentinel_heavy/step1",
+      "eeeabsmobs:entity/guling_sentinel_heavy/step2",
+      "eeeabsmobs:entity/guling_sentinel_heavy/step3"
+    ]
+  },
+  "gsh.idle": {
+    "subtitle": "subtitles.gsh.idle",
+    "sounds": [
+      "eeeabsmobs:entity/guling_sentinel_heavy/idle1",
+      "eeeabsmobs:entity/guling_sentinel_heavy/idle2",
+      "eeeabsmobs:entity/guling_sentinel_heavy/idle3"
+    ]
+  },
+  "gsh.spark": {
+    "subtitle": "subtitles.gsh.spark",
+    "sounds": [
+      "eeeabsmobs:entity/guling_sentinel_heavy/spark1",
+      "eeeabsmobs:entity/guling_sentinel_heavy/spark2",
+      "eeeabsmobs:entity/guling_sentinel_heavy/spark3"
+    ]
+  },
+  "gsh.pre_attack": {
+    "subtitle": "subtitles.gsh.pre_attack",
+    "sounds": [
+      "eeeabsmobs:entity/guling_sentinel_heavy/pre_attack1",
+      "eeeabsmobs:entity/guling_sentinel_heavy/pre_attack2"
+    ]
+  },
+  "gsh.attack": {
+    "subtitle": "subtitles.gsh.attack",
+    "sounds": [
+      "eeeabsmobs:entity/guling_sentinel_heavy/attack1",
+      "eeeabsmobs:entity/guling_sentinel_heavy/attack2",
+      "eeeabsmobs:entity/guling_sentinel_heavy/attack3"
+    ]
+  },
+  "gsh.hurt": {
+    "subtitle": "subtitles.gsh.hurt",
+    "sounds": [
+      "eeeabsmobs:entity/guling_sentinel_heavy/hurt1",
+      "eeeabsmobs:entity/guling_sentinel_heavy/hurt2",
+      "eeeabsmobs:entity/guling_sentinel_heavy/hurt3"
+    ]
+  },
+  "gsh.death": {
+    "subtitle": "subtitles.gsh.death",
+    "sounds": [
+      "eeeabsmobs:entity/guling_sentinel_heavy/death1",
+      "eeeabsmobs:entity/guling_sentinel_heavy/death2",
+      "eeeabsmobs:entity/guling_sentinel_heavy/death3"
+    ]
+  },
+  "gsh.friction": {
+    "subtitle": "subtitles.gsh.friction",
+    "sounds": [
+      "eeeabsmobs:entity/guling_sentinel_heavy/friction"
+    ]
+  },
   "nameless.guardian.step": {
     "subtitle": "subtitles.nameless.guardian.step",
     "sounds": [
@@ -169,6 +230,18 @@
     "subtitle": "subtitles.giant_axe_hit",
     "sounds": [
       "eeeabsmobs:effect/giant_axe_hit"
+    ]
+  },
+  "crimson_ray": {
+    "subtitle": "subtitles.crimson_ray",
+    "sounds": [
+      "eeeabsmobs:effect/crimson_ray"
+    ]
+  },
+  "break": {
+    "subtitle": "subtitles.break",
+    "sounds": [
+      "eeeabsmobs:effect/break"
     ]
   },
   "nameless.guardian.death": {

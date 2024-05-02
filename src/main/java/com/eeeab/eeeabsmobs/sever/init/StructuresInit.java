@@ -1,9 +1,9 @@
 package com.eeeab.eeeabsmobs.sever.init;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.world.structure.AncientTombStructure;
-import com.eeeab.eeeabsmobs.sever.world.structure.BloodyAltarStructure;
-import com.eeeab.eeeabsmobs.sever.world.structure.EMConfigurationStructure;
+import com.eeeab.eeeabsmobs.sever.world.structure.StructureGuling;
+import com.eeeab.eeeabsmobs.sever.world.structure.StructureBloodyAltar;
+import com.eeeab.eeeabsmobs.sever.world.structure.StructureEMCustom;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -16,11 +16,11 @@ import net.minecraftforge.registries.RegistryObject;
 public class StructuresInit {
     private static final DeferredRegister<StructureType<?>> STRUCTURES = DeferredRegister.create(Registry.STRUCTURE_TYPE_REGISTRY, EEEABMobs.MOD_ID);
     private static final DeferredRegister<StructurePieceType> PIECE_TYPE = DeferredRegister.create(Registry.STRUCTURE_PIECE_REGISTRY, EEEABMobs.MOD_ID);
-    public static final RegistryObject<StructureType<EMConfigurationStructure>> CONFIG_STRUCTURES = STRUCTURES.register("em_config", () -> explicitStructureTypeTyping(EMConfigurationStructure.CODEC));
-    public static final RegistryObject<StructureType<AncientTombStructure>> ANCIENT_TOMB_STRUCTURE = STRUCTURES.register("ancient_tomb", () -> explicitStructureTypeTyping(AncientTombStructure.CODEC));
-    public static final RegistryObject<StructureType<BloodyAltarStructure>> BLOODY_ALTAR_STRUCTURE = STRUCTURES.register("bloody_altar", () -> explicitStructureTypeTyping(BloodyAltarStructure.CODEC));
-    public static final RegistryObject<StructurePieceType> ATP = PIECE_TYPE.register("ancient_tomb", () -> AncientTombStructure.Piece::new);
-    public static final RegistryObject<StructurePieceType> BA = PIECE_TYPE.register("bloody_altar", () -> BloodyAltarStructure.Piece::new);
+    public static final RegistryObject<StructureType<StructureEMCustom>> CONFIG_STRUCTURES = STRUCTURES.register("em_config", () -> explicitStructureTypeTyping(StructureEMCustom.CODEC));
+    public static final RegistryObject<StructureType<StructureGuling>> GULING_STRUCTURE = STRUCTURES.register("guling", () -> explicitStructureTypeTyping(StructureGuling.CODEC));
+    public static final RegistryObject<StructureType<StructureBloodyAltar>> BLOODY_ALTAR_STRUCTURE = STRUCTURES.register("bloody_altar", () -> explicitStructureTypeTyping(StructureBloodyAltar.CODEC));
+    public static final RegistryObject<StructurePieceType> GUL = PIECE_TYPE.register("guling", () -> StructureGuling.Piece::new);
+    public static final RegistryObject<StructurePieceType> BA = PIECE_TYPE.register("bloody_altar", () -> StructureBloodyAltar.Piece::new);
 
     /**
      * Originally, I had a double lambda ()->()-> for the RegistryObject line above, but it turns out that
