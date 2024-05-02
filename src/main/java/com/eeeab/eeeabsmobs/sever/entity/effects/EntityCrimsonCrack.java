@@ -6,11 +6,11 @@ import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityAbsCorpse;
-import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
+import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -26,7 +26,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.List;
 
 public class EntityCrimsonCrack extends EntityMagicEffects {
-    public static final float ATTACK_RANGE = 4.5F;
+    public static final float ATTACK_RANGE = 3.8F;
     private static final EntityDataAccessor<Integer> DATA_PHASE = SynchedEntityData.defineId(EntityCrimsonCrack.class, EntityDataSerializers.INT);
     public final ControlledAnimation phaseControlled = new ControlledAnimation(30);
     public final ControlledAnimation displayControlled = new ControlledAnimation(20);
@@ -69,11 +69,11 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
                     this.displayControlled.decreaseTimer();
                 } else {
                     List<LivingEntity> entities = this.getNearByEntities(LivingEntity.class, ATTACK_RANGE, ATTACK_RANGE, ATTACK_RANGE, ATTACK_RANGE);
-                    for (LivingEntity target : entities) {
-                        if (target == this.caster || target instanceof EntityAbsCorpse && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get())
-                            continue;
-                        if (caster instanceof EntityCorpseWarlock) {
-                            boolean flag = target.hurt(this.damageSources().indirectMagic(caster, target), 5F + target.getMaxHealth() * 0.05F);
+                    if (!this.level().isClientSide) {
+                        for (LivingEntity target : entities) {
+                            if (target == this.caster || target instanceof EntityAbsCorpse && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get())
+                                continue;
+                            boolean flag = target.hurt(this.damageSources().indirectMagic(target, caster), 5F + target.getMaxHealth() * 0.015F);
                             if (flag && target.isAlive()) {
                                 target.setDeltaMovement(target.getDeltaMovement().subtract(this.position().normalize().scale(0.08F)));
                                 ModEntityUtils.addEffectStackingAmplifier(target, EffectInit.ARMOR_LOWER_EFFECT.get(), 300, true, true, true);
@@ -122,6 +122,7 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
         if (phase < 3) {
             this.setPhase(phase + 1);
         }
+        this.playSound(SoundInit.BREAK.get(), 1.5F, (this.random.nextFloat() - this.random.nextFloat()) * 0.5F + 1.5F);
     }
 
     public int getPhase() {

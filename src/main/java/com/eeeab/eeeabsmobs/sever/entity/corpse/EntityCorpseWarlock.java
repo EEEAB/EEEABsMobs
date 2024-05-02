@@ -15,6 +15,7 @@ import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationFullRangeAtt
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationSpellAIGoal;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCrimsonCrack;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCrimsonRay;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.*;
@@ -76,6 +77,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     public static final Animation TELEPORT_ANIMATION = Animation.create(30);
     public static final Animation REST_POS_ANIMATION = Animation.create(30);
     public static final Animation VAMPIRE_ANIMATION = Animation.create(90);
+    public static final Animation ROBUST_ANIMATION = Animation.create(100);
     public static final Animation BABBLE_ANIMATION = Animation.create(666);
     public static final Animation TEARAPARTSPACE_ANIMATION = Animation.create(30);
     private static final Animation[] ANIMATIONS = new Animation[]{
@@ -86,6 +88,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             TELEPORT_ANIMATION,
             REST_POS_ANIMATION,
             VAMPIRE_ANIMATION,
+            ROBUST_ANIMATION,
             BABBLE_ANIMATION,
             TEARAPARTSPACE_ANIMATION,
     };
@@ -194,11 +197,13 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         this.goalSelector.addGoal(1, new WarlockAnimationCommonGoal(this, TEARAPARTSPACE_ANIMATION, true));
         this.goalSelector.addGoal(1, new WarlockAnimationCommonGoal(this, VAMPIRE_ANIMATION, false));
         this.goalSelector.addGoal(1, new WarlockAnimationCommonGoal(this, BABBLE_ANIMATION, false));
+        this.goalSelector.addGoal(1, new WarlockAnimationCommonGoal(this, ROBUST_ANIMATION, false));
         this.goalSelector.addGoal(2, new AnimationFullRangeAttackGoal<>(this, ATTACK_ANIMATION, 4F, 6, 2F, 5F, true));
         this.goalSelector.addGoal(2, new WarlockTeleportGoal(this));
         this.goalSelector.addGoal(3, new WarlockSummonGoal(this));
         this.goalSelector.addGoal(3, new WarlockTearApartGoal(this));
         this.goalSelector.addGoal(4, new WarlockReinforceGoal(this));
+        this.goalSelector.addGoal(5, new WarlockRobustGoal(this));
         this.goalSelector.addGoal(6, new KeepDistanceGoal<>(this, 0.96D, 18F, 2F));
         this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new EMLookAtGoal(this, Mob.class, 6.0F));
@@ -321,35 +326,48 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                 this.setInvisible(false);
             }
         } else if (this.getAnimation() == BABBLE_ANIMATION) {
-            int tick = this.getAnimationTick();
             if (this.getTarget() != null && this.distanceTo(this.getTarget()) < 12) {
                 this.setAnimation(NO_ANIMATION);//中断施法
             }
-            if (this.level().isClientSide) {
-                if (tick % 20 == 0) {
-                    Vec3 vec3 = this.position();
-                    float yRot = this.yBodyRot;
-                    float offsetX = (float) (Math.cos(Math.toRadians(yRot + 90)) * 2.5F);
-                    float offsetZ = (float) (Math.sin(Math.toRadians(yRot + 90)) * 2.5F);
-                    this.myPos[0] = new Vec3(vec3.x + offsetX, vec3.y + getBbHeight() * 1.5, vec3.z + offsetZ);
-                    AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.CRIMSON_EYE.get(), this.getX(), this.getY(), this.getZ(), 0, 0, 0, true, 0, 0, 0, 0, 10F, 1, 1, 1, 1, 1, 20, true, false, true, new ParticleComponent[]{
-                            new ParticleComponent.PinLocation(this.myPos)
-                    });
-                }
-                if (tick % 5 == 0) {
-                    ModParticleUtils.advAttractorParticle(ParticleInit.ADV_ORB.get(), this, 12, 0f, 2.5f, 20, new ParticleComponent[]{
-                            new ParticleComponent.Attractor(this.myPos, 1.2f, 0f, ParticleComponent.Attractor.EnumAttractorBehavior.EXPONENTIAL),
-                            new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, AnimData.KeyTrack.startAndEnd(0f, 0.6f), false),
-                            new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, AnimData.KeyTrack.startAndEnd(3f, 0f), false),
-                            new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.BLUE, AnimData.KeyTrack.constant(0F), false),
-                            new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.GREEN, AnimData.KeyTrack.constant(0F), false),
-                    }, false);
-                }
-            }
+            this.doCrimsonEyeEffect(2.5F);
         } else if (this.getAnimation() == ATTACK_ANIMATION) {
             this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
             if (this.level().isClientSide && this.getAnimationTick() == 5) {
                 ModParticleUtils.randomAnnularParticleOutburst(this.level(), 50, new ParticleOptions[]{ParticleTypes.SMOKE}, this.getX(), this.getY(), this.getZ(), 0.4F);
+            }
+        } else if (this.getAnimation() == ROBUST_ANIMATION) {
+            int tick = this.getAnimationTick();
+            if (tick > 35) {
+                this.doCrimsonEyeEffect(-1F);
+                this.setDeltaMovement(0, 0, 0);
+            } else {
+                this.setDeltaMovement(0, 0.25F, 0);
+            }
+        }
+    }
+
+
+    private void doCrimsonEyeEffect(float offset) {
+        if (this.level().isClientSide) {
+            int tick = this.getAnimationTick();
+            if (tick % 20 == 0) {
+                Vec3 vec3 = this.position();
+                float yRot = this.yBodyRot;
+                float offsetX = (float) (Math.cos(Math.toRadians(yRot + 90)) * offset);
+                float offsetZ = (float) (Math.sin(Math.toRadians(yRot + 90)) * offset);
+                this.myPos[0] = new Vec3(vec3.x + offsetX, vec3.y + getBbHeight() * 1.5, vec3.z + offsetZ);
+                AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.CRIMSON_EYE.get(), this.getX(), this.getY(), this.getZ(), 0, 0, 0, true, 0, 0, 0, 0, 10F, 1, 1, 1, 1, 1, 20, true, false, true, new ParticleComponent[]{
+                        new ParticleComponent.PinLocation(this.myPos)
+                });
+            }
+            if (tick % 5 == 0) {
+                ModParticleUtils.advAttractorParticle(ParticleInit.ADV_ORB.get(), this, 12, 0f, 2.5f, 20, new ParticleComponent[]{
+                        new ParticleComponent.Attractor(this.myPos, 1.2f, 0f, ParticleComponent.Attractor.EnumAttractorBehavior.EXPONENTIAL),
+                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, AnimData.KeyTrack.startAndEnd(0f, 0.6f), false),
+                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, AnimData.KeyTrack.startAndEnd(3f, 0f), false),
+                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.BLUE, AnimData.KeyTrack.constant(0F), false),
+                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.GREEN, AnimData.KeyTrack.constant(0F), false),
+                }, false);
             }
         }
     }
@@ -392,12 +410,13 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             return false;
         } else {
             if (entity != null) {
-                if (this.getAnimation() == TELEPORT_ANIMATION) {
+                Animation animation = this.getAnimation();
+                if (animation == TELEPORT_ANIMATION) {
                     return false;
-                } else if (this.getAnimation() == BABBLE_ANIMATION) {
+                } else if (animation == BABBLE_ANIMATION) {
                     this.setAnimation(NO_ANIMATION);
-                } else if (this.getAnimation() == VAMPIRE_ANIMATION) {
-                    damage = 0F;
+                } else if (animation == VAMPIRE_ANIMATION || animation == ROBUST_ANIMATION) {
+                    damage *= 0.2F;
                 }
                 if (!ModEntityUtils.isProjectileSource(source) && this.random.nextFloat() < 0.6F) this.hurtCount++;
                 float maxDamageCap = (float) (EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.maximumDamageCap.damageCap.get() * 1.0F);
@@ -418,7 +437,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             damage = 0.0F;
         }
         if (source.is(EMTagKey.MAGIC_UNRESISTANT_TO)) {
-            damage *= 0.2F;//魔法造成的伤害减少80%
+            damage *= 0.5F;//魔法造成的伤害减少50%
         }
         return damage;
     }
@@ -614,6 +633,11 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         }
     }
 
+    @Override
+    public boolean isGlow() {
+        return this.getAnimation() == VAMPIRE_ANIMATION || this.getAnimation() == TELEPORT_ANIMATION || this.getAnimation() == ROBUST_ANIMATION;
+    }
+
     public boolean isHeal() {
         return this.entityData.get(DATA_IS_HEAL);
     }
@@ -640,11 +664,11 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     }
 
     public static AttributeSupplier.Builder setAttributes() {
-        return createMobAttributes().add(Attributes.MAX_HEALTH, 120.0D).
+        return createMobAttributes().add(Attributes.MAX_HEALTH, 150.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.32D).
                 add(Attributes.FOLLOW_RANGE, 36.0D).
                 add(Attributes.ATTACK_DAMAGE, 5.0D).
-                add(Attributes.KNOCKBACK_RESISTANCE, 0.5D);
+                add(Attributes.KNOCKBACK_RESISTANCE, 1D);
     }
 
     public enum TargetType {
@@ -837,7 +861,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
          */
         @Override
         protected int getSpellCastingCooling() {
-            return 100;
+            return 100 + this.spellCaster.random.nextInt(100);
         }
 
         /**
@@ -924,6 +948,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                 double radians = 0;
                 if (this.target != null) {
                     radians = Math.toRadians(this.spellCaster.getAngleBetweenEntities(this.spellCaster, this.target) + 90);
+                    this.targetY = Mth.floor(this.target.getY() + 1.0);
                 }
                 EntityCrimsonCrack crack = new EntityCrimsonCrack(this.spellCaster.level(), this.spellCaster, new Vec3(this.targetX - 2.0F * Math.cos(radians), this.targetY + 0.56125F, this.targetZ - 2.0F * Math.sin(radians)));
                 this.spellCaster.level().addFreshEntity(crack);
@@ -955,4 +980,98 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             return EntityCorpseWarlock.TEARAPARTSPACE_ANIMATION;
         }
     }
+
+    static class WarlockRobustGoal extends AnimationSpellAIGoal<EntityCorpseWarlock> {
+
+        public WarlockRobustGoal(EntityCorpseWarlock spellCaster) {
+            super(spellCaster);
+        }
+
+        @Override
+        public boolean canUse() {
+            if (super.canUse()) {
+                LivingEntity target = this.spellCaster.getTarget();
+                if (target != null) {
+                    return this.spellCaster.distanceTo(target) - target.getBbWidth() / 2f < 16;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.spellCaster.getAnimation() == EntityCorpseWarlock.ROBUST_ANIMATION;
+        }
+
+        @Override
+        public void tick() {
+            int tick = this.spellCaster.getAnimationTick();
+            LivingEntity target = this.spellCaster.getTarget();
+            if (target != null) {
+                if (tick > 40) {
+                    this.spellCaster.getLookControl().setLookAt(target, 30F, 30F);
+                } else {
+                    this.spellCaster.setYRot(this.spellCaster.yRotO);
+                }
+                double minY = Math.min(target.getY(), this.spellCaster.getY()) - EntityCrimsonRay.ATTACK_RADIUS;
+                double maxY = Math.max(target.getY(), this.spellCaster.getY()) + 1.0D;
+                if (tick >= 40 && tick % 10 == 0) {
+                    for (int i = 0; i < 5; i++) {
+                        double rz = target.getZ() + this.spellCaster.random.nextGaussian() * 5;
+                        double rx = target.getX() + this.spellCaster.random.nextGaussian() * 5;
+                        this.spawnRay(rx, rz, minY, maxY);
+                    }
+                }
+                if (this.spellCaster.random.nextBoolean() && (tick == 45 || tick == 55 || tick == 65 || tick == 75 || tick == 85)) {
+                    this.spawnRay(target.getX(), target.getZ(), minY, maxY);
+                }
+            }
+        }
+
+        private void spawnRay(double x, double z, double minY, double maxY) {
+            if (!this.spellCaster.level().isClientSide) {
+                Vec3 sPos = ModEntityUtils.checkSummonEntityPoint(this.spellCaster, x, z, minY, maxY);
+                EntityCrimsonRay ray = new EntityCrimsonRay(this.spellCaster.level(), this.spellCaster, sPos, 20);
+                this.spellCaster.level().addFreshEntity(ray);
+            }
+        }
+
+        /**
+         * 施法
+         */
+        @Override
+        protected void inSpellCasting() {
+        }
+
+        /**
+         * @return 施法冷却
+         */
+        @Override
+        protected int getSpellCastingCooling() {
+            return 600;
+        }
+
+        /**
+         * @return 施法音效
+         */
+        @Nullable
+        @Override
+        protected SoundEvent getSpellCastingSound() {
+            return null;
+        }
+
+        /**
+         * @return 实体动画
+         */
+        @Override
+        protected Animation getAnimation() {
+            return EntityCorpseWarlock.ROBUST_ANIMATION;
+        }
+    }
+
 }
