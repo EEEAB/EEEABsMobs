@@ -290,7 +290,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     protected EMConfigHandler.AttributeConfig getAttributeConfig() {
-        return EMConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.combatConfig;
+        return EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.combatConfig;
     }
 
     @Override
@@ -356,7 +356,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.targetSelector.addGoal(2, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new HurtByTargetGoal(this, EntityAbsGuling.class));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null));
     }
 
@@ -471,7 +471,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             }
 
             if (!this.active && this.getAnimation() != ACTIVATE_ANIMATION) {
-                if (EMConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.enableNonCombatHeal.get()) this.heal(0.5F);
+                if (EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.enableNonCombatHeal.get()) this.heal(0.5F);
             }
 
             if (this.getTarget() != null && this.active && this.isTimeOutToUseSkill() && !this.shouldUseSkill && this.getAnimation() == NO_ANIMATION && !this.isNoAi()) {
@@ -622,12 +622,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 this.level().addParticle(ParticleTypes.SOUL_FIRE_FLAME, this.getRandomX(1.2D), this.getRandomY(), this.getRandomZ(1.2D), d0, d1, d2);
             }
         } else {
-            for (int i = 0; i < 30; ++i) {
-                double d0 = this.random.nextGaussian() * 0.02D;
-                double d1 = this.random.nextGaussian() * 0.02D;
-                double d2 = this.random.nextGaussian() * 0.02D;
-                this.level().addParticle(ParticleTypes.LARGE_SMOKE, this.getRandomX(1.5D), this.getRandomY(), this.getRandomZ(1.5D), d0, d1, d2);
-            }
+            super.makePoofParticles();
         }
     }
 
@@ -732,12 +727,13 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public boolean hurt(DamageSource source, float damage) {
         if (!this.level().isClientSide/* 在服务端进行判断 */) {
             Entity entity = source.getEntity();
-            float maximumDamageCap = (float) (EMConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.maximumDamageCap.damageCap.get() * 1F);
+            float maximumDamageCap = (float) (EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.maximumDamageCap.damageCap.get() * 1F);
             float maxHurtDamage = getMaxHealth() * maximumDamageCap;
             if ((!active || getTarget() == null) && entity instanceof LivingEntity livingEntity
                     && !(livingEntity instanceof Player player && player.isCreative() || this.level().getDifficulty() == Difficulty.PEACEFUL)
-                    && !(livingEntity instanceof EntityNamelessGuardian))
+                    && (!EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() || !(livingEntity instanceof EntityAbsGuling))) {
                 this.setLastHurtByMob(livingEntity);//使得可以有多个仇恨目标
+            }
             if (this.guardianInvulnerableTime > 0) {
                 return false;
             } else if (entity != null) {
@@ -1211,24 +1207,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         }
     }
 
-    private void doWalkEffect(int amount) {
-        if (this.level().isClientSide) {
-            for (int l = 0; l < amount; l++) {
-                int i = Mth.floor(this.getX());
-                int j = Mth.floor(this.getY() - (double) 0.2F);
-                int k = Mth.floor(this.getZ());
-                BlockPos pos = new BlockPos(i, j, k);
-                BlockState blockstate = this.level().getBlockState(pos);
-                if (!blockstate.isAir()) {
-                    this.level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, blockstate).setPos(pos),
-                            this.getX() + ((double) this.random.nextFloat() - 0.5D) * (double) this.getBbWidth(),
-                            this.getY() + 0.1D, this.getZ() + ((double) this.random.nextFloat() - 0.5D) * (double) this.getBbWidth(),
-                            4.0D * ((double) this.random.nextFloat() - 0.5D), 0.5D, ((double) this.random.nextFloat() - 0.5D) * 4.0D);
-                }
-            }
-        }
-    }
-
     private void doBreakAirEffect() {
         if (this.level().isClientSide) {
             int tick = this.getAnimationTick();
@@ -1277,7 +1255,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public boolean guardianHurtTarget(DamageSource damageSource, EntityNamelessGuardian guardian, LivingEntity hitEntity, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier, boolean shouldHeal, boolean disableShield) {
         float finalDamage = ((guardian.getAttackDamageAttributeValue() * baseDamageMultiplier) + hitEntity.getMaxHealth() * hitEntityMaxHealth) * damageMultiplier;
         boolean flag = hitEntity.hurt(damageSource, finalDamage);
-        double suckBloodCap = EMConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.suckBloodFactor.get();
+        double suckBloodCap = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.suckBloodFactor.get();
         if (flag && shouldHeal)
             guardian.heal((float) Mth.clamp(finalDamage * 0.22F, 0F, getMaxHealth() * suckBloodCap));
         if (disableShield && hitEntity instanceof Player player && player.isBlocking()) {
@@ -1323,7 +1301,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     public boolean isChallengeMode() {
-        return EMConfigHandler.COMMON.MOB.NAMELESS_GUARDIAN.challengeMode.get();
+        return EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.challengeMode.get();
     }
 
     public void setExecuteWeak(boolean executeWeak) {
