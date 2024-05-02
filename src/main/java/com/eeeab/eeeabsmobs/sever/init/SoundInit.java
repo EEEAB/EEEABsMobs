@@ -14,6 +14,8 @@ public class SoundInit {
     //Generic
     public static final RegistryObject<SoundEvent> LASER = create("laser");
     public static final RegistryObject<SoundEvent> GIANT_AXE_HIT = create("giant_axe_hit");
+    public static final RegistryObject<SoundEvent> CRIMSON_RAY = create("crimson_ray");
+    public static final RegistryObject<SoundEvent> BREAK = create("break");
 
     //Immortal Skeleton
     public static final RegistryObject<SoundEvent> IMMORTAL_SKELETON_ROAR = create("immortal.skeleton.roar");
@@ -30,6 +32,16 @@ public class SoundInit {
     //Immortal Golem
     public static final RegistryObject<SoundEvent> IMMORTAL_GOLEM_HURT = create("immortal.golem.hurt");
     public static final RegistryObject<SoundEvent> IMMORTAL_GOLEM_DEATH = create("immortal.golem.death");
+
+    //Guling Sentinel-Heavy
+    public static final RegistryObject<SoundEvent> GSH_STEP = create("gsh.step");
+    public static final RegistryObject<SoundEvent> GSH_IDLE = create("gsh.idle");
+    public static final RegistryObject<SoundEvent> GSH_FRICTION = create("gsh.friction");
+    public static final RegistryObject<SoundEvent> GSH_SPARK = create("gsh.spark");
+    public static final RegistryObject<SoundEvent> GSH_PRE_ATTACK = create("gsh.pre_attack");
+    public static final RegistryObject<SoundEvent> GSH_ATTACK = create("gsh.attack");
+    public static final RegistryObject<SoundEvent> GSH_HURT = create("gsh.hurt");
+    public static final RegistryObject<SoundEvent> GSH_DEATH = create("gsh.death");
 
     //Nameless Guardian
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_STEP = create("nameless.guardian.step");
