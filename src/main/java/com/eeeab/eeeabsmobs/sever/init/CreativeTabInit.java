@@ -53,6 +53,7 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.IMMORTAL_KNIGHT_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_SHAMAN_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_GOLEM_EGG.get());
+                entries.accept(ItemInit.GULING_SENTINEL_HEAVY_EGG.get());
                 entries.accept(ItemInit.NAMELESS_GUARDIAN_EGG.get());
                 entries.accept(ItemInit.CORPSE_EGG.get());
                 entries.accept(ItemInit.CORPSE_VILLAGER_EGG.get());

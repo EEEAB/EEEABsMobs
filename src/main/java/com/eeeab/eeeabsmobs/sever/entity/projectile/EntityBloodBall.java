@@ -82,7 +82,7 @@ public class EntityBloodBall extends Projectile implements IEntity {
             if (!this.level().isClientSide && this.tickCount >= this.duration && !this.locating) {
                 this.locating = true;
                 if (this.getSavedTargetByUUID() != null && this.getSavedTargetByUUID().isAlive() && !this.isHeal) {
-                    this.shoot(this.getSavedTargetByUUID(), 0.1F, 1.5F);
+                    this.shoot(this.getSavedTargetByUUID(), -0.1F, 1.5F);
                 } else {
                     this.shoot(this.getOwner(), 0.2F, 0.5F);
                 }
@@ -123,6 +123,10 @@ public class EntityBloodBall extends Projectile implements IEntity {
             }
         }
         this.discard();
+    }
+
+    public boolean isHeal() {
+        return isHeal;
     }
 
     @Override

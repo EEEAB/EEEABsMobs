@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.world.structure;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
+import com.eeeab.eeeabsmobs.sever.entity.guling.EntityGulingSentinelHeavy;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalShaman;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
@@ -137,11 +138,11 @@ public class StructureGuling extends Structure {
 
             if ("elite_spawn".equals(function)) {
                 levelAccessor.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2);
-                EntityImmortalShaman shaman = (EntityInit.IMMORTAL_SHAMAN.get()).create(levelAccessor.getLevel());
-                if (shaman != null) {
-                    shaman.moveTo(blockPos, 0, 0);
-                    shaman.finalizeSpawn(levelAccessor, levelAccessor.getCurrentDifficultyAt(blockPos), MobSpawnType.STRUCTURE, null, null);
-                    levelAccessor.addFreshEntity(shaman);
+                EntityGulingSentinelHeavy heavy = (EntityInit.GULING_SENTINEL_HEAVY.get()).create(levelAccessor.getLevel());
+                if (heavy != null) {
+                    heavy.moveTo(blockPos, 0, 0);
+                    heavy.finalizeSpawn(levelAccessor, levelAccessor.getCurrentDifficultyAt(blockPos), MobSpawnType.STRUCTURE, null, null);
+                    levelAccessor.addFreshEntity(heavy);
                 }
             }
         }

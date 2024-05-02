@@ -11,6 +11,7 @@
   "entity.eeeabsmobs.corpse_villager": "死尸村民",
   "entity.eeeabsmobs.corpse_warlock": "死尸术士",
   "entity.eeeabsmobs.nameless_guardian": "无名守卫者",
+  "entity.eeeabsmobs.guling_sentinel_heavy": "古陵哨兵-重型",
 
   "_comment": "实验性实体",
   "entity.eeeabsmobs.shaman_bomb": "巫师炸弹",
@@ -59,7 +60,8 @@
   "item.eeeabsmobs.immortal_golem_egg": "不朽傀儡刷怪蛋",
   "item.eeeabsmobs.corpse_egg": "死尸刷怪蛋",
   "item.eeeabsmobs.corpse_villager_egg": "死尸村民刷怪蛋",
-  "item.eeeabsmobs.corpse_warlock_egg": "死尸术士刷怪蛋(未完成)",
+  "item.eeeabsmobs.corpse_warlock_egg": "死尸术士刷怪蛋",
+  "item.eeeabsmobs.guling_sentinel_heavy_egg": "古陵哨兵-重型刷怪蛋(未完成)",
   "item.eeeabsmobs.nameless_guardian_egg": "无名守卫者刷怪蛋",
   "item.eeeabsmobs.tester_egg": "测试者刷怪蛋",
 
@@ -71,7 +73,7 @@
   "item.eeeabsmobs.immortal_debris.tip": "似乎是某种生物的盔甲碎片...",
   "tooltip.weapon.eeeabsmobs.immortal_sword.tip": "赋予被攻击者侵蚀状态",
   "tooltip.weapon.eeeabsmobs.immortal_staff.tip": "按住右键1秒发射巫师炸弹",
-  "tooltip.weapon.eeeabsmobs.guardian_axe.tip": "对地面右键释放技能，技能造成伤害基于武器+使用者攻击力，该伤害视作魔法伤害并无视护甲。伤害上限为该武器伤害的2倍，且伤害随着距离增加而减少",
+  "tooltip.weapon.eeeabsmobs.guardian_axe.tip": "朝地面右键释放技能，造成伤害基于武器 + 使用者攻击力，该伤害视作魔法伤害并无视护甲。伤害上限为该武器伤害的2倍，技能造成伤害随着距离衰减",
   "structure.eeeabsmobs.eye_of_bloody_altar.tip": "右键查找血色祭坛结构",
   "structure.eeeabsmobs.eye_of_guling.tip": "右键查找古陵结构",
   "tooltip.armor.eeeabsmobs.full_suit_of_armor.tip": "全套盔甲效果 :",

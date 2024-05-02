@@ -11,6 +11,7 @@
   "entity.eeeabsmobs.corpse_villager": "Corpse Villager",
   "entity.eeeabsmobs.corpse_warlock": "Corpse Warlock",
   "entity.eeeabsmobs.nameless_guardian": "Nameless Guardian",
+  "entity.eeeabsmobs.guling_sentinel_heavy": "Guling Sentinel-Heavy",
 
   "_comment": "Entities",
   "entity.eeeabsmobs.shaman_bomb": "Shaman Bomb",
@@ -59,7 +60,8 @@
   "item.eeeabsmobs.immortal_golem_egg": "Immortal Golem Spawn Egg",
   "item.eeeabsmobs.corpse_egg": "Corpse Spawn Egg",
   "item.eeeabsmobs.corpse_villager_egg": "Corpse Villager Spawn Egg",
-  "item.eeeabsmobs.corpse_warlock_egg": "Corpse Warlock Spawn Egg(WIP)",
+  "item.eeeabsmobs.corpse_warlock_egg": "Corpse Warlock Spawn Egg",
+  "item.eeeabsmobs.guling_sentinel_heavy_egg": "Guling Sentinel-Heavy Spawn Egg(WIP)",
   "item.eeeabsmobs.nameless_guardian_egg": "Nameless Guardian Spawn Egg",
   "item.eeeabsmobs.tester_egg": "Tester Spawn Egg",
 

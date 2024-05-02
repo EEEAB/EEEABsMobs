@@ -3,6 +3,7 @@ package com.eeeab.eeeabsmobs.client.util;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleData;
 import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.util.Mth;
@@ -10,6 +11,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.RenderShape;
 
 /**
  * 粒子效果工具类
@@ -180,9 +182,13 @@ public class ModParticleUtils {
      * @param speedModifier  速度乘数
      */
     public static void annularParticleOutburstOnGround(Level level, ParticleOptions particle, LivingEntity entity, int quantity, int randomQuantity, double sizeModifier, double inFrontOffset, double sideOffset, double speedModifier) {
+        if (particle instanceof BlockParticleOption blockPO){
+            if (blockPO.getState().getRenderShape() == RenderShape.INVISIBLE){
+                return;
+            }
+        }
         double perpFacing = entity.yBodyRot * (Math.PI / 180);
         double facingAngle = perpFacing + Math.PI / 2;
-        //final double inFrontOffset = 0.8, sideOffset = -0.5;
         double vx = Math.cos(facingAngle) * inFrontOffset;
         double vz = Math.sin(facingAngle) * inFrontOffset;
         double perpX = Math.cos(perpFacing);
