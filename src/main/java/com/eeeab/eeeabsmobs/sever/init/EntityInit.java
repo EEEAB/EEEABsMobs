@@ -5,9 +5,11 @@ import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseVillager;
 import com.eeeab.eeeabsmobs.sever.entity.effects.*;
+import com.eeeab.eeeabsmobs.sever.entity.guling.EntityGulingSentinelHeavy;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.*;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGrenade;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityPoisonArrow;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
 import com.eeeab.eeeabsmobs.sever.entity.test.EntityTester;
@@ -77,6 +79,12 @@ public class EntityInit {
                             .sized(2.0f, 4.0f).fireImmune().clientTrackingRange(10)
                             .setShouldReceiveVelocityUpdates(true)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "nameless_guardian").toString()));
+
+    public static final RegistryObject<EntityType<EntityGulingSentinelHeavy>> GULING_SENTINEL_HEAVY =
+            ENTITIES.register("guling_sentinel_heavy",
+                    () -> EntityType.Builder.<EntityGulingSentinelHeavy>of(EntityGulingSentinelHeavy::new, MobCategory.MONSTER)
+                            .sized(2.5f, 3.8f).fireImmune().clientTrackingRange(8)
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "guling_sentinel_heavy").toString()));
 
     //public static final RegistryObject<EntityType<EntityTheImmortal>> IMMORTAL =
     //        ENTITIES.register("immortal",
@@ -168,6 +176,20 @@ public class EntityInit {
                             .sized(0.1f, 0.1f).setUpdateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "crimson_crack").toString()));
 
+    //腥红射线
+    public static final RegistryObject<EntityType<EntityCrimsonRay>> CRIMSON_RAY =
+            ENTITIES.register("crimson_ray",
+                    () -> EntityType.Builder.<EntityCrimsonRay>of(EntityCrimsonRay::new, MobCategory.MISC)
+                            .sized(0.1f, 0.1f).setUpdateInterval(1)
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "crimson_ray").toString()));
+
+    //榴弹
+    public static final RegistryObject<EntityType<EntityGrenade>> GRENADE =
+            ENTITIES.register("grenade",
+                    () -> EntityType.Builder.<EntityGrenade>of(EntityGrenade::new, MobCategory.MISC)
+                            .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(10)
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "grenade").toString()));
+
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);
     }
@@ -182,6 +204,7 @@ public class EntityInit {
         event.put(EntityInit.CORPSE_VILLAGER.get(), EntityCorpse.setAttributes().build());
         event.put(EntityInit.CORPSE_WARLOCK.get(), EntityCorpseWarlock.setAttributes().build());
         event.put(EntityInit.NAMELESS_GUARDIAN.get(), EntityNamelessGuardian.setAttributes().build());
+        event.put(EntityInit.GULING_SENTINEL_HEAVY.get(), EntityGulingSentinelHeavy.setAttributes().build());
         event.put(EntityInit.TESTER.get(), EntityTester.setAttributes().build());
         //event.put(EntityInit.IMMORTAL.get(), EntityTheImmortal.setAttributes().build());
     }
