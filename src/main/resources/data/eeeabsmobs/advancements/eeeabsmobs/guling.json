@@ -5,10 +5,10 @@
       "item": "minecraft:deepslate_bricks"
     },
     "title": {
-      "translate": "advancements.eeeabsmobs.ancient_tomb.title"
+      "translate": "advancements.eeeabsmobs.guling.title"
     },
     "description": {
-      "translate": "advancements.eeeabsmobs.ancient_tomb.description"
+      "translate": "advancements.eeeabsmobs.guling.description"
     },
     "frame": "goal",
     "show_toast": true,
@@ -21,7 +21,7 @@
       "conditions": {
         "player": {
           "location": {
-            "structure": "eeeabsmobs:ancient_tomb"
+            "structure": "eeeabsmobs:guling"
           }
         }
       }
