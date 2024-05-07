@@ -125,7 +125,7 @@ public class GuardianPounceAttackGoal extends AnimationAbstractGoal<EntityNamele
                         float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - this.entity.getZ()) * (hitEntity.getZ() - this.entity.getZ()) + (hitEntity.getX() - this.entity.getX()) * (hitEntity.getX() - this.entity.getX())) - hitEntity.getBbWidth() / 2F;
 
                         if (entityHitDistance <= 3F && (entityRelativeAngle <= 120 / 2F && entityRelativeAngle >= -120 / 2F) || (entityRelativeAngle >= 360 - 120 / 2F || entityRelativeAngle <= -360 + 120 / 2F)) {
-                            this.entity.guardianHurtTarget(this.entity, hitEntity, 0.05F, 1F, baseDamageMultiplier, false, false);
+                            this.entity.guardianHurtTarget(this.entity, hitEntity, 0.05F, 1.0F, baseDamageMultiplier, false, false, false);
                             double ratioX = Math.sin(this.entity.getYRot() * ((float) Math.PI / 180F));
                             double ratioZ = (-Math.cos(this.entity.getYRot() * ((float) Math.PI / 180F)));
                             ModEntityUtils.forceKnockBack(hitEntity, 1.5f, ratioX, ratioZ, 0.01f, false);

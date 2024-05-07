@@ -52,7 +52,7 @@ public class GuardianRobustAttackGoal extends AnimationCommonGoal<EntityNameless
                     } else if (!(hitEntity instanceof Player) && !hitEntity.isBlocking()) {
                         hitEntity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), (int) (duration * 20), 0, false, false, true));
                     }
-                    entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.03F, 1.85F, 1.4F, true, true);
+                    entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.03F, 1.85F, 1.4F, true, true, true);
                 }
             }
         } else if (tick == 36) {
@@ -69,7 +69,7 @@ public class GuardianRobustAttackGoal extends AnimationCommonGoal<EntityNameless
             if (entity.getMadnessTick() == 0 && entity.isPowered()) {
                 if (entity.isChallengeMode()) {
                     entity.setMadnessTick(EntityNamelessGuardian.NEVER_STOP);
-                    entity.setRobustTick(EntityNamelessGuardian.MADNESS_TICK);
+                    entity.setRobustTick();
                     return;
                 }
                 entity.setExecuteWeak(true);

@@ -62,7 +62,7 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
                     float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
                     if ((entityHitDistance <= range && (entityRelativeAngle <= (attackArc + 70) / 2F && entityRelativeAngle >= -(attackArc - 20) / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                        entity.guardianHurtTarget(entity, hitEntity, 0.025F, 1.0F, baseDamageMultiplier, true, true);
+                        entity.guardianHurtTarget(entity, hitEntity, 0.025F, 1.0F, baseDamageMultiplier, true, true, true);
                         hitEntity.setDeltaMovement(hitEntity.getDeltaMovement().add(0, 0.6, 0));
                         entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                     }
@@ -88,7 +88,7 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
                     float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
                     if ((entityHitDistance <= range && (entityRelativeAngle <= (attackArc + 20) / 2F && entityRelativeAngle >= -(attackArc + 20) / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                        entity.guardianHurtTarget(entity, hitEntity, 0.025F, 1.0F, baseDamageMultiplier, true, true);
+                        entity.guardianHurtTarget(entity, hitEntity, 0.025F, 1.0F, baseDamageMultiplier, true, true, true);
                         entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                         double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
                         double ratioZ = (-Math.cos(entity.getYRot() * ((float) Math.PI / 180F)));
@@ -119,7 +119,7 @@ public class GuardianCombo2Goal extends AnimationAbstractGoal<EntityNamelessGuar
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, livingEntity);
                     float entityHitDistance = (float) Math.sqrt((livingEntity.getZ() - entity.getZ()) * (livingEntity.getZ() - entity.getZ()) + (livingEntity.getX() - entity.getX()) * (livingEntity.getX() - entity.getX())) - livingEntity.getBbWidth() / 2F;
                     if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                        entity.guardianHurtTarget(entity, livingEntity, 0.025F, 1.0F, baseDamageMultiplier, true, true);
+                        entity.guardianHurtTarget(entity, livingEntity, 0.025F, 1.0F, baseDamageMultiplier, true, true, true);
                     }
                 }
             } else if (tick == 15) {

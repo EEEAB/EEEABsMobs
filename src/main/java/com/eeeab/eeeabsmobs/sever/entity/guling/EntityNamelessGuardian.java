@@ -171,6 +171,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     private final static int MAX_LASER_ATTACK_TICK = 400;
     private final static int MIN_LASER_ATTACK_TICK = 300;
     private final static int SHAKE_GROUND_ATTACK_TICK = 400;
+    private final static int ROBUST_ATTACK_TICK = 650;
     private final static int WEAK_STATE_TICK = 160;
     private final static int HARD_MODE_STATE_TICK = 80;
     private final EntityNamelessGuardianPart core;
@@ -343,7 +344,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 this.resetTimeOutToUseSkill();
             } else if (animation == ROAR_ANIMATION) {
                 this.setMadnessTick(this.isChallengeMode() ? NEVER_STOP : MADNESS_TICK);
-                this.setRobustTick(MADNESS_TICK);
+                this.setRobustTick();
                 if (this.FIRST && !this.isChallengeMode()) this.FIRST = false;
                 this.laserTick = this.pounceTick = this.smashTick = this.attackTick = 0;
                 this.removeAllEffects();
@@ -738,7 +739,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 return false;
             } else if (entity != null) {
                 if (this.isPowered()) {
-                    if (this.guardianInvulnerableTime <= 0) guardianInvulnerableTime = 25 /*不能小于等于10*/;
+                    if (this.guardianInvulnerableTime <= 0) guardianInvulnerableTime = 20 /*不能小于等于10*/;
                     if (ModEntityUtils.isProjectileSource(source)) return false;
                 }
                 if (this.getAnimation() == WEAK_ANIMATION_2) {
@@ -961,7 +962,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                     this.guardian.playAnimation(attackAnimation);
                 } else if (canRobust) {
                     this.guardian.playAnimation(ROBUST_ATTACK_ANIMATION);
-                    this.guardian.setRobustTick(MADNESS_TICK);
+                    this.guardian.setRobustTick();
                 } else if (canSmash) {
                     this.guardian.playAnimation(SMASH_ATTACK_ANIMATION);
                     this.guardian.setSmashTick(this.guardian.getCoolingTimerUtil(MAX_SMASH_ATTACK_TICK, MIN_SMASH_ATTACK_TICK, 0.2F));
@@ -1030,7 +1031,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                         continue;
                     }
                     if (hit instanceof LivingEntity livingEntity) {
-                        this.guardianHurtTarget(EMDamageSource.guardianRobustAttack(this), this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, shouldHeal, false);
+                        this.guardianHurtTarget(EMDamageSource.guardianRobustAttack(this), this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, shouldHeal, false, false);
                     }
                     double magnitude = level().random.nextGaussian() * 0.15 + 0.1;
                     double angle = this.getAngleBetweenEntities(this, hit);
@@ -1082,7 +1083,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                             continue;
                         }
                         if (hit instanceof LivingEntity livingEntity) {
-                            this.guardianHurtTarget(this, livingEntity, 0.02F, 0.5F, damageMultiply, false, false);
+                            this.guardianHurtTarget(this, livingEntity, 0.02F, 0.5F, damageMultiply, false, false, false);
                         }
 
                         double magnitude = level().random.nextDouble() * 0.15 + 0.1;
@@ -1248,17 +1249,20 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
 
-    public boolean guardianHurtTarget(EntityNamelessGuardian guardian, LivingEntity hitEntity, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier, boolean shouldHeal, boolean disableShield) {
-        return this.guardianHurtTarget(this.damageSources().mobAttack(guardian), guardian, hitEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, shouldHeal, disableShield);
+    public boolean guardianHurtTarget(EntityNamelessGuardian guardian, LivingEntity hitEntity, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier, boolean shouldHeal, boolean disableShield, boolean ignoreHit) {
+        return this.guardianHurtTarget(this.damageSources().mobAttack(guardian), guardian, hitEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, shouldHeal, disableShield, ignoreHit);
     }
 
-    public boolean guardianHurtTarget(DamageSource damageSource, EntityNamelessGuardian guardian, LivingEntity hitEntity, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier, boolean shouldHeal, boolean disableShield) {
+    public boolean guardianHurtTarget(DamageSource damageSource, EntityNamelessGuardian guardian, LivingEntity hitEntity, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier, boolean shouldHeal, boolean disableShield, boolean ignoreHit) {
         float finalDamage = ((guardian.getAttackDamageAttributeValue() * baseDamageMultiplier) + hitEntity.getMaxHealth() * hitEntityMaxHealth) * damageMultiplier;
         boolean flag = hitEntity.hurt(damageSource, finalDamage);
         double suckBloodCap = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.suckBloodFactor.get();
-        if (flag && shouldHeal)
-            guardian.heal((float) Mth.clamp(finalDamage * 0.22F, 0F, getMaxHealth() * suckBloodCap));
-        if (disableShield && hitEntity instanceof Player player && player.isBlocking()) {
+        float suckBlood = this.isPowered() ? 0.25F : 0.22F;
+        boolean blocking = hitEntity instanceof Player && hitEntity.isBlocking();
+        if ((flag || (ignoreHit && this.isPowered() && !blocking)) && shouldHeal)
+            guardian.heal((float) Mth.clamp(finalDamage * suckBlood, 0F, getMaxHealth() * suckBloodCap));
+        if (disableShield && blocking) {
+            Player player = (Player) hitEntity;
             player.disableShield(true);
             flag = true;
         }
@@ -1380,8 +1384,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         return this.robustTick;
     }
 
-    public void setRobustTick(int robustTick) {
-        this.robustTick = robustTick;
+    public void setRobustTick() {
+        this.robustTick = ROBUST_ATTACK_TICK;
     }
 
     @Override
