@@ -42,10 +42,10 @@ public class GuardianShootLaserGoal extends AnimationCommonGoal<EntityNamelessGu
             try {
                 if (this.entity.getTarget() != null) {
                     float distance = this.entity.distanceTo(this.entity.getTarget());
-                    speed = Math.max(1F, 1F / Math.abs(distance * 0.08F));
+                    speed = Math.min(3F, 1F / Math.abs(distance * 0.08F));
                 }
             } catch (ArithmeticException ignored) {}
-            float yMaxRotSpeed = 1F + speed;
+            float yMaxRotSpeed = 6F - speed;
             float xMaxRotAngle = 90F;
             if (entityTarget != null) {
                 this.entity.getLookControl().setLookAt(entityTarget.getX(), entityTarget.getY() + entityTarget.getBbHeight() / 2, entityTarget.getZ(), yMaxRotSpeed, xMaxRotAngle);
