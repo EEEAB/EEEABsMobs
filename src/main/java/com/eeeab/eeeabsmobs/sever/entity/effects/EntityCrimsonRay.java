@@ -1,8 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityAbsCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
@@ -28,7 +26,7 @@ import java.util.Optional;
 
 public class EntityCrimsonRay extends EntityMagicEffects {
     public static final double ATTACK_RADIUS = 16;
-    public static final int PRE_SHOOT_DURATION = 10;
+    public static final int PRE_SHOOT_DURATION = 1;
     public double endPosX, endPosY, endPosZ;
     public double collidePosX, collidePosY, collidePosZ;
     public double prevCollidePosX, prevCollidePosY, prevCollidePosZ;
@@ -60,17 +58,6 @@ public class EntityCrimsonRay extends EntityMagicEffects {
         }
     }
 
-    public EntityCrimsonRay(Level world, LivingEntity caster, Vec3 pos, int duration, float pitch, float yaw) {
-        this(world, caster, pos, duration);
-        this.setPitch(pitch);
-        this.setYaw(yaw);
-        this.setDuration(duration);
-        this.calculateEndPos();
-        if (!level().isClientSide) {
-            setCasterId(caster.getId());
-        }
-    }
-
     @Override
     public void tick() {
         super.tick();
@@ -90,7 +77,7 @@ public class EntityCrimsonRay extends EntityMagicEffects {
 
         if (this.tickCount >= PRE_SHOOT_DURATION) {
             if (this.tickCount == PRE_SHOOT_DURATION) {
-                this.playSound(SoundInit.CRIMSON_RAY.get(), 1F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+                this.playSound(SoundInit.CRIMSON_RAY.get(), 0.95F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
             }
             this.calculateEndPos();
             List<LivingEntity> hit = raytraceEntities(level(), new Vec3(getX(), getY(), getZ()), new Vec3(endPosX, endPosY, endPosZ)).entities;
@@ -109,7 +96,7 @@ public class EntityCrimsonRay extends EntityMagicEffects {
             }
             if (!this.level().isClientSide) {
                 for (LivingEntity target : hit) {
-                    if (target == this.caster || target instanceof EntityAbsCorpse && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get())
+                    if (target == this.caster /*|| target instanceof EntityAbsCorpse && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()*/)
                         continue;
                     target.hurt(this.damageSources().indirectMagic(target, caster), 5F + target.getMaxHealth() * 0.01F);
                 }
@@ -242,6 +229,65 @@ public class EntityCrimsonRay extends EntityMagicEffects {
 
         public void addEntityHit(LivingEntity entity) {
             entities.add(entity);
+        }
+    }
+
+    public static class PreAttack extends EntityMagicEffects {
+        private final ControlledAnimation phaseController = new ControlledAnimation(2);
+        private static final EntityDataAccessor<Integer> DATA_PHASE = SynchedEntityData.defineId(PreAttack.class, EntityDataSerializers.INT);
+        private Vec3 pos;
+
+        public PreAttack(EntityType<?> type, Level level) {
+            super(type, level);
+        }
+
+        public PreAttack(Level level, Vec3 pos, LivingEntity caster) {
+            this(EntityInit.CRIMSON_RAY_PRE.get(), level);
+            this.pos = pos;
+            this.caster = caster;
+        }
+
+        @Override
+        protected void defineSynchedData() {
+            super.defineSynchedData();
+            this.entityData.define(DATA_PHASE, 0);
+        }
+
+        @Override
+        public void tick() {
+            super.tick();
+            if (!this.level().isClientSide) {
+                if (this.pos == null || this.caster == null) {
+                    this.discard();
+                    return;
+                }
+                switch (this.getPhase()) {
+                    case 0, 1, 2, 3, 4:
+                        if (this.phaseController.increaseTimerChain().isEnd()) {
+                            this.setPhase(this.getPhase() + 1);
+                            this.phaseController.resetTimer();
+                        }
+                        break;
+                    case 5:
+                        if (this.phaseController.increaseTimerChain().isEnd()) {
+                            this.level().addFreshEntity(new EntityCrimsonRay(this.level(), this.caster, this.pos, 10));
+                            this.discard();
+                        }
+                }
+            }
+        }
+
+        @Override
+        public boolean shouldRenderAtSqrDistance(double distance) {
+            return distance < Math.pow(ATTACK_RADIUS, 3);
+        }
+
+        public int getPhase() {
+            return this.entityData.get(DATA_PHASE);
+        }
+
+        public void setPhase(int phase) {
+            this.entityData.set(DATA_PHASE, phase);
         }
     }
 }
