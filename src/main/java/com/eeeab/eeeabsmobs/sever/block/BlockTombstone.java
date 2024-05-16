@@ -33,7 +33,6 @@ import java.util.stream.Stream;
 //TODO 未完成方块
 public class BlockTombstone extends BaseEntityBlock {
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
-    private static final VoxelShape AXIS_AABB = Optional.of(Block.box(0D, 0.0D, 0D, 16.0D, 15.9D, 16.0D)).get();
 
     public BlockTombstone() {
         super(BlockBehaviour.Properties.of().lightLevel(state -> state.getValue(POWER)).hasPostProcess((state, level, pos) -> state.getValue(POWER) > 0).strength(-1.0F, 3600000.0F).sound(SoundType.STONE));
@@ -41,13 +40,8 @@ public class BlockTombstone extends BaseEntityBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext context) {
-        return AXIS_AABB;
-    }
-
-    @Override
-    public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return AXIS_AABB;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
     @Override
