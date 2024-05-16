@@ -1,7 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.capability;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.Direction;
@@ -12,7 +11,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
@@ -23,7 +21,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class VertigoCapability {
@@ -152,9 +149,9 @@ public class VertigoCapability {
 
                 if (entity instanceof Mob mob && mob.getTarget() != null) {
                     setPrevAttackTargetUUID(mob.getTarget().getUUID());
-                    mob.setTarget(null);
-                    if (mob.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET))
-                        mob.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, Optional.empty());
+                    //mob.setTarget(null);
+                    //if (mob.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET))
+                    //    mob.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, Optional.empty());
                 }
             }
         }
@@ -178,7 +175,6 @@ public class VertigoCapability {
         public void tick(LivingEntity entity) {
             if (isVertigo) {
                 entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 2, 50, false, false, false));
-                //疑似特性:重进游戏后isClientSide始终为false
                 if (entity.level().isClientSide()) {
                     for (int i = 0; i < 5; i++) {
                         Vec3 pos = new Vec3(entity.getX(), entity.getY() + (entity.getBbHeight() + 0.25D), entity.getZ()).add(new Vec3(1.0D, 0, 0).yRot((float) Math.toRadians(entity.getRandom().nextInt(360))));

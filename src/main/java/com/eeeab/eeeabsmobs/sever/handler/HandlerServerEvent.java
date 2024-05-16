@@ -23,10 +23,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.AbstractGolem;
 import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.npc.AbstractVillager;
@@ -326,15 +324,15 @@ public final class HandlerServerEvent {
     //实体设置目标时
     @SubscribeEvent
     public void onLivingEntityChangeTarget(LivingChangeTargetEvent event) {
-        LivingEntity entity = event.getEntity();
-        VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
-        if (capability != null) {
-            if (event.isCancelable() && entity instanceof Mob && capability.isVertigo()) {
-                if (event.getOriginalTarget() != null || entity.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET)) {
-                    event.setCanceled(true);
-                }
-            }
-        }
+        //LivingEntity entity = event.getEntity();
+        //VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
+        //if (capability != null) {
+        //    if (event.isCancelable() && entity instanceof Mob && capability.isVertigo()) {
+        //        if (event.getOriginalTarget() != null || entity.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET)) {
+        //            event.setCanceled(true);
+        //        }
+        //    }
+        //}
     }
 
     //玩家攻击产生暴击时
