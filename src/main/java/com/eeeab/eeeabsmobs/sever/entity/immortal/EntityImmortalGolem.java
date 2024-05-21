@@ -1,19 +1,20 @@
 package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
+import com.eeeab.animate.server.ai.AnimationMeleeAI;
+import com.eeeab.animate.server.ai.animation.AnimationActivate;
+import com.eeeab.animate.server.ai.animation.AnimationHurt;
+import com.eeeab.animate.server.ai.animation.AnimationMelee;
+import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
-import com.eeeab.eeeabsmobs.sever.entity.XpReward;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationMeleeAIGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerDieGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerResetGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerCopyTargetGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationActivateGoal;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationAttackGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationHurtGoal;
+import com.eeeab.eeeabsmobs.sever.entity.XpReward;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerCopyTargetGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerDieGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerResetGoal;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.github.alexthe666.citadel.animation.AnimationHandler;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -33,20 +34,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import com.github.alexthe666.citadel.animation.Animation;
 
 import javax.annotation.Nullable;
 
 public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
-    public static final Animation DIE_ANIMATION = Animation.create(30);
-    public static final Animation ATTACK_ANIMATION = Animation.create(12);
-    public static final Animation HURT_ANIMATION = Animation.create(10);
-    public static final Animation SPAWN_ANIMATION = Animation.create(40);
-    private static final Animation[] ANIMATIONS = {
-            DIE_ANIMATION,
-            ATTACK_ANIMATION,
-            HURT_ANIMATION,
-            SPAWN_ANIMATION,
+    public final Animation hurtAnimation = Animation.create(5);
+    public final Animation attackAnimation = Animation.create(12);
+    public final Animation spawnAnimation = Animation.create(20);
+    private final Animation[] animations = new Animation[]{
+            hurtAnimation,
+            attackAnimation,
+            spawnAnimation
     };
     private boolean boom;
 
@@ -78,10 +76,10 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
 
     @Override
     protected void registerCustomGoals() {
-        this.goalSelector.addGoal(1, new AnimationActivateGoal<>(this, SPAWN_ANIMATION));
-        this.goalSelector.addGoal(1, new AnimationAttackGoal<>(this, ATTACK_ANIMATION, 7, 1.5f, 1.0f, 1.0f));
-        this.goalSelector.addGoal(1, new AnimationHurtGoal<>(this, false));
-        this.goalSelector.addGoal(2, new AnimationMeleeAIGoal<>(this, 1.0D, ATTACK_ANIMATION));
+        this.goalSelector.addGoal(1, new AnimationActivate<>(this, () -> spawnAnimation));
+        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> attackAnimation, 7, 1.5f, 1.0f, 1.0f));
+        this.goalSelector.addGoal(1, new AnimationHurt<>(this, false));
+        this.goalSelector.addGoal(2, new AnimationMeleeAI<>(this, 1.0D, () -> attackAnimation));
         this.goalSelector.addGoal(1, new OwnerResetGoal<>(this, EntityImmortalShaman.class, 20D));
         this.targetSelector.addGoal(2, new OwnerCopyTargetGoal<>(this));
         this.goalSelector.addGoal(3, new OwnerDieGoal<>(this));
@@ -91,8 +89,8 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
     @Override
     public void tick() {
         super.tick();
-        AnimationHandler.INSTANCE.updateAnimations(this);
-        if (this.isDangerous() && this.getAnimation() == ATTACK_ANIMATION) {
+        EMAnimationHandler.INSTANCE.updateAnimations(this);
+        if (this.isDangerous() && this.getAnimation() == this.attackAnimation) {
             if (this.getAnimationTick() == 6) this.boom();
         }
         if (this.isDangerous() && this.isOnFire()) this.boom();
@@ -167,25 +165,20 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
                 add(Attributes.ATTACK_DAMAGE, 2.5D);
     }
 
+
     @Override
-    public Animation getDeathAnimation() {
-        return DIE_ANIMATION;
+    public Animation getSpawnAnimation() {
+        return this.spawnAnimation;
+    }
+
+    @Override
+    public Animation[] getAnimations() {
+        return this.animations;
     }
 
     @Override
     public Animation getHurtAnimation() {
-        return HURT_ANIMATION;
-    }
-
-
-    @Override
-    public Animation[] getAnimations() {
-        return ANIMATIONS;
-    }
-
-    @Override
-    public Animation getSpawnAnimation() {
-        return SPAWN_ANIMATION;
+        return this.hurtAnimation;
     }
 
     @Override

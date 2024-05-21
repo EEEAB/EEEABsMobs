@@ -1,12 +1,12 @@
 package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModMobType;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
-import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -83,7 +83,7 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements GlowE
             getNavigation().stop();
             setYRot(yRotO);
             yBodyRot = getYRot();
-            if ((onGround() || isInWater() || isInLava()) && getAnimation() == NO_ANIMATION) {
+            if ((onGround() || isInWater() || isInLava()) && getAnimation() == getNoAnimation()) {
                 this.playAnimation(getSpawnAnimation());
             }
             return;

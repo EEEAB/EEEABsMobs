@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.client.render.effects;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelGuardianBlade;
+import com.eeeab.eeeabsmobs.client.model.layer.EMModelLayer;
 import com.eeeab.eeeabsmobs.client.render.EMRenderType;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianBlade;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -15,11 +16,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class RenderGuardianBlade extends EntityRenderer<EntityGuardianBlade> {
-    private final ModelGuardianBlade MODEL = new ModelGuardianBlade();
+    private final ModelGuardianBlade model;
     private static final ResourceLocation[] TEXTURES = new ResourceLocation[6];
 
-    public RenderGuardianBlade(EntityRendererProvider.Context pContext) {
-        super(pContext);
+    public RenderGuardianBlade(EntityRendererProvider.Context context) {
+        super(context);
+        this.model = new ModelGuardianBlade(context.bakeLayer(EMModelLayer.GUARDIAN_BLADE));
         //初始化文件地址
         for (int i = 0; i < TEXTURES.length; i++) {
             TEXTURES[i] = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/guardian_blade/gb_" + (i + 1) + ".png");
@@ -33,7 +35,7 @@ public class RenderGuardianBlade extends EntityRenderer<EntityGuardianBlade> {
         pPoseStack.scale(1F, -1.0F, -1.0F);
         float f = entity.controlled.getAnimationProgressTemporaryInvesed();
         pPoseStack.mulPose(Axis.YP.rotationDegrees(entity.getYRot()));
-        MODEL.renderToBuffer(pPoseStack, pBuffer.getBuffer(EMRenderType.getGlowingCutOutEffect(getTextureLocation(entity))), pPackedLight, OverlayTexture.NO_OVERLAY, f, f, f, f);
+        model.renderToBuffer(pPoseStack, pBuffer.getBuffer(EMRenderType.getGlowingCutOutEffect(getTextureLocation(entity))), pPackedLight, OverlayTexture.NO_OVERLAY, f, f, f, f);
         pPoseStack.popPose();
         super.render(entity, pEntityYaw, pPartialTick, pPoseStack, pBuffer, pPackedLight);
     }

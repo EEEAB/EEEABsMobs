@@ -1,8 +1,9 @@
 package com.eeeab.eeeabsmobs.client.render.entity;
 
+import com.eeeab.animate.client.layer.LayerOuter;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelTester;
-import com.eeeab.eeeabsmobs.client.render.layer.LayerOuter;
+import com.eeeab.eeeabsmobs.client.model.layer.EMModelLayer;
 import com.eeeab.eeeabsmobs.sever.entity.test.EntityTester;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -20,7 +21,7 @@ public class RenderTester extends MobRenderer<EntityTester, ModelTester> {
     private static final ResourceLocation LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/tester/tester_plains.png");
 
     public RenderTester(EntityRendererProvider.Context context) {
-        super(context, new ModelTester(), 0.3F);
+        super(context, new ModelTester(context.bakeLayer(EMModelLayer.TESTER)), 0.3F);
         this.addLayer(new LayerOuter<>(this, LAYER));
     }
 

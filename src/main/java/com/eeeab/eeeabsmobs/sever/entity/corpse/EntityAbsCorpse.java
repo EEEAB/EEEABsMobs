@@ -1,6 +1,5 @@
 package com.eeeab.eeeabsmobs.sever.entity.corpse;
 
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
 import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
@@ -10,7 +9,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
@@ -49,18 +47,6 @@ public abstract class EntityAbsCorpse extends EEEABMobLibrary implements GlowEnt
     public void tick() {
         super.tick();
         if (!this.level().isClientSide && this.getTarget() != null && !this.getTarget().isAlive()) setTarget(null);
-    }
-
-    @Override
-    public boolean hurt(DamageSource source, float damage) {
-        if (level().isClientSide) {
-            return false;
-        } else {
-            if (source.getEntity() instanceof EntityAbsCorpse && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()) {
-                return false;
-            }
-            return super.hurt(source, damage);
-        }
     }
 
     @Override

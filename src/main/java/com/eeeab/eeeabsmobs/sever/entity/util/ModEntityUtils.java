@@ -109,7 +109,7 @@ public class ModEntityUtils {
         if (flag) {
             return new Vec3(pX, blockpos.getY() + d0, pZ);
         }
-        return new Vec3(summoner.getX(), summoner.getY(), summoner.getZ());
+        return new Vec3(pX, pMinY , pZ);
     }
 
     //获取是否目标逐渐逼近

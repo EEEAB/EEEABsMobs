@@ -1,13 +1,13 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
-import com.eeeab.eeeabsmobs.sever.init.EffectInit;
-import com.eeeab.eeeabsmobs.sever.util.EMDamageSource;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
-import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.github.alexthe666.citadel.animation.Animation;
+import com.eeeab.eeeabsmobs.sever.init.EffectInit;
+import com.eeeab.eeeabsmobs.sever.init.SoundInit;
+import com.eeeab.eeeabsmobs.sever.util.EMDamageSource;
+import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -16,11 +16,12 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class GuardianRobustAttackGoal extends AnimationCommonGoal<EntityNamelessGuardian> {
+public class GuardianRobustAttackGoal extends AnimationSimpleAI<EntityNamelessGuardian> {
 
-    public GuardianRobustAttackGoal(EntityNamelessGuardian entity, Animation animation) {
-        super(entity, animation);
+    public GuardianRobustAttackGoal(EntityNamelessGuardian entity, Supplier<Animation> animationSupplier) {
+        super(entity, animationSupplier);
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
     }
 
@@ -60,12 +61,12 @@ public class GuardianRobustAttackGoal extends AnimationCommonGoal<EntityNameless
             EntityCameraShake.cameraShake(entity.level(), entity.position(), 10, 0.3F, 0, 10);
         } else if (tick == 45) {
             for (int i = 2; i <= 12; i++) {
-                entity.robustAttack(i, 0.025F, 1.3F, 1.25F, false);
+                entity.shockAttack(EMDamageSource.guardianRobustAttack(this.entity), i, 3F, 2F, 4F, 0.025F, 1.3F, 1.25F, false, true, false, true);
             }
         } else if (tick == 46) {
             entity.playSound(SoundEvents.GENERIC_EXPLODE, 1.5F, 1F + entity.getRandom().nextFloat() * 0.1F);
             EntityCameraShake.cameraShake(entity.level(), entity.position(), 30, 0.2F, 10, 10);
-        } else if (tick == 72) {
+        } else if (tick == 68) {
             if (entity.getMadnessTick() == 0 && entity.isPowered()) {
                 if (entity.isChallengeMode()) {
                     entity.setMadnessTick(EntityNamelessGuardian.NEVER_STOP);
@@ -73,7 +74,7 @@ public class GuardianRobustAttackGoal extends AnimationCommonGoal<EntityNameless
                     return;
                 }
                 entity.setExecuteWeak(true);
-                entity.playAnimation(EntityNamelessGuardian.WEAK_ANIMATION_1);
+                entity.playAnimation(this.entity.weakAnimation1);
             }
         }
     }

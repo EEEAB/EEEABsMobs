@@ -1,17 +1,25 @@
 package com.eeeab.eeeabsmobs.sever.entity.guling;
 
+import com.eeeab.animate.server.ai.AnimationAI;
+import com.eeeab.animate.server.ai.AnimationSimpleAI;
+import com.eeeab.animate.server.ai.animation.AnimationActivate;
+import com.eeeab.animate.server.ai.animation.AnimationDeactivate;
+import com.eeeab.animate.server.ai.animation.AnimationDie;
+import com.eeeab.animate.server.ai.animation.AnimationRepel;
+import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.advancements.EMCriteriaTriggers;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.*;
+import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
+import com.eeeab.eeeabsmobs.sever.entity.IBoss;
+import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
+import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.*;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.*;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationAbstractGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityFallingBlock;
@@ -20,11 +28,7 @@ import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.EMDamageSource;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
-import com.github.alexthe666.citadel.animation.Animation;
-import com.github.alexthe666.citadel.animation.AnimationHandler;
-import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
@@ -80,59 +84,58 @@ import java.util.function.BiConsumer;
 
 //创建于 2023/1/17
 public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, GlowEntity, PowerableMob, NeedStopAiEntity {
-    public static final Animation DIE_ANIMATION = Animation.create(60);
-    public static final Animation DIE_WORDS_ANIMATION = Animation.create(70);
-    public static final Animation ROAR_ANIMATION = Animation.create(80);
-    public static final Animation ATTACK_ANIMATION_1 = Animation.create(34);
-    public static final Animation ATTACK_ANIMATION_2 = Animation.create(35);
-    public static final Animation ATTACK_ANIMATION_3 = Animation.create(44);
-    public static final Animation ATTACK2_ANIMATION_1 = Animation.create(40);
-    public static final Animation ATTACK2_ANIMATION_2 = Animation.create(36);
-    public static final Animation ATTACK2_ANIMATION_3 = Animation.create(36);
-    public static final Animation ROBUST_ATTACK_ANIMATION = Animation.create(82);
-    public static final Animation SMASH_ATTACK_ANIMATION = Animation.create(40);
-    public static final Animation POUNCE_ATTACK_ANIMATION_1 = Animation.create(16);
-    public static final Animation POUNCE_ATTACK_ANIMATION_2 = Animation.create(29);
-    public static final Animation POUNCE_ATTACK_ANIMATION_3 = Animation.create(18);
-    public static final Animation ACTIVATE_ANIMATION = Animation.create(56);
-    public static final Animation DEACTIVATE_ANIMATION = Animation.create(40);
-    public static final Animation WEAK_ANIMATION_1 = Animation.create(40);
-    public static final Animation WEAK_ANIMATION_2 = Animation.create(200);
-    public static final Animation WEAK_ANIMATION_3 = Animation.create(40);
-    public static final Animation LEAP_ANIMATION = Animation.create(105);
-    public static final Animation SMASH_DOWN_ANIMATION = Animation.create(21);
-    public static final Animation LASER_ANIMATION = Animation.create(120);
-    public static final Animation CONCUSSION_ANIMATION = Animation.create(24);
-    public static final Animation SHAKE_GROUND_ATTACK_ANIMATION_1 = Animation.create(60);
-    public static final Animation SHAKE_GROUND_ATTACK_ANIMATION_2 = Animation.create(56);
-    public static final Animation SHAKE_GROUND_ATTACK_ANIMATION_3 = Animation.create(60);
-    private static final Animation[] ANIMATIONS = {
-            DIE_ANIMATION,
-            DIE_WORDS_ANIMATION,
-            ROAR_ANIMATION,
-            ATTACK_ANIMATION_1,
-            ATTACK_ANIMATION_2,
-            ATTACK_ANIMATION_3,
-            SMASH_ATTACK_ANIMATION,
-            ROBUST_ATTACK_ANIMATION,
-            POUNCE_ATTACK_ANIMATION_1,
-            POUNCE_ATTACK_ANIMATION_2,
-            POUNCE_ATTACK_ANIMATION_3,
-            ACTIVATE_ANIMATION,
-            DEACTIVATE_ANIMATION,
-            WEAK_ANIMATION_1,
-            WEAK_ANIMATION_2,
-            WEAK_ANIMATION_3,
-            LEAP_ANIMATION,
-            SMASH_DOWN_ANIMATION,
-            LASER_ANIMATION,
-            CONCUSSION_ANIMATION,
-            ATTACK2_ANIMATION_1,
-            ATTACK2_ANIMATION_2,
-            ATTACK2_ANIMATION_3,
-            SHAKE_GROUND_ATTACK_ANIMATION_1,
-            SHAKE_GROUND_ATTACK_ANIMATION_2,
-            SHAKE_GROUND_ATTACK_ANIMATION_3
+    public final Animation dieAnimation = Animation.create(51);
+    public final Animation roarAnimation = Animation.create(80);
+    public final Animation attackAnimation1 = Animation.create(36);
+    public final Animation attackAnimation2 = Animation.create(35);
+    public final Animation attackAnimation3 = Animation.create(44);
+    public final Animation attackAnimation4 = Animation.create(40);
+    public final Animation attackAnimation5 = Animation.create(36);
+    public final Animation attackAnimation6 = Animation.create(36);
+    public final Animation robustAttackAnimation = Animation.create(70);
+    public final Animation smashAttackAnimation = Animation.create(40);
+    public final Animation pounceAttackAnimation1 = Animation.create(16);
+    public final Animation pounceAttackAnimation2 = Animation.createLoop(38);
+    public final Animation pounceAttackAnimation3 = Animation.create(18);
+    public final Animation activateAnimation = Animation.create(56);
+    public final Animation deactivateAnimation = Animation.create(40);
+    public final Animation weakAnimation1 = Animation.create(40);
+    public final Animation weakAnimation2 = Animation.create(200);
+    public final Animation weakAnimation3 = Animation.create(40);
+    public final Animation leapAnimation = Animation.create(105);
+    public final Animation smashDownAnimation = Animation.create(21);
+    public final Animation laserAnimation = Animation.create(120);
+    public final Animation concussionAnimation = Animation.create(30);
+    public final Animation shakeGroundAttackAnimation1 = Animation.create(60);
+    public final Animation shakeGroundAttackAnimation2 = Animation.create(56);
+    public final Animation shakeGroundAttackAnimation3 = Animation.create(60);
+    private final Animation[] animations = new Animation[]{
+            dieAnimation,
+            dieAnimation,
+            roarAnimation,
+            attackAnimation1,
+            attackAnimation2,
+            attackAnimation3,
+            attackAnimation4,
+            attackAnimation5,
+            attackAnimation6,
+            robustAttackAnimation,
+            smashAttackAnimation,
+            pounceAttackAnimation1,
+            pounceAttackAnimation2,
+            pounceAttackAnimation3,
+            activateAnimation,
+            deactivateAnimation,
+            weakAnimation1,
+            weakAnimation2,
+            weakAnimation3,
+            leapAnimation,
+            smashDownAnimation,
+            laserAnimation,
+            concussionAnimation,
+            shakeGroundAttackAnimation1,
+            shakeGroundAttackAnimation2,
+            shakeGroundAttackAnimation3
     };
 
     private final EMLookAtGoal lookAtPlayerGoal = new EMLookAtGoal(this, Player.class, 8.0F);
@@ -155,7 +158,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     private int noUseSkillFromLongTick;
     private boolean executeWeak;
     private boolean shouldUseSkill;
-    private boolean FIRST = true;
+    //判断是否是首次进入强化状态
+    private boolean fmFlag = true;
     private int attackTick;
     //BGM高潮部分的时长
     public static final int MADNESS_TICK = 1300;
@@ -322,13 +326,13 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     @Override
     protected void onAnimationStart(Animation animation) {
         if (!this.level().isClientSide) {
-            if (animation == WEAK_ANIMATION_1) {
+            if (animation == this.weakAnimation1) {
                 this.setExecuteWeak(true);
                 this.setPowered(false);
                 int duration = Difficulty.HARD.equals(this.level().getDifficulty()) ? HARD_MODE_STATE_TICK : WEAK_STATE_TICK;
                 this.setNextMadnessTick(NEXT_MADNESS_TICK + duration);
                 this.resetTimeOutToUseSkill();
-            } else if (animation == POUNCE_ATTACK_ANIMATION_1 || animation == LASER_ANIMATION) {
+            } else if (animation == this.pounceAttackAnimation1 || animation == this.laserAnimation) {
                 this.resetTimeOutToUseSkill();
             }
         }
@@ -337,18 +341,18 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     @Override
     protected void onAnimationFinish(Animation animation) {
         if (!this.level().isClientSide) {
-            if (animation == DEACTIVATE_ANIMATION || animation == ACTIVATE_ANIMATION) {
-                this.FIRST = true;
+            if (animation == this.deactivateAnimation || animation == this.activateAnimation) {
+                this.fmFlag = true;
                 this.attackTick = this.madnessTick = this.guardianInvulnerableTime = 0;
                 this.setExecuteWeak(false);
                 this.resetTimeOutToUseSkill();
-            } else if (animation == ROAR_ANIMATION) {
+            } else if (animation == this.roarAnimation) {
                 this.setMadnessTick(this.isChallengeMode() ? NEVER_STOP : MADNESS_TICK);
                 this.setRobustTick();
-                if (this.FIRST && !this.isChallengeMode()) this.FIRST = false;
+                if (this.isFirstMadness() && !this.isChallengeMode()) this.fmFlag = false;
                 this.laserTick = this.pounceTick = this.smashTick = this.attackTick = 0;
                 this.removeAllEffects();
-            } else if (animation == WEAK_ANIMATION_3) {
+            } else if (animation == this.weakAnimation3) {
                 this.setExecuteWeak(false);
             }
         }
@@ -363,46 +367,45 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     protected void registerCustomGoals() {
-        this.goalSelector.addGoal(1, new AnimationHurtGoal<>(this, false));
-        this.goalSelector.addGoal(1, new AnimationDieGoal<>(this));
+        this.goalSelector.addGoal(1, new AnimationDie<>(this));
         this.goalSelector.addGoal(1, new GuardianCombo1Goal(this, 4F, 100F));
         this.goalSelector.addGoal(1, new GuardianCombo2Goal(this, 4.5F, 100F));
-        this.goalSelector.addGoal(1, new GuardianLobedAttackGoal(this, SMASH_ATTACK_ANIMATION));
+        this.goalSelector.addGoal(1, new GuardianLobedAttackGoal(this, () -> smashAttackAnimation));
         this.goalSelector.addGoal(1, new GuardianPounceAttackGoal(this, 3F));
-        this.goalSelector.addGoal(1, new GuardianRobustAttackGoal(this, ROBUST_ATTACK_ANIMATION));
+        this.goalSelector.addGoal(1, new GuardianRobustAttackGoal(this, () -> robustAttackAnimation));
         this.goalSelector.addGoal(1, new GuardianShakeGroundAttackGoal(this));
-        this.goalSelector.addGoal(1, new AnimationActivateGoal<>(this, ACTIVATE_ANIMATION));
-        this.goalSelector.addGoal(1, new AnimationDeactivateGoal<>(this, DEACTIVATE_ANIMATION));
-        this.goalSelector.addGoal(1, new AnimationCommonGoal<>(this, ROAR_ANIMATION));
-        this.goalSelector.addGoal(1, new AnimationAbstractGoal<>(this) {
+        this.goalSelector.addGoal(1, new AnimationActivate<>(this, () -> activateAnimation));
+        this.goalSelector.addGoal(1, new AnimationDeactivate<>(this, () -> deactivateAnimation));
+        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, () -> roarAnimation));
+        this.goalSelector.addGoal(1, new AnimationAI<>(this) {
 
             @Override
             protected boolean test(Animation animation) {
-                return animation == EntityNamelessGuardian.WEAK_ANIMATION_1 || animation == EntityNamelessGuardian.WEAK_ANIMATION_2 || animation == EntityNamelessGuardian.WEAK_ANIMATION_3;
+                return animation == entity.weakAnimation1 || animation == entity.weakAnimation2 || animation == entity.weakAnimation3;
             }
 
             @Override
             public void tick() {
                 setDeltaMovement(0, getDeltaMovement().y, 0);
-                if (entity.getAnimation() == EntityNamelessGuardian.WEAK_ANIMATION_1) {
-                    if (entity.getAnimationTick() == EntityNamelessGuardian.WEAK_ANIMATION_1.getDuration() - 1) {
-                        entity.playAnimation(WEAK_ANIMATION_2);
+                if (entity.getAnimation() == entity.weakAnimation1) {
+                    if (entity.getAnimationTick() == entity.weakAnimation1.getDuration() - 1) {
+                        entity.playAnimation(entity.weakAnimation2);
                     }
-                } else if (entity.getAnimation() == EntityNamelessGuardian.WEAK_ANIMATION_2) {
+                } else if (entity.getAnimation() == entity.weakAnimation2) {
                     int duration = Difficulty.HARD.equals(entity.level().getDifficulty()) ? HARD_MODE_STATE_TICK : WEAK_STATE_TICK;
                     if (entity.getAnimationTick() == duration) {
-                        entity.playAnimation(WEAK_ANIMATION_3);
+                        entity.playAnimation(entity.weakAnimation3);
                     }
                 }
             }
         });
-        this.goalSelector.addGoal(1, new GuardianLeapGoal(this, LEAP_ANIMATION));
-        this.goalSelector.addGoal(1, new AnimationCommonGoal<>(this, SMASH_DOWN_ANIMATION) {
+        this.goalSelector.addGoal(1, new GuardianLeapGoal(this, () -> leapAnimation));
+        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, () -> smashDownAnimation) {
             @Override
             public void tick() {
-                int tick = getAnimationTick();
-                if (tick >= 2 && tick < 9) {
-                    entity.lobedAttack(tick + 6, 2.0F, 0.0F, 3F, (entity.isPowered() ? 0.8F : 0.6F));
+                int tick = entity.getAnimationTick();
+                if (tick >= 2 && tick < 6) {
+                    entity.shockAttack(entity.damageSources().mobAttack(entity), tick + 1, 1.5F, 2F, 0F, 0.02F, 0.5F, (entity.isPowered() ? 0.8F : 0.6F), false, false, true, false);
                     if (tick == 2) {
                         entity.playSound(SoundEvents.GENERIC_EXPLODE, 1.0F, 1F + entity.getRandom().nextFloat() * 0.1F);
                         EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.125F, 8, 17);
@@ -410,16 +413,15 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 }
             }
         });
-        this.goalSelector.addGoal(1, new GuardianShootLaserGoal(this, LASER_ANIMATION));
-        this.goalSelector.addGoal(2, new AnimationFullRangeAttackGoal<>(this, CONCUSSION_ANIMATION, 6.5F, 8, 2.5F, 0.2F, true));
+        this.goalSelector.addGoal(1, new GuardianShootLaserGoal(this, () -> laserAnimation));
+        this.goalSelector.addGoal(2, new AnimationRepel<>(this, () -> concussionAnimation, 6.5F, 8, 2.5F, 0.2F, true));
         this.goalSelector.addGoal(2, new GuardianAIGoal(this));
-        this.goalSelector.addGoal(2, new AnimationDieGoal<>(this));
     }
 
     @Override
     public boolean isInvulnerableTo(DamageSource damageSource) {
         Animation animation = this.getAnimation();
-        return ((!this.isActive() || animation == ACTIVATE_ANIMATION || animation == DEACTIVATE_ANIMATION || animation == ROAR_ANIMATION || animation == WEAK_ANIMATION_1 || animation == WEAK_ANIMATION_3)) || super.isInvulnerableTo(damageSource);
+        return ((!this.isActive() || animation == this.activateAnimation || animation == this.deactivateAnimation || animation == this.roarAnimation || animation == this.weakAnimation1 || animation == this.weakAnimation3)) || super.isInvulnerableTo(damageSource);
     }
 
     @Override
@@ -439,15 +441,15 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         this.explodeControlled.updatePrevTimer();
         this.accumulationControlled.updatePrevTimer();
 
-        AnimationHandler.INSTANCE.updateAnimations(this);
+        EMAnimationHandler.INSTANCE.updateAnimations(this);
 
         if (!this.level().isClientSide) {
             if (this.getTarget() != null && !this.getTarget().isAlive()) this.setTarget(null);
 
-            if (this.getTarget() != null && this.isActive() && !this.isPowered() && this.noConflictingTasks() && (this.isChallengeMode() || (this.FIRST && this.getHealthPercentage() <= 60) || (!this.FIRST && this.getNextMadnessTick() <= 0))) {
+            if (this.getTarget() != null && this.isActive() && !this.isPowered() && this.noConflictingTasks() && (this.isChallengeMode() || (this.isFirstMadness() && this.getHealthPercentage() <= 60) || (!this.isFirstMadness() && this.getNextMadnessTick() <= 0))) {
                 this.removeAllEffects();
                 this.setNoAi(false);
-                this.playAnimation(ROAR_ANIMATION);
+                this.playAnimation(this.roarAnimation);
             }
 
             if (this.isUnnatural()) {
@@ -456,11 +458,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             } else if (this.noConflictingTasks() && !this.isNoAi()) {
                 if (this.isActive()) {
                     if (this.getTarget() == null && !this.isPowered() && zza == 0 && this.isAtRestPos()) {
-                        this.playAnimation(DEACTIVATE_ANIMATION);
+                        this.playAnimation(this.deactivateAnimation);
                         this.setActive(false);
                     }
                 } else if (this.getTarget() != null && this.targetDistance <= 5) {
-                    this.playAnimation(ACTIVATE_ANIMATION);
+                    this.playAnimation(this.activateAnimation);
                     this.setActive(true);
                 }
             }
@@ -471,12 +473,12 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 }
             }
 
-            if (!this.active && this.getAnimation() != ACTIVATE_ANIMATION) {
+            if (!this.active && this.getAnimation() != this.activateAnimation) {
                 if (EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.enableNonCombatHeal.get()) this.heal(0.5F);
             }
 
-            if (this.getTarget() != null && this.active && this.isTimeOutToUseSkill() && !this.shouldUseSkill && this.getAnimation() == NO_ANIMATION && !this.isNoAi()) {
-                this.playAnimation(CONCUSSION_ANIMATION);
+            if (this.getTarget() != null && this.active && this.isTimeOutToUseSkill() && !this.shouldUseSkill && this.getAnimation() == this.getNoAnimation() && !this.isNoAi()) {
+                this.playAnimation(this.concussionAnimation);
                 this.shouldUseSkill = true;
             }
         }
@@ -487,23 +489,23 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
         }
 
-        if (this.getAnimation() != NO_ANIMATION
-                && this.getAnimation() != POUNCE_ATTACK_ANIMATION_1
-                && this.getAnimation() != POUNCE_ATTACK_ANIMATION_2
-                && this.getAnimation() != POUNCE_ATTACK_ANIMATION_3
-                && this.getAnimation() != ROAR_ANIMATION
-                && this.getAnimation() != LASER_ANIMATION
+        if (this.getAnimation() != this.getNoAnimation()
+                && this.getAnimation() != this.pounceAttackAnimation1
+                && this.getAnimation() != this.pounceAttackAnimation2
+                && this.getAnimation() != this.pounceAttackAnimation3
+                && this.getAnimation() != this.roarAnimation
+                && this.getAnimation() != this.laserAnimation
                 || !this.isActive()) {
             this.yHeadRot = this.yBodyRot = this.getYRot();
         }
 
         int tick = this.getAnimationTick();
-        if (this.getAnimation() == DIE_WORDS_ANIMATION) {
+        if (this.getAnimation() == this.dieAnimation) {
             this.doExplodeEffect();
-        } else if (this.getAnimation() == ROAR_ANIMATION) {
+        } else if (this.getAnimation() == this.roarAnimation) {
             this.setPowered(true);
             this.doRoarEffect();
-        } else if (this.getAnimation() == CONCUSSION_ANIMATION) {
+        } else if (this.getAnimation() == this.concussionAnimation) {
             this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
             if (tick == 8) {
                 ModParticleUtils.sphericalParticleOutburst(level(), 10F, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleInit.GUARDIAN_SPARK.get()}, this, 2.5F, 0, 0, 3);
@@ -512,34 +514,34 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 this.strongKnockBlock();
             }
             if (this.getTarget() != null) this.lookAt(getTarget(), 30F, 30F);
-        } else if (this.getAnimation() == ATTACK2_ANIMATION_3) {
-            if (tick == 15) this.doSplashParticlesEffect(20);
-        } else if (this.getAnimation() == SHAKE_GROUND_ATTACK_ANIMATION_1) {
+        } else if (this.getAnimation() == this.attackAnimation6) {
+            if (tick == 14) this.doSplashParticlesEffect(20);
+        } else if (this.getAnimation() == this.shakeGroundAttackAnimation1) {
             if (tick == 24) this.doSplashParticlesEffect(25);
-        } else if (this.getAnimation() == SHAKE_GROUND_ATTACK_ANIMATION_2) {
+        } else if (this.getAnimation() == this.shakeGroundAttackAnimation2) {
             if (tick == 17) this.doSplashParticlesEffect(20);
-        } else if (this.getAnimation() == SHAKE_GROUND_ATTACK_ANIMATION_3) {
+        } else if (this.getAnimation() == this.shakeGroundAttackAnimation3) {
             if (tick == 26) this.doSplashParticlesEffect(30);
-        } else if (this.getAnimation() == ROBUST_ATTACK_ANIMATION) {
+        } else if (this.getAnimation() == this.robustAttackAnimation) {
             if (tick < 35) {
                 this.preRobustAttack();
             } else if (tick == 35) {
                 this.doSplashParticlesEffect(30);
             }
-        } else if (this.getAnimation() == SMASH_ATTACK_ANIMATION) {
+        } else if (this.getAnimation() == this.smashAttackAnimation) {
             this.doSmashEffect();
-        } else if (this.getAnimation() == POUNCE_ATTACK_ANIMATION_2) {
+        } else if (this.getAnimation() == this.pounceAttackAnimation2) {
             this.doWalkEffect(10);
             if (tick > 2) this.doBreakAirEffect();
-        } else if (this.getAnimation() == WEAK_ANIMATION_2) {
+        } else if (this.getAnimation() == this.weakAnimation2) {
             if (this.level().isClientSide && tick % 5 == 0) {
                 this.level().addParticle(ParticleTypes.LARGE_SMOKE, this.getRandomX(0.5D), this.getRandomY() - 1.5F, this.getRandomZ(0.5D), -0.15D + this.random.nextDouble() * 0.15D, -0.15D + this.random.nextDouble() * 0.15D, -0.15D + this.random.nextDouble() * 0.15D);
             }
-        } else if (this.getAnimation() == LEAP_ANIMATION && tick == 13) {
+        } else if (this.getAnimation() == this.leapAnimation && tick == 13) {
             if (!this.level().isClientSide) this.level().broadcastEntityEvent(this, (byte) 7);
-        } else if (this.getAnimation() == SMASH_DOWN_ANIMATION && tick == 4) {
+        } else if (this.getAnimation() == this.smashDownAnimation && tick == 4) {
             if (!this.level().isClientSide) this.level().broadcastEntityEvent(this, (byte) 7);
-        } else if (this.getAnimation() == ACTIVATE_ANIMATION) {
+        } else if (this.getAnimation() == this.activateAnimation) {
             LivingEntity target = getTarget();
             if (target != null && tick > 40) {
                 this.lookAt(target, 30F, 30F);
@@ -554,7 +556,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             }
         }
 
-        if (this.getAnimation() == NO_ANIMATION && this.getDeltaMovement().horizontalDistanceSqr() > (double) 2.5000003E-7F
+        if (this.getAnimation() == this.getNoAnimation() && this.getDeltaMovement().horizontalDistanceSqr() > (double) 2.5000003E-7F
                 && this.random.nextInt(5) == 0) {
             this.doWalkEffect(1);
         }
@@ -564,10 +566,10 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         float speed = Mth.sqrt(moveX * moveX + moveZ * moveZ);
 
         if (this.level().isClientSide && speed > 0.05 && this.isActive() && !this.isSilent()) {
-            if (this.frame % 22 == 1 && this.getAnimation() == NO_ANIMATION) {
+            if (this.frame % 22 == 1 && this.getAnimation() == this.getNoAnimation()) {
                 this.level().playLocalSound(getX(), getY(), getZ(), SoundInit.NAMELESS_GUARDIAN_STEP.get(), this.getSoundSource(), 1F, 1.05F, false);
             }
-            if (this.frame % 5 == 1 && this.getAnimation() == POUNCE_ATTACK_ANIMATION_2) {
+            if (this.frame % 5 == 1 && this.getAnimation() == this.pounceAttackAnimation2) {
                 this.level().playLocalSound(getX(), getY(), getZ(), SoundInit.NAMELESS_GUARDIAN_STEP.get(), this.getSoundSource(), 1F, 1.05F, false);
             }
         }
@@ -666,11 +668,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 this.shakeGroundTick--;
             }
 
-            if (this.attackTick > 0 && this.getAnimation() == NO_ANIMATION) {
+            if (this.attackTick > 0 && this.getAnimation() == this.getNoAnimation()) {
                 this.attackTick--;
             }
 
-            if (this.madnessTick > 0 && this.getTarget() != null) {
+            if (this.madnessTick > 0 && this.getTarget() != null && this.getAnimation() != this.leapAnimation) {
                 this.madnessTick--;
             }
 
@@ -695,7 +697,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         this.coreControlled.incrementOrDecreaseTimer(this.isGlow());
 
         int tick = this.getAnimationTick();
-        this.accumulationControlled.incrementOrDecreaseTimer(this.getAnimation() == LASER_ANIMATION && tick > 8 && tick < 99);
+        this.accumulationControlled.incrementOrDecreaseTimer(this.getAnimation() == this.laserAnimation && tick > 8 && tick < 99);
 
         //并无实际用途,仅作为测试 复制自EndDragon
         if (!this.isNoAi()) {
@@ -742,8 +744,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                     if (this.guardianInvulnerableTime <= 0) guardianInvulnerableTime = 20 /*不能小于等于10*/;
                     if (ModEntityUtils.isProjectileSource(source)) return false;
                 }
-                if (this.getAnimation() == WEAK_ANIMATION_2) {
-                    maxHurtDamage = /* 如果伤害源是magic类型 则没有限制伤害,反之则受到最大伤害上限2倍伤害*/source.is(EMTagKey.MAGIC_UNRESISTANT_TO) ? damage : getMaxHealth() * (maximumDamageCap * 2);
+                if (this.getAnimation() == this.weakAnimation2) {
+                    maxHurtDamage = /* 如果伤害源是magic类型 则没有限制伤害,反之则受到最大伤害上限1.5倍伤害*/source.is(EMTagKey.MAGIC_UNRESISTANT_TO) ? damage : getMaxHealth() * (maximumDamageCap * 1.5F);
                     maxHurtDamage = /* 防止超过生命值上限 */Math.min(maxHurtDamage, getMaxHealth());
                 }
                 damage = Math.min(damage, maxHurtDamage);
@@ -759,7 +761,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public void thunderHit(ServerLevel level, LightningBolt lightningBolt) {
         super.thunderHit(level, lightningBolt);
         if (!this.isPowered()) {
-            if (!this.isChallengeMode()) FIRST = false;
+            if (!this.isChallengeMode()) fmFlag = false;
             this.setNextMadnessTick(0);
         } else {
             this.heal(this.getMaxHealth() * 0.01F);
@@ -823,7 +825,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         if (compound.contains("spawnPos")) {
             this.setRestPos(NbtUtils.readBlockPos(compound.getCompound("spawnPos")));
         }
-        this.FIRST = compound.getBoolean("isFirst");
+        this.fmFlag = compound.getBoolean("fmFlag");
         this.setActive(compound.getBoolean("isActive"));
         this.setPowered(compound.getBoolean("power"));
         this.setUnnatural(compound.getBoolean("isUnnatural"));
@@ -840,7 +842,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             compound.putBoolean("power", this.entityData.get(DATA_POWER));
             compound.putInt("madnessCountdownTick", this.madnessTick);
         }
-        compound.putBoolean("isFirst", this.FIRST);
+        compound.putBoolean("fmFlag", this.fmFlag);
         compound.putBoolean("isUnnatural", this.entityData.get(DATA_IS_UNNATURAL));
         compound.putBoolean("isActive", this.entityData.get(DATA_ACTIVE));
         compound.putInt("nextMadnessTick", this.nextMadnessTick);
@@ -870,22 +872,17 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     public Animation[] getAnimations() {
-        return ANIMATIONS;
+        return this.animations;
     }
 
     @Override
     public Animation getDeathAnimation() {
-        return !this.isPowered() ? DIE_ANIMATION : DIE_WORDS_ANIMATION;
-    }
-
-    @Override
-    public Animation getHurtAnimation() {
-        return NO_ANIMATION;
+        return this.dieAnimation;
     }
 
     @Override
     public boolean noConflictingTasks() {
-        return !this.executeWeak && getAnimation() == IAnimatedEntity.NO_ANIMATION;
+        return !this.executeWeak && getAnimation() == this.getNoAnimation();
     }
 
     @Override
@@ -958,31 +955,31 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 boolean canRobust = dist <= 144D && this.isPowered && (this.guardian.getMadnessTick() == 0 || this.guardian.isChallengeMode() && this.guardian.getRobustTick() == 0);
                 boolean canSmash = (checkAttackHeight || target.onGround()) && (this.random.nextFloat() < 0.6F && dist <= (this.isPowered ? 50D : 25D) && this.guardian.getSmashTick() <= 0);
                 if (dist < 25D && !canSmash && !canRobust) {
-                    Animation attackAnimation = this.random.nextBoolean() ? ATTACK_ANIMATION_1 : ATTACK2_ANIMATION_1;
+                    Animation attackAnimation = this.random.nextBoolean() ? this.guardian.attackAnimation1 : this.guardian.attackAnimation4;
                     this.guardian.playAnimation(attackAnimation);
                 } else if (canRobust) {
-                    this.guardian.playAnimation(ROBUST_ATTACK_ANIMATION);
+                    this.guardian.playAnimation(this.guardian.robustAttackAnimation);
                     this.guardian.setRobustTick();
                 } else if (canSmash) {
-                    this.guardian.playAnimation(SMASH_ATTACK_ANIMATION);
+                    this.guardian.playAnimation(this.guardian.smashAttackAnimation);
                     this.guardian.setSmashTick(this.guardian.getCoolingTimerUtil(MAX_SMASH_ATTACK_TICK, MIN_SMASH_ATTACK_TICK, 0.2F));
                 }
 
                 boolean canLaser = this.random.nextFloat() < 0.6F && this.isPowered && checkModeOrPreventTimeouts(120) && (((checkAttackHeight ? this.guardian.targetDistance > 10.0D : this.guardian.targetDistance > 4.0D) && (entityRelativeAngle < 60.0 || entityRelativeAngle > 300) && this.guardian.targetDistance < EntityGuardianLaser.GUARDIAN_RADIUS && this.guardian.getLaserTick() <= 0) || this.guardian.isTimeOutToUseSkill());
-                boolean canShakeGround = (checkAttackHeight || target.onGround()) && !this.guardian.isTimeOutToUseSkill() && this.random.nextFloat() < 0.6F && this.guardian.getHealthPercentage() <= 50 && this.guardian.targetDistance < 6.0D && this.guardian.getShakeGroundTick() <= 0 && checkModeOrPreventTimeouts(180);
+                boolean canShakeGround = (checkAttackHeight || target.onGround()) && !this.guardian.isTimeOutToUseSkill() && this.random.nextFloat() < 0.6F && (this.guardian.getHealthPercentage() <= 75 || !this.guardian.isFirstMadness()) && this.guardian.targetDistance < 6.0D && this.guardian.getShakeGroundTick() <= 0 && checkModeOrPreventTimeouts(180);
                 boolean canLeap = this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 12.0D && this.guardian.targetDistance < 24.0 && this.guardian.getLeapTick() <= 0 && checkModeOrPreventTimeouts(100);
                 boolean canPouch = checkAttackHeight && checkModeOrPreventTimeouts(80) && (this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 6.0D && this.guardian.targetDistance < 14.0 && this.guardian.getPounceTick() <= 0 || this.guardian.isTimeOutToUseSkill());
                 if (canShakeGround) {
-                    this.guardian.playAnimation(SHAKE_GROUND_ATTACK_ANIMATION_1);
+                    this.guardian.playAnimation(this.guardian.shakeGroundAttackAnimation1);
                     this.guardian.setShakeGroundTick(SHAKE_GROUND_ATTACK_TICK);
                 } else if (canLaser) {
-                    this.guardian.playAnimation(LASER_ANIMATION);
+                    this.guardian.playAnimation(this.guardian.laserAnimation);
                     this.guardian.setLaserTick(this.guardian.getCoolingTimerUtil(MAX_LASER_ATTACK_TICK, MIN_LASER_ATTACK_TICK, 0.5F));
                 } else if (canPouch) {
-                    this.guardian.playAnimation(POUNCE_ATTACK_ANIMATION_1);
+                    this.guardian.playAnimation(this.guardian.pounceAttackAnimation1);
                     this.guardian.setPounceTick(this.guardian.getCoolingTimerUtil(MAX_POUNCE_ATTACK_TICK, MIN_POUNCE_ATTACK_TICK, 0.5F));
                 } else if (canLeap) {
-                    this.guardian.playAnimation(LEAP_ANIMATION);
+                    this.guardian.playAnimation(this.guardian.leapAnimation);
                     this.guardian.setLeapTick(this.guardian.getCoolingTimerUtil(MAX_LEAP_TICK, MIN_LEAP_TICK, 0.2F));
                 }
             }
@@ -1007,106 +1004,72 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         }
     }
 
-    public void robustAttack(int distance, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier, boolean shouldHeal) {
+    /**
+     * 无名守卫者通用撼地攻击
+     *
+     * @param damageSource         伤害源
+     * @param distance             距离
+     * @param maxFallingDistance   最大y轴起伏
+     * @param spreadArc            攻击角度
+     * @param offset               前后偏移
+     * @param hitEntityMaxHealth   目标最大生命百分比
+     * @param baseDamageMultiplier 基础伤害乘数
+     * @param damageMultiplier     总伤害乘数
+     * @param heal                 是否治疗
+     * @param disableShield        是否禁用盾牌
+     * @param randomOffset         是否生成方块随机y轴偏移
+     * @param continuous           是否在同一时刻发生
+     */
+    public void shockAttack(DamageSource damageSource, int distance, float maxFallingDistance, double spreadArc, double offset, float hitEntityMaxHealth,
+                            float baseDamageMultiplier, float damageMultiplier, boolean heal, boolean disableShield, boolean randomOffset, boolean continuous) {
         ServerLevel level = (ServerLevel) this.level();
         double perpFacing = this.yBodyRot * (Math.PI / 180);
         double facingAngle = perpFacing + Math.PI / 2;
-        double spread = Math.PI * 2.0;
+        double spread = Math.PI * spreadArc;
         int arcLen = Mth.ceil(distance * spread);
-        double minY = this.getBoundingBox().minY - 2;
+        double minY = this.getBoundingBox().minY - 2D;
         double maxY = this.getBoundingBox().maxY;
         int hitY = Mth.floor(this.getBoundingBox().minY - 0.5);
         for (int i = 0; i < arcLen; i++) {
             double theta = (i / (arcLen - 1.0) - 0.5) * spread + facingAngle;
             double vx = Math.cos(theta);
             double vz = Math.sin(theta);
-            double px = this.getX() + vx * distance + 4.0 * Math.cos((double) (this.yBodyRot + 90.0F) * Math.PI / 180.0D);
-            double pz = this.getZ() + vz * distance + 4.0 * Math.sin((double) (this.yBodyRot + 90.0F) * Math.PI / 180.0D);
-
+            double px = this.getX() + vx * distance + offset * Math.cos((double) (this.yBodyRot + 90.0F) * Math.PI / 180.0D);
+            double pz = this.getZ() + vz * distance + offset * Math.sin((double) (this.yBodyRot + 90.0F) * Math.PI / 180.0D);
             AABB aabb = new AABB(px - 1.5D, minY, pz - 1.5D, px + 1.5D, maxY, pz + 1.5D);
             List<Entity> entities = level().getEntitiesOfClass(Entity.class, aabb);
+            float factor = 1F - ((float) distance / 2F - 2F) / maxFallingDistance;
             for (Entity hit : entities) {
                 if (hit.onGround()) {
                     if (hit == this || hit instanceof EntityFallingBlock) {
                         continue;
                     }
                     if (hit instanceof LivingEntity livingEntity) {
-                        this.guardianHurtTarget(EMDamageSource.guardianRobustAttack(this), this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, shouldHeal, false, false);
+                        this.guardianHurtTarget(damageSource, this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, heal, disableShield, false);
                     }
-                    double magnitude = level().random.nextGaussian() * 0.15 + 0.1;
+                    double magnitude = level().random.nextGaussian() * 0.15F + 0.1F;
                     double angle = this.getAngleBetweenEntities(this, hit);
                     double x1 = Math.cos(Math.toRadians(angle - 90));
                     double z1 = Math.sin(Math.toRadians(angle - 90));
-                    float x = 0F, z = 0F;
-                    x += x1 * magnitude * 0.15;
-                    z += z1 * magnitude * 0.15;
+                    float x = 0F, y = 0F, z = 0F;
+                    x += (float) (x1 * magnitude * 0.15);
+                    y += (float) (0.1 + factor * 0.15) * 0.5F;
+                    z += (float) (z1 * magnitude * 0.15);
                     if (hit instanceof ServerPlayer) {
                         ((ServerPlayer) hit).connection.send(new ClientboundSetEntityMotionPacket(hit));
                     }
-                    hit.setDeltaMovement(hit.getDeltaMovement().add(x, 0.1, z));
+                    if (continuous) y *= 0.5F;
+                    hit.setDeltaMovement(hit.getDeltaMovement().add(x, y, z));
                 }
             }
-            int hitX = Mth.floor(px);
-            int hitZ = Mth.floor(pz);
-            BlockPos pos = new BlockPos(hitX, hitY, hitZ);
-            ModEntityUtils.spawnFallingBlockByPos(level, pos);
-        }
-    }
-
-    public void lobedAttack(int tick, double spreadArc, double offset, float maxFallingDistance, float damageMultiply) {
-        ServerLevel level = (ServerLevel) this.level();
-        double perpFacing = this.yBodyRot * (Math.PI / 180);
-        double facingAngle = perpFacing + Math.PI / 2;
-        double spread = Math.PI * spreadArc;
-        double maxY = this.getBoundingBox().maxY;
-        double minY = this.getBoundingBox().minY - 2D;
-        int hitY = Mth.floor(this.getBoundingBox().minY - 0.5);
-        if (tick % 2 == 0) {
-            int distance = tick / 2 - 2;
-            //取整(向上取整)
-            int arcLen = Mth.ceil(distance * spread);
-            for (int i = 0; i < arcLen; i++) {
-                double theta = (i / (arcLen - 1.0) - 0.5) * spread + facingAngle;
-                double vx = Math.cos(theta);
-                double vz = Math.sin(theta);
-                double px = this.getX() + vx * distance + offset * Math.cos((double) (this.yBodyRot + 90.0F) * Math.PI / 180.0D);
-                double pz = this.getZ() + vz * distance + offset * Math.sin((double) (this.yBodyRot + 90.0F) * Math.PI / 180.0D);
-                float factor = 1 - distance / maxFallingDistance;
-
-                //范围攻击
-                AABB aabb = new AABB(px - 1.5D, minY, pz - 1.5D, px + 1.5D, maxY, pz + 1.5D);
-                List<Entity> entities = level().getEntitiesOfClass(Entity.class, aabb);
-
-                for (Entity hit : entities) {
-                    if (hit.onGround()) {
-                        if (hit == this || hit instanceof EntityFallingBlock) {
-                            continue;
-                        }
-                        if (hit instanceof LivingEntity livingEntity) {
-                            this.guardianHurtTarget(this, livingEntity, 0.02F, 0.5F, damageMultiply, false, false, false);
-                        }
-
-                        double magnitude = level().random.nextDouble() * 0.15 + 0.1;
-                        double angle = this.getAngleBetweenEntities(this, hit);
-                        double x1 = Math.cos(Math.toRadians(angle - 90));
-                        double z1 = Math.sin(Math.toRadians(angle - 90));
-                        float x = 0F, y = 0F, z = 0F;
-                        x += x1 * magnitude * 0.15;
-                        y += 0.1 + factor * 0.15;
-                        z += z1 * magnitude * 0.15;
-                        hit.setDeltaMovement(hit.getDeltaMovement().add(x, y, z));
-                        if (hit instanceof ServerPlayer) {
-                            ((ServerPlayer) hit).connection.send(new ClientboundSetEntityMotionPacket(hit));
-                        }
-                    }
-                }
-                if (random.nextBoolean()) {
-                    //取整(向下取整)
-                    int hitX = Mth.floor(px);
-                    //取整(向下取整)
-                    int hitZ = Mth.floor(pz);
-                    BlockPos pos = new BlockPos(hitX, hitY, hitZ);
+            if (continuous || this.getRandom().nextBoolean()) {
+                int hitX = Mth.floor(px);
+                int hitZ = Mth.floor(pz);
+                BlockPos pos = new BlockPos(hitX, hitY, hitZ);
+                if (randomOffset) {
                     ModEntityUtils.spawnFallingBlockByPos(level, pos, factor);
+                } else {
+                    ModEntityUtils.spawnFallingBlockByPos(level, pos);
                 }
             }
         }
@@ -1235,12 +1198,12 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     private void doExplodeEffect() {
         int tick = this.getAnimationTick();
         if (tick == 10) this.playSound(SoundInit.NAMELESS_GUARDIAN_ACCUMULATING.get(), 2F, 2.5F);
-        if (tick > 20) this.explodeControlled.increaseTimer();
+        if (tick > 21) this.explodeControlled.increaseTimer();
         this.setDeltaMovement(0, 0, 0);
         LivingEntity target = this.getTarget();
         if (target != null) this.getLookControl().setLookAt(target, 30F, 30F);
         if (!this.level().isClientSide) {
-            if (tick == 49) {
+            if (tick == 50) {
                 this.level().broadcastEntityEvent(this, (byte) 8);
                 this.level().explode(this, this.getX(), this.getY(), this.getZ(), 5F, false, Level.ExplosionInteraction.NONE);
                 EntityCameraShake.cameraShake(level(), position(), 20, 0.2F, 10, 20);
@@ -1271,7 +1234,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     public void playAnimation(Animation animation) {
-        if (animation != NO_ANIMATION && this.attackTick <= 0 && !this.isPowered()) {
+        if (animation != this.getNoAnimation() && this.attackTick <= 0 && !this.isPowered()) {
             this.attackTick = 10;
         }
         super.playAnimation(animation);
@@ -1302,6 +1265,10 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             this.goalSelector.addGoal(7, lookAtPlayerGoal);
             this.goalSelector.addGoal(8, randomLookAroundGoal);
         }
+    }
+
+    public boolean isFirstMadness() {
+        return this.fmFlag;
     }
 
     public boolean isChallengeMode() {
@@ -1421,7 +1388,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     public boolean isGlow() {
-        return this.getHealth() > 0 && this.isActive() && !(this.getAnimation() == WEAK_ANIMATION_1 || this.getAnimation() == WEAK_ANIMATION_2 || (this.getAnimation() == WEAK_ANIMATION_3 && this.getAnimationTick() < 20));
+        return this.getHealth() > 0 && this.isActive() && !(this.getAnimation() == this.weakAnimation1 || this.getAnimation() == this.weakAnimation2 || (this.getAnimation() == this.weakAnimation3 && this.getAnimationTick() < 20));
     }
 
     public void setActive(boolean isActive) {
@@ -1469,7 +1436,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     protected boolean canHandOffMusic() {
-        return (this.getAnimation() == ROAR_ANIMATION && this.getAnimationTick() == 34) || (this.getAnimation() == WEAK_ANIMATION_1 && this.getAnimationTick() == 1);
+        return (this.getAnimation() == this.roarAnimation && this.getAnimationTick() == 34) || (this.getAnimation() == this.weakAnimation1 && this.getAnimationTick() == 1);
     }
 
     @Override

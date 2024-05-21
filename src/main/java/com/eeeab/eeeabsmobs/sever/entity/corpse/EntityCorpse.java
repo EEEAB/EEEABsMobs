@@ -1,13 +1,14 @@
 package com.eeeab.eeeabsmobs.sever.entity.corpse;
 
+import com.eeeab.animate.server.ai.AnimationMeleeAI;
+import com.eeeab.animate.server.ai.animation.AnimationActivate;
+import com.eeeab.animate.server.ai.animation.AnimationMelee;
+import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.sever.capability.FrenzyCapability;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationActivateGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationAttackGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationHurtGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationMeleeAIGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerCopyTargetGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerDieGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerProtectGoal;
@@ -16,8 +17,6 @@ import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMWallClimberNavigation;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.github.alexthe666.citadel.animation.Animation;
-import com.github.alexthe666.citadel.animation.AnimationHandler;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -29,9 +28,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -41,6 +41,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
@@ -51,22 +52,15 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class EntityCorpse extends EntityAbsCorpse implements IEntity {
     private static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(EntityCorpse.class, EntityDataSerializers.BYTE);
-    public static final Animation ATTACK_ANIMATION_HANDS = Animation.create(20);
-    public static final Animation ATTACK_ANIMATION_RIGHT = Animation.create(15);
-    public static final Animation ATTACK_ANIMATION_LEFT = Animation.create(15);
-    public static final Animation SPAWN_ANIMATION = Animation.create(20);
-    public static final Animation HURT_ANIMATION = Animation.create(0);
-    private static final Animation[] ANIMATIONS = new Animation[]{
-            ATTACK_ANIMATION_HANDS,
-            ATTACK_ANIMATION_RIGHT,
-            ATTACK_ANIMATION_LEFT,
-            HURT_ANIMATION,
-            SPAWN_ANIMATION
-    };
-    private static final Animation[] MELEE_ATTACK_ANIMATIONS = new Animation[]{
-            ATTACK_ANIMATION_HANDS,
-            ATTACK_ANIMATION_RIGHT,
-            ATTACK_ANIMATION_LEFT,
+    public final Animation attackAnimation1 = Animation.create(15);
+    public final Animation attackAnimation2 = Animation.create(15);
+    public final Animation attackAnimation3 = Animation.create(15);
+    public final Animation spawnAnimation = Animation.create(20);
+    private final Animation[] animations = new Animation[]{
+            attackAnimation1,
+            attackAnimation2,
+            attackAnimation3,
+            spawnAnimation
     };
 
     public EntityCorpse(EntityType<? extends EntityAbsCorpse> type, Level level) {
@@ -110,7 +104,7 @@ public class EntityCorpse extends EntityAbsCorpse implements IEntity {
     @Override
     public void setInitSpawn() {
         super.setInitSpawn();
-        this.playAnimation(SPAWN_ANIMATION);
+        this.playAnimation(spawnAnimation);
         this.active = false;
         this.setActive(false);
     }
@@ -127,24 +121,23 @@ public class EntityCorpse extends EntityAbsCorpse implements IEntity {
 
     @Override
     protected void registerCustomGoals() {
-        this.goalSelector.addGoal(1, new AnimationHurtGoal<>(this, false));
-        this.goalSelector.addGoal(1, new AnimationActivateGoal<>(this, SPAWN_ANIMATION));
-        this.goalSelector.addGoal(1, new AnimationAttackGoal<>(this, ATTACK_ANIMATION_HANDS, 12, 2F, 1.5F, 1.5F));
-        this.goalSelector.addGoal(1, new AnimationAttackGoal<>(this, ATTACK_ANIMATION_RIGHT, 9, 2F, 1F, 1F));
-        this.goalSelector.addGoal(1, new AnimationAttackGoal<>(this, ATTACK_ANIMATION_LEFT, 9, 2F, 1F, 1F));
-        this.goalSelector.addGoal(2, new AnimationMeleeAIGoal<>(this, 1.2D, 2, MELEE_ATTACK_ANIMATIONS));
+        this.goalSelector.addGoal(1, new AnimationActivate<>(this, () -> spawnAnimation));
+        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> attackAnimation1, 9, 2F, 1F, 1F));
+        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> attackAnimation2, 9, 2F, 1F, 1F));
+        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> attackAnimation3, 9, 2F, 1.5F, 1.5F));
+        this.goalSelector.addGoal(2, new AnimationMeleeAI<>(this, 1.2D, 5, () -> attackAnimation1, () -> attackAnimation2, () -> attackAnimation3));
         this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new EMLookAtGoal(this, EntityAbsCorpse.class, 6.0F));
         this.goalSelector.addGoal(1, new OwnerResetGoal<>(this, EntityCorpseWarlock.class, 18D));
         this.targetSelector.addGoal(2, new OwnerCopyTargetGoal<>(this));
-        this.goalSelector.addGoal(3, new OwnerProtectGoal<>(this));
+        this.goalSelector.addGoal(3, new OwnerProtectGoal<>(this, 16F));
         this.goalSelector.addGoal(3, new OwnerDieGoal<>(this));
     }
 
     @Override
     public void baseTick() {
         super.baseTick();
-        if (level().isClientSide && getAnimation() == SPAWN_ANIMATION) {
+        if (level().isClientSide && getAnimation() == spawnAnimation) {
             setSpawnParticle(4);
         }
     }
@@ -152,7 +145,7 @@ public class EntityCorpse extends EntityAbsCorpse implements IEntity {
     @Override
     public void tick() {
         super.tick();
-        AnimationHandler.INSTANCE.updateAnimations(this);
+        EMAnimationHandler.INSTANCE.updateAnimations(this);
         if (!this.level().isClientSide) {
             this.setClimbing(this.horizontalCollision);
         }
@@ -186,12 +179,20 @@ public class EntityCorpse extends EntityAbsCorpse implements IEntity {
 
     @Override
     public void die(DamageSource source) {
-        if (this.getTarget() instanceof Mob mob && this.getOwner() != null && this.getOwner().isAlive()) {
-            mob.setTarget(this.getOwner());
-            Brain<?> mobBrain = mob.getBrain();
-            if (mobBrain.hasMemoryValue(MemoryModuleType.ATTACK_TARGET)) {
-                mobBrain.setMemory(MemoryModuleType.ATTACK_TARGET, this.getOwner());
+        if (!this.level().isClientSide && this.getOwner() != null && this.getOwner().isAlive()) {
+            if (source.getEntity() == this.getOwner()) {
+                this.getOwner().heal(this.getOwner().getMaxHealth() * 0.01F);
+                this.getOwner().level().broadcastEntityEvent(this.getOwner(), (byte) 14);
             }
+            this.level().getNearbyEntities(Mob.class, TargetingConditions.DEFAULT, this, this.getBoundingBox().inflate(16))
+                    .stream().filter(mob -> mob != this && mob != this.getOwner() && mob.isAlive() && mob.getTarget() == this)
+                    .forEach(mob -> {
+                        mob.setTarget(this.getOwner());
+                        Brain<?> mobBrain = mob.getBrain();
+                        if (mobBrain.hasMemoryValue(MemoryModuleType.ATTACK_TARGET)) {
+                            mobBrain.setMemory(MemoryModuleType.ATTACK_TARGET, this.getOwner());
+                        }
+                    });
         }
         super.die(source);
     }
@@ -262,18 +263,8 @@ public class EntityCorpse extends EntityAbsCorpse implements IEntity {
     }
 
     @Override
-    public Animation getDeathAnimation() {
-        return null;
-    }
-
-    @Override
-    public Animation getHurtAnimation() {
-        return HURT_ANIMATION;
-    }
-
-    @Override
     public Animation[] getAnimations() {
-        return ANIMATIONS;
+        return this.animations;
     }
 
     @Override

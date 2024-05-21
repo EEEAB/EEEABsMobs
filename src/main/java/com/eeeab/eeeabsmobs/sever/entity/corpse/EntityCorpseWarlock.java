@@ -1,5 +1,11 @@
 package com.eeeab.eeeabsmobs.sever.entity.corpse;
 
+import com.eeeab.animate.server.ai.AnimationSimpleAI;
+import com.eeeab.animate.server.ai.AnimationSpellAI;
+import com.eeeab.animate.server.ai.animation.AnimationDie;
+import com.eeeab.animate.server.ai.animation.AnimationRepel;
+import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
 import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
 import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
@@ -10,18 +16,12 @@ import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
 import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.KeepDistanceGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationDieGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationFullRangeAttackGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationSpellAIGoal;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCrimsonCrack;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCrimsonRay;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.*;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
-import com.github.alexthe666.citadel.animation.Animation;
-import com.github.alexthe666.citadel.animation.AnimationHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
@@ -67,30 +67,31 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, NeedStopAiEntity, RangedAttackMob {
-    public static final Animation DIE_ANIMATION = Animation.create(0);
-    public static final Animation ATTACK_ANIMATION = Animation.create(15);
-    public static final Animation SUMMON_ANIMATION = Animation.create(30);
-    public static final Animation FRENZY_ANIMATION = Animation.create(30);
-    public static final Animation TELEPORT_ANIMATION = Animation.create(30);
-    public static final Animation REST_POS_ANIMATION = Animation.create(30);
-    public static final Animation VAMPIRE_ANIMATION = Animation.create(90);
-    public static final Animation ROBUST_ANIMATION = Animation.create(100);
-    public static final Animation BABBLE_ANIMATION = Animation.create(666);
-    public static final Animation TEARAPARTSPACE_ANIMATION = Animation.create(30);
-    private static final Animation[] ANIMATIONS = new Animation[]{
-            DIE_ANIMATION,
-            ATTACK_ANIMATION,
-            SUMMON_ANIMATION,
-            FRENZY_ANIMATION,
-            TELEPORT_ANIMATION,
-            REST_POS_ANIMATION,
-            VAMPIRE_ANIMATION,
-            ROBUST_ANIMATION,
-            BABBLE_ANIMATION,
-            TEARAPARTSPACE_ANIMATION,
+    public final Animation dieAnimation = Animation.create(0);
+    public final Animation attackAnimation = Animation.create(15);
+    public final Animation summonAnimation = Animation.create(30);
+    public final Animation frenzyAnimation = Animation.create(30);
+    public final Animation teleportAnimation = Animation.create(30);
+    public final Animation resetPosAnimation = Animation.create(30);
+    public final Animation vampireAnimation = Animation.create(90);
+    public final Animation robustAnimation = Animation.create(100);
+    public final Animation babbleAnimation = Animation.create(666);
+    public final Animation tearSpaceAnimation = Animation.create(30);
+    private final Animation[] animations = new Animation[]{
+            dieAnimation,
+            attackAnimation,
+            summonAnimation,
+            frenzyAnimation,
+            teleportAnimation,
+            resetPosAnimation,
+            vampireAnimation,
+            robustAnimation,
+            babbleAnimation,
+            tearSpaceAnimation,
     };
     //周期检查是否处于出生点坐标计时
     private int nextDPTick;
@@ -99,7 +100,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     private List<EntityCorpse> entities = new ArrayList<>();
     public static final int[] SPAWN_COUNT = new int[]{2, 4, 6};
     private static final int MAX_HURT_COUNT = 3;
-    private static final UniformInt NEXT_HEAL_TIME = TimeUtil.rangeOfSeconds(12, 24);
+    private static final UniformInt NEXT_HEAL_TIME = TimeUtil.rangeOfSeconds(15, 25);
     private static final TargetingConditions IGNORE_ALLIES = TargetingConditions.forCombat().selector(e -> {
         if (e instanceof EntityAbsCorpse) {
             return !EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get();
@@ -131,7 +132,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
 
     @Override//是否免疫药水效果
     public boolean addEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        return (this.getAnimation() == NO_ANIMATION || effectInstance.getEffect() == EffectInit.VERTIGO_EFFECT.get()) && super.addEffect(effectInstance, entity);
+        return (this.getAnimation() == this.getNoAnimation() || effectInstance.getEffect() == EffectInit.VERTIGO_EFFECT.get()) && super.addEffect(effectInstance, entity);
     }
 
     @Override//被方块阻塞
@@ -173,9 +174,9 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
 
     @Override
     protected void registerCustomGoals() {
-        this.goalSelector.addGoal(1, new AnimationDieGoal<>(this));
-        this.goalSelector.addGoal(1, new WarlockAnimationCommonGoal(this, SUMMON_ANIMATION, true));
-        this.goalSelector.addGoal(1, new WarlockAnimationCommonGoal(this, TELEPORT_ANIMATION, true) {
+        this.goalSelector.addGoal(1, new AnimationDie<>(this));
+        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> summonAnimation, true));
+        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> teleportAnimation, true) {
             @Override
             public void start() {
                 super.start();
@@ -186,19 +187,19 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                 }
             }
         });
-        this.goalSelector.addGoal(1, new WarlockAnimationCommonGoal(this, REST_POS_ANIMATION, false) {
+        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> resetPosAnimation, false) {
             @Override
             public void start() {
                 super.start();
                 this.entity.tryTeleportToRestPosition();
             }
         });
-        this.goalSelector.addGoal(1, new WarlockAnimationCommonGoal(this, FRENZY_ANIMATION, true));
-        this.goalSelector.addGoal(1, new WarlockAnimationCommonGoal(this, TEARAPARTSPACE_ANIMATION, true));
-        this.goalSelector.addGoal(1, new WarlockAnimationCommonGoal(this, VAMPIRE_ANIMATION, false));
-        this.goalSelector.addGoal(1, new WarlockAnimationCommonGoal(this, BABBLE_ANIMATION, false));
-        this.goalSelector.addGoal(1, new WarlockAnimationCommonGoal(this, ROBUST_ANIMATION, false));
-        this.goalSelector.addGoal(2, new AnimationFullRangeAttackGoal<>(this, ATTACK_ANIMATION, 4F, 6, 2F, 5F, true));
+        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> frenzyAnimation, true));
+        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> tearSpaceAnimation, true));
+        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> vampireAnimation, false));
+        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> babbleAnimation, false));
+        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> robustAnimation, false));
+        this.goalSelector.addGoal(2, new AnimationRepel<>(this, () -> attackAnimation, 4F, 6, 2F, 2F, true));
         this.goalSelector.addGoal(2, new WarlockTeleportGoal(this));
         this.goalSelector.addGoal(3, new WarlockSummonGoal(this));
         this.goalSelector.addGoal(3, new WarlockTearApartGoal(this));
@@ -212,50 +213,34 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     @Override
     public void tick() {
         super.tick();
-        AnimationHandler.INSTANCE.updateAnimations(this);
+        EMAnimationHandler.INSTANCE.updateAnimations(this);
         if (!this.level().isClientSide && !this.isNoAi() && this.noConflictingTasks() && this.getTarget() == null && this.tickCount % 2 == 0 && this.random.nextInt(400) == 0) {
-            this.playAnimation(BABBLE_ANIMATION);
+            this.playAnimation(babbleAnimation);
         }
 
         if (!this.level().isClientSide && !this.isNoAi() && this.noConflictingTasks() && this.getTarget() == null && this.tickCount % 10 == 0 && this.isNoAtRestPos() && this.nextDPTick <= 0) {
             this.nextDPTick = 1200;
-            this.playAnimation(REST_POS_ANIMATION);
+            this.playAnimation(resetPosAnimation);
         }
 
         if (!this.level().isClientSide && !this.isNoAi() && this.noConflictingTasks() && this.hurtCount >= MAX_HURT_COUNT && this.getTarget() != null && this.tickCount % 2 == 0 && (!this.level().getNearbyEntities(LivingEntity.class, IGNORE_ALLIES, this, this.getBoundingBox().inflate(2)).isEmpty() || targetDistance <= 5.0F && ModEntityUtils.checkTargetComingCloser(this, this.getTarget()) || this.targetDistance < 4.0F)) {
             this.hurtCount = 0;
-            this.playAnimation(ATTACK_ANIMATION);
+            this.playAnimation(attackAnimation);
         }
 
-        if (!this.level().isClientSide && !this.isNoAi() && this.tickCount % 30 == 0 && this.getTarget() != null && this.noConflictingTasks() && this.nextHealTick <= 0) {
-            this.entities = this.level().getNearbyEntities(EntityCorpse.class, TargetingConditions.forNonCombat().selector(e -> e instanceof EntityCorpse c
-                                    && (!c.hasEffect(EffectInit.FRENZY_EFFECT.get())
-                                    || this.getHealthPercentage() < 50)
-                                    && this == c.getOwner() && !c.valuable),
-                            this, this.getBoundingBox().inflate(32, 16, 32))
+        if (!this.level().isClientSide && !this.isNoAi() && this.tickCount % 40 == 0 && (this.getTarget() != null || this.getHealthPercentage() != 100) && this.noConflictingTasks() && this.nextHealTick <= 0) {
+            this.entities = this.level().getNearbyEntities(EntityCorpse.class, TargetingConditions.forNonCombat().selector(e -> this.getTarget() == null || (e instanceof EntityCorpse c && (!c.hasEffect(EffectInit.FRENZY_EFFECT.get()) || this.getHealthPercentage() < 50) && !c.valuable)), this, this.getBoundingBox().inflate(32, 16, 32))
                     .stream()
+                    .filter(e -> this == e.getOwner())
                     .limit(10)
                     .collect(Collectors.toList());
             if (!this.entities.isEmpty()) {
-                this.nextHealTick = NEXT_HEAL_TIME.sample(this.random);
-                this.playAnimation(VAMPIRE_ANIMATION);
+                this.resetHealTick();
+                this.playAnimation(vampireAnimation);
             }
         }
 
-        if (!this.level().isClientSide && !this.isNoAi() && this.tickCount % 40 == 0 && this.getTarget() == null && this.noConflictingTasks() && this.getHealthPercentage() != 100 && this.nextHealTick <= 0) {
-            this.entities = this.level().getNearbyEntities(EntityCorpse.class, TargetingConditions.forNonCombat().selector(e -> e instanceof EntityCorpse c && this == c.getOwner()),
-                            this, this.getBoundingBox().inflate(32, 16, 32))
-                    .stream()
-                    .limit(10)
-                    .collect(Collectors.toList());
-            if (!this.entities.isEmpty()) {
-                this.nextHealTick = NEXT_HEAL_TIME.sample(this.random);
-                this.playAnimation(VAMPIRE_ANIMATION);
-            }
-        }
-
-
-        if (this.getAnimation() == VAMPIRE_ANIMATION) {
+        if (this.getAnimation() == vampireAnimation) {
             int tick = this.getAnimationTick();
             if (!this.level().isClientSide) {
                 for (EntityCorpse corps : this.entities) {
@@ -307,15 +292,10 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                     }
                     this.level().playLocalSound(this.myPos[1].x, this.myPos[1].y, this.myPos[1].z, SoundInit.CORPSE_WARLOCK_TEAR.get(), this.getSoundSource(), this.getSoundVolume(), this.getVoicePitch(), false);
                 } else if (this.isHeal() && tick == 80) {
-                    for (int i = 0; i < 5; ++i) {
-                        double d0 = this.random.nextGaussian() * 0.02D;
-                        double d1 = this.random.nextGaussian() * 0.02D;
-                        double d2 = this.random.nextGaussian() * 0.02D;
-                        this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0D), this.getRandomY() + 0.1D, this.getRandomZ(1.0D), d0, d1, d2);
-                    }
+                    this.doHealEffect();
                 }
             }
-        } else if (this.getAnimation() == TELEPORT_ANIMATION || this.getAnimation() == REST_POS_ANIMATION) {
+        } else if (this.getAnimation() == teleportAnimation || this.getAnimation() == resetPosAnimation) {
             int tick = this.getAnimationTick();
             if (tick == 1) {
                 this.setInvisible(true);
@@ -325,17 +305,17 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             } else if (tick >= 20) {
                 this.setInvisible(false);
             }
-        } else if (this.getAnimation() == BABBLE_ANIMATION) {
+        } else if (this.getAnimation() == babbleAnimation) {
             if (this.getTarget() != null && this.distanceTo(this.getTarget()) < 12) {
-                this.setAnimation(NO_ANIMATION);//中断施法
+                this.setAnimation(this.getNoAnimation());//中断施法
             }
             this.doCrimsonEyeEffect(2.5F);
-        } else if (this.getAnimation() == ATTACK_ANIMATION) {
+        } else if (this.getAnimation() == attackAnimation) {
             this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
             if (this.level().isClientSide && this.getAnimationTick() == 5) {
                 ModParticleUtils.randomAnnularParticleOutburst(this.level(), 50, new ParticleOptions[]{ParticleTypes.SMOKE}, this.getX(), this.getY(), this.getZ(), 0.4F);
             }
-        } else if (this.getAnimation() == ROBUST_ANIMATION) {
+        } else if (this.getAnimation() == robustAnimation) {
             int tick = this.getAnimationTick();
             if (tick > 35) {
                 this.doCrimsonEyeEffect(-1F);
@@ -343,6 +323,15 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             } else {
                 this.setDeltaMovement(0, 0.25F, 0);
             }
+        }
+    }
+
+    private void doHealEffect() {
+        for (int i = 0; i < 5; ++i) {
+            double d0 = this.random.nextGaussian() * 0.02D;
+            double d1 = this.random.nextGaussian() * 0.02D;
+            double d2 = this.random.nextGaussian() * 0.02D;
+            this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0D), this.getRandomY() + 0.1D, this.getRandomZ(1.0D), d0, d1, d2);
         }
     }
 
@@ -411,14 +400,16 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         } else {
             if (entity != null) {
                 Animation animation = this.getAnimation();
-                if (animation == TELEPORT_ANIMATION) {
+                if (animation == teleportAnimation) {
                     return false;
-                } else if (animation == BABBLE_ANIMATION) {
-                    this.setAnimation(NO_ANIMATION);
-                } else if (animation == VAMPIRE_ANIMATION || animation == ROBUST_ANIMATION) {
+                } else if (animation == babbleAnimation) {
+                    this.setAnimation(this.getNoAnimation());
+                } else if (animation == vampireAnimation || animation == robustAnimation) {
                     damage *= 0.2F;
                 }
-                if (!ModEntityUtils.isProjectileSource(source) && this.random.nextFloat() < 0.6F) this.hurtCount++;
+                if (this.random.nextFloat() < 0.6F) this.hurtCount++;
+                Double maxDistance = EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.maxDistanceTakeDamage.get();
+                if (ModEntityUtils.isProjectileSource(source) && this.distanceTo(entity) >= maxDistance) return false;
                 float maxDamageCap = (float) (EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.maximumDamageCap.damageCap.get() * 1.0F);
                 float maxHurtDamage = this.getMaxHealth() * maxDamageCap;
                 damage = Math.min(damage, maxHurtDamage);
@@ -440,6 +431,14 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             damage *= 0.5F;//魔法造成的伤害减少50%
         }
         return damage;
+    }
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == 14) {
+            this.doHealEffect();
+        }
+        super.handleEntityEvent(id);
     }
 
     @Override
@@ -503,7 +502,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     }
 
     public boolean checkCanSummonCorpse() {
-        return this.getNearByEntities(EntityCorpse.class, 16, 16, 16, 16).size() <= 12;
+        return !this.hasEffect(EffectInit.VERTIGO_EFFECT.get()) && this.getNearByEntities(EntityCorpse.class, 16, 16, 16, 16).size() <= 12;
     }
 
     public void summonCorpse(Vec3 vec3) {
@@ -526,6 +525,9 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     public TargetType assessTargetAI() {
         LivingEntity target = this.getTarget();
         if (target != null) {
+            if (target instanceof Player) {
+                return TargetType.KNOTTY;
+            }
             AttributeInstance attribute = target.getAttribute(Attributes.ATTACK_DAMAGE);
             AttributeInstance attribute1 = target.getAttribute(Attributes.ARMOR);
             float health = target.getMaxHealth();
@@ -567,6 +569,18 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     }
 
     @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        if (!this.level().isClientSide && target == null && this.hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
+            this.resetHealTick();
+        }
+        super.setTarget(target);
+    }
+
+    private void resetHealTick() {
+        this.nextHealTick = NEXT_HEAL_TIME.sample(this.random);
+    }
+
+    @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_IS_HEAL, false);
@@ -601,22 +615,12 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
 
     @Override
     public Animation getDeathAnimation() {
-        return DIE_ANIMATION;
-    }
-
-    @Override
-    public Animation getHurtAnimation() {
-        return null;
-    }
-
-    @Override
-    public Animation[] getAnimations() {
-        return ANIMATIONS;
+        return this.dieAnimation;
     }
 
     @Override
     public boolean noConflictingTasks() {
-        return this.getAnimation() == NO_ANIMATION;
+        return this.getAnimation() == this.getNoAnimation();
     }
 
     @Override
@@ -635,7 +639,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
 
     @Override
     public boolean isGlow() {
-        return this.getAnimation() == VAMPIRE_ANIMATION || this.getAnimation() == TELEPORT_ANIMATION || this.getAnimation() == ROBUST_ANIMATION;
+        return this.getAnimation() == vampireAnimation || this.getAnimation() == teleportAnimation || this.getAnimation() == robustAnimation;
     }
 
     public boolean isHeal() {
@@ -671,6 +675,11 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                 add(Attributes.KNOCKBACK_RESISTANCE, 1D);
     }
 
+    @Override
+    public Animation[] getAnimations() {
+        return animations;
+    }
+
     public enum TargetType {
         COMMON(0, 200),
         KNOTTY(1, 300),
@@ -685,11 +694,11 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         }
     }
 
-    static class WarlockAnimationCommonGoal extends AnimationCommonGoal<EntityCorpseWarlock> {
+    static class WarlockAnimationSimpleAI extends AnimationSimpleAI<EntityCorpseWarlock> {
         private final boolean lookAtTarget;
 
-        public WarlockAnimationCommonGoal(EntityCorpseWarlock entity, Animation animation, boolean lookAtTarget) {
-            super(entity, animation);
+        public WarlockAnimationSimpleAI(EntityCorpseWarlock entity, Supplier<Animation> animationSupplier, boolean lookAtTarget) {
+            super(entity, animationSupplier);
             this.lookAtTarget = lookAtTarget;
         }
 
@@ -702,7 +711,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         }
     }
 
-    static class WarlockSummonGoal extends AnimationSpellAIGoal<EntityCorpseWarlock> {
+    static class WarlockSummonGoal extends AnimationSpellAI<EntityCorpseWarlock> {
 
         public WarlockSummonGoal(EntityCorpseWarlock spellCaster) {
             super(spellCaster);
@@ -721,7 +730,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                     return flag1 && flag2;
                 }
             }
-            return flag && flag1 && this.spellCaster.getHealthPercentage() != 100 && flag2;
+            return flag && flag1 && flag2 && this.spellCaster.getHealthPercentage() != 100;
         }
 
         @Override
@@ -729,9 +738,6 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             return this.attackDelay > 0;
         }
 
-        /**
-         * 施法
-         */
         @Override
         protected void inSpellCasting() {
             LivingEntity target = this.spellCaster.getTarget();
@@ -751,17 +757,11 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             }
         }
 
-        /**
-         * @return 施法冷却
-         */
         @Override
         protected int getSpellCastingCooling() {
             return this.spellCaster.assessTargetAI().duration;
         }
 
-        /**
-         * @return 施法音效
-         */
         @Nullable
         @Override
         protected SoundEvent getSpellCastingSound() {
@@ -769,12 +769,12 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         }
 
         @Override
-        protected Animation getAnimation() {
-            return EntityCorpseWarlock.SUMMON_ANIMATION;
+        protected Animation getEMAnimation() {
+            return this.spellCaster.summonAnimation;
         }
     }
 
-    static class WarlockReinforceGoal extends AnimationSpellAIGoal<EntityCorpseWarlock> {
+    static class WarlockReinforceGoal extends AnimationSpellAI<EntityCorpseWarlock> {
         private final TargetingConditions reinforceConditions = TargetingConditions.forCombat().range(16).selector(e -> e instanceof EntityCorpse c && c.valuable);
         private List<EntityCorpse> list;
 
@@ -792,9 +792,6 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             return !this.list.isEmpty();
         }
 
-        /**
-         * 施法
-         */
         @Override
         protected void inSpellCasting() {
             if (this.list != null && !this.list.isEmpty()) {
@@ -805,33 +802,24 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             }
         }
 
-        /**
-         * @return 施法冷却
-         */
         @Override
         protected int getSpellCastingCooling() {
             return this.spellCaster.assessTargetAI().duration;
         }
 
-        /**
-         * @return 施法音效
-         */
         @Nullable
         @Override
         protected SoundEvent getSpellCastingSound() {
             return null;
         }
 
-        /**
-         * @return 实体动画
-         */
         @Override
-        protected Animation getAnimation() {
-            return EntityCorpseWarlock.FRENZY_ANIMATION;
+        protected Animation getEMAnimation() {
+            return this.spellCaster.frenzyAnimation;
         }
     }
 
-    static class WarlockTeleportGoal extends AnimationSpellAIGoal<EntityCorpseWarlock> {
+    static class WarlockTeleportGoal extends AnimationSpellAI<EntityCorpseWarlock> {
 
         public WarlockTeleportGoal(EntityCorpseWarlock spellCaster) {
             super(spellCaster);
@@ -849,40 +837,28 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             return false;
         }
 
-        /**
-         * 施法
-         */
         @Override
         protected void inSpellCasting() {
         }
 
-        /**
-         * @return 施法冷却
-         */
         @Override
         protected int getSpellCastingCooling() {
-            return 100 + this.spellCaster.random.nextInt(100);
+            return 150 + this.spellCaster.random.nextInt(90);
         }
 
-        /**
-         * @return 施法音效
-         */
         @Nullable
         @Override
         protected SoundEvent getSpellCastingSound() {
             return null;
         }
 
-        /**
-         * @return 实体动画
-         */
         @Override
-        protected Animation getAnimation() {
-            return EntityCorpseWarlock.TELEPORT_ANIMATION;
+        protected Animation getEMAnimation() {
+            return this.spellCaster.teleportAnimation;
         }
     }
 
-    static class WarlockTearApartGoal extends AnimationSpellAIGoal<EntityCorpseWarlock> {
+    static class WarlockTearApartGoal extends AnimationSpellAI<EntityCorpseWarlock> {
         private double preX;
         private double preZ;
         private double targetY;
@@ -938,10 +914,6 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             }
         }
 
-
-        /**
-         * 施法
-         */
         @Override
         protected void inSpellCasting() {
             if (!this.spellCaster.level().isClientSide) {
@@ -955,33 +927,24 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             }
         }
 
-        /**
-         * @return 施法冷却
-         */
         @Override
         protected int getSpellCastingCooling() {
-            return 200;
+            return 300;
         }
 
-        /**
-         * @return 施法音效
-         */
         @Nullable
         @Override
         protected SoundEvent getSpellCastingSound() {
             return null;
         }
 
-        /**
-         * @return 实体动画
-         */
         @Override
-        protected Animation getAnimation() {
-            return EntityCorpseWarlock.TEARAPARTSPACE_ANIMATION;
+        protected Animation getEMAnimation() {
+            return this.spellCaster.tearSpaceAnimation;
         }
     }
 
-    static class WarlockRobustGoal extends AnimationSpellAIGoal<EntityCorpseWarlock> {
+    static class WarlockRobustGoal extends AnimationSpellAI<EntityCorpseWarlock> {
 
         public WarlockRobustGoal(EntityCorpseWarlock spellCaster) {
             super(spellCaster);
@@ -991,8 +954,9 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         public boolean canUse() {
             if (super.canUse()) {
                 LivingEntity target = this.spellCaster.getTarget();
+                boolean flag = this.spellCaster.getHealthPercentage() < 75 || this.spellCaster.tickCount > 1200;
                 if (target != null) {
-                    return this.spellCaster.distanceTo(target) - target.getBbWidth() / 2f < 16;
+                    return flag && this.spellCaster.distanceTo(target) - target.getBbWidth() / 2f < 16;
                 }
             }
             return false;
@@ -1005,7 +969,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
 
         @Override
         public boolean canContinueToUse() {
-            return this.spellCaster.getAnimation() == EntityCorpseWarlock.ROBUST_ANIMATION;
+            return this.spellCaster.getAnimation() == this.spellCaster.robustAnimation;
         }
 
         @Override
@@ -1036,41 +1000,30 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         private void spawnRay(double x, double z, double minY, double maxY) {
             if (!this.spellCaster.level().isClientSide) {
                 Vec3 sPos = ModEntityUtils.checkSummonEntityPoint(this.spellCaster, x, z, minY, maxY);
-                EntityCrimsonRay ray = new EntityCrimsonRay(this.spellCaster.level(), this.spellCaster, sPos, 20);
+                EntityCrimsonRay.PreAttack ray = new EntityCrimsonRay.PreAttack(this.spellCaster.level(), sPos, this.spellCaster);
+                ray.setPos(sPos);
                 this.spellCaster.level().addFreshEntity(ray);
             }
         }
 
-        /**
-         * 施法
-         */
         @Override
         protected void inSpellCasting() {
         }
 
-        /**
-         * @return 施法冷却
-         */
         @Override
         protected int getSpellCastingCooling() {
-            return 600;
+            return 800 - this.spellCaster.assessTargetAI().duration;
         }
 
-        /**
-         * @return 施法音效
-         */
         @Nullable
         @Override
         protected SoundEvent getSpellCastingSound() {
             return null;
         }
 
-        /**
-         * @return 实体动画
-         */
         @Override
-        protected Animation getAnimation() {
-            return EntityCorpseWarlock.ROBUST_ANIMATION;
+        protected Animation getEMAnimation() {
+            return this.spellCaster.robustAnimation;
         }
     }
 

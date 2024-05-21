@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationAbstractGoal;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianBlade;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
@@ -8,7 +8,7 @@ import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMDamageSource;
-import com.github.alexthe666.citadel.animation.Animation;
+import com.eeeab.animate.server.ai.AnimationAI;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -19,9 +19,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-import static com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian.*;
-
-public class GuardianShakeGroundAttackGoal extends AnimationAbstractGoal<EntityNamelessGuardian> {
+public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGuardian> {
 
     public GuardianShakeGroundAttackGoal(EntityNamelessGuardian entity) {
         super(entity);
@@ -29,7 +27,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAbstractGoal<EntityN
 
     @Override
     protected boolean test(Animation animation) {
-        return animation == SHAKE_GROUND_ATTACK_ANIMATION_1 || animation == SHAKE_GROUND_ATTACK_ANIMATION_2 || animation == SHAKE_GROUND_ATTACK_ANIMATION_3;
+        return animation == this.entity.shakeGroundAttackAnimation1 || animation == this.entity.shakeGroundAttackAnimation2 || animation == this.entity.shakeGroundAttackAnimation3;
     }
 
     @Override
@@ -38,7 +36,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAbstractGoal<EntityN
         LivingEntity target = this.entity.getTarget();
         Animation animation = this.entity.getAnimation();
         entity.setDeltaMovement(0, entity.onGround() ? 0 : entity.getDeltaMovement().y, 0);
-        if (animation == SHAKE_GROUND_ATTACK_ANIMATION_1) {
+        if (animation == this.entity.shakeGroundAttackAnimation1) {
             if (tick > 10 && tick < 25 && target != null) {
                 this.entity.lookAt(target, 30F, 30F);
             } else {
@@ -64,9 +62,9 @@ public class GuardianShakeGroundAttackGoal extends AnimationAbstractGoal<EntityN
                 this.entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                 EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.125F, 5, 10);
             } else if (tick == 35) {
-                this.entity.playAnimation(SHAKE_GROUND_ATTACK_ANIMATION_2);
+                this.entity.playAnimation(this.entity.shakeGroundAttackAnimation2);
             }
-        } else if (animation == SHAKE_GROUND_ATTACK_ANIMATION_2) {
+        } else if (animation == this.entity.shakeGroundAttackAnimation2) {
             tick = this.entity.getAnimationTick();
             if (tick > 8 && tick < 18 && target != null) {
                 this.entity.lookAt(target, 30F, 30F);
@@ -93,9 +91,9 @@ public class GuardianShakeGroundAttackGoal extends AnimationAbstractGoal<EntityN
                 this.entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                 EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.125F, 5, 10);
             } else if (tick == 30 && this.entity.isPowered()) {
-                this.entity.playAnimation(SHAKE_GROUND_ATTACK_ANIMATION_3);
+                this.entity.playAnimation(this.entity.shakeGroundAttackAnimation3);
             }
-        } else if (animation == SHAKE_GROUND_ATTACK_ANIMATION_3) {
+        } else if (animation == this.entity.shakeGroundAttackAnimation3) {
             tick = this.entity.getAnimationTick();
             if (tick > 8 && tick < 25 && target != null) {
                 this.entity.lookAt(target, 30F, 30F);
@@ -124,7 +122,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAbstractGoal<EntityN
                         entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1.5F, 1.2F, true, true, true);
                     }
                 }
-                doSpawnBlade(3, 0.35F);
+                doSpawnBlade(3, 0.3F);
                 this.entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                 EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.2F, 5, 10);
             }

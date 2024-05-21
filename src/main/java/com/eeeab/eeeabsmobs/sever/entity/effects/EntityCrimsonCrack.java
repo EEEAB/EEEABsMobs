@@ -4,8 +4,6 @@ import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
 import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
 import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityAbsCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
@@ -71,7 +69,7 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
                     List<LivingEntity> entities = this.getNearByEntities(LivingEntity.class, ATTACK_RANGE, ATTACK_RANGE, ATTACK_RANGE, ATTACK_RANGE);
                     if (!this.level().isClientSide) {
                         for (LivingEntity target : entities) {
-                            if (target == this.caster || target instanceof EntityAbsCorpse && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get())
+                            if (target == this.caster /*|| target instanceof EntityAbsCorpse && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()*/)
                                 continue;
                             boolean flag = target.hurt(this.damageSources().indirectMagic(target, caster), 5F + target.getMaxHealth() * 0.015F);
                             if (flag && target.isAlive()) {

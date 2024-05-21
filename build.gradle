@@ -109,9 +109,12 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     //Mob battle
-    implementation fg.deobf("curse.maven:mob-battle-mod-268746:4748521")//用于调试
-    //Citadel
-    implementation fg.deobf("curse.maven:citadel-331936:4744075")
+    implementation fg.deobf("curse.maven:mob-battle-mod-268746:4748521")
+    //Shader
+    implementation fg.deobf("curse.maven:xenon-564239:5216360")
+    implementation fg.deobf("curse.maven:oculus-581495:5299671")
+    //Neat
+    implementation fg.deobf("curse.maven:neat-238372:4580940")
     //Jei
     compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"))
     compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"))

@@ -19,6 +19,7 @@ public class EMTagKey {
     public static final TagKey<DamageType> GENERAL_UNRESISTANT_TO = registerTagKey(Registries.DAMAGE_TYPE, "general_unresistant_to");
     public static final TagKey<DamageType> MAGIC_UNRESISTANT_TO = registerTagKey(Registries.DAMAGE_TYPE, "magic_unresistant_to");
     public static final TagKey<EntityType<?>> TRAP_WHITELIST = registerTagKey(Registries.ENTITY_TYPE, "trap_whitelist");
+    public static final TagKey<EntityType<?>> IGNORE_CHANGE_TARGET = registerTagKey(Registries.ENTITY_TYPE, "ignore_change_target");
 
     private static <T> TagKey<T> registerTagKey(ResourceKey<Registry<T>> registry, String key) {
         return TagKey.create(registry, new ResourceLocation(EEEABMobs.MOD_ID, key));

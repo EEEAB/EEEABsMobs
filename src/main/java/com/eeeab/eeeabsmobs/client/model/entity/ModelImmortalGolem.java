@@ -1,120 +1,72 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
+import com.eeeab.animate.client.model.EMHierarchicalModel;
+import com.eeeab.eeeabsmobs.client.model.animation.AnimationCommon;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalGolem;
-import com.github.alexthe666.citadel.animation.Animation;
-import com.github.alexthe666.citadel.client.model.AdvancedModelBox;
-import com.github.alexthe666.citadel.client.model.ModelAnimator;
-import com.github.alexthe666.citadel.client.model.basic.BasicModelPart;
-import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.animation.AnimationChannel;
+import net.minecraft.client.animation.AnimationDefinition;
+import net.minecraft.client.animation.Keyframe;
+import net.minecraft.client.animation.KeyframeAnimations;
 import net.minecraft.client.model.ArmedModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class ModelImmortalGolem extends EMCanSpawnEntityModel<EntityImmortalGolem> implements ArmedModel {
+public class ModelImmortalGolem extends EMHierarchicalModel<EntityImmortalGolem> implements ArmedModel {
+    private final ModelPart root;
+    private final ModelPart head;
+    private final ModelPart body;
+    private final ModelPart rightArm;
+    private final ModelPart leftArm;
+    private final ModelPart rightLeg;
+    private final ModelPart leftLeg;
 
-    public ModelImmortalGolem() {
-        texHeight = 128;
-        texWidth = 128;
-
-        root = new AdvancedModelBox(this, "root");
-        root.setPos(0.0F, 24.0F, 0.0F);
-
-        upper = new AdvancedModelBox(this, "upper");
-        upper.setPos(0.0F, 0.0F, 0.0F);
-        root.addChild(upper);
-
-        head = new AdvancedModelBox(this, "head");
-        head.setPos(0.0F, -18.0F, 0.0F);
-        upper.addChild(head);
-        head.setTextureOffset(0, 0).addBox(-4.0F, -7.5F, -4.0F, 8.0F, 8.0F, 8.0F, -0.3F);
-        head.setTextureOffset(34, 0).addBox(-4.0F, -6.5F, -4.0F, 8.0F, 8.0F, 8.0F, -0.6F);
-
-        body = new AdvancedModelBox(this, "body");
-        body.setPos(0.0F, -18.0F, 0.0F);
-        upper.addChild(body);
-        body.setTextureOffset(11, 18).addBox(-3.5F, 0.0F, -2.0F, 7.0F, 10.0F, 4.0F);
-
-        leftArm = new AdvancedModelBox(this, "leftArm");
-        leftArm.setPos(5.0F, 1.0F, 0.0F);
-        body.addChild(leftArm);
-        leftArm.setTextureOffset(35, 20).addBox(-1.5F, -1.0F, -1.0F, 2.0F, 10.0F, 2.0F, true);
-        setRotationAngle(leftArm, toRadians(-90), 0, 0);
-
-        rightArm = new AdvancedModelBox(this, "rightArm");
-        rightArm.setPos(-5.0F, 1.0F, 0.0F);
-        body.addChild(rightArm);
-        rightArm.setTextureOffset(35, 20).addBox(-0.5F, -1.0F, -1.0F, 2.0F, 10.0F, 2.0F);
-        setRotationAngle(rightArm, toRadians(-90), 0, 0);
-
-
-        lower = new AdvancedModelBox(this, "lower");
-        lower.setPos(0.0F, 0.0F, 0.0F);
-        root.addChild(lower);
-
-        leftLeg = new AdvancedModelBox(this, "leftLeg");
-        leftLeg.setPos(2.0F, -9.0F, 0.1F);
-        lower.addChild(leftLeg);
-        leftLeg.setTextureOffset(1, 22).addBox(-1.0F, 1.0F, -1.1F, 2.0F, 8.0F, 2.0F, true);
-
-        rightLeg = new AdvancedModelBox(this, "rightLeg");
-        rightLeg.setPos(-2.0F, -9.0F, 0.1F);
-        lower.addChild(rightLeg);
-        rightLeg.setTextureOffset(1, 22).addBox(-1.0F, 1.0F, -1.1F, 2.0F, 8.0F, 2.0F);
-
-        animator = ModelAnimator.create();
-        updateDefaultPose();
+    public ModelImmortalGolem(ModelPart root) {
+        this.root = root.getChild("root");
+        ModelPart upper = this.root.getChild("upper");
+        this.head = upper.getChild("head");
+        this.body = upper.getChild("body");
+        this.leftArm = body.getChild("leftArm");
+        this.rightArm = body.getChild("rightArm");
+        ModelPart lower = this.root.getChild("lower");
+        this.rightLeg = lower.getChild("rightLeg");
+        this.leftLeg = lower.getChild("leftLeg");
     }
 
-
-    private void animate(EntityImmortalGolem entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float frame) {
-        if (this.animator.setAnimation(EntityImmortalGolem.ATTACK_ANIMATION)) {
-            this.animator.setStaticKeyframe(2);
-            this.animator.startKeyframe(5);
-            this.animator.rotate(root, toRadians(-6), 0, 0);
-            this.animator.rotate(head, 0, 0, 0);
-            this.animator.rotate(leftArm, toRadians(-70), toRadians(5), 0);
-            this.animator.rotate(rightArm, toRadians(-70), toRadians(-5), 0);
-            this.animator.endKeyframe();
-            this.animator.startKeyframe(3);
-            this.animator.rotate(root, toRadians(6), 0, 0);
-            this.animator.rotate(head, toRadians(-30), 0, 0);
-            this.animator.rotate(leftArm, toRadians(40), toRadians(12), 0);
-            this.animator.rotate(rightArm, toRadians(40), toRadians(-12), 0);
-            this.animator.endKeyframe();
-            this.animator.resetKeyframe(2);
-        }
-        if (this.animator.setAnimation(EntityImmortalGolem.HURT_ANIMATION)) {
-            this.animator.startKeyframe(3);
-            this.animator.rotate(upper, toRadians(2.5), 0, toRadians(-2.5));
-            this.animator.rotate(rightArm, toRadians(2.5), 0, toRadians(-2.5));
-            this.animator.rotate(leftArm, toRadians(2.5), 0, toRadians(-2.5));
-            this.animator.rotate(root, toRadians(2.5), 0, toRadians(-1.5));
-            this.animator.move(upper, 0, 1, 0);
-            this.animator.move(head, 0, 1.5F, 0);
-            this.animator.endKeyframe();
-            this.animator.startKeyframe(3);
-            this.animator.rotate(upper, toRadians(-2.5), 0, toRadians(2.5));
-            this.animator.rotate(rightArm, toRadians(-2.5), 0, toRadians(2.5));
-            this.animator.rotate(leftArm, toRadians(-2.5), 0, toRadians(2.5));
-            this.animator.rotate(root, toRadians(-2.5), 0, toRadians(1.5));
-            this.animator.move(upper, 0, 1, 0);
-            this.animator.move(head, 0, 1.5F, 0);
-            this.animator.endKeyframe();
-            this.animator.resetKeyframe(4);
-        }
+    public static LayerDefinition createBodyLayer() {
+        MeshDefinition meshdefinition = new MeshDefinition();
+        PartDefinition partdefinition = meshdefinition.getRoot();
+        PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+        PartDefinition upper = root.addOrReplaceChild("upper", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition head = upper.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -7.5F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(-0.3F))
+                .texOffs(34, 0).addBox(-4.0F, -6.5F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(-0.6F)), PartPose.offset(0.0F, -18.0F, 0.0F));
+        PartDefinition body = upper.addOrReplaceChild("body", CubeListBuilder.create().texOffs(11, 22).addBox(-3.5F, 0.0F, -2.0F, 7.0F, 10.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -18.0F, 0.0F));
+        PartDefinition leftArm = body.addOrReplaceChild("leftArm", CubeListBuilder.create().texOffs(35, 24).addBox(-1.5F, -1.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.0F, 1.0F, 0.0F, -1.5708F, 0.0F, 0.0F));
+        PartDefinition leftHand = leftArm.addOrReplaceChild("leftHand", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition rightArm = body.addOrReplaceChild("rightArm", CubeListBuilder.create().texOffs(35, 24).mirror().addBox(-0.5F, -1.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-5.0F, 1.0F, 0.0F, -1.5708F, 0.0F, 0.0F));
+        PartDefinition rightHand = rightArm.addOrReplaceChild("rightHand", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition lower = root.addOrReplaceChild("lower", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition leftLeg = lower.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(1, 26).addBox(-1.0F, 1.0F, -1.1F, 2.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(2.0F, -9.0F, 0.1F));
+        PartDefinition rightLeg = lower.addOrReplaceChild("rightLeg", CubeListBuilder.create().texOffs(1, 26).mirror().addBox(-1.0F, 1.0F, -1.1F, 2.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(-2.0F, -9.0F, 0.1F));
+        return LayerDefinition.create(meshdefinition, 128, 128);
     }
 
     @Override
-    protected Animation getSpawnAnimation() {
-        return EntityImmortalGolem.SPAWN_ANIMATION;
+    public ModelPart root() {
+        return this.root;
     }
 
     @Override
-    public void setupAnim(EntityImmortalGolem entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float frame) {
-        this.animate(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, frame);
+    public void setupAnim(EntityImmortalGolem entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.resetToDefaultPose();
+        float delta = ageInTicks - entity.tickCount;
+        float frame = entity.frame + delta;
         //LookAt
-        this.faceTarget(netHeadYaw, headPitch, 1.0F, this.head);
-
+        lookAtAnimation(netHeadYaw, headPitch, 1.0F, this.head);
         //Walk
         float walkSpeed = 0.8F;
         float walkDegree = 0.8F;
@@ -123,7 +75,6 @@ public class ModelImmortalGolem extends EMCanSpawnEntityModel<EntityImmortalGole
         this.walk(this.rightLeg, walkSpeed, walkDegree * 1.2F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
         this.walk(this.leftArm, walkSpeed, walkDegree * 0.2F, false, 0.0F, -0.05F, limbSwing, limbSwingAmount);
         this.walk(this.rightArm, walkSpeed, walkDegree * 0.2F, true, 0.0F, -0.05F, limbSwing, limbSwingAmount);
-
         //Idle
         float speed = 0.08F;
         float degree = 0.05F;
@@ -134,28 +85,23 @@ public class ModelImmortalGolem extends EMCanSpawnEntityModel<EntityImmortalGole
             this.walk(leftArm, speed, degree, false, 0, -0.05F, frame, 1);
             this.swing(leftArm, speed, degree, false, 0, 0, frame, 1);
         }
-
-        if (entity.isDangerous() && entity.getAnimation() != EntityImmortalGolem.SPAWN_ANIMATION) {
-            setStaticRotationAngle(leftArm, toRadians(20), toRadians(25), 0);
-            setStaticRotationAngle(rightArm, toRadians(20), toRadians(-25), 0);
+        if (entity.getAnimation() == entity.spawnAnimation) {
+            setStaticRotationAngle(leftArm, 90, 0, 0);
+            setStaticRotationAngle(rightArm, 90, 0, 0);
         }
+        if (entity.isDangerous() && entity.getAnimation() != entity.spawnAnimation) {
+            setStaticRotationAngle(leftArm, 20, 25, 0);
+            setStaticRotationAngle(rightArm, 20, -25, 0);
+        }
+        this.animate(entity.spawnAnimation, AnimationCommon.SPAWN, ageInTicks);
+        this.animate(entity.hurtAnimation, AnimationImmortalGolem.HURT, ageInTicks);
+        this.animate(entity.attackAnimation, AnimationImmortalGolem.ATTACK, ageInTicks);
     }
-
 
     @Override
-    public Iterable<AdvancedModelBox> getAllParts() {
-        return ImmutableList.of(this.root, this.upper, this.lower, this.head, this.rightArm, this.leftArm, this.body, this.rightLeg, this.leftLeg);
-    }
-
-    @Override
-    public Iterable<BasicModelPart> parts() {
-        return ImmutableList.of(this.root);
-    }
-
-
     public void translateToHand(HumanoidArm humanoidArm, PoseStack poseStack) {
         boolean flag = humanoidArm == HumanoidArm.RIGHT;
-        AdvancedModelBox model$part = flag ? this.rightArm : this.leftArm;
+        ModelPart model$part = flag ? this.rightArm : this.leftArm;
         this.root.translateAndRotate(poseStack);
         this.body.translateAndRotate(poseStack);
         model$part.translateAndRotate(poseStack);
@@ -171,8 +117,98 @@ public class ModelImmortalGolem extends EMCanSpawnEntityModel<EntityImmortalGole
         }
     }
 
-    @Override
-    protected double handsOffset() {
-        return -90;
+    @OnlyIn(Dist.CLIENT)
+    private static class AnimationImmortalGolem {
+
+        public static final AnimationDefinition ATTACK = AnimationDefinition.Builder.withLength(0.6f)
+                .addAnimation("root",
+                        new AnimationChannel(AnimationChannel.Targets.POSITION,
+                                new Keyframe(0f, KeyframeAnimations.posVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(0.25f, KeyframeAnimations.posVec(0f, 0.1f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(0.5f, KeyframeAnimations.posVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM)))
+                .addAnimation("root",
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(-2.5f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(0.3433333f, KeyframeAnimations.degreeVec(2.5f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(0.5f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM)))
+                .addAnimation("upper",
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(-5f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(0.3433333f, KeyframeAnimations.degreeVec(2.5f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(0.5f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM)))
+                .addAnimation("head",
+                        new AnimationChannel(AnimationChannel.Targets.POSITION,
+                                new Keyframe(0f, KeyframeAnimations.posVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.16766666f, KeyframeAnimations.posVec(0f, 0.5f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.3433333f, KeyframeAnimations.posVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR)))
+                .addAnimation("head",
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(-10f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.3433333f, KeyframeAnimations.degreeVec(-5f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.5f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR)))
+                .addAnimation("leftArm",
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(-60.08f, 4.53f, -2.12f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.25f, KeyframeAnimations.degreeVec(6.38f, 20.49f, -15.99f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.3433333f, KeyframeAnimations.degreeVec(42.39f, -3.92f, -7.47f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.5f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR)))
+                .addAnimation("rightArm",
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(-60.08f, -4.53f, 2.12f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.25f, KeyframeAnimations.degreeVec(6.38f, -20.49f, 15.99f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.3433333f, KeyframeAnimations.degreeVec(42.39f, 3.92f, 7.47f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.5f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR))).build();
+        public static final AnimationDefinition HURT = AnimationDefinition.Builder.withLength(0.5f)
+                .addAnimation("head",
+                        new AnimationChannel(AnimationChannel.Targets.POSITION,
+                                new Keyframe(0f, KeyframeAnimations.posVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(0.125f, KeyframeAnimations.posVec(0f, 2f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(0.2916767f, KeyframeAnimations.posVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM)))
+                .addAnimation("head",
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(0.08343333f, KeyframeAnimations.degreeVec(-5f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(5f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(0.2916767f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM))).build();
     }
 }
