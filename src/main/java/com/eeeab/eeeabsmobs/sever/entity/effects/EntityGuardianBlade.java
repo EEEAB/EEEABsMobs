@@ -21,7 +21,6 @@ import java.util.List;
 
 public class EntityGuardianBlade extends EntityMagicEffects {
     public final ControlledAnimation controlled = new ControlledAnimation(100);
-    private static final float MAX_DAMAGE = 30F;
     private static final int DURATION = 35;
     private boolean moveOffset;
     private double damage = 1D;
@@ -85,7 +84,7 @@ public class EntityGuardianBlade extends EntityMagicEffects {
             for (LivingEntity target : entities) {
                 if (target == caster) continue;
                 if (caster instanceof EntityNamelessGuardian) damage += target.getMaxHealth() * 0.05D;
-                damage = Mth.clamp(damage * progress, 1, MAX_DAMAGE);
+                damage = Math.max(1, damage * progress);
                 target.hurt(this.damageSources().indirectMagic(target, caster), (float) damage);
             }
         }
