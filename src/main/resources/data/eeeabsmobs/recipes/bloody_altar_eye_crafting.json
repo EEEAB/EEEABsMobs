@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#B#",
+    "RIS",
+    "#G#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:soul_sand"
+    },
+    "I": {
+      "item": "minecraft:ender_eye"
+    },
+    "B": {
+      "item": "minecraft:bone"
+    },
+    "R": {
+      "item": "minecraft:rotten_flesh"
+    },
+    "S": {
+      "item": "minecraft:spider_eye"
+    },
+    "G": {
+      "item": "minecraft:gunpowder"
+    }
+  },
+  "result": {
+    "item": "eeeabsmobs:bloody_altar_eye",
+    "count": 1
+  }
+}
