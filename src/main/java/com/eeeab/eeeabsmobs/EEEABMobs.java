@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs;
 
 import com.eeeab.eeeabsmobs.client.ClientProxy;
 import com.eeeab.eeeabsmobs.sever.ServerProxy;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerServerEvent;
 import com.eeeab.eeeabsmobs.sever.init.*;
@@ -11,9 +12,12 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
@@ -51,6 +55,7 @@ public class EEEABMobs {
         bus.<FMLLoadCompleteEvent>addListener(this::complete);
 
         PROXY.init(bus);
+        bus.addListener(this::onModConfigInit);
         bus.addListener(HandlerCapability::registerCapabilities);
         bus.addListener(PROXY::register);
 
@@ -58,6 +63,15 @@ public class EEEABMobs {
         MinecraftForge.EVENT_BUS.register(new HandlerServerEvent());
         MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, HandlerCapability::attachEntityCapability);
 
+    }
+
+    @SubscribeEvent
+    public void onModConfigInit(final ModConfigEvent event) {
+        ModConfig config = event.getConfig();
+        if (config.getSpec() == EMConfigHandler.SPEC) {
+            EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackSpeedValue = EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackSpeed.get().floatValue();
+            EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamageValue = EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamage.get().floatValue();
+        }
     }
 
     private void setup(final FMLCommonSetupEvent event) {

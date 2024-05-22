@@ -49,7 +49,7 @@ public class ItemInit {
     public static final RegistryObject<Item> IMMORTAL_LEGGINGS = ITEMS.register("immortal_leggings", () -> new ItemArmorImmortal(ArmorItem.Type.LEGGINGS));
     public static final RegistryObject<Item> IMMORTAL_AXE = ITEMS.register("immortal_axe", () -> new ItemImmortalAxe(EMToolsTier.IMMORTAL_TIER, 6F, -2.8F, new Item.Properties()));
     public static final RegistryObject<Item> IMMORTAL_SWORD = ITEMS.register("immortal_sword", () -> new ItemImmortalSword(EMToolsTier.IMMORTAL_TIER, 5, -2.4F, new Item.Properties()));
-    public static final RegistryObject<Item> GUARDIAN_AXE = ITEMS.register("guardian_axe", () -> new ItemGuardianAxe(EMToolsTier.GUARDIAN_AXE_TIER, 10F, -3F, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+    public static final RegistryObject<ItemGuardianAxe> GUARDIAN_AXE = ITEMS.register("guardian_axe", () -> new ItemGuardianAxe(EMToolsTier.GUARDIAN_AXE_TIER, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
     public static final RegistryObject<Item> GUARDIANS_MUSIC_DISC = ITEMS.register("guardians_music_disc", () -> new RecordItem(8, SoundInit.GUARDIANS, new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 3640));
     public static final RegistryObject<Item> HEART_OF_PAGAN = ITEMS.register("heart_of_pagan", () -> new Item(new Item.Properties().stacksTo(1).fireResistant()));
 
@@ -61,14 +61,6 @@ public class ItemInit {
         return block.get().asItem().getDefaultInstance();
     }
 
-    public static Item findBlockItem(RegistryObject<Block> block) {
-        return block.get().asItem();
-    }
-
-    public static void register(IEventBus bus) {
-        ITEMS.register(bus);
-    }
-
     private static int rgb2dec(int r, int g, int b) {
         int n = 0;
         n += (r << 16);
@@ -76,4 +68,13 @@ public class ItemInit {
         n += b;
         return n;
     }
+
+    public static void register(IEventBus bus) {
+        ITEMS.register(bus);
+    }
+
+    public static void initializeAttributes() {
+        GUARDIAN_AXE.get().refreshAttributesFromConfig();
+    }
+
 }

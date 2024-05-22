@@ -4,12 +4,13 @@ import com.eeeab.eeeabsmobs.EEEABMobs;
 
 import com.eeeab.eeeabsmobs.sever.advancements.EMCriteriaTriggers;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.message.MessageFrenzyEffect;
 import com.eeeab.eeeabsmobs.sever.message.MessagePlayerUseAbility;
 import com.eeeab.eeeabsmobs.sever.message.MessageUseAbility;
 import com.eeeab.eeeabsmobs.sever.message.MessageVertigoEffect;
 import com.eeeab.eeeabsmobs.sever.world.portal.EMTeleporter;
-import com.eeeab.lib.server.message.EMAnimationMessage;
+import com.eeeab.animate.server.message.AnimationMessage;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -36,7 +37,7 @@ public class ServerProxy {
         EEEABMobs.NETWORK.messageBuilder(MessageUseAbility.class, nextID()).encoder(MessageUseAbility::serialize).decoder(MessageUseAbility::deserialize).consumerNetworkThread(new MessageUseAbility.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(MessagePlayerUseAbility.class, nextID()).encoder(MessagePlayerUseAbility::serialize).decoder(MessagePlayerUseAbility::deserialize).consumerNetworkThread(new MessagePlayerUseAbility.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(MessageFrenzyEffect.class,nextID()).encoder(MessageFrenzyEffect::serialize).decoder(MessageFrenzyEffect::deserialize).consumerNetworkThread(new MessageFrenzyEffect.Handler()).add();
-        EEEABMobs.NETWORK.messageBuilder(EMAnimationMessage.class, nextID()).encoder(EMAnimationMessage::serialize).decoder(EMAnimationMessage::deserialize).consumerNetworkThread(new EMAnimationMessage.Handler()).add();
+        EEEABMobs.NETWORK.messageBuilder(AnimationMessage.class, nextID()).encoder(AnimationMessage::serialize).decoder(AnimationMessage::deserialize).consumerNetworkThread(new AnimationMessage.Handler()).add();
     }
 
     public void init(IEventBus bus) {
@@ -49,6 +50,7 @@ public class ServerProxy {
 
     public void loadComplete(IEventBus bus) {
         EMCriteriaTriggers.register();
+        ItemInit.initializeAttributes();
     }
 
     public Object getISTERProperties() {
