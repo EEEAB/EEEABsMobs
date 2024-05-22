@@ -140,7 +140,7 @@ public class EntityGuardianLaser extends EntityMagicEffects {
                 for (LivingEntity target : hit) {
                     target.setSecondsOnFire(3);
                     if (caster instanceof EntityNamelessGuardian guardian) {
-                        guardian.guardianHurtTarget(EMDamageSource.guardianLaserAttack(this, guardian), guardian, target, 0.03F, 0.3F, 1F, true, false, false);
+                        guardian.guardianHurtTarget(EMDamageSource.guardianLaserAttack(this, guardian), guardian, target, 0.05F, 0.2F, 1F, true, false, false);
                     } else if (caster != null) {
                         target.hurt(this.damageSources().mobAttack(caster), 5F + target.getMaxHealth() * 0.01F);
                     }
