@@ -13,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public class EMBiomeTagsProvider extends BiomeTagsProvider {
-
     public EMBiomeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, @Nullable ExistingFileHelper existingFileHelper) {
         super(output, provider, EEEABMobs.MOD_ID, existingFileHelper);
     }

@@ -20,9 +20,14 @@ public class DataGenerators {
         PackOutput packOutput = generator.getPackOutput();
         ExistingFileHelper helper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> provider = event.getLookupProvider();
-        generator.addProvider(true, new EMDamageTypeProvider(packOutput, provider, helper));
-        generator.addProvider(true, new EMStructureTagsProvider(packOutput, provider, helper));
-        generator.addProvider(true, new EMBiomeTagsProvider(packOutput, provider, helper));
-        generator.addProvider(true, new EMEntityTypeTagsProvider(packOutput, provider, helper));
+        boolean includeServer = event.includeServer();
+        generator.addProvider(includeServer, new EMDamageTypeProvider(packOutput, provider, helper));
+        generator.addProvider(includeServer, new EMStructureTagsProvider(packOutput, provider, helper));
+        generator.addProvider(includeServer, new EMBiomeTagsProvider(packOutput, provider, helper));
+        generator.addProvider(includeServer, new EMEntityTypeTagsProvider(packOutput, provider, helper));
+        EMBlockTagsProvider blockTagsProvider = new EMBlockTagsProvider(packOutput, provider, helper);
+        generator.addProvider(includeServer, blockTagsProvider);
+        generator.addProvider(includeServer, new EMItemTagsProvider(packOutput, provider, blockTagsProvider.contentsGetter(), helper));
+        generator.addProvider(includeServer, new EMBlockStateProvider(packOutput, helper));
     }
 }

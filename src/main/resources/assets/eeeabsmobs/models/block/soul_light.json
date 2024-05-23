@@ -1,7 +1,0 @@
-{
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "eeeabsmobs:block/soul_light",
-    "particle": "eeeabsmobs:block/soul_light"
-  }
-}
