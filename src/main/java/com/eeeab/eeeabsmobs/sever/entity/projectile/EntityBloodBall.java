@@ -110,7 +110,7 @@ public class EntityBloodBall extends Projectile implements IEntity {
     private void preDestroy(@Nullable Entity entity) {
         if (!this.level().isClientSide) {
             if (this.getOwner() == entity && entity instanceof LivingEntity livingEntity) {
-                if (this.isHeal) livingEntity.heal(Math.max(livingEntity.getMaxHealth() * power * 0.05F, livingEntity.getMaxHealth() * 0.5F));
+                if (this.isHeal) livingEntity.heal(Math.min(livingEntity.getMaxHealth() * power * 0.05F, livingEntity.getMaxHealth() * 0.5F));
             } else {
                 this.level().explode(this, this.damageSources().explosion(this, entity), null, this.position(), Math.min(power + 1, 5F), false, Level.ExplosionInteraction.NONE);
                 EntityCameraShake.cameraShake(this.level(), this.position(), 16F, 0.125F, 10, 10);
