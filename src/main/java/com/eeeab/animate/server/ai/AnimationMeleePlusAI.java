@@ -23,7 +23,7 @@ public class AnimationMeleePlusAI<T extends EEEABMobLibrary & EMAnimatedEntity> 
     @Override
     public boolean canUse() {
         LivingEntity target = this.attacker.getTarget();
-        return this.attacker.active && target != null && target.isAlive();
+        return this.attacker.active && target != null && target.isAlive() && this.attacker.canAttack(target);
     }
 
     @Override

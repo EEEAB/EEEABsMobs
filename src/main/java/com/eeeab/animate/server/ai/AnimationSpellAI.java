@@ -22,7 +22,7 @@ public abstract class AnimationSpellAI<T extends EEEABMobLibrary & EMAnimatedEnt
     @Override
     public boolean canUse() {
         LivingEntity target = this.spellCaster.getTarget();
-        if (target != null && target.isAlive()) {
+        if (target != null && target.isAlive() && this.spellCaster.canAttack(target)) {
             if (!this.spellCaster.noConflictingTasks()) {
                 return false;
             } else {

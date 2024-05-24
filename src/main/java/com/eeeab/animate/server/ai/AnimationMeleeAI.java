@@ -64,6 +64,8 @@ public class AnimationMeleeAI<T extends EEEABMobLibrary & EMAnimatedEntity> exte
                 return false;
             } else if (!target.isAlive()) {
                 return false;
+            } else if (!this.attacker.canAttack(target)) {
+                return false;
             } else {
                 this.path = this.attacker.getNavigation().createPath(target, 0);
                 if (this.path != null) {
