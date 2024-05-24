@@ -230,17 +230,17 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override//添加药水效果
     public boolean addEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        return this.isActive() && !this.isPowered() && super.addEffect(effectInstance, entity);
+        return this.isActive() && ModEntityUtils.isBeneficial(effectInstance.getEffect()) && super.addEffect(effectInstance, entity);
     }
 
     @Override//强制添加药水效果
     public void forceAddEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        if (this.isActive() && !this.isPowered()) super.forceAddEffect(effectInstance, entity);
+        if (this.isActive() && ModEntityUtils.isBeneficial(effectInstance.getEffect())) super.forceAddEffect(effectInstance, entity);
     }
 
     @Override//添加效果时额外条件
     public boolean canBeAffected(MobEffectInstance effectInstance) {
-        return this.isActive() && !this.isPowered() && super.canBeAffected(effectInstance);
+        return this.isActive() && ModEntityUtils.isBeneficial(effectInstance.getEffect()) && super.canBeAffected(effectInstance);
     }
 
     @Override//是否在实体上渲染着火效果

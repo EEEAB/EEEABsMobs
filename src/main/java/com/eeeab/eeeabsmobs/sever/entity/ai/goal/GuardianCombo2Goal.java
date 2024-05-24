@@ -46,6 +46,7 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
         if (animation == entity.attackAnimation4) {
             int lookAtFrame = isPowered ? 12 : 8;
             if (tick < lookAtFrame && target != null) {
+                entity.getLookControl().setLookAt(target, 30F, 30F);
                 this.entity.lookAt(target, 30F, 30F);
             } else {
                 this.entity.setYRot(this.entity.yRotO);
@@ -72,6 +73,7 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
             tick = this.entity.getAnimationTick();
             int lookAtFrame = isPowered ? 10 : 4;
             if (tick < lookAtFrame && target != null) {
+                entity.getLookControl().setLookAt(target, 30F, 30F);
                 this.entity.lookAt(target, 30F, 30F);
             } else {
                 this.entity.setYRot(this.entity.yRotO);
@@ -101,6 +103,7 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
             baseDamageMultiplier += 0.2F;
             int lookAtFrame = isPowered ? 14 : 12;
             if (tick < lookAtFrame && target != null) {
+                entity.getLookControl().setLookAt(target, 30F, 30F);
                 this.entity.lookAt(target, 30F, 30F);
             } else {
                 this.entity.setYRot(this.entity.yRotO);
@@ -109,6 +112,10 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
                 pursuit(5F, 2.5F);
             } else if (tick == 10) {
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.2f, this.entity.getVoicePitch() + 0.15f);
+            } else if (tick == 12) {
+                for (int i = 0; i < 6; i++) {
+                    entity.shockAttack(entity.damageSources().mobAttack(entity), i, -0.5F, 0.3F, 2F, 0.025F, 0.5F, (isPowered ? 1.0F : 0.8F), true, false, true, true);
+                }
             } else if (tick == 13) {
                 final float attackArc = 30F;
                 final float range = 5.2F;
@@ -119,9 +126,6 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
                     if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
                         entity.guardianHurtTarget(entity, livingEntity, 0.025F, 1.0F, baseDamageMultiplier, true, true, true);
                     }
-                }
-                for (int i = 0; i < 6; i++) {
-                    entity.shockAttack(entity.damageSources().mobAttack(entity), i, -0.5F, 0.3F, 2F, 0.025F, 0.5F, (isPowered ? 1.0F : 0.8F), true, false, true, true);
                 }
             } else if (tick == 14) {
                 entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 2F, 0.2F);

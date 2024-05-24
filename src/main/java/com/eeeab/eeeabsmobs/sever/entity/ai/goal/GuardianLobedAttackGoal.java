@@ -30,7 +30,10 @@ public class GuardianLobedAttackGoal extends AnimationSimpleAI<EntityNamelessGua
         float maxFallingDistance = isPowered ? 3F : 2F;
         int tick = entity.getAnimationTick();
         LivingEntity target = entity.getTarget();
-        if (target != null) entity.lookAt(target, 30F, 30F);
+        if (target != null) {
+            entity.getLookControl().setLookAt(target, 30F, 30F);
+            entity.lookAt(target, 30F, 30F);
+        }
         if ((!isPowered && tick >= 22 && tick < 27) || (isPowered && tick >= 22 && tick < 31)) {
             if (tick == 23) {
                 if (isPowered) doSpawnBlade();

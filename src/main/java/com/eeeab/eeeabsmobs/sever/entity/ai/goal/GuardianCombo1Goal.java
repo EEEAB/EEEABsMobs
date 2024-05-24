@@ -45,9 +45,9 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
         if (entity.getAnimation() == entity.attackAnimation1) {
             int tick = entity.getAnimationTick();
             int lookAtFrame = isPowered ? 15 : 8;
-            //如果是狂化状态,则追加攻击力的40%
             float baseDamageMultiplier = isPowered ? 1.0F : 0.8F;
             if (tick < lookAtFrame && target != null) {
+                entity.getLookControl().setLookAt(target, 30F, 30F);
                 entity.lookAt(target, 30F, 30F);
             } else {
                 entity.setYRot(entity.yRotO);
@@ -76,10 +76,9 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
             int tick = entity.getAnimationTick();
             int lookAtFrame = isPowered ? 15 : 9;
             float attackArc1 = attackArc + 40;
-            /* 如果是狂化状态,则追加基础攻击力的50% */
             float baseDamageMultiplier = isPowered ? 1.0F : 0.8F;
             if (tick < lookAtFrame && target != null) {
-                //entity.getLookControl().setLookAt(target, 30F, 30F);
+                entity.getLookControl().setLookAt(target, 30F, 30F);
                 entity.lookAt(target, 30F, 30F);
             } else {
                 entity.setYRot(entity.yRotO);
@@ -110,7 +109,7 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
             int tick = entity.getAnimationTick();
             float baseDamageMultiplier = isPowered ? 1.2F : 1.0F;
             if (tick < 15 && target != null) {
-                //entity.getLookControl().setLookAt(target, 30F, 30F);
+                entity.getLookControl().setLookAt(target, 30F, 30F);
                 entity.lookAt(target, 30F, 30F);
             } else {
                 entity.setYRot(entity.yRotO);
