@@ -27,6 +27,7 @@ public class EMRenderType extends RenderType {
         return create("glow_effect", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true, rendertype$state);
     }
 
+    @Deprecated
     public static RenderType getStrongGlowingEffect(ResourceLocation location) {
         RenderStateShard.TextureStateShard shard = new RenderStateShard.TextureStateShard(location, false, false);
         RenderType.CompositeState rendertype$state = RenderType.CompositeState.builder().setTextureState(shard).setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER).setTransparencyState(ADDITIVE_TRANSPARENCY).setCullState(NO_CULL).setOverlayState(OVERLAY).setWriteMaskState(COLOR_WRITE).createCompositeState(false);
