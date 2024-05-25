@@ -18,6 +18,7 @@ public enum EMAnimationHandler {
             if (animation == null) {
                 throw new IllegalArgumentException("animation is null");
             }
+            entity.getAnimation().stop();
             entity.setAnimation(animation);
             entity.setAnimationTick(0);
             animation.start(entity.tickCount);
