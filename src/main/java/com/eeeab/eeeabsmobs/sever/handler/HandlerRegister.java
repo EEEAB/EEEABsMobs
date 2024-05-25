@@ -3,6 +3,7 @@ package com.eeeab.eeeabsmobs.sever.handler;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.EMItemModels;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelBloodBall;
+import com.eeeab.eeeabsmobs.client.model.effects.ModelGrenade;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelGuardianBlade;
 import com.eeeab.eeeabsmobs.client.model.entity.*;
 import com.eeeab.eeeabsmobs.client.model.layer.EMModelLayer;
@@ -41,6 +42,7 @@ public class HandlerRegister {
         event.registerLayerDefinition(EMModelLayer.CORPSE_SLAVERY, ModelCorpseWarlock::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.BLOOD_BALL, ModelBloodBall::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.GULING_SENTINEL_HEAVY, ModelGulingSentinelHeavy::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.GRENADE, ModelGrenade::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.NAMELESS_GUARDIAN, ModelNamelessGuardian::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.GUARDIAN_BLADE, ModelGuardianBlade::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_GOLEM, ModelImmortalGolem::createBodyLayer);
@@ -66,6 +68,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.GUARDIAN_BLADE.get(), RenderGuardianBlade::new);
         event.registerEntityRenderer(EntityInit.SHAMAN_BOMB.get(), RenderShamanBomb::new);
         event.registerEntityRenderer(EntityInit.CAMERA_SHAKE.get(), EmptyRender::new);
+        event.registerEntityRenderer(EntityInit.EXPLODE.get(), EmptyRender::new);
         event.registerEntityRenderer(EntityInit.MOVING_CONTROLLER.get(), EmptyRender::new);
         event.registerEntityRenderer(EntityInit.FALLING_BLOCK.get(), RenderFallingBlock::new);
         event.registerEntityRenderer(EntityInit.GUARDIAN_LASER.get(), RenderGuardianLaser::new);
@@ -76,7 +79,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.CRIMSON_CRACK.get(), RenderCrimsonCrack::new);
         event.registerEntityRenderer(EntityInit.CRIMSON_RAY.get(), RenderCrimsonRay::new);
         event.registerEntityRenderer(EntityInit.CRIMSON_RAY_PRE.get(), RenderCrimsonRay.RenderPreAttack::new);
-        event.registerEntityRenderer(EntityInit.GRENADE.get(), EmptyRender::new);
+        event.registerEntityRenderer(EntityInit.GRENADE.get(), RenderGrenade::new);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

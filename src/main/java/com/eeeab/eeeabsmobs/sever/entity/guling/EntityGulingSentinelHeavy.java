@@ -5,9 +5,11 @@ import com.eeeab.animate.server.ai.AnimationMeleePlusAI;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import com.eeeab.animate.server.ai.animation.AnimationActivate;
 import com.eeeab.animate.server.ai.animation.AnimationDeactivate;
+import com.eeeab.animate.server.ai.animation.AnimationDie;
 import com.eeeab.animate.server.ai.animation.AnimationRepel;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
+import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
@@ -17,6 +19,7 @@ import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGrenade;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
@@ -24,6 +27,7 @@ import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -62,7 +66,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntity, GlowEntity, RangedAttackMob {
-    public final Animation dieAnimation = Animation.create(0);
+    public final Animation dieAnimation = Animation.create(60);
     public final Animation activeAnimation = Animation.create(30);
     public final Animation deactivateAnimation = Animation.create(30);
     public final Animation attackAnimationLeft = Animation.create(25);
@@ -70,7 +74,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     public final Animation smashAttackAnimation = Animation.create(30);
     public final Animation rangeAttackAnimation = Animation.create(100);
     public final Animation rangeAttackStopAnimation = Animation.create(10);
-    public final Animation electromagneticAnimation = Animation.create(80);
+    public final Animation electromagneticAnimation = Animation.create(100);
     private final Animation[] animations = new Animation[]{
             dieAnimation,
             activeAnimation,
@@ -92,12 +96,14 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     private static final int RANGE_ATTACK_TICK = 350;
     private static final int SMASH_ATTACK_TICK = 300;
     private static final int ELECTROMAGNETIC_TICK = 450;
+    public final ControlledAnimation electromagneticConControlled = new ControlledAnimation(20);
     //@OnlyIn(Dist.CLIENT)
     //public Vec3[] hand;//0:left 1:right
 
     public EntityGulingSentinelHeavy(EntityType<? extends EntityAbsGuling> type, Level level) {
         super(type, level);
         this.active = false;
+        this.dropAfterDeathAnim = false;
         this.setPathfindingMalus(BlockPathTypes.UNPASSABLE_RAIL, 0.0F);
         //if (this.level().isClientSide) {
         //    this.hand = new Vec3[]{new Vec3(0, 0, 0), new Vec3(0, 0, 0)};
@@ -202,12 +208,13 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
 
     @Override
     protected void registerCustomGoals() {
+        this.goalSelector.addGoal(1, new AnimationDie<>(this));
         this.goalSelector.addGoal(1, new AnimationActivate<>(this, () -> activeAnimation));
         this.goalSelector.addGoal(1, new AnimationDeactivate<>(this, () -> deactivateAnimation));
         this.goalSelector.addGoal(1, new GSHMeleeAttackGoal(this));
         this.goalSelector.addGoal(1, new GSHRangeAttackGoal(this));
         this.goalSelector.addGoal(1, new GSHElectromagneticAttackGoal(this));
-        this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> smashAttackAnimation, 7F, 18, 1.5F, 2F, true) {
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> smashAttackAnimation, 7F, 18, 1.5F, 1.5F, true) {
             @Override
             public void tick() {
                 this.entity.setDeltaMovement(0F, 0F, 0F);
@@ -290,6 +297,42 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         } else if (this.getAnimation() == this.attackAnimationLeft || this.getAnimation() == this.attackAnimationRight) {
             if (tick == 9 || tick == 17) {
                 this.playSound(SoundInit.GSH_ATTACK.get(), this.getSoundVolume(), this.getVoicePitch());
+            }
+        } else if (this.getAnimation() == this.dieAnimation) {
+            if (tick <= 10) {
+                LivingEntity target = this.getTarget();
+                if (target != null) {
+                    this.getLookControl().setLookAt(target, 30F, 30F);
+                }
+            } else if (tick == 38) {
+                float range = 5F;
+                float attackArc = 120F;
+                List<LivingEntity> entities = this.getNearByLivingEntities(range - 0.5F, 3F, range - 0.5F, range - 0.5F);
+                for (LivingEntity hitEntity : entities) {
+                    float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this, hitEntity);
+                    float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - this.getZ()) * (hitEntity.getZ() - this.getZ()) + (hitEntity.getX() - this.getX()) * (hitEntity.getX() - this.getX())) - hitEntity.getBbWidth() / 2F;
+                    if ((entityHitDistance <= range - 0.5F && (entityRelativeAngle <= 10F && entityRelativeAngle >= -(attackArc + 20) / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
+                        this.gshHurtTarget(hitEntity, 3F, true);
+                        double ratioX = Math.sin(this.getYRot() * ((float) Math.PI / 180F));
+                        double ratioZ = (-Math.cos(this.getYRot() * ((float) Math.PI / 180F)));
+                        ModEntityUtils.forceKnockBack(hitEntity, 0.5F, ratioX, ratioZ, 1.0F, false);
+                    }
+                }
+            } else if (tick == 39) {
+                EntityCameraShake.cameraShake(level(), position(), 15, 0.125F, 0, 10);
+                if (this.level().isClientSide) {
+                    ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 25, ParticleDust.EnumDustBehavior.GROW, 1.0f);
+                    ModParticleUtils.annularParticleOutburst(level(), 15, new ParticleOptions[]{dustData}, getX(), this.getY(), getZ(), 0.5F, 0.1);
+                }
+            }
+        } else if (this.getAnimation() == this.electromagneticAnimation) {
+            if (tick > 20 && tick < 90) {
+                this.electromagneticConControlled.increaseTimer();
+                if (tick == 44 || tick == 66 || tick == 88) {
+                    this.electromagneticConControlled.decreaseTimer(10);
+                }
+            } else {
+                this.electromagneticConControlled.decreaseTimer(2);
             }
         }
 
@@ -397,6 +440,11 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         return this.animations;
     }
 
+    @Override
+    public Animation getDeathAnimation() {
+        return this.dieAnimation;
+    }
+
     @Nullable
     @Override
     protected SoundEvent getDeathSound() {
@@ -429,11 +477,11 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().
                 add(Attributes.MAX_HEALTH, 150.0D).
-                add(Attributes.ARMOR, 20.0D).
+                add(Attributes.ARMOR, 15.0D).
                 add(Attributes.ATTACK_DAMAGE, 10.0D).
                 add(Attributes.FOLLOW_RANGE, 32.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.28D).
-                add(ForgeMod.ENTITY_GRAVITY.get(), 0.12D).
+                add(ForgeMod.ENTITY_GRAVITY.get(), 0.125D).
                 add(Attributes.KNOCKBACK_RESISTANCE, 1.0D);
     }
 
@@ -536,7 +584,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, livingEntity);
                     float entityHitDistance = (float) Math.sqrt((livingEntity.getZ() - entity.getZ()) * (livingEntity.getZ() - entity.getZ()) + (livingEntity.getX() - entity.getX()) * (livingEntity.getX() - entity.getX())) - livingEntity.getBbWidth() / 2F;
                     if ((entityHitDistance <= range && (entityRelativeAngle <= rightArc / 2F && entityRelativeAngle >= -leftArc / 2F) || (entityRelativeAngle >= 360 - 90F / 2F || entityRelativeAngle <= -360 + 90F / 2F))) {
-                        entity.gshHurtTarget(livingEntity, 1.5F, false);
+                        entity.gshHurtTarget(livingEntity, 1.25F, false);
                     }
                 }
             }
@@ -578,17 +626,17 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             }
             int tick = this.entity.getAnimationTick();
             if (tick % 20 == 0 && tick > 10) {
-                this.entity.performRangedAttack(target, 1.24F);
+                this.entity.performRangedAttack(target, 1F);
             }
         }
 
         private void moveGoal(LivingEntity target) {
-            double moveSpeed = this.entity.getAttributeValue(Attributes.MOVEMENT_SPEED);
+            double moveSpeed = this.entity.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.75;
             double distance = this.entity.distanceToSqr(target);
             if (distance < Math.pow(6, 2)) {
                 Vec3 vec3 = findTargetPoint(target, this.entity);
                 this.entity.setDeltaMovement(vec3.x * moveSpeed, this.entity.getDeltaMovement().y, vec3.z * moveSpeed);
-            } else if (distance > Math.pow(24, 2)) {
+            } else if (distance > Math.pow(12, 2)) {
                 Vec3 vec3 = findTargetPoint(this.entity, target);
                 this.entity.setDeltaMovement(vec3.x * moveSpeed, this.entity.getDeltaMovement().y, vec3.z * moveSpeed);
             } else {
@@ -613,7 +661,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             return animation == this.entity.electromagneticAnimation;
         }
 
-        //TODO 待实现
+        //TODO 待实现 2024/5/25完成动画制作
         @Override
         public void tick() {
             super.tick();

@@ -21,5 +21,6 @@ public class EMModelLayer {
 
     //非生物实体
     public static final ModelLayerLocation BLOOD_BALL = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "blood_ball"), "main");
+    public static final ModelLayerLocation GRENADE = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "grenade"), "main");
     public static final ModelLayerLocation GUARDIAN_BLADE = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "guardian_blade"), "main");
 }

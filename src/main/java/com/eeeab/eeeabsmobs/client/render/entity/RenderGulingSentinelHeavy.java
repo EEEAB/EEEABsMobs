@@ -36,6 +36,11 @@ public class RenderGulingSentinelHeavy extends MobRenderer<EntityGulingSentinelH
     }
 
     @Override
+    protected float getFlipDegrees(EntityGulingSentinelHeavy entity) {
+        return 0;//获取死亡翻转角度
+    }
+
+    @Override
     public ResourceLocation getTextureLocation(EntityGulingSentinelHeavy sentinelHeavy) {
         return TEXTURE;
     }

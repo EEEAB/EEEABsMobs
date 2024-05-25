@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
+import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -10,7 +11,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-//TODO 待优化 部分参数可配置 延迟爆炸(爆炸前要有蓄力过程)
 public class EntityGrenade extends EntityMagicEffects {
     private static final float GRAVITY = 0.03F;
     private static final float RADIUS = 2.5F;
@@ -28,12 +28,9 @@ public class EntityGrenade extends EntityMagicEffects {
     public void tick() {
         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
         if (hitresult.getType() != HitResult.Type.MISS) {
-            if (!this.level().isClientSide) {
-                Vec3 position = this.position();
-                this.level().explode(this, this.damageSources().explosion(this, this.caster), null, this.position(), RADIUS, false, Level.ExplosionInteraction.NONE);
-                EntityCameraShake.cameraShake(this.level(), position, 16F, 0.125F, 10, 10);
-                this.discard();
-            }
+            EntityExplode.explode(this.level(), this.position(), this.damageSources().explosion(this, this.caster), RADIUS, 15F);
+            EntityCameraShake.cameraShake(this.level(), this.position(), 16F, 0.125F, 5, 15);
+            this.discard();
         }
         this.checkInsideBlocks();
         Vec3 vec3 = this.getDeltaMovement();
@@ -45,8 +42,13 @@ public class EntityGrenade extends EntityMagicEffects {
                 this.level().addParticle(ParticleTypes.BUBBLE, d0 - vec3.x * 0.25D, d1 - vec3.y * 0.25D, d2 - vec3.z * 0.25D, vec3.x, vec3.y, vec3.z);
             }
         }
-        for (int i = 0; i < 4; ++i) {
-            this.level().addParticle(ParticleTypes.SMOKE, d0, d1 + 0.5D, d2, 0.0D, 0.0D, 0.0D);
+        if (this.tickCount > 3) {
+            for (int i = 0; i < 4; ++i) {
+                double dx = this.getX() + this.random.nextGaussian() * 0.15D;
+                double dy = this.getY() + this.random.nextGaussian() * 0.15D;
+                double dz = this.getZ() + this.random.nextGaussian() * 0.15D;
+                this.level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), dx, dy, dz, -this.getDeltaMovement().x() * 0.25F, -this.getDeltaMovement().y() * 0.25F, -this.getDeltaMovement().z() * 0.25F);
+            }
         }
         if (!this.isNoGravity()) {
             Vec3 vec31 = this.getDeltaMovement();
