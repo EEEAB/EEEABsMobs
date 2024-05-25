@@ -51,7 +51,8 @@ public class AnimationRangeAI<T extends EEEABMobLibrary & EMAnimatedEntity> exte
 
     @Override
     public boolean canUse() {
-        return customFlag.test(this.attacker) && this.attacker.getTarget() != null && (this.ignoreWeaponCheck || this.isHoldItem());
+        LivingEntity target = this.attacker.getTarget();
+        return customFlag.test(this.attacker) && target != null && target.isAlive() && this.attacker.canAttack(target) && (this.ignoreWeaponCheck || this.isHoldItem());
     }
 
     public boolean canContinueToUse() {
