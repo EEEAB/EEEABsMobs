@@ -44,7 +44,7 @@ public class EntityInit {
     public static final RegistryObject<EntityType<EntityImmortalShaman>> IMMORTAL_SHAMAN =
             ENTITIES.register("immortal_shaman",
                     () -> EntityType.Builder.<EntityImmortalShaman>of(EntityImmortalShaman::new, MobCategory.MONSTER)
-                            .sized(0.6f, 1.8f).clientTrackingRange(8)
+                            .sized(0.6f, 2.6f).clientTrackingRange(8)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_shaman").toString()));
 
 

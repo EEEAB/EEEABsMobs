@@ -441,7 +441,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
             if (!super.canUse()) {
                 return false;
             } else {
-                int size = this.spellCaster.level().getNearbyEntities(EntityImmortalGolem.class, this.CountTargeting, this.spellCaster, this.spellCaster.getBoundingBox().inflate(30.0D)).size();
+                int size = this.spellCaster.level().getNearbyEntities(EntityImmortalSkeleton.class, this.CountTargeting, this.spellCaster, this.spellCaster.getBoundingBox().inflate(32.0D)).size();
                 return size < this.spellCaster.random.nextInt(6) + 1 && this.spellCaster.getTarget() != null && this.spellCaster.targetDistance > 8.0;
             }
         }
@@ -465,16 +465,13 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         }
 
         private void summonEntity(Vec3 vec3) {
-            EntityImmortalGolem entity = EntityInit.IMMORTAL_GOLEM.get().create(this.spellCaster.level());
-            if (!this.spellCaster.level().isClientSide && entity != null && vec3 != null) {
-                entity.setInitSpawn();
-                entity.finalizeSpawn((ServerLevel) this.spellCaster.level(), this.spellCaster.level().getCurrentDifficultyAt(BlockPos.containing(vec3.x, vec3.y, vec3.z)), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
-                entity.setOwner(this.spellCaster);
-                entity.setSummonAliveTime(20 * (30 + this.spellCaster.random.nextInt(90)));
-                Difficulty difficulty = this.spellCaster.level().getDifficulty();
-                entity.setDangerous(this.spellCaster.random.nextInt(10 - difficulty.getId()) == 0);
-                entity.setPos(vec3);
-                level().addFreshEntity(entity);
+            EntityImmortalSkeleton skeleton = new EntityImmortalSkeleton(EntityInit.IMMORTAL_SKELETON.get(), this.spellCaster.level());
+            if (!this.spellCaster.level().isClientSide && vec3 != null) {
+                skeleton.setInitSpawn();
+                skeleton.finalizeSpawn((ServerLevel) this.spellCaster.level(), this.spellCaster.level().getCurrentDifficultyAt(BlockPos.containing(vec3.x, vec3.y, vec3.z)), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
+                skeleton.setOwner(this.spellCaster);
+                skeleton.setPos(vec3);
+                level().addFreshEntity(skeleton);
             }
         }
 
