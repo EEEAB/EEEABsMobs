@@ -8,7 +8,6 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector4f;
 
-//TODO 待完善:获取模型部件的坐标不能兼容原版动画
 public class ModelPartUtils {
     private ModelPartUtils() {
     }
@@ -32,6 +31,7 @@ public class ModelPartUtils {
      * @param yaw    偏航
      * @param box    模型部件
      */
+    @Deprecated
     public static Vec3 getWorldPosition(Entity entity, float yaw, ModelPart box) {
         PoseStack poseStack = new PoseStack();
         poseStack.translate(entity.getX(), entity.getY(), entity.getZ());
@@ -39,6 +39,39 @@ public class ModelPartUtils {
         poseStack.scale(-1F, -1F, 1F);
         poseStack.translate(0, -1.0F, 0);
         poseStackFromModel(poseStack, box);
+        PoseStack.Pose last = poseStack.last();
+        Matrix4f matrix4f = last.pose();
+        Vector4f vector4f = new Vector4f(0, 0, 0, 1);
+        Vector4f mul = vector4f.mul(matrix4f);
+        return new Vec3(mul.x, mul.y, mul.z);
+    }
+
+    /**
+     * 手动指定模型部件链路位于世界坐标
+     *
+     * @param entity        实体
+     * @param yaw           偏航
+     * @param root          根部件
+     * @param modelPartName 查找链路(子组件靠后)
+     */
+    public static Vec3 getWorldPosition(Entity entity, float yaw, ModelPart root, String... modelPartName) {
+        if (modelPartName == null || modelPartName.length == 0)
+            throw new IllegalArgumentException("The lookup link cannot be null");
+        PoseStack poseStack = new PoseStack();
+        poseStack.translate(entity.getX(), entity.getY(), entity.getZ());
+        poseStack.mulPose((new Quaternionf().rotationY((float) ((-yaw + 180F) * Math.PI / 180F))));
+        poseStack.scale(-1F, -1F, 1F);
+        ModelPart nextPart = null;
+        for (int i = 0; i < modelPartName.length; i++) {
+            if (i == 0) {
+                nextPart = root.getChild(modelPartName[0]);
+                nextPart.translateAndRotate(poseStack);
+            } else {
+                ModelPart child = nextPart.getChild(modelPartName[i]);
+                child.translateAndRotate(poseStack);
+                nextPart = child;
+            }
+        }
         PoseStack.Pose last = poseStack.last();
         Matrix4f matrix4f = last.pose();
         Vector4f vector4f = new Vector4f(0, 0, 0, 1);

@@ -97,17 +97,17 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     private static final int SMASH_ATTACK_TICK = 300;
     private static final int ELECTROMAGNETIC_TICK = 450;
     public final ControlledAnimation electromagneticConControlled = new ControlledAnimation(20);
-    //@OnlyIn(Dist.CLIENT)
-    //public Vec3[] hand;//0:left 1:right
+    @OnlyIn(Dist.CLIENT)
+    public Vec3[] hand;//0:left 1:right
 
     public EntityGulingSentinelHeavy(EntityType<? extends EntityAbsGuling> type, Level level) {
         super(type, level);
         this.active = false;
         this.dropAfterDeathAnim = false;
         this.setPathfindingMalus(BlockPathTypes.UNPASSABLE_RAIL, 0.0F);
-        //if (this.level().isClientSide) {
-        //    this.hand = new Vec3[]{new Vec3(0, 0, 0), new Vec3(0, 0, 0)};
-        //}
+        if (this.level().isClientSide) {
+            this.hand = new Vec3[]{new Vec3(0, 0, 0), new Vec3(0, 0, 0)};
+        }
     }
 
     @Override
@@ -343,24 +343,24 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             if (this.level().isClientSide && this.tickCount % 2 == 0 && this.random.nextInt(100) == 0) {
                 this.level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), this.getRandomX(1.5D), this.getY(0.5F), this.getRandomZ(1.5D), 0.0D, 0.07D, 0.0D);
             }
-            //if (this.level().isClientSide && !this.hotControlled.isStop()) {
-            //    if (this.hand != null && this.hand.length > 0) {
-            //        Vec3 left = this.hand[0];
-            //        Vec3 right = this.hand[1];
-            //        if (left != null && right != null) {
-            //            double d0 = this.random.nextGaussian() * 0.02D;
-            //            double d1 = this.random.nextGaussian() * 0.02D;
-            //            double d2 = this.random.nextGaussian() * 0.02D;
-            //            if (this.random.nextInt(100) == 0) {
-            //                this.level().addParticle(ParticleTypes.SOUL_FIRE_FLAME, left.x, left.y, left.z, d0, d1, d2);
-            //                this.level().addParticle(ParticleTypes.SOUL_FIRE_FLAME, right.x, right.y, right.z, d0, d1, d2);
-            //            } else {
-            //                this.level().addParticle(ParticleTypes.SMOKE, left.x, left.y, left.z, d0, d1, d2);
-            //                this.level().addParticle(ParticleTypes.SMOKE, right.x, right.y, right.z, d0, d1, d2);
-            //            }
-            //        }
-            //    }
-            //}
+            if (this.level().isClientSide && !this.hotControlled.isStop()) {
+                if (this.hand != null && this.hand.length > 0) {
+                    Vec3 left = this.hand[0];
+                    Vec3 right = this.hand[1];
+                    if (left != null && right != null) {
+                        double d0 = this.random.nextGaussian() * 0.02D;
+                        double d1 = this.random.nextGaussian() * 0.02D;
+                        double d2 = this.random.nextGaussian() * 0.02D;
+                        if (this.random.nextInt(100) == 0) {
+                            this.level().addParticle(ParticleTypes.SOUL_FIRE_FLAME, left.x, left.y, left.z, d0, d1, d2);
+                            this.level().addParticle(ParticleTypes.SOUL_FIRE_FLAME, right.x, right.y, right.z, d0, d1, d2);
+                        } else {
+                            this.level().addParticle(ParticleTypes.SMOKE, left.x, left.y, left.z, d0, d1, d2);
+                            this.level().addParticle(ParticleTypes.SMOKE, right.x, right.y, right.z, d0, d1, d2);
+                        }
+                    }
+                }
+            }
         }
 
         float moveX = (float) (this.getX() - this.xo);

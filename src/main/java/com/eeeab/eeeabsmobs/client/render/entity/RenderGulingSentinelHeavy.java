@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.client.render.entity;
 
+import com.eeeab.animate.client.util.ModelPartUtils;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelGulingSentinelHeavy;
 import com.eeeab.eeeabsmobs.client.model.layer.EMModelLayer;
@@ -16,6 +17,8 @@ public class RenderGulingSentinelHeavy extends MobRenderer<EntityGulingSentinelH
     private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/guling/heavy/guling_sentinel_heavy.png");
     private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/guling/heavy/guling_sentinel_heavy_glow.png");
     private static final ResourceLocation HOT_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/guling/heavy/guling_sentinel_heavy_hot.png");
+    private static final String[] RIGHT_FINGER = new String[]{"upper", "body", "rightArm", "rightHand", "finger1"};
+    private static final String[] LEFT_FINGER = new String[]{"upper", "body", "leftArm", "leftHand", "finger4"};
 
     public RenderGulingSentinelHeavy(EntityRendererProvider.Context context) {
         super(context, new ModelGulingSentinelHeavy(context.bakeLayer(EMModelLayer.GULING_SENTINEL_HEAVY)), 1.2F);
@@ -48,9 +51,9 @@ public class RenderGulingSentinelHeavy extends MobRenderer<EntityGulingSentinelH
     @Override
     public void render(EntityGulingSentinelHeavy entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
         super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
-        //if (!entity.hotControlled.isStop()) {
-        //    entity.hand[0] = ModelPartUtils.getWorldPosition(entity, entityYaw, this.getModel().finger4);
-        //    entity.hand[1] = ModelPartUtils.getWorldPosition(entity, entityYaw, this.getModel().finger1);
-        //}
+        if (!entity.hotControlled.isStop()) {
+            entity.hand[0] = ModelPartUtils.getWorldPosition(entity, entityYaw, this.model.root(), LEFT_FINGER);
+            entity.hand[1] = ModelPartUtils.getWorldPosition(entity, entityYaw, this.model.root(), RIGHT_FINGER);
+        }
     }
 }
