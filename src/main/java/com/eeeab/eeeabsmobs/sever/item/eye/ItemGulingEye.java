@@ -5,6 +5,6 @@ import net.minecraft.world.item.Rarity;
 
 public class ItemGulingEye extends ItemFindStructureEye {
     public ItemGulingEye() {
-        super(new Properties().rarity(Rarity.RARE).stacksTo(16), EMTagKey.EYE_OF_GULING, 0.05F, 0.15F, 0.255F);
+        super(new Properties().rarity(Rarity.RARE).stacksTo(16).fireResistant(), EMTagKey.EYE_OF_GULING, 0.05F, 0.15F, 0.255F);
     }
 }
