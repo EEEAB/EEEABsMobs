@@ -27,9 +27,6 @@ public class ModelGulingSentinelHeavy extends EMHierarchicalModel<EntityGulingSe
     private final ModelPart cube_r1;
     private final ModelPart lower;
 
-    public final ModelPart finger1;
-    public final ModelPart finger4;
-
     public ModelGulingSentinelHeavy(ModelPart root) {
         this.root = root.getChild("root");
         this.cube_r1 = this.root.getChild("cube_r1");
@@ -44,8 +41,6 @@ public class ModelGulingSentinelHeavy extends EMHierarchicalModel<EntityGulingSe
         this.leftHand = this.leftArm.getChild("leftHand");
         this.rightLeg = this.lower.getChild("rightLeg");
         this.leftLeg = this.lower.getChild("leftLeg");
-        this.finger1 = this.rightHand.getChild("finger1");
-        this.finger4 = this.leftHand.getChild("finger4");
     }
 
     public static LayerDefinition createBodyLayer() {
