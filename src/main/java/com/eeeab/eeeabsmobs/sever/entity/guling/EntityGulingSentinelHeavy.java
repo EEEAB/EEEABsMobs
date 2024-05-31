@@ -299,19 +299,23 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 this.playSound(SoundInit.GSH_ATTACK.get(), this.getSoundVolume(), this.getVoicePitch());
             }
         } else if (this.getAnimation() == this.dieAnimation) {
-            if (tick <= 10) {
+            if (tick <= 15) {
                 LivingEntity target = this.getTarget();
                 if (target != null) {
+                    this.lookAt(target,30F,30F);
                     this.getLookControl().setLookAt(target, 30F, 30F);
                 }
-            } else if (tick == 38) {
+            }else {
+                this.setYRot(this.yRotO);
+            }
+            if (tick == 38) {
                 float range = 5F;
                 float attackArc = 120F;
                 List<LivingEntity> entities = this.getNearByLivingEntities(range - 0.5F, 3F, range - 0.5F, range - 0.5F);
                 for (LivingEntity hitEntity : entities) {
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this, hitEntity);
                     float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - this.getZ()) * (hitEntity.getZ() - this.getZ()) + (hitEntity.getX() - this.getX()) * (hitEntity.getX() - this.getX())) - hitEntity.getBbWidth() / 2F;
-                    if ((entityHitDistance <= range - 0.5F && (entityRelativeAngle <= 10F && entityRelativeAngle >= -(attackArc + 20) / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
+                    if ((entityHitDistance <= range - 0.5F && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
                         this.gshHurtTarget(hitEntity, 3F, true);
                         double ratioX = Math.sin(this.getYRot() * ((float) Math.PI / 180F));
                         double ratioZ = (-Math.cos(this.getYRot() * ((float) Math.PI / 180F)));
@@ -319,10 +323,17 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                     }
                 }
             } else if (tick == 39) {
+                boolean hot = !this.hotControlled.isStop();
                 EntityCameraShake.cameraShake(level(), position(), 15, 0.125F, 0, 10);
                 if (this.level().isClientSide) {
                     ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 25, ParticleDust.EnumDustBehavior.GROW, 1.0f);
-                    ModParticleUtils.annularParticleOutburst(level(), 15, new ParticleOptions[]{dustData}, getX(), this.getY(), getZ(), 0.5F, 0.1);
+                    ParticleOptions[] options;
+                    if (hot) {
+                        options = new ParticleOptions[]{dustData, ParticleTypes.SOUL_FIRE_FLAME};
+                    } else {
+                        options = new ParticleOptions[]{dustData};
+                    }
+                    ModParticleUtils.annularParticleOutburst(level(), 15, options, getX(), this.getY(), getZ(), 0.5F, 0.1);
                 }
             }
         } else if (this.getAnimation() == this.electromagneticAnimation) {
