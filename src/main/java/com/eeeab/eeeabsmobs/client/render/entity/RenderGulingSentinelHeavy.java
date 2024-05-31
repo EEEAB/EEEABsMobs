@@ -52,8 +52,8 @@ public class RenderGulingSentinelHeavy extends MobRenderer<EntityGulingSentinelH
     public void render(EntityGulingSentinelHeavy entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
         super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
         if (!entity.hotControlled.isStop()) {
-            entity.hand[0] = ModelPartUtils.getWorldPosition(entity, entityYaw, this.model.root(), LEFT_FINGER);
-            entity.hand[1] = ModelPartUtils.getWorldPosition(entity, entityYaw, this.model.root(), RIGHT_FINGER);
+            entity.hand[0] = ModelPartUtils.getWorldPosition(entity, entity.yBodyRot, this.model.root(), LEFT_FINGER);
+            entity.hand[1] = ModelPartUtils.getWorldPosition(entity, entity.yBodyRot, this.model.root(), RIGHT_FINGER);
         }
     }
 }
