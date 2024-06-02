@@ -98,7 +98,7 @@ public class EntityCrimsonRay extends EntityMagicEffects {
                 for (LivingEntity target : hit) {
                     if (target == this.caster /*|| target instanceof EntityAbsCorpse && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()*/)
                         continue;
-                    target.hurt(this.damageSources().indirectMagic(target, caster), 5F + target.getMaxHealth() * 0.01F);
+                    target.hurt(this.damageSources().indirectMagic(this, caster), 5F + target.getMaxHealth() * 0.01F);
                 }
             }
         }

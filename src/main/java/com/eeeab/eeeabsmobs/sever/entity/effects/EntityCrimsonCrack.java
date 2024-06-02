@@ -71,7 +71,7 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
                         for (LivingEntity target : entities) {
                             if (target == this.caster /*|| target instanceof EntityAbsCorpse && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()*/)
                                 continue;
-                            boolean flag = target.hurt(this.damageSources().indirectMagic(target, caster), 5F + target.getMaxHealth() * 0.015F);
+                            boolean flag = target.hurt(this.damageSources().indirectMagic(this, caster), 5F + target.getMaxHealth() * 0.015F);
                             if (flag && target.isAlive()) {
                                 target.setDeltaMovement(target.getDeltaMovement().subtract(this.position().normalize().scale(0.08F)));
                                 ModEntityUtils.addEffectStackingAmplifier(target, EffectInit.ARMOR_LOWER_EFFECT.get(), 300, true, true, true);

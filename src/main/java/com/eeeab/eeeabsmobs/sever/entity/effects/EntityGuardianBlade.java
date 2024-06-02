@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
@@ -12,6 +13,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -84,8 +86,9 @@ public class EntityGuardianBlade extends EntityMagicEffects {
             for (LivingEntity target : entities) {
                 if (target == caster) continue;
                 if (caster instanceof EntityNamelessGuardian) damage += target.getMaxHealth() * 0.05D;
+                if (caster instanceof Player) damage = Math.min(EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamageValue * 2, damage);
                 damage = Math.max(1, damage * progress);
-                target.hurt(this.damageSources().indirectMagic(target, caster), (float) damage);
+                target.hurt(this.damageSources().indirectMagic(this, caster), (float) damage);
             }
         }
     }
