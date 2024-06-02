@@ -95,6 +95,8 @@ public class EntityGuardianLaser extends EntityMagicEffects {
                 this.updateWithPlayer();
             } else if (caster instanceof EntityNamelessGuardian) {
                 this.updateWithGuardian();
+            } else {
+                this.updateWithEntity(0F);
             }
         }
 
@@ -274,11 +276,15 @@ public class EntityGuardianLaser extends EntityMagicEffects {
     }
 
     private void updateWithGuardian() {
+        this.updateWithEntity(1.35F);
+    }
+
+    private void updateWithEntity(float offset) {
         double radians = Math.toRadians(this.caster.yHeadRot + 90);
         this.setYHeadRotAngle((float) radians);
         this.setXHeadRotAngle((float) ((double) (-this.caster.getXRot()) * Math.PI / 180.0));
-        double offsetX = Math.cos(radians) * 1.35;
-        double offsetZ = Math.sin(radians) * 1.35;
+        double offsetX = Math.cos(radians) * offset;
+        double offsetZ = Math.sin(radians) * offset;
         this.setPos(this.caster.getX() + offsetX, this.caster.getY() + (caster.getBbHeight() * 0.75f), this.caster.getZ() + offsetZ);
     }
 

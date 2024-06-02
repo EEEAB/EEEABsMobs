@@ -28,6 +28,7 @@ public class ItemInit {
     public static final RegistryObject<Item> IMMORTAL_GOLEM_EGG = registerEgg("immortal_golem_egg", EntityInit.IMMORTAL_GOLEM, IMMORTAL_BACK_COLOR, rgb2dec(158, 226, 255));
     public static final RegistryObject<Item> IMMORTAL_BOSS_EGG = registerEgg("immortal_boss_egg", EntityInit.IMMORTAL_BOSS, IMMORTAL_BACK_COLOR, rgb2dec(83, 137, 173));
     public static final RegistryObject<Item> NAMELESS_GUARDIAN_EGG = registerEgg("nameless_guardian_egg", EntityInit.NAMELESS_GUARDIAN, rgb2dec(15, 15, 15), rgb2dec(100, 100, 105));
+    public static final RegistryObject<Item> GULING_SENTINEL_EGG = registerEgg("guling_sentinel_egg", EntityInit.GULING_SENTINEL, rgb2dec(25, 25, 25), rgb2dec(110, 130, 160));
     public static final RegistryObject<Item> GULING_SENTINEL_HEAVY_EGG = registerEgg("guling_sentinel_heavy_egg", EntityInit.GULING_SENTINEL_HEAVY, rgb2dec(15, 15, 15), rgb2dec(100, 120, 150));
     public static final RegistryObject<Item> CORPSE_EGG = registerEgg("corpse_egg", EntityInit.CORPSE, CORPSE_GREEN_COLOR, rgb2dec(72, 135, 115));
     public static final RegistryObject<Item> CORPSE_VILLAGER_EGG = registerEgg("corpse_villager_egg", EntityInit.CORPSE_VILLAGER, CORPSE_GREEN_COLOR, rgb2dec(72, 129, 125));

@@ -33,6 +33,10 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> IMMORTAL_GOLEM_HURT = create("immortal.golem.hurt");
     public static final RegistryObject<SoundEvent> IMMORTAL_GOLEM_DEATH = create("immortal.golem.death");
 
+    //Guling Sentinel
+    public static final RegistryObject<SoundEvent> GS_HURT = create("gs.hurt");
+    public static final RegistryObject<SoundEvent> GS_DEATH = create("gs.death");
+
     //Guling Sentinel-Heavy
     public static final RegistryObject<SoundEvent> GSH_STEP = create("gsh.step");
     public static final RegistryObject<SoundEvent> GSH_IDLE = create("gsh.idle");

@@ -185,13 +185,28 @@ public final class EMConfigHandler {
     public static class GulingMobs {
         public GulingMobs(final ForgeConfigSpec.Builder builder) {
             builder.push("Structure-Guling");
+            GULING_SENTINEL = new GulingSentinel(builder);
             GULING_SENTINEL_HEAVY = new GulingSentinelHeavy(builder);
             NAMELESS_GUARDIAN = new NamelessGuardian(builder);
             builder.pop();
         }
 
         public final NamelessGuardian NAMELESS_GUARDIAN;
+        public final GulingSentinel GULING_SENTINEL;
         public final GulingSentinelHeavy GULING_SENTINEL_HEAVY;
+    }
+
+    //古陵哨兵
+    public static class GulingSentinel {
+        public GulingSentinel(final ForgeConfigSpec.Builder builder) {
+            builder.push("Guling Sentinel");
+            enableNonCombatHeal = BUILDER.comment("If 'False' disable non-combat heal").define("Enable non-combat heal", true);
+            combatConfig = new AttributeConfig();
+            builder.pop();
+        }
+
+        public final ForgeConfigSpec.BooleanValue enableNonCombatHeal;//启用脱战治疗
+        public final AttributeConfig combatConfig;
     }
 
     //古陵哨兵-重型

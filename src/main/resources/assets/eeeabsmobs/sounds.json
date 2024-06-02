@@ -68,6 +68,20 @@
       "eeeabsmobs:generic/entity/skeleton_death"
     ]
   },
+  "gs.hurt": {
+    "subtitle": "subtitles.gs.hurt",
+    "sounds": [
+      "eeeabsmobs:entity/guling_sentinel/hurt1",
+      "eeeabsmobs:entity/guling_sentinel/hurt2",
+      "eeeabsmobs:entity/guling_sentinel/hurt3"
+    ]
+  },
+  "gs.death": {
+    "subtitle": "subtitles.gs.death",
+    "sounds": [
+      "eeeabsmobs:entity/guling_sentinel/death"
+    ]
+  },
   "gsh.step": {
     "subtitle": "subtitles.gsh.step",
     "sounds": [
