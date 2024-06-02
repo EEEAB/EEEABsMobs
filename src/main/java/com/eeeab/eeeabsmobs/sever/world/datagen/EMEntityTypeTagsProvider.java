@@ -22,7 +22,7 @@ public class EMEntityTypeTagsProvider extends EntityTypeTagsProvider {
     protected void addTags(HolderLookup.Provider provider) {
         tag(Tags.EntityTypes.BOSSES).add(EntityInit.NAMELESS_GUARDIAN.get());
         tag(EntityTypeTags.ARROWS).add(EntityInit.POISON_ARROW.get());
-        tag(EMTagKey.TRAP_WHITELIST).add(EntityInit.IMMORTAL_GOLEM.get(), EntityInit.CORPSE.get()/*TODO 待移除*/, EntityInit.CORPSE_VILLAGER.get()/*TODO 待移除*/, EntityInit.GULING_SENTINEL_HEAVY.get(), EntityInit.NAMELESS_GUARDIAN.get());
+        tag(EMTagKey.TRAP_WHITELIST).add(EntityInit.IMMORTAL_GOLEM.get(), EntityInit.GULING_SENTINEL.get(), EntityInit.GULING_SENTINEL_HEAVY.get(), EntityInit.NAMELESS_GUARDIAN.get());
         tag(EMTagKey.IGNORE_CHANGE_TARGET).add(EntityInit.CORPSE_WARLOCK.get(), EntityInit.NAMELESS_GUARDIAN.get());
     }
 }

@@ -1,8 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
-import com.eeeab.animate.server.ai.AnimationAI;
-import com.eeeab.animate.server.ai.AnimationMeleeAI;
-import com.eeeab.animate.server.ai.AnimationRangeAI;
+import com.eeeab.animate.server.ai.*;
 import com.eeeab.animate.server.ai.animation.AnimationActivate;
 import com.eeeab.animate.server.ai.animation.AnimationBlock;
 import com.eeeab.animate.server.ai.animation.AnimationMelee;
@@ -10,17 +8,22 @@ import com.eeeab.animate.server.ai.animation.AnimationRange;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerCopyTargetGoal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -34,6 +37,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -41,6 +45,7 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -53,7 +58,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     public final Animation crossBowHoldAnimation = Animation.create(10);
     public final Animation castAnimation = Animation.create(30);
     public final Animation blockAnimation = Animation.create(10);
-    public final Animation spawnAnimation = Animation.create(40);
+    public final Animation spawnAnimation = Animation.create(20);
     public final Animation roarAnimation = Animation.create(45);
     private final Animation[] animations = new Animation[]{
             swingArmAnimation,
@@ -134,14 +139,53 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
                 }
             }
         });
+        this.goalSelector.addGoal(1, new AnimationAI<>(this, true, true) {
+
+            @Override
+            protected boolean test(Animation animation) {
+                return animation == this.entity.castAnimation;
+            }
+
+            @Override
+            public void tick() {
+                int tick = this.entity.getAnimationTick();
+                if (tick == 20) {
+                    if (this.entity.getTarget() != null) {
+                        LivingEntity livingEntity = this.entity.getTarget();
+                        double minY = Math.min(livingEntity.getY(), this.entity.getY());
+                        double maxY = Math.max(livingEntity.getY(), this.entity.getY()) + 1.0D;
+                        Vec3 point1 = ModEntityUtils.checkSummonEntityPoint(this.entity, this.entity.getX() - 1, this.entity.getZ(), minY, maxY);
+                        summonEntity(point1);
+                        Vec3 point2 = ModEntityUtils.checkSummonEntityPoint(this.entity, this.entity.getX() + 1, this.entity.getZ(), minY, maxY);
+                        summonEntity(point2);
+                    }
+                }
+            }
+
+            private void summonEntity(Vec3 vec3) {
+                EntityImmortalGolem entity = EntityInit.IMMORTAL_GOLEM.get().create(this.entity.level());
+                if (!this.entity.level().isClientSide && entity != null && vec3 != null) {
+                    entity.setInitSpawn();
+                    entity.finalizeSpawn((ServerLevel) this.entity.level(), this.entity.level().getCurrentDifficultyAt(BlockPos.containing(vec3.x, vec3.y, vec3.z)), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
+                    entity.setOwner(this.entity);
+                    entity.setSummonAliveTime(20 * (15 + this.entity.random.nextInt(15)));
+                    Difficulty difficulty = this.entity.level().getDifficulty();
+                    entity.setDangerous(this.entity.random.nextInt(10 - difficulty.getId()) == 0);
+                    entity.setPos(vec3);
+                    level().addFreshEntity(entity);
+                }
+            }
+        });
         this.goalSelector.addGoal(1, new AnimationRange<>(this, () -> bowAnimation, 25, null));
         this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> swingArmAnimation, 6, 2.5F, 1.0F, 1.0F));
         this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> meleeAnimation, 5, 3.0F, 1.0F, 1.0F));
         this.goalSelector.addGoal(1, new AnimationBlock<>(this, () -> blockAnimation));
-        this.goalSelector.addGoal(2, new AnimationRangeAI<>(this, 1D, 20, 8F, Items.CROSSBOW, e -> e.checkHoldItemIsCareerWeapon(CareerType.ARCHER, CareerType.KNIGHT), () -> crossBowChangeAnimation));
-        this.goalSelector.addGoal(2, new AnimationRangeAI<>(this, 1D, 25, 12F, Items.BOW, e -> e.checkHoldItemIsCareerWeapon(CareerType.ARCHER, CareerType.KNIGHT), () -> bowAnimation));
-        this.goalSelector.addGoal(3, new AnimationMeleeAI<>(this, 1D, 10, EntityAbsImmortalSkeleton::checkConformCareerWeapon, () -> swingArmAnimation));
-        this.goalSelector.addGoal(3, new AnimationMeleeAI<>(this, 1D, 10, e -> e.checkHoldItemIsCareerWeapon(CareerType.WARRIOR, CareerType.KNIGHT), () -> meleeAnimation));
+        this.targetSelector.addGoal(2, new OwnerCopyTargetGoal<>(this));
+        this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 20, 10F, Items.CROSSBOW, e -> e.active && e.checkHoldItemIsCareerWeapon(CareerType.ARCHER, CareerType.KNIGHT), () -> crossBowChangeAnimation));
+        this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 25, 12F, Items.BOW, e -> e.active && e.checkHoldItemIsCareerWeapon(CareerType.ARCHER, CareerType.KNIGHT), () -> bowAnimation));
+        this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 300, 16F, null, e -> e.active && e.checkHoldItemIsCareerWeapon(CareerType.MAGE), () -> castAnimation));
+        this.goalSelector.addGoal(4, new AnimationMeleeAI<>(this, 1D, 10, e -> e.checkHoldItemIsCareerWeapon(CareerType.WARRIOR, CareerType.KNIGHT), () -> meleeAnimation));
+        this.goalSelector.addGoal(5, new AnimationMeleeAI<>(this, 1.05D, 10, EntityAbsImmortalSkeleton::checkConformCareerWeapon, () -> swingArmAnimation));
     }
 
     @Override
@@ -154,7 +198,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
                 if (attackTick == 0 && getSensing().hasLineOfSight(target)) {
                     attacking = true;
                 }
-                if (attacking && getSensing().hasLineOfSight(target)) {
+                if (attacking && getSensing().hasLineOfSight(target) && canAttack(target)) {
                     if (targetDistance < 1.5 || targetDistance < 2.5 && ModEntityUtils.checkTargetComingCloser(this, target)) {
                         this.stopUsingItem();
                         this.playAnimation(this.meleeAnimation);
@@ -269,6 +313,11 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     }
 
     @Override
+    public Animation getSpawnAnimation() {
+        return this.spawnAnimation;
+    }
+
+    @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putInt("careerType", this.getCareerType().id);
@@ -346,8 +395,8 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         NONE(-1, 5F, 4F, 0F, 0F, 1.05F, Items.AIR),
         MAGE(0, 20F, 0F, 2F, 0.08F, 1.05F, Items.AIR),
         ARCHER(1, 10F, 6F, 4F, 0.05F, 1.1F, Items.BOW, Items.CROSSBOW),
-        WARRIOR(2, 15F, 5F, 6F, -0.05F, 1.1F, Items.STONE_SWORD),
-        KNIGHT(3, 25F, 6F, 8F, -0.08F, 1.2F, ItemInit.IMMORTAL_AXE.get(), ItemInit.IMMORTAL_SWORD.get(), Items.BOW, Items.CROSSBOW),
+        WARRIOR(2, 15F, 5F, 6F, -0.02F, 1.1F, Items.STONE_SWORD),
+        KNIGHT(3, 25F, 6F, 8F, -0.02F, 1.2F, ItemInit.IMMORTAL_AXE.get(), ItemInit.IMMORTAL_SWORD.get(), Items.BOW, Items.CROSSBOW),
         ;
 
         CareerType(int id, float health, float attack, float armor, float speed, float scale, Item... holdItems) {

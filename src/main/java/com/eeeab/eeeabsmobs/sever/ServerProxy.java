@@ -9,7 +9,7 @@ import com.eeeab.eeeabsmobs.sever.message.MessageFrenzyEffect;
 import com.eeeab.eeeabsmobs.sever.message.MessagePlayerUseAbility;
 import com.eeeab.eeeabsmobs.sever.message.MessageUseAbility;
 import com.eeeab.eeeabsmobs.sever.message.MessageVertigoEffect;
-import com.eeeab.eeeabsmobs.sever.world.portal.EMTeleporter;
+import com.eeeab.eeeabsmobs.sever.world.portal.VoidCrackTeleporter;
 import com.eeeab.animate.server.message.AnimationMessage;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -45,7 +45,7 @@ public class ServerProxy {
     }
 
     public void register(RegisterEvent event) {
-        EMTeleporter.onRegisterPointOfInterest(event);
+        VoidCrackTeleporter.onRegisterPointOfInterest(event);
     }
 
     public void loadComplete(IEventBus bus) {

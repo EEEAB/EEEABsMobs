@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.block;
 
+import com.eeeab.eeeabsmobs.sever.init.BlockInit;
 import com.eeeab.eeeabsmobs.sever.util.EMResourceKey;
 import com.eeeab.eeeabsmobs.sever.world.portal.CuboidPortalShape;
 import net.minecraft.core.BlockPos;
@@ -31,7 +32,7 @@ public class BlockErosionPortal extends NetherPortalBlock {
     }
 
     public static void portalSpawn(Level level, BlockPos pos) {
-        Optional<CuboidPortalShape> optional = CuboidPortalShape.findEmptyPortalShape(level, pos, Direction.Axis.X);
+        Optional<CuboidPortalShape> optional = CuboidPortalShape.findEmptyPortalShape(level, pos, Direction.Axis.X, BlockInit.EROSION_PORTAL.get());
         optional.ifPresent(CuboidPortalShape::createPortalBlocks);
     }
 
@@ -40,7 +41,7 @@ public class BlockErosionPortal extends NetherPortalBlock {
         Direction.Axis direction$axis = facing.getAxis();
         Direction.Axis direction$axis1 = blockState.getValue(AXIS);
         boolean flag = direction$axis1 != direction$axis && direction$axis.isHorizontal();
-        return !flag && !facingState.is(this) && !(new CuboidPortalShape(levelAccessor, currentPos, direction$axis1)).isComplete() ? Blocks.AIR.defaultBlockState() : super.updateShape(blockState, facing, facingState, levelAccessor, currentPos, facingPos);
+        return !flag && !facingState.is(this) && !(new CuboidPortalShape(levelAccessor, currentPos, direction$axis1, BlockInit.EROSION_PORTAL.get())).isComplete() ? Blocks.AIR.defaultBlockState() : super.updateShape(blockState, facing, facingState, levelAccessor, currentPos, facingPos);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -72,7 +73,7 @@ public class BlockErosionPortal extends NetherPortalBlock {
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (entity.level() instanceof ServerLevel serverLevel) {
             MinecraftServer server = serverLevel.getServer();
-            ResourceKey<Level> resourceKey = entity.level().dimension() == EMResourceKey.EROSION ? Level.OVERWORLD : EMResourceKey.EROSION;
+            ResourceKey<Level> resourceKey = entity.level().dimension() == EMResourceKey.VOID_CRACK_LEVEL ? Level.OVERWORLD : EMResourceKey.VOID_CRACK_LEVEL;
             ServerLevel portalDimension = server.getLevel(resourceKey);
             if (portalDimension != null && !entity.isPassenger() && entity.canChangeDimensions()) {
                 if (entity.isOnPortalCooldown()) {
@@ -80,9 +81,9 @@ public class BlockErosionPortal extends NetherPortalBlock {
                 } else {
                     entity.setPortalCooldown();
                     //维度未实现
-                    //entity.changeDimension(portalDimension, new EMTeleporter(portalDimension, pos));
-                    //if (resourceKey == EMResourceKey.EROSION)
-                    //    EEEABMobs.LOGGER.debug("Entity '{}' enters the erosion dimension", entity.getName().getString());
+                    //entity.changeDimension(portalDimension, new ErosionTeleporter(portalDimension, pos));
+                    //if (resourceKey == EMResourceKey.VOID_CRACK_LEVEL)
+                    //    EEEABMobs.LOGGER.debug("Entity '{}' enters the void crack dimension", entity.getName().getString());
                 }
             }
         }

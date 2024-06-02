@@ -29,5 +29,6 @@ public class DataGenerators {
         generator.addProvider(includeServer, blockTagsProvider);
         generator.addProvider(includeServer, new EMItemTagsProvider(packOutput, provider, blockTagsProvider.contentsGetter(), helper));
         generator.addProvider(includeServer, new EMBlockStateProvider(packOutput, helper));
+        //generator.addProvider(includeServer, new EMWorldGenProvider(packOutput, provider));
     }
 }

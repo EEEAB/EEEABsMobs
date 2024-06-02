@@ -12,6 +12,7 @@ public class EMModelLayer {
     public static final ModelLayerLocation CORPSE = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "corpse"), "main");
     public static final ModelLayerLocation CORPSE_VILLAGER = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "corpse_villager"), "main");
     public static final ModelLayerLocation CORPSE_SLAVERY = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "corpse_slavery"), "main");
+    public static final ModelLayerLocation GULING_SENTINEL = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "guling_sentinel"), "main");
     public static final ModelLayerLocation GULING_SENTINEL_HEAVY = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "guling_sentinel_heavy"), "main");
     public static final ModelLayerLocation NAMELESS_GUARDIAN = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "nameless_guardian"), "main");
     public static final ModelLayerLocation IMMORTAL_GOLEM = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_golem"), "main");

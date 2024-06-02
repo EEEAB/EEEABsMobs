@@ -6,6 +6,7 @@ import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
 import com.eeeab.eeeabsmobs.sever.capability.FrenzyCapability;
 import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityAbsCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
@@ -29,6 +30,7 @@ import net.minecraft.world.entity.animal.AbstractGolem;
 import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
@@ -348,6 +350,10 @@ public final class HandlerServerEvent {
         if (event.getRayTraceResult() instanceof EntityHitResult hitResult) {
             if (projectile instanceof EntityBloodBall bloodBall && !bloodBall.isHeal() && hitResult.getEntity() instanceof EntityCorpseWarlock) {
                 event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
+            }
+            if (projectile instanceof AbstractArrow arrow && arrow.getOwner() instanceof EntityAbsImmortal && hitResult.getEntity() instanceof EntityAbsImmortal) {
+                if (EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get())
+                    event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
             }
         }
     }

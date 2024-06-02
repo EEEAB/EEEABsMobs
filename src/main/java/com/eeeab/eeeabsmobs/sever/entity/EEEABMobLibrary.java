@@ -3,6 +3,7 @@ package com.eeeab.eeeabsmobs.sever.entity;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.animation.EMAnimatedEntity;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
+import com.eeeab.eeeabsmobs.EEEABMobs;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -10,6 +11,8 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 /**
  * <b>EEEABMobLibrary</b><br/>
@@ -26,11 +29,11 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
         super(type, level);
     }
 
-    public Animation getDeathAnimation(){
+    public Animation getDeathAnimation() {
         return this.noAnimation;
     }
 
-    public Animation getHurtAnimation(){
+    public Animation getHurtAnimation() {
         return this.noAnimation;
     }
 
@@ -46,6 +49,22 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
             }
         }
         return attack;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        //this.checkAnimationLegality();
+    }
+
+    private void checkAnimationLegality() {
+        Animation[] animations = this.getAnimations();
+        if (animations != null && this.isAlive()) {
+            for (Animation animation : Arrays.stream(animations).filter(a -> a != this.noAnimation && a != this.getAnimation() && a.isStarted()).toList()) {
+                if (this.tickCount % 20 == 0)
+                    EEEABMobs.LOGGER.error("{} - 存在非法动作数据: 实体{} 动画{}", this.level().isClientSide ? "客户端" : "服务端", this.getName().getString(), animation);
+            }
+        }
     }
 
     @Override
@@ -89,11 +108,6 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
     @Override
     public @NotNull Animation getNoAnimation() {
         return this.noAnimation;
-    }
-
-    @Override
-    public Animation[] getAnimations() {
-        return new Animation[0];
     }
 
 

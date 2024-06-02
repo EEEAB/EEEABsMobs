@@ -9,6 +9,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.NetherPortalBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -39,26 +40,28 @@ public class CuboidPortalShape {
     private BlockPos bottomLeft;
     private int height;
     private final int width;
+    private final Block fillBlock;
 
-    public static Optional<CuboidPortalShape> findEmptyPortalShape(LevelAccessor levelAccessor, BlockPos blockPos, Direction.Axis axis) {
-        return findPortalShape(levelAccessor, blockPos, (cuboidPortalShape) -> cuboidPortalShape.isValid() && cuboidPortalShape.numPortalBlocks == 0, axis);
+    public static Optional<CuboidPortalShape> findEmptyPortalShape(LevelAccessor levelAccessor, BlockPos blockPos, Direction.Axis axis, Block fillBlock) {
+        return findPortalShape(levelAccessor, blockPos, (cuboidPortalShape) -> cuboidPortalShape.isValid() && cuboidPortalShape.numPortalBlocks == 0, axis, fillBlock);
     }
 
-    public static Optional<CuboidPortalShape> findPortalShape(LevelAccessor levelAccessor, BlockPos blockPos, Predicate<CuboidPortalShape> predicate, Direction.Axis axis) {
-        Optional<CuboidPortalShape> optional = Optional.of(new CuboidPortalShape(levelAccessor, blockPos, axis)).filter(predicate);
+    public static Optional<CuboidPortalShape> findPortalShape(LevelAccessor levelAccessor, BlockPos blockPos, Predicate<CuboidPortalShape> predicate, Direction.Axis axis, Block fillBlock) {
+        Optional<CuboidPortalShape> optional = Optional.of(new CuboidPortalShape(levelAccessor, blockPos, axis, fillBlock)).filter(predicate);
         if (optional.isPresent()) {
             return optional;
         } else {
             Direction.Axis direction$axis = axis == Direction.Axis.X ? Direction.Axis.Z : Direction.Axis.X;
-            return Optional.of(new CuboidPortalShape(levelAccessor, blockPos, direction$axis)).filter(predicate);
+            return Optional.of(new CuboidPortalShape(levelAccessor, blockPos, direction$axis, fillBlock)).filter(predicate);
         }
     }
 
-    public CuboidPortalShape(LevelAccessor levelAccessor, BlockPos blockPos, Direction.Axis axis) {
+    public CuboidPortalShape(LevelAccessor levelAccessor, BlockPos blockPos, Direction.Axis axis, Block fillBlock) {
         this.level = levelAccessor;
         this.axis = axis;
         this.rightDir = axis == Direction.Axis.X ? Direction.WEST : Direction.SOUTH;
         this.bottomLeft = this.calculateBottomLeft(blockPos);
+        this.fillBlock = fillBlock;
         if (this.bottomLeft == null) {
             this.bottomLeft = blockPos;
             this.width = 1;
@@ -73,7 +76,7 @@ public class CuboidPortalShape {
 
     @Nullable
     private BlockPos calculateBottomLeft(BlockPos blockPos) {
-        for (int i = Math.max(this.level.getMinBuildHeight(), blockPos.getY() - 21); blockPos.getY() > i && isEmpty(this.level.getBlockState(blockPos.below())); blockPos = blockPos.below()) {
+        for (int i = Math.max(this.level.getMinBuildHeight(), blockPos.getY() - 21); blockPos.getY() > i && isEmpty(this.level.getBlockState(blockPos.below()),this.fillBlock); blockPos = blockPos.below()) {
         }
         Direction direction = this.rightDir.getOpposite();
         int j = this.getDistanceUntilEdgeAboveFrame(blockPos, direction) - 1;
@@ -90,7 +93,7 @@ public class CuboidPortalShape {
         for (int i = 0; i <= 21; ++i) {
             blockpos$mutableblockpos.set(blockPos).move(direction, i);
             BlockState blockstate = this.level.getBlockState(blockpos$mutableblockpos);
-            if (!isEmpty(blockstate)) {
+            if (!isEmpty(blockstate, this.fillBlock)) {
                 if (FRAME.test(blockstate, this.level, blockpos$mutableblockpos)) {
                     return i;
                 }
@@ -134,10 +137,10 @@ public class CuboidPortalShape {
             for (int j = 0; j < this.width; ++j) {
                 mutableBlockPos.set(this.bottomLeft).move(Direction.UP, i).move(this.rightDir, j);
                 BlockState blockstate = this.level.getBlockState(mutableBlockPos);
-                if (!isEmpty(blockstate)) {
+                if (!isEmpty(blockstate, this.fillBlock)) {
                     return i;
                 }
-                if (blockstate.getBlock() == BlockInit.EROSION_PORTAL.get()) {
+                if (blockstate.getBlock() == this.fillBlock) {
                     ++this.numPortalBlocks;
                 }
             }
@@ -145,8 +148,8 @@ public class CuboidPortalShape {
         return 21;
     }
 
-    private static boolean isEmpty(BlockState blockState) {
-        return blockState.isAir() || blockState.getBlock() == BlockInit.EROSION_PORTAL.get();
+    private static boolean isEmpty(BlockState blockState, Block block) {
+        return blockState.isAir() || blockState.getBlock() == block;
     }
 
     public boolean isValid() {
@@ -154,11 +157,11 @@ public class CuboidPortalShape {
     }
 
     public void createPortalBlocks() {
-        BlockState blockstate = BlockInit.EROSION_PORTAL.get().defaultBlockState().setValue(NetherPortalBlock.AXIS, this.axis);
+        BlockState blockstate = this.fillBlock.defaultBlockState().setValue(NetherPortalBlock.AXIS, this.axis);
         BlockPos.betweenClosed(this.bottomLeft, this.bottomLeft.relative(Direction.UP, this.height - 1).relative(this.rightDir, this.width - 1)).forEach((p_77725_) -> {
             this.level.setBlock(p_77725_, blockstate, 18);
             if (this.level instanceof ServerLevel)
-                ((ServerLevel) this.level).getPoiManager().add(p_77725_, EMTeleporter.poi);
+                ((ServerLevel) this.level).getPoiManager().add(p_77725_, VoidCrackTeleporter.poi);
         });
 
     }
@@ -210,7 +213,7 @@ public class CuboidPortalShape {
 
     private static Vec3 findCollisionFreePosition(Vec3 pos, ServerLevel level, Entity entity, EntityDimensions dimensions) {
         if (!(dimensions.width > SAFE_TRAVEL_MAX_ENTITY_XY) && !(dimensions.height > SAFE_TRAVEL_MAX_ENTITY_XY)) {
-            double d0 = (double)dimensions.height / 2.0D;
+            double d0 = (double) dimensions.height / 2.0D;
             Vec3 vec3 = pos.add(0.0D, d0, 0.0D);
             VoxelShape voxelshape = Shapes.create(AABB.ofSize(vec3, dimensions.width, 0.0D, dimensions.width).expandTowards(0.0D, 1.0D, 0.0D).inflate(1.0E-6D));
             Optional<Vec3> optional = level.findFreePosition(entity, voxelshape, vec3, dimensions.width, dimensions.height, dimensions.width);

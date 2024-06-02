@@ -36,8 +36,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-public class EMTeleporter implements ITeleporter {
-    public static final TicketType<BlockPos> CUSTOM_PORTAL = TicketType.create(EEEABMobs.MOD_ID + "portal", Vec3i::compareTo, 300);
+public class VoidCrackTeleporter implements ITeleporter {
+    public static final TicketType<BlockPos> CUSTOM_PORTAL = TicketType.create(EEEABMobs.MOD_ID + "erosion_portal", Vec3i::compareTo, 300);
     private final ServerLevel level;
     private final BlockPos entityEnterPos;
     public static Holder<PoiType> poi = null;
@@ -50,7 +50,7 @@ public class EMTeleporter implements ITeleporter {
         });
     }
 
-    public EMTeleporter(ServerLevel worldServer, BlockPos entityEnterPos) {
+    public VoidCrackTeleporter(ServerLevel worldServer, BlockPos entityEnterPos) {
         this.level = worldServer;
         this.entityEnterPos = entityEnterPos;
     }
@@ -180,7 +180,12 @@ public class EMTeleporter implements ITeleporter {
         if (entity instanceof ServerPlayer player) {
             player.setServerLevel(server);
             server.addDuringPortalTeleport(player);
-            player.connection.teleport(portalinfo.pos.x, portalinfo.pos.y, portalinfo.pos.z, portalinfo.yRot, portalinfo.xRot);
+            if (currentWorld.dimension() == EMResourceKey.VOID_CRACK_LEVEL) {
+                BlockPos spawnPos = server.getSharedSpawnPos();
+                player.connection.teleport(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ(), 0, 0);
+            } else {
+                player.connection.teleport(0, portalinfo.pos.y, 0, portalinfo.yRot, portalinfo.xRot);
+            }
             player.connection.resetPosition();
             CriteriaTriggers.CHANGED_DIMENSION.trigger(player, currentWorld.dimension(), server.dimension());
             return entity;

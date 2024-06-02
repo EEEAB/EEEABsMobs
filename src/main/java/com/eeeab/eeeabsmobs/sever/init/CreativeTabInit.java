@@ -49,15 +49,17 @@ public class CreativeTabInit {
 
                 /* Spawn Egg */
                 entries.accept(ItemInit.TESTER.get());
+                entries.accept(ItemInit.CORPSE_EGG.get());
+                entries.accept(ItemInit.CORPSE_VILLAGER_EGG.get());
+                entries.accept(ItemInit.CORPSE_WARLOCK_EGG.get());
+                entries.accept(ItemInit.GULING_SENTINEL_EGG.get());
+                entries.accept(ItemInit.GULING_SENTINEL_HEAVY_EGG.get());
+                entries.accept(ItemInit.NAMELESS_GUARDIAN_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_SKELETON_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_KNIGHT_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_SHAMAN_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_GOLEM_EGG.get());
-                entries.accept(ItemInit.GULING_SENTINEL_HEAVY_EGG.get());
-                entries.accept(ItemInit.NAMELESS_GUARDIAN_EGG.get());
-                entries.accept(ItemInit.CORPSE_EGG.get());
-                entries.accept(ItemInit.CORPSE_VILLAGER_EGG.get());
-                entries.accept(ItemInit.CORPSE_WARLOCK_EGG.get());
+                entries.accept(ItemInit.IMMORTAL_BOSS_EGG.get());
             }).build());
 
 

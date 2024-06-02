@@ -101,6 +101,11 @@ public class EntityCorpse extends EntityAbsCorpse implements IEntity {
         return fallDistance > 10;
     }
 
+    @Override//应该禁用和平模式生成
+    protected boolean shouldDespawnInPeaceful() {
+        return true;
+    }
+
     @Override
     public void setInitSpawn() {
         super.setInitSpawn();

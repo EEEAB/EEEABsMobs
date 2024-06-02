@@ -41,6 +41,7 @@ public class HandlerRegister {
         event.registerLayerDefinition(EMModelLayer.CORPSE_VILLAGER, ModelCorpse::createVillagerBodyLayer);
         event.registerLayerDefinition(EMModelLayer.CORPSE_SLAVERY, ModelCorpseWarlock::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.BLOOD_BALL, ModelBloodBall::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.GULING_SENTINEL, ModelGulingSentinel::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.GULING_SENTINEL_HEAVY, ModelGulingSentinelHeavy::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.GRENADE, ModelGrenade::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.NAMELESS_GUARDIAN, ModelNamelessGuardian::createBodyLayer);
@@ -62,6 +63,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.CORPSE_VILLAGER.get(), RenderCorpseVillager::new);
         event.registerEntityRenderer(EntityInit.CORPSE_WARLOCK.get(), RenderCorpseWarlock::new);
         event.registerEntityRenderer(EntityInit.NAMELESS_GUARDIAN.get(), RenderNamelessGuardian::new);
+        event.registerEntityRenderer(EntityInit.GULING_SENTINEL.get(), RenderGulingSentinel::new);
         event.registerEntityRenderer(EntityInit.GULING_SENTINEL_HEAVY.get(), RenderGulingSentinelHeavy::new);
         event.registerEntityRenderer(EntityInit.TESTER.get(), RenderTester::new);
 
