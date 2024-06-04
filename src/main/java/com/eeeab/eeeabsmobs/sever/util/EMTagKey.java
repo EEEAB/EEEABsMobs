@@ -15,6 +15,7 @@ public class EMTagKey {
     public static final TagKey<Biome> GULING_BIOMES = registerTagKey(Registry.BIOME_REGISTRY, "guling_biomes");
     public static final TagKey<Biome> BLOODY_ALTAR_BIOMES = registerTagKey(Registry.BIOME_REGISTRY, "bloody_altar_biomes");
     public static final TagKey<EntityType<?>> TRAP_WHITELIST = registerTagKey(Registry.ENTITY_TYPE_REGISTRY, "trap_whitelist");
+    public static final TagKey<EntityType<?>> IGNORE_CHANGE_TARGET = registerTagKey(Registry.ENTITY_TYPE_REGISTRY, "ignore_change_target");
 
     private static <T> TagKey<T> registerTagKey(ResourceKey<Registry<T>> registry, String key) {
         return TagKey.create(registry, new ResourceLocation(EEEABMobs.MOD_ID, key));

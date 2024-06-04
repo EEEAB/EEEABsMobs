@@ -1,29 +1,28 @@
 package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
+import com.eeeab.animate.server.ai.AnimationSimpleAI;
+import com.eeeab.animate.server.ai.AnimationSpellAI;
+import com.eeeab.animate.server.ai.animation.AnimationDie;
+import com.eeeab.animate.server.ai.animation.AnimationHurt;
+import com.eeeab.animate.server.ai.animation.AnimationRepel;
+import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
 import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
+import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.KeepDistanceGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationDieGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationFullRangeAttackGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationHurtGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationSpellAIGoal;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.init.*;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
-import com.github.alexthe666.citadel.animation.Animation;
-import com.github.alexthe666.citadel.animation.AnimationHandler;
-import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -58,28 +57,24 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.util.EnumSet;
 import java.util.List;
+import java.util.function.Supplier;
 
 //基本AI完成
 public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, RangedAttackMob, NeedStopAiEntity {
-    public static final Animation DIE_ANIMATION = Animation.create(80);
-    public static final Animation HURT_ANIMATION = Animation.create(0);
-    public static final Animation SPELL_CASTING_FR_ATTACK_ANIMATION = Animation.create(30);
-    public static final Animation SPELL_CASTING_SUMMON_ANIMATION = Animation.create(44);
-    public static final Animation SPELL_CASTING_BOMB_ANIMATION = Animation.create(30);
-    public static final Animation SPELL_CASTING_HEAL_ANIMATION = Animation.create(60);
-    public static final Animation SPELL_CASTING_WOLOLO_ANIMATION = Animation.create(40);
-    public static final Animation AVOID_ANIMATION = Animation.create(15);
-    public static final Animation[] ANIMATIONS = {
-            DIE_ANIMATION,
-            HURT_ANIMATION,
-            SPELL_CASTING_FR_ATTACK_ANIMATION,
-            SPELL_CASTING_SUMMON_ANIMATION,
-            SPELL_CASTING_BOMB_ANIMATION,
-            SPELL_CASTING_HEAL_ANIMATION,
-            SPELL_CASTING_WOLOLO_ANIMATION,
-            AVOID_ANIMATION
+    public final Animation spellCastingFRAnimation = Animation.create(30);
+    public final Animation spellCastingSummonAnimation = Animation.create(44);
+    public final Animation spellCastingBombAnimation = Animation.create(30);
+    public final Animation spellCastingHealAnimation = Animation.create(60);
+    public final Animation spellCastingWololoAnimation = Animation.create(44);
+    public final Animation avoidAnimation = Animation.create(15);
+    private final Animation[] animations = new Animation[]{
+            spellCastingFRAnimation,
+            spellCastingSummonAnimation,
+            spellCastingBombAnimation,
+            spellCastingHealAnimation,
+            spellCastingWololoAnimation,
+            avoidAnimation
     };
     private final VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(this, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
 
@@ -130,14 +125,14 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
 
     @Override
     protected void registerCustomGoals() {
-        this.goalSelector.addGoal(1, new AnimationDieGoal<>(this));
-        this.goalSelector.addGoal(1, new AnimationHurtGoal<>(this, false));
-        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, SPELL_CASTING_BOMB_ANIMATION));
-        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, SPELL_CASTING_SUMMON_ANIMATION));
-        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, SPELL_CASTING_HEAL_ANIMATION));
-        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, SPELL_CASTING_WOLOLO_ANIMATION));
-        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, AVOID_ANIMATION));
-        this.goalSelector.addGoal(1, new AnimationFullRangeAttackGoal<>(this, SPELL_CASTING_FR_ATTACK_ANIMATION, 4.5F, 14, 2.0F, 5.0F, true) {
+        this.goalSelector.addGoal(1, new AnimationDie<>(this));
+        this.goalSelector.addGoal(1, new AnimationHurt<>(this, false));
+        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> spellCastingHealAnimation));
+        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> spellCastingSummonAnimation));
+        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> spellCastingBombAnimation));
+        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> spellCastingWololoAnimation));
+        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> avoidAnimation));
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> spellCastingFRAnimation, 4.5F, 14, 2.0F, 5.0F, true) {
             @Override
             public void onHit(LivingEntity entity) {
                 if (entity instanceof Player player) {
@@ -156,7 +151,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
                 return entity instanceof EntityAbsImmortal && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get();
             }
         });
-        this.goalSelector.addGoal(2, new ShamanSummonGoal(this));
+        this.goalSelector.addGoal(2, new ShamanSummon(this));
         this.goalSelector.addGoal(3, new ShamanAvoid(this));
         this.goalSelector.addGoal(4, new ShamanBombing(this));
         this.goalSelector.addGoal(5, new ShamanWololo(this));
@@ -194,9 +189,9 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
     @Override
     protected void onAnimationFinish(Animation animation) {
         if (!this.level.isClientSide) {
-            if (animation == SPELL_CASTING_FR_ATTACK_ANIMATION) {
+            if (animation == this.spellCastingFRAnimation) {
                 this.attackTick = 200;
-            } else if (animation == SPELL_CASTING_HEAL_ANIMATION) {
+            } else if (animation == this.spellCastingHealAnimation) {
                 int timer;
                 if (this.hurtCountBeforeHeal < CAN_STOP_HEAL_COUNT && !this.isWeakness()) {
                     this.heal((float) (this.getMaxHealth() * EMConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SHAMAN.healPercentage.get()));
@@ -215,7 +210,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
     @Override
     public void tick() {
         super.tick();
-        AnimationHandler.INSTANCE.updateAnimations(this);
+        EMAnimationHandler.INSTANCE.updateAnimations(this);
 
         if (!this.level.isClientSide && this.getTarget() != null && !this.getTarget().isAlive()) this.setTarget(null);
 
@@ -226,23 +221,23 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         if (this.getTarget() != null) {
             LivingEntity target = this.getTarget();
             if (!this.level.isClientSide && this.noConflictingTasks() && !this.isNoAi() && this.attackTick <= 0 && ((targetDistance <= 5.0F && ModEntityUtils.checkTargetComingCloser(this, target)) || this.targetDistance < 4.0F)) {
-                this.playAnimation(SPELL_CASTING_FR_ATTACK_ANIMATION);
+                this.playAnimation(this.spellCastingFRAnimation);
             }
         }
 
         if (!this.level.isClientSide && this.noConflictingTasks() && !this.isNoAi() && this.getHealthPercentage() != 100 && this.nextHealTick <= 0) {
             if ((this.getTarget() != null && this.targetDistance > 8) || this.getTarget() == null) {
-                this.playAnimation(SPELL_CASTING_HEAL_ANIMATION);
+                this.playAnimation(this.spellCastingHealAnimation);
             }
         }
 
-        if (this.getAnimation() == SPELL_CASTING_WOLOLO_ANIMATION) {
+        if (this.getAnimation() == this.spellCastingWololoAnimation) {
             if (this.level.isClientSide) this.addParticlesAroundHeart(30);
-        } else if (this.getAnimation() == SPELL_CASTING_HEAL_ANIMATION) {
+        } else if (this.getAnimation() == this.spellCastingHealAnimation) {
             if (!this.level.isClientSide) {
                 if (this.getAnimationTick() == 1) this.playSound(SoundInit.IMMORTAL_SHAMAN_PREPARE_SPELL_CASTING.get());
                 if (this.isWeakness()) {
-                    this.playAnimation(NO_ANIMATION);//在治疗过程中被中断,直接结束
+                    this.playAnimation(this.getNoAnimation());//在治疗过程中被中断,直接结束
                     this.level.broadcastEntityEvent(this, (byte) 13);
                 } else if (getAnimationTick() > 5 && getAnimationTick() < 40 && this.tickCount % 5 == 0) {
                     this.level.broadcastEntityEvent(this, (byte) 14);
@@ -250,7 +245,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
             } else {
                 this.addParticlesAroundHeart(55);
             }
-        } else if (this.getAnimation() == EntityImmortalShaman.SPELL_CASTING_SUMMON_ANIMATION) {
+        } else if (this.getAnimation() == this.spellCastingSummonAnimation) {
             if (this.level.isClientSide) {
                 float speed = 0.08f;
                 float yaw = this.random.nextFloat() * (2 * Mth.PI);
@@ -260,20 +255,20 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
                 this.level.addParticle(ParticleTypes.SOUL, this.getX(), this.getY() + 0.1f, this.getZ(), ym, xm, zm);
                 this.addParticlesAroundHeart(40);
             }
-        } else if (this.getAnimation() == SPELL_CASTING_BOMB_ANIMATION) {
+        } else if (this.getAnimation() == this.spellCastingBombAnimation) {
             if (this.getTarget() != null)
                 this.lookAt(this.getTarget(), 30F, 30F);
             if (this.level.isClientSide && this.getAnimationTick() >= 10 && this.getAnimationTick() <= 12) {
                 this.spawnExplosionParticles(5, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleTypes.LARGE_SMOKE}, 0.15F);
             }
             if (!this.level.isClientSide) this.level.broadcastEntityEvent(this, (byte) 4);
-        } else if (this.getAnimation() == SPELL_CASTING_FR_ATTACK_ANIMATION) {
+        } else if (this.getAnimation() == this.spellCastingFRAnimation) {
             this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
             if (this.level.isClientSide && this.getAnimationTick() == 12) {
                 this.spawnExplosionParticles(50, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME}, 0.4F);
             }
             if (this.getAnimationTick() == 18) {
-                EntityCameraShake.cameraShake(level, position(), 20, 0.02f, 10, 15);
+                EntityCameraShake.cameraShake(this.level, position(), 20, 0.02f, 10, 15);
             }
         }
     }
@@ -296,7 +291,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         } else if (entity != null) {
             float maximumDamageCap = (float) (EMConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SHAMAN.maximumDamageCap.damageCap.get() * 1F);
             float maxHurtDamage = getMaxHealth() * maximumDamageCap;
-            if (this.getAnimation() == SPELL_CASTING_HEAL_ANIMATION && !(this.hurtTime > 0)) {
+            if (this.getAnimation() == this.spellCastingHealAnimation && !(this.hurtTime > 0)) {
                 this.hurtCountBeforeHeal++;
             }
             if (!this.isWeakness()) {
@@ -358,7 +353,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
 
     @Override
     public boolean noConflictingTasks() {
-        return !this.isWeakness() && this.getAnimation() == IAnimatedEntity.NO_ANIMATION;
+        return !this.isWeakness() && this.getAnimation() == this.getNoAnimation();
     }
 
 
@@ -410,21 +405,17 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         double d2 = entity.getX() - (this.getX() + vec3.x * d1);
         double d3 = entity.getY(0.5D) - (0.5D + this.getY(0.5D));
         double d4 = entity.getZ() - (this.getZ() + vec3.z * d1);
-        shamanBomb = new EntityShamanBomb(level, this, d2, d3, d4);
+        shamanBomb = new EntityShamanBomb(this.level, this, d2, d3, d4);
         shamanBomb.setOwner(this);
         shamanBomb.setDangerous(dangerous);
         shamanBomb.setPos(this.getX() + vec3.x * d1, this.getY(0.74D), shamanBomb.getZ() + vec3.z * d1);
         this.level.addFreshEntity(shamanBomb);
     }
 
-    private class ShamanAnimationCommonGoal extends AnimationCommonGoal<EntityImmortalShaman> {
+    private class ShamanAnimationCommonGoal extends AnimationSimpleAI<EntityImmortalShaman> {
 
-        public ShamanAnimationCommonGoal(EntityImmortalShaman entity, Animation animation) {
-            super(entity, animation);
-        }
-
-        public ShamanAnimationCommonGoal(EntityImmortalShaman entity, Animation animation, EnumSet<Flag> interruptFlagTypes) {
-            super(entity, animation, interruptFlagTypes);
+        public ShamanAnimationCommonGoal(EntityImmortalShaman entity, Supplier<Animation> animationSupplier) {
+            super(entity, animationSupplier);
         }
 
         @Override
@@ -438,10 +429,10 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
     }
 
 
-    private class ShamanSummonGoal extends AnimationSpellAIGoal<EntityImmortalShaman> {
+    private class ShamanSummon extends AnimationSpellAI<EntityImmortalShaman> {
         private final TargetingConditions CountTargeting = TargetingConditions.forNonCombat().range(30.0D).ignoreLineOfSight().ignoreInvisibilityTesting();
 
-        public ShamanSummonGoal(EntityImmortalShaman spellCaster) {
+        public ShamanSummon(EntityImmortalShaman spellCaster) {
             super(spellCaster);
         }
 
@@ -450,7 +441,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
             if (!super.canUse()) {
                 return false;
             } else {
-                int size = this.spellCaster.level.getNearbyEntities(EntityImmortalGolem.class, this.CountTargeting, this.spellCaster, this.spellCaster.getBoundingBox().inflate(30.0D)).size();
+                int size = this.spellCaster.level.getNearbyEntities(EntityImmortalSkeleton.class, this.CountTargeting, this.spellCaster, this.spellCaster.getBoundingBox().inflate(32.0D)).size();
                 return size < this.spellCaster.random.nextInt(6) + 1 && this.spellCaster.getTarget() != null && this.spellCaster.targetDistance > 8.0;
             }
         }
@@ -474,16 +465,13 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         }
 
         private void summonEntity(Vec3 vec3) {
-            EntityImmortalGolem entity = EntityInit.IMMORTAL_GOLEM.get().create(this.spellCaster.level);
-            if (!this.spellCaster.level.isClientSide && entity != null && vec3 != null) {
-                entity.setInitSpawn();
-                entity.finalizeSpawn((ServerLevel) this.spellCaster.level, this.spellCaster.level.getCurrentDifficultyAt(new BlockPos(vec3)), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
-                entity.setOwner(this.spellCaster);
-                entity.setSummonAliveTime(20 * (30 + this.spellCaster.random.nextInt(90)));
-                Difficulty difficulty = this.spellCaster.level.getDifficulty();
-                entity.setDangerous(this.spellCaster.random.nextInt(10 - difficulty.getId()) == 0);
-                entity.setPos(vec3);
-                level.addFreshEntity(entity);
+            EntityImmortalSkeleton skeleton = new EntityImmortalSkeleton(EntityInit.IMMORTAL_SKELETON.get(), this.spellCaster.level);
+            if (!this.spellCaster.level.isClientSide && vec3 != null) {
+                skeleton.setInitSpawn();
+                skeleton.finalizeSpawn((ServerLevel) this.spellCaster.level, this.spellCaster.level.getCurrentDifficultyAt(new BlockPos(vec3)), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
+                skeleton.setOwner(this.spellCaster);
+                skeleton.setPos(vec3);
+                this.spellCaster.level.addFreshEntity(skeleton);
             }
         }
 
@@ -493,12 +481,12 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         }
 
         @Override
-        protected Animation getAnimation() {
-            return SPELL_CASTING_SUMMON_ANIMATION;
+        protected Animation getEMAnimation() {
+            return this.spellCaster.spellCastingSummonAnimation;
         }
     }
 
-    private class ShamanBombing extends AnimationSpellAIGoal<EntityImmortalShaman> {
+    private class ShamanBombing extends AnimationSpellAI<EntityImmortalShaman> {
 
         public ShamanBombing(EntityImmortalShaman spellCaster) {
             super(spellCaster);
@@ -538,12 +526,12 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         }
 
         @Override
-        protected Animation getAnimation() {
-            return SPELL_CASTING_BOMB_ANIMATION;
+        protected Animation getEMAnimation() {
+            return this.spellCaster.spellCastingBombAnimation;
         }
     }
 
-    private class ShamanAvoid extends AnimationSpellAIGoal<EntityImmortalShaman> {
+    private class ShamanAvoid extends AnimationSpellAI<EntityImmortalShaman> {
         private float avoidYaw;
 
         public ShamanAvoid(EntityImmortalShaman spellCaster) {
@@ -595,13 +583,13 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         }
 
         @Override
-        protected Animation getAnimation() {
-            return AVOID_ANIMATION;
+        protected Animation getEMAnimation() {
+            return this.spellCaster.avoidAnimation;
         }
     }
 
     //参考自: net.minecraft.world.entity.monster.Evoker.EvokerWololoSpellGoal
-    private class ShamanWololo extends AnimationSpellAIGoal<EntityImmortalShaman> {
+    private class ShamanWololo extends AnimationSpellAI<EntityImmortalShaman> {
         private final TargetingConditions wololoTargeting = TargetingConditions.forNonCombat().range(16.0D).selector((entity) -> ((Sheep) entity).getColor() == DyeColor.RED);
 
         public ShamanWololo(EntityImmortalShaman spellCaster) {
@@ -659,26 +647,15 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         }
 
         @Override
-        protected Animation getAnimation() {
-            return SPELL_CASTING_WOLOLO_ANIMATION;
+        protected Animation getEMAnimation() {
+            return this.spellCaster.spellCastingWololoAnimation;
         }
     }
 
     @Override
-    public Animation getDeathAnimation() {
-        return DIE_ANIMATION;
-    }
-
-    @Override
-    public Animation getHurtAnimation() {
-        return HURT_ANIMATION;
-    }
-
-    @Override
     public Animation[] getAnimations() {
-        return ANIMATIONS;
+        return this.animations;
     }
-
 
     //受伤音效
     @Override

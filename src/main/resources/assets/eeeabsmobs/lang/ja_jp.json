@@ -68,7 +68,7 @@
   "_comment": "ダメージソースメッセージ",
   "death.attack.shaman_bomb": "%1$s はシャーマンの爆弾によって粉々に吹き飛ばされた",
   "death.attack.guardian_robust_attack": "%1$s は %2$s によって粉砕された",
-  "death.attack.guardian_laser_attack":"1$s は %2$s からのレーザーによって焼却された",
+  "death.attack.guardian_laser_attack":"%1$s は %2$s からのレーザーによって焼却された",
 
   "_comment": "レコード",
   "item.eeeabsmobs.guardians_music_disc.desc": "Guardians - Evan King",
@@ -81,7 +81,7 @@
   "advancements.eeeabsmobs.root.description": "EEEAB's Mobsの世界にようこそ!",
   "advancements.eeeabsmobs.guling.title": "古代の墓",
   "advancements.eeeabsmobs.guling.description": "古代の墓を見つける",
-  "advancements.eeeabsmobs.kill_nameless_guardian.title": "最後の防衛線は破られた",
+  "advancements.eeeabsmobs.kill_nameless_guardian.title": "不吉な徴候です",
   "advancements.eeeabsmobs.kill_nameless_guardian.description": "名も無き守護者を倒す",
   "advancements.eeeabsmobs.kill_all_immortal_mob.title": "不滅の者を狩る者",
   "advancements.eeeabsmobs.kill_all_immortal_mob.description": "このMODで追加された敵対的なモブをすべて倒す"

@@ -1,21 +1,26 @@
 package com.eeeab.eeeabsmobs.sever.entity;
 
-import com.github.alexthe666.citadel.animation.Animation;
-import com.github.alexthe666.citadel.animation.AnimationHandler;
-import com.github.alexthe666.citadel.animation.IAnimatedEntity;
+import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.animate.server.animation.EMAnimatedEntity;
+import com.eeeab.animate.server.handler.EMAnimationHandler;
+import com.eeeab.eeeabsmobs.EEEABMobs;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 /**
  * <b>EEEABMobLibrary</b><br/>
  */
-public abstract class EEEABMobLibrary extends EEEABMobEntity implements IAnimatedEntity, IEntityAdditionalSpawnData {
+public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimatedEntity, IEntityAdditionalSpawnData {
     private int animationTick;
-    private Animation animation = NO_ANIMATION;
+    private final Animation noAnimation = Animation.create(0);
+    private Animation animation = noAnimation;
     public boolean canplayHurtAnimation = true;//可以播放受伤动画
     public boolean hurtInterruptsAnimation = false;//伤害中断其他动画
 
@@ -24,35 +29,55 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements IAnimate
         super(type, level);
     }
 
-    public abstract Animation getDeathAnimation();
+    public Animation getDeathAnimation() {
+        return this.noAnimation;
+    }
 
-    public abstract Animation getHurtAnimation();
+    public Animation getHurtAnimation() {
+        return this.noAnimation;
+    }
 
 
     @Override
     public boolean hurt(DamageSource source, float damage) {
         boolean attack = super.hurt(source, damage);
         if (attack) {
-            if (getHealth() > 0.0F && (getAnimation() == NO_ANIMATION || hurtInterruptsAnimation) && canplayHurtAnimation) {
-                AnimationHandler.INSTANCE.sendAnimationMessage(this, getHurtAnimation());
+            if (getHealth() > 0.0F && (getAnimation() == getNoAnimation() || hurtInterruptsAnimation) && canplayHurtAnimation) {
+                EMAnimationHandler.INSTANCE.sendEMAnimationMessage(this, getHurtAnimation());
             } else if (getHealth() <= 0.0F) {
-                AnimationHandler.INSTANCE.sendAnimationMessage(this, getDeathAnimation());
+                EMAnimationHandler.INSTANCE.sendEMAnimationMessage(this, getDeathAnimation());
             }
         }
         return attack;
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        //this.checkAnimationLegality();
+    }
+
+    private void checkAnimationLegality() {
+        Animation[] animations = this.getAnimations();
+        if (animations != null && this.isAlive()) {
+            for (Animation animation : Arrays.stream(animations).filter(a -> a != this.noAnimation && a != this.getAnimation() && a.isStarted()).toList()) {
+                if (this.tickCount % 20 == 0)
+                    EEEABMobs.LOGGER.error("{} - 存在非法动作数据: 实体{} 动画{}", this.level.isClientSide ? "客户端" : "服务端", this.getName().getString(), animation);
+            }
+        }
+    }
+
+    @Override
     protected int getDeathDuration() {
         Animation death;
-        if ((death = getDeathAnimation()) != null) {
-            return death.getDuration() - 20;
+        if ((death = getDeathAnimation()) != this.getNoAnimation()) {
+            return death.getDuration();
         }
         return 20;
     }
 
     public void playAnimation(Animation animation) {
-        if (animation != null) AnimationHandler.INSTANCE.sendAnimationMessage(this, animation);
+        if (animation != null) EMAnimationHandler.INSTANCE.sendEMAnimationMessage(this, animation);
     }
 
     @Override
@@ -72,14 +97,19 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements IAnimate
 
     @Override
     public void setAnimation(Animation animation) {
-        if (animation != NO_ANIMATION) {
+        if (animation != this.getNoAnimation()) {
             onAnimationStart(animation);
         } else {
             onAnimationFinish(this.animation);
         }
         this.animation = animation;
-        setAnimationTick(0);
     }
+
+    @Override
+    public @NotNull Animation getNoAnimation() {
+        return this.noAnimation;
+    }
+
 
     protected void onAnimationStart(Animation animation) {
     }
@@ -102,7 +132,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements IAnimate
         yBodyRotO = yBodyRot = yHeadRotO = yHeadRot;
         int animOrdinal = additionalData.readInt();
         int animTick = additionalData.readInt();
-        this.setAnimation(animOrdinal == -1 ? NO_ANIMATION : this.getAnimations()[animOrdinal]);
+        this.setAnimation(animOrdinal == -1 ? this.noAnimation : this.getAnimations()[animOrdinal]);
         this.setAnimationTick(animTick);
     }
 }

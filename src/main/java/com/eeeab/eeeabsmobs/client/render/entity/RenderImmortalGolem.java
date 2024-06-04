@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.client.render.entity;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelImmortalGolem;
+import com.eeeab.eeeabsmobs.client.model.layer.EMModelLayer;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalGolem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -15,7 +16,7 @@ public class RenderImmortalGolem extends MobRenderer<EntityImmortalGolem, ModelI
     private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_golem/immortal_golem_eyes.png");
 
     public RenderImmortalGolem(EntityRendererProvider.Context context) {
-        super(context, new ModelImmortalGolem(), 0.3f);
+        super(context, new ModelImmortalGolem(context.bakeLayer(EMModelLayer.IMMORTAL_GOLEM)), 0.3f);
         this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
         this.addLayer(new LayerGlow<>(this, GLOW_LAYER));
     }

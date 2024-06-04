@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.client.render.entity;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelNamelessGuardian;
+import com.eeeab.eeeabsmobs.client.model.layer.EMModelLayer;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGuardianCore;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGuardianExplode;
@@ -18,7 +19,7 @@ public class RenderNamelessGuardian extends MobRenderer<EntityNamelessGuardian, 
     private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/guling/nameless_guardian/nameless_guardian_eyes.png");
 
     public RenderNamelessGuardian(EntityRendererProvider.Context context) {
-        super(context, new ModelNamelessGuardian(), 1.5F);
+        super(context, new ModelNamelessGuardian(context.bakeLayer(EMModelLayer.NAMELESS_GUARDIAN)), 1.5F);
         this.addLayer(new LayerGlow<>(this, GLOW_LAYER));
         this.addLayer(new LayerGuardianExplode(this));
         this.addLayer(new LayerGuardianLaser(this));

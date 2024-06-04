@@ -5,9 +5,7 @@ import com.eeeab.eeeabsmobs.client.render.EMRenderType;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCrimsonRay;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
+import com.mojang.math.*;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -19,7 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class RenderCrimsonRay extends EntityRenderer<EntityCrimsonRay> {
-    private static final ResourceLocation R_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/crimson_ray.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/crimson_ray.png");
     private static final float TEXTURE_WIDTH = 256;
     private static final float TEXTURE_HEIGHT = 32;
     private static final float START_RADIUS = 1.2f;
@@ -27,11 +25,6 @@ public class RenderCrimsonRay extends EntityRenderer<EntityCrimsonRay> {
 
     public RenderCrimsonRay(EntityRendererProvider.Context mgr) {
         super(mgr);
-    }
-
-    @Override
-    public ResourceLocation getTextureLocation(EntityCrimsonRay entity) {
-        return R_TEXTURE;
     }
 
     @Override
@@ -58,6 +51,11 @@ public class RenderCrimsonRay extends EntityRenderer<EntityCrimsonRay> {
         matrixStackIn.translate(collidePosX - posX, collidePosY - posY, collidePosZ - posZ);
         renderEnd(frame, ray.blockSide, matrixStackIn, vertex$builder, packedLightIn);
         matrixStackIn.popPose();
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(EntityCrimsonRay entity) {
+        return TEXTURE;
     }
 
     //圆
@@ -158,7 +156,48 @@ public class RenderCrimsonRay extends EntityRenderer<EntityCrimsonRay> {
         matrixStackIn.popPose();
     }
 
-    public void drawVertex(Matrix4f matrix, Matrix3f normals, VertexConsumer vertexBuilder, float offsetX, float offsetY, float offsetZ, float textureX, float textureY, int packedLightIn) {
+    public static class RenderPreAttack extends EntityRenderer<EntityCrimsonRay.PreAttack> {
+        private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/crimson_ray_pre.png");
+        private static final float TEXTURE_WIDTH = 256;
+        private static final float TEXTURE_HEIGHT = 32;
+        private static final float SIZE = 0.6F;
+
+        public RenderPreAttack(EntityRendererProvider.Context context) {
+            super(context);
+        }
+
+        @Override
+        public void render(EntityCrimsonRay.PreAttack crack, float entityYaw, float delta, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
+            VertexConsumer consumer = bufferIn.getBuffer(EMRenderType.getGlowingEffect(TEXTURE));
+            matrixStackIn.pushPose();
+            matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90.0F - crack.getYRot()));
+            matrixStackIn.translate(0.0, 0.001F, 0.0);
+            matrixStackIn.scale(-2F, -2F, -2F);
+            this.renderFlatQuad(crack.getPhase(), matrixStackIn, consumer, packedLightIn);
+            matrixStackIn.popPose();
+        }
+
+        @Override
+        public ResourceLocation getTextureLocation(EntityCrimsonRay.PreAttack pEntity) {
+            return TEXTURE;
+        }
+
+        private void renderFlatQuad(int frame, PoseStack matrixStackIn, VertexConsumer builder, int packedLightIn) {
+            float minU = 0 + 32F / TEXTURE_WIDTH * frame;
+            float minV = 0;
+            float maxU = minU + 32F / TEXTURE_WIDTH;
+            float maxV = minV + 32F / TEXTURE_HEIGHT;
+            PoseStack.Pose matrix$stack$entry = matrixStackIn.last();
+            Matrix4f matrix4f = matrix$stack$entry.pose();
+            Matrix3f matrix3f = matrix$stack$entry.normal();
+            drawVertex(matrix4f, matrix3f, builder, -SIZE, 0, -SIZE, minU, minV, packedLightIn);
+            drawVertex(matrix4f, matrix3f, builder, -SIZE, 0, SIZE, minU, maxV, packedLightIn);
+            drawVertex(matrix4f, matrix3f, builder, SIZE, 0, SIZE, maxU, maxV, packedLightIn);
+            drawVertex(matrix4f, matrix3f, builder, SIZE, 0, -SIZE, maxU, minV, packedLightIn);
+        }
+    }
+
+    public static void drawVertex(Matrix4f matrix, Matrix3f normals, VertexConsumer vertexBuilder, float offsetX, float offsetY, float offsetZ, float textureX, float textureY, int packedLightIn) {
         vertexBuilder.vertex(matrix, offsetX, offsetY, offsetZ).color(1F, 1F, 1F, 1F).uv(textureX, textureY).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLightIn).normal(normals, 1F, 0F, 1F).endVertex();
     }
 }

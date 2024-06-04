@@ -96,6 +96,8 @@ public class EntityGuardianLaser extends EntityMagicEffects {
                 this.updateWithPlayer();
             } else if (caster instanceof EntityNamelessGuardian) {
                 this.updateWithGuardian();
+            } else {
+                this.updateWithEntity(0F);
             }
         }
 
@@ -141,7 +143,7 @@ public class EntityGuardianLaser extends EntityMagicEffects {
                 for (LivingEntity target : hit) {
                     target.setSecondsOnFire(3);
                     if (caster instanceof EntityNamelessGuardian guardian) {
-                        guardian.guardianHurtTarget(EMDamageSource.guardianLaserAttack(this, guardian), guardian, target, 0.03F, 0.1F, 1F, true, false);
+                        guardian.guardianHurtTarget(EMDamageSource.guardianLaserAttack(this, guardian), guardian, target, 0.05F, 0.2F, 1F, true, false, false);
                     } else if (caster != null) {
                         target.hurt(DamageSource.mobAttack(caster), 5F + target.getMaxHealth() * 0.01F);
                     }
@@ -275,11 +277,15 @@ public class EntityGuardianLaser extends EntityMagicEffects {
     }
 
     private void updateWithGuardian() {
+        this.updateWithEntity(1.35F);
+    }
+
+    private void updateWithEntity(float offset) {
         double radians = Math.toRadians(this.caster.yHeadRot + 90);
         this.setYHeadRotAngle((float) radians);
         this.setXHeadRotAngle((float) ((double) (-this.caster.getXRot()) * Math.PI / 180.0));
-        double offsetX = Math.cos(radians) * 1.35;
-        double offsetZ = Math.sin(radians) * 1.35;
+        double offsetX = Math.cos(radians) * offset;
+        double offsetZ = Math.sin(radians) * offset;
         this.setPos(this.caster.getX() + offsetX, this.caster.getY() + (caster.getBbHeight() * 0.75f), this.caster.getZ() + offsetZ);
     }
 

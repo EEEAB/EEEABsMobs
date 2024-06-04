@@ -1,7 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.world.datagen;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
@@ -15,8 +14,14 @@ public class DataGenerators {
     public static void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         ExistingFileHelper helper = event.getExistingFileHelper();
-        generator.addProvider(true, new EMStructureTagsProvider(generator, helper));
-        generator.addProvider(true, new EMBiomeTagsProvider(generator, helper));
-        generator.addProvider(true, new EMEntityTypeTagsProvider(generator, helper));
+        boolean includeServer = event.includeServer();
+        generator.addProvider(includeServer, new EMStructureTagsProvider(generator, helper));
+        generator.addProvider(includeServer, new EMBiomeTagsProvider(generator, helper));
+        generator.addProvider(includeServer, new EMEntityTypeTagsProvider(generator, helper));
+        EMBlockTagsProvider blockTagsProvider = new EMBlockTagsProvider(generator, helper);
+        generator.addProvider(includeServer, blockTagsProvider);
+        generator.addProvider(includeServer, new EMItemTagsProvider(generator, blockTagsProvider, helper));
+        generator.addProvider(includeServer, new EMBlockStateProvider(generator, helper));
+        //generator.addProvider(includeServer, new EMWorldGenProvider(packOutput, provider));
     }
 }

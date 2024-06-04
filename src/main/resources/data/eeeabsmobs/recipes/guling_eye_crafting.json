@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#@#",
+    "@I@",
+    "#@#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:deepslate_bricks"
+    },
+    "@": {
+      "item": "minecraft:soul_lantern"
+    },
+    "I": {
+      "item": "minecraft:ender_eye"
+    }
+  },
+  "result": {
+    "item": "eeeabsmobs:guling_eye",
+    "count": 1
+  }
+}

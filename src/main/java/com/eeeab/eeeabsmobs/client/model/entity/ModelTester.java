@@ -1,149 +1,121 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
+import com.eeeab.animate.client.model.EMHierarchicalModel;
 import com.eeeab.eeeabsmobs.sever.entity.test.EntityTester;
-import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
-import com.github.alexthe666.citadel.client.model.AdvancedModelBox;
-import com.github.alexthe666.citadel.client.model.ModelAnimator;
-import com.github.alexthe666.citadel.client.model.basic.BasicModelPart;
-import com.google.common.collect.ImmutableList;
+import net.minecraft.client.animation.AnimationChannel;
+import net.minecraft.client.animation.AnimationDefinition;
+import net.minecraft.client.animation.Keyframe;
+import net.minecraft.client.animation.KeyframeAnimations;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.*;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class ModelTester extends AdvancedEntityModel<EntityTester> {
-    private final AdvancedModelBox root;
-    private final AdvancedModelBox upper;
-    private final AdvancedModelBox head;
-    private final AdvancedModelBox nose;
-    private final AdvancedModelBox headwear;
-    private final AdvancedModelBox headwear2;
-    private final AdvancedModelBox body;
-    private final AdvancedModelBox bodywear;
-    private final AdvancedModelBox arms;
-    private final AdvancedModelBox mirrored;
-    private final AdvancedModelBox lower;
-    private final AdvancedModelBox right_leg;
-    private final AdvancedModelBox left_leg;
-    private final ModelAnimator animator;
+public class ModelTester extends EMHierarchicalModel<EntityTester> {
+    private final ModelPart root;
+    private final ModelPart upper;
+    private final ModelPart head;
+    private final ModelPart arms;
+    private final ModelPart rightLeg;
+    private final ModelPart leftLeg;
 
+    public ModelTester(ModelPart root) {
+        this.root = root.getChild("root");
+        this.upper = this.root.getChild("upper");
+        this.head = this.upper.getChild("head");
+        ModelPart body = this.upper.getChild("body");
+        this.arms = body.getChild("arms");
+        ModelPart lower = this.root.getChild("lower");
+        this.rightLeg = lower.getChild("right_leg");
+        this.leftLeg = lower.getChild("left_leg");
+    }
 
-    public ModelTester() {
-        texHeight = 64;
-        texWidth = 64;
-
-        root = new AdvancedModelBox(this, "root");
-        root.setPos(0.0F, 24.0F, 0.0F);
-
-        upper = new AdvancedModelBox(this, "upper");
-        upper.setPos(0.0F, 0.0F, 0.0F);
-        root.addChild(upper);
-
-        head = new AdvancedModelBox(this, "head");
-        head.setPos(0.0F, -24.0F, 0.0F);
-        upper.addChild(head);
-        head.setTextureOffset(0, 0).addBox(-4.0F, -10.0F, -4.0F, 8.0F, 10.0F, 8.0F, 0.0F);
-
-        nose = new AdvancedModelBox(this, "nose");
-        nose.setPos(0.0F, -2.0F, 0.0F);
-        head.addChild(nose);
-        nose.setTextureOffset(24, 0).addBox(-1.0F, -1.0F, -6.0F, 2.0F, 4.0F, 2.0F, 0.0F);
-
-        headwear = new AdvancedModelBox(this, "headwear");
-        headwear.setPos(0.0F, 0.0F, 0.0F);
-        head.addChild(headwear);
-        headwear.setTextureOffset(32, 0).addBox(-4.0F, -10.0F, -4.0F, 8.0F, 10.0F, 8.0F, 0.0F);
-
-        headwear2 = new AdvancedModelBox(this, "headwear2");
-        offsetAndRotation(headwear2, 0.0F, 0.0F, 0.0F, -1.5708F, 0.0F, 0.0F);
-        head.addChild(headwear2);
-        headwear2.setTextureOffset(30, 47).addBox(-8.0F, -8.0F, -6.0F, 16.0F, 16.0F, 1.0F, 0.0F);
-
-        body = new AdvancedModelBox(this, "body");
-        body.setPos(0.0F, -24.0F, 0.0F);
-        upper.addChild(body);
-        body.setTextureOffset(16, 20).addBox(-4.0F, 0.0F, -3.0F, 8.0F, 12.0F, 6.0F, 0.0F);
-
-        bodywear = new AdvancedModelBox(this, "bodywear");
-        bodywear.setPos(0.0F, 0.0F, 0.0F);
-        body.addChild(bodywear);
-        bodywear.setTextureOffset(0, 38).addBox(-4.0F, 0.0F, -3.0F, 8.0F, 20.0F, 6.0F, 0.5F);
-
-        arms = new AdvancedModelBox(this, "arms");
-        offsetAndRotation(arms, 0.0F, 2.95F, -1.05F, -0.7505F, 0.0F, 0.0F);
-        body.addChild(arms);
-        arms.setTextureOffset(40, 38).addBox(-4.0F, 2.0F, -2.0F, 8.0F, 4.0F, 4.0F, false)
-                .setTextureOffset(44, 22).addBox(-8.0F, -2.0F, -2.0F, 4.0F, 8.0F, 4.0F, false);
-
-        mirrored = new AdvancedModelBox(this, "mirrored");
-        mirrored.setPos(0.0F, 21.05F, 1.05F);
-        arms.addChild(mirrored);
-        mirrored.setTextureOffset(44, 22).addBox(4.0F, -23.05F, -3.05F, 4.0F, 8.0F, 4.0F, true);
+    public static LayerDefinition createBodyLayer() {
+        MeshDefinition meshdefinition = new MeshDefinition();
+        PartDefinition partdefinition = meshdefinition.getRoot();
+        PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+        PartDefinition upper = root.addOrReplaceChild("upper", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition head = upper.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -10.0F, -4.0F, 8.0F, 10.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -24.0F, 0.0F));
+        PartDefinition nose = head.addOrReplaceChild("nose", CubeListBuilder.create().texOffs(24, 0).addBox(-1.0F, -1.0F, -6.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -2.0F, 0.0F));
+        PartDefinition headwear = head.addOrReplaceChild("headwear", CubeListBuilder.create().texOffs(32, 0).addBox(-4.0F, -10.0F, -4.0F, 8.0F, 10.0F, 8.0F, new CubeDeformation(0.51F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition headwear2 = head.addOrReplaceChild("headwear2", CubeListBuilder.create().texOffs(30, 47).addBox(-8.0F, -8.0F, -6.0F, 16.0F, 16.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -1.5708F, 0.0F, 0.0F));
+        PartDefinition body = upper.addOrReplaceChild("body", CubeListBuilder.create().texOffs(16, 20).addBox(-4.0F, 0.0F, -3.0F, 8.0F, 12.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -24.0F, 0.0F));
+        PartDefinition bodywear = body.addOrReplaceChild("bodywear", CubeListBuilder.create().texOffs(0, 38).addBox(-4.0F, 0.0F, -3.0F, 8.0F, 20.0F, 6.0F, new CubeDeformation(0.5F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition arms = body.addOrReplaceChild("arms", CubeListBuilder.create().texOffs(40, 38).addBox(-4.0F, 2.0F, -2.0F, 8.0F, 4.0F, 4.0F, new CubeDeformation(0.0F))
+                .texOffs(44, 22).addBox(-8.0F, -2.0F, -2.0F, 4.0F, 8.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.95F, -1.05F, -0.7505F, 0.0F, 0.0F));
+        PartDefinition mirrored = arms.addOrReplaceChild("mirrored", CubeListBuilder.create().texOffs(44, 22).mirror().addBox(4.0F, -23.05F, -3.05F, 4.0F, 8.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(0.0F, 21.05F, 1.05F));
+        PartDefinition lower = root.addOrReplaceChild("lower", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition right_leg = lower.addOrReplaceChild("right_leg", CubeListBuilder.create().texOffs(0, 22).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(-2.0F, -12.0F, 0.0F));
+        PartDefinition left_leg = lower.addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(0, 22).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(2.0F, -12.0F, 0.0F));
+        return LayerDefinition.create(meshdefinition, 64, 64);
+    }
 
 
-        lower = new AdvancedModelBox(this, "lower");
-        lower.setPos(0.0F, 0.0F, 0.0F);
-        root.addChild(lower);
-
-        right_leg = new AdvancedModelBox(this, "right_leg");
-        right_leg.setPos(-2.0F, -12.0F, 0.0F);
-        lower.addChild(right_leg);
-        right_leg.setTextureOffset(0, 22).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F);
-
-
-        left_leg = new AdvancedModelBox(this, "left_leg");
-        left_leg.setPos(2.0F, -12.0F, 0.0F);
-        lower.addChild(left_leg);
-        left_leg.setTextureOffset(0, 22).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F);
-
-        animator = ModelAnimator.create();
-        updateDefaultPose();
-
+    @Override
+    public ModelPart root() {
+        return this.root;
     }
 
     @Override
-    public Iterable<AdvancedModelBox> getAllParts() {
-        return ImmutableList.of(this.root, this.head, this.upper, this.nose, this.headwear, this.headwear2, this.body, this.bodywear, this.arms, this.mirrored, this.lower, this.left_leg, this.right_leg);
-    }
-
-    @Override
-    public Iterable<BasicModelPart> parts() {
-        return ImmutableList.of(this.root);
-    }
-
-    @Override
-    public void setupAnim(EntityTester entityTester, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.animate(entityTester, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        float delta = ageInTicks - entityTester.tickCount;
-        float frame = entityTester.frame + delta;
+    public void setupAnim(EntityTester entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.resetToDefaultPose();
+        float delta = ageInTicks - entity.tickCount;
+        float frame = entity.frame + delta;
         float walkSpeed = 0.6F;
         float walkDegree = 0.6F;
-        this.faceTarget(netHeadYaw, headPitch, 1.0F, this.head);
+        lookAtAnimation(netHeadYaw, headPitch, 1.0F, this.head);
         this.flap(this.root, walkSpeed, walkDegree * 0.025F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
-        this.walk(this.left_leg, walkSpeed, walkDegree * 1.2F, true, 0.0F, 0.0F, limbSwing, limbSwingAmount);
-        this.walk(this.right_leg, walkSpeed, walkDegree * 1.2F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
+        this.walk(this.leftLeg, walkSpeed, walkDegree * 1.2F, true, 0.0F, 0.0F, limbSwing, limbSwingAmount);
+        this.walk(this.rightLeg, walkSpeed, walkDegree * 1.2F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
         this.walk(this.arms, walkSpeed, walkDegree * 0.2F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
         this.bob(this.upper, walkSpeed * 0.4F, walkDegree * 0.3F, false, frame, 1);
         this.bob(this.arms, walkSpeed * 0.2F, walkDegree * 0.2F, true, frame, 1);
         this.bob(this.head, walkSpeed * 0.2F, walkDegree * 0.2F, true, frame, 1);
+        this.animate(entity.yesAnimation, AnimationTester.YES, ageInTicks);
+        this.animate(entity.noAnimation, AnimationTester.NO, ageInTicks);
     }
 
-    private void animate(EntityTester entityTester, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.resetToDefaultPose();
-        animator.update(entityTester);
-        if (animator.setAnimation(EntityTester.YES) || animator.setAnimation(EntityTester.NO)) {
-            animator.startKeyframe(2);
-            animator.rotate(head, toRadians(35), 0, 0);
-            animator.rotate(upper, toRadians(5), 0, 0);
-            animator.endKeyframe();
-            animator.resetKeyframe(3);
-        }
-    }
+    @OnlyIn(Dist.CLIENT)
+    private static class AnimationTester {
 
-    private void offsetAndRotation(AdvancedModelBox box, float px, float py, float pz, float rx, float ry, float rz) {
-        box.setRotationPoint(px, py, pz);
-        box.rotateAngleX = rx;
-        box.rotateAngleY = ry;
-        box.rotateAngleZ = rz;
-    }
-
-    private static float toRadians(double degree) {
-        return (float) degree * ((float) Math.PI / 180F);
+        public static final AnimationDefinition YES = AnimationDefinition.Builder.withLength(0.25f)
+                .addAnimation("upper",
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.08343333f, KeyframeAnimations.degreeVec(2.5f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.25f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR)))
+                .addAnimation("head",
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.08343333f, KeyframeAnimations.degreeVec(15f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR))).build();
+        public static final AnimationDefinition NO = AnimationDefinition.Builder.withLength(0.25f)
+                .addAnimation("upper",
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.041676664f, KeyframeAnimations.degreeVec(0f, 5f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(0f, -5f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.20834334f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR)))
+                .addAnimation("head",
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.08343333f, KeyframeAnimations.degreeVec(0f, 20f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(0f, -20f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR),
+                                new Keyframe(0.25f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.LINEAR))).build();
     }
 }

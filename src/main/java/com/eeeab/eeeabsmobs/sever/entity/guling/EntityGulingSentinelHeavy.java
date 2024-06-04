@@ -1,31 +1,33 @@
 package com.eeeab.eeeabsmobs.sever.entity.guling;
 
+import com.eeeab.animate.server.ai.AnimationAI;
+import com.eeeab.animate.server.ai.AnimationMeleePlusAI;
+import com.eeeab.animate.server.ai.AnimationSimpleAI;
+import com.eeeab.animate.server.ai.animation.AnimationActivate;
+import com.eeeab.animate.server.ai.animation.AnimationDeactivate;
+import com.eeeab.animate.server.ai.animation.AnimationDie;
+import com.eeeab.animate.server.ai.animation.AnimationRepel;
+import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.animate.server.handler.EMAnimationHandler;
+import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
-import com.eeeab.eeeabsmobs.sever.block.BlockSignalTarp;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationActivateGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationDeactivateGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationDieGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationFullRangeAttackGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationAbstractGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationMeleeAIPlusGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGrenade;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
-import com.github.alexthe666.citadel.animation.Animation;
-import com.github.alexthe666.citadel.animation.AnimationHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -47,11 +49,11 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.AbstractGolem;
-import net.minecraft.world.entity.monster.*;
+import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
@@ -64,25 +66,25 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntity, GlowEntity, RangedAttackMob {
-    public static final Animation DIE_ANIMATION = Animation.create(40);
-    public static final Animation ACTIVE_ANIMATION = Animation.create(30);
-    public static final Animation DEACTIVATE_ANIMATION = Animation.create(30);
-    public static final Animation ATTACK_ANIMATION_LEFT = Animation.create(25);
-    public static final Animation ATTACK_ANIMATION_RIGHT = Animation.create(25);
-    public static final Animation SMASH_ATTACK_ANIMATION = Animation.create(30);
-    public static final Animation RANGE_ATTACK_ANIMATION = Animation.create(100);
-    public static final Animation RANGE_ATTACK_END_ANIMATION = Animation.create(10);
-    public static final Animation ELECTROMAGNETIC_ANIMATION = Animation.create(80);
-    private static final Animation[] ANIMATIONS = new Animation[]{
-            DIE_ANIMATION,
-            ACTIVE_ANIMATION,
-            DEACTIVATE_ANIMATION,
-            ATTACK_ANIMATION_LEFT,
-            ATTACK_ANIMATION_RIGHT,
-            SMASH_ATTACK_ANIMATION,
-            RANGE_ATTACK_ANIMATION,
-            RANGE_ATTACK_END_ANIMATION,
-            ELECTROMAGNETIC_ANIMATION
+    public final Animation dieAnimation = Animation.create(60);
+    public final Animation activeAnimation = Animation.create(30);
+    public final Animation deactivateAnimation = Animation.create(30);
+    public final Animation attackAnimationLeft = Animation.create(25);
+    public final Animation attackAnimationRight = Animation.create(25);
+    public final Animation smashAttackAnimation = Animation.create(30);
+    public final Animation rangeAttackAnimation = Animation.create(100);
+    public final Animation rangeAttackStopAnimation = Animation.create(10);
+    public final Animation electromagneticAnimation = Animation.create(100);
+    private final Animation[] animations = new Animation[]{
+            dieAnimation,
+            activeAnimation,
+            deactivateAnimation,
+            attackAnimationLeft,
+            attackAnimationRight,
+            smashAttackAnimation,
+            rangeAttackAnimation,
+            rangeAttackStopAnimation,
+            electromagneticAnimation
     };
     private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EntityGulingSentinelHeavy.class, EntityDataSerializers.BOOLEAN);
     private int deactivateTick;
@@ -94,12 +96,14 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     private static final int RANGE_ATTACK_TICK = 350;
     private static final int SMASH_ATTACK_TICK = 300;
     private static final int ELECTROMAGNETIC_TICK = 450;
+    public final ControlledAnimation electromagneticConControlled = new ControlledAnimation(20);
     @OnlyIn(Dist.CLIENT)
     public Vec3[] hand;//0:left 1:right
 
     public EntityGulingSentinelHeavy(EntityType<? extends EntityAbsGuling> type, Level level) {
         super(type, level);
         this.active = false;
+        this.dropAfterDeathAnim = false;
         this.setPathfindingMalus(BlockPathTypes.UNPASSABLE_RAIL, 0.0F);
         if (this.level.isClientSide) {
             this.hand = new Vec3[]{new Vec3(0, 0, 0), new Vec3(0, 0, 0)};
@@ -119,6 +123,11 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     @Override//减少实体在水下的空气供应
     protected int decreaseAirSupply(int air) {
         return air;
+    }
+
+    @Override//是否免疫摔伤
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource damageSource) {
+        return false;
     }
 
     @Override//是否在实体上渲染着火效果
@@ -173,9 +182,9 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     @Override
     protected void onAnimationFinish(Animation animation) {
         if (!this.level.isClientSide) {
-            if (animation == SMASH_ATTACK_ANIMATION) {
+            if (animation == this.smashAttackAnimation) {
                 this.smashAttackTick = SMASH_ATTACK_TICK;
-            } else if (animation == RANGE_ATTACK_ANIMATION) {
+            } else if (animation == this.rangeAttackAnimation) {
                 this.rangeAttackTick = RANGE_ATTACK_TICK;
             }
         }
@@ -199,13 +208,13 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
 
     @Override
     protected void registerCustomGoals() {
-        this.goalSelector.addGoal(1, new AnimationDieGoal<>(this));
-        this.goalSelector.addGoal(1, new AnimationActivateGoal<>(this, ACTIVE_ANIMATION));
-        this.goalSelector.addGoal(1, new AnimationDeactivateGoal<>(this, DEACTIVATE_ANIMATION));
+        this.goalSelector.addGoal(1, new AnimationDie<>(this));
+        this.goalSelector.addGoal(1, new AnimationActivate<>(this, () -> activeAnimation));
+        this.goalSelector.addGoal(1, new AnimationDeactivate<>(this, () -> deactivateAnimation));
         this.goalSelector.addGoal(1, new GSHMeleeAttackGoal(this));
         this.goalSelector.addGoal(1, new GSHRangeAttackGoal(this));
         this.goalSelector.addGoal(1, new GSHElectromagneticAttackGoal(this));
-        this.goalSelector.addGoal(1, new AnimationFullRangeAttackGoal<>(this, SMASH_ATTACK_ANIMATION, 7F, 18, 1.5F, 2F, true) {
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> smashAttackAnimation, 7F, 18, 1.5F, 1.5F, true) {
             @Override
             public void tick() {
                 this.entity.setDeltaMovement(0F, 0F, 0F);
@@ -227,14 +236,14 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 }
             }
         });
-        this.goalSelector.addGoal(1, new AnimationCommonGoal<>(this, RANGE_ATTACK_END_ANIMATION));
-        this.goalSelector.addGoal(2, new AnimationMeleeAIPlusGoal<>(this, 1.0, 15, ATTACK_ANIMATION_LEFT, ATTACK_ANIMATION_RIGHT));
+        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, () -> rangeAttackAnimation));
+        this.goalSelector.addGoal(2, new AnimationMeleePlusAI<>(this, 1.0, 15, () -> attackAnimationLeft, () -> attackAnimationRight));
     }
 
     @Override
     public boolean isInvulnerableTo(DamageSource damageSource) {
         Animation animation = this.getAnimation();
-        return (!this.isActive() || animation == ACTIVE_ANIMATION || animation == DEACTIVATE_ANIMATION) || super.isInvulnerableTo(damageSource);
+        return (!this.isActive() || animation == activeAnimation || animation == deactivateAnimation) || super.isInvulnerableTo(damageSource);
     }
 
     @Override
@@ -242,7 +251,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         super.tick();
         this.glowControlled.updatePrevTimer();
         this.hotControlled.updatePrevTimer();
-        AnimationHandler.INSTANCE.updateAnimations(this);
+        EMAnimationHandler.INSTANCE.updateAnimations(this);
         if (!this.level.isClientSide) {
             if (this.getTarget() != null && !this.getTarget().isAlive()) this.setTarget(null);
             if (!this.isNoAi() && !this.isActive()) {
@@ -250,44 +259,91 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
                 this.yHeadRot = this.yBodyRot = this.getYRot();
             }
-            if (!this.isNoAi() && !this.isActive() && this.getAnimation() == NO_ANIMATION && this.getTarget() != null && this.targetDistance <= 12) {
+            if (!this.isNoAi() && !this.isActive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() != null && this.targetDistance <= 12) {
                 this.playSound(SoundInit.GSH_FRICTION.get());
-                this.playAnimation(ACTIVE_ANIMATION);
+                this.playAnimation(this.activeAnimation);
                 this.setActive(true);
             }
-            if (!this.isNoAi() && this.isActive() && this.getAnimation() == NO_ANIMATION && this.getTarget() == null && this.deactivateTick >= 300) {
+            if (!this.isNoAi() && this.isActive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() == null && this.deactivateTick >= 300) {
                 this.playSound(SoundInit.GSH_FRICTION.get());
-                this.playAnimation(DEACTIVATE_ANIMATION);
+                this.playAnimation(this.deactivateAnimation);
                 this.setActive(false);
             }
-            if (!this.isNoAi() && this.isActive() && this.getAnimation() == NO_ANIMATION && this.smashAttackTick <= 0 && this.getTarget() != null && ((targetDistance <= 6.5F && ModEntityUtils.checkTargetComingCloser(this, this.getTarget())) || this.targetDistance < 6.0F)) {
-                this.playAnimation(SMASH_ATTACK_ANIMATION);
+            if (!this.isNoAi() && this.isActive() && this.getAnimation() == this.getNoAnimation() && this.smashAttackTick <= 0 && this.getTarget() != null && ((targetDistance <= 6.5F && ModEntityUtils.checkTargetComingCloser(this, this.getTarget())) || this.targetDistance < 6.0F)) {
+                this.playAnimation(this.smashAttackAnimation);
             }
-            if (!this.isNoAi() && this.isActive() && this.getAnimation() == NO_ANIMATION && this.getTarget() != null && this.rangeAttackTick <= 0 && Math.pow(this.targetDistance, 2.0) > this.getMeleeAttackRangeSqr(this.getTarget()) + 5) {
-                this.playAnimation(RANGE_ATTACK_ANIMATION);
+            if (!this.isNoAi() && this.isActive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() != null && this.rangeAttackTick <= 0 && Math.pow(this.targetDistance, 2.0) > this.getMeleeAttackRangeSqr(this.getTarget()) + 5) {
+                this.playAnimation(this.rangeAttackAnimation);
             }
         }
 
         this.pushEntitiesAway(1.8F, getBbHeight(), 1.8F, 1.8F);
 
         int tick = this.getAnimationTick();
-        if (getAnimation() == SMASH_ATTACK_ANIMATION) {
+        if (this.getAnimation() == this.smashAttackAnimation) {
             if (tick == 1) {
                 this.playSound(SoundInit.GSH_PRE_ATTACK.get(), 0.5F, this.getVoicePitch());
             } else if (tick == 18) {
                 this.playSound(SoundEvents.GENERIC_EXPLODE, 1.25F, 1F + this.random.nextFloat() * 0.1F);
                 BlockState block = this.level.getBlockState(new BlockPos(Mth.floor(this.getX()), Mth.floor(this.getY() - 0.2), Mth.floor(this.getZ())));
-                ModParticleUtils.annularParticleOutburstOnGround(level, new BlockParticleOption(ParticleTypes.BLOCK, block), this, 16, 8, 3, 0.5, 0, 0.1);
+                ModParticleUtils.annularParticleOutburstOnGround(this.level, new BlockParticleOption(ParticleTypes.BLOCK, block), this, 16, 8, 3, 0.5, 0, 0.1);
                 if (!this.hotControlled.isStop())
-                    ModParticleUtils.annularParticleOutburstOnGround(level, ParticleTypes.SOUL_FIRE_FLAME, this, 6, 6, 2.5, 0.5, 0, 0.15);
+                    ModParticleUtils.annularParticleOutburstOnGround(this.level, ParticleTypes.SOUL_FIRE_FLAME, this, 6, 6, 2.5, 0.5, 0, 0.15);
             }
-        } else if (getAnimation() == RANGE_ATTACK_ANIMATION) {
+        } else if (this.getAnimation() == this.rangeAttackAnimation) {
             if (tick >= 20 && tick % 20 == 0) {
                 this.hotControlled.increaseTimer(5);
             }
-        } else if (getAnimation() == ATTACK_ANIMATION_LEFT || getAnimation() == ATTACK_ANIMATION_RIGHT) {
+        } else if (this.getAnimation() == this.attackAnimationLeft || this.getAnimation() == this.attackAnimationRight) {
             if (tick == 9 || tick == 17) {
                 this.playSound(SoundInit.GSH_ATTACK.get(), this.getSoundVolume(), this.getVoicePitch());
+            }
+        } else if (this.getAnimation() == this.dieAnimation) {
+            if (tick <= 15) {
+                LivingEntity target = this.getTarget();
+                if (target != null) {
+                    this.lookAt(target,30F,30F);
+                    this.getLookControl().setLookAt(target, 30F, 30F);
+                }
+            }else {
+                this.setYRot(this.yRotO);
+            }
+            if (tick == 38) {
+                float range = 5F;
+                float attackArc = 120F;
+                List<LivingEntity> entities = this.getNearByLivingEntities(range - 0.5F, 3F, range - 0.5F, range - 0.5F);
+                for (LivingEntity hitEntity : entities) {
+                    float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this, hitEntity);
+                    float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - this.getZ()) * (hitEntity.getZ() - this.getZ()) + (hitEntity.getX() - this.getX()) * (hitEntity.getX() - this.getX())) - hitEntity.getBbWidth() / 2F;
+                    if ((entityHitDistance <= range - 0.5F && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
+                        this.gshHurtTarget(hitEntity, 3F, true);
+                        double ratioX = Math.sin(this.getYRot() * ((float) Math.PI / 180F));
+                        double ratioZ = (-Math.cos(this.getYRot() * ((float) Math.PI / 180F)));
+                        ModEntityUtils.forceKnockBack(hitEntity, 0.5F, ratioX, ratioZ, 1.0F, false);
+                    }
+                }
+            } else if (tick == 39) {
+                boolean hot = !this.hotControlled.isStop();
+                EntityCameraShake.cameraShake(this.level, position(), 15, 0.125F, 0, 10);
+                if (this.level.isClientSide) {
+                    ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 25, ParticleDust.EnumDustBehavior.GROW, 1.0f);
+                    ParticleOptions[] options;
+                    if (hot) {
+                        options = new ParticleOptions[]{dustData, ParticleTypes.SOUL_FIRE_FLAME};
+                    } else {
+                        options = new ParticleOptions[]{dustData};
+                    }
+                    ModParticleUtils.annularParticleOutburst(this.level, 15, options, getX(), this.getY(), getZ(), 0.5F, 0.1);
+                }
+            }
+        } else if (this.getAnimation() == this.electromagneticAnimation) {
+            if (tick > 20 && tick < 90) {
+                this.electromagneticConControlled.increaseTimer();
+                if (tick == 44 || tick == 66 || tick == 88) {
+                    this.electromagneticConControlled.decreaseTimer(10);
+                }
+            } else {
+                this.electromagneticConControlled.decreaseTimer(2);
             }
         }
 
@@ -322,7 +378,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         float moveZ = (float) (this.getZ() - this.zo);
         float speed = Mth.sqrt(moveX * moveX + moveZ * moveZ);
         if (this.level.isClientSide && speed > 0.05 && this.isActive() && !this.isSilent()) {
-            if (this.frame % 10 == 1 && (this.getAnimation() == NO_ANIMATION || this.getAnimation() == RANGE_ATTACK_ANIMATION)) {
+            if (this.frame % 10 == 1 && (this.getAnimation() == this.getNoAnimation() || this.getAnimation() == this.rangeAttackAnimation)) {
                 this.level.playLocalSound(getX(), getY(), getZ(), SoundInit.GSH_STEP.get(), this.getSoundSource(), 1F, 1F, false);
             }
         }
@@ -354,7 +410,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         }
         this.glowControlled.incrementOrDecreaseTimer(this.isGlow());
 
-        if (getAnimation() != RANGE_ATTACK_ANIMATION) {
+        if (this.getAnimation() != this.rangeAttackAnimation) {
             if (tickCount % 10 == 0) this.hotControlled.decreaseTimer();
         }
     }
@@ -391,18 +447,13 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     }
 
     @Override
-    public Animation getDeathAnimation() {
-        return DIE_ANIMATION;
-    }
-
-    @Override
-    public Animation getHurtAnimation() {
-        return null;
-    }
-
-    @Override
     public Animation[] getAnimations() {
-        return ANIMATIONS;
+        return this.animations;
+    }
+
+    @Override
+    public Animation getDeathAnimation() {
+        return this.dieAnimation;
     }
 
     @Nullable
@@ -425,7 +476,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
 
     @Override
     public void playAmbientSound() {
-        if (this.isActive() && this.getAnimation() != ACTIVE_ANIMATION) {
+        if (this.isActive() && this.getAnimation() != this.activeAnimation) {
             super.playAmbientSound();
         }
     }
@@ -437,11 +488,11 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().
                 add(Attributes.MAX_HEALTH, 150.0D).
-                add(Attributes.ARMOR, 20.0D).
+                add(Attributes.ARMOR, 15.0D).
                 add(Attributes.ATTACK_DAMAGE, 10.0D).
                 add(Attributes.FOLLOW_RANGE, 32.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.28D).
-                add(ForgeMod.ENTITY_GRAVITY.get(), 0.12D).
+                add(ForgeMod.ENTITY_GRAVITY.get(), 0.125D).
                 add(Attributes.KNOCKBACK_RESISTANCE, 1.0D);
     }
 
@@ -468,7 +519,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             EntityGrenade grenade = new EntityGrenade(this.level, this);
             grenade.shoot(d1, d2 + d4, d3, velocity, 3);
             Vec3 vec3 = this.position().add(this.getLookAngle());
-            grenade.setPos(vec3.x + this.getBbWidth() * 0.8F * Math.cos(yBodyRadians), this.getY(0.48D), vec3.z + this.getBbWidth() * 0.8F * Math.sin(yBodyRadians));
+            grenade.setPos(vec3.x + this.getBbWidth() * 0.8F * Math.cos(yBodyRadians), this.getY(0.45D), vec3.z + this.getBbWidth() * 0.8F * Math.sin(yBodyRadians));
             this.level.addFreshEntity(grenade);
         }
     }
@@ -495,7 +546,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     }
 
 
-    static class GSHMeleeAttackGoal extends AnimationAbstractGoal<EntityGulingSentinelHeavy> {
+    static class GSHMeleeAttackGoal extends AnimationAI<EntityGulingSentinelHeavy> {
 
         protected GSHMeleeAttackGoal(EntityGulingSentinelHeavy entity) {
             super(entity);
@@ -503,7 +554,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
 
         @Override
         protected boolean test(Animation animation) {
-            return animation == ATTACK_ANIMATION_RIGHT || animation == ATTACK_ANIMATION_LEFT;
+            return animation == this.entity.attackAnimationLeft || animation == this.entity.attackAnimationRight;
         }
 
         @Override
@@ -533,7 +584,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             } else if (tick == 18) {
                 float leftArc = 45F;
                 float rightArc = 45F;
-                if (this.entity.getAnimation() == ATTACK_ANIMATION_RIGHT) {
+                if (this.entity.getAnimation() == this.entity.attackAnimationRight) {
                     rightArc = 90F;
                 } else {
                     leftArc = 90F;
@@ -543,25 +594,30 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 for (LivingEntity livingEntity : entities) {
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, livingEntity);
                     float entityHitDistance = (float) Math.sqrt((livingEntity.getZ() - entity.getZ()) * (livingEntity.getZ() - entity.getZ()) + (livingEntity.getX() - entity.getX()) * (livingEntity.getX() - entity.getX())) - livingEntity.getBbWidth() / 2F;
-                    if ((entityHitDistance <= range && (entityRelativeAngle <= rightArc / 2F && entityRelativeAngle >= -leftArc / 2F) || (entityRelativeAngle >= 360 - leftArc / 2F || entityRelativeAngle <= -360 + leftArc / 2F))) {
-                        entity.gshHurtTarget(livingEntity, 1.5F, false);
+                    if ((entityHitDistance <= range && (entityRelativeAngle <= rightArc / 2F && entityRelativeAngle >= -leftArc / 2F) || (entityRelativeAngle >= 360 - 90F / 2F || entityRelativeAngle <= -360 + 90F / 2F))) {
+                        entity.gshHurtTarget(livingEntity, 1.25F, false);
                     }
                 }
             }
         }
     }
 
-    static class GSHRangeAttackGoal extends AnimationCommonGoal<EntityGulingSentinelHeavy> {
+    static class GSHRangeAttackGoal extends AnimationAI<EntityGulingSentinelHeavy> {
         private int lostTargetDelay;
 
         public GSHRangeAttackGoal(EntityGulingSentinelHeavy entity) {
-            super(entity, RANGE_ATTACK_ANIMATION);
+            super(entity);
         }
 
         @Override
         public void start() {
             super.start();
             this.lostTargetDelay = 0;
+        }
+
+        @Override
+        protected boolean test(Animation animation) {
+            return animation == this.entity.rangeAttackAnimation;
         }
 
         @Override
@@ -576,22 +632,22 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 this.moveGoal(target);
                 this.entity.getLookControl().setLookAt(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), 15F, 30F);
             } else {
-                this.entity.playAnimation(RANGE_ATTACK_END_ANIMATION);
+                this.entity.playAnimation(this.entity.rangeAttackStopAnimation);
                 return;
             }
             int tick = this.entity.getAnimationTick();
             if (tick % 20 == 0 && tick > 10) {
-                this.entity.performRangedAttack(target, 1.24F);
+                this.entity.performRangedAttack(target, 1F);
             }
         }
 
         private void moveGoal(LivingEntity target) {
-            double moveSpeed = this.entity.getAttributeValue(Attributes.MOVEMENT_SPEED);
+            double moveSpeed = this.entity.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.75;
             double distance = this.entity.distanceToSqr(target);
             if (distance < Math.pow(6, 2)) {
                 Vec3 vec3 = findTargetPoint(target, this.entity);
                 this.entity.setDeltaMovement(vec3.x * moveSpeed, this.entity.getDeltaMovement().y, vec3.z * moveSpeed);
-            } else if (distance > Math.pow(24, 2)) {
+            } else if (distance > Math.pow(12, 2)) {
                 Vec3 vec3 = findTargetPoint(this.entity, target);
                 this.entity.setDeltaMovement(vec3.x * moveSpeed, this.entity.getDeltaMovement().y, vec3.z * moveSpeed);
             } else {
@@ -605,13 +661,18 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         }
     }
 
-    static class GSHElectromagneticAttackGoal extends AnimationCommonGoal<EntityGulingSentinelHeavy> {
+    static class GSHElectromagneticAttackGoal extends AnimationAI<EntityGulingSentinelHeavy> {
 
         public GSHElectromagneticAttackGoal(EntityGulingSentinelHeavy entity) {
-            super(entity, ELECTROMAGNETIC_ANIMATION);
+            super(entity);
         }
 
-        //TODO 待实现
+        @Override
+        protected boolean test(Animation animation) {
+            return animation == this.entity.electromagneticAnimation;
+        }
+
+        //TODO 待实现 2024/5/25完成动画制作
         @Override
         public void tick() {
             super.tick();

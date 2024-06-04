@@ -8,13 +8,13 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.ForgeHooks;
@@ -23,18 +23,98 @@ import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 
 import java.util.Random;
 
+/**
+ * 实体工具类
+ *
+ * @author EEEAB
+ */
 public class ModEntityUtils {
 
     private ModEntityUtils() {
     }
 
-    //伤害源是弹射物伤害
+    /**
+     * 检查药水是否是有益的
+     *
+     * @param effect 药水
+     * @return 布尔值
+     */
+    public static boolean isBeneficial(MobEffect effect) {
+        return effect != null && (effect.getCategory() == MobEffectCategory.BENEFICIAL || effect.isBeneficial());
+    }
+
+    /**
+     * 检查伤害源是否是弹射物
+     *
+     * @param source 伤害源
+     * @return 布尔值
+     */
     public static boolean isProjectileSource(DamageSource source) {
         Entity entity = source.getDirectEntity();
         return entity instanceof Projectile || source.isProjectile();
     }
 
-    //寻找冲向目标的坐标
+
+    public static boolean checkDirectEntityConsistency(DamageSource source) {
+        return source.getEntity() == source.getDirectEntity();
+    }
+
+    /**
+     * 检查目标实体是否正在接近当前实体
+     *
+     * @param entity 当前实体
+     * @param target 目标实体
+     * @return 布尔值
+     */
+    public static boolean checkTargetComingCloser(LivingEntity entity, LivingEntity target) {
+        Vec3 betweenEntitiesVec = entity.position().subtract(target.position());
+        return target.getDeltaMovement().dot(betweenEntitiesVec) > 0 && target.getDeltaMovement().lengthSqr() > 0.015;
+    }
+
+    public static boolean canDestroyBlock(Level world, BlockPos pos, Entity entity, float maxBlockHardness) {
+        return canDestroyBlock(world, pos, world.getBlockState(pos), maxBlockHardness, entity);
+    }
+
+    public static boolean canDestroyBlock(Level world, BlockPos pos, Entity entity) {
+        return canDestroyBlock(world, pos, world.getBlockState(pos), 50f, entity);
+    }
+
+    /**
+     * 判断给定区块方块是否可被破坏
+     *
+     * @param world            服务端&客户端
+     * @param pos              区块坐标
+     * @param state            方块状态
+     * @param maxBlockHardness 最大硬度
+     * @param entity           实体
+     * @return 布尔值
+     */
+    public static boolean canDestroyBlock(Level world, BlockPos pos, BlockState state, float maxBlockHardness, Entity entity) {
+        float hardness = state.getDestroySpeed(world, pos);
+        return hardness >= 0f && hardness <= maxBlockHardness && !state.isAir()
+                && state.getBlock().canEntityDestroy(state, world, pos, entity)
+                && (/* 强制条件 */!(entity instanceof LivingEntity)
+                || ForgeEventFactory.onEntityDestroyBlock((LivingEntity) entity, pos, state));
+    }
+
+    /**
+     * 检查游戏规则:生物破坏
+     *
+     * @param entity 实体
+     * @return 布尔值
+     */
+    public static boolean canMobDestroy(Entity entity) {
+        return ForgeEventFactory.getMobGriefingEvent(entity.level, entity);
+    }
+
+    /**
+     * 寻找到目标的直线延展坐标
+     *
+     * @param attacker  当前实体
+     * @param target    目标
+     * @param overshoot 延展距离
+     * @return 坐标
+     */
     public static Vec3 findPounceTargetPoint(Entity attacker, Entity target, double overshoot) {
         double vx = target.getX() - attacker.getX();
         double vz = target.getZ() - attacker.getZ();
@@ -48,40 +128,16 @@ public class ModEntityUtils {
         return new Vec3(attacker.getX() + dx, target.getY(), attacker.getZ() + dz);
     }
 
-    public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos, float fallingFactor) {
-        Random random = new Random();
-        BlockPos abovePos = new BlockPos(pos).above();//获取上面方块的坐标,以用来判断是否需要生成下落的方块
-        BlockState block = level.getBlockState(pos);//获取下落方块,以用于渲染方块材质
-        BlockState blockAbove = level.getBlockState(abovePos);//获取上面方块的状态,,以用来判断是否需要生成下落的方块
-
-        //随机扰动
-        if (random.nextBoolean()) {
-            fallingFactor += 0.4 + random.nextGaussian() * 0.2;
-        } else {
-            fallingFactor -= Mth.clamp(0.2 + random.nextGaussian() * 0.2, 0.2, fallingFactor - 0.1);
-        }
-
-        if (block.getMaterial() != Material.AIR && block.isRedstoneConductor(level, pos) && !block.hasBlockEntity() && !blockAbove.getMaterial().blocksMotion()) {
-            EntityFallingBlock fallingBlock = new EntityFallingBlock(level, block, (float) (0.32 + fallingFactor * 0.2));
-            fallingBlock.setPos(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
-            level.addFreshEntity(fallingBlock);
-        }
-    }
-
-    public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos) {
-        RandomSource random = RandomSource.create();
-        BlockPos abovePos = new BlockPos(pos).above();//获取上面方块的坐标,以用来判断是否需要生成下落的方块
-        BlockState block = level.getBlockState(pos);//获取下落方块,以用于渲染方块材质
-        BlockState blockAbove = level.getBlockState(abovePos);//获取上面方块的状态,,以用来判断是否需要生成下落的方块
-
-        if (block.getMaterial() != Material.AIR && block.isRedstoneConductor(level, pos) && !block.hasBlockEntity() && !blockAbove.getMaterial().blocksMotion()) {
-            EntityFallingBlock fallingBlock = new EntityFallingBlock(level, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, block, 10);
-            fallingBlock.push(0, 0.2 + random.nextGaussian() * 0.2, 0);
-            level.addFreshEntity(fallingBlock);
-        }
-    }
-
-    //判断指定y轴的生成位置
+    /**
+     * 检查生成实体坐标
+     *
+     * @param summoner 召唤者
+     * @param pX       x轴
+     * @param pZ       z轴
+     * @param pMinY    起步y轴
+     * @param pMaxY    最终y轴
+     * @return 坐标
+     */
     public static Vec3 checkSummonEntityPoint(LivingEntity summoner, double pX, double pZ, double pMinY, double pMaxY) {
         BlockPos blockpos = new BlockPos(pX, pMaxY, pZ);
         boolean flag = false;
@@ -109,38 +165,31 @@ public class ModEntityUtils {
         if (flag) {
             return new Vec3(pX, blockpos.getY() + d0, pZ);
         }
-        return new Vec3(summoner.getX(), summoner.getY(), summoner.getZ());
+        return new Vec3(pX, pMinY, pZ);
     }
 
-    //获取是否目标逐渐逼近
-    public static boolean checkTargetComingCloser(LivingEntity entity, LivingEntity target) {
-        Vec3 betweenEntitiesVec = entity.position().subtract(target.position());
-        return target.getDeltaMovement().dot(betweenEntitiesVec) > 0 && target.getDeltaMovement().lengthSqr() > 0.015;
+    public static float getTargetRelativeAngle(LivingEntity entity, LivingEntity target) {
+        return getTargetRelativeAngle(entity, target.position());
     }
 
-    public static boolean canDestroyBlock(Level world, BlockPos pos, Entity entity, float maxBlockHardness) {
-        return canDestroyBlock(world, pos, world.getBlockState(pos), maxBlockHardness, entity);
+    /**
+     * 获取击中时的角度与该实体面向角度之间的差值
+     */
+    public static float getTargetRelativeAngle(LivingEntity entity, Vec3 position) {
+        float entityHitAngle = (float) ((Math.atan2(position.z() - entity.getZ(), position.x() - entity.getX()) * (180 / Math.PI) - 90) % 360);
+        float entityAttackingAngle = entity.yBodyRot % 360;
+        if (entityHitAngle < 0) {
+            entityHitAngle += 360;
+        }
+        if (entityAttackingAngle < 0) {
+            entityAttackingAngle += 360;
+        }
+        return entityHitAngle - entityAttackingAngle;
     }
 
-    public static boolean canDestroyBlock(Level world, BlockPos pos, Entity entity) {
-        return canDestroyBlock(world, pos, world.getBlockState(pos), 50f, entity);
-    }
-
-    //判断方块是否可以摧毁
-    public static boolean canDestroyBlock(Level world, BlockPos pos, BlockState state, float maxBlockHardness, Entity entity) {
-        float hardness = state.getDestroySpeed(world, pos);
-        return hardness >= 0f && hardness <= maxBlockHardness && !state.isAir()
-                && state.getBlock().canEntityDestroy(state, world, pos, entity)
-                && (/* 强制条件 */!(entity instanceof LivingEntity)
-                || ForgeEventFactory.onEntityDestroyBlock((LivingEntity) entity, pos, state));
-    }
-
-    //判断是否开启生物破坏规则
-    public static boolean canMobDestroy(Entity entity) {
-        return ForgeEventFactory.getMobGriefingEvent(entity.level, entity);
-    }
-
-    //击退生物(受事件影响)
+    /**
+     * 击退指定实体(受事件影响)
+     */
     public static void forceKnockBack(LivingEntity attackTarget, float strength, double ratioX, double ratioZ, double knockBackResistanceReduction, boolean canceledEventKnockBack) {
         LivingKnockBackEvent event = ForgeHooks.onLivingKnockBack(attackTarget, strength, ratioX, ratioZ);
         if (canceledEventKnockBack && event.isCanceled()) return;
@@ -156,34 +205,55 @@ public class ModEntityUtils {
         }
     }
 
+    /**
+     * 生成下落方块(渲染移动)
+     *
+     * @param level         服务端
+     * @param pos           区块坐标
+     * @param fallingFactor y轴下降系数
+     */
+    public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos, float fallingFactor) {
+        Random random = new Random();
+        BlockPos abovePos = new BlockPos(pos).above();//获取上面方块的坐标,以用来判断是否需要生成下落的方块
+        BlockState block = level.getBlockState(pos);//获取下落方块,以用于渲染方块材质
+        BlockState blockAbove = level.getBlockState(abovePos);//获取上面方块的状态,,以用来判断是否需要生成下落的方块
 
-    //获取与目标实体相对角度
-    public static float getTargetRelativeAngle(LivingEntity entity, LivingEntity target) {
-        float entityHitAngle = (float) ((Math.atan2(target.getZ() - entity.getZ(), target.getX() - entity.getX()) * (180 / Math.PI) - 90) % 360);
-        float entityAttackingAngle = entity.yBodyRot % 360;
-        if (entityHitAngle < 0) {
-            entityHitAngle += 360;
+        //随机扰动
+        if (random.nextBoolean()) {
+            fallingFactor += (float) (0.4 + random.nextGaussian() * 0.2);
+        } else {
+            fallingFactor -= (float) Mth.clamp(0.2 + random.nextGaussian() * 0.2, 0.2, fallingFactor - 0.1);
         }
-        if (entityAttackingAngle < 0) {
-            entityAttackingAngle += 360;
+
+        if (!block.isAir() && block.isRedstoneConductor(level, pos) && !block.hasBlockEntity() && !blockAbove.getMaterial().blocksMotion()) {
+            EntityFallingBlock fallingBlock = new EntityFallingBlock(level, block, (float) (0.32 + fallingFactor * 0.2));
+            fallingBlock.setPos(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
+            level.addFreshEntity(fallingBlock);
         }
-        return entityHitAngle - entityAttackingAngle;
     }
 
-    //获取与目标坐标相对角度
-    public static float getTargetRelativeAngle(LivingEntity entity, Vec3 position) {
-        float entityHitAngle = (float) ((Math.atan2(position.z() - entity.getZ(), position.x() - entity.getX()) * (180 / Math.PI) - 90) % 360);
-        float entityAttackingAngle = entity.yBodyRot % 360;
-        if (entityHitAngle < 0) {
-            entityHitAngle += 360;
+    /**
+     * 生成下落方块(整体移动)
+     *
+     * @param level 服务端
+     * @param pos   区块坐标
+     */
+    public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos) {
+        RandomSource random = RandomSource.create();
+        BlockPos abovePos = new BlockPos(pos).above();//获取上面方块的坐标,以用来判断是否需要生成下落的方块
+        BlockState block = level.getBlockState(pos);//获取下落方块,以用于渲染方块材质
+        BlockState blockAbove = level.getBlockState(abovePos);//获取上面方块的状态,,以用来判断是否需要生成下落的方块
+
+        if (!block.isAir() && block.isRedstoneConductor(level, pos) && !block.hasBlockEntity() && !blockAbove.getMaterial().blocksMotion()) {
+            EntityFallingBlock fallingBlock = new EntityFallingBlock(level, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, block, 10);
+            fallingBlock.push(0, 0.2 + random.nextGaussian() * 0.2, 0);
+            level.addFreshEntity(fallingBlock);
         }
-        if (entityAttackingAngle < 0) {
-            entityAttackingAngle += 360;
-        }
-        return entityHitAngle - entityAttackingAngle;
     }
 
-    //添加药水效果(可堆叠等级 上限5级)
+    /**
+     * 添加药水效果(可堆叠等级 上限5级)
+     */
     public static void addEffectStackingAmplifier(LivingEntity target, MobEffect mobEffect, int duration, boolean ambient, boolean visible, boolean showIcon) {
         if (!target.hasEffect(mobEffect)) {
             target.addEffect(new MobEffectInstance(mobEffect, duration, 0, ambient, visible, showIcon));

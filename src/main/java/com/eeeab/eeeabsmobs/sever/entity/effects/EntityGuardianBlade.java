@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,7 +24,6 @@ import java.util.List;
 
 public class EntityGuardianBlade extends EntityMagicEffects {
     public final ControlledAnimation controlled = new ControlledAnimation(100);
-    private static final float MAX_DAMAGE = 30F;
     private static final int DURATION = 35;
     private boolean moveOffset;
     private double damage = 1D;
@@ -86,8 +87,9 @@ public class EntityGuardianBlade extends EntityMagicEffects {
             for (LivingEntity target : entities) {
                 if (target == caster) continue;
                 if (caster instanceof EntityNamelessGuardian) damage += target.getMaxHealth() * 0.05D;
-                damage = Mth.clamp(damage * progress, 1, MAX_DAMAGE);
-                target.hurt(DamageSource.indirectMagic(target, caster), (float) damage);
+                if (caster instanceof Player) damage = Math.min(EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamageValue * 2, damage);
+                damage = Math.max(1, damage * progress);
+                target.hurt(DamageSource.indirectMagic(this, caster), (float) damage);
             }
         }
     }

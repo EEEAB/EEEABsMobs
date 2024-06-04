@@ -1,9 +1,9 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.github.alexthe666.citadel.animation.Animation;
+import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -14,10 +14,11 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
+import java.util.function.Supplier;
 
-public class GuardianLeapGoal extends AnimationCommonGoal<EntityNamelessGuardian> {
-    public GuardianLeapGoal(EntityNamelessGuardian entity, Animation animation) {
-        super(entity, animation);
+public class GuardianLeapGoal extends AnimationSimpleAI<EntityNamelessGuardian> {
+    public GuardianLeapGoal(EntityNamelessGuardian entity, Supplier<Animation> animationSupplier) {
+        super(entity, animationSupplier);
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
 
@@ -68,7 +69,7 @@ public class GuardianLeapGoal extends AnimationCommonGoal<EntityNamelessGuardian
                 }
             }
             if (onGround) {
-                this.entity.playAnimation(EntityNamelessGuardian.SMASH_DOWN_ANIMATION);
+                this.entity.playAnimation(this.entity.smashDownAnimation);
             }
         }
     }

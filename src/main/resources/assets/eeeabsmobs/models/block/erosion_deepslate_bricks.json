@@ -1,7 +1,0 @@
-{
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "eeeabsmobs:block/erosion_deepslate_bricks",
-    "particle": "eeeabsmobs:block/erosion_deepslate_bricks"
-  }
-}

@@ -1,18 +1,19 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.base.AnimationCommonGoal;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianLaser;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.github.alexthe666.citadel.animation.Animation;
+import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.EnumSet;
+import java.util.function.Supplier;
 
-public class GuardianShootLaserGoal extends AnimationCommonGoal<EntityNamelessGuardian> {
-    public GuardianShootLaserGoal(EntityNamelessGuardian entity, Animation animation) {
-        super(entity, animation);
+public class GuardianShootLaserGoal extends AnimationSimpleAI<EntityNamelessGuardian> {
+    public GuardianShootLaserGoal(EntityNamelessGuardian entity, Supplier<Animation> animationSupplier) {
+        super(entity, animationSupplier);
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
     }
 
@@ -42,10 +43,10 @@ public class GuardianShootLaserGoal extends AnimationCommonGoal<EntityNamelessGu
             try {
                 if (this.entity.getTarget() != null) {
                     float distance = this.entity.distanceTo(this.entity.getTarget());
-                    speed = Math.max(0F, 1F / Math.abs(distance * 0.08F));
+                    speed = Math.min(3F, 1F / Math.abs(distance * 0.08F));
                 }
             } catch (ArithmeticException ignored) {}
-            float yMaxRotSpeed = 1F + speed;
+            float yMaxRotSpeed = 5F - speed;
             float xMaxRotAngle = 90F;
             if (entityTarget != null) {
                 this.entity.getLookControl().setLookAt(entityTarget.getX(), entityTarget.getY() + entityTarget.getBbHeight() / 2, entityTarget.getZ(), yMaxRotSpeed, xMaxRotAngle);

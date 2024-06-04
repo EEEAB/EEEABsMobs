@@ -3,6 +3,7 @@ package com.eeeab.eeeabsmobs.sever.entity.projectile;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityExplode;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import net.minecraft.nbt.CompoundTag;
@@ -23,7 +24,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -112,11 +112,11 @@ public class EntityBloodBall extends Projectile implements IEntity {
     private void preDestroy(@Nullable Entity entity) {
         if (!this.level.isClientSide) {
             if (this.getOwner() == entity && entity instanceof LivingEntity livingEntity) {
-                if (this.isHeal) livingEntity.heal(livingEntity.getMaxHealth() * power * 0.1F);
+                if (this.isHeal)
+                    livingEntity.heal(Math.min(livingEntity.getMaxHealth() * power * 0.05F, livingEntity.getMaxHealth() * 0.5F));
             } else {
-                Vec3 vec3 = this.position();
-                this.level.explode(this, vec3.x, vec3.y, vec3.z, Math.min(power + 1, 5F), false, Explosion.BlockInteraction.NONE);
-                EntityCameraShake.cameraShake(this.level, vec3, 16F, 0.125F, 10, 10);
+                EntityExplode.explode(this.level, this.position(), DamageSource.explosion((Explosion) null), Math.min(power + 1, 5F), 30F);
+                EntityCameraShake.cameraShake(this.level, this.position(), 16F, 0.125F, 5, 15);
             }
         }
         this.discard();

@@ -38,17 +38,17 @@ public final class EMConfigHandler {
             builder.push("Items");
             enableImmortalArmorItemDurability = BUILDER.comment("If 'True' the 'Immortal Armor' will be damaged due to durability").define("Enable immortal armor durability", false);
             enableImmortalItemDurability = BUILDER.comment("If 'True' the 'Immortal Item' will be damaged due to durability").define("Enable immortal item durability", false);
-            //{
-            //    builder.push("Guardian Axe");
-            //    GUARDIAN_AXE_TOOL = new ToolConfig(10F, 1F);
-            //    builder.pop();
-            //}
+            {
+                builder.push("Guardian Axe");
+                GUARDIAN_AXE_TOOL = new ToolConfig(15D, 0.9D);
+                builder.pop();
+            }
             builder.pop();
         }
 
         public final ForgeConfigSpec.BooleanValue enableImmortalArmorItemDurability;
         public final ForgeConfigSpec.BooleanValue enableImmortalItemDurability;
-        //public final ToolConfig GUARDIAN_AXE_TOOL;
+        public final ToolConfig GUARDIAN_AXE_TOOL;
     }
 
     public static class Mob {
@@ -171,11 +171,13 @@ public final class EMConfigHandler {
     public static class CorpseWarlock {
         public CorpseWarlock(final ForgeConfigSpec.Builder builder) {
             builder.push("Corpse Warlock");
+            maxDistanceTakeDamage = BUILDER.comment("Set the distance to take damage from projectiles").defineInRange("Attack distance", 12D, 1D, 32D);
             combatConfig = new AttributeConfig();
             maximumDamageCap = new GeneralDamageCap(0.25);
             builder.pop();
         }
 
+        public final ForgeConfigSpec.DoubleValue maxDistanceTakeDamage;
         public final AttributeConfig combatConfig;
         public final GeneralDamageCap maximumDamageCap;
     }
@@ -183,13 +185,28 @@ public final class EMConfigHandler {
     public static class GulingMobs {
         public GulingMobs(final ForgeConfigSpec.Builder builder) {
             builder.push("Structure-Guling");
+            GULING_SENTINEL = new GulingSentinel(builder);
             GULING_SENTINEL_HEAVY = new GulingSentinelHeavy(builder);
             NAMELESS_GUARDIAN = new NamelessGuardian(builder);
             builder.pop();
         }
 
         public final NamelessGuardian NAMELESS_GUARDIAN;
+        public final GulingSentinel GULING_SENTINEL;
         public final GulingSentinelHeavy GULING_SENTINEL_HEAVY;
+    }
+
+    //古陵哨兵
+    public static class GulingSentinel {
+        public GulingSentinel(final ForgeConfigSpec.Builder builder) {
+            builder.push("Guling Sentinel");
+            enableNonCombatHeal = BUILDER.comment("If 'False' disable non-combat heal").define("Enable non-combat heal", true);
+            combatConfig = new AttributeConfig();
+            builder.pop();
+        }
+
+        public final ForgeConfigSpec.BooleanValue enableNonCombatHeal;//启用脱战治疗
+        public final AttributeConfig combatConfig;
     }
 
     //古陵哨兵-重型
@@ -291,12 +308,17 @@ public final class EMConfigHandler {
 
     //通用物品配置
     public static class ToolConfig {
-        ToolConfig(float attackDamage, float attackSpeed) {
-            this.attackDamage = BUILDER.comment("Set tool attack damage").defineInRange("Attack damage", attackDamage, 0d, Double.MAX_VALUE);
-            this.attackSpeed = BUILDER.comment("Set tool attack speed").defineInRange("Attack speed", attackSpeed, 0d, Double.MAX_VALUE);
+        ToolConfig(double attackDamage, double attackSpeed) {
+            this.attackSpeedValue = attackSpeed;
+            this.attackDamageValue = attackDamage;
+            this.attackDamage = BUILDER.comment("Set tool attack damage").defineInRange("Attack damage", attackDamage, 0d, Float.MAX_VALUE);
+            this.attackSpeed = BUILDER.comment("Set tool attack speed").defineInRange("Attack speed", attackSpeed, 0d, Float.MAX_VALUE);
         }
 
         public final ForgeConfigSpec.DoubleValue attackDamage;
         public final ForgeConfigSpec.DoubleValue attackSpeed;
+
+        public double attackDamageValue;
+        public double attackSpeedValue;
     }
 }

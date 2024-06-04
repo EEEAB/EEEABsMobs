@@ -39,9 +39,9 @@ public class ItemGuardianCore extends Item {
                 if (!level.isClientSide)
                     AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.GUARDIAN_LASER_ABILITY_TYPE);
                 itemStack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
-                player.startUsingItem(hand);
                 player.playSound(SoundInit.NAMELESS_GUARDIAN_ACCUMULATING.get(), 1.5F, (player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.2F + 3.5F);
-                return InteractionResultHolder.consume(itemStack);
+                player.startUsingItem(hand);
+                return InteractionResultHolder.consume(player.getItemInHand(hand));
             } else {
                 try {
                     Optional.ofNullable(capability.getAbilitiesMap().get(AbilityHandler.GUARDIAN_LASER_ABILITY_TYPE)).orElseThrow().end();
@@ -50,7 +50,7 @@ public class ItemGuardianCore extends Item {
                 }
             }
         }
-        return InteractionResultHolder.pass(itemStack);
+        return super.use(level, player, hand);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class ItemGuardianCore extends Item {
 
     @Override
     public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.CUSTOM;
+        return UseAnim.NONE;
     }
 
     @Override

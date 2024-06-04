@@ -2,17 +2,20 @@ package com.eeeab.eeeabsmobs.sever.handler;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.EMItemModels;
+import com.eeeab.eeeabsmobs.client.model.effects.ModelBloodBall;
+import com.eeeab.eeeabsmobs.client.model.effects.ModelGrenade;
+import com.eeeab.eeeabsmobs.client.model.effects.ModelGuardianBlade;
+import com.eeeab.eeeabsmobs.client.model.entity.*;
+import com.eeeab.eeeabsmobs.client.model.layer.EMModelLayer;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.ParticleGuardianSpark;
 import com.eeeab.eeeabsmobs.client.particle.ParticlePoison;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
-import com.eeeab.eeeabsmobs.client.render.*;
-import com.eeeab.eeeabsmobs.client.render.block.RenderBlockTombstone;
+import com.eeeab.eeeabsmobs.client.render.EmptyRender;
 import com.eeeab.eeeabsmobs.client.render.effects.*;
 import com.eeeab.eeeabsmobs.client.render.entity.*;
-import com.eeeab.eeeabsmobs.sever.init.BlockEntityInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
@@ -31,10 +34,23 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = EEEABMobs.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class HandlerRegister {
 
-    //@SubscribeEvent
-    //public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event){
-    //
-    //}
+    @SubscribeEvent
+    public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(EMModelLayer.TESTER, ModelTester::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.CORPSE, ModelCorpse::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.CORPSE_VILLAGER, ModelCorpse::createVillagerBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.CORPSE_SLAVERY, ModelCorpseWarlock::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.BLOOD_BALL, ModelBloodBall::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.GULING_SENTINEL, ModelGulingSentinel::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.GULING_SENTINEL_HEAVY, ModelGulingSentinelHeavy::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.GRENADE, ModelGrenade::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.NAMELESS_GUARDIAN, ModelNamelessGuardian::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.GUARDIAN_BLADE, ModelGuardianBlade::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.IMMORTAL_GOLEM, ModelImmortalGolem::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.IMMORTAL_SKELETON, ModelAbsImmortalSkeleton::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.IMMORTAL_SHAMAN, ModelImmortalShaman::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.IMMORTAL, ModelTheImmortal::createBodyLayer);
+    }
 
     @SubscribeEvent
     public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
@@ -42,16 +58,19 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.IMMORTAL_KNIGHT.get(), RenderAbsImmortalSkeleton::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_SHAMAN.get(), RenderImmortalShaman::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_GOLEM.get(), RenderImmortalGolem::new);
+        event.registerEntityRenderer(EntityInit.IMMORTAL_BOSS.get(), RenderTheImmortal::new);
         event.registerEntityRenderer(EntityInit.CORPSE.get(), RenderCorpse::new);
         event.registerEntityRenderer(EntityInit.CORPSE_VILLAGER.get(), RenderCorpseVillager::new);
         event.registerEntityRenderer(EntityInit.CORPSE_WARLOCK.get(), RenderCorpseWarlock::new);
         event.registerEntityRenderer(EntityInit.NAMELESS_GUARDIAN.get(), RenderNamelessGuardian::new);
+        event.registerEntityRenderer(EntityInit.GULING_SENTINEL.get(), RenderGulingSentinel::new);
         event.registerEntityRenderer(EntityInit.GULING_SENTINEL_HEAVY.get(), RenderGulingSentinelHeavy::new);
         event.registerEntityRenderer(EntityInit.TESTER.get(), RenderTester::new);
 
         event.registerEntityRenderer(EntityInit.GUARDIAN_BLADE.get(), RenderGuardianBlade::new);
         event.registerEntityRenderer(EntityInit.SHAMAN_BOMB.get(), RenderShamanBomb::new);
         event.registerEntityRenderer(EntityInit.CAMERA_SHAKE.get(), EmptyRender::new);
+        event.registerEntityRenderer(EntityInit.EXPLODE.get(), EmptyRender::new);
         event.registerEntityRenderer(EntityInit.MOVING_CONTROLLER.get(), EmptyRender::new);
         event.registerEntityRenderer(EntityInit.FALLING_BLOCK.get(), RenderFallingBlock::new);
         event.registerEntityRenderer(EntityInit.GUARDIAN_LASER.get(), RenderGuardianLaser::new);
@@ -61,9 +80,8 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.BLOOD_BALL.get(), RendererBloodBall::new);
         event.registerEntityRenderer(EntityInit.CRIMSON_CRACK.get(), RenderCrimsonCrack::new);
         event.registerEntityRenderer(EntityInit.CRIMSON_RAY.get(), RenderCrimsonRay::new);
-        event.registerEntityRenderer(EntityInit.GRENADE.get(), EmptyRender::new);
-
-        event.registerBlockEntityRenderer(BlockEntityInit.ENTITY_TOMBSTONE.get(), RenderBlockTombstone::new);
+        event.registerEntityRenderer(EntityInit.CRIMSON_RAY_PRE.get(), RenderCrimsonRay.RenderPreAttack::new);
+        event.registerEntityRenderer(EntityInit.GRENADE.get(), RenderGrenade::new);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

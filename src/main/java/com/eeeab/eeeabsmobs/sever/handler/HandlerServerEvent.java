@@ -6,10 +6,11 @@ import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
 import com.eeeab.eeeabsmobs.sever.capability.FrenzyCapability;
 import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityAbsCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
@@ -23,14 +24,13 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.AbstractGolem;
 import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
@@ -327,15 +327,15 @@ public final class HandlerServerEvent {
     //实体设置目标时
     @SubscribeEvent
     public void onLivingEntityChangeTarget(LivingChangeTargetEvent event) {
-        LivingEntity entity = event.getEntity();
-        VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
-        if (capability != null) {
-            if (event.isCancelable() && entity instanceof Mob && capability.isVertigo()) {
-                if (event.getOriginalTarget() != null || entity.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET)) {
-                    event.setCanceled(true);
-                }
-            }
-        }
+        //LivingEntity entity = event.getEntity();
+        //VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
+        //if (capability != null) {
+        //    if (event.isCancelable() && entity instanceof Mob && capability.isVertigo()) {
+        //        if (event.getOriginalTarget() != null || entity.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET)) {
+        //            event.setCanceled(true);
+        //        }
+        //    }
+        //}
     }
 
     //玩家攻击产生暴击时
@@ -351,6 +351,10 @@ public final class HandlerServerEvent {
         if (event.getRayTraceResult() instanceof EntityHitResult hitResult) {
             if (projectile instanceof EntityBloodBall bloodBall && !bloodBall.isHeal() && hitResult.getEntity() instanceof EntityCorpseWarlock) {
                 event.setCanceled(true);
+            }
+            if (projectile instanceof AbstractArrow arrow && arrow.getOwner() instanceof EntityAbsImmortal && hitResult.getEntity() instanceof EntityAbsImmortal) {
+                if (EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get())
+                    event.setCanceled(true);
             }
         }
     }

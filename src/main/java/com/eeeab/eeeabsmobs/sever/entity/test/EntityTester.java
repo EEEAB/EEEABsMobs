@@ -1,14 +1,14 @@
 package com.eeeab.eeeabsmobs.sever.entity.test;
 
+import com.eeeab.animate.server.ai.animation.AnimationActivate;
+import com.eeeab.animate.server.ai.animation.AnimationDeactivate;
+import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationActivateGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animation.AnimationDeactivateGoal;
 import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
-import com.github.alexthe666.citadel.animation.Animation;
-import com.github.alexthe666.citadel.animation.AnimationHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -19,7 +19,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -32,9 +31,12 @@ import java.util.Optional;
 
 //伤害测试单位 仅用于测试
 public class EntityTester extends EEEABMobLibrary implements IEntity {
-    public static final Animation YES = Animation.create(5);
-    public static final Animation NO = Animation.create(5);
-    public static final Animation[] ANIMATIONS = {YES, NO};
+    public final Animation yesAnimation = Animation.create(5);
+    public final Animation noAnimation = Animation.create(5);
+    public final Animation[] animations = new Animation[]{
+            yesAnimation,
+            noAnimation,
+    };
     private static final EntityDataAccessor<Boolean> ACTIVE = SynchedEntityData.defineId(EntityTester.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Optional<Component>> DAMAGE = SynchedEntityData.defineId(EntityTester.class, EntityDataSerializers.OPTIONAL_COMPONENT);
 
@@ -57,14 +59,14 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
 
     @Override
     protected void registerCustomGoals() {
-        goalSelector.addGoal(0, new AnimationActivateGoal<>(this, YES) {
+        goalSelector.addGoal(0, new AnimationActivate<>(this, () -> yesAnimation) {
             @Override
             public void start() {
                 super.start();
                 this.entity.playSound(SoundEvents.VILLAGER_YES);
             }
         });
-        goalSelector.addGoal(0, new AnimationDeactivateGoal<>(this, NO) {
+        goalSelector.addGoal(0, new AnimationDeactivate<>(this, () -> noAnimation) {
             @Override
             public void start() {
                 super.start();
@@ -85,17 +87,7 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
     public void tick() {
         if (!this.isActive()) this.setDeltaMovement(0, isOnGround() ? 0 : getDeltaMovement().y, 0);
         super.tick();
-        AnimationHandler.INSTANCE.updateAnimations(this);
-    }
-
-    @Override
-    public Animation getDeathAnimation() {
-        return null;
-    }
-
-    @Override
-    public Animation getHurtAnimation() {
-        return null;
+        EMAnimationHandler.INSTANCE.updateAnimations(this);
     }
 
     @Override
@@ -145,9 +137,9 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
             player.displayClientMessage(Component.keybind("reset success").setStyle(EMTUtils.STYLE_GREEN), true);
             return InteractionResult.SUCCESS;
         }
-        if (getAnimation() == NO_ANIMATION) {
+        if (this.getAnimation() == this.getNoAnimation()) {
             setActive(!isActive());
-            this.playAnimation(isActive() ? NO : YES);
+            this.playAnimation(isActive() ? this.noAnimation : this.yesAnimation);
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
@@ -155,7 +147,7 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
 
     @Override
     public Animation[] getAnimations() {
-        return ANIMATIONS;
+        return this.animations;
     }
 
     @Override
