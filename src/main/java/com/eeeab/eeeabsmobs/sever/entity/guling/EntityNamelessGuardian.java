@@ -405,7 +405,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             public void tick() {
                 int tick = entity.getAnimationTick();
                 if (tick >= 2 && tick < 6) {
-                    entity.shockAttack(entity.damageSources().mobAttack(entity), tick + 1, 1.5F, 2F, 0F, 0.02F, 0.5F, (entity.isPowered() ? 0.8F : 0.6F), false, false, true, false);
+                    entity.shockAttack(entity.damageSources().mobAttack(entity), tick + 1, 1.5F, 2F, 0F, 0.02F, 0.5F, (entity.isPowered() ? 0.8F : 0.6F), false, true, false);
                     if (tick == 2) {
                         entity.playSound(SoundEvents.GENERIC_EXPLODE, 1.0F, 1F + entity.getRandom().nextFloat() * 0.1F);
                         EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.125F, 8, 17);
@@ -1015,13 +1015,12 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
      * @param hitEntityMaxHealth   目标最大生命百分比
      * @param baseDamageMultiplier 基础伤害乘数
      * @param damageMultiplier     总伤害乘数
-     * @param heal                 是否治疗
      * @param disableShield        是否禁用盾牌
      * @param randomOffset         是否生成方块随机y轴偏移
      * @param continuous           是否在同一时刻发生
      */
     public void shockAttack(DamageSource damageSource, int distance, float maxFallingDistance, double spreadArc, double offset, float hitEntityMaxHealth,
-                            float baseDamageMultiplier, float damageMultiplier, boolean heal, boolean disableShield, boolean randomOffset, boolean continuous) {
+                            float baseDamageMultiplier, float damageMultiplier, boolean disableShield, boolean randomOffset, boolean continuous) {
         ServerLevel level = (ServerLevel) this.level();
         double perpFacing = this.yBodyRot * (Math.PI / 180);
         double facingAngle = perpFacing + Math.PI / 2;
@@ -1045,7 +1044,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                         continue;
                     }
                     if (hit instanceof LivingEntity livingEntity) {
-                        this.guardianHurtTarget(damageSource, this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, heal, disableShield, false);
+                        this.guardianHurtTarget(damageSource, this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, false, disableShield, false);
                     }
                     double magnitude = level().random.nextGaussian() * 0.15F + 0.1F;
                     double angle = this.getAngleBetweenEntities(this, hit);

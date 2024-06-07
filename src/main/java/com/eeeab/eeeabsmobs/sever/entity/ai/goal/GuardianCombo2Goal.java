@@ -114,7 +114,7 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.2f, this.entity.getVoicePitch() + 0.15f);
             } else if (tick == 12) {
                 for (int i = 0; i < 6; i++) {
-                    entity.shockAttack(entity.damageSources().mobAttack(entity), i, -0.5F, 0.3F, 2F, 0.025F, 0.5F, (isPowered ? 1.0F : 0.8F), true, false, true, true);
+                    entity.shockAttack(entity.damageSources().mobAttack(entity), i, -0.5F, 0.3F, 2F, 0.025F, 0.5F, (isPowered ? 1.0F : 0.8F), false, true, true);
                 }
             } else if (tick == 13) {
                 final float attackArc = 30F;
