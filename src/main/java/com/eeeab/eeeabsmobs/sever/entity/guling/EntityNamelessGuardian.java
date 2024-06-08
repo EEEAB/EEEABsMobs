@@ -28,6 +28,7 @@ import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
+import com.eeeab.eeeabsmobs.sever.util.EMResourceKey;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -235,7 +236,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override//强制添加药水效果
     public void forceAddEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        if (this.isActive() && ModEntityUtils.isBeneficial(effectInstance.getEffect())) super.forceAddEffect(effectInstance, entity);
+        if (this.isActive() && ModEntityUtils.isBeneficial(effectInstance.getEffect()))
+            super.forceAddEffect(effectInstance, entity);
     }
 
     @Override//添加效果时额外条件
@@ -1215,8 +1217,12 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         return this.guardianHurtTarget(this.damageSources().mobAttack(guardian), guardian, hitEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, shouldHeal, disableShield, ignoreHit);
     }
 
-    public boolean guardianHurtTarget(DamageSource damageSource, EntityNamelessGuardian guardian, LivingEntity hitEntity, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier, boolean shouldHeal, boolean disableShield, boolean ignoreHit) {
+    public boolean guardianHurtTarget(DamageSource damageSource, EntityNamelessGuardian guardian, LivingEntity hitEntity, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier,
+                                      boolean shouldHeal, boolean disableShield, boolean ignoreHit) {
         float finalDamage = ((guardian.getAttackDamageAttributeValue() * baseDamageMultiplier) + hitEntity.getMaxHealth() * hitEntityMaxHealth) * damageMultiplier;
+        if (damageSource.is(EMResourceKey.GUARDIAN_LASER)) {
+            finalDamage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(finalDamage, hitEntity.getArmorValue(), (float) hitEntity.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0.8F);
+        }
         boolean flag = hitEntity.hurt(damageSource, finalDamage);
         double suckBloodCap = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.suckBloodFactor.get();
         float suckBlood = this.isPowered() ? 0.25F : 0.22F;
