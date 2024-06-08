@@ -1227,8 +1227,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         double suckBloodCap = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.suckBloodFactor.get();
         float suckBlood = this.isPowered() ? 0.25F : 0.22F;
         boolean blocking = hitEntity instanceof Player && hitEntity.isBlocking();
-        if ((flag || (ignoreHit && this.isPowered() && !blocking)) && shouldHeal)
+        boolean checkConfig = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.enableForcedSuckBlood.get() || this.isChallengeMode();
+        if ((flag || (ignoreHit && this.isPowered() && !blocking && checkConfig)) && shouldHeal) {
+            if (!flag) suckBlood = 0.1F;//未能造成伤害减少吸血量
             guardian.heal((float) Mth.clamp(finalDamage * suckBlood, 0F, getMaxHealth() * suckBloodCap));
+        }
         if (disableShield && blocking) {
             Player player = (Player) hitEntity;
             player.disableShield(true);
