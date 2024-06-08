@@ -3,6 +3,7 @@ package com.eeeab.eeeabsmobs.sever.entity.effects;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.core.BlockPos;
@@ -25,7 +26,7 @@ public class EntityGuardianBlade extends EntityMagicEffects {
     public final ControlledAnimation controlled = new ControlledAnimation(100);
     private static final int DURATION = 35;
     private boolean moveOffset;
-    private double damage = 1D;
+    private float damage = 1F;
     private static final float[][] BLOCK_OFFSETS = {
             {-0.5F, -0.5F},
             {-0.5F, 0.5F},
@@ -58,7 +59,7 @@ public class EntityGuardianBlade extends EntityMagicEffects {
             float speed = 1.35F;
             if (moveOffset) speed += this.random.nextFloat() * 0.5F;
             this.shoot(lookAngle.x, lookAngle.y, lookAngle.z, speed);
-            if (this.caster != null) this.damage = this.caster.getAttributeValue(Attributes.ATTACK_DAMAGE);
+            if (this.caster != null) this.damage = (float) this.caster.getAttributeValue(Attributes.ATTACK_DAMAGE);
             this.controlled.increaseTimer(1);
         } else if (this.controlled.increaseTimerChain().getTimer() <= DURATION) {
             if (this.controlled.getTimer() % 5 == 0) {
@@ -85,10 +86,11 @@ public class EntityGuardianBlade extends EntityMagicEffects {
             List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.2));
             for (LivingEntity target : entities) {
                 if (target == caster) continue;
-                if (caster instanceof EntityNamelessGuardian) damage += target.getMaxHealth() * 0.05D;
-                if (caster instanceof Player) damage = Math.min(EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamageValue * 2, damage);
+                if (caster instanceof EntityNamelessGuardian) damage += target.getMaxHealth() * 0.05F;
+                if (caster instanceof Player) damage = (float) Math.min(EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamageValue * 2F, damage);
                 damage = Math.max(1, damage * progress);
-                target.hurt(this.damageSources().indirectMagic(this, caster), (float) damage);
+                damage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(damage, target.getArmorValue(), (float) target.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1F);
+                target.hurt(this.damageSources().indirectMagic(this, caster), damage);
             }
         }
     }
