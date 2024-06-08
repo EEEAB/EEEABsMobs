@@ -226,8 +226,9 @@ public final class EMConfigHandler {
     public static class NamelessGuardian {
         public NamelessGuardian(final ForgeConfigSpec.Builder builder) {
             builder.push("Nameless Guardian");
-            enableNonCombatHeal = BUILDER.comment("If 'False' disable non-combat heal").define("Enable non-combat heal", true);
             suckBloodFactor = BUILDER.comment("Max life steal coefficient (based on max health percentage)").defineInRange("Suck blood factor", 0.05, 0, 1);
+            enableNonCombatHeal = BUILDER.comment("If 'False' disable non-combat heal").define("Enable non-combat heal", true);
+            enableForcedSuckBlood = BUILDER.comment("If 'False' disable forced suck blood on power status(Does not take effect in Challenge mode)").define("Enable forced suck blood", true);
             challengeMode = BUILDER.comment("Challenge mode!").define("Be careful! It's going to get tricky!", false);
             combatConfig = new AttributeConfig();
             maximumDamageCap = new GeneralDamageCap(0.05);
@@ -236,6 +237,7 @@ public final class EMConfigHandler {
 
         public final ForgeConfigSpec.BooleanValue enableNonCombatHeal;//启用脱战治疗
         public final ForgeConfigSpec.DoubleValue suckBloodFactor;//吸血系数上限(基于最大生命值的百分比)
+        public final ForgeConfigSpec.BooleanValue enableForcedSuckBlood;//启用强制吸血
         public final ForgeConfigSpec.BooleanValue challengeMode;//挑战模式
         public final AttributeConfig combatConfig;
         public final GeneralDamageCap maximumDamageCap;
