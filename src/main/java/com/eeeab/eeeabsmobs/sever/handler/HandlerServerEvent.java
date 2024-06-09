@@ -5,6 +5,7 @@ import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
 import com.eeeab.eeeabsmobs.sever.capability.FrenzyCapability;
+import com.eeeab.eeeabsmobs.sever.capability.PlayerCapability;
 import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityAbsCorpse;
@@ -58,6 +59,7 @@ public final class HandlerServerEvent {
         }
         if (event.getObject() instanceof Player) {
             event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "ability_processor"), new AbilityCapability.AbilityCapabilityProvider());
+            event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "player_processor"), new PlayerCapability.PlayerCapabilityProvider());
         }
     }
 
@@ -110,7 +112,7 @@ public final class HandlerServerEvent {
                 abilityCapability.tick(entity);
             }
 
-            FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(entity, HandlerCapability.FRENZY_CAPABILITY_CAPABILITY);
+            FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(entity, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
             if (frenzyCapability != null) {
                 frenzyCapability.tick(entity);
             }
@@ -194,7 +196,7 @@ public final class HandlerServerEvent {
         }
         if (effectInstance.getEffect() == EffectInit.FRENZY_EFFECT.get()) {
             EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new MessageFrenzyEffect(entity, flag));
-            FrenzyCapability.IFrenzyCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.FRENZY_CAPABILITY_CAPABILITY);
+            FrenzyCapability.IFrenzyCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
             if (capability != null) {
                 capability.setLevel(effectInstance.getAmplifier());
                 if (flag)
@@ -315,7 +317,7 @@ public final class HandlerServerEvent {
             }
         }
 
-        FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(hurtEntity, HandlerCapability.FRENZY_CAPABILITY_CAPABILITY);
+        FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(hurtEntity, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
         if (frenzyCapability != null && frenzyCapability.isFrenzy() && !event.getSource().is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
             float damage = event.getAmount();
             damage -= damage * (Math.min((frenzyCapability.getLevel() + 1F), 5)) * 0.1F;//至多减少50%伤害

@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.sever.handler;
 
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
 import com.eeeab.eeeabsmobs.sever.capability.FrenzyCapability;
+import com.eeeab.eeeabsmobs.sever.capability.PlayerCapability;
 import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,7 +22,9 @@ public class HandlerCapability {
     });
     public static final Capability<AbilityCapability.IAbilityCapability> CUSTOM_ABILITY_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
     });
-    public static final Capability<FrenzyCapability.IFrenzyCapability> FRENZY_CAPABILITY_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    public static final Capability<FrenzyCapability.IFrenzyCapability> FRENZY_EFFECT_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    });
+    public static final Capability<PlayerCapability.PlayerCapabilityImpl> PLAYER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
     });
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -41,9 +44,10 @@ public class HandlerCapability {
         Entity entity = event.getObject();
         if (entity instanceof LivingEntity) {
             event.addCapability(VertigoCapability.ID, new VertigoCapability.VertigoCapabilityProvider());
-            event.addCapability(FrenzyCapability.ID,new FrenzyCapability.FrenzyCapabilityProvider());
+            event.addCapability(FrenzyCapability.ID, new FrenzyCapability.FrenzyCapabilityProvider());
             if (entity instanceof Player) {
                 event.addCapability(AbilityCapability.ID, new AbilityCapability.AbilityCapabilityProvider());
+                event.addCapability(PlayerCapability.ID, new PlayerCapability.PlayerCapabilityProvider());
             }
         }
     }
