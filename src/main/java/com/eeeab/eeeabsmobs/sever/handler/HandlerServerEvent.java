@@ -156,6 +156,8 @@ public final class HandlerServerEvent {
                 } else {
                     ability.end();
                 }
+            } else {
+                ability.end();
             }
         }
     }
