@@ -144,7 +144,7 @@ public final class EMConfigHandler {
 
     public static class CorpseMobs {
         public CorpseMobs(final ForgeConfigSpec.Builder builder) {
-            builder.push("Corpse Mobs");
+            builder.push("Structure-Bloody Altar");
             CORPSE = new Corpse(builder);
             CORPSE_WARLOCK = new CorpseWarlock(builder);
             builder.pop();
