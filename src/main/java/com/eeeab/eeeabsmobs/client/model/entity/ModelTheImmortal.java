@@ -167,7 +167,7 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
         this.root.xRot -= (Mth.cos(limbSwing * cycle) - 2.0F) * limbSwingAmount * 0.1F * dampingFactor - 0.1F * (-idle) * -0.1F;
         //this.root.xRot -= (Mth.cos(limbSwing * cycle) - 2.0F) * limbSwingAmount * 0.1F - 0.1F;
         //this.lower.xRot -= (Mth.cos(limbSwing * cycle + 3.1415927F)) * limbSwingAmount * 0.1F - 0.1F /*- idle*/ * -0.1F;
-        this.head.xRot += (Mth.cos(limbSwing * cycle) - 2.0F) * limbSwingAmount * 0.1F - 0.2F - idle * -0.1F;
+        this.head.xRot += (Mth.cos(limbSwing * cycle) - 2.0F) * limbSwingAmount * 0.1F * dampingFactor - 0.1F * (-idle) * -0.1F;
         this.upper.y += Mth.sin(rebound) * limbSwingAmount;
     }
 }

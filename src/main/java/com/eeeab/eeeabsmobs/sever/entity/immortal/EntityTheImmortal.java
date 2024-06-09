@@ -11,7 +11,6 @@ import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.github.L_Ender.cataclysm.entity.AnimationMonster.AI.SimpleAnimationGoal;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
