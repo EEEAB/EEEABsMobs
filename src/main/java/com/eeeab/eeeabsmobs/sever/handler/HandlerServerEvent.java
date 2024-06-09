@@ -126,6 +126,11 @@ public final class HandlerServerEvent {
             return;
         }
         useGuardianCoreStack(event);
+
+        PlayerCapability.PlayerCapabilityImpl playerCapability = HandlerCapability.getCapability(event.player, HandlerCapability.PLAYER_CAPABILITY);
+        if (playerCapability != null) {
+            playerCapability.tick(event.player);
+        }
     }
 
     /**
@@ -309,11 +314,17 @@ public final class HandlerServerEvent {
             }
         }
 
-        if (hurtEntity instanceof Player player && attacker instanceof EntityAbsImmortal) {
-            if (EMArmorUtil.checkFullSuitOfArmor(EMArmorMaterial.IMMORTAL_MATERIAL, player)) {
-                float damage = event.getAmount();
-                damage -= damage * 0.1F;//减少10%伤害
-                event.setAmount(damage);
+        if (hurtEntity instanceof Player player) {
+            PlayerCapability.PlayerCapabilityImpl playerCapability = HandlerCapability.getCapability(player, HandlerCapability.PLAYER_CAPABILITY);
+            if (playerCapability != null) {
+                playerCapability.hurt(player, event.getSource(), event.getAmount());
+            }
+            if (attacker instanceof EntityAbsImmortal) {
+                if (EMArmorUtil.checkFullSuitOfArmor(EMArmorMaterial.IMMORTAL_MATERIAL, player)) {
+                    float damage = event.getAmount();
+                    damage -= damage * 0.1F;//减少10%伤害
+                    event.setAmount(damage);
+                }
             }
         }
 

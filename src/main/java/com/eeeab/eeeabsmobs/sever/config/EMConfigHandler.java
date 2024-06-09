@@ -43,12 +43,19 @@ public final class EMConfigHandler {
                 GUARDIAN_AXE_TOOL = new ToolConfig(15D, 0.9D);
                 builder.pop();
             }
+            {
+                builder.push("Summoning Soul Necklace");
+                SSNCumulativeMaximumDamage = BUILDER.comment("Set the maximum amount of damage a player can take while holding this item").defineInRange("Set the maximum cumulative damage taken", 50, 1, Float.MAX_VALUE);
+                SSNCoolingTime = BUILDER.comment("Set item cool down time after player summons (seconds)").defineInRange("Set item cool down time", 15, 1, Integer.MAX_VALUE);
+            }
             builder.pop();
         }
 
         public final ForgeConfigSpec.BooleanValue enableImmortalArmorItemDurability;
         public final ForgeConfigSpec.BooleanValue enableImmortalItemDurability;
         public final ToolConfig GUARDIAN_AXE_TOOL;
+        public final ForgeConfigSpec.DoubleValue SSNCumulativeMaximumDamage;
+        public final ForgeConfigSpec.IntValue SSNCoolingTime;
     }
 
     public static class Mob {

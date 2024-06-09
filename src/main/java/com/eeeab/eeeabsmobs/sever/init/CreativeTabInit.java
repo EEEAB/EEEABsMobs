@@ -32,6 +32,7 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.BLOODY_ALTAR_EYE.get());
                 entries.accept(ItemInit.ANCIENT_TOMB_EYE.get());
                 entries.accept(ItemInit.HEART_OF_PAGAN.get());
+                entries.accept(ItemInit.SOUL_SUMMONING_NECKLACE.get());
 
                 /* Fight Item */
                 entries.accept(ItemInit.IMMORTAL_HELMET.get());

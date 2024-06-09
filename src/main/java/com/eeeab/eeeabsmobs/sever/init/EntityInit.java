@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.sever.init;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpse;
+import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseToPlayer;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseVillager;
 import com.eeeab.eeeabsmobs.sever.entity.effects.*;
@@ -46,6 +47,12 @@ public class EntityInit {
                     () -> EntityType.Builder.<EntityCorpseWarlock>of(EntityCorpseWarlock::new, MobCategory.MONSTER)
                             .sized(0.7f, 2.2f).fireImmune().clientTrackingRange(8)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "corpse_warlock").toString()));
+
+    public static final RegistryObject<EntityType<EntityCorpseToPlayer>> CORPSE_TO_PLAYER =
+            ENTITIES.register("corpse_to_player",
+                    () -> EntityType.Builder.<EntityCorpseToPlayer>of(EntityCorpseToPlayer::new, MobCategory.CREATURE)
+                            .sized(0.6f, 1.95f).clientTrackingRange(8)
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "corpse_to_player").toString()));
 
     public static final RegistryObject<EntityType<EntityImmortalSkeleton>> IMMORTAL_SKELETON =
             ENTITIES.register("immortal_skeleton",
@@ -192,7 +199,7 @@ public class EntityInit {
                     () -> EntityType.Builder.<EntityCrimsonRay>of(EntityCrimsonRay::new, MobCategory.MISC)
                             .sized(0.1f, 0.1f).setUpdateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "crimson_ray").toString()));
-    public static final RegistryObject<EntityType<EntityCrimsonRay.PreAttack>> CRIMSON_RAY_PRE=
+    public static final RegistryObject<EntityType<EntityCrimsonRay.PreAttack>> CRIMSON_RAY_PRE =
             ENTITIES.register("crimson_ray_pre",
                     () -> EntityType.Builder.<EntityCrimsonRay.PreAttack>of(EntityCrimsonRay.PreAttack::new, MobCategory.MISC)
                             .sized(0.1f, 0.1f).setUpdateInterval(1)
@@ -214,6 +221,7 @@ public class EntityInit {
         event.put(EntityInit.CORPSE.get(), EntityCorpse.setAttributes().build());
         event.put(EntityInit.CORPSE_VILLAGER.get(), EntityCorpse.setAttributes().build());
         event.put(EntityInit.CORPSE_WARLOCK.get(), EntityCorpseWarlock.setAttributes().build());
+        event.put(EntityInit.CORPSE_TO_PLAYER.get(), EntityCorpseToPlayer.setAttributes().build());
         event.put(EntityInit.IMMORTAL_SKELETON.get(), EntityAbsImmortalSkeleton.setAttributes().build());
         event.put(EntityInit.IMMORTAL_KNIGHT.get(), EntityAbsImmortalSkeleton.setAttributes().build());
         event.put(EntityInit.IMMORTAL_SHAMAN.get(), EntityImmortalShaman.setAttributes().build());

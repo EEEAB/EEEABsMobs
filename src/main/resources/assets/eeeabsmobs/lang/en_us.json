@@ -11,6 +11,7 @@
   "entity.eeeabsmobs.corpse": "Corpse",
   "entity.eeeabsmobs.corpse_villager": "Corpse Villager",
   "entity.eeeabsmobs.corpse_warlock": "Corpse Warlock",
+  "entity.eeeabsmobs.corpse_to_player": "Corpse",
   "entity.eeeabsmobs.nameless_guardian": "Nameless Guardian",
   "entity.eeeabsmobs.guling_sentinel": "Guling Sentinel",
   "entity.eeeabsmobs.guling_sentinel_heavy": "Heavy Guling Sentinel",
@@ -51,6 +52,7 @@
   "item.eeeabsmobs.guardian_axe": "Guardian Battleaxe",
   "item.eeeabsmobs.guardian_core": "Guardian Core",
   "item.eeeabsmobs.heart_of_pagan": "Heart of Pagan",
+  "item.eeeabsmobs.soul_summoning_necklace": "Summoning Soul Necklace",
 
   "_comment": "Blocks",
   "block.eeeabsmobs.immortal_block": "Immortal Block",
@@ -81,6 +83,7 @@
   "item.eeeabsmobs.guardian_core.tip_1": "Hold right-click to fire a laser that lasts for 4 seconds and continuously consumes item durability,causing 1% of the target's maximum HP + 5 base damage, and automatically restoring durability in the player's backpack when unused",
   "item.eeeabsmobs.guardian_core.tip_2": "It seems to have other uses besides being a weapon...",
   "item.eeeabsmobs.immortal_debris.tip": "It seems to be a fragment of the armor of some kind of creature...",
+  "item.eeeabsmobs.soul_summoning_necklace.tip": "Take damage accumulates to %1$s summon corpse and cool down for %2$s seconds",
   "tooltip.weapon.eeeabsmobs.immortal_sword.tip": "Give the attacker an erosion status",
   "tooltip.weapon.eeeabsmobs.immortal_staff.tip": "Hold right-click for 1 second to fire the Shaman Bomb",
   "tooltip.weapon.eeeabsmobs.guardian_axe.tip": "Right-click on the ground to cast the skill, the skill damage is based on the weapon + the user's attack damage, this damage is considered magic damage and ignores armor.The damage is limited to 2 times the damage of the weapon, and the damage decreases with distance",
