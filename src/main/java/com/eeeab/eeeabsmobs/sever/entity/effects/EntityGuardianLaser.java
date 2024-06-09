@@ -10,6 +10,7 @@ import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.util.EMDamageSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -17,6 +18,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -92,11 +94,11 @@ public class EntityGuardianLaser extends EntityMagicEffects {
         }
 
         if (!level.isClientSide) {
-            if (isPlayer()) {
+            if (isPlayer() && caster instanceof Player) {
                 this.updateWithPlayer();
             } else if (caster instanceof EntityNamelessGuardian) {
                 this.updateWithGuardian();
-            } else {
+            } else if (this.caster != null) {
                 this.updateWithEntity(0F);
             }
         }
@@ -181,6 +183,11 @@ public class EntityGuardianLaser extends EntityMagicEffects {
         getEntityData().define(X_HEAD_ROT_ANGLE, 0F);
         getEntityData().define(DURATION, 0);
         getEntityData().define(IS_PLAYER, false);
+    }
+
+    @Override
+    protected void readAdditionalSaveData(CompoundTag compoundTag) {
+        if (this.caster == null) discard();
     }
 
     public float getYHeadRotAngle() {

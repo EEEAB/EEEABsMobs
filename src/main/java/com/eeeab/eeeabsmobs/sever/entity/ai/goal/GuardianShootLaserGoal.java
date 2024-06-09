@@ -43,10 +43,14 @@ public class GuardianShootLaserGoal extends AnimationSimpleAI<EntityNamelessGuar
             try {
                 if (this.entity.getTarget() != null) {
                     float distance = this.entity.distanceTo(this.entity.getTarget());
-                    speed = Math.min(3F, 1F / Math.abs(distance * 0.08F));
+                    float minSpeed = 0.5F;
+                    float maxSpeed = 3.5F;
+                    float distanceScaleFactor = this.entity.isChallengeMode() ? 5F : 7.5F;
+                    speed = Math.min(maxSpeed, Math.max(minSpeed, distance / distanceScaleFactor));
                 }
-            } catch (ArithmeticException ignored) {}
-            float yMaxRotSpeed = 5F - speed;
+            } catch (ArithmeticException ignored) {
+            }
+            float yMaxRotSpeed = 1.5F + speed;
             float xMaxRotAngle = 90F;
             if (entityTarget != null) {
                 this.entity.getLookControl().setLookAt(entityTarget.getX(), entityTarget.getY() + entityTarget.getBbHeight() / 2, entityTarget.getZ(), yMaxRotSpeed, xMaxRotAngle);

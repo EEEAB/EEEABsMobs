@@ -30,6 +30,7 @@ public class ItemInit {
     public static final RegistryObject<Item> BLOODY_ALTAR_EYE = ITEMS.register("bloody_altar_eye", () -> new ItemBloodyAltarEye(new Item.Properties().tab(EMTabGroup.TABS).rarity(Rarity.RARE).stacksTo(16).fireResistant()));
     public static final RegistryObject<Item> GULING_EYE = ITEMS.register("guling_eye", () -> new ItemGulingEye(new Item.Properties().tab(EMTabGroup.TABS).rarity(Rarity.RARE).stacksTo(16).fireResistant()));
     public static final RegistryObject<Item> HEART_OF_PAGAN = ITEMS.register("heart_of_pagan", () -> new Item(new Item.Properties().tab(EMTabGroup.TABS).stacksTo(1).fireResistant()));
+    public static final RegistryObject<Item> SOUL_SUMMONING_NECKLACE = ITEMS.register("soul_summoning_necklace", () -> new ItemSoulSummoningNecklace(new Item.Properties().tab(EMTabGroup.TABS).stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
     //防具
     public static final RegistryObject<Item> IMMORTAL_HELMET = ITEMS.register("immortal_helmet", () -> new ItemArmorImmortal(EquipmentSlot.HEAD, new Item.Properties().tab(EMTabGroup.TABS)));
     public static final RegistryObject<Item> IMMORTAL_CHEST_PLATE = ITEMS.register("immortal_chest_plate", () -> new ItemArmorImmortal(EquipmentSlot.CHEST, new Item.Properties().tab(EMTabGroup.TABS)));

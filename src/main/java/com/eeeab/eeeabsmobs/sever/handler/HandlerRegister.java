@@ -62,6 +62,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.CORPSE.get(), RenderCorpse::new);
         event.registerEntityRenderer(EntityInit.CORPSE_VILLAGER.get(), RenderCorpseVillager::new);
         event.registerEntityRenderer(EntityInit.CORPSE_WARLOCK.get(), RenderCorpseWarlock::new);
+        event.registerEntityRenderer(EntityInit.CORPSE_TO_PLAYER.get(), RenderCorpseToPlayer::new);
         event.registerEntityRenderer(EntityInit.NAMELESS_GUARDIAN.get(), RenderNamelessGuardian::new);
         event.registerEntityRenderer(EntityInit.GULING_SENTINEL.get(), RenderGulingSentinel::new);
         event.registerEntityRenderer(EntityInit.GULING_SENTINEL_HEAVY.get(), RenderGulingSentinelHeavy::new);

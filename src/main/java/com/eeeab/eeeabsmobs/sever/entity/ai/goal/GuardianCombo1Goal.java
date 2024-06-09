@@ -137,7 +137,7 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
                 }
                 entity.playSound(SoundEvents.GENERIC_EXPLODE, 1.25F, 1F + entity.getRandom().nextFloat() * 0.1F);
             } else if (tick > 15 && tick < 22) {
-                entity.shockAttack(DamageSource.mobAttack(entity), tick - 13, 1F, 1F, 1.5F, 0.025F, 0.5F, (isPowered ? 1.0F : 0.8F), false, true, false, false);
+                entity.shockAttack(DamageSource.mobAttack(entity), tick - 13, 1F, 1F, 1.5F, 0.025F, 0.5F, (isPowered ? 1.0F : 0.8F), true, false, false);
             }
         }
     }

@@ -1,51 +1,135 @@
 package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
+import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
+import com.eeeab.eeeabsmobs.client.model.animation.AnimationCommon;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IBoss;
 import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
+import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.EnumSet;
+import org.jetbrains.annotations.Nullable;
 
 //创建于 2023/1/17
 public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
-    private boolean circleDirection;
-    private int circleTick;
-    private static final EntityDataAccessor<Integer> DATA_MOVING_TYPE = SynchedEntityData.defineId(EntityTheImmortal.class, EntityDataSerializers.INT);
+    public final Animation switchStage2Animation = Animation.create(80);
+    public final Animation switchStage3Animation = Animation.create(80);
+    private final Animation[] animations = new Animation[]{
+            switchStage2Animation,
+            switchStage3Animation
+    };
+    private static final EntityDataAccessor<Integer> DATA_STAGE = SynchedEntityData.defineId(EntityTheImmortal.class, EntityDataSerializers.INT);
 
     public EntityTheImmortal(EntityType<? extends EntityAbsImmortal> type, Level level) {
         super(type, level);
         this.active = true;
-        this.circleTick += this.random.nextInt(200);
-        this.setMovingType(MoveType.CIRCLE);
+        this.setPathfindingMalus(BlockPathTypes.UNPASSABLE_RAIL, 0.0F);
+        this.setPathfindingMalus(BlockPathTypes.DAMAGE_OTHER, 8.0F);
+        this.setPathfindingMalus(BlockPathTypes.POWDER_SNOW, 8.0F);
+        this.setPathfindingMalus(BlockPathTypes.LAVA, 0.0F);
+        this.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
+        this.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, 0.0F);
+        this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 0.0F);
     }
 
     @Override
     protected XpReward getEntityReward() {
         return XpReward.XP_REWARD_BOSS;
+    }
+
+    @Override
+    public float getStepHeight() {
+        return 3F;
+    }
+
+    @Override//可以站立的流体
+    public boolean canStandOnFluid(FluidState fluidState) {
+        return fluidState.is(FluidTags.LAVA);
+    }
+
+    @Override//是否免疫摔伤
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource damageSource) {
+        return false;
+    }
+
+    @Override//添加药水效果
+    public boolean addEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
+        return this.isActive() && ModEntityUtils.isBeneficial(effectInstance.getEffect()) && super.addEffect(effectInstance, entity);
+    }
+
+    @Override//强制添加药水效果
+    public void forceAddEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
+        if (this.isActive() && ModEntityUtils.isBeneficial(effectInstance.getEffect()))
+            super.forceAddEffect(effectInstance, entity);
+    }
+
+    @Override//添加效果时额外条件
+    public boolean canBeAffected(MobEffectInstance effectInstance) {
+        return this.isActive() && ModEntityUtils.isBeneficial(effectInstance.getEffect()) && super.canBeAffected(effectInstance);
+    }
+
+    @Override//是否在实体上渲染着火效果
+    public boolean displayFireAnimation() {
+        return false;
+    }
+
+    @Override
+    protected boolean canBePushedByEntity(Entity entity) {
+        return false;
+    }
+
+    @Override//是否被流体推动
+    public boolean isPushedByFluid() {
+        return false;
+    }
+
+    @Override//被方块阻塞
+    public void makeStuckInBlock(BlockState state, Vec3 motionMultiplier) {
+        if (!state.is(Blocks.COBWEB)) {
+            super.makeStuckInBlock(state, motionMultiplier);
+        }
+    }
+
+    @Override
+    protected boolean shouldDespawnInPeaceful() {
+        return false;
+    }
+
+    @Override
+    public boolean isDeadOrDying() {
+        return super.isDeadOrDying() && this.getStage() == Stage.STAGE3;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distance) {
+        return false;
     }
 
     @Override
@@ -60,33 +144,6 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
         return new EMPathNavigateGround(this, level);
     }
 
-    @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource damageSource) {
-        return false;
-    }
-
-    @Override
-    protected boolean shouldDespawnInPeaceful() {
-        return false;
-    }
-
-    @Override
-    public boolean isInvulnerableTo(DamageSource damageSource) {
-        return true;
-    }
-
-    @Override
-    protected void registerGoals() {
-        super.registerGoals();
-        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        EMAnimationHandler.INSTANCE.updateAnimations(this);
-    }
 
     @Override
     protected EMConfigHandler.AttributeConfig getAttributeConfig() {
@@ -103,207 +160,117 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
         return BossEvent.BossBarColor.BLUE;
     }
 
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new EMLookAtGoal(this, Mob.class, 6.0F));
+    }
+
+    @Override
+    protected void registerCustomGoals() {
+        super.registerCustomGoals();
+        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, () -> switchStage2Animation));
+        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, () -> switchStage3Animation));
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        EMAnimationHandler.INSTANCE.updateAnimations(this);
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float damage) {
+        Entity entity = source.getEntity();
+        if (this.level.isClientSide) {
+            return false;
+        } else {
+
+        }
+        return super.hurt(source, damage);
+    }
 
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_MOVING_TYPE, MoveType.KEEP_DISTANCE.getId());
-    }
-
-    public MoveType getMoveType() {
-        return MoveType.byId(this.entityData.get(DATA_MOVING_TYPE));
-    }
-
-    public void setMovingType(MoveType movingType) {
-        this.entityData.set(DATA_MOVING_TYPE, movingType.getId());
+        this.entityData.define(DATA_STAGE, Stage.STAGE1.type);
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        this.setMovingType(MoveType.byId(compound.getInt("moveId")));
+        this.entityData.set(DATA_STAGE, compound.getInt("stage"));
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        compound.putInt("moveId", getMoveType().getId());
-    }
-
-    private Vec3 updateCirclingPosition(float radius, float speed) {
-        LivingEntity target = getTarget();
-        if (target != null) {
-            if (random.nextInt(200) == 0) {
-                circleDirection = !circleDirection;
-            }
-            if (circleDirection) {
-                circleTick++;
-            } else {
-                circleTick--;
-            }
-            return circlePosition(target.position(), radius, speed, true, circleTick, 0);
-        }
-        return null;
+        compound.putInt("stage", this.getStage().type);
     }
 
     @Override
     public Animation[] getAnimations() {
-        return new Animation[0];
+        return this.animations;
     }
 
-    public enum MoveType {
-        NONE(-1),
-        KEEP_DISTANCE(0),
-        CIRCLE(1);
-
-        private final int id;
-
-        MoveType(int id) {
-            this.id = id;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public static MoveType byId(int id) {
-            for (MoveType value : values()) {
-                if (id == value.getId()) {
-                    return value;
-                }
-            }
-            return NONE;
-        }
+    public Stage getStage() {
+        return Stage.byStage(this.entityData.get(DATA_STAGE));
     }
 
-    public static class ImmortalMoveGoal extends Goal {
-        private final EntityTheImmortal immortal;
-        private boolean inside;
-        private final float safeRange;
-        private int cooling;
-
-        public ImmortalMoveGoal(EntityTheImmortal immortal, float safeRange) {
-            this.immortal = immortal;
-            this.safeRange = safeRange;
-            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
-        }
-
-        @Override
-        public boolean canUse() {
-            return this.immortal.getTarget() != null;
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return (this.canUse() || !this.immortal.getNavigation().isDone());
-        }
-
-        @Override
-        public boolean requiresUpdateEveryTick() {
-            return true;
-        }
-
-        @Override
-        public void stop() {
-            this.immortal.getMoveControl().strafe(0, 0);
-        }
-
-        @Override
-        public void tick() {
-            LivingEntity target = this.immortal.getTarget();
-            if (target != null) {
-                //TODO 可以优化成工厂模式
-                float distanceToTarget = this.immortal.distanceTo(target);
-
-                if (inside && distanceToTarget >= safeRange + 2) {
-                    inside = false;
-                }
-                if (!inside && distanceToTarget <= safeRange) {
-                    inside = true;
-                }
-
-                if (this.immortal.getMoveType() == MoveType.CIRCLE) {
-                    if (!inside) {
-                        //超出范围
-                        this.immortal.getMoveControl().strafe(0, 0);
-                        this.immortal.getNavigation().moveTo(target, 0.6F);
-                        this.immortal.getLookControl().setLookAt(target, 30F, 30F);
-                    } else {
-                        //在安全距离
-                        this.immortal.getNavigation().stop();
-                        Vec3 circlingPosition = this.immortal.updateCirclingPosition(this.safeRange, 0.3F);
-                        double distanceTo = this.immortal.position().distanceTo(circlingPosition);
-                        if (distanceTo <= 1.5F) {
-                            int strafingFrontBackMul;
-                            if (distanceToTarget > this.safeRange + 0.5) {
-                                strafingFrontBackMul = 1;
-                            } else if (distanceToTarget < this.safeRange - 0.5) {
-                                strafingFrontBackMul = -1;
-                            } else {
-                                strafingFrontBackMul = 0;
-                            }
-
-                            Vec3 toTarget = target.position().subtract(this.immortal.position()).multiply(1, 0, 1).normalize();
-                            Vec3 toCirclePos = circlingPosition.subtract(this.immortal.position()).multiply(1, 0, 1).normalize();
-                            Vec3 cross = toTarget.cross(toCirclePos);
-                            int strafingLeftRightMul;
-                            if (cross.y > 0) strafingLeftRightMul = 1;
-                            else if (cross.y < 0) strafingLeftRightMul = -1;
-                            else strafingLeftRightMul = 0;
-
-                            float distScale = (float) Math.min(Math.pow(distanceTo * 1f / 1.5, 0.7), 1.0);
-
-                            this.immortal.getMoveControl().strafe(strafingFrontBackMul * 0.5F, strafingLeftRightMul * 0.5F * distScale);
-                            this.immortal.lookAt(target, 30.0F, 30.0F);
-                        } else {
-                            //不在安全距离
-                            this.immortal.getMoveControl().strafe(0, 0);
-                            this.immortal.getNavigation().moveTo(circlingPosition.x(), circlingPosition.y(), circlingPosition.z(), 0.53F);
-                            this.immortal.getLookControl().setLookAt(target, 30F, 30F);
-                        }
-                    }
-                } else if (this.immortal.getMoveType() == MoveType.KEEP_DISTANCE) {
-                    this.immortal.getNavigation().stop();
-                    this.immortal.getMoveControl().strafe(0, 0);
-                    this.immortal.lookAt(target, 30.0F, 30.0F);
-                    this.immortal.getLookControl().setLookAt(target, 30F, 30F);
-                    double angle = this.immortal.getAngleBetweenEntities(this.immortal, target);
-                    float radian = (float) Math.toRadians(angle + 90F);
-                    float distanceMultiple = 1.5F;
-                    if (cooling <= 0) {
-                        if (!inside) {
-                            if (distanceToTarget > safeRange + 4) {
-                                //向目标移动
-                                keepDistanceMoving(false, distanceMultiple, radian);
-                            }
-                        } else {
-                            if (distanceToTarget < safeRange / 2) {
-                                //尝试远离目标
-                                distanceMultiple = 2.0F;
-                                keepDistanceMoving(true, distanceMultiple, radian);
-                            }
-                        }
-                    }
-                }
+    /**
+     * 不朽者切换阶段调用此方法
+     *
+     * @param stage 下一阶段
+     */
+    private void nextStage(Stage stage) {
+        this.entityData.set(DATA_STAGE, stage.type);
+        switch (stage) {
+            case STAGE1 -> {
+                System.out.println("阶段1");
             }
-            if (cooling > 0) {
-                cooling--;
+            case STAGE2 -> {
+                System.out.println("阶段2");
             }
-        }
-
-        private void keepDistanceMoving(boolean direction, float distanceMultiple, double radian) {
-            int t = direction ? 1 : -1;
-            Vec3 movement = this.immortal.getDeltaMovement().add(distanceMultiple * Math.cos(radian), 0, distanceMultiple * Math.sin(radian));
-            this.immortal.setDeltaMovement(movement.x * t, 0.3, movement.z * t);
-            this.cooling = 40;
+            case STAGE3 -> {
+                System.out.println("阶段3");
+            }
         }
     }
 
     public static AttributeSupplier.Builder setAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 1000.0D).
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 200.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.32D).
                 add(Attributes.FOLLOW_RANGE, 64.0D).
                 add(Attributes.ATTACK_DAMAGE, 1.0D).
                 add(Attributes.KNOCKBACK_RESISTANCE, 1.0D);
+    }
+
+    public enum Stage {
+        STAGE1(1, 0F, 0F, 0F),
+        STAGE2(2, 250F, 15F, 0F),
+        STAGE3(3, 150F, 10F, 5F);
+
+        Stage(int type, float addHealth, float addArmor, float addAttack) {
+            this.type = type;
+            this.addHealth = addHealth;
+            this.addArmor = addArmor;
+            this.addAttack = addAttack;
+        }
+
+        public final int type;
+        public final float addHealth;
+        public final float addArmor;
+        public final float addAttack;
+
+        public static Stage byStage(int type) {
+            for (Stage value : values()) {
+                if (value.type == type) {
+                    return value;
+                }
+            }
+            return STAGE1;
+        }
     }
 }

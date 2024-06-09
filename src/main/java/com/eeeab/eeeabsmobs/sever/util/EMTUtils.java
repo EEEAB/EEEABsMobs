@@ -7,6 +7,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  * 翻译字段工具类
  *
  * @author EEEAB
- * @version 1.1
+ * @version 1.2
  */
 public class EMTUtils {
 
@@ -61,45 +62,46 @@ public class EMTUtils {
     public static final String STRUCTURE_PREFIX = "structure.";
 
 
-    public static Component simpleText(String prefix, String key, Style style) {
+    public static Component simpleText(String prefix, String key, Style style, @Nullable Object... args) {
         MutableComponent component;
         String finalPrefix = prefix + MOD_ID;
         if (style == null) style = Style.EMPTY;
+        if (args == null) args = new Object[0];
         if (key == null) {
-            component = Component.translatable(finalPrefix + TIP_SUFFIX.substring(1)).setStyle(style);
+            component = Component.translatable(finalPrefix + TIP_SUFFIX.substring(1), args).setStyle(style);
         } else {
             key = subDescriptionId(key);
-            component = Component.translatable(finalPrefix + key + TIP_SUFFIX).setStyle(style);
+            component = Component.translatable(finalPrefix + key + TIP_SUFFIX, args).setStyle(style);
         }
         return component;
     }
 
-    public static Component simpleItemText(String key, Style style) {
-        return simpleText(ITEM_PREFIX, key, style);
+    public static Component simpleItemText(String key, Style style, @Nullable Object... args) {
+        return simpleText(ITEM_PREFIX, key, style, args);
     }
 
-    public static Component simpleArmorText(String key, Style style) {
-        return simpleText(ARMOR_PREFIX, key, style);
+    public static Component simpleArmorText(String key, Style style, @Nullable Object... args) {
+        return simpleText(ARMOR_PREFIX, key, style, args);
     }
 
-    public static Component simpleWeaponText(String key, Style style) {
-        return simpleText(WEAPON_PREFIX, key, style);
+    public static Component simpleWeaponText(String key, Style style, @Nullable Object... args) {
+        return simpleText(WEAPON_PREFIX, key, style, args);
     }
 
-    public static Component simpleOtherText(String key, Style style) {
-        return simpleText(TOOLTIP_OTHER_PREFIX, key, style);
+    public static Component simpleOtherText(String key, Style style, @Nullable Object... args) {
+        return simpleText(TOOLTIP_OTHER_PREFIX, key, style, args);
     }
 
-    public static Component simpleShiftDownText(String key, Style style) {
-        return simpleText(SHIFT_DOWN, key, style);
+    public static Component simpleShiftDownText(String key, Style style, @Nullable Object... args) {
+        return simpleText(SHIFT_DOWN, key, style, args);
     }
 
-    public static Component simpleRightClickText(String key, Style style) {
-        return simpleText(RIGHT_CLICK, key, style);
+    public static Component simpleRightClickText(String key, Style style, @Nullable Object... args) {
+        return simpleText(RIGHT_CLICK, key, style, args);
     }
 
-    public static Component simpleLeftClickText(String key, Style style) {
-        return simpleText(LEFT_CLICK, key, style);
+    public static Component simpleLeftClickText(String key, Style style, @Nullable Object... args) {
+        return simpleText(LEFT_CLICK, key, style, args);
     }
 
     /**
@@ -110,28 +112,30 @@ public class EMTUtils {
      * prefix.modId.descriptionId.tip_n<br>
      * ...
      */
-    public static List<Component> complexText(String prefix, int count, Style style, String key) {
+    public static List<Component> complexText(String prefix, int count, Style style, String key, @Nullable Object... args) {
         List<Component> components = new ArrayList<>();
         if (style == null) style = Style.EMPTY;
+        if (args == null) args = new Object[0];
         for (int i = 1; i <= count; i++) {
             StringBuilder sb = new StringBuilder();
             components.add(Component.translatable(sb
-                    .append(prefix)
-                    .append(MOD_ID)
-                    .append(subDescriptionId(key))
-                    .append(TIP_SUFFIX)
-                    .append("_")
-                    .append(i)
-                    .toString()
-            ).setStyle(style));
+                            .append(prefix)
+                            .append(MOD_ID)
+                            .append(subDescriptionId(key))
+                            .append(TIP_SUFFIX)
+                            .append("_")
+                            .append(i)
+                            .toString()
+                    , args).setStyle(style));
         }
         return components;
     }
 
     /**
-     * 批量生成键<br>
+     * 批量生成键(不支持插入自定义数据)<br>
      * 示例:<br>
-     * prefix.modId.XXX.tip<br>
+     * prefix.modId.AAA.tip<br>
+     * prefix.modId.BBB.tip<br>
      * ...
      */
     public static List<Component> complexText(String prefix, boolean hasIndex, Style style, String... keys) {

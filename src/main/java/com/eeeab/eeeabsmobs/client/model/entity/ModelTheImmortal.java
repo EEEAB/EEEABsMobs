@@ -145,12 +145,12 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
         this.bob(core, 0.06F, 0.4F, false, frame, 1);
         this.bob(rightArm, 0.08F, 1F, false, frame, 1);
         this.bob(leftArm, 0.08F, 1F, false, frame, 1);
-        this.bob(lower, 0.1F, 0.42F, false, frame, 1);
+        //this.bob(lower, 0.1F, 0.42F, false, frame, 1);
         this.core.xRot += Mth.sin(frame * 0.01F) * 180F * Mth.PI / 180F;
         this.core.yRot += Mth.sin(frame * 0.01F) * 180F * Mth.PI / 180F;
         this.core.zRot += Mth.sin(frame * 0.015F) * 360F * Mth.PI / 180F;
         //this.bob(body, 0.08F, 0.4F, false, frame, 1);
-        float chainSpeed = 0.08F;
+        float chainSpeed = 0.1F;
         float chainDegree = 0.4F;
         for (ModelPart spine : spines) {
             this.bob(spine, chainSpeed, chainDegree, false, frame, 1);
@@ -158,16 +158,16 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
             chainDegree += 0.01F;
         }
         //Walk
-        if (entity.getDeltaMovement().horizontalDistanceSqr() > 0D) {
-            float cycle = 0.2F;
-            float idle = (Mth.sin(ageInTicks * cycle * 0.1F) + 1.0F) * (1.0F - limbSwingAmount);
-            float rebound = limbSwing * cycle % Mth.PI / Mth.PI;
-            rebound = 1.0F - rebound;
-            rebound *= rebound;
-            this.root.xRot -= (Mth.cos(limbSwing * cycle) - 2.0F) * limbSwingAmount * 0.1F - 0.1F /*- idle*/ * -0.1F;
-            this.lower.xRot -= (Mth.cos(limbSwing * cycle + 3.1415927F)) * limbSwingAmount * 0.1F - 0.1F /*- idle*/ * -0.1F;
-            this.head.xRot += (Mth.cos(limbSwing * cycle) - 2.0F) * limbSwingAmount * 0.1F - 0.2F - idle * -0.1F;
-            this.upper.y += Mth.sin(rebound) * limbSwingAmount;
-        }
+        float cycle = 0.2F;
+        float idle = (Mth.sin(ageInTicks * cycle * 0.1F) + 1.0F) * (1.0F - limbSwingAmount);
+        float rebound = limbSwing * cycle % Mth.PI / Mth.PI;
+        rebound = 1.0F - rebound;
+        rebound *= rebound;
+        float dampingFactor = 1.0F - limbSwingAmount * 0.5F; // 引入的衰减因子，根据移动速度调整
+        this.root.xRot -= (Mth.cos(limbSwing * cycle) - 2.0F) * limbSwingAmount * 0.1F * dampingFactor - 0.1F * (-idle) * -0.1F;
+        //this.root.xRot -= (Mth.cos(limbSwing * cycle) - 2.0F) * limbSwingAmount * 0.1F - 0.1F;
+        //this.lower.xRot -= (Mth.cos(limbSwing * cycle + 3.1415927F)) * limbSwingAmount * 0.1F - 0.1F /*- idle*/ * -0.1F;
+        this.head.xRot += (Mth.cos(limbSwing * cycle) - 2.0F) * limbSwingAmount * 0.1F * dampingFactor - 0.1F * (-idle) * -0.1F;
+        this.upper.y += Mth.sin(rebound) * limbSwingAmount;
     }
 }

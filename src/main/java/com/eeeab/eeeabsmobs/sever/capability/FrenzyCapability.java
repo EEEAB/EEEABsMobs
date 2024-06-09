@@ -160,7 +160,7 @@ public class FrenzyCapability {
 
         @Override
         public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-            return HandlerCapability.FRENZY_CAPABILITY_CAPABILITY.orEmpty(cap, instance.cast());
+            return HandlerCapability.FRENZY_EFFECT_CAPABILITY.orEmpty(cap, instance.cast());
         }
 
         @Override

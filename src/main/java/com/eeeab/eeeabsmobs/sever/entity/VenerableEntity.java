@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity;
 
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 
@@ -7,7 +8,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public interface VenerableEntity<T extends Mob> {
+public interface VenerableEntity<T extends LivingEntity> {
 
     @Nullable
     T getOwner();

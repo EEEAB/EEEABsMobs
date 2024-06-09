@@ -43,7 +43,7 @@ public class MessageFrenzyEffect {
                 if (Minecraft.getInstance().level != null) {
                     Entity entity = Minecraft.getInstance().level.getEntity(message.entityID);
                     if (entity instanceof LivingEntity livingEntity) {
-                        FrenzyCapability.IFrenzyCapability livingCapability = HandlerCapability.getCapability(livingEntity, HandlerCapability.FRENZY_CAPABILITY_CAPABILITY);
+                        FrenzyCapability.IFrenzyCapability livingCapability = HandlerCapability.getCapability(livingEntity, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
                         if (livingCapability != null) {
                             if (message.isFrenzy) livingCapability.onStart(livingEntity);
                             else livingCapability.onEnd(livingEntity);

@@ -1,0 +1,17 @@
+{
+  "structures": [
+    {
+      "structure": "eeeabsmobs:test",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:concentric_rings",
+    "salt": 857677979,
+    "distance": 0,
+    "spread": 0,
+    "count": 1,
+    "preferred_biomes": "eeeabsmobs:void_crack"
+  }
+}
+

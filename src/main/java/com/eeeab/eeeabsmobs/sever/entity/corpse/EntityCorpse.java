@@ -69,7 +69,7 @@ public class EntityCorpse extends EntityAbsCorpse implements IEntity {
     }
 
     public boolean isFrenzy() {
-        FrenzyCapability.IFrenzyCapability capability = HandlerCapability.getCapability(this, HandlerCapability.FRENZY_CAPABILITY_CAPABILITY);
+        FrenzyCapability.IFrenzyCapability capability = HandlerCapability.getCapability(this, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
         if (capability != null) {
             return capability.isFrenzy();
         }

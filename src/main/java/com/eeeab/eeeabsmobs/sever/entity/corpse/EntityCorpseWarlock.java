@@ -593,8 +593,12 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         Entity entity = source.getEntity();
         if (entity instanceof Player) {
             ItemEntity itementity = this.spawnAtLocation(ItemInit.HEART_OF_PAGAN.get());
-            if (itementity != null) {
+            ItemEntity itementity2 = this.spawnAtLocation(ItemInit.SOUL_SUMMONING_NECKLACE.get());
+            if (itementity != null && itementity2 != null) {
                 itementity.setExtendedLifetime();
+                itementity.setGlowingTag(true);
+                itementity2.setExtendedLifetime();
+                itementity2.setGlowingTag(true);
             }
         }
     }

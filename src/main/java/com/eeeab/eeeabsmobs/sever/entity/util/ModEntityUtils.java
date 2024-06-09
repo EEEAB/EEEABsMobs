@@ -6,6 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.damagesource.CombatRules;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -166,6 +167,20 @@ public class ModEntityUtils {
             return new Vec3(pX, blockpos.getY() + d0, pZ);
         }
         return new Vec3(pX, pMinY, pZ);
+    }
+
+    /**
+     * 根据护甲值、盔甲韧性与盔甲减少乘数计算实际受到的伤害
+     *
+     * @param damage                   造成伤害
+     * @param armor                    护甲值
+     * @param toughness                盔甲韧性
+     * @param armorReductionMultiplier 盔甲减少乘数[0~1]
+     * @return 实际受到的伤害
+     */
+    public static float actualDamageIsCalculatedBasedOnArmor(float damage, float armor, float toughness, float armorReductionMultiplier) {
+        float adjustedArmor = armor * armorReductionMultiplier;
+        return CombatRules.getDamageAfterAbsorb(damage, adjustedArmor, toughness);
     }
 
     public static float getTargetRelativeAngle(LivingEntity entity, LivingEntity target) {

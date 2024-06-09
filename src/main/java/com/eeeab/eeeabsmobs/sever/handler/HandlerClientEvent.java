@@ -60,7 +60,7 @@ public class HandlerClientEvent {
         if (event.getOverlay().overlay() == VanillaGuiOverlay.FROSTBITE.type().overlay()) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null) {
-                FrenzyCapability.IFrenzyCapability capability = HandlerCapability.getCapability(player, HandlerCapability.FRENZY_CAPABILITY_CAPABILITY);
+                FrenzyCapability.IFrenzyCapability capability = HandlerCapability.getCapability(player, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
                 if (capability != null && capability.isFrenzy() && Minecraft.getInstance().options.getCameraType() == CameraType.FIRST_PERSON) {
                     RenderSystem.setShaderTexture(0, FRENZY_OUTLINE_LOCATION);
                     Window res = event.getWindow();
