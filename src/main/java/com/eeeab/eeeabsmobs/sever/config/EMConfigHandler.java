@@ -47,6 +47,7 @@ public final class EMConfigHandler {
                 builder.push("Summoning Soul Necklace");
                 SSNCumulativeMaximumDamage = BUILDER.comment("Set the maximum amount of damage a player can take while holding this item").defineInRange("Set the maximum cumulative damage taken", 50, 1, Float.MAX_VALUE);
                 SSNCoolingTime = BUILDER.comment("Set item cool down time after player summons (seconds)").defineInRange("Set item cool down time", 15, 1, Integer.MAX_VALUE);
+                builder.pop();
             }
             builder.pop();
         }
