@@ -77,7 +77,7 @@ public class EntityCrimsonRay extends EntityMagicEffects {
 
         if (this.tickCount >= PRE_SHOOT_DURATION) {
             if (this.tickCount == PRE_SHOOT_DURATION) {
-                this.playSound(SoundInit.CRIMSON_RAY.get(), 0.95F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+                this.playSound(SoundInit.CRIMSON_RAY.get(), 0.25F, (this.random.nextFloat() - this.random.nextFloat()) * -0.2F + 1.0F);
             }
             this.calculateEndPos();
             List<LivingEntity> hit = raytraceEntities(level(), new Vec3(getX(), getY(), getZ()), new Vec3(endPosX, endPosY, endPosZ)).entities;
