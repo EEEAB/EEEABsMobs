@@ -98,13 +98,13 @@ public class ModelGulingSentinelHeavy extends EMHierarchicalModel<EntityGulingSe
                 setStaticRotationAngle(leftHand, 0F, 0F, -7.5F);
                 setStaticRotationPoint(leftHand, -4F, 0F, 0F);
                 setStaticRotationAngle(rightLeg, 0F, 0F, -1F);
-                setStaticRotationAngle(leftLeg, 0F, 0F, -1F);
+                setStaticRotationAngle(leftLeg, 0F, 0F, 1F);
                 setStaticRotationPoint(upper, 0F, 3F, 0F);
             }
         }
         //LookAt
         if (entity.getAnimation() == entity.rangeAttackAnimation && entity.getAnimationTick() > 10) {
-            lookAtAnimation(netHeadYaw, headPitch, 3F, this.upper);
+            lookAtAnimation(netHeadYaw, headPitch, 2F, this.upper);
         } else {
             lookAtAnimation(netHeadYaw, headPitch, 1.5F, this.head);
         }

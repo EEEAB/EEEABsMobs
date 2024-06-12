@@ -6,6 +6,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
@@ -14,6 +16,7 @@ import net.minecraft.world.phys.Vec3;
 public class EntityGrenade extends EntityMagicEffects {
     private static final float GRAVITY = 0.03F;
     private static final float RADIUS = 2.5F;
+    private float maxDamage = 8F;
 
     public EntityGrenade(EntityType<? extends EntityMagicEffects> entityType, Level level) {
         super(entityType, level);
@@ -28,7 +31,11 @@ public class EntityGrenade extends EntityMagicEffects {
     public void tick() {
         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
         if (hitresult.getType() != HitResult.Type.MISS) {
-            EntityExplode.explode(this.level(), this.position(), this.damageSources().explosion(this, this.caster), RADIUS, 15F);
+            if (this.caster != null && !(this.caster instanceof Player)) {
+                //基于使用者(非玩家)决定攻击伤害
+                maxDamage = (float) this.caster.getAttributeValue(Attributes.ATTACK_DAMAGE);
+            }
+            EntityExplode.explode(this.level(), this.position(), this.damageSources().explosion(this, this.caster), RADIUS, maxDamage);
             EntityCameraShake.cameraShake(this.level(), this.position(), 16F, 0.125F, 5, 15);
             this.discard();
         }
