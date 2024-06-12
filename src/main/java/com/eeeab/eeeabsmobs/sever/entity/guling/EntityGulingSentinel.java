@@ -1,10 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.guling;
 
 import com.eeeab.animate.server.ai.AnimationAI;
-import com.eeeab.animate.server.ai.animation.AnimationActivate;
-import com.eeeab.animate.server.ai.animation.AnimationDeactivate;
-import com.eeeab.animate.server.ai.animation.AnimationDie;
-import com.eeeab.animate.server.ai.animation.AnimationHurt;
+import com.eeeab.animate.server.ai.animation.*;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
@@ -180,6 +177,8 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
                     float xHeadRotAngle = (float) (float) Math.toRadians(-this.entity.getXRot());
                     EntityGuardianLaser laser = new EntityGuardianLaser(EntityInit.GUARDIAN_LASER.get(), this.entity.level(), this.entity, px, py, pz, yHeadRotAngle, xHeadRotAngle, 5);
                     this.entity.level().addFreshEntity(laser);
+                } else if (tick == 28) {
+                    this.entity.playSound(SoundInit.GS_ELECTROMAGNETIC.get(), 0.5F, this.entity.getVoicePitch());
                 }
             }
         });
@@ -256,7 +255,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
             Entity entity = source.getDirectEntity();
             if (entity instanceof LivingEntity livingEntity) {
                 if (this.getAnimation() != this.getHurtAnimation() && !source.is(EMTagKey.GENERAL_UNRESISTANT_TO) && !source.is(DamageTypes.THORNS)) {
-                    livingEntity.hurt(this.damageSources().noAggroMobAttack(this), damage * 0.1F);
+                    livingEntity.hurt(this.damageSources().noAggroMobAttack(this), damage * 0.2F);
                 }
                 Item item = livingEntity.getMainHandItem().getItem();
                 if (item instanceof PickaxeItem) {

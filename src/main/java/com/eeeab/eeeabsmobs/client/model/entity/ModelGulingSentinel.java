@@ -3,7 +3,6 @@ package com.eeeab.eeeabsmobs.client.model.entity;
 import com.eeeab.animate.client.model.EMHierarchicalModel;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityGulingSentinel;
-import com.google.errorprone.annotations.Var;
 import net.minecraft.client.animation.AnimationChannel;
 import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.animation.Keyframe;
