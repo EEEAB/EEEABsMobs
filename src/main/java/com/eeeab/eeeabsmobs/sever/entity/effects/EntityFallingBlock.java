@@ -87,6 +87,14 @@ public class EntityFallingBlock extends Entity {
         }
     }
 
+
+    @Override
+    public void setDeltaMovement(double x, double y, double z) {
+        if (getMode() == FallingMoveType.OVERALL_MOVE) {
+            super.setDeltaMovement(x, y, z);
+        }
+    }
+
     protected void addAdditionalSaveData(CompoundTag compoundTag) {
         BlockState blockState = this.getBlockState();
         compoundTag.put("block_state", NbtUtils.writeBlockState(blockState));
