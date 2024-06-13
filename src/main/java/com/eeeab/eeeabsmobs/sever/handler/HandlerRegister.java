@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.sever.handler;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.EMItemModels;
+import com.eeeab.eeeabsmobs.client.model.armor.ModelGhostWarriorArmor;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelBloodBall;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelGrenade;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelGuardianBlade;
@@ -17,8 +18,10 @@ import com.eeeab.eeeabsmobs.client.particle.util.ParticleRibbon;
 import com.eeeab.eeeabsmobs.client.render.EmptyRender;
 import com.eeeab.eeeabsmobs.client.render.effects.*;
 import com.eeeab.eeeabsmobs.client.render.entity.*;
+import com.eeeab.eeeabsmobs.client.render.util.EMArmorStackRenderProperties;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
@@ -51,6 +54,8 @@ public class HandlerRegister {
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_SKELETON, ModelAbsImmortalSkeleton::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_SHAMAN, ModelImmortalShaman::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.IMMORTAL, ModelTheImmortal::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.GHOST_WARRIOR_ARMOR, () -> ModelGhostWarriorArmor.createBodyLayer(new CubeDeformation(0.5F)));
+        event.registerLayerDefinition(EMModelLayer.GHOST_WARRIOR_ARMOR_LEGS, () -> ModelGhostWarriorArmor.createBodyLayer(new CubeDeformation(0.2F)));
     }
 
     @SubscribeEvent

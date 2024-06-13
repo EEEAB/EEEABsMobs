@@ -322,7 +322,7 @@ public final class HandlerServerEvent {
                 playerCapability.hurt(player, event.getSource(), event.getAmount());
             }
             if (attacker instanceof EntityAbsImmortal) {
-                if (EMArmorUtil.checkFullSuitOfArmor(EMArmorMaterial.IMMORTAL_MATERIAL, player)) {
+                if (EMArmorUtil.checkFullSuitOfArmor(EMArmorMaterial.GHOST_WARRIOR_MATERIAL, player)) {
                     float damage = event.getAmount();
                     damage -= damage * 0.1F;//减少10%伤害
                     event.setAmount(damage);

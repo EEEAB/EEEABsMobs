@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.client;
 
 import com.eeeab.eeeabsmobs.client.model.EMItemModels;
+import com.eeeab.eeeabsmobs.client.render.util.EMArmorStackRenderProperties;
 import com.eeeab.eeeabsmobs.client.render.util.EMItemStackRenderProperties;
 import com.eeeab.eeeabsmobs.client.sound.ability.GuardianLaserSoundInstance;
 import com.eeeab.eeeabsmobs.sever.ServerProxy;
@@ -36,6 +37,11 @@ public class ClientProxy extends ServerProxy {
     @Override
     public Object getISTERProperties() {
         return new EMItemStackRenderProperties();
+    }
+
+    @Override
+    public Object getASTEProperties() {
+        return new EMArmorStackRenderProperties();
     }
 
     @Override

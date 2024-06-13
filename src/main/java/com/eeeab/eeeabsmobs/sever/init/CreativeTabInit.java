@@ -29,16 +29,17 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.IMMORTAL_BONE.get());
                 entries.accept(ItemInit.IMMORTAL_DEBRIS.get());
                 entries.accept(ItemInit.IMMORTAL_INGOT.get());
+                entries.accept(ItemInit.GHOST_STEEL_INGOT.get());
                 entries.accept(ItemInit.BLOODY_ALTAR_EYE.get());
                 entries.accept(ItemInit.ANCIENT_TOMB_EYE.get());
                 entries.accept(ItemInit.HEART_OF_PAGAN.get());
                 entries.accept(ItemInit.SOUL_SUMMONING_NECKLACE.get());
 
                 /* Fight Item */
-                entries.accept(ItemInit.IMMORTAL_HELMET.get());
-                entries.accept(ItemInit.IMMORTAL_CHEST_PLATE.get());
-                entries.accept(ItemInit.IMMORTAL_LEGGINGS.get());
-                entries.accept(ItemInit.IMMORTAL_BOOTS.get());
+                entries.accept(ItemInit.GHOST_WARRIOR_HELMET.get());
+                entries.accept(ItemInit.GHOST_WARRIOR_CHESTPLATE.get());
+                entries.accept(ItemInit.GHOST_WARRIOR_LEGGINGS.get());
+                entries.accept(ItemInit.GHOST_WARRIOR_BOOTS.get());
                 entries.accept(ItemInit.IMMORTAL_AXE.get());
                 entries.accept(ItemInit.IMMORTAL_SWORD.get());
                 entries.accept(ItemInit.IMMORTAL_STAFF.get());

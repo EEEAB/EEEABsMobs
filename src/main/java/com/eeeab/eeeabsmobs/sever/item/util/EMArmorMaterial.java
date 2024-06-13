@@ -17,13 +17,13 @@ import java.util.function.Supplier;
 
 //盔甲级别
 public enum EMArmorMaterial implements net.minecraft.world.item.ArmorMaterial {
-    IMMORTAL_MATERIAL("immortal", 15, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
-        map.put(ArmorItem.Type.BOOTS, 2);
-        map.put(ArmorItem.Type.LEGGINGS, 5);
-        map.put(ArmorItem.Type.CHESTPLATE, 6);
-        map.put(ArmorItem.Type.HELMET, 2);
-    }), 15, SoundEvents.ARMOR_EQUIP_IRON, 1.5F, 0.0F, () -> {
-        return Ingredient.of(ItemInit.IMMORTAL_INGOT.get());//修复材料
+    GHOST_WARRIOR_MATERIAL("ghost_warrior", 37, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
+        map.put(ArmorItem.Type.BOOTS, 3);
+        map.put(ArmorItem.Type.LEGGINGS, 6);
+        map.put(ArmorItem.Type.CHESTPLATE, 8);
+        map.put(ArmorItem.Type.HELMET, 3);
+    }), 15, SoundEvents.ARMOR_EQUIP_IRON, 3F, 0.1F, () -> {
+        return Ingredient.of(ItemInit.GHOST_STEEL_INGOT.get());//修复材料
     });
 
     private final String name;//名字 用于渲染装备有关
