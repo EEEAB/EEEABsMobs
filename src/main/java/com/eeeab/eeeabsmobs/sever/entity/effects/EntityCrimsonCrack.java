@@ -47,6 +47,17 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
     }
 
     @Override
+    public boolean isOnFire() {
+        return false;
+    }
+
+    @Override
+    public boolean isNoGravity() {
+        return true;
+    }
+
+
+    @Override
     public void tick() {
         super.tick();
         displayControlled.updatePrevTimer();
@@ -107,6 +118,10 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
                 });
             }
         }
+    }
+
+    @Override
+    public void setDeltaMovement(double x, double y, double z) {
     }
 
     @Override
