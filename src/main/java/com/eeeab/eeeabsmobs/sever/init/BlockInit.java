@@ -9,6 +9,7 @@ import com.eeeab.eeeabsmobs.sever.block.trapImpl.BlockTombSummonTrap;
 import com.eeeab.eeeabsmobs.sever.item.util.EMBlockEntityItemRender;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -29,6 +30,11 @@ public class BlockInit {
                     .copy(Blocks.IRON_BLOCK)
                     .sound(SoundType.METAL)),
             false);
+
+    public static final RegistryObject<Block> GHOST_STEEL_BLOCK = registryBlock("ghost_steel_block", () -> new Block(BlockBehaviour.Properties
+                    .copy(Blocks.NETHERITE_BLOCK)
+                    .sound(SoundType.METAL)),
+            false, new Item.Properties().rarity(Rarity.RARE).fireResistant());
 
     public static final RegistryObject<Block> SOUL_LIGHT = registryBlock("soul_light", () -> new Block(BlockBehaviour.Properties
                     .copy(Blocks.SHROOMLIGHT)
@@ -76,12 +82,18 @@ public class BlockInit {
 
     private static <T extends Block> RegistryObject<T> registryBlock(String name, Supplier<T> block, boolean isEntity) {
         RegistryObject<T> register = BLOCKS.register(name, block);
-        registerBlockItem(name, register, isEntity);
+        registerBlockItem(name, register, new Item.Properties(), isEntity);
         return register;
     }
 
-    private static <T extends Block> void registerBlockItem(String name, RegistryObject<T> block, boolean isEntityBlock) {
-        ItemInit.ITEMS.register(name, () -> isEntityBlock ? new EMBlockEntityItemRender(block.get(), new Item.Properties()) : new BlockItem(block.get(), new Item.Properties()));
+    private static <T extends Block> RegistryObject<T> registryBlock(String name, Supplier<T> block, boolean isEntity, Item.Properties properties) {
+        RegistryObject<T> register = BLOCKS.register(name, block);
+        registerBlockItem(name, register, properties, isEntity);
+        return register;
+    }
+
+    private static <T extends Block> void registerBlockItem(String name, RegistryObject<T> block, Item.Properties properties, boolean isEntityBlock) {
+        ItemInit.ITEMS.register(name, () -> isEntityBlock ? new EMBlockEntityItemRender(block.get(), new Item.Properties()) : new BlockItem(block.get(), properties));
     }
 
     public static void register(IEventBus bus) {

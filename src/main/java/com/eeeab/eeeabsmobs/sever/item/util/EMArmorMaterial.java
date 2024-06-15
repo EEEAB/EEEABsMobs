@@ -17,12 +17,12 @@ import java.util.function.Supplier;
 
 //盔甲级别
 public enum EMArmorMaterial implements net.minecraft.world.item.ArmorMaterial {
-    GHOST_WARRIOR_MATERIAL("ghost_warrior", 37, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
-        map.put(ArmorItem.Type.BOOTS, 3);
-        map.put(ArmorItem.Type.LEGGINGS, 6);
-        map.put(ArmorItem.Type.CHESTPLATE, 8);
-        map.put(ArmorItem.Type.HELMET, 3);
-    }), 15, SoundEvents.ARMOR_EQUIP_IRON, 3F, 0.1F, () -> {
+    GHOST_WARRIOR_MATERIAL("ghost_warrior", 180, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
+        map.put(ArmorItem.Type.BOOTS, 5);
+        map.put(ArmorItem.Type.LEGGINGS, 8);
+        map.put(ArmorItem.Type.CHESTPLATE, 11);
+        map.put(ArmorItem.Type.HELMET, 5);
+    }), 20, SoundEvents.ARMOR_EQUIP_IRON, 4.5F, 0.125F, () -> {
         return Ingredient.of(ItemInit.GHOST_STEEL_INGOT.get());//修复材料
     });
 

@@ -16,6 +16,7 @@ public class EMBlockStateProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         cubeAll(BlockInit.IMMORTAL_BLOCK);
+        cubeAll(BlockInit.GHOST_STEEL_BLOCK);
         cubeAll(BlockInit.EROSION_DEEPSLATE_BRICKS);
         cubeAll(BlockInit.SOUL_LIGHT);
         //cubeAll(BlockInit.TOMBSTONE);

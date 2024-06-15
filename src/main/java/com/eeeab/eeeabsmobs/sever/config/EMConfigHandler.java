@@ -36,23 +36,27 @@ public final class EMConfigHandler {
     public static class Item {
         public Item(final ForgeConfigSpec.Builder builder) {
             builder.push("Items");
-            enableImmortalArmorItemDurability = BUILDER.comment("If 'True' the 'Immortal Armor' will be damaged due to durability").define("Enable immortal armor durability", false);
             enableImmortalItemDurability = BUILDER.comment("If 'True' the 'Immortal Item' will be damaged due to durability").define("Enable immortal item durability", false);
-            {
-                builder.push("Guardian Axe");
-                GUARDIAN_AXE_TOOL = new ToolConfig(15D, 0.9D);
-                builder.pop();
-            }
             {
                 builder.push("Summoning Soul Necklace");
                 SSNCumulativeMaximumDamage = BUILDER.comment("Set the maximum amount of damage a player can take while holding this item").defineInRange("Set the maximum cumulative damage taken", 50, 1, Float.MAX_VALUE);
                 SSNCoolingTime = BUILDER.comment("Set item cool down time after player summons (seconds)").defineInRange("Set item cool down time", 15, 1, Integer.MAX_VALUE);
                 builder.pop();
             }
+            {
+                builder.push("Guardian Axe");
+                GUARDIAN_AXE_TOOL = new ToolConfig(15D, 0.9D);
+                builder.pop();
+            }
+            {
+                builder.push("Ghost Warrior Armor");
+                enableGhostWarriorArmorItemDurability = BUILDER.comment("If 'True' the 'Ghost Warrior Armor' will be damaged due to durability").define("Enable armor durability", false);
+                builder.pop();
+            }
             builder.pop();
         }
 
-        public final ForgeConfigSpec.BooleanValue enableImmortalArmorItemDurability;
+        public final ForgeConfigSpec.BooleanValue enableGhostWarriorArmorItemDurability;
         public final ForgeConfigSpec.BooleanValue enableImmortalItemDurability;
         public final ToolConfig GUARDIAN_AXE_TOOL;
         public final ForgeConfigSpec.DoubleValue SSNCumulativeMaximumDamage;

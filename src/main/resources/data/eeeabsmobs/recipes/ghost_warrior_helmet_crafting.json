@@ -2,15 +2,14 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "XXX",
-    "X X",
     "X X"
   ],
   "key": {
     "X": {
-      "item": "eeeabsmobs:immortal_ingot"
+      "item": "eeeabsmobs:ghost_steel_ingot"
     }
   },
   "result": {
-    "item": "eeeabsmobs:immortal_leggings"
+    "item": "eeeabsmobs:ghost_warrior_helmet"
   }
 }

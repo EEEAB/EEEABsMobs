@@ -18,6 +18,7 @@ public class CreativeTabInit {
             .displayItems((enabledFeatures, entries) -> {
                 /* Block Item */
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.IMMORTAL_BLOCK));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.GHOST_STEEL_BLOCK));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.SOUL_LIGHT));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.TOMB_GAS_TRAP));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.TOMB_SUMMON_TRAP));

@@ -7,10 +7,10 @@
   ],
   "key": {
     "X": {
-      "item": "eeeabsmobs:immortal_ingot"
+      "item": "eeeabsmobs:ghost_steel_ingot"
     }
   },
   "result": {
-    "item": "eeeabsmobs:immortal_chest_plate"
+    "item": "eeeabsmobs:ghost_warrior_chestplate"
   }
 }

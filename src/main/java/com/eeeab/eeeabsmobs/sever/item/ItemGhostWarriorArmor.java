@@ -20,24 +20,29 @@ public class ItemGhostWarriorArmor extends ArmorItem {
         super(EMArmorMaterial.GHOST_WARRIOR_MATERIAL, type, new Item.Properties().rarity(Rarity.EPIC).fireResistant());
     }
 
+    @Override
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         consumer.accept((IClientItemExtensions) EEEABMobs.PROXY.getASTEProperties());
     }
 
+    @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
+        if (slot == EquipmentSlot.LEGS) {
+            return new ResourceLocation(EEEABMobs.MOD_ID, "textures/armor/ghost_warrior_armor_legs.png").toString();
+        }
         return new ResourceLocation(EEEABMobs.MOD_ID, "textures/armor/ghost_warrior_armor.png").toString();
     }
 
     @Override
     public boolean canBeDepleted() {
-        return EMConfigHandler.COMMON.ITEM.enableImmortalArmorItemDurability.get() && super.canBeDepleted();
+        return EMConfigHandler.COMMON.ITEM.enableGhostWarriorArmorItemDurability.get() && super.canBeDepleted();
     }
 
 
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        if (!EMConfigHandler.COMMON.ITEM.enableImmortalArmorItemDurability.get()) tooltip.add(EMTUtils.UNABLE_BREAKS);
+        if (!EMConfigHandler.COMMON.ITEM.enableGhostWarriorArmorItemDurability.get()) tooltip.add(EMTUtils.UNABLE_BREAKS);
         List<Component> componentList = EMTUtils.complexText(EMTUtils.ARMOR_PREFIX, false, EMTUtils.STYLE_GREEN,
                 "full_suit_of_armor", "ghost_warrior_full_suit_of_armor");
         tooltip.addAll(componentList);
