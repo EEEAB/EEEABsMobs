@@ -28,4 +28,7 @@ public class EMModelLayer {
     //盔甲
     public static final ModelLayerLocation GHOST_WARRIOR_ARMOR = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "ghost_warrior_armor"), "main");
     public static final ModelLayerLocation GHOST_WARRIOR_ARMOR_LEGS = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "ghost_warrior_armor_legs"), "main");
+
+    //物品
+    public static final ModelLayerLocation THE_NETHERWORLD_KATANA = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "netherworld_katana"), "main");
 }

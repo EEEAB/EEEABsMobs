@@ -76,6 +76,10 @@ public class EMTUtils {
         return component;
     }
 
+    public static Component itemCoolTime(Object args) {
+        return simpleText(TOOLTIP_OTHER_PREFIX, "cd", STYLE_GREEN, args);
+    }
+
     public static Component simpleItemText(String key, Style style, @Nullable Object... args) {
         return simpleText(ITEM_PREFIX, key, style, args);
     }

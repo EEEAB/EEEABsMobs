@@ -34,7 +34,6 @@ import java.util.Optional;
 //参考自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/server/entity/effects/EntitySolarBeam.java
 public class EntityGuardianLaser extends EntityMagicEffects {
     public static final double GUARDIAN_RADIUS = 32;
-    public static final double PLAYER_RADIUS = 16;
     public static final int PRE_SHOOT_DURATION = 20;
     public double endPosX, endPosY, endPosZ;
     public double collidePosX, collidePosY, collidePosZ;
@@ -223,7 +222,7 @@ public class EntityGuardianLaser extends EntityMagicEffects {
 
 
     private void calculateEndPos() {
-        double radius = isPlayer() ? PLAYER_RADIUS : GUARDIAN_RADIUS;
+        double radius = isPlayer() ? EMConfigHandler.COMMON.ENTITY.GUARDIAN_LASER.playerShootRadius.get() : GUARDIAN_RADIUS;
         if (level().isClientSide()) {
             endPosX = getX() + radius * Math.cos(yHeadRotAngle) * Math.cos(xHeadRotAngle);
             endPosZ = getZ() + radius * Math.sin(yHeadRotAngle) * Math.cos(xHeadRotAngle);
@@ -272,7 +271,8 @@ public class EntityGuardianLaser extends EntityMagicEffects {
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
-        return isPlayer() ? distance < (PLAYER_RADIUS * PLAYER_RADIUS) * 2 : distance < (GUARDIAN_RADIUS * GUARDIAN_RADIUS) * 2;
+        Double radius = EMConfigHandler.COMMON.ENTITY.GUARDIAN_LASER.playerShootRadius.get();
+        return isPlayer() ? distance < (radius * radius) * 2 : distance < (GUARDIAN_RADIUS * GUARDIAN_RADIUS) * 2;
     }
 
     private void updateWithPlayer() {

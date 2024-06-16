@@ -7,6 +7,7 @@ import com.eeeab.eeeabsmobs.client.model.effects.ModelBloodBall;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelGrenade;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelGuardianBlade;
 import com.eeeab.eeeabsmobs.client.model.entity.*;
+import com.eeeab.eeeabsmobs.client.model.item.ModelTheNetherworldKatana;
 import com.eeeab.eeeabsmobs.client.model.layer.EMModelLayer;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.ParticleGuardianSpark;
@@ -54,8 +55,10 @@ public class HandlerRegister {
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_SKELETON, ModelAbsImmortalSkeleton::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_SHAMAN, ModelImmortalShaman::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.IMMORTAL, ModelTheImmortal::createBodyLayer);
+
         event.registerLayerDefinition(EMModelLayer.GHOST_WARRIOR_ARMOR, () -> ModelGhostWarriorArmor.createBodyLayer(new CubeDeformation(0.5F)));
         event.registerLayerDefinition(EMModelLayer.GHOST_WARRIOR_ARMOR_LEGS, () -> ModelGhostWarriorArmor.createBodyLayer(new CubeDeformation(0.2F)));
+        event.registerLayerDefinition(EMModelLayer.THE_NETHERWORLD_KATANA, ModelTheNetherworldKatana::createBodyLayer);
     }
 
     @SubscribeEvent

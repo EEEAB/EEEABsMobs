@@ -71,6 +71,8 @@ public class EEEABMobs {
         if (config.getSpec() == EMConfigHandler.SPEC) {
             EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackSpeedValue = EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackSpeed.get().floatValue();
             EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamageValue = EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamage.get().floatValue();
+            EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackSpeedValue = EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackSpeed.get().floatValue();
+            EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackDamageValue = EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackDamage.get().floatValue();
         }
     }
 

@@ -4,6 +4,7 @@ import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.block.BlockErosionPortal;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -105,10 +106,11 @@ public class ItemGuardianCore extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.add(EMTUtils.UNABLE_BREAKS);
         if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340)) {
+            tooltip.add(EMTUtils.UNABLE_BREAKS);
             tooltip.add(EMTUtils.simpleShiftDownText(null, EMTUtils.STYLE_GREEN));
         } else {
+            tooltip.add(EMTUtils.simpleWeaponText(this.getDescriptionId(), EMTUtils.STYLE_GREEN, EMConfigHandler.COMMON.ENTITY.GUARDIAN_LASER.playerShootRadius.get()));
             tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, EMTUtils.STYLE_GRAY, this.getDescriptionId()));
         }
     }

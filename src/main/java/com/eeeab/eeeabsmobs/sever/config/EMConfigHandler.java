@@ -36,7 +36,6 @@ public final class EMConfigHandler {
     public static class Item {
         public Item(final ForgeConfigSpec.Builder builder) {
             builder.push("Items");
-            enableImmortalItemDurability = BUILDER.comment("If 'True' the 'Immortal Item' will be damaged due to durability").define("Enable immortal item durability", false);
             {
                 builder.push("Summoning Soul Necklace");
                 SSNCumulativeMaximumDamage = BUILDER.comment("Set the maximum amount of damage a player can take while holding this item").defineInRange("Set the maximum cumulative damage taken", 50, 1, Float.MAX_VALUE);
@@ -49,16 +48,25 @@ public final class EMConfigHandler {
                 builder.pop();
             }
             {
-                builder.push("Ghost Warrior Armor");
+                builder.push("Immortal Staff");
+                itemImmortalStaffCoolingTime = BUILDER.comment("Set the cool down time after using the weapon (seconds)").defineInRange("Set item cool down time", 1, 0, 60);
+                itemImmortalStaffStorageTime = BUILDER.comment("Set the weapon recharge time (seconds)").defineInRange("Set item recharge time", 1, 0, 60);
+                builder.pop();
+            }
+            {
+                builder.push("Ghost Warrior Armor & Weapons");
                 enableGhostWarriorArmorItemDurability = BUILDER.comment("If 'True' the 'Ghost Warrior Armor' will be damaged due to durability").define("Enable armor durability", false);
+                NETHERWORLD_KATANA_TOOL = new ToolConfig(14D, 1.4D);
                 builder.pop();
             }
             builder.pop();
         }
 
         public final ForgeConfigSpec.BooleanValue enableGhostWarriorArmorItemDurability;
-        public final ForgeConfigSpec.BooleanValue enableImmortalItemDurability;
+        public final ForgeConfigSpec.IntValue itemImmortalStaffCoolingTime;
+        public final ForgeConfigSpec.IntValue itemImmortalStaffStorageTime;
         public final ToolConfig GUARDIAN_AXE_TOOL;
+        public final ToolConfig NETHERWORLD_KATANA_TOOL;
         public final ForgeConfigSpec.DoubleValue SSNCumulativeMaximumDamage;
         public final ForgeConfigSpec.IntValue SSNCoolingTime;
     }
@@ -269,9 +277,12 @@ public final class EMConfigHandler {
         public GuardianLaser(final ForgeConfigSpec.Builder builder) {
             builder.push("Guardian Laser");
             this.enableGenerateScorchEntity = BUILDER.comment("If 'False' disable scorch generate on the ground").define("Enable scorch generate", true);
+            this.playerShootRadius = BUILDER.comment("Set the maximum shooting distance when the user is a player").defineInRange("Set attack radius", 16D, 1D, 64D);
             builder.pop();
         }
 
+        //当使用者是玩家时的最大射击距离
+        public final ForgeConfigSpec.DoubleValue playerShootRadius;
         //生成烧焦的地面实体
         public final ForgeConfigSpec.BooleanValue enableGenerateScorchEntity;
     }
