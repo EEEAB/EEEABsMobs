@@ -37,15 +37,16 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.SOUL_SUMMONING_NECKLACE.get());
 
                 /* Fight Item */
+                entries.accept(ItemInit.GUARDIAN_CORE.get());
+                entries.accept(ItemInit.GUARDIAN_AXE.get());
+                entries.accept(ItemInit.IMMORTAL_AXE.get());
+                entries.accept(ItemInit.IMMORTAL_SWORD.get());
+                entries.accept(ItemInit.IMMORTAL_STAFF.get());
                 entries.accept(ItemInit.GHOST_WARRIOR_HELMET.get());
                 entries.accept(ItemInit.GHOST_WARRIOR_CHESTPLATE.get());
                 entries.accept(ItemInit.GHOST_WARRIOR_LEGGINGS.get());
                 entries.accept(ItemInit.GHOST_WARRIOR_BOOTS.get());
-                entries.accept(ItemInit.IMMORTAL_AXE.get());
-                entries.accept(ItemInit.IMMORTAL_SWORD.get());
-                entries.accept(ItemInit.IMMORTAL_STAFF.get());
-                entries.accept(ItemInit.GUARDIAN_AXE.get());
-                entries.accept(ItemInit.GUARDIAN_CORE.get());
+                entries.accept(ItemInit.THE_NETHERWORLD_KATANA.get());
 
                 /* Disc Item */
                 entries.accept(ItemInit.GUARDIANS_MUSIC_DISC.get());
