@@ -109,7 +109,7 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
                                         /* 高于2.0即不能破坏,不能让它什么都能撞坏~ */ 1.9F)
                                         && entity.level().getBlockEntity(pos) == null).
                                 forEach((pos) ->
-                                        entity.level().destroyBlock(pos, true));
+                                        entity.level().destroyBlock(pos, false));
                     }
                 }
                 if (tick % 2 == 0) {
