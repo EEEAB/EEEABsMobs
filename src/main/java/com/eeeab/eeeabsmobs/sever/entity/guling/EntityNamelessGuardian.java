@@ -326,6 +326,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     @Override
+    protected boolean isAffectedByFluids() {
+        return !(this.getAnimation() == this.leapAnimation || this.getAnimation() == this.smashDownAnimation);
+    }
+
+    @Override
     protected void onAnimationStart(Animation animation) {
         if (!this.level().isClientSide) {
             if (animation == this.weakAnimation1) {
