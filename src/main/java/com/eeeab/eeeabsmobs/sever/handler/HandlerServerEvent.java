@@ -321,13 +321,13 @@ public final class HandlerServerEvent {
             if (playerCapability != null) {
                 playerCapability.hurt(player, event.getSource(), event.getAmount());
             }
-            if (attacker instanceof EntityAbsImmortal) {
-                if (EMArmorUtil.checkFullSuitOfArmor(EMArmorMaterial.GHOST_WARRIOR_MATERIAL, player)) {
-                    float damage = event.getAmount();
-                    damage -= damage * 0.1F;//减少10%伤害
-                    event.setAmount(damage);
-                }
-            }
+            //if (attacker instanceof EntityAbsImmortal) {
+            //    if (EMArmorUtil.checkFullSuitOfArmor(EMArmorMaterial.GHOST_WARRIOR_MATERIAL, player)) {
+            //        float damage = event.getAmount();
+            //        damage -= damage * 0.1F;//减少10%伤害
+            //        event.setAmount(damage);
+            //    }
+            //}
         }
 
         FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(hurtEntity, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
