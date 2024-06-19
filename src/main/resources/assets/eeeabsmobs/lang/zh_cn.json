@@ -56,6 +56,7 @@
   "item.eeeabsmobs.guardian_core": "守卫者核心",
   "item.eeeabsmobs.heart_of_pagan": "异教徒的心脏",
   "item.eeeabsmobs.soul_summoning_necklace": "唤魂项链",
+  "item.eeeabsmobs.ancient_drive_crystal": "远古驱动水晶",
 
   "_comment": "方块",
   "block.eeeabsmobs.immortal_block": "不朽块",
@@ -111,6 +112,7 @@
   "item.minecraft.potion.effect.frenzy_potion": "狂暴药水",
   "item.minecraft.splash_potion.effect.frenzy_potion": "喷溅型狂暴药水",
   "item.minecraft.lingering_potion.effect.frenzy_potion": "滞留型狂暴药水",
+  "item.minecraft.tipped_arrow.effect.frenzy_potion": "狂暴之箭",
 
   "_comment": "伤害源信息",
   "death.attack.shaman_bomb": "%1$s 被巫师炸弹炸成碎片",

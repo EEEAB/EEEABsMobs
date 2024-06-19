@@ -27,13 +27,14 @@ public class CreativeTabInit {
 
                 /* Misc Item */
                 entries.accept(ItemInit.REMOVE_MOB.get());
+                entries.accept(ItemInit.HEART_OF_PAGAN.get());
+                entries.accept(ItemInit.ANCIENT_DRIVE_CRYSTAL.get());
                 entries.accept(ItemInit.IMMORTAL_BONE.get());
                 entries.accept(ItemInit.IMMORTAL_DEBRIS.get());
                 entries.accept(ItemInit.IMMORTAL_INGOT.get());
                 entries.accept(ItemInit.GHOST_STEEL_INGOT.get());
                 entries.accept(ItemInit.BLOODY_ALTAR_EYE.get());
                 entries.accept(ItemInit.ANCIENT_TOMB_EYE.get());
-                entries.accept(ItemInit.HEART_OF_PAGAN.get());
                 entries.accept(ItemInit.SOUL_SUMMONING_NECKLACE.get());
 
                 /* Fight Item */
@@ -42,17 +43,17 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.IMMORTAL_AXE.get());
                 entries.accept(ItemInit.IMMORTAL_SWORD.get());
                 entries.accept(ItemInit.IMMORTAL_STAFF.get());
+                entries.accept(ItemInit.THE_NETHERWORLD_KATANA.get());
                 entries.accept(ItemInit.GHOST_WARRIOR_HELMET.get());
                 entries.accept(ItemInit.GHOST_WARRIOR_CHESTPLATE.get());
                 entries.accept(ItemInit.GHOST_WARRIOR_LEGGINGS.get());
                 entries.accept(ItemInit.GHOST_WARRIOR_BOOTS.get());
-                entries.accept(ItemInit.THE_NETHERWORLD_KATANA.get());
 
                 /* Disc Item */
                 entries.accept(ItemInit.GUARDIANS_MUSIC_DISC.get());
 
                 /* Spawn Egg */
-                entries.accept(ItemInit.TESTER.get());
+                entries.accept(ItemInit.TESTER_EGG.get());
                 entries.accept(ItemInit.CORPSE_EGG.get());
                 entries.accept(ItemInit.CORPSE_VILLAGER_EGG.get());
                 entries.accept(ItemInit.CORPSE_WARLOCK_EGG.get());

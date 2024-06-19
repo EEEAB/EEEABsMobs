@@ -23,6 +23,7 @@ import com.eeeab.eeeabsmobs.sever.entity.effects.EntityElectromagnetic;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGrenade;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
@@ -51,6 +52,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.AbstractGolem;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.entity.player.Player;
@@ -95,10 +97,10 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     private int electromagneticTick;
     public final ControlledAnimation glowControlled = new ControlledAnimation(10);
     public final ControlledAnimation hotControlled = new ControlledAnimation(20);
+    public final ControlledAnimation electromagneticConControlled = new ControlledAnimation(20);
     private static final int RANGE_ATTACK_TICK = 400;
     private static final int SMASH_ATTACK_TICK = 300;
     private static final int ELECTROMAGNETIC_TICK = 450;
-    public final ControlledAnimation electromagneticConControlled = new ControlledAnimation(20);
     @OnlyIn(Dist.CLIENT)
     public Vec3[] hand;//0:left 1:right
 
@@ -439,6 +441,19 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             }
         }
         return super.hurt(source, damage);
+    }
+
+    @Override
+    protected void dropCustomDeathLoot(DamageSource source, int pLooting, boolean pRecentlyHit) {
+        super.dropCustomDeathLoot(source, pLooting, pRecentlyHit);
+        Entity entity = source.getEntity();
+        if (entity instanceof Player) {
+            ItemEntity itementity = this.spawnAtLocation(ItemInit.ANCIENT_DRIVE_CRYSTAL.get());
+            if (itementity != null) {
+                itementity.setExtendedLifetime();
+                itementity.setGlowingTag(true);
+            }
+        }
     }
 
     @Override

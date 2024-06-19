@@ -56,6 +56,7 @@
   "item.eeeabsmobs.guardian_core": "Guardian Core",
   "item.eeeabsmobs.heart_of_pagan": "Heart of Pagan",
   "item.eeeabsmobs.soul_summoning_necklace": "Summoning Soul Necklace",
+  "item.eeeabsmobs.ancient_drive_crystal": "Ancient Drive Crystal",
 
   "_comment": "Blocks",
   "block.eeeabsmobs.immortal_block": "Immortal Block",
@@ -111,6 +112,7 @@
   "item.minecraft.potion.effect.frenzy_potion": "Potion of Frenzy",
   "item.minecraft.splash_potion.effect.frenzy_potion": "Splash Potion of Frenzy",
   "item.minecraft.lingering_potion.effect.frenzy_potion": "Lingering Potion of Frenzy",
+  "item.minecraft.tipped_arrow.effect.frenzy_potion": "Arrow of Frenzy",
 
   "_comment": "DamageSource Message",
   "death.attack.shaman_bomb": "%1$s was blown to pieces by a shaman bomb",
