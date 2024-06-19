@@ -21,6 +21,7 @@ public class DataGenerators {
         ExistingFileHelper helper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> provider = event.getLookupProvider();
         boolean includeServer = event.includeServer();
+        generator.addProvider(includeServer, new EMItemModelProvider(packOutput, helper));
         generator.addProvider(includeServer, new EMDamageTypeProvider(packOutput, provider, helper));
         generator.addProvider(includeServer, new EMStructureTagsProvider(packOutput, provider, helper));
         generator.addProvider(includeServer, new EMBiomeTagsProvider(packOutput, provider, helper));
