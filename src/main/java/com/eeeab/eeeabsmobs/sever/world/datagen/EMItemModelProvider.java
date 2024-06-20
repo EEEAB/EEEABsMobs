@@ -53,7 +53,7 @@ public class EMItemModelProvider extends ItemModelProvider {
         simpleItem(ItemInit.GHOST_STEEL_INGOT);
         handheldItem(ItemInit.IMMORTAL_BONE);
         //战斗
-        handheldItem(ItemInit.SOUL_SUMMONING_NECKLACE);
+        simpleItem(ItemInit.SOUL_SUMMONING_NECKLACE);
         simpleItem(ItemInit.IMMORTAL_DEBRIS);
         handheldItem(ItemInit.IMMORTAL_AXE);
         handheldItem(ItemInit.IMMORTAL_SWORD);
