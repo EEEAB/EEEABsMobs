@@ -42,7 +42,7 @@ public class EMItemModelProvider extends ItemModelProvider {
         spawnEgg(ItemInit.IMMORTAL_BOSS_EGG);
         //杂项
         simpleItem(ItemInit.LOGO_ITEM);
-        handheldItem(ItemInit.REMOVE_MOB);
+        simpleItem(ItemInit.REMOVE_MOB);
         simpleItem(ItemInit.ANCIENT_TOMB_EYE);
         simpleItem(ItemInit.BLOODY_ALTAR_EYE);
         simpleItem(ItemInit.GUARDIANS_MUSIC_DISC);
@@ -51,9 +51,9 @@ public class EMItemModelProvider extends ItemModelProvider {
         simpleItem(ItemInit.ANCIENT_DRIVE_CRYSTAL);
         simpleItem(ItemInit.IMMORTAL_INGOT);
         simpleItem(ItemInit.GHOST_STEEL_INGOT);
+        handheldItem(ItemInit.IMMORTAL_BONE);
         //战斗
         handheldItem(ItemInit.SOUL_SUMMONING_NECKLACE);
-        simpleItem(ItemInit.IMMORTAL_BONE);
         simpleItem(ItemInit.IMMORTAL_DEBRIS);
         handheldItem(ItemInit.IMMORTAL_AXE);
         handheldItem(ItemInit.IMMORTAL_SWORD);
