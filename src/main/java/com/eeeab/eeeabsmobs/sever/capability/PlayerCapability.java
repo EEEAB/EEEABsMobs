@@ -12,6 +12,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -50,7 +52,7 @@ public class PlayerCapability {
 
         @Override
         public void hurt(Player player, DamageSource source, float damage) {
-            if (SSNInvulnerableTime <= 0) {
+            if (/*只计算由实体造成伤害*/source.getEntity() != null && SSNInvulnerableTime <= 0) {
                 this.SSNInvulnerableTime = 10;
                 for (ItemStack stack : player.getInventory().items) {
                     Item item = stack.getItem();
@@ -58,7 +60,7 @@ public class PlayerCapability {
                         if (!player.getCooldowns().isOnCooldown(item)) {
                             this.SSNCumulativeDamage += damage;
                             if (this.SSNCumulativeDamage >= EMConfigHandler.COMMON.ITEM.SSNCumulativeMaximumDamage.get().floatValue()) {
-                                this.doSpawnCorpse(player);
+                                this.doSpawnCorpse(player, source.getEntity());
                                 player.getCooldowns().addCooldown(item, EMConfigHandler.COMMON.ITEM.SSNCoolingTime.get() * 20);
                                 this.SSNCumulativeDamage = 0;
                             }
@@ -70,7 +72,7 @@ public class PlayerCapability {
         }
 
         //唤魂项链召唤死尸
-        private void doSpawnCorpse(Player player) {
+        private void doSpawnCorpse(Player player, Entity target) {
             if (!player.level().isClientSide) {
                 Vec3 vec3 = player.position();
                 EntityCorpseToPlayer entity = EntityInit.CORPSE_TO_PLAYER.get().create(player.level());
@@ -79,6 +81,8 @@ public class PlayerCapability {
                     entity.finalizeSpawn((ServerLevel) player.level(), player.level().getCurrentDifficultyAt(BlockPos.containing(vec3.x, vec3.y, vec3.z)), MobSpawnType.MOB_SUMMONED, null, null);
                     entity.moveTo(vec3);
                     entity.setOwner(player);
+                    if (target instanceof LivingEntity livingEntity)
+                        entity.setTarget(livingEntity);
                     player.level().addFreshEntity(entity);
                 }
             }
