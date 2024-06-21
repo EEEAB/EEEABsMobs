@@ -275,7 +275,7 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
         this.entityData.set(DATA_STAGE, compound.getInt("stage"));
         this.switching = compound.getBoolean("switching");
         System.out.println(this.getStage());
-        if (this.switching || !this.isDeadOrDying()) {
+        if (this.switching/* || !this.isDeadOrDying()*/) {
             if (this.getStage() == Stage.STAGE1) {
                 this.nextStage(Stage.STAGE2);
             } else if (this.getStage() == Stage.STAGE2) {

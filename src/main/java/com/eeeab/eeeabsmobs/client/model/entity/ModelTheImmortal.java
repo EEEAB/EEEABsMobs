@@ -30,8 +30,6 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
         this.leftArm = this.body.getChild("leftArm");
         this.lNetherworldKatana = this.leftArm.getChild("leftArmUnder")
                 .getChild("l_netherworld_katana");
-        //this.rNetherworldKatana.visible = false;
-        //this.lNetherworldKatana.visible = false;
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -102,14 +100,14 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
         PartDefinition cube_r43 = rightArmUnder.addOrReplaceChild("cube_r43", CubeListBuilder.create().texOffs(50, 117).mirror().addBox(-49.1809F, -5.1008F, -3.5475F, 10.0F, 10.0F, 9.0F, new CubeDeformation(0.5F)).mirror(false), PartPose.offsetAndRotation(36.7718F, 28.8418F, -12.6084F, 1.3091F, -0.0045F, -0.0258F));
         PartDefinition cube_r44 = rightArmUnder.addOrReplaceChild("cube_r44", CubeListBuilder.create().texOffs(1, 114).mirror().addBox(-8.5F, -5.5F, -25.7F, 11.0F, 11.0F, 25.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.7211F, -0.9818F, -6.9428F, 1.4029F, 0.0479F, 0.2752F));
         PartDefinition r_netherworld_katana = rightArmUnder.addOrReplaceChild("r_netherworld_katana", CubeListBuilder.create(), PartPose.offsetAndRotation(-8.2282F, 30.7478F, -11.4081F, 1.3963F, 0.0F, 0.0F));
-        PartDefinition blade = r_netherworld_katana.addOrReplaceChild("blade", CubeListBuilder.create().texOffs(253, 4).addBox(-4.5F, -72.4F, -2.5F, 9.0F, 71.0F, 5.0F, new CubeDeformation(-1.5F))
-                .texOffs(281, 21).addBox(-5.0F, -25.4F, -2.5F, 7.0F, 24.0F, 5.0F, new CubeDeformation(-1.4F)), PartPose.offsetAndRotation(0.0F, -8.0F, 0.0F, 0.0F, 1.5708F, 0.0F));
-        PartDefinition cube_r45 = blade.addOrReplaceChild("cube_r45", CubeListBuilder.create().texOffs(253, 3).addBox(-4.7F, -7.8F, -2.5F, 9.0F, 10.0F, 5.0F, new CubeDeformation(-1.65F)), PartPose.offsetAndRotation(0.0F, -69.8F, 0.0F, 0.0F, 0.0F, -0.0873F));
-        PartDefinition cube_r46 = blade.addOrReplaceChild("cube_r46", CubeListBuilder.create().texOffs(253, 3).addBox(-4.7F, -7.8F, -2.5F, 9.0F, 10.0F, 5.0F, new CubeDeformation(-1.8F)), PartPose.offsetAndRotation(-0.3F, -73.8F, 0.0F, 0.0F, 0.0F, -0.2182F));
-        PartDefinition cube_r47 = blade.addOrReplaceChild("cube_r47", CubeListBuilder.create().texOffs(253, 4).addBox(-3.5542F, -11.1522F, -2.5F, 9.0F, 8.0F, 5.0F, new CubeDeformation(-2.0F)), PartPose.offsetAndRotation(-1.1F, -73.8F, 0.0F, 0.0F, 0.0F, -0.3142F));
+        PartDefinition blade = r_netherworld_katana.addOrReplaceChild("blade", CubeListBuilder.create().texOffs(253, 83).addBox(-4.5F, -72.4F, -2.5F, 9.0F, 71.0F, 5.0F, new CubeDeformation(-1.5F))
+                .texOffs(281, 100).addBox(-5.0F, -25.4F, -2.5F, 7.0F, 24.0F, 5.0F, new CubeDeformation(-1.4F)), PartPose.offsetAndRotation(0.0F, -8.0F, 0.0F, 0.0F, 1.5708F, 0.0F));
+        PartDefinition cube_r45 = blade.addOrReplaceChild("cube_r45", CubeListBuilder.create().texOffs(253, 82).addBox(-4.7F, -7.8F, -2.5F, 9.0F, 10.0F, 5.0F, new CubeDeformation(-1.65F)), PartPose.offsetAndRotation(0.0F, -69.8F, 0.0F, 0.0F, 0.0F, -0.0873F));
+        PartDefinition cube_r46 = blade.addOrReplaceChild("cube_r46", CubeListBuilder.create().texOffs(253, 82).addBox(-4.7F, -7.8F, -2.5F, 9.0F, 10.0F, 5.0F, new CubeDeformation(-1.8F)), PartPose.offsetAndRotation(-0.3F, -73.8F, 0.0F, 0.0F, 0.0F, -0.2182F));
+        PartDefinition cube_r47 = blade.addOrReplaceChild("cube_r47", CubeListBuilder.create().texOffs(253, 83).addBox(-3.5542F, -11.1522F, -2.5F, 9.0F, 8.0F, 5.0F, new CubeDeformation(-2.0F)), PartPose.offsetAndRotation(-1.1F, -73.8F, 0.0F, 0.0F, 0.0F, -0.3142F));
         PartDefinition hilt = r_netherworld_katana.addOrReplaceChild("hilt", CubeListBuilder.create(), PartPose.offset(0.25F, -10.0F, 0.0F));
-        PartDefinition cube_r48 = hilt.addOrReplaceChild("cube_r48", CubeListBuilder.create().texOffs(286, 5).addBox(-5.0F, -2.5F, -4.5F, 10.0F, 4.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.75F, -0.5F, -0.5F, 0.0F, 0.7854F, 0.0F));
-        PartDefinition cube_r49 = hilt.addOrReplaceChild("cube_r49", CubeListBuilder.create().texOffs(300, 53).addBox(-2.5F, -10.5F, -2.5F, 5.0F, 21.0F, 5.0F, new CubeDeformation(-0.5F)), PartPose.offsetAndRotation(-0.25F, 9.5F, 0.0F, 0.0F, 0.7854F, 0.0F));
+        PartDefinition cube_r48 = hilt.addOrReplaceChild("cube_r48", CubeListBuilder.create().texOffs(286, 84).addBox(-5.0F, -2.5F, -4.5F, 10.0F, 4.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.75F, -0.5F, -0.5F, 0.0F, 0.7854F, 0.0F));
+        PartDefinition cube_r49 = hilt.addOrReplaceChild("cube_r49", CubeListBuilder.create().texOffs(300, 132).addBox(-2.5F, -10.5F, -2.5F, 5.0F, 21.0F, 5.0F, new CubeDeformation(-0.5F)), PartPose.offsetAndRotation(-0.25F, 9.5F, 0.0F, 0.0F, 0.7854F, 0.0F));
         PartDefinition miniLeftArm = body.addOrReplaceChild("miniLeftArm", CubeListBuilder.create(), PartPose.offsetAndRotation(21.2878F, 2.1086F, 7.1009F, -0.2233F, 0.2129F, -0.0479F));
         PartDefinition cube_r50 = miniLeftArm.addOrReplaceChild("cube_r50", CubeListBuilder.create().texOffs(0, 155).addBox(3.2626F, -16.2447F, -1.6113F, 5.0F, 21.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.5261F, 14.0016F, -8.494F, -0.5368F, 0.1339F, -0.6748F));
         PartDefinition miniLeftArmUnder = miniLeftArm.addOrReplaceChild("miniLeftArmUnder", CubeListBuilder.create(), PartPose.offset(-21.218F, -2.5864F, -6.3769F));
@@ -160,12 +158,8 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
         this.bob(root, 0.1F, 0.8F, false, frame, 1);
         this.bob(head, 0.08F, 0.7F, false, frame, 1);
         this.walk(head, 0.1F, 0.05F, true, 0, 0, frame, 1);
-        if (rNetherworldKatana.visible) {
-            this.walk(rNetherworldKatana, 0.08F, 0.025F, true, 0, 0, frame, 1);
-        }
-        if (lNetherworldKatana.visible) {
-            this.walk(lNetherworldKatana, 0.08F, 0.025F, true, 0, 0, frame, 1);
-        }
+        this.walk(rNetherworldKatana, 0.08F, 0.025F, true, 0, 0, frame, 1);
+        this.walk(lNetherworldKatana, 0.08F, 0.025F, true, 0, 0, frame, 1);
         this.bob(core, 0.06F, 0.4F, false, frame, 1);
         this.bob(rightArm, 0.08F, 1F, false, frame, 1);
         this.bob(leftArm, 0.08F, 1F, false, frame, 1);
