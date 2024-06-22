@@ -3,20 +3,22 @@ package com.eeeab.eeeabsmobs.sever.init;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.block.BlockErosionPortal;
 import com.eeeab.eeeabsmobs.sever.block.BlockTombstone;
+import com.eeeab.eeeabsmobs.sever.block.trapImpl.BlockTomeArrowsTarp;
 import com.eeeab.eeeabsmobs.sever.block.trapImpl.BlockTombGasTrap;
 import com.eeeab.eeeabsmobs.sever.block.trapImpl.BlockTombSummonTrap;
-import com.eeeab.eeeabsmobs.sever.block.trapImpl.BlockTomeArrowsTarp;
 import com.eeeab.eeeabsmobs.sever.item.util.EMBlockEntityItemRender;
 import com.eeeab.eeeabsmobs.sever.util.EMTabGroup;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -31,6 +33,11 @@ public class BlockInit {
                     .copy(Blocks.IRON_BLOCK)
                     .sound(SoundType.METAL)),
             false, EMTabGroup.TABS);
+
+    public static final RegistryObject<Block> GHOST_STEEL_BLOCK = registryBlock("ghost_steel_block", () -> new Block(BlockBehaviour.Properties
+                    .copy(Blocks.NETHERITE_BLOCK)
+                    .sound(SoundType.METAL)),
+            false, new Item.Properties().rarity(Rarity.RARE).fireResistant().tab(EMTabGroup.TABS));
 
     public static final RegistryObject<Block> SOUL_LIGHT = registryBlock("soul_light", () -> new Block(BlockBehaviour.Properties
                     .copy(Blocks.SHROOMLIGHT)
@@ -71,19 +78,25 @@ public class BlockInit {
                     .sound(SoundType.GLASS)
                     .lightLevel(s -> 11)
                     .noLootTable()),
-            false, null);
+            false, (CreativeModeTab) null);
 
-    public static final RegistryObject<Block> TOMBSTONE = registryBlock("tombstone", BlockTombstone::new, true, null);
+    public static final RegistryObject<Block> TOMBSTONE = registryBlock("tombstone", BlockTombstone::new, true, (CreativeModeTab) null);
 
 
     private static <T extends Block> RegistryObject<T> registryBlock(String name, Supplier<T> block, boolean isEntity, CreativeModeTab tab) {
         RegistryObject<T> register = BLOCKS.register(name, block);
-        registerBlockItem(name, register, isEntity, tab);
+        registerBlockItem(name, register, new Item.Properties().tab(tab), isEntity);
         return register;
     }
 
-    private static <T extends Block> void registerBlockItem(String name, RegistryObject<T> block, boolean isEntityBlock, CreativeModeTab tab) {
-        ItemInit.ITEMS.register(name, () -> isEntityBlock ? new EMBlockEntityItemRender(block.get(), new Item.Properties().tab(tab)) : new BlockItem(block.get(), new Item.Properties().tab(tab)));
+    private static <T extends Block> RegistryObject<T> registryBlock(String name, Supplier<T> block, boolean isEntity, Item.Properties properties) {
+        RegistryObject<T> register = BLOCKS.register(name, block);
+        registerBlockItem(name, register, properties, isEntity);
+        return register;
+    }
+
+    private static <T extends Block> void registerBlockItem(String name, RegistryObject<T> block, Item.Properties properties, boolean isEntityBlock) {
+        ItemInit.ITEMS.register(name, () -> isEntityBlock ? new EMBlockEntityItemRender(block.get(), new Item.Properties()) : new BlockItem(block.get(), properties));
     }
 
     public static void register(IEventBus bus) {

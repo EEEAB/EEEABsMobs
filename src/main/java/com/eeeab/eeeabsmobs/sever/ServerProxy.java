@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.sever;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 
+import com.eeeab.eeeabsmobs.client.render.util.EMArmorStackRenderProperties;
 import com.eeeab.eeeabsmobs.sever.advancements.EMCriteriaTriggers;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
@@ -36,7 +37,7 @@ public class ServerProxy {
         EEEABMobs.NETWORK.messageBuilder(MessageVertigoEffect.class, nextID()).encoder(MessageVertigoEffect::serialize).decoder(MessageVertigoEffect::deserialize).consumerNetworkThread(new MessageVertigoEffect.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(MessageUseAbility.class, nextID()).encoder(MessageUseAbility::serialize).decoder(MessageUseAbility::deserialize).consumerNetworkThread(new MessageUseAbility.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(MessagePlayerUseAbility.class, nextID()).encoder(MessagePlayerUseAbility::serialize).decoder(MessagePlayerUseAbility::deserialize).consumerNetworkThread(new MessagePlayerUseAbility.Handler()).add();
-        EEEABMobs.NETWORK.messageBuilder(MessageFrenzyEffect.class,nextID()).encoder(MessageFrenzyEffect::serialize).decoder(MessageFrenzyEffect::deserialize).consumerNetworkThread(new MessageFrenzyEffect.Handler()).add();
+        EEEABMobs.NETWORK.messageBuilder(MessageFrenzyEffect.class, nextID()).encoder(MessageFrenzyEffect::serialize).decoder(MessageFrenzyEffect::deserialize).consumerNetworkThread(new MessageFrenzyEffect.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(AnimationMessage.class, nextID()).encoder(AnimationMessage::serialize).decoder(AnimationMessage::deserialize).consumerNetworkThread(new AnimationMessage.Handler()).add();
     }
 
@@ -57,8 +58,14 @@ public class ServerProxy {
         return null;
     }
 
-    public void playLaserSound(Player player){}
+    public Object getASTEProperties() {
+        return null;
+    }
 
-    public void endLaserSound(Player player){}
+    public void playLaserSound(Player player) {
+    }
+
+    public void endLaserSound(Player player) {
+    }
 
 }

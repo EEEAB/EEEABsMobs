@@ -94,7 +94,8 @@ public class EntityInit {
     public static final RegistryObject<EntityType<EntityGulingSentinelHeavy>> GULING_SENTINEL_HEAVY =
             ENTITIES.register("guling_sentinel_heavy",
                     () -> EntityType.Builder.<EntityGulingSentinelHeavy>of(EntityGulingSentinelHeavy::new, MobCategory.MONSTER)
-                            .sized(2.5f, 3.8f).fireImmune().clientTrackingRange(8)
+                            .sized(2.5f, 3.8f).fireImmune().clientTrackingRange(10)
+                            .setShouldReceiveVelocityUpdates(true)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "guling_sentinel_heavy").toString()));
 
     public static final RegistryObject<EntityType<EntityNamelessGuardian>> NAMELESS_GUARDIAN =
@@ -199,7 +200,7 @@ public class EntityInit {
                     () -> EntityType.Builder.<EntityCrimsonRay>of(EntityCrimsonRay::new, MobCategory.MISC)
                             .sized(0.1f, 0.1f).setUpdateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "crimson_ray").toString()));
-    public static final RegistryObject<EntityType<EntityCrimsonRay.PreAttack>> CRIMSON_RAY_PRE=
+    public static final RegistryObject<EntityType<EntityCrimsonRay.PreAttack>> CRIMSON_RAY_PRE =
             ENTITIES.register("crimson_ray_pre",
                     () -> EntityType.Builder.<EntityCrimsonRay.PreAttack>of(EntityCrimsonRay.PreAttack::new, MobCategory.MISC)
                             .sized(0.1f, 0.1f).setUpdateInterval(1)
@@ -211,6 +212,12 @@ public class EntityInit {
                     () -> EntityType.Builder.<EntityGrenade>of(EntityGrenade::new, MobCategory.MISC)
                             .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(10)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "grenade").toString()));
+
+    public static final RegistryObject<EntityType<EntityElectromagnetic>> ELECTROMAGNETIC =
+            ENTITIES.register("electromagnetic",
+                    () -> EntityType.Builder.<EntityElectromagnetic>of(EntityElectromagnetic::new, MobCategory.MISC)
+                            .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(1)
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "electromagnetic").toString()));
 
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);

@@ -27,7 +27,7 @@ public class AdvancedParticleBase extends TextureSheetParticle {
     public SpriteSet spriteSet;
 
     public ParticleComponent[] components;
-    //public ParticleRibbon ribbon;
+    public ParticleRibbon ribbon;
 
     /**
      * AdvancedParticle
@@ -67,7 +67,7 @@ public class AdvancedParticleBase extends TextureSheetParticle {
         this.rotation = rotation;
         this.components = components;
         this.emissive = emissive;
-        //this.ribbon = null;
+        this.ribbon = null;
 
         for (ParticleComponent component : components) {
             component.init(this);
@@ -132,11 +132,11 @@ public class AdvancedParticleBase extends TextureSheetParticle {
             component.postUpdate(this);
         }
 
-//        if (ribbon != null) {
-//            ribbon.setPos(x, y, z);
-//            ribbon.positions[0] = new Vec3(x, y, z);
-//            ribbon.prevPositions[0] = getPrevPos();
-//        }
+        if (ribbon != null) {
+            ribbon.setPos(x, y, z);
+            ribbon.positions[0] = new Vec3(x, y, z);
+            ribbon.prevPositions[0] = getPrevPos();
+        }
     }
 
     protected void updatePosition() {

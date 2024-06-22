@@ -131,6 +131,7 @@ public class ModelAbsImmortalSkeleton extends EMHierarchicalModel<EntityAbsImmor
         this.upper.translateAndRotate(poseStack);
         model$part.translateAndRotate(poseStack);
         //offsetStackPosition(poseStack, isRightArm);
+        poseStack.translate(0, 0, 0.085D);
         poseStack.scale(0.9375F, 0.9375F, 0.9375F);
     }
 

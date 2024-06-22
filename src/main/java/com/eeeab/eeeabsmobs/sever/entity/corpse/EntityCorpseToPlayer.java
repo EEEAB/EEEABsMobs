@@ -57,6 +57,7 @@ public class EntityCorpseToPlayer extends EEEABMobLibrary implements IEntity, Gl
     private UUID ownerUUID;
     @Nullable
     private Player owner;
+    private int countdown = -1;
     private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EntityCorpseToPlayer.class, EntityDataSerializers.BOOLEAN);
 
     public EntityCorpseToPlayer(EntityType<? extends EntityCorpseToPlayer> type, Level level) {
@@ -136,6 +137,10 @@ public class EntityCorpseToPlayer extends EEEABMobLibrary implements IEntity, Gl
             setYRot(yRotO);
             yBodyRot = getYRot();
         }
+        if (this.isSummon() && --countdown <= 0) {
+            this.hurt(DamageSource.STARVE, getMaxHealth() * 0.25F);
+            countdown = 20;
+        }
     }
 
     public void setSpawnParticle(int amount) {
@@ -170,6 +175,7 @@ public class EntityCorpseToPlayer extends EEEABMobLibrary implements IEntity, Gl
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance instance, MobSpawnType spawnType, @Nullable SpawnGroupData groupData, @Nullable CompoundTag tag) {
+        this.countdown = 400 + this.random.nextInt(200);
         return groupData;
     }
 

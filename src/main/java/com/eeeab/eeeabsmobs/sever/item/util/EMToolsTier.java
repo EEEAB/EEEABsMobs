@@ -11,7 +11,8 @@ import java.util.function.Supplier;
 
 //工具级别
 public enum EMToolsTier implements Tier {
-    IMMORTAL_TIER(2, 300, 5.0F, 0.0F, 10, () -> Ingredient.of(ItemInit.IMMORTAL_INGOT.get())),
+    IMMORTAL_TIER(2, 300, 5.0F, 0.0F, 10, () -> Ingredient.of(ItemInit.GHOST_STEEL_INGOT.get())),
+    NETHERWORLD_KATANA_TIER(4, 3000, 9.0F, 5.0F, 20, () -> Ingredient.of(ItemInit.GHOST_STEEL_INGOT.get())),
     GUARDIAN_AXE_TIER(4, 1, 9.0F, 4.0F, 15, () -> Ingredient.of(Tags.Items.INGOTS_IRON));
 
     private final int harvestLevel;//挖掘等级

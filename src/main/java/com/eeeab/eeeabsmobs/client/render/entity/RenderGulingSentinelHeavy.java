@@ -22,12 +22,15 @@ public class RenderGulingSentinelHeavy extends MobRenderer<EntityGulingSentinelH
 
     public RenderGulingSentinelHeavy(EntityRendererProvider.Context context) {
         super(context, new ModelGulingSentinelHeavy(context.bakeLayer(EMModelLayer.GULING_SENTINEL_HEAVY)), 1.2F);
-        this.addLayer(new LayerBreath<>(this, GLOW_LAYER, 0.05F, e -> e.isGlow() && e.getAnimation() != e.activeAnimation, 0.075F));
+        this.addLayer(new LayerBreath<>(this, GLOW_LAYER, 0.05F, e -> e.isGlow() && e.getAnimation() != e.activeAnimation && e.getAnimation() != e.electromagneticAnimation, 0.075F));
         this.addLayer(new LayerGlow<>(this, GLOW_LAYER, 0.5F) {
             @Override
             protected float getBrightness(EntityGulingSentinelHeavy entity) {
                 float timer = entity.glowControlled.getPrevTimer();
-                return timer * 0.05F;
+                if (entity.getAnimation() == entity.electromagneticAnimation) {
+                    timer += entity.electromagneticConControlled.getTimer();
+                }
+                return Math.min(timer * 0.05F, 1F);
             }
         });
         this.addLayer(new LayerGlow<>(this, HOT_LAYER, 1F) {

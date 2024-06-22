@@ -16,8 +16,6 @@ import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
-import com.eeeab.eeeabsmobs.sever.item.util.EMArmorMaterial;
-import com.eeeab.eeeabsmobs.sever.item.util.EMArmorUtil;
 import com.eeeab.eeeabsmobs.sever.message.MessageFrenzyEffect;
 import com.eeeab.eeeabsmobs.sever.message.MessageVertigoEffect;
 import net.minecraft.resources.ResourceLocation;
@@ -322,13 +320,13 @@ public final class HandlerServerEvent {
             if (playerCapability != null) {
                 playerCapability.hurt(player, event.getSource(), event.getAmount());
             }
-            if (attacker instanceof EntityAbsImmortal) {
-                if (EMArmorUtil.checkFullSuitOfArmor(EMArmorMaterial.IMMORTAL_MATERIAL, player)) {
-                    float damage = event.getAmount();
-                    damage -= damage * 0.1F;//减少10%伤害
-                    event.setAmount(damage);
-                }
-            }
+            //if (attacker instanceof EntityAbsImmortal) {
+            //    if (EMArmorUtil.checkFullSuitOfArmor(EMArmorMaterial.IMMORTAL_MATERIAL, player)) {
+            //        float damage = event.getAmount();
+            //        damage -= damage * 0.1F;//减少10%伤害
+            //        event.setAmount(damage);
+            //    }
+            //}
         }
 
         FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(hurtEntity, HandlerCapability.FRENZY_EFFECT_CAPABILITY);

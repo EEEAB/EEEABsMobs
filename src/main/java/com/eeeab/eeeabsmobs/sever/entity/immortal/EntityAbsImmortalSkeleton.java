@@ -392,7 +392,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     }
 
     public enum CareerType {
-        NONE(-1, 5F, 4F, 0F, 0F, 1.05F, Items.AIR),
+        NONE(-1, 5F, 4F, 0F, 0F, 1.05F, Items.AIR, ItemInit.IMMORTAL_BONE.get()),
         MAGE(0, 20F, 0F, 2F, 0.08F, 1.05F, Items.AIR),
         ARCHER(1, 10F, 6F, 4F, 0.05F, 1.1F, Items.BOW, Items.CROSSBOW),
         WARRIOR(2, 15F, 5F, 6F, -0.02F, 1.1F, Items.STONE_SWORD),

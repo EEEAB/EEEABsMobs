@@ -24,6 +24,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -178,6 +179,8 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
                     float xHeadRotAngle = (float) (float) Math.toRadians(-this.entity.getXRot());
                     EntityGuardianLaser laser = new EntityGuardianLaser(EntityInit.GUARDIAN_LASER.get(), this.entity.level, this.entity, px, py, pz, yHeadRotAngle, xHeadRotAngle, 5);
                     this.entity.level.addFreshEntity(laser);
+                } else if (tick == 28) {
+                    this.entity.playSound(SoundInit.GS_ELECTROMAGNETIC.get(), 0.5F, this.entity.getVoicePitch());
                 }
             }
         });
@@ -253,9 +256,10 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
             }
             Entity entity = source.getDirectEntity();
             if (entity instanceof LivingEntity livingEntity) {
-                boolean flag = source == DamageSource.OUT_OF_WORLD || source == DamageSource.GENERIC;
-                if (this.getAnimation() != this.getHurtAnimation() && !flag && !source.isMagic()) {
-                    livingEntity.hurt(DamageSource.mobAttack(this).setNoAggro(), damage * 0.1F);
+                boolean flag = (source == DamageSource.OUT_OF_WORLD || source == DamageSource.GENERIC)
+                        || (source instanceof EntityDamageSource entityDamageSource && entityDamageSource.isThorns());
+                if (this.getAnimation() != this.getHurtAnimation() && !flag && !source.isExplosion()) {
+                    livingEntity.hurt(DamageSource.thorns(this), damage * 0.1F);
                 }
                 Item item = livingEntity.getMainHandItem().getItem();
                 if (item instanceof PickaxeItem) {

@@ -36,11 +36,13 @@ public class SoundInit {
     //Guling Sentinel
     public static final RegistryObject<SoundEvent> GS_HURT = create("gs.hurt");
     public static final RegistryObject<SoundEvent> GS_DEATH = create("gs.death");
+    public static final RegistryObject<SoundEvent> GS_ELECTROMAGNETIC = create("gs.electromagnetic");
 
     //Guling Sentinel-Heavy
     public static final RegistryObject<SoundEvent> GSH_STEP = create("gsh.step");
     public static final RegistryObject<SoundEvent> GSH_IDLE = create("gsh.idle");
     public static final RegistryObject<SoundEvent> GSH_FRICTION = create("gsh.friction");
+    public static final RegistryObject<SoundEvent> GSH_ELECTROMAGNETIC = create("gsh.electromagnetic");
     public static final RegistryObject<SoundEvent> GSH_SPARK = create("gsh.spark");
     public static final RegistryObject<SoundEvent> GSH_PRE_ATTACK = create("gsh.pre_attack");
     public static final RegistryObject<SoundEvent> GSH_ATTACK = create("gsh.attack");

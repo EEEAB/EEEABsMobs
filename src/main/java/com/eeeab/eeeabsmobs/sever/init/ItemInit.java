@@ -27,25 +27,28 @@ public class ItemInit {
     public static final RegistryObject<Item> IMMORTAL_BONE = ITEMS.register("immortal_bone", () -> new ItemImmortalBone(new Item.Properties().tab(EMTabGroup.TABS)));
     public static final RegistryObject<Item> IMMORTAL_DEBRIS = ITEMS.register("immortal_debris", () -> new ItemImmortalDebris(new Item.Properties().tab(EMTabGroup.TABS)));
     public static final RegistryObject<Item> IMMORTAL_INGOT = ITEMS.register("immortal_ingot", () -> new Item(new Item.Properties().tab(EMTabGroup.TABS)));
+    public static final RegistryObject<Item> GHOST_STEEL_INGOT = ITEMS.register("ghost_steel_ingot", () -> new Item(new Item.Properties().tab(EMTabGroup.TABS).rarity(Rarity.RARE)));
     public static final RegistryObject<Item> BLOODY_ALTAR_EYE = ITEMS.register("bloody_altar_eye", () -> new ItemBloodyAltarEye(new Item.Properties().tab(EMTabGroup.TABS).rarity(Rarity.RARE).stacksTo(16).fireResistant()));
     public static final RegistryObject<Item> GULING_EYE = ITEMS.register("guling_eye", () -> new ItemGulingEye(new Item.Properties().tab(EMTabGroup.TABS).rarity(Rarity.RARE).stacksTo(16).fireResistant()));
     public static final RegistryObject<Item> HEART_OF_PAGAN = ITEMS.register("heart_of_pagan", () -> new Item(new Item.Properties().tab(EMTabGroup.TABS).stacksTo(1).fireResistant()));
     public static final RegistryObject<Item> SOUL_SUMMONING_NECKLACE = ITEMS.register("soul_summoning_necklace", () -> new ItemSoulSummoningNecklace(new Item.Properties().tab(EMTabGroup.TABS).stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
+    public static final RegistryObject<Item> ANCIENT_DRIVE_CRYSTAL = ITEMS.register("ancient_drive_crystal", () -> new Item(new Item.Properties().tab(EMTabGroup.TABS).rarity(Rarity.RARE).fireResistant()));
     //防具
-    public static final RegistryObject<Item> IMMORTAL_HELMET = ITEMS.register("immortal_helmet", () -> new ItemArmorImmortal(EquipmentSlot.HEAD, new Item.Properties().tab(EMTabGroup.TABS)));
-    public static final RegistryObject<Item> IMMORTAL_CHEST_PLATE = ITEMS.register("immortal_chest_plate", () -> new ItemArmorImmortal(EquipmentSlot.CHEST, new Item.Properties().tab(EMTabGroup.TABS)));
-    public static final RegistryObject<Item> IMMORTAL_BOOTS = ITEMS.register("immortal_boots", () -> new ItemArmorImmortal(EquipmentSlot.FEET, new Item.Properties().tab(EMTabGroup.TABS)));
-    public static final RegistryObject<Item> IMMORTAL_LEGGINGS = ITEMS.register("immortal_leggings", () -> new ItemArmorImmortal(EquipmentSlot.LEGS, new Item.Properties().tab(EMTabGroup.TABS)));
+    public static final RegistryObject<Item> GHOST_WARRIOR_HELMET = ITEMS.register("ghost_warrior_helmet", () -> new ItemGhostWarriorArmor(EquipmentSlot.HEAD));
+    public static final RegistryObject<Item> GHOST_WARRIOR_CHESTPLATE = ITEMS.register("ghost_warrior_chestplate", () -> new ItemGhostWarriorArmor(EquipmentSlot.CHEST));
+    public static final RegistryObject<Item> GHOST_WARRIOR_BOOTS = ITEMS.register("ghost_warrior_boots", () -> new ItemGhostWarriorArmor(EquipmentSlot.FEET));
+    public static final RegistryObject<Item> GHOST_WARRIOR_LEGGINGS = ITEMS.register("ghost_warrior_leggings", () -> new ItemGhostWarriorArmor(EquipmentSlot.LEGS));
     //武器
     public static final RegistryObject<Item> IMMORTAL_AXE = ITEMS.register("immortal_axe", () -> new ItemImmortalAxe(EMToolsTier.IMMORTAL_TIER, 6F, -2.8F, new Item.Properties().tab(EMTabGroup.TABS)));
     public static final RegistryObject<Item> IMMORTAL_SWORD = ITEMS.register("immortal_sword", () -> new ItemImmortalSword(EMToolsTier.IMMORTAL_TIER, 5, -2.4F, new Item.Properties().tab(EMTabGroup.TABS)));
-    public static final RegistryObject<Item> IMMORTAL_STAFF = ITEMS.register("immortal_staff", () -> new ItemImmortalStaff(new Item.Properties().tab(EMTabGroup.TABS)));
+    public static final RegistryObject<ItemNetherworldKatana> THE_NETHERWORLD_KATANA = ITEMS.register("netherworld_katana", () -> new ItemNetherworldKatana(EMToolsTier.NETHERWORLD_KATANA_TIER, new Item.Properties().tab(EMTabGroup.TABS).rarity(Rarity.EPIC).fireResistant()));
+    public static final RegistryObject<Item> IMMORTAL_STAFF = ITEMS.register("immortal_staff", () -> new ItemImmortalStaff(new Item.Properties().tab(EMTabGroup.TABS).fireResistant()));
     public static final RegistryObject<ItemGuardianAxe> GUARDIAN_AXE = ITEMS.register("guardian_axe", () -> new ItemGuardianAxe(EMToolsTier.GUARDIAN_AXE_TIER, new Item.Properties().tab(EMTabGroup.TABS).rarity(Rarity.EPIC).fireResistant()));
     public static final RegistryObject<Item> GUARDIAN_CORE = ITEMS.register("guardian_core", () -> new ItemGuardianCore(new Item.Properties().tab(EMTabGroup.TABS).rarity(Rarity.EPIC).defaultDurability(100).fireResistant()));
     //唱片
     public static final RegistryObject<Item> GUARDIANS_MUSIC_DISC = ITEMS.register("guardians_music_disc", () -> new RecordItem(8, SoundInit.GUARDIANS, new Item.Properties().tab(EMTabGroup.TABS).stacksTo(1).rarity(Rarity.RARE), 3640));
     //刷怪蛋
-    public static final RegistryObject<Item> TESTER = registerEgg("tester_egg", EntityInit.TESTER, new Item.Properties().tab(EMTabGroup.TABS), rgb2dec(70, 145, 190), rgb2dec(95, 195, 255));
+    public static final RegistryObject<Item> TESTER_EGG = registerEgg("tester_egg", EntityInit.TESTER, new Item.Properties().tab(EMTabGroup.TABS), rgb2dec(70, 145, 190), rgb2dec(95, 195, 255));
     public static final RegistryObject<Item> IMMORTAL_SKELETON_EGG = registerEgg("immortal_skeleton_egg", EntityInit.IMMORTAL_SKELETON, new Item.Properties().tab(EMTabGroup.TABS), IMMORTAL_BACK_COLOR, rgb2dec(90, 180, 204));
     public static final RegistryObject<Item> IMMORTAL_KNIGHT_EGG = registerEgg("immortal_knight_egg", EntityInit.IMMORTAL_KNIGHT, new Item.Properties().tab(EMTabGroup.TABS), IMMORTAL_BACK_COLOR, rgb2dec(0, 143, 204));
     public static final RegistryObject<Item> IMMORTAL_SHAMAN_EGG = registerEgg("immortal_shaman_egg", EntityInit.IMMORTAL_SHAMAN, new Item.Properties().tab(EMTabGroup.TABS), IMMORTAL_BACK_COLOR, rgb2dec(56, 195, 255));
@@ -80,5 +83,6 @@ public class ItemInit {
 
     public static void initializeAttributes() {
         GUARDIAN_AXE.get().refreshAttributesFromConfig();
+        THE_NETHERWORLD_KATANA.get().refreshAttributesFromConfig();
     }
 }

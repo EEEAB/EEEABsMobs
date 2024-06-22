@@ -20,6 +20,7 @@ public class ItemSoulSummoningNecklace extends Item {
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
         EMConfigHandler.Item item = EMConfigHandler.COMMON.ITEM;
-        tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), EMTUtils.STYLE_GRAY, item.SSNCumulativeMaximumDamage.get(), item.SSNCoolingTime.get()));
+        tooltip.add(EMTUtils.itemCoolTime(item.SSNCoolingTime.get()));
+        tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), EMTUtils.STYLE_GRAY, item.SSNCumulativeMaximumDamage.get()));
     }
 }

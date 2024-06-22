@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X X",
+    "XXX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "item": "eeeabsmobs:ghost_steel_ingot"
+    }
+  },
+  "result": {
+    "item": "eeeabsmobs:ghost_warrior_chestplate"
+  }
+}

@@ -19,12 +19,13 @@ import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityElectromagnetic;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGrenade;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
@@ -49,6 +50,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.AbstractGolem;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.entity.player.Player;
@@ -93,10 +95,10 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     private int electromagneticTick;
     public final ControlledAnimation glowControlled = new ControlledAnimation(10);
     public final ControlledAnimation hotControlled = new ControlledAnimation(20);
-    private static final int RANGE_ATTACK_TICK = 350;
+    public final ControlledAnimation electromagneticConControlled = new ControlledAnimation(20);
+    private static final int RANGE_ATTACK_TICK = 400;
     private static final int SMASH_ATTACK_TICK = 300;
     private static final int ELECTROMAGNETIC_TICK = 450;
-    public final ControlledAnimation electromagneticConControlled = new ControlledAnimation(20);
     @OnlyIn(Dist.CLIENT)
     public Vec3[] hand;//0:left 1:right
 
@@ -186,6 +188,8 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 this.smashAttackTick = SMASH_ATTACK_TICK;
             } else if (animation == this.rangeAttackAnimation) {
                 this.rangeAttackTick = RANGE_ATTACK_TICK;
+            } else if (animation == this.electromagneticAnimation) {
+                this.electromagneticTick = ELECTROMAGNETIC_TICK;
             }
         }
     }
@@ -237,7 +241,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             }
         });
         this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, () -> rangeAttackAnimation));
-        this.goalSelector.addGoal(2, new AnimationMeleePlusAI<>(this, 1.0, 15, () -> attackAnimationLeft, () -> attackAnimationRight));
+        this.goalSelector.addGoal(2, new AnimationMeleePlusAI<>(this, 1.0, 40, () -> attackAnimationLeft, () -> attackAnimationRight));
     }
 
     @Override
@@ -264,7 +268,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 this.playAnimation(this.activeAnimation);
                 this.setActive(true);
             }
-            if (!this.isNoAi() && this.isActive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() == null && this.deactivateTick >= 300) {
+            if (!this.isNoAi() && this.isActive() && this.isAlive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() == null && this.deactivateTick >= 300) {
                 this.playSound(SoundInit.GSH_FRICTION.get());
                 this.playAnimation(this.deactivateAnimation);
                 this.setActive(false);
@@ -274,6 +278,9 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             }
             if (!this.isNoAi() && this.isActive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() != null && this.rangeAttackTick <= 0 && Math.pow(this.targetDistance, 2.0) > this.getMeleeAttackRangeSqr(this.getTarget()) + 5) {
                 this.playAnimation(this.rangeAttackAnimation);
+            }
+            if (!this.isNoAi() && this.isActive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() != null && this.electromagneticTick <= 0 && (this.getHealthPercentage() <= 80 || this.tickCount > 1200) && this.targetDistance < 6.5F) {
+                this.playAnimation(this.electromagneticAnimation);
             }
         }
 
@@ -286,9 +293,9 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             } else if (tick == 18) {
                 this.playSound(SoundEvents.GENERIC_EXPLODE, 1.25F, 1F + this.random.nextFloat() * 0.1F);
                 BlockState block = this.level.getBlockState(new BlockPos(Mth.floor(this.getX()), Mth.floor(this.getY() - 0.2), Mth.floor(this.getZ())));
-                ModParticleUtils.annularParticleOutburstOnGround(this.level, new BlockParticleOption(ParticleTypes.BLOCK, block), this, 16, 8, 3, 0.5, 0, 0.1);
+                ModParticleUtils.annularParticleOutburstOnGround(level, new BlockParticleOption(ParticleTypes.BLOCK, block), this, 16, 8, 3, 0.5, 0, 0.1);
                 if (!this.hotControlled.isStop())
-                    ModParticleUtils.annularParticleOutburstOnGround(this.level, ParticleTypes.SOUL_FIRE_FLAME, this, 6, 6, 2.5, 0.5, 0, 0.15);
+                    ModParticleUtils.annularParticleOutburstOnGround(level, ParticleTypes.SOUL_FIRE_FLAME, this, 6, 6, 2.5, 0.5, 0, 0.15);
             }
         } else if (this.getAnimation() == this.rangeAttackAnimation) {
             if (tick >= 20 && tick % 20 == 0) {
@@ -302,10 +309,10 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             if (tick <= 15) {
                 LivingEntity target = this.getTarget();
                 if (target != null) {
-                    this.lookAt(target,30F,30F);
+                    this.lookAt(target, 30F, 30F);
                     this.getLookControl().setLookAt(target, 30F, 30F);
                 }
-            }else {
+            } else {
                 this.setYRot(this.yRotO);
             }
             if (tick == 38) {
@@ -324,7 +331,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 }
             } else if (tick == 39) {
                 boolean hot = !this.hotControlled.isStop();
-                EntityCameraShake.cameraShake(this.level, position(), 15, 0.125F, 0, 10);
+                EntityCameraShake.cameraShake(level, position(), 15, 0.125F, 0, 10);
                 if (this.level.isClientSide) {
                     ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 25, ParticleDust.EnumDustBehavior.GROW, 1.0f);
                     ParticleOptions[] options;
@@ -333,13 +340,16 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                     } else {
                         options = new ParticleOptions[]{dustData};
                     }
-                    ModParticleUtils.annularParticleOutburst(this.level, 15, options, getX(), this.getY(), getZ(), 0.5F, 0.1);
+                    ModParticleUtils.annularParticleOutburst(level, 15, options, getX(), this.getY(), getZ(), 0.5F, 0.1);
                 }
             }
         } else if (this.getAnimation() == this.electromagneticAnimation) {
-            if (tick > 20 && tick < 90) {
+            if (tick == 1) {
+                this.playSound(SoundInit.GSH_PRE_ATTACK.get(), 0.75F, 0.5F);
+            } else if (tick > 20 && tick < 90) {
                 this.electromagneticConControlled.increaseTimer();
-                if (tick == 44 || tick == 66 || tick == 88) {
+                if (tick == 42 || tick == 64 || tick == 86) {
+                    this.playSound(SoundInit.GSH_ELECTROMAGNETIC.get(), 1F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
                     this.electromagneticConControlled.decreaseTimer(10);
                 }
             } else {
@@ -421,10 +431,27 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             return false;
         } else {
             if (!(source == DamageSource.OUT_OF_WORLD || source == DamageSource.GENERIC)) {
-                damage *= 0.8F;//减少20%伤害
+                if (this.getAnimation() == this.electromagneticAnimation) {
+                    damage *= 0.2F;
+                } else {
+                    damage *= 0.8F;
+                }
             }
         }
         return super.hurt(source, damage);
+    }
+
+    @Override
+    protected void dropCustomDeathLoot(DamageSource source, int pLooting, boolean pRecentlyHit) {
+        super.dropCustomDeathLoot(source, pLooting, pRecentlyHit);
+        Entity entity = source.getEntity();
+        if (entity instanceof Player) {
+            ItemEntity itementity = this.spawnAtLocation(ItemInit.ANCIENT_DRIVE_CRYSTAL.get());
+            if (itementity != null) {
+                itementity.setExtendedLifetime();
+                itementity.setGlowingTag(true);
+            }
+        }
     }
 
     @Override
@@ -489,7 +516,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         return Mob.createMobAttributes().
                 add(Attributes.MAX_HEALTH, 150.0D).
                 add(Attributes.ARMOR, 15.0D).
-                add(Attributes.ATTACK_DAMAGE, 10.0D).
+                add(Attributes.ATTACK_DAMAGE, 8.0D).
                 add(Attributes.FOLLOW_RANGE, 32.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.28D).
                 add(ForgeMod.ENTITY_GRAVITY.get(), 0.125D).
@@ -630,7 +657,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                     this.lostTargetDelay += 2;
                 }
                 this.moveGoal(target);
-                this.entity.getLookControl().setLookAt(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), 15F, 30F);
+                this.entity.getLookControl().setLookAt(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), 30F, 30F);
             } else {
                 this.entity.playAnimation(this.entity.rangeAttackStopAnimation);
                 return;
@@ -672,10 +699,20 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             return animation == this.entity.electromagneticAnimation;
         }
 
-        //TODO 待实现 2024/5/25完成动画制作
         @Override
         public void tick() {
-            super.tick();
+            int tick = entity.getAnimationTick();
+            if (!this.entity.level.isClientSide) {
+                if (tick == 43 || tick == 65 || tick == 87) {
+                    final int count = 10;
+                    float offset = (float) Math.toRadians(this.entity.getRandom().nextGaussian() * 360 - 180);
+                    float amount = (float) (this.entity.getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.25F);
+                    for (int i = 0; i < count; ++i) {
+                        float f1 = (float) (this.entity.getYRot() + (i + offset) * (float) Math.PI * (2.0 / count));
+                        EntityElectromagnetic.shoot(this.entity.level, this.entity, amount, 2.0F, count + 2, 3, (f1 * (180F / (float) Math.PI)) - 90F);
+                    }
+                }
+            }
         }
     }
 }

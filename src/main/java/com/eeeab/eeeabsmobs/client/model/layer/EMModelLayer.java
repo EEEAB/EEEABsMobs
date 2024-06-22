@@ -24,4 +24,11 @@ public class EMModelLayer {
     public static final ModelLayerLocation BLOOD_BALL = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "blood_ball"), "main");
     public static final ModelLayerLocation GRENADE = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "grenade"), "main");
     public static final ModelLayerLocation GUARDIAN_BLADE = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "guardian_blade"), "main");
+
+    //盔甲
+    public static final ModelLayerLocation GHOST_WARRIOR_ARMOR = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "ghost_warrior_armor"), "main");
+    public static final ModelLayerLocation GHOST_WARRIOR_ARMOR_LEGS = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "ghost_warrior_armor_legs"), "main");
+
+    //物品
+    public static final ModelLayerLocation THE_NETHERWORLD_KATANA = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "netherworld_katana"), "main");
 }

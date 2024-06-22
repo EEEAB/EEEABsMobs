@@ -55,7 +55,8 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
             if (capability != null) {
                 player.playSound(SoundEvents.GENERIC_EXPLODE, 1.5F, 1F + player.getRandom().nextFloat() * 0.1F);
                 EntityCameraShake.cameraShake(level, player.position(), 8, 0.125F, 0, 20);
-                if (level.isClientSide) ModParticleUtils.roundParticleOutburst(level, 50, new ParticleOptions[]{ParticleInit.GUARDIAN_SPARK.get()}, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 0.5F);
+                if (level.isClientSide)
+                    ModParticleUtils.roundParticleOutburst(level, 50, new ParticleOptions[]{ParticleInit.GUARDIAN_SPARK.get()}, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 0.5F);
                 AbilityHandler.INSTANCE.sendPlayerAbilityMessage(player, AbilityHandler.GUARDIAN_AXE_ABILITY_TYPE);
                 player.getCooldowns().addCooldown(this, 100);
                 return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide);
@@ -89,10 +90,11 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
 
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.add(EMTUtils.UNABLE_BREAKS);
         if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340)) {
+            tooltip.add(EMTUtils.UNABLE_BREAKS);
             tooltip.add(EMTUtils.simpleShiftDownText(null, EMTUtils.STYLE_GREEN));
         } else {
+            tooltip.add(EMTUtils.itemCoolTime(5));
             tooltip.add(EMTUtils.simpleWeaponText(this.getDescriptionId(), EMTUtils.STYLE_GRAY));
         }
     }

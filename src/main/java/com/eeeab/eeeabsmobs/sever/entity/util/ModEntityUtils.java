@@ -16,6 +16,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.ForgeHooks;
@@ -107,6 +108,18 @@ public class ModEntityUtils {
     public static boolean canMobDestroy(Entity entity) {
         return ForgeEventFactory.getMobGriefingEvent(entity.level, entity);
     }
+
+    /**
+     * 根据指定坐标计算获得轴对称边界框
+     *
+     * @param yOffset 边界框y轴偏移
+     * @return 特定大小的边界框
+     */
+    public static AABB makeAABBWithSize(double x, double y, double z, double yOffset, double sizeX, double sizeY, double sizeZ) {
+        y += yOffset;
+        return new AABB(x - sizeX / 2.0, y - sizeY / 2.0, z - sizeZ / 2.0, x + sizeX / 2.0, y + sizeY / 2.0, z + sizeZ / 2.0);
+    }
+
 
     /**
      * 寻找到目标的直线延展坐标

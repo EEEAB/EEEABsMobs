@@ -82,6 +82,12 @@
       "eeeabsmobs:entity/guling_sentinel/death"
     ]
   },
+  "gs.electromagnetic": {
+    "subtitle": "subtitles.gs.electromagnetic",
+    "sounds": [
+      "eeeabsmobs:entity/guling_sentinel/electromagnetic"
+    ]
+  },
   "gsh.step": {
     "subtitle": "subtitles.gsh.step",
     "sounds": [
@@ -141,6 +147,12 @@
     "subtitle": "subtitles.gsh.friction",
     "sounds": [
       "eeeabsmobs:entity/guling_sentinel_heavy/friction"
+    ]
+  },
+  "gsh.electromagnetic": {
+    "subtitle": "subtitles.gsh.electromagnetic",
+    "sounds": [
+      "eeeabsmobs:entity/guling_sentinel_heavy/electromagnetic"
     ]
   },
   "nameless.guardian.step": {

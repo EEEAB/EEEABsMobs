@@ -109,6 +109,10 @@ public class EntityExplode extends EntityMagicEffects {
     }
 
     @Override
+    public void setDeltaMovement(double x, double y, double z) {
+    }
+
+    @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_EXPLODE, false);

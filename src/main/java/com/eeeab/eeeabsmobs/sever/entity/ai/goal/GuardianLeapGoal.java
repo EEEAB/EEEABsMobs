@@ -34,9 +34,7 @@ public class GuardianLeapGoal extends AnimationSimpleAI<EntityNamelessGuardian> 
                 entity.setYRot(entity.yRotO);
                 if (tick == 12) {
                     Vec3 vec3 = findTargetPoint(entity, target);
-                    double speedX = entity.isInWater() ? 0.3D : 0.155D;
-                    double speedY = entity.isInWater() ? 0.2D : 0.055D;
-                    entity.setDeltaMovement(vec3.x * speedX, 1.2 + Mth.clamp(vec3.y * speedY, 0D, 12D), vec3.z * speedX);
+                    entity.setDeltaMovement(vec3.x * 0.155D, 1.2 + Mth.clamp(vec3.y * 0.055D, 0D, 12D), vec3.z * 0.155D);
                 }
             }
         } else if (tick == 12) {

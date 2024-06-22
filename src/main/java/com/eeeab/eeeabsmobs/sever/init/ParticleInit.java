@@ -5,6 +5,7 @@ import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleData;
+import com.eeeab.eeeabsmobs.client.particle.util.RibbonParticleData;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
@@ -42,6 +43,7 @@ public class ParticleInit {
     public static final RegistryObject<ParticleType<AdvancedParticleData>> ADV_ORB = ParticleInit.registerAdvancedParticle("adv_orb", AdvancedParticleData.DESERIALIZER);
     public static final RegistryObject<ParticleType<AdvancedParticleData>> CRIMSON = ParticleInit.registerAdvancedParticle("crimson", AdvancedParticleData.DESERIALIZER);
     public static final RegistryObject<ParticleType<AdvancedParticleData>> CRIMSON_EYE = ParticleInit.registerAdvancedParticle("crimson_eye", AdvancedParticleData.DESERIALIZER);
+    public static final RegistryObject<ParticleType<RibbonParticleData>> FLAT_RIBBON = ParticleInit.registerRibbonParticle("flat_ribbon", RibbonParticleData.DESERIALIZER);
 
     private static RegistryObject<ParticleType<AdvancedParticleData>> registerAdvancedParticle(String key, ParticleOptions.Deserializer<AdvancedParticleData> deserializer) {
         return PARTICLES.register(key, () -> new ParticleType<AdvancedParticleData>(false, deserializer) {
@@ -50,6 +52,15 @@ public class ParticleInit {
             }
         });
     }
+
+    private static RegistryObject<ParticleType<RibbonParticleData>> registerRibbonParticle(String key, ParticleOptions.Deserializer<RibbonParticleData> deserializer) {
+        return PARTICLES.register(key, () -> new ParticleType<RibbonParticleData>(false, deserializer) {
+            public Codec<RibbonParticleData> codec() {
+                return RibbonParticleData.CODEC_RIBBON(this);
+            }
+        });
+    }
+
 
     public static void register(IEventBus bus) {
         PARTICLES.register(bus);
