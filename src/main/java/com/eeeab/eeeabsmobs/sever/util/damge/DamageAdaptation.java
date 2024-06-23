@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.sever.util.damge;
 
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,7 +17,7 @@ import java.util.Map;
  * 伤害适应
  *
  * @author EEEAB
- * @version 1.0
+ * @version 1.1
  */
 public class DamageAdaptation {
     /**
@@ -58,20 +59,17 @@ public class DamageAdaptation {
 
     public float damageAfterAdaptingOnce(DamageSource source, float amount) {
         Entity entity = source.getEntity();
-        if (entity == null) {
-            return amount;
-        }
-        String msgId = source.getMsgId();
-        String uuid = this.adaptsSameTypeMobs ? entity.getClass().getName() : entity.getStringUUID();
         // 判断伤害类型是否可被适应
-        if (source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
+        if (entity == null || source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
             return amount;
         }
+        String uuid = this.adaptsSameTypeMobs ? entity.getClass().getName() : entity.getStringUUID();
         String key;
         if (entity instanceof Player player) {
-            key = spliceCharacters(uuid, player.getMainHandItem().getItem().getDescriptionId());
+            InteractionHand hand = player.getUsedItemHand();
+            key = spliceCharacters(uuid, player.getItemInHand(hand).getItem().getDescriptionId());
         } else {
-            key = spliceCharacters(uuid, msgId);
+            key = spliceCharacters(uuid, source.getMsgId());
         }
         DamageInfo info = ADAPT_MAP.getOrDefault(key, null);
         long systemMs = System.currentTimeMillis();
