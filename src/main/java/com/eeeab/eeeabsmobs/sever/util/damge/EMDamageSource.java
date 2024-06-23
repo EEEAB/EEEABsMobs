@@ -1,5 +1,6 @@
-package com.eeeab.eeeabsmobs.sever.util;
+package com.eeeab.eeeabsmobs.sever.util.damge;
 
+import com.eeeab.eeeabsmobs.sever.util.EMResourceKey;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
