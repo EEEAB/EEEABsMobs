@@ -6,7 +6,7 @@ import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.EMDamageSource;
+import com.eeeab.eeeabsmobs.sever.util.damge.EMDamageSource;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.Difficulty;

@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs.sever.entity.projectile;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
-import com.eeeab.eeeabsmobs.sever.util.EMDamageSource;
+import com.eeeab.eeeabsmobs.sever.util.damge.EMDamageSource;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;

@@ -1,8 +1,10 @@
 package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
+import com.eeeab.animate.server.ai.animation.AnimationActivate;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
+import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IBoss;
 import com.eeeab.eeeabsmobs.sever.entity.XpReward;
@@ -10,27 +12,34 @@ import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
+import com.eeeab.eeeabsmobs.sever.util.damge.DamageAdaptation;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -46,9 +55,13 @@ import java.util.UUID;
 
 //创建于 2023/1/17
 public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
-    public final Animation switchStage2Animation = Animation.create(80);
+    public final Animation dieAnimation = Animation.create(60);
+    public final Animation spawnAnimation = Animation.create(100);
+    public final Animation switchStage2Animation = Animation.create(90);
     public final Animation switchStage3Animation = Animation.create(80);
     private final Animation[] animations = new Animation[]{
+            dieAnimation,
+            spawnAnimation,
             switchStage2Animation,
             switchStage3Animation
     };
@@ -56,14 +69,15 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
     private static final UUID HEALTH_UUID = UUID.fromString("E2F534E6-4A55-4B72-A9D2-3157D084A281");
     private static final UUID ARMOR_UUID = UUID.fromString("FA2FB8E8-FFE8-4D77-B23B-E0110D4A175F");
     private static final UUID ATTACK_UUID = UUID.fromString("F8DBD65D-3C4A-4851-83D3-4CB22964A196");
-    //正在转换阶段时为true
     private boolean switching;
-    //定期检查是否需要进行转换阶段(当转换阶段失败根据标记进行再次转换)
-    private boolean switchFlag;
+    private DamageSource lastDamageSource;
+    private final DamageAdaptation damageAdaptation;
+    public final ControlledAnimation glowControllerAnimation = new ControlledAnimation(40);
 
     public EntityTheImmortal(EntityType<? extends EntityAbsImmortal> type, Level level) {
         super(type, level);
-        this.active = true;
+        this.active = false;
+        this.damageAdaptation = new DamageAdaptation(50, 10000, 0.05F, 0.8F, true);
         this.setPathfindingMalus(BlockPathTypes.UNPASSABLE_RAIL, 0.0F);
         this.setPathfindingMalus(BlockPathTypes.DAMAGE_OTHER, 8.0F);
         this.setPathfindingMalus(BlockPathTypes.POWDER_SNOW, 8.0F);
@@ -161,7 +175,7 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
     @Override
     public boolean isInvulnerableTo(DamageSource damageSource) {
         Animation animation = this.getAnimation();
-        return (animation == this.switchStage2Animation || animation == this.switchStage3Animation) || super.isInvulnerableTo(damageSource);
+        return !this.isActive() || ((animation == this.switchStage2Animation || animation == this.switchStage3Animation) || super.isInvulnerableTo(damageSource));
     }
 
     @Override
@@ -201,7 +215,14 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(6, new RandomStrollGoal(this, 0.8D));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, EntityAbsImmortal.class));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.goalSelector.addGoal(6, new RandomStrollGoal(this, 0.8D) {
+            @Override
+            public boolean canUse() {
+                return EntityTheImmortal.this.active && super.canUse();
+            }
+        });
         this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new EMLookAtGoal(this, Mob.class, 6.0F));
     }
@@ -211,32 +232,74 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
         super.registerCustomGoals();
         this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, () -> switchStage2Animation));
         this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, () -> switchStage3Animation));
+        this.goalSelector.addGoal(2, new AnimationActivate<>(this, () -> spawnAnimation));
     }
 
     @Override
     public void tick() {
         super.tick();
         this.floatImmortal();
+        this.glowControllerAnimation.updatePrevTimer();
+
         EMAnimationHandler.INSTANCE.updateAnimations(this);
+
+        this.pushEntitiesAway(2F, getBbHeight(), 2F, 2F);
+        LivingEntity lookTarget = this.getLastAttacker();
+        if (this.getTarget() != null) {
+            lookTarget = this.getTarget();
+        }
+        if (this.getAnimation() == this.switchStage2Animation || this.getAnimation() == this.switchStage3Animation) {
+            if (lookTarget != null && lookTarget.isAlive()) {
+                this.getLookControl().setLookAt(lookTarget, 30F, 30F);
+            }
+        } else if (this.getAnimation() == this.spawnAnimation) {
+            if (this.getAnimationTick() > 20) {
+                if (lookTarget != null && lookTarget.isAlive()) {
+                    this.getLookControl().setLookAt(lookTarget, 30F, 30F);
+                }
+            }
+        }
+
+        if (!this.isActive()) {
+            this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
+        }
     }
 
     @Override
     public void aiStep() {
         super.aiStep();
-        this.healToSwitch(this.switchStage2Animation);
-        this.healToSwitch(this.switchStage3Animation);
+        Animation animation = this.getAnimation();
+        if (!this.level().isClientSide) {
+            if (animation == this.switchStage2Animation || animation == this.switchStage3Animation) {
+                this.heal(this.getMaxHealth() / animation.getDuration());
+            }
+            this.damageAdaptation.tick(this);
+        }
+        this.glowControllerAnimation.incrementOrDecreaseTimer(this.isActive());
+    }
+
+    @Override
+    public void setHealth(float health) {
+        //判断是否扣血
+        if (health < this.getHealth()) {
+            if (this.lastDamageSource == null || !this.lastDamageSource.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
+                float damage = Math.min(this.getHealth() - health, 20);
+                health = this.getHealth() - damage;
+            }
+        }
+        super.setHealth(health);
     }
 
     @Override
     public boolean hurt(DamageSource source, float damage) {
-        Entity entity = source.getEntity();
         if (this.level().isClientSide) {
             return false;
         } else if (this.isInvulnerableTo(source)) {
             return false;
         } else {
-            //限伤逻辑
-            boolean flag = super.hurt(source, damage);
+            this.lastDamageSource = source;
+            float damaged = this.damageAdaptation.damageAfterAdaptingOnce(source, damage);
+            boolean flag = super.hurt(source, damaged);
             //判断是否切换阶段
             if (this.getHealth() <= 0 && this.getStage() != Stage.STAGE3) {
                 this.nextStage(Stage.byStage(this.getStage().type + 1));
@@ -267,6 +330,7 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
         super.addAdditionalSaveData(compound);
         compound.putInt("stage", this.getStage().type);
         compound.putBoolean("switching", this.switching);
+        compound.putBoolean("isActive", this.isActive());
     }
 
     @Override
@@ -274,8 +338,8 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
         super.readAdditionalSaveData(compound);
         this.entityData.set(DATA_STAGE, compound.getInt("stage"));
         this.switching = compound.getBoolean("switching");
-        System.out.println(this.getStage());
-        if (this.switching/* || !this.isDeadOrDying()*/) {
+        this.setActive(compound.getBoolean("isActive"));
+        if (this.switching) {
             if (this.getStage() == Stage.STAGE1) {
                 this.nextStage(Stage.STAGE2);
             } else if (this.getStage() == Stage.STAGE2) {
@@ -287,11 +351,54 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
     }
 
     @Override
+    protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack itemStack = player.getItemInHand(hand);
+        if (!itemStack.is(Items.AIR)) {
+            return InteractionResult.PASS;
+        } else if (this.isActive() || this.isNoAi()) {
+            return InteractionResult.PASS;
+        } else {
+            if (!player.getAbilities().instabuild) {
+                System.out.println("物品数量减1");
+                //itemStack.shrink(1);
+            }
+            this.playAnimation(this.spawnAnimation);
+            this.setActive(true);
+            return InteractionResult.SUCCESS;
+        }
+    }
+
+    @Nullable
+    @Override
+    //在初始生成时调用
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @javax.annotation.Nullable SpawnGroupData spawnDataIn, @javax.annotation.Nullable CompoundTag dataTag) {
+        this.setActive(false);
+        return spawnDataIn;
+    }
+
+
+    public Stage getStage() {
+        return Stage.byStage(this.entityData.get(DATA_STAGE));
+    }
+
+    @Override
+    public boolean isGlow() {
+        return !this.glowControllerAnimation.isStop();
+    }
+
+    @Override
     public void setOwner(@Nullable EntityAbsImmortal owner) {
+
     }
 
     @Override
     public void setOwnerUUID(UUID uuid) {
+
+    }
+
+    @Override
+    public void setSpawnParticle(int amount) {
+
     }
 
     @Override
@@ -300,23 +407,13 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
     }
 
     @Override
+    public Animation getDeathAnimation() {
+        return this.dieAnimation;
+    }
+
+    @Override
     public Animation[] getAnimations() {
         return this.animations;
-    }
-
-    public Stage getStage() {
-        return Stage.byStage(this.entityData.get(DATA_STAGE));
-    }
-
-    /**
-     * 不朽者切换阶段时治疗
-     *
-     * @param animation 切换动画
-     */
-    private void healToSwitch(Animation animation) {
-        if (!this.level().isClientSide && this.getAnimation() == animation) {
-            this.heal(this.getMaxHealth() / animation.getDuration());
-        }
     }
 
     /**
@@ -332,14 +429,13 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
             switch (this.getStage()) {
                 case STAGE1 -> {
                     System.out.println("阶段1");
-                    if (stage == Stage.STAGE2 /*&& this.getAnimation() == this.getNoAnimation()*/) {
+                    if (stage == Stage.STAGE2) {
                         playAnimation = this.switchStage2Animation;
                     }
                 }
                 case STAGE2 -> {
                     System.out.println("阶段2");
-                    if (stage == Stage.STAGE3 /*&& this.getAnimation() == this.getNoAnimation()*/) {
-                        if (this.getHealth() <= 0) this.setHealth(0.1F);
+                    if (stage == Stage.STAGE3) {
                         playAnimation = this.switchStage3Animation;
                     }
                 }
