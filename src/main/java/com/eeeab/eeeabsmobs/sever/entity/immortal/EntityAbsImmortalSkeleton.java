@@ -1,10 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
 import com.eeeab.animate.server.ai.*;
-import com.eeeab.animate.server.ai.animation.AnimationActivate;
-import com.eeeab.animate.server.ai.animation.AnimationBlock;
-import com.eeeab.animate.server.ai.animation.AnimationMelee;
-import com.eeeab.animate.server.ai.animation.AnimationRange;
+import com.eeeab.animate.server.ai.animation.*;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
@@ -37,7 +34,6 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -52,7 +48,8 @@ import java.util.UUID;
 
 public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implements RangedAttackMob {
     public final Animation swingArmAnimation = Animation.create(15);
-    public final Animation meleeAnimation = Animation.create(15);
+    public final Animation meleeAnimation1 = Animation.create(15);
+    public final Animation meleeAnimation2 = Animation.create(15);
     public final Animation bowAnimation = Animation.create(30);
     public final Animation crossBowChangeAnimation = Animation.create(30);
     public final Animation crossBowHoldAnimation = Animation.create(10);
@@ -60,22 +57,26 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     public final Animation blockAnimation = Animation.create(10);
     public final Animation spawnAnimation = Animation.create(20);
     public final Animation roarAnimation = Animation.create(45);
+    public final Animation dieAnimation = Animation.create(30);
     private final Animation[] animations = new Animation[]{
             swingArmAnimation,
-            meleeAnimation,
+            meleeAnimation1,
+            meleeAnimation2,
             bowAnimation,
             crossBowChangeAnimation,
             crossBowHoldAnimation,
             castAnimation,
             blockAnimation,
             spawnAnimation,
-            roarAnimation
+            roarAnimation,
+            dieAnimation
     };
     private static final EntityDataAccessor<Integer> DATA_CAREER_TYPE = SynchedEntityData.defineId(EntityAbsImmortalSkeleton.class, EntityDataSerializers.INT);
     private static final UUID ATTACK_UUID = UUID.fromString("2D305FA6-B041-4300-80F0-D04F95A65BA8");
     private static final UUID HEALTH_UUID = UUID.fromString("6C41A484-299F-4DB7-A8DF-75713D68D2DE");
     private static final UUID ARMOR_UUID = UUID.fromString("CF54F152-37B6-4A40-A7E5-5D0715B98423");
     private static final UUID SPEED_UUID = UUID.fromString("69163DAB-E9E5-7769-C147-31A405D27167");
+    private int blockCoolTick;
 
     public EntityAbsImmortalSkeleton(EntityType<? extends EntityAbsImmortal> type, Level level) {
         super(type, level);
@@ -178,13 +179,15 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         });
         this.goalSelector.addGoal(1, new AnimationRange<>(this, () -> bowAnimation, 25, null));
         this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> swingArmAnimation, 6, 2.5F, 1.0F, 1.0F));
-        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> meleeAnimation, 5, 3.0F, 1.0F, 1.0F));
+        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> meleeAnimation1, 8, 2.8F, 1.0F, 1.0F));
+        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> meleeAnimation2, 6, 2.8F, 1.0F, 1.0F));
         this.goalSelector.addGoal(1, new AnimationBlock<>(this, () -> blockAnimation));
+        this.goalSelector.addGoal(2, new AnimationDie<>(this));
         this.targetSelector.addGoal(2, new OwnerCopyTargetGoal<>(this));
         this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 20, 10F, Items.CROSSBOW, e -> e.active && e.checkHoldItemIsCareerWeapon(CareerType.ARCHER, CareerType.KNIGHT), () -> crossBowChangeAnimation));
         this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 25, 12F, Items.BOW, e -> e.active && e.checkHoldItemIsCareerWeapon(CareerType.ARCHER, CareerType.KNIGHT), () -> bowAnimation));
         this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 300, 16F, null, e -> e.active && e.checkHoldItemIsCareerWeapon(CareerType.MAGE), () -> castAnimation));
-        this.goalSelector.addGoal(4, new AnimationMeleeAI<>(this, 1D, 10, e -> e.checkHoldItemIsCareerWeapon(CareerType.WARRIOR, CareerType.KNIGHT), () -> meleeAnimation));
+        this.goalSelector.addGoal(4, new AnimationMeleeAI<>(this, 1D, 10, e -> e.checkHoldItemIsCareerWeapon(CareerType.WARRIOR, CareerType.KNIGHT), () -> meleeAnimation1, () -> meleeAnimation2));
         this.goalSelector.addGoal(5, new AnimationMeleeAI<>(this, 1.05D, 10, EntityAbsImmortalSkeleton::checkConformCareerWeapon, () -> swingArmAnimation));
     }
 
@@ -201,7 +204,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
                 if (attacking && getSensing().hasLineOfSight(target) && canAttack(target)) {
                     if (targetDistance < 1.5 || targetDistance < 2.5 && ModEntityUtils.checkTargetComingCloser(this, target)) {
                         this.stopUsingItem();
-                        this.playAnimation(this.meleeAnimation);
+                        this.playAnimation(this.meleeAnimation1);
                         attackTick = 20;
                         attacking = false;
                     }
@@ -218,8 +221,11 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     @Override
     protected void customServerAiStep() {
         super.customServerAiStep();
-        if (attackTick > 0) {
-            attackTick--;
+        if (this.attackTick > 0) {
+            this.attackTick--;
+        }
+        if (this.blockCoolTick > 0) {
+            this.blockCoolTick--;
         }
     }
 
@@ -232,9 +238,14 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
             float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this, entity.position());
             hitFlag = (entityRelativeAngle <= attackArc / 2f && entityRelativeAngle >= -attackArc / 2f) || (entityRelativeAngle >= 360 - attackArc / 2f || entityRelativeAngle <= -attackArc + 90f / 2f);
         }
-        if (hitFlag && this.checkHoldItemCanBlock() && entity instanceof LivingEntity livingEntity && !source.is(DamageTypeTags.BYPASSES_ARMOR) && (this.getAnimation() == this.getNoAnimation() || this.getAnimation() == this.blockAnimation)) {
+        if (hitFlag && this.checkHoldItemCanBlock() && entity instanceof LivingEntity livingEntity && !source.is(DamageTypeTags.BYPASSES_ARMOR) && (this.isNoAnimation() || this.getAnimation() == this.blockAnimation)) {
             this.blockEntity = livingEntity;
-            this.playSound(SoundEvents.SHIELD_BLOCK);
+            if (livingEntity.getItemInHand(livingEntity.getUsedItemHand()).getItem() instanceof AxeItem || damage >= this.getMaxHealth()) {
+                this.playSound(SoundEvents.SHIELD_BREAK);
+                this.blockCoolTick = 100;
+            } else {
+                this.playSound(SoundEvents.SHIELD_BLOCK);
+            }
             if (this.getAnimation() != this.blockAnimation) this.playAnimation(this.blockAnimation);
             return false;
         }
@@ -308,6 +319,11 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     }
 
     @Override
+    public Animation getDeathAnimation() {
+        return this.dieAnimation;
+    }
+
+    @Override
     public Animation[] getAnimations() {
         return this.animations;
     }
@@ -354,8 +370,10 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     }
 
     public boolean checkHoldItemCanBlock() {
-        return this.getItemInHand(InteractionHand.OFF_HAND).getItem() instanceof ShieldItem
-                || this.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ShieldItem;
+        if (this.getOffhandItem().getItem() instanceof ShieldItem || this.getMainHandItem().getItem() instanceof ShieldItem) {
+            return this.blockCoolTick <= 0;
+        }
+        return false;
     }
 
     public boolean checkHoldItemIsCareerWeapon(CareerType... careerType) {
