@@ -304,10 +304,21 @@
       {
         "name": "eeeabsmobs:music/guardians/guardians",
         "stream": true,
-        "volume": 0.5
+        "volume": 1.0
       }
     ],
     "subtitle": "subtitles.music.guardians"
+  },
+  "music.the_army_of_minotaur": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "eeeabsmobs:music/the_army_of_minotaur",
+        "stream": true,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.music.the_army_of_minotaur"
   }
 }
 

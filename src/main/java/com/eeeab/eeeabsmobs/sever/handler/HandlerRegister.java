@@ -19,7 +19,6 @@ import com.eeeab.eeeabsmobs.client.particle.util.ParticleRibbon;
 import com.eeeab.eeeabsmobs.client.render.EmptyRender;
 import com.eeeab.eeeabsmobs.client.render.effects.*;
 import com.eeeab.eeeabsmobs.client.render.entity.*;
-import com.eeeab.eeeabsmobs.client.render.util.EMArmorStackRenderProperties;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.client.model.geom.builders.CubeDeformation;

@@ -46,6 +46,7 @@ public class EMItemModelProvider extends ItemModelProvider {
         simpleItem(ItemInit.ANCIENT_TOMB_EYE);
         simpleItem(ItemInit.BLOODY_ALTAR_EYE);
         simpleItem(ItemInit.GUARDIANS_MUSIC_DISC);
+        simpleItem(ItemInit.THE_ARMY_OF_MINOTAUR_MUSIC_DISC);
         //材料
         simpleItem(ItemInit.HEART_OF_PAGAN);
         simpleItem(ItemInit.ANCIENT_DRIVE_CRYSTAL);

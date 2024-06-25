@@ -51,6 +51,7 @@ public class CreativeTabInit {
 
                 /* Disc Item */
                 entries.accept(ItemInit.GUARDIANS_MUSIC_DISC.get());
+                entries.accept(ItemInit.THE_ARMY_OF_MINOTAUR_MUSIC_DISC.get());
 
                 /* Spawn Egg */
                 entries.accept(ItemInit.TESTER_EGG.get());

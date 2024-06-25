@@ -50,6 +50,7 @@
   "item.eeeabsmobs.immortal_ingot": "不朽锭",
   "item.eeeabsmobs.ghost_steel_ingot": "幽冥钢锭",
   "item.eeeabsmobs.guardians_music_disc": "音乐唱片",
+  "item.eeeabsmobs.the_army_of_minotaur_music_disc": "音乐唱片",
   "item.eeeabsmobs.guling_eye": "古陵之眼",
   "item.eeeabsmobs.bloody_altar_eye": "血色之眼",
   "item.eeeabsmobs.guardian_axe": "守卫者战斧",
@@ -121,9 +122,11 @@
 
   "_comment": "音乐描述",
   "item.eeeabsmobs.guardians_music_disc.desc": "Guardians - Evan King",
+  "item.eeeabsmobs.the_army_of_minotaur_music_disc.desc": "The army of minotaur - Makai Symphony",
 
   "_comment": "声音字幕",
   "subtitles.music.guardians": "Guardians - Evan King",
+  "subtitles.music.the_army_of_minotaur": "The army of minotaur - Makai Symphony",
 
   "_comment": "成就",
   "advancements.eeeabsmobs.root.title": "EEEAB's Mobs",
