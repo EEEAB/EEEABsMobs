@@ -133,7 +133,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
 
     @Override//是否免疫药水效果
     public boolean addEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        return (this.getAnimation() == this.getNoAnimation() || effectInstance.getEffect() == EffectInit.VERTIGO_EFFECT.get()) && super.addEffect(effectInstance, entity);
+        return (this.noConflictingTasks() || effectInstance.getEffect() == EffectInit.VERTIGO_EFFECT.get()) && super.addEffect(effectInstance, entity);
     }
 
     @Override//被方块阻塞
@@ -627,7 +627,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
 
     @Override
     public boolean noConflictingTasks() {
-        return this.getAnimation() == this.getNoAnimation();
+        return this.isNoAnimation();
     }
 
     @Override

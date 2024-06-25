@@ -138,7 +138,7 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
             player.displayClientMessage(Component.keybind("reset success").setStyle(EMTUtils.STYLE_GREEN), true);
             return InteractionResult.SUCCESS;
         }
-        if (this.getAnimation() == this.getNoAnimation()) {
+        if (this.isNoAnimation()) {
             setActive(!isActive());
             this.playAnimation(isActive() ? this.noAnimation : this.yesAnimation);
             return InteractionResult.SUCCESS;

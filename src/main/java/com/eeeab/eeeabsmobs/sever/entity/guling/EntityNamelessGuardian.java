@@ -484,7 +484,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 if (EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.enableNonCombatHeal.get()) this.heal(0.5F);
             }
 
-            if (this.getTarget() != null && this.active && this.isTimeOutToUseSkill() && !this.shouldUseSkill && this.getAnimation() == this.getNoAnimation() && !this.isNoAi()) {
+            if (this.getTarget() != null && this.active && this.isTimeOutToUseSkill() && !this.shouldUseSkill && this.isNoAnimation() && !this.isNoAi()) {
                 this.playAnimation(this.concussionAnimation);
                 this.shouldUseSkill = true;
             }
@@ -563,7 +563,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             }
         }
 
-        if (this.getAnimation() == this.getNoAnimation() && this.getDeltaMovement().horizontalDistanceSqr() > (double) 2.5000003E-7F
+        if (this.isNoAnimation() && this.getDeltaMovement().horizontalDistanceSqr() > (double) 2.5000003E-7F
                 && this.random.nextInt(5) == 0) {
             this.doWalkEffect(1);
         }
@@ -573,7 +573,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         float speed = Mth.sqrt(moveX * moveX + moveZ * moveZ);
 
         if (this.level().isClientSide && speed > 0.05 && this.isActive() && !this.isSilent()) {
-            if (this.frame % 22 == 1 && this.getAnimation() == this.getNoAnimation()) {
+            if (this.frame % 22 == 1 && this.isNoAnimation()) {
                 this.level().playLocalSound(getX(), getY(), getZ(), SoundInit.NAMELESS_GUARDIAN_STEP.get(), this.getSoundSource(), 1F, 1.05F, false);
             }
             if (this.frame % 5 == 1 && this.getAnimation() == this.pounceAttackAnimation2) {
@@ -675,7 +675,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 this.shakeGroundTick--;
             }
 
-            if (this.attackTick > 0 && this.getAnimation() == this.getNoAnimation()) {
+            if (this.attackTick > 0 && this.isNoAnimation()) {
                 this.attackTick--;
             }
 
@@ -889,7 +889,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     public boolean noConflictingTasks() {
-        return !this.executeWeak && getAnimation() == this.getNoAnimation();
+        return !this.executeWeak && this.isNoAnimation();
     }
 
     @Override

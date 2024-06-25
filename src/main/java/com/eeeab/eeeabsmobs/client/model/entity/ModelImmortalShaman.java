@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
 import com.eeeab.animate.client.model.EMHierarchicalModel;
+import com.eeeab.eeeabsmobs.client.model.animation.AnimationCommon;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalShaman;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.animation.AnimationChannel;
@@ -97,11 +98,12 @@ public class ModelImmortalShaman extends EMHierarchicalModel<EntityImmortalShama
             this.flap(leftArm, speed, degree * 0.5F, false, 0, 0, frame, 1);
             this.swing(leftArm, speed, degree, false, 0, 0, frame, 1);
         }
-        this.animate(entity.spellCastingBombAnimation, ModelImmortalShaman.AnimationImmortalShaman.BOMB, ageInTicks);
-        this.animate(entity.spellCastingHealAnimation, ModelImmortalShaman.AnimationImmortalShaman.HEAL, ageInTicks);
-        this.animate(entity.spellCastingFRAnimation, ModelImmortalShaman.AnimationImmortalShaman.ATTACK, ageInTicks);
-        this.animate(entity.spellCastingSummonAnimation, ModelImmortalShaman.AnimationImmortalShaman.SUMMON, ageInTicks);
-        this.animate(entity.spellCastingWololoAnimation, ModelImmortalShaman.AnimationImmortalShaman.SUMMON, ageInTicks);
+        this.animate(entity.spellCastingBombAnimation, AnimationImmortalShaman.BOMB, ageInTicks);
+        this.animate(entity.spellCastingHealAnimation, AnimationImmortalShaman.HEAL, ageInTicks);
+        this.animate(entity.spellCastingFRAnimation, AnimationImmortalShaman.ATTACK, ageInTicks);
+        this.animate(entity.spellCastingSummonAnimation, AnimationImmortalShaman.SUMMON, ageInTicks);
+        this.animate(entity.spellCastingWololoAnimation, AnimationImmortalShaman.SUMMON, ageInTicks);
+        this.animate(entity.dieAnimation, AnimationCommon.DIE, ageInTicks);
         int tick = entity.getAnimationTick();
         if (entity.getAnimation() == entity.spellCastingSummonAnimation || entity.getAnimation() == entity.spellCastingWololoAnimation) {
             if (tick < 34) {

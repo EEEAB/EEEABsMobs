@@ -85,7 +85,7 @@ public class ModelGulingSentinelHeavy extends EMHierarchicalModel<EntityGulingSe
     @Override
     public void setupAnim(EntityGulingSentinelHeavy entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
-        if (entity.getAnimation() == entity.getNoAnimation()) {
+        if (entity.isNoAnimation()) {
             if (!entity.isActive()) {
                 setStaticRotationPoint(core, 0F, 0F, -5F);
                 setStaticRotationAngle(head, 6F, 0F, 0F);

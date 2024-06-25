@@ -68,13 +68,15 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
     public final Animation spellCastingHealAnimation = Animation.create(60);
     public final Animation spellCastingWololoAnimation = Animation.create(44);
     public final Animation avoidAnimation = Animation.create(15);
+    public final Animation dieAnimation = Animation.create(30);
     private final Animation[] animations = new Animation[]{
             spellCastingFRAnimation,
             spellCastingSummonAnimation,
             spellCastingBombAnimation,
             spellCastingHealAnimation,
             spellCastingWololoAnimation,
-            avoidAnimation
+            avoidAnimation,
+            dieAnimation
     };
     private final VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(this, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
 
@@ -178,7 +180,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         return dimensions.height * 0.8f;
     }
 
-    //TODO 如果有该buff 则应该陷入虚弱状态 (疑似特性,退出重进后客户端的isVertigo()始终为false)
+    //如果有该buff 则应该陷入虚弱状态
     public boolean isWeakness() {
         if (this.capability != null) {
             return this.capability.isVertigo();
@@ -353,7 +355,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
 
     @Override
     public boolean noConflictingTasks() {
-        return !this.isWeakness() && this.getAnimation() == this.getNoAnimation();
+        return !this.isWeakness() && this.isNoAnimation();
     }
 
 
@@ -650,6 +652,11 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         protected Animation getEMAnimation() {
             return this.spellCaster.spellCastingWololoAnimation;
         }
+    }
+
+    @Override
+    public Animation getDeathAnimation() {
+        return this.dieAnimation;
     }
 
     @Override

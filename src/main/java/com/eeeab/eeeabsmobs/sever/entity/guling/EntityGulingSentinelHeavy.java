@@ -265,23 +265,23 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
                 this.yHeadRot = this.yBodyRot = this.getYRot();
             }
-            if (!this.isNoAi() && !this.isActive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() != null && this.targetDistance <= 12) {
+            if (!this.isNoAi() && !this.isActive() && this.isNoAnimation() && this.getTarget() != null && this.targetDistance <= 12) {
                 this.playSound(SoundInit.GSH_FRICTION.get());
                 this.playAnimation(this.activeAnimation);
                 this.setActive(true);
             }
-            if (!this.isNoAi() && this.isActive() && this.isAlive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() == null && this.deactivateTick >= 300) {
+            if (!this.isNoAi() && this.isActive() && this.isAlive() && this.isNoAnimation() && this.getTarget() == null && this.deactivateTick >= 300) {
                 this.playSound(SoundInit.GSH_FRICTION.get());
                 this.playAnimation(this.deactivateAnimation);
                 this.setActive(false);
             }
-            if (!this.isNoAi() && this.isActive() && this.getAnimation() == this.getNoAnimation() && this.smashAttackTick <= 0 && this.getTarget() != null && ((targetDistance <= 6.5F && ModEntityUtils.checkTargetComingCloser(this, this.getTarget())) || this.targetDistance < 6.0F)) {
+            if (!this.isNoAi() && this.isActive() && this.isNoAnimation() && this.smashAttackTick <= 0 && this.getTarget() != null && ((targetDistance <= 6.5F && ModEntityUtils.checkTargetComingCloser(this, this.getTarget())) || this.targetDistance < 6.0F)) {
                 this.playAnimation(this.smashAttackAnimation);
             }
-            if (!this.isNoAi() && this.isActive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() != null && this.rangeAttackTick <= 0 && Math.pow(this.targetDistance, 2.0) > this.getMeleeAttackRangeSqr(this.getTarget()) + 5) {
+            if (!this.isNoAi() && this.isActive() && this.isNoAnimation() && this.getTarget() != null && this.rangeAttackTick <= 0 && Math.pow(this.targetDistance, 2.0) > this.getMeleeAttackRangeSqr(this.getTarget()) + 5) {
                 this.playAnimation(this.rangeAttackAnimation);
             }
-            if (!this.isNoAi() && this.isActive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() != null && this.electromagneticTick <= 0 && (this.getHealthPercentage() <= 80 || this.tickCount > 1200) && this.targetDistance < 6.5F) {
+            if (!this.isNoAi() && this.isActive() && this.isNoAnimation() && this.getTarget() != null && this.electromagneticTick <= 0 && (this.getHealthPercentage() <= 80 || this.tickCount > 1200) && this.targetDistance < 6.5F) {
                 this.playAnimation(this.electromagneticAnimation);
             }
         }
@@ -390,7 +390,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         float moveZ = (float) (this.getZ() - this.zo);
         float speed = Mth.sqrt(moveX * moveX + moveZ * moveZ);
         if (this.level().isClientSide && speed > 0.05 && this.isActive() && !this.isSilent()) {
-            if (this.frame % 10 == 1 && (this.getAnimation() == this.getNoAnimation() || this.getAnimation() == this.rangeAttackAnimation)) {
+            if (this.frame % 10 == 1 && (this.isNoAnimation() || this.getAnimation() == this.rangeAttackAnimation)) {
                 this.level().playLocalSound(getX(), getY(), getZ(), SoundInit.GSH_STEP.get(), this.getSoundSource(), 1F, 1F, false);
             }
         }

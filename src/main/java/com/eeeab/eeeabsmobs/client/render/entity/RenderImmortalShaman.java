@@ -30,6 +30,11 @@ public class RenderImmortalShaman extends MobRenderer<EntityImmortalShaman, Mode
     }
 
     @Override
+    protected float getFlipDegrees(EntityImmortalShaman entity) {
+        return 0;//获取死亡翻转角度
+    }
+
+    @Override
     public ResourceLocation getTextureLocation(EntityImmortalShaman entity) {
         return TEXTURE;
     }
