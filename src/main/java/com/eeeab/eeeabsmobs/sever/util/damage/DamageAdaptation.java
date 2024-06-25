@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.util.damge;
+package com.eeeab.eeeabsmobs.sever.util.damage;
 
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.util.RandomSource;
