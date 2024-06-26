@@ -845,7 +845,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         this.getRestPos().ifPresent(spawnPos -> compound.put("spawnPos", NbtUtils.writeBlockPos(spawnPos)));
-        if (!this.isChallengeMode()) {
+        if (!this.isChallengeMode() && this.madnessTick != NEVER_STOP) {
             compound.putBoolean("power", this.entityData.get(DATA_POWER));
             compound.putInt("madnessCountdownTick", this.madnessTick);
         }
