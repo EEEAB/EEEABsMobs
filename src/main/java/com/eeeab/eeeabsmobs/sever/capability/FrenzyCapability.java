@@ -94,7 +94,8 @@ public class FrenzyCapability {
                         if (entity instanceof Player player) {
                             //当玩家持有唤魂项链时 狂暴的副作用持续时间减少3/4
                             if (player.getInventory().items.stream().anyMatch(i -> i.is(ItemInit.SOUL_SUMMONING_NECKLACE.get()))) {
-                                baseTick = 50;
+                                baseTick = 100;
+                                this.level = 2;
                             }
                         }
                         entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, baseTick * (this.level + 1), this.level, false, true, true));
