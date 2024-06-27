@@ -4,6 +4,7 @@ import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
+import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -88,10 +89,17 @@ public class FrenzyCapability {
                 MobEffectInstance effect = entity.getEffect(EffectInit.FRENZY_EFFECT.get());
                 if (effect != null) {
                     int duration = effect.getDuration();
+                    int baseTick = 200;
                     if (duration <= 10 && duration >= 0) {
-                        entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200 * (this.level + 1), this.level, false, true, true));
-                        entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200 * (this.level + 1), this.level, false, true, true));
-                        entity.addEffect(new MobEffectInstance(EffectInit.ARMOR_LOWER_EFFECT.get(), 200 * (this.level + 1), this.level, false, true, true));
+                        if (entity instanceof Player player) {
+                            //当玩家持有唤魂项链时 狂暴的副作用持续时间减少3/4
+                            if (player.getInventory().items.stream().anyMatch(i -> i.is(ItemInit.SOUL_SUMMONING_NECKLACE.get()))) {
+                                baseTick = 50;
+                            }
+                        }
+                        entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, baseTick * (this.level + 1), this.level, false, true, true));
+                        entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, baseTick * (this.level + 1), this.level, false, true, true));
+                        entity.addEffect(new MobEffectInstance(EffectInit.ARMOR_LOWER_EFFECT.get(), baseTick * (this.level + 1), this.level, false, true, true));
                         return;
                     }
                 }

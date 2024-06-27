@@ -16,12 +16,12 @@ import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
-import com.eeeab.eeeabsmobs.sever.item.util.EMArmorMaterial;
-import com.eeeab.eeeabsmobs.sever.item.util.EMArmorUtil;
 import com.eeeab.eeeabsmobs.sever.message.MessageFrenzyEffect;
 import com.eeeab.eeeabsmobs.sever.message.MessageVertigoEffect;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -306,8 +306,9 @@ public final class HandlerServerEvent {
     //实体受伤时
     @SubscribeEvent
     public void onLivingEntityHurt(LivingHurtEvent event) {
-        Entity directEntity = event.getSource().getDirectEntity();
-        Entity attacker = event.getSource().getEntity();
+        DamageSource source = event.getSource();
+        Entity directEntity = source.getDirectEntity();
+        Entity attacker = source.getEntity();
         LivingEntity hurtEntity = event.getEntity();
 
         if (directEntity instanceof EntityShamanBomb shamanBomb) {
@@ -319,21 +320,17 @@ public final class HandlerServerEvent {
         if (hurtEntity instanceof Player player) {
             PlayerCapability.PlayerCapabilityImpl playerCapability = HandlerCapability.getCapability(player, HandlerCapability.PLAYER_CAPABILITY);
             if (playerCapability != null) {
-                playerCapability.hurt(player, event.getSource(), event.getAmount());
+                playerCapability.hurt(player, source, event.getAmount());
             }
-            //if (attacker instanceof EntityAbsImmortal) {
-            //    if (EMArmorUtil.checkFullSuitOfArmor(EMArmorMaterial.GHOST_WARRIOR_MATERIAL, player)) {
-            //        float damage = event.getAmount();
-            //        damage -= damage * 0.1F;//减少10%伤害
-            //        event.setAmount(damage);
-            //    }
-            //}
         }
 
         FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(hurtEntity, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
-        if (frenzyCapability != null && frenzyCapability.isFrenzy() && !event.getSource().is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
+        if (frenzyCapability != null && frenzyCapability.isFrenzy() && !source.is(EMTagKey.GENERAL_UNRESISTANT_TO) && !source.is(DamageTypeTags.BYPASSES_ARMOR)) {
             float damage = event.getAmount();
-            damage -= damage * (Math.min((frenzyCapability.getLevel() + 1F), 5)) * 0.1F;//至多减少50%伤害
+            if (hurtEntity.getHealth() > 1F) {
+                //至多减少50%伤害
+                damage -= damage * (Math.min((frenzyCapability.getLevel() + 1F), 5)) * 0.1F;
+            }
             event.setAmount(damage);
         }
     }
