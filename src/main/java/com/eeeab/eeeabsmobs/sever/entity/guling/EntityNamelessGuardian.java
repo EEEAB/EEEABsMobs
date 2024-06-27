@@ -779,7 +779,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     protected void dropCustomDeathLoot(DamageSource source, int pLooting, boolean pRecentlyHit) {
         super.dropCustomDeathLoot(source, pLooting, pRecentlyHit);
         Entity entity = source.getEntity();
-        if (entity instanceof Player) {
+        if (entity != null) {
             ItemEntity itementity = this.spawnAtLocation(ItemInit.GUARDIAN_CORE.get());
             if (itementity != null) {
                 itementity.setExtendedLifetime();

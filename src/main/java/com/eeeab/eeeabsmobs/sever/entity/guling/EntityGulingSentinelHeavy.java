@@ -446,14 +446,11 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     @Override
     protected void dropCustomDeathLoot(DamageSource source, int pLooting, boolean pRecentlyHit) {
         super.dropCustomDeathLoot(source, pLooting, pRecentlyHit);
-        Entity entity = source.getEntity();
-        if (entity instanceof Player) {
             ItemEntity itementity = this.spawnAtLocation(ItemInit.ANCIENT_DRIVE_CRYSTAL.get());
             if (itementity != null) {
                 itementity.setExtendedLifetime();
                 itementity.setGlowingTag(true);
             }
-        }
     }
 
     @Override
