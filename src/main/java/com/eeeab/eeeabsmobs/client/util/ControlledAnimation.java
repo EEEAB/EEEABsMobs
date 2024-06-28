@@ -113,8 +113,17 @@ public class ControlledAnimation {
      * <br/>
      * 支持链式编程
      */
-    public ControlledAnimation increaseTimerChain(){
+    public ControlledAnimation increaseTimerChain() {
         increaseTimer();
+        return this;
+    }
+
+    /**
+     * Decreases the timer by 1.
+     * 支持链式编程
+     */
+    public ControlledAnimation decreaseTimerChain() {
+        decreaseTimer();
         return this;
     }
 
