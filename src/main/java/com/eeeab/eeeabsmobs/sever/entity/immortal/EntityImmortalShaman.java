@@ -62,7 +62,7 @@ import java.util.function.Supplier;
 
 //基本AI完成
 public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, RangedAttackMob, NeedStopAiEntity {
-    public final Animation spellCastingFRAnimation = Animation.create(30);
+    public final Animation spellCastingFRAnimation = Animation.create(24);
     public final Animation spellCastingSummonAnimation = Animation.create(44);
     public final Animation spellCastingBombAnimation = Animation.create(30);
     public final Animation spellCastingHealAnimation = Animation.create(60);
@@ -82,7 +82,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
 
     //无需在退出游戏后存储数据
     private int hurtCountBeforeHeal = 0;
-    private static final int CAN_STOP_HEAL_COUNT = 2;
+    private static final int CAN_STOP_HEAL_COUNT = 3;
     private int nextHealTick = 0;
     @Nullable
     private Sheep wololoTarget;
@@ -100,7 +100,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
 
     @Override
     protected XpReward getEntityReward() {
-        return XpReward.XP_REWARD_ELITE;
+        return XpReward.XP_REWARD_HARD;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> spellCastingBombAnimation));
         this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> spellCastingWololoAnimation));
         this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> avoidAnimation));
-        this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> spellCastingFRAnimation, 4.5F, 14, 2.0F, 5.0F, true) {
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> spellCastingFRAnimation, 4.5F, 9, 2.0F, 5.0F, true) {
             @Override
             public void onHit(LivingEntity entity) {
                 if (entity instanceof Player player) {
@@ -362,6 +362,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 60.0D).
                 add(Attributes.ATTACK_DAMAGE, 1.0D).
+                add(Attributes.ARMOR, 2.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.35D).
                 add(Attributes.FOLLOW_RANGE, 32.0D).
                 add(Attributes.KNOCKBACK_RESISTANCE, 0.5D);
