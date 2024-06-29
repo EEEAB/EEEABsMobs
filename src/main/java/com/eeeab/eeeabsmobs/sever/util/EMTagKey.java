@@ -24,4 +24,15 @@ public class EMTagKey {
     private static <T> TagKey<T> registerTagKey(ResourceKey<Registry<T>> registry, String key) {
         return TagKey.create(registry, new ResourceLocation(EEEABMobs.MOD_ID, key));
     }
+
+    //Other Mod
+    private static final String ICE_AND_FIRE = "iceandfire";
+    private static final String ALEX_S_CAVES = "alexscaves";
+    public static final TagKey<EntityType<?>> BLINDED = registerOtherModTagKey(Registries.ENTITY_TYPE, ICE_AND_FIRE, "blinded");
+    public static final TagKey<EntityType<?>> IMMUNE_TO_GORGON_STONE = registerOtherModTagKey(Registries.ENTITY_TYPE, ICE_AND_FIRE, "immune_to_gorgon_stone");
+    public static final TagKey<EntityType<?>> RESISTS_TREMORSAURUS_ROAR = registerOtherModTagKey(Registries.ENTITY_TYPE, ALEX_S_CAVES, "resists_tremorsaurus_roar");
+
+    private static <T> TagKey<T> registerOtherModTagKey(ResourceKey<Registry<T>> registry, String modId, String key) {
+        return TagKey.create(registry, new ResourceLocation(modId, key));
+    }
 }
