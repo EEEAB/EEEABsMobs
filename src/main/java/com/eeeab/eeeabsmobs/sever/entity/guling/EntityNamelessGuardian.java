@@ -737,8 +737,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public boolean hurt(DamageSource source, float damage) {
         if (!this.level().isClientSide/* 在服务端进行判断 */) {
             Entity entity = source.getEntity();
-            float maximumDamageCap = (float) (EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.maximumDamageCap.damageCap.get() * 1F);
-            float maxHurtDamage = getMaxHealth() * maximumDamageCap;
             if ((!active || getTarget() == null) && entity instanceof LivingEntity livingEntity
                     && !(livingEntity instanceof Player player && player.isCreative() || this.level().getDifficulty() == Difficulty.PEACEFUL)
                     && (!EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() || !(livingEntity instanceof EntityAbsGuling))) {
@@ -751,11 +749,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                     if (this.guardianInvulnerableTime <= 0) guardianInvulnerableTime = 20 /*不能小于等于10*/;
                     if (ModEntityUtils.isProjectileSource(source)) return false;
                 }
-                if (this.getAnimation() == this.weakAnimation2) {
-                    maxHurtDamage = /* 如果伤害源是magic类型 则没有限制伤害,反之则受到最大伤害上限1.5倍伤害*/source.is(EMTagKey.MAGIC_UNRESISTANT_TO) ? damage : getMaxHealth() * (maximumDamageCap * 1.5F);
-                    maxHurtDamage = /* 防止超过生命值上限 */Math.min(maxHurtDamage, getMaxHealth());
-                }
-                damage = Math.min(damage, maxHurtDamage);
+                damage = Math.min(damage, EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.maximumDamageCap.damageCap.get().floatValue());
                 return super.hurt(source, damage);
             } else if (source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
                 return super.hurt(source, damage);
@@ -857,8 +851,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().
-                add(Attributes.MAX_HEALTH, 300.0D).
-                add(Attributes.ARMOR, 10).
+                add(Attributes.MAX_HEALTH, 350.0D).
+                add(Attributes.ARMOR, 10.0D).
                 add(Attributes.ATTACK_DAMAGE, 15.0D).
                 add(Attributes.FOLLOW_RANGE, 50.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.3D).
@@ -1229,13 +1223,14 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             finalDamage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(finalDamage, hitEntity.getArmorValue(), (float) hitEntity.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0.8F);
         }
         boolean flag = hitEntity.hurt(damageSource, finalDamage);
-        double suckBloodCap = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.suckBloodFactor.get();
-        float suckBlood = this.isPowered() ? 0.25F : 0.22F;
+        double suckBloodMultiplier = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.suckBloodMultiplier.get();
+        //治疗值 = 攻击力15% + 生命上限1.5% - 目标护甲值5%
+        float heal = (guardian.getAttackDamageAttributeValue() * 0.15F) + (guardian.getMaxHealth() * 0.015F) - (Mth.clamp(hitEntity.getArmorValue() * 0.05F, 0F, 1.5F));
         boolean blocking = hitEntity instanceof Player && hitEntity.isBlocking();
         boolean checkConfig = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.enableForcedSuckBlood.get() || this.isChallengeMode();
         if ((flag || (ignoreHit && this.isPowered() && !blocking && checkConfig)) && shouldHeal) {
-            if (!flag) suckBlood = 0.1F;//未能造成伤害减少吸血量
-            guardian.heal((float) Mth.clamp(finalDamage * suckBlood, 0F, getMaxHealth() * suckBloodCap));
+            if (!flag) heal *= 0.5F;//未能造成伤害减少吸血量
+            guardian.heal((float) (heal * suckBloodMultiplier));
         }
         if (disableShield && blocking) {
             Player player = (Player) hitEntity;
