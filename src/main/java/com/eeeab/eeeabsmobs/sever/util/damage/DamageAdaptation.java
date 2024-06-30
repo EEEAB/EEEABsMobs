@@ -8,6 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -57,19 +58,10 @@ public class DamageAdaptation {
         }
     }
 
-    public float damageAfterAdaptingOnce(DamageSource source, float amount) {
-        Entity entity = source.getEntity();
-        // 判断伤害类型是否可被适应
-        if (entity == null || source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
+    public float damageAfterAdaptingOnce(@Nullable DamageSource source, float amount) {
+        String key = getKey(source, this.adaptsSameTypeMobs);
+        if (key == null) {
             return amount;
-        }
-        String uuid = this.adaptsSameTypeMobs ? entity.getClass().getName() : entity.getStringUUID();
-        String key;
-        if (entity instanceof Player player) {
-            InteractionHand hand = player.getUsedItemHand();
-            key = spliceCharacters(uuid, player.getItemInHand(hand).getItem().getDescriptionId());
-        } else {
-            key = spliceCharacters(uuid, source.getMsgId());
         }
         DamageInfo info = ADAPT_MAP.getOrDefault(key, null);
         long systemMs = System.currentTimeMillis();
@@ -109,6 +101,27 @@ public class DamageAdaptation {
 
     public void clearCache() {
         ADAPT_MAP.clear();
+    }
+
+    private static @Nullable String getKey(@Nullable DamageSource source, boolean adaptsSameTypeMobs) {
+        if (source == null) {
+            return "unknown:source";
+        } else if (source.getEntity() == null && !source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
+            return "unknown:entity";
+        } else if (source.getEntity() != null) {
+            Entity entity = source.getEntity();
+            String id = adaptsSameTypeMobs ? entity.getClass().getName() : entity.getStringUUID();
+            String key;
+            if (entity instanceof Player player) {
+                InteractionHand hand = player.getUsedItemHand();
+                key = spliceCharacters(id, player.getItemInHand(hand).getItem().getDescriptionId());
+            } else {
+                key = spliceCharacters(id, source.getMsgId());
+            }
+            return key;
+        } else {
+            return null;
+        }
     }
 
     private static String spliceCharacters(String str1, String str2) {
