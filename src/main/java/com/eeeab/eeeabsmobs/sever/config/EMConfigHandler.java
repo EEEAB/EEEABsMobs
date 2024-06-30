@@ -131,7 +131,7 @@ public final class EMConfigHandler {
             builder.push("Immortal Shaman");
             healPercentage = BUILDER.comment("Immortal Shaman heal values (based on max health percentage)").defineInRange("Heal percentage", 0.5D, 0D, 1D);
             combatConfig = new AttributeConfig();
-            maximumDamageCap = new GeneralDamageCap(0.25);
+            maximumDamageCap = new GeneralDamageCap(22);
             builder.pop();
         }
 
@@ -193,7 +193,7 @@ public final class EMConfigHandler {
             builder.push("Corpse Warlock");
             maxDistanceTakeDamage = BUILDER.comment("Set the distance to take damage from projectiles").defineInRange("Attack distance", 12D, 1D, 32D);
             combatConfig = new AttributeConfig();
-            maximumDamageCap = new GeneralDamageCap(0.25);
+            maximumDamageCap = new GeneralDamageCap(22);
             builder.pop();
         }
 
@@ -246,19 +246,23 @@ public final class EMConfigHandler {
     public static class NamelessGuardian {
         public NamelessGuardian(final ForgeConfigSpec.Builder builder) {
             builder.push("Nameless Guardian");
-            suckBloodFactor = BUILDER.comment("Max life steal coefficient (based on max health percentage)").defineInRange("Suck blood factor", 0.05, 0, 1);
+            suckBloodMultiplier = BUILDER.comment("Set suck blood multiplier").defineInRange("Suck blood multiplier", 1D, 0D, 1024D);
             enableNonCombatHeal = BUILDER.comment("If 'False' disable non-combat heal").define("Enable non-combat heal", true);
             enableForcedSuckBlood = BUILDER.comment("If 'False' disable forced suck blood on power status(Does not take effect in Challenge mode)").define("Enable forced suck blood", true);
-            challengeMode = BUILDER.comment("Challenge mode!").define("Be careful! It's going to get tricky!", false);
+            challengeMode = BUILDER.comment("Be careful! It's going to get tricky!").define("Challenge mode!", false);
             combatConfig = new AttributeConfig();
-            maximumDamageCap = new GeneralDamageCap(0.05);
+            maximumDamageCap = new GeneralDamageCap(20);
             builder.pop();
         }
 
-        public final ForgeConfigSpec.BooleanValue enableNonCombatHeal;//启用脱战治疗
-        public final ForgeConfigSpec.DoubleValue suckBloodFactor;//吸血系数上限(基于最大生命值的百分比)
-        public final ForgeConfigSpec.BooleanValue enableForcedSuckBlood;//启用强制吸血
-        public final ForgeConfigSpec.BooleanValue challengeMode;//挑战模式
+        //启用脱战治疗
+        public final ForgeConfigSpec.BooleanValue enableNonCombatHeal;
+        //吸血倍率
+        public final ForgeConfigSpec.DoubleValue suckBloodMultiplier;
+        //启用强制吸血
+        public final ForgeConfigSpec.BooleanValue enableForcedSuckBlood;
+        //挑战模式
+        public final ForgeConfigSpec.BooleanValue challengeMode;
         public final AttributeConfig combatConfig;
         public final GeneralDamageCap maximumDamageCap;
     }
@@ -325,7 +329,7 @@ public final class EMConfigHandler {
     //通用伤害限制
     public static class GeneralDamageCap {
         public GeneralDamageCap(double damageCapPercentage) {
-            this.damageCap = BUILDER.comment("Set damage cap percentage (based on max health)").defineInRange("Damage cap percentage", damageCapPercentage, 0.01D, 1D);
+            this.damageCap = BUILDER.comment("Set this mob damageCap").defineInRange("DamageCap", damageCapPercentage, 0D, 1024D);
         }
 
         public final ForgeConfigSpec.DoubleValue damageCap;

@@ -291,13 +291,11 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         if (this.level().isClientSide) {
             return false;
         } else if (entity != null) {
-            float maximumDamageCap = (float) (EMConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SHAMAN.maximumDamageCap.damageCap.get() * 1F);
-            float maxHurtDamage = getMaxHealth() * maximumDamageCap;
             if (this.getAnimation() == this.spellCastingHealAnimation && !(this.hurtTime > 0)) {
                 this.hurtCountBeforeHeal++;
             }
             if (!this.isWeakness()) {
-                damage = Math.min(damage, maxHurtDamage);
+                damage = Math.min(damage, EMConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SHAMAN.maximumDamageCap.damageCap.get().floatValue());
             }
             return super.hurt(source, damage);
         } else if (source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {

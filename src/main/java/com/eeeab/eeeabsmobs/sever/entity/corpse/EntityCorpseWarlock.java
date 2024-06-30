@@ -413,9 +413,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                 if (this.random.nextFloat() < 0.6F) this.hurtCount++;
                 Double maxDistance = EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.maxDistanceTakeDamage.get();
                 if (ModEntityUtils.isProjectileSource(source) && this.distanceTo(entity) >= maxDistance) return false;
-                float maxDamageCap = (float) (EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.maximumDamageCap.damageCap.get() * 1.0F);
-                float maxHurtDamage = this.getMaxHealth() * maxDamageCap;
-                damage = Math.min(damage, maxHurtDamage);
+                damage = Math.min(damage, EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.maximumDamageCap.damageCap.get().floatValue());
                 return super.hurt(source, damage);
             } else if (source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
                 return super.hurt(source, damage);
