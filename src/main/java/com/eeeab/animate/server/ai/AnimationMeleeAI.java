@@ -22,7 +22,7 @@ public class AnimationMeleeAI<T extends EEEABMobLibrary & EMAnimatedEntity> exte
     private final Supplier<Animation>[] animations;
     private final Predicate<T> customFlag;
     protected int attackInterval = 10;
-    protected final boolean followingTargetEvenIfNotSeen = false;
+    protected boolean followingTargetEvenIfNotSeen = false;
 
     @SafeVarargs
     public AnimationMeleeAI(T attacker, double speed, Supplier<Animation>... animations) {
@@ -48,6 +48,11 @@ public class AnimationMeleeAI<T extends EEEABMobLibrary & EMAnimatedEntity> exte
         this.customFlag = customFlag;
         this.animations = animations;
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+    }
+
+    public AnimationMeleeAI<T> ignoreSight() {
+        this.followingTargetEvenIfNotSeen = true;
+        return this;
     }
 
     @Override
