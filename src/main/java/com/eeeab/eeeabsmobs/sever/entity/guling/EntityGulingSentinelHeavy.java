@@ -346,6 +346,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 }
             }
         } else if (this.getAnimation() == this.electromagneticAnimation) {
+            this.setDeltaMovement(0, this.onGround() ? 0 : this.getDeltaMovement().y, 0);
             if (tick == 1) {
                 this.playSound(SoundInit.GSH_PRE_ATTACK.get(), 0.75F, 0.5F);
             } else if (tick > 20 && tick < 90) {
@@ -446,11 +447,11 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     @Override
     protected void dropCustomDeathLoot(DamageSource source, int pLooting, boolean pRecentlyHit) {
         super.dropCustomDeathLoot(source, pLooting, pRecentlyHit);
-            ItemEntity itementity = this.spawnAtLocation(ItemInit.ANCIENT_DRIVE_CRYSTAL.get());
-            if (itementity != null) {
-                itementity.setExtendedLifetime();
-                itementity.setGlowingTag(true);
-            }
+        ItemEntity itementity = this.spawnAtLocation(ItemInit.ANCIENT_DRIVE_CRYSTAL.get());
+        if (itementity != null) {
+            itementity.setExtendedLifetime();
+            itementity.setGlowingTag(true);
+        }
     }
 
     @Override
@@ -536,14 +537,14 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     @Override
     public void performRangedAttack(LivingEntity target, float velocity) {
         double d1 = target.getX() - this.getX();
-        double d2 = target.getY(-0.8F) - this.getY();
+        double d2 = target.getY(-0.5F) - this.getY();
         double d3 = target.getZ() - this.getZ();
         double d4 = Math.sqrt(d1 * d1 + d3 * d3) * (double) 0.12F;
         this.playSound(SoundInit.GSH_SPARK.get());
         for (int i = 1; i <= 2; i++) {
             double yBodyRadians = Math.toRadians(this.yBodyRot + (180 * (i - 1)));
             EntityGrenade grenade = new EntityGrenade(this.level(), this);
-            grenade.shoot(d1, d2 + d4, d3, velocity, 3);
+            grenade.shoot(d1, d2 + d4, d3, velocity, 3F);
             Vec3 vec3 = this.position().add(this.getLookAngle());
             grenade.setPos(vec3.x + this.getBbWidth() * 0.8F * Math.cos(yBodyRadians), this.getY(0.45D), vec3.z + this.getBbWidth() * 0.8F * Math.sin(yBodyRadians));
             this.level().addFreshEntity(grenade);
