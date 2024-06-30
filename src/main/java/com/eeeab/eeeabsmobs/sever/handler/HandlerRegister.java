@@ -92,6 +92,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.CRIMSON_RAY_PRE.get(), RenderCrimsonRay.RenderPreAttack::new);
         event.registerEntityRenderer(EntityInit.GRENADE.get(), RenderGrenade::new);
         event.registerEntityRenderer(EntityInit.ELECTROMAGNETIC.get(), EmptyRender::new);
+        event.registerEntityRenderer(EntityInit.ALIEN_PORTAL.get(), RenderAlienPortal::new);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
