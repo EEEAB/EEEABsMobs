@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.util.damage;
 
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -18,7 +19,7 @@ import java.util.Map;
  * 伤害适应
  *
  * @author EEEAB
- * @version 1.1
+ * @version 1.2
  */
 public class DamageAdaptation {
     /**
@@ -50,6 +51,14 @@ public class DamageAdaptation {
         this.singleAdaptFactor = singleAdaptFactor;
         this.maxAdaptFactor = maxAdaptFactor;
         this.adaptsSameTypeMobs = adaptsSameTypeMobs;
+    }
+
+    public DamageAdaptation(EMConfigHandler.DamageSourceAdaptConfig config) {
+        this.adaptDamageTypesCount = config.maxDamageSourceAdaptCount.get();
+        this.resetCountdown = config.resetCountdown.get() * 1000;
+        this.singleAdaptFactor = config.singleAdaptFactor.get().floatValue();
+        this.maxAdaptFactor = config.maxAdaptFactor.get().floatValue();
+        this.adaptsSameTypeMobs = config.adaptsSameTypeMobs;
     }
 
     public void tick(LivingEntity entity) {
