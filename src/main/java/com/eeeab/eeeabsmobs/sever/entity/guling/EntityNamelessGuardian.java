@@ -791,7 +791,9 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     public boolean checkCanAttackRange(double checkRange, double range) {
         LivingEntity target = this.getTarget();
-        if (target != null && target.isAlive()) {
+        if (target == null) {
+            return true;
+        } else if (target.isAlive()) {
             Vec3 betweenEntitiesVec = this.position().subtract(target.position());
             boolean targetComingCloser = target.getDeltaMovement().dot(betweenEntitiesVec) > 0 && target.getDeltaMovement().lengthSqr() > 0.015;
             return this.targetDistance < checkRange + range || (this.targetDistance < range + 5 + checkRange && targetComingCloser);
