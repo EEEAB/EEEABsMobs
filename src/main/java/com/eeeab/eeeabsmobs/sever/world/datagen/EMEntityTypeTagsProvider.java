@@ -33,9 +33,16 @@ public class EMEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(EntityInit.NAMELESS_GUARDIAN.get())
                 .add(EntityInit.IMMORTAL_BOSS.get());
         //免疫强制切换目标
-        tag(EMTagKey.IGNORE_CHANGE_TARGET)
+        tag(EMTagKey.RESISTS_FORCED_CHANGE_TARGET)
                 .add(EntityInit.CORPSE_WARLOCK.get())
                 .add(EntityInit.NAMELESS_GUARDIAN.get())
+                .add(EntityInit.IMMORTAL_BOSS.get());
+        //不朽军团
+        tag(EMTagKey.IMMORTAL_ARMY)
+                .add(EntityInit.IMMORTAL_GOLEM.get())
+                .add(EntityInit.IMMORTAL_SKELETON.get())
+                .add(EntityInit.IMMORTAL_KNIGHT.get())
+                .add(EntityInit.IMMORTAL_SHAMAN.get())
                 .add(EntityInit.IMMORTAL_BOSS.get());
         //Ice And Fire 免疫蛇发女妖石化
         tag(EMTagKey.BLINDED)
@@ -52,6 +59,16 @@ public class EMEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(EntityInit.CORPSE_WARLOCK.get())
                 .add(EntityInit.GULING_SENTINEL.get())
                 .add(EntityInit.GULING_SENTINEL_HEAVY.get())
+                .add(EntityInit.NAMELESS_GUARDIAN.get())
+                .addTag(EMTagKey.IMMORTAL_ARMY);
+        //免疫占有图腾
+        tag(EMTagKey.RESISTS_TOTEM_OF_POSSESSION)
+                .add(EntityInit.CORPSE_WARLOCK.get())
+                .add(EntityInit.NAMELESS_GUARDIAN.get())
+                .add(EntityInit.IMMORTAL_BOSS.get());
+        //免疫辐射
+        tag(EMTagKey.RESISTS_RADIATION)
+                .add(EntityInit.CORPSE_WARLOCK.get())
                 .add(EntityInit.NAMELESS_GUARDIAN.get())
                 .add(EntityInit.IMMORTAL_BOSS.get());
     }
