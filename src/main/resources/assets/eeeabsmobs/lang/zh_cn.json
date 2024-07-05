@@ -33,6 +33,7 @@
   "entity.eeeabsmobs.crimson_ray_pre": "腥红射线",
   "entity.eeeabsmobs.grenade": "榴弹",
   "entity.eeeabsmobs.electromagnetic": "电磁脉冲",
+  "entity.eeeabsmobs.alien_portal": "异界传送门",
 
   "_comment": "物品",
   "item.eeeabsmobs.logo_item": "EEEAB's Mobs 模组标识",

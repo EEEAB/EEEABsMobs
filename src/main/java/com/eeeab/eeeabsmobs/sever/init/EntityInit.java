@@ -220,6 +220,7 @@ public class EntityInit {
                             .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "electromagnetic").toString()));
 
+    //异界传送门
     public static final RegistryObject<EntityType<EntityAlienPortal>> ALIEN_PORTAL =
             ENTITIES.register("alien_portal",
                     () -> EntityType.Builder.<EntityAlienPortal>of(EntityAlienPortal::new, MobCategory.MISC)
