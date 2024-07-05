@@ -31,7 +31,7 @@ public class OwnerProtectGoal<T extends Mob & VenerableEntity<T>> extends Goal {
             if (!owner.isAlive() || target == null) return false;
             if (this.venerable.tickCount % randomCooling == 0) return false;
             this.mandatoryTarget.addAll(this.venerable.getNearByEntitiesByClass(Mob.class, this.venerable.level(), this.venerable, searchRange, searchRange, searchRange, searchRange)
-                    .stream().filter(mob -> mob != owner && !target.getType().is(EMTagKey.IGNORE_CHANGE_TARGET) && mob.getTarget() == owner)
+                    .stream().filter(mob -> mob != owner && !target.getType().is(EMTagKey.RESISTS_FORCED_CHANGE_TARGET) && mob.getTarget() == owner)
                     .limit(Mth.floor(searchRange * 2))//查找上限
                     .toList());
         }

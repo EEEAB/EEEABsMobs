@@ -3,7 +3,6 @@ package com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player;
 import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -33,7 +32,7 @@ public class OwnerProtectToPlayerGoal<T extends Mob & VenerableEntity<Player>> e
             if (this.venerable.tickCount % randomCooling == 0) return false;
             this.mandatoryTarget.addAll(this.venerable.getNearByEntitiesByClass(Mob.class, this.venerable.level(), owner, searchRange, searchRange, searchRange, searchRange)
                     .stream().filter(mob -> mob.getTarget() == owner
-                            && !mob.getType().is(EMTagKey.IGNORE_CHANGE_TARGET)
+                            && !mob.getType().is(EMTagKey.RESISTS_FORCED_CHANGE_TARGET)
                             && !mob.getType().is(Tags.EntityTypes.BOSSES)
                     )
                     .limit(Mth.floor(searchRange * 2))//查找上限
