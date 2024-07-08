@@ -591,8 +591,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     @Override
     protected void dropCustomDeathLoot(DamageSource source, int pLooting, boolean pRecentlyHit) {
         super.dropCustomDeathLoot(source, pLooting, pRecentlyHit);
-        Entity entity = source.getEntity();
-        if (entity != null) {
+        if (source.getEntity() != null || this.getTarget() != null) {
             ItemEntity itementity = this.spawnAtLocation(ItemInit.HEART_OF_PAGAN.get());
             ItemEntity itementity2 = this.spawnAtLocation(ItemInit.SOUL_SUMMONING_NECKLACE.get());
             if (itementity != null && itementity2 != null) {
