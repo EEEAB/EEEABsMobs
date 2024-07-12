@@ -79,7 +79,6 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
             dieAnimation
     };
     private final VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(this, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
-
     //无需在退出游戏后存储数据
     private int hurtCountBeforeHeal = 0;
     private static final int CAN_STOP_HEAL_COUNT = 3;
@@ -294,8 +293,10 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
             if (this.getAnimation() == this.spellCastingHealAnimation && !(this.hurtTime > 0)) {
                 this.hurtCountBeforeHeal++;
             }
-            if (!this.isWeakness()) {
-                damage = Math.min(damage, EMConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_SHAMAN.maximumDamageCap.damageCap.get().floatValue());
+            if (this.isWeakness()) {
+                damage *= 1.5F;
+            } else if (ModEntityUtils.isProjectileSource(source)) {
+                damage *= 0.5F;
             }
             return super.hurt(source, damage);
         } else if (source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
@@ -358,7 +359,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
 
 
     public static AttributeSupplier.Builder setAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 60.0D).
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 80.0D).
                 add(Attributes.ATTACK_DAMAGE, 1.0D).
                 add(Attributes.ARMOR, 2.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.35D).
