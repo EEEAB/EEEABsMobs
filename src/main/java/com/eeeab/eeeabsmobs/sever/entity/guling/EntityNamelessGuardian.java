@@ -778,12 +778,10 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 itementity.setExtendedLifetime();
                 itementity.setGlowingTag(true);
             }
-            if (this.isChallengeMode() || this.random.nextBoolean()) {
-                itementity = this.spawnAtLocation(ItemInit.GUARDIAN_AXE.get());
-                if (itementity != null) {
-                    itementity.setExtendedLifetime();
-                    itementity.setGlowingTag(true);
-                }
+            itementity = this.spawnAtLocation(ItemInit.GUARDIAN_AXE.get());
+            if (itementity != null) {
+                itementity.setExtendedLifetime();
+                itementity.setGlowingTag(true);
             }
         }
     }
