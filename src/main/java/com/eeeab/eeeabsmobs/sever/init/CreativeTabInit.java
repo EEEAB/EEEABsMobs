@@ -38,6 +38,7 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.SOUL_SUMMONING_NECKLACE.get());
 
                 /* Fight Item */
+                entries.accept(ItemInit.DEMOLISHER.get());
                 entries.accept(ItemInit.GUARDIAN_CORE.get());
                 entries.accept(ItemInit.GUARDIAN_AXE.get());
                 entries.accept(ItemInit.IMMORTAL_AXE.get());
@@ -65,6 +66,7 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.IMMORTAL_KNIGHT_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_SHAMAN_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_GOLEM_EGG.get());
+                entries.accept(ItemInit.IMMORTAL_EXECUTIONER_EGG.get());
                 entries.accept(ItemInit.IMMORTAL_BOSS_EGG.get());
             }).build());
 

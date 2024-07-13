@@ -3,6 +3,7 @@ package com.eeeab.eeeabsmobs.sever.ability;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.ability.abilities.GuardianAxeAbility;
 import com.eeeab.eeeabsmobs.sever.ability.abilities.GuardianLaserAbility;
+import com.eeeab.eeeabsmobs.sever.ability.abilities.HowitzerAbility;
 import com.eeeab.eeeabsmobs.sever.ability.abilities.ImmortalStaffAbility;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
@@ -20,10 +21,12 @@ public enum AbilityHandler {
     public static final AbilityType<Player, ImmortalStaffAbility> IMMORTAL_STAFF_ABILITY_TYPE = new AbilityType<>(ImmortalStaffAbility::new, "immortal_staff_ability");
     public static final AbilityType<Player, GuardianLaserAbility> GUARDIAN_LASER_ABILITY_TYPE = new AbilityType<>(GuardianLaserAbility::new, "guardian_laser_ability");
     public static final AbilityType<Player, GuardianAxeAbility> GUARDIAN_AXE_ABILITY_TYPE = new AbilityType<>(GuardianAxeAbility::new, "guardian_axe_ability");
+    public static final AbilityType<Player, HowitzerAbility> HOWITZER_ABILITY_TYPE = new AbilityType<>(HowitzerAbility::new, "howitzer_ability");
     public static final AbilityType<Player, ? extends Ability<?>>[] PLAYER_ABILITY_TYPES = new AbilityType[]{
             IMMORTAL_STAFF_ABILITY_TYPE,
             GUARDIAN_LASER_ABILITY_TYPE,
-            GUARDIAN_AXE_ABILITY_TYPE
+            GUARDIAN_AXE_ABILITY_TYPE,
+            HOWITZER_ABILITY_TYPE
     };
 
     public AbilityCapability.IAbilityCapability getAbilityCapability(LivingEntity entity) {
