@@ -130,7 +130,7 @@ public class FrenzyCapability {
                             int miny = Mth.floor(bb.minY + 0.15D);
                             int minz = Mth.floor(bb.minZ - 2.75F);
                             BlockPos min = new BlockPos(minx, miny, minz);
-                            int maxx = Mth.floor(bb.maxX + 3.75F);
+                            int maxx = Mth.floor(bb.maxX + 2.75F);
                             int maxy = Mth.floor(bb.maxY + 0.5D);
                             int maxz = Mth.floor(bb.maxZ + 2.75F);
                             BlockPos max = new BlockPos(maxx, maxy, maxz);
