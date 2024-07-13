@@ -180,7 +180,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         this.goalSelector.addGoal(1, new AnimationRange<>(this, () -> bowAnimation, 25, null));
         this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> swingArmAnimation, 6, 2.5F, 1.0F, 1.0F));
         this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> meleeAnimation1, 8, 2.8F, 1.0F, 1.0F));
-        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> meleeAnimation2, 6, 2.8F, 1.0F, 1.0F));
+        this.goalSelector.addGoal(1, new AnimationAreaMelee<>(this, () -> meleeAnimation2, 6, 2.8F, 1.0F, 1.0F, 90F, 2.8F, true));
         this.goalSelector.addGoal(1, new AnimationBlock<>(this, () -> blockAnimation));
         this.goalSelector.addGoal(2, new AnimationDie<>(this));
         this.targetSelector.addGoal(2, new OwnerCopyTargetGoal<>(this));
