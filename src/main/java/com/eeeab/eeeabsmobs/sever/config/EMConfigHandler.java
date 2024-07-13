@@ -1,7 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.config;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.util.damage.DamageAdaptation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.common.Mod;
 
@@ -44,6 +43,11 @@ public final class EMConfigHandler {
                 builder.pop();
             }
             {
+                builder.push("Howitzer");
+                itemHowitzerCoolingTime = BUILDER.comment("Set item cool down time after player on use (seconds)").defineInRange("Set item cool down time", 5, 1, Integer.MAX_VALUE);
+                builder.pop();
+            }
+            {
                 builder.push("Guardian Axe");
                 GUARDIAN_AXE_TOOL = new ToolConfig(15D, 0.9D);
                 builder.pop();
@@ -68,6 +72,7 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.IntValue itemImmortalStaffStorageTime;
         public final ToolConfig GUARDIAN_AXE_TOOL;
         public final ToolConfig NETHERWORLD_KATANA_TOOL;
+        public final ForgeConfigSpec.IntValue itemHowitzerCoolingTime;
         public final ForgeConfigSpec.DoubleValue SSNCumulativeMaximumDamage;
         public final ForgeConfigSpec.IntValue SSNCoolingTime;
     }
@@ -132,12 +137,10 @@ public final class EMConfigHandler {
             builder.push("Immortal Shaman");
             healPercentage = BUILDER.comment("Immortal Shaman heal values (based on max health percentage)").defineInRange("Heal percentage", 0.5D, 0D, 1D);
             combatConfig = new AttributeConfig();
-            maximumDamageCap = new DamageCapConfig(22);
             builder.pop();
         }
 
         public final AttributeConfig combatConfig;
-        public final DamageCapConfig maximumDamageCap;
         public final ForgeConfigSpec.DoubleValue healPercentage;
     }
 
@@ -305,6 +308,7 @@ public final class EMConfigHandler {
             this.enableSameMobsTypeInjury = BUILDER.comment("If 'False' able inflict damage between mobs of the same type").define("Mobs of the same type cannot cause harm", true);
             this.enableRenderFallingBlock = BUILDER.comment("If 'False' disable falling block rendering").define("Enable falling block rendering", true);
             this.enablePlayBossMusic = BUILDER.comment("If 'False' disable play boss music").define("Enable play boss music", true);
+            this.enableFrenzyDestroyBlock = BUILDER.comment("If 'False' disable frenzy potion destroy block").define("Enable frenzy potion destroy block", true);
             builder.pop();
         }
 
@@ -318,6 +322,8 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.BooleanValue enableRenderFallingBlock;
         //启用播放boss战斗音乐
         public final ForgeConfigSpec.BooleanValue enablePlayBossMusic;
+        //启用狂暴药水冲刺时破坏方块效果
+        public final ForgeConfigSpec.BooleanValue enableFrenzyDestroyBlock;
     }
 
 
