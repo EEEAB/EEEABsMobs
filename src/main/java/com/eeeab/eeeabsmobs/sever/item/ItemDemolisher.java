@@ -3,13 +3,16 @@ package com.eeeab.eeeabsmobs.sever.item;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.Tags;
 
@@ -36,7 +39,7 @@ public class ItemDemolisher extends ProjectileWeaponItem {
             }
             AbilityHandler.INSTANCE.sendPlayerAbilityMessage(player, AbilityHandler.HOWITZER_ABILITY_TYPE);
             player.getCooldowns().addCooldown(this, EMConfigHandler.COMMON.ITEM.itemHowitzerCoolingTime.get() * 20);
-            player.playSound(SoundEvents.WITHER_SHOOT);
+            player.playSound(SoundInit.GSH_SPARK.get());
             player.swing(usedHand, true);
             //判断是否需要消耗弹药
             if (instabuild) {
