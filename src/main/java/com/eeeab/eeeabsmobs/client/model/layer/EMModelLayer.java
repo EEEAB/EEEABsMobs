@@ -8,6 +8,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class EMModelLayer {
+    public static final ModelLayerLocation UNKNOWN = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "unknown"), "main");
     public static final ModelLayerLocation TESTER = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "tester"), "main");
     public static final ModelLayerLocation CORPSE = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "corpse"), "main");
     public static final ModelLayerLocation CORPSE_VILLAGER = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "corpse_villager"), "main");

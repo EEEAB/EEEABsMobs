@@ -43,7 +43,12 @@ public class EMEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(EntityInit.IMMORTAL_SKELETON.get())
                 .add(EntityInit.IMMORTAL_KNIGHT.get())
                 .add(EntityInit.IMMORTAL_SHAMAN.get())
+                .add(EntityInit.IMMORTAL_EXECUTIONER.get())
                 .add(EntityInit.IMMORTAL_BOSS.get());
+        tag(EntityTypeTags.FREEZE_IMMUNE_ENTITY_TYPES)
+                .add(EntityInit.NAMELESS_GUARDIAN.get())
+                .add(EntityInit.CORPSE_WARLOCK.get())
+                .addTag(EMTagKey.IMMORTAL_ARMY);
         //Ice And Fire 免疫蛇发女妖石化
         tag(EMTagKey.BLINDED)
                 .add(EntityInit.NAMELESS_GUARDIAN.get())

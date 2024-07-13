@@ -12,6 +12,7 @@ import com.eeeab.eeeabsmobs.client.model.layer.EMModelLayer;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.ParticleGuardianSpark;
 import com.eeeab.eeeabsmobs.client.particle.ParticlePoison;
+import com.eeeab.eeeabsmobs.client.particle.ParticleVerticalLine;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
@@ -40,6 +41,7 @@ public class HandlerRegister {
 
     @SubscribeEvent
     public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(EMModelLayer.UNKNOWN, ModelUnKnown::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.TESTER, ModelTester::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.CORPSE, ModelCorpse::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.CORPSE_VILLAGER, ModelCorpse::createVillagerBodyLayer);
@@ -66,6 +68,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.IMMORTAL_KNIGHT.get(), RenderAbsImmortalSkeleton::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_SHAMAN.get(), RenderImmortalShaman::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_GOLEM.get(), RenderImmortalGolem::new);
+        event.registerEntityRenderer(EntityInit.IMMORTAL_EXECUTIONER.get(), (context) -> new RenderUnknown<>(context, 1.4F, 0.6F));
         event.registerEntityRenderer(EntityInit.IMMORTAL_BOSS.get(), RenderTheImmortal::new);
         event.registerEntityRenderer(EntityInit.CORPSE.get(), RenderCorpse::new);
         event.registerEntityRenderer(EntityInit.CORPSE_VILLAGER.get(), RenderCorpseVillager::new);
@@ -108,6 +111,7 @@ public class HandlerRegister {
         event.registerSpriteSet(ParticleInit.GUARDIAN_SPARK.get(), ParticleGuardianSpark.GuardianSparkFactory::new);
         event.registerSpriteSet(ParticleInit.POISON.get(), ParticlePoison.PoisonFactory::new);
         event.registerSpriteSet(ParticleInit.RING.get(), ParticleRing.RingFactory::new);
+        event.registerSpriteSet(ParticleInit.VERTICAL_LINE.get(), ParticleVerticalLine.VerticalLineFactory::new);
     }
 
     @SubscribeEvent

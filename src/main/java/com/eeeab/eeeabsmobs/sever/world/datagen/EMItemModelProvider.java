@@ -39,6 +39,7 @@ public class EMItemModelProvider extends ItemModelProvider {
         spawnEgg(ItemInit.IMMORTAL_SKELETON_EGG);
         spawnEgg(ItemInit.IMMORTAL_KNIGHT_EGG);
         spawnEgg(ItemInit.IMMORTAL_SHAMAN_EGG);
+        spawnEgg(ItemInit.IMMORTAL_EXECUTIONER_EGG);
         spawnEgg(ItemInit.IMMORTAL_BOSS_EGG);
         //杂项
         simpleItem(ItemInit.LOGO_ITEM);
@@ -62,7 +63,6 @@ public class EMItemModelProvider extends ItemModelProvider {
         simpleItem(ItemInit.GHOST_WARRIOR_CHESTPLATE);
         simpleItem(ItemInit.GHOST_WARRIOR_LEGGINGS);
         simpleItem(ItemInit.GHOST_WARRIOR_BOOTS);
-
     }
 
     private static LinkedHashMap<ResourceKey<TrimMaterial>, Float> trimMaterials = new LinkedHashMap<>();
