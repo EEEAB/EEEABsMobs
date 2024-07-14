@@ -57,7 +57,6 @@ public class ItemImmortalStaff extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.add(EMTUtils.UNABLE_BREAKS);
         EMConfigHandler.Item item = EMConfigHandler.COMMON.ITEM;
         tooltip.add(EMTUtils.itemCoolTime(item.itemImmortalStaffCoolingTime.get()));
         tooltip.add(EMTUtils.simpleWeaponText(this.getDescriptionId(), EMTUtils.STYLE_GRAY, item.itemImmortalStaffCoolingTime.get()));

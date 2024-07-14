@@ -33,6 +33,11 @@ public class RenderAbsImmortalSkeleton extends MobRenderer<EntityAbsImmortalSkel
     }
 
     @Override
+    protected float getFlipDegrees(EntityAbsImmortalSkeleton entity) {
+        return 0;//获取死亡翻转角度
+    }
+
+    @Override
     protected void scale(EntityAbsImmortalSkeleton entity, PoseStack poseStack, float partialTickTime) {
         float scale = entity.getCareerType().scale;
         poseStack.scale(scale, scale, scale);

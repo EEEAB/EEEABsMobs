@@ -32,7 +32,7 @@ public class OwnerProtectToPlayerGoal<T extends Mob & VenerableEntity<Player>> e
             if (this.venerable.tickCount % randomCooling == 0) return false;
             this.mandatoryTarget.addAll(this.venerable.getNearByEntitiesByClass(Mob.class, this.venerable.level, owner, searchRange, searchRange, searchRange, searchRange)
                     .stream().filter(mob -> mob.getTarget() == owner
-                            && !mob.getType().is(EMTagKey.IGNORE_CHANGE_TARGET)
+                            && !mob.getType().is(EMTagKey.RESISTS_FORCED_CHANGE_TARGET)
                             && !mob.getType().is(Tags.EntityTypes.BOSSES)
                     )
                     .limit(Mth.floor(searchRange * 2))//查找上限

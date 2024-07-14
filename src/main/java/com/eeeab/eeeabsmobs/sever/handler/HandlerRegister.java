@@ -12,6 +12,7 @@ import com.eeeab.eeeabsmobs.client.model.layer.EMModelLayer;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.ParticleGuardianSpark;
 import com.eeeab.eeeabsmobs.client.particle.ParticlePoison;
+import com.eeeab.eeeabsmobs.client.particle.ParticleVerticalLine;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
@@ -19,7 +20,6 @@ import com.eeeab.eeeabsmobs.client.particle.util.ParticleRibbon;
 import com.eeeab.eeeabsmobs.client.render.EmptyRender;
 import com.eeeab.eeeabsmobs.client.render.effects.*;
 import com.eeeab.eeeabsmobs.client.render.entity.*;
-import com.eeeab.eeeabsmobs.client.render.util.EMArmorStackRenderProperties;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -41,6 +41,7 @@ public class HandlerRegister {
 
     @SubscribeEvent
     public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(EMModelLayer.UNKNOWN, ModelUnKnown::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.TESTER, ModelTester::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.CORPSE, ModelCorpse::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.CORPSE_VILLAGER, ModelCorpse::createVillagerBodyLayer);
@@ -67,6 +68,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.IMMORTAL_KNIGHT.get(), RenderAbsImmortalSkeleton::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_SHAMAN.get(), RenderImmortalShaman::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_GOLEM.get(), RenderImmortalGolem::new);
+        event.registerEntityRenderer(EntityInit.IMMORTAL_EXECUTIONER.get(), (context) -> new RenderUnknown<>(context, 1.4F, 0.6F));
         event.registerEntityRenderer(EntityInit.IMMORTAL_BOSS.get(), RenderTheImmortal::new);
         event.registerEntityRenderer(EntityInit.CORPSE.get(), RenderCorpse::new);
         event.registerEntityRenderer(EntityInit.CORPSE_VILLAGER.get(), RenderCorpseVillager::new);
@@ -93,6 +95,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.CRIMSON_RAY_PRE.get(), RenderCrimsonRay.RenderPreAttack::new);
         event.registerEntityRenderer(EntityInit.GRENADE.get(), RenderGrenade::new);
         event.registerEntityRenderer(EntityInit.ELECTROMAGNETIC.get(), EmptyRender::new);
+        event.registerEntityRenderer(EntityInit.ALIEN_PORTAL.get(), RenderAlienPortal::new);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -108,6 +111,7 @@ public class HandlerRegister {
         event.register(ParticleInit.GUARDIAN_SPARK.get(), ParticleGuardianSpark.GuardianSparkFactory::new);
         event.register(ParticleInit.POISON.get(), ParticlePoison.PoisonFactory::new);
         event.register(ParticleInit.RING.get(), ParticleRing.RingFactory::new);
+        event.register(ParticleInit.VERTICAL_LINE.get(), ParticleVerticalLine.VerticalLineFactory::new);
     }
 
     @SubscribeEvent

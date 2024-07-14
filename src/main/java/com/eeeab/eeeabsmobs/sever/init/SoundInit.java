@@ -75,6 +75,7 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> GUARDIANS = create("music.guardians");
     public static final RegistryObject<SoundEvent> GUARDIANS_CLIMAX = create("music.nameless_guardian_theme_2");
     public static final RegistryObject<SoundEvent> GUARDIANS_PRELUDE = create("music.nameless_guardian_theme_1");
+    public static final RegistryObject<SoundEvent> THE_ARMY_OF_MINOTAUR = create("music.the_army_of_minotaur");
 
     public static void register(IEventBus bus) {
         SOUNDS.register(bus);

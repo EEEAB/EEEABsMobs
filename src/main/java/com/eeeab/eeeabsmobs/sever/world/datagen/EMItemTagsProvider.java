@@ -16,6 +16,8 @@ public class EMItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags() {
-        this.tag(ItemTags.MUSIC_DISCS).add(ItemInit.GUARDIANS_MUSIC_DISC.get());
+        this.tag(ItemTags.MUSIC_DISCS)
+                .add(ItemInit.GUARDIANS_MUSIC_DISC.get())
+                .add(ItemInit.THE_ARMY_OF_MINOTAUR_MUSIC_DISC.get());
     }
 }

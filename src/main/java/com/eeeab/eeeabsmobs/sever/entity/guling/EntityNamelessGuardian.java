@@ -483,7 +483,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 if (EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.enableNonCombatHeal.get()) this.heal(0.5F);
             }
 
-            if (this.getTarget() != null && this.active && this.isTimeOutToUseSkill() && !this.shouldUseSkill && this.getAnimation() == this.getNoAnimation() && !this.isNoAi()) {
+            if (this.getTarget() != null && this.active && this.isTimeOutToUseSkill() && !this.shouldUseSkill && this.isNoAnimation() && !this.isNoAi()) {
                 this.playAnimation(this.concussionAnimation);
                 this.shouldUseSkill = true;
             }
@@ -514,8 +514,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         } else if (this.getAnimation() == this.concussionAnimation) {
             this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
             if (tick == 8) {
-                ModParticleUtils.sphericalParticleOutburst(this.level, 10F, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleInit.GUARDIAN_SPARK.get()}, this, 2.5F, 0, 0, 3);
-                EntityCameraShake.cameraShake(this.level, position(), 30, 0.125F, 0, 20);
+                ModParticleUtils.sphericalParticleOutburst(level, 10F, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleInit.GUARDIAN_SPARK.get()}, this, 2.5F, 0, 0, 3);
+                EntityCameraShake.cameraShake(level, position(), 30, 0.125F, 0, 20);
             } else if (tick > 8) {
                 this.strongKnockBlock();
             }
@@ -562,7 +562,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             }
         }
 
-        if (this.getAnimation() == this.getNoAnimation() && this.getDeltaMovement().horizontalDistanceSqr() > (double) 2.5000003E-7F
+        if (this.isNoAnimation() && this.getDeltaMovement().horizontalDistanceSqr() > (double) 2.5000003E-7F
                 && this.random.nextInt(5) == 0) {
             this.doWalkEffect(1);
         }
@@ -572,7 +572,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         float speed = Mth.sqrt(moveX * moveX + moveZ * moveZ);
 
         if (this.level.isClientSide && speed > 0.05 && this.isActive() && !this.isSilent()) {
-            if (this.frame % 22 == 1 && this.getAnimation() == this.getNoAnimation()) {
+            if (this.frame % 22 == 1 && this.isNoAnimation()) {
                 this.level.playLocalSound(getX(), getY(), getZ(), SoundInit.NAMELESS_GUARDIAN_STEP.get(), this.getSoundSource(), 1F, 1.05F, false);
             }
             if (this.frame % 5 == 1 && this.getAnimation() == this.pounceAttackAnimation2) {
@@ -609,13 +609,13 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public void handleEntityEvent(byte id) {
         if (id == 6) {
             ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 20, ParticleDust.EnumDustBehavior.GROW, 1.0f);
-            ModParticleUtils.annularParticleOutburst(this.level, 15, new ParticleOptions[]{dustData}, getX(), getY(), getZ(), 0.9, 0.5);
-            ModParticleUtils.annularParticleOutburst(this.level, 15, new ParticleOptions[]{dustData}, getX(), getY(), getZ(), 0.6, 0.5);
+            ModParticleUtils.annularParticleOutburst(level, 15, new ParticleOptions[]{dustData}, getX(), getY(), getZ(), 0.9, 0.5);
+            ModParticleUtils.annularParticleOutburst(level, 15, new ParticleOptions[]{dustData}, getX(), getY(), getZ(), 0.6, 0.5);
         } else if (id == 7) {
             ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 25, ParticleDust.EnumDustBehavior.SHRINK, 1.0f);
-            ModParticleUtils.annularParticleOutburst(this.level, 15, new ParticleOptions[]{dustData}, getX(), this.getY(), getZ(), 0.8F, 0.1);
+            ModParticleUtils.annularParticleOutburst(level, 15, new ParticleOptions[]{dustData}, getX(), this.getY(), getZ(), 0.8F, 0.1);
         } else if (id == 8) {
-            ModParticleUtils.roundParticleOutburst(this.level, 200, new ParticleOptions[]{ParticleTypes.LARGE_SMOKE, ParticleTypes.SMOKE, ParticleTypes.EXPLOSION}, getX(), this.getY(0.1), getZ(), 1);
+            ModParticleUtils.roundParticleOutburst(level, 200, new ParticleOptions[]{ParticleTypes.LARGE_SMOKE, ParticleTypes.SMOKE, ParticleTypes.EXPLOSION}, getX(), this.getY(0.1), getZ(), 1);
         }
         super.handleEntityEvent(id);
     }
@@ -674,7 +674,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 this.shakeGroundTick--;
             }
 
-            if (this.attackTick > 0 && this.getAnimation() == this.getNoAnimation()) {
+            if (this.attackTick > 0 && this.isNoAnimation()) {
                 this.attackTick--;
             }
 
@@ -736,8 +736,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public boolean hurt(DamageSource source, float damage) {
         if (!this.level.isClientSide/* 在服务端进行判断 */) {
             Entity entity = source.getEntity();
-            float maximumDamageCap = (float) (EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.maximumDamageCap.damageCap.get() * 1F);
-            float maxHurtDamage = getMaxHealth() * maximumDamageCap;
             if ((!active || getTarget() == null) && entity instanceof LivingEntity livingEntity
                     && !(livingEntity instanceof Player player && player.isCreative() || this.level.getDifficulty() == Difficulty.PEACEFUL)
                     && (!EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() || !(livingEntity instanceof EntityAbsGuling))) {
@@ -750,11 +748,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                     if (this.guardianInvulnerableTime <= 0) guardianInvulnerableTime = 20 /*不能小于等于10*/;
                     if (ModEntityUtils.isProjectileSource(source)) return false;
                 }
-                if (this.getAnimation() == this.weakAnimation2) {
-                    maxHurtDamage = /* 如果伤害源是magic类型 则没有限制伤害,反之则受到最大伤害上限1.5倍伤害*/source.isMagic() || source.isBypassMagic() ? damage : getMaxHealth() * (maximumDamageCap * 1.5F);
-                    maxHurtDamage = /* 防止超过生命值上限 */Math.min(maxHurtDamage, getMaxHealth());
-                }
-                damage = Math.min(damage, maxHurtDamage);
+                damage = Math.min(damage, EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.maximumDamageCap.damageCap.get().floatValue());
                 return super.hurt(source, damage);
             } else if (source == DamageSource.OUT_OF_WORLD || source == DamageSource.GENERIC) {
                 return super.hurt(source, damage);
@@ -777,26 +771,25 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     @Override
     protected void dropCustomDeathLoot(DamageSource source, int pLooting, boolean pRecentlyHit) {
         super.dropCustomDeathLoot(source, pLooting, pRecentlyHit);
-        Entity entity = source.getEntity();
-        if (entity instanceof Player) {
+        if (source.getEntity() != null || this.getTarget() != null) {
             ItemEntity itementity = this.spawnAtLocation(ItemInit.GUARDIAN_CORE.get());
             if (itementity != null) {
                 itementity.setExtendedLifetime();
                 itementity.setGlowingTag(true);
             }
-            if (this.isChallengeMode() || this.random.nextBoolean()) {
-                itementity = this.spawnAtLocation(ItemInit.GUARDIAN_AXE.get());
-                if (itementity != null) {
-                    itementity.setExtendedLifetime();
-                    itementity.setGlowingTag(true);
-                }
+            itementity = this.spawnAtLocation(ItemInit.GUARDIAN_AXE.get());
+            if (itementity != null) {
+                itementity.setExtendedLifetime();
+                itementity.setGlowingTag(true);
             }
         }
     }
 
     public boolean checkCanAttackRange(double checkRange, double range) {
         LivingEntity target = this.getTarget();
-        if (target != null && target.isAlive()) {
+        if (target == null) {
+            return true;
+        } else if (target.isAlive()) {
             Vec3 betweenEntitiesVec = this.position().subtract(target.position());
             boolean targetComingCloser = target.getDeltaMovement().dot(betweenEntitiesVec) > 0 && target.getDeltaMovement().lengthSqr() > 0.015;
             return this.targetDistance < checkRange + range || (this.targetDistance < range + 5 + checkRange && targetComingCloser);
@@ -844,7 +837,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         this.getRestPos().ifPresent(spawnPos -> compound.put("spawnPos", NbtUtils.writeBlockPos(spawnPos)));
-        if (!this.isChallengeMode()) {
+        if (!this.isChallengeMode() && this.madnessTick != NEVER_STOP) {
             compound.putBoolean("power", this.entityData.get(DATA_POWER));
             compound.putInt("madnessCountdownTick", this.madnessTick);
         }
@@ -856,8 +849,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().
-                add(Attributes.MAX_HEALTH, 300.0D).
-                add(Attributes.ARMOR, 10).
+                add(Attributes.MAX_HEALTH, 350.0D).
+                add(Attributes.ARMOR, 10.0D).
                 add(Attributes.ATTACK_DAMAGE, 15.0D).
                 add(Attributes.FOLLOW_RANGE, 50.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.3D).
@@ -888,7 +881,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     public boolean noConflictingTasks() {
-        return !this.executeWeak && getAnimation() == this.getNoAnimation();
+        return !this.executeWeak && this.isNoAnimation();
     }
 
     @Override
@@ -1042,7 +1035,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             double px = this.getX() + vx * distance + offset * Math.cos((double) (this.yBodyRot + 90.0F) * Math.PI / 180.0D);
             double pz = this.getZ() + vz * distance + offset * Math.sin((double) (this.yBodyRot + 90.0F) * Math.PI / 180.0D);
             AABB aabb = new AABB(px - 1.5D, minY, pz - 1.5D, px + 1.5D, maxY, pz + 1.5D);
-            List<Entity> entities = this.level.getEntitiesOfClass(Entity.class, aabb);
+            List<Entity> entities = level.getEntitiesOfClass(Entity.class, aabb);
             float factor = 1F - ((float) distance / 2F - 2F) / maxFallingDistance;
             for (Entity hit : entities) {
                 if (hit.isOnGround()) {
@@ -1052,7 +1045,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                     if (hit instanceof LivingEntity livingEntity) {
                         this.guardianHurtTarget(damageSource, this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, false, disableShield, false);
                     }
-                    double magnitude = this.level.random.nextGaussian() * 0.15F + 0.1F;
+                    double magnitude = level.random.nextGaussian() * 0.15F + 0.1F;
                     double angle = this.getAngleBetweenEntities(this, hit);
                     double x1 = Math.cos(Math.toRadians(angle - 90));
                     double z1 = Math.sin(Math.toRadians(angle - 90));
@@ -1090,11 +1083,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 this.level.playLocalSound(this.getX(), this.getY(), this.getZ(), SoundInit.NAMELESS_GUARDIAN_ACCUMULATING.get(), this.getSoundSource(), 2F, 3.5F, false);
         } else if (tick >= 30 && tick < 70) {
             if (tick == 32) {
-                ModParticleUtils.sphericalParticleOutburst(this.level, 10F, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleInit.GUARDIAN_SPARK.get()}, this, 2.5F, 0, 0, 3);
+                ModParticleUtils.sphericalParticleOutburst(level, 10F, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleInit.GUARDIAN_SPARK.get()}, this, 2.5F, 0, 0, 3);
                 if (!this.isSilent())
                     this.level.playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.TOTEM_USE, this.getSoundSource(), 1F, 0.95F, false);
                 this.playSound(SoundInit.NAMELESS_GUARDIAN_MADNESS.get(), 1.5F, 0.92F);
-                EntityCameraShake.cameraShake(this.level, position(), 20, 0.125F, 20, 20);
+                EntityCameraShake.cameraShake(level, position(), 20, 0.125F, 20, 20);
             }
             this.strongKnockBlock();
             if (!this.level.isClientSide && tick % 10 == 0) this.level.broadcastEntityEvent(this, (byte) 6);
@@ -1108,7 +1101,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         int maxDistance = 6;
         if (tick >= 20 && tick < 33) {
             if (tick == 22) {
-                ModParticleUtils.annularParticleOutburstOnGround(this.level, this.isPowered() ? ParticleInit.GUARDIAN_SPARK.get() : ParticleTypes.SMOKE, this, 12, 8, 0.1, 0.8, -0.5, this.isPowered() ? 0.075 : 0.065);
+                ModParticleUtils.annularParticleOutburstOnGround(level, this.isPowered() ? ParticleInit.GUARDIAN_SPARK.get() : ParticleTypes.SMOKE, this, 12, 8, 0.1, 0.8, -0.5, this.isPowered() ? 0.075 : 0.065);
             }
             if (tick % 2 == 0) {
                 tick -= this.isPowered() ? 7 : 11;
@@ -1154,7 +1147,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 int hitX = Mth.floor(x + ox);
                 int hitZ = Mth.floor(z + oy);
                 BlockPos hit = new BlockPos(hitX, hitY, hitZ);
-                BlockState block = this.level.getBlockState(hit);
+                BlockState block = level.getBlockState(hit);
                 if (block.getRenderShape() != RenderShape.INVISIBLE) {
                     for (int n = 0; n < count; n++) {
                         double pa = random.nextDouble() * 2 * Math.PI;
@@ -1169,7 +1162,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                             velX = -velX;
                             velZ = -velZ;
                         }
-                        this.level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, block), px, y, pz, velX, velY, velZ);
+                        level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, block), px, y, pz, velX, velY, velZ);
                     }
                 }
             }
@@ -1228,13 +1221,14 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             finalDamage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(finalDamage, hitEntity.getArmorValue(), (float) hitEntity.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0.8F);
         }
         boolean flag = hitEntity.hurt(damageSource, finalDamage);
-        double suckBloodCap = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.suckBloodFactor.get();
-        float suckBlood = this.isPowered() ? 0.25F : 0.22F;
+        double suckBloodMultiplier = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.suckBloodMultiplier.get();
+        //治疗值 = 攻击力15% + 生命上限1.5% - 目标护甲值5%
+        float heal = (guardian.getAttackDamageAttributeValue() * 0.15F) + (guardian.getMaxHealth() * 0.015F) - (Mth.clamp(hitEntity.getArmorValue() * 0.05F, 0F, 1.5F));
         boolean blocking = hitEntity instanceof Player && hitEntity.isBlocking();
         boolean checkConfig = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.enableForcedSuckBlood.get() || this.isChallengeMode();
         if ((flag || (ignoreHit && this.isPowered() && !blocking && checkConfig)) && shouldHeal) {
-            if (!flag) suckBlood = 0.1F;//未能造成伤害减少吸血量
-            guardian.heal((float) Mth.clamp(finalDamage * suckBlood, 0F, getMaxHealth() * suckBloodCap));
+            if (!flag) heal *= 0.5F;//未能造成伤害减少吸血量
+            guardian.heal((float) (heal * suckBloodMultiplier));
         }
         if (disableShield && blocking) {
             Player player = (Player) hitEntity;

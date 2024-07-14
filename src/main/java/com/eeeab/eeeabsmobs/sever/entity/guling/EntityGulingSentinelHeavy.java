@@ -26,6 +26,8 @@ import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
+import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
@@ -263,23 +265,23 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
                 this.yHeadRot = this.yBodyRot = this.getYRot();
             }
-            if (!this.isNoAi() && !this.isActive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() != null && this.targetDistance <= 12) {
+            if (!this.isNoAi() && !this.isActive() && this.isNoAnimation() && this.getTarget() != null && this.targetDistance <= 12) {
                 this.playSound(SoundInit.GSH_FRICTION.get());
                 this.playAnimation(this.activeAnimation);
                 this.setActive(true);
             }
-            if (!this.isNoAi() && this.isActive() && this.isAlive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() == null && this.deactivateTick >= 300) {
+            if (!this.isNoAi() && this.isActive() && this.isAlive() && this.isNoAnimation() && this.getTarget() == null && this.deactivateTick >= 300) {
                 this.playSound(SoundInit.GSH_FRICTION.get());
                 this.playAnimation(this.deactivateAnimation);
                 this.setActive(false);
             }
-            if (!this.isNoAi() && this.isActive() && this.getAnimation() == this.getNoAnimation() && this.smashAttackTick <= 0 && this.getTarget() != null && ((targetDistance <= 6.5F && ModEntityUtils.checkTargetComingCloser(this, this.getTarget())) || this.targetDistance < 6.0F)) {
+            if (!this.isNoAi() && this.isActive() && this.isNoAnimation() && this.smashAttackTick <= 0 && this.getTarget() != null && ((targetDistance <= 6.5F && ModEntityUtils.checkTargetComingCloser(this, this.getTarget())) || this.targetDistance < 6.0F)) {
                 this.playAnimation(this.smashAttackAnimation);
             }
-            if (!this.isNoAi() && this.isActive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() != null && this.rangeAttackTick <= 0 && Math.pow(this.targetDistance, 2.0) > this.getMeleeAttackRangeSqr(this.getTarget()) + 5) {
+            if (!this.isNoAi() && this.isActive() && this.isNoAnimation() && this.getTarget() != null && this.rangeAttackTick <= 0 && Math.pow(this.targetDistance, 2.0) > this.getMeleeAttackRangeSqr(this.getTarget()) + 5) {
                 this.playAnimation(this.rangeAttackAnimation);
             }
-            if (!this.isNoAi() && this.isActive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() != null && this.electromagneticTick <= 0 && (this.getHealthPercentage() <= 80 || this.tickCount > 1200) && this.targetDistance < 6.5F) {
+            if (!this.isNoAi() && this.isActive() && this.isNoAnimation() && this.getTarget() != null && this.electromagneticTick <= 0 && (this.getHealthPercentage() <= 80 || this.tickCount > 1200) && this.targetDistance < 6.5F) {
                 this.playAnimation(this.electromagneticAnimation);
             }
         }
@@ -344,6 +346,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 }
             }
         } else if (this.getAnimation() == this.electromagneticAnimation) {
+            this.setDeltaMovement(0, this.isOnGround() ? 0 : this.getDeltaMovement().y, 0);
             if (tick == 1) {
                 this.playSound(SoundInit.GSH_PRE_ATTACK.get(), 0.75F, 0.5F);
             } else if (tick > 20 && tick < 90) {
@@ -388,7 +391,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         float moveZ = (float) (this.getZ() - this.zo);
         float speed = Mth.sqrt(moveX * moveX + moveZ * moveZ);
         if (this.level.isClientSide && speed > 0.05 && this.isActive() && !this.isSilent()) {
-            if (this.frame % 10 == 1 && (this.getAnimation() == this.getNoAnimation() || this.getAnimation() == this.rangeAttackAnimation)) {
+            if (this.frame % 10 == 1 && (this.isNoAnimation() || this.getAnimation() == this.rangeAttackAnimation)) {
                 this.level.playLocalSound(getX(), getY(), getZ(), SoundInit.GSH_STEP.get(), this.getSoundSource(), 1F, 1F, false);
             }
         }
@@ -444,13 +447,10 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     @Override
     protected void dropCustomDeathLoot(DamageSource source, int pLooting, boolean pRecentlyHit) {
         super.dropCustomDeathLoot(source, pLooting, pRecentlyHit);
-        Entity entity = source.getEntity();
-        if (entity instanceof Player) {
-            ItemEntity itementity = this.spawnAtLocation(ItemInit.ANCIENT_DRIVE_CRYSTAL.get());
-            if (itementity != null) {
-                itementity.setExtendedLifetime();
-                itementity.setGlowingTag(true);
-            }
+        ItemEntity itementity = this.spawnAtLocation(ItemInit.ANCIENT_DRIVE_CRYSTAL.get());
+        if (itementity != null) {
+            itementity.setExtendedLifetime();
+            itementity.setGlowingTag(true);
         }
     }
 
@@ -537,14 +537,14 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     @Override
     public void performRangedAttack(LivingEntity target, float velocity) {
         double d1 = target.getX() - this.getX();
-        double d2 = target.getY(-0.8F) - this.getY();
+        double d2 = target.getY(-0.5F) - this.getY();
         double d3 = target.getZ() - this.getZ();
         double d4 = Math.sqrt(d1 * d1 + d3 * d3) * (double) 0.12F;
         this.playSound(SoundInit.GSH_SPARK.get());
         for (int i = 1; i <= 2; i++) {
             double yBodyRadians = Math.toRadians(this.yBodyRot + (180 * (i - 1)));
             EntityGrenade grenade = new EntityGrenade(this.level, this);
-            grenade.shoot(d1, d2 + d4, d3, velocity, 3);
+            grenade.shoot(d1, d2 + d4, d3, velocity, 3F);
             Vec3 vec3 = this.position().add(this.getLookAngle());
             grenade.setPos(vec3.x + this.getBbWidth() * 0.8F * Math.cos(yBodyRadians), this.getY(0.45D), vec3.z + this.getBbWidth() * 0.8F * Math.sin(yBodyRadians));
             this.level.addFreshEntity(grenade);

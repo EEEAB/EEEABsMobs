@@ -110,6 +110,9 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
         return this.noAnimation;
     }
 
+    public boolean isNoAnimation() {
+        return this.animation == this.noAnimation;
+    }
 
     protected void onAnimationStart(Animation animation) {
     }

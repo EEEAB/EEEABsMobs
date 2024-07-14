@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.util;
+package com.eeeab.eeeabsmobs.sever.util.damage;
 
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.EntityDamageSource;

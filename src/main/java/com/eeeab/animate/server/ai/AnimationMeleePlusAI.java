@@ -1,8 +1,8 @@
 package com.eeeab.animate.server.ai;
 
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.animate.server.animation.EMAnimatedEntity;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
+import com.eeeab.animate.server.animation.EMAnimatedEntity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
@@ -34,7 +34,7 @@ public class AnimationMeleePlusAI<T extends EEEABMobLibrary & EMAnimatedEntity> 
             double distSqr = this.attacker.distanceToSqr(target.getX(), target.getBoundingBox().minY, target.getZ());
             if (--this.delayCounter <= 0) {
                 this.delayCounter = 5 + this.attacker.getRandom().nextInt(5) + 1;
-                if (distSqr > Math.pow(this.attacker.getAttribute(Attributes.FOLLOW_RANGE).getValue(), 2.0)) {
+                if (distSqr > Math.pow(this.attacker.getAttributeValue(Attributes.FOLLOW_RANGE), 2.0)) {
                     if (this.attacker.getNavigation().isDone() && !this.attacker.getNavigation().moveTo(target, 1.0)) {
                         this.delayCounter += 5;
                     }
@@ -42,18 +42,19 @@ public class AnimationMeleePlusAI<T extends EEEABMobLibrary & EMAnimatedEntity> 
                     this.attacker.getNavigation().moveTo(target, this.speed);
                 }
             }
-            this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            if (this.ticksUntilNextAttack == 0 && this.attacker.getMeleeAttackRangeSqr(target) >= distSqr) {
-                this.ticksUntilNextAttack = this.getAttackInterval();
-                this.attacker.playAnimation(this.getAnimationByPolling());
-                this.delayCounter += 5;
+            if (animations != null && animations.length != 0) {
+                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
+                if (this.ticksUntilNextAttack == 0 && this.attacker.getMeleeAttackRangeSqr(target) >= distSqr) {
+                    this.ticksUntilNextAttack = this.getAttackInterval();
+                    this.attacker.playAnimation(this.getAnimationByPolling());
+                    this.delayCounter += 5;
+                }
             }
         }
     }
 
     //轮询获得动画
     private Animation getAnimationByPolling() {
-        if (animations == null || animations.length == 0) return attacker.getNoAnimation();
         if (attackIndex < 0) attackIndex = 0;
         return animations[attackIndex++ % animations.length].get();
     }

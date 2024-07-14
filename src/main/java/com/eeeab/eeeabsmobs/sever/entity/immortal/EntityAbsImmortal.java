@@ -83,7 +83,7 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements GlowE
             getNavigation().stop();
             setYRot(yRotO);
             yBodyRot = getYRot();
-            if ((isOnGround() || isInWater() || isInLava()) && getAnimation() == getNoAnimation()) {
+            if ((isOnGround() || isInWater() || isInLava()) && this.isNoAnimation()) {
                 this.playAnimation(getSpawnAnimation());
             }
             return;

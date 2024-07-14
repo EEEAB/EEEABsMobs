@@ -7,6 +7,7 @@
   "entity.eeeabsmobs.immortal_knight": "Immortal Knight",
   "entity.eeeabsmobs.immortal_shaman": "Immortal Shaman",
   "entity.eeeabsmobs.immortal_golem": "Immortal Golem",
+  "entity.eeeabsmobs.immortal_executioner": "Immortal Executioner",
   "entity.eeeabsmobs.immortal": "The Immortal",
   "entity.eeeabsmobs.corpse": "Corpse",
   "entity.eeeabsmobs.corpse_villager": "Corpse Villager",
@@ -33,6 +34,7 @@
   "entity.eeeabsmobs.crimson_ray_pre": "Crimson Ray",
   "entity.eeeabsmobs.grenade": "Grenade",
   "entity.eeeabsmobs.electromagnetic": "Electromagnetic",
+  "entity.eeeabsmobs.alien_portal": "Alien Portal",
 
   "_comment": "Items",
   "item.eeeabsmobs.logo_item": "EEEAB's Mobs MOD Logo",
@@ -50,6 +52,7 @@
   "item.eeeabsmobs.immortal_ingot": "Immortal Ingot",
   "item.eeeabsmobs.ghost_steel_ingot": "Ghost Steel Ingot",
   "item.eeeabsmobs.guardians_music_disc": "Music Disc",
+  "item.eeeabsmobs.the_army_of_minotaur_music_disc": "Music Disc",
   "item.eeeabsmobs.guling_eye": "Eye of Guling",
   "item.eeeabsmobs.bloody_altar_eye": "Eye of Bloody Altar",
   "item.eeeabsmobs.guardian_axe": "Guardian Battleaxe",
@@ -57,6 +60,7 @@
   "item.eeeabsmobs.heart_of_pagan": "Heart of Pagan",
   "item.eeeabsmobs.soul_summoning_necklace": "Summoning Soul Necklace",
   "item.eeeabsmobs.ancient_drive_crystal": "Ancient Drive Crystal",
+  "item.eeeabsmobs.demolisher": "Demolisher",
 
   "_comment": "Blocks",
   "block.eeeabsmobs.immortal_block": "Immortal Block",
@@ -73,6 +77,7 @@
   "item.eeeabsmobs.immortal_knight_egg": "Immortal Knight Spawn Egg",
   "item.eeeabsmobs.immortal_shaman_egg": "Immortal Shaman Spawn Egg",
   "item.eeeabsmobs.immortal_golem_egg": "Immortal Golem Spawn Egg",
+  "item.eeeabsmobs.immortal_executioner_egg": "Immortal Executioner Spawn Egg(WIP)",
   "item.eeeabsmobs.immortal_boss_egg": "The Immortal Spawn Egg(WIP)",
   "item.eeeabsmobs.corpse_egg": "Corpse Spawn Egg",
   "item.eeeabsmobs.corpse_villager_egg": "Corpse Villager Spawn Egg",
@@ -88,7 +93,10 @@
   "item.eeeabsmobs.guardian_core.tip_1": "Hold right-click to fire the laser and continuously consume item durability,causing 1% of the target's maximum HP + 5 base damage, and automatically restoring durability in the player's backpack when unused",
   "item.eeeabsmobs.guardian_core.tip_2": "It seems to have other uses besides being a weapon...",
   "tooltip.weapon.eeeabsmobs.guardian_core.tip": "Attack range %1$s",
+  "tooltip.weapon.eeeabsmobs.demolisher.tip": "Right-click to fire the grenade, which can smash the enemy as well as the user",
+  "tooltip.other.eeeabsmobs.demolisher.tip": "Need more stones...",
   "item.eeeabsmobs.immortal_debris.tip": "It seems to be a fragment of the armor of some kind of creature...",
+  "item.eeeabsmobs.heart_of_pagan.tip": "Used to make frenzy potions",
   "item.eeeabsmobs.soul_summoning_necklace.tip": "Take damage accumulates to %1$s summon Corpse",
   "tooltip.weapon.eeeabsmobs.immortal_sword.tip": "Give the attacker an erosion status",
   "tooltip.weapon.eeeabsmobs.immortal_staff.tip": "Hold right-click for %1$s second to fire the Shaman Bomb",
@@ -106,7 +114,7 @@
   "effect.eeeabsmobs.erode_effect": "Erode",
   "effect.eeeabsmobs.armor_lower_effect": "Armor Reduction",
   "effect.eeeabsmobs.vertigo_effect": "Vertigo",
-  "effect.eeeabsmobs.frenzy_effect": "Frenzy(WIP)",
+  "effect.eeeabsmobs.frenzy_effect": "Frenzy",
 
   "_comment": "Potion",
   "item.minecraft.potion.effect.frenzy_potion": "Potion of Frenzy",
@@ -121,9 +129,11 @@
 
   "_comment": "Music Desc",
   "item.eeeabsmobs.guardians_music_disc.desc": "Guardians - Evan King",
+  "item.eeeabsmobs.the_army_of_minotaur_music_disc.desc": "The army of minotaur - Makai Symphony",
 
   "_comment": "Sounds subtitle",
   "subtitles.music.guardians": "Guardians - Evan King",
+  "subtitles.music.the_army_of_minotaur": "The army of minotaur - Makai Symphony",
 
   "_comment": "Advancements",
   "advancements.eeeabsmobs.root.title": "EEEAB's Mobs",

@@ -31,6 +31,7 @@ public class EMItemModelProvider extends ItemModelProvider {
         spawnEgg(ItemInit.IMMORTAL_SKELETON_EGG);
         spawnEgg(ItemInit.IMMORTAL_KNIGHT_EGG);
         spawnEgg(ItemInit.IMMORTAL_SHAMAN_EGG);
+        spawnEgg(ItemInit.IMMORTAL_EXECUTIONER_EGG);
         spawnEgg(ItemInit.IMMORTAL_BOSS_EGG);
         //杂项
         simpleItem(ItemInit.LOGO_ITEM);
@@ -38,6 +39,7 @@ public class EMItemModelProvider extends ItemModelProvider {
         simpleItem(ItemInit.GULING_EYE);
         simpleItem(ItemInit.BLOODY_ALTAR_EYE);
         simpleItem(ItemInit.GUARDIANS_MUSIC_DISC);
+        simpleItem(ItemInit.THE_ARMY_OF_MINOTAUR_MUSIC_DISC);
         //材料
         simpleItem(ItemInit.HEART_OF_PAGAN);
         simpleItem(ItemInit.ANCIENT_DRIVE_CRYSTAL);
@@ -53,7 +55,6 @@ public class EMItemModelProvider extends ItemModelProvider {
         simpleItem(ItemInit.GHOST_WARRIOR_CHESTPLATE);
         simpleItem(ItemInit.GHOST_WARRIOR_LEGGINGS);
         simpleItem(ItemInit.GHOST_WARRIOR_BOOTS);
-
     }
 
     private void spawnEgg(RegistryObject<Item> item) {

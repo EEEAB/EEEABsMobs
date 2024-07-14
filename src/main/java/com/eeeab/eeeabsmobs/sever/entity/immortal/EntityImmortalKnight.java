@@ -87,7 +87,7 @@ public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements I
     public void tick() {
         super.tick();
         boolean flag = this.random.nextFloat() < 0.1F + this.level.getCurrentDifficultyAt(this.blockPosition()).getSpecialMultiplier();
-        if (!this.level.isClientSide && !this.isNoAi() && this.isActive() && this.getTarget() != null && this.getAnimation() == this.getNoAnimation() && this.tickCount % 60 == 0 && this.nextBoostTick == 0 && flag) {
+        if (!this.level.isClientSide && !this.isNoAi() && this.isActive() && this.getTarget() != null && this.isNoAnimation() && this.tickCount % 60 == 0 && this.nextBoostTick == 0 && flag) {
             this.playAnimation(this.roarAnimation);
             this.nextBoostTick = ROAR_INTERVAL.sample(this.random);
         }

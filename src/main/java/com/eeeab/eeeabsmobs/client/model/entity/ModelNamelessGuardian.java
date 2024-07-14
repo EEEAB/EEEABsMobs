@@ -105,7 +105,7 @@ public class ModelNamelessGuardian extends EMHierarchicalModel<EntityNamelessGua
         //LookAt
         lookAtAnimation(netHeadYaw, headPitch, 1.0F, this.head);
 
-        if (entity.getAnimation() == entity.getNoAnimation()) {
+        if (entity.isNoAnimation()) {
             if (entity.isActive()) {
                 //抬起斧头姿势
                 setStaticRotationAngle(axe, -2.5F, -10, 20);
@@ -133,7 +133,7 @@ public class ModelNamelessGuardian extends EMHierarchicalModel<EntityNamelessGua
             this.walk(head, 0.1F, 0.05F, true, 0, 0, frame, 1);
 
             //Walk
-            if (entity.getAnimation() == entity.getNoAnimation()) {
+            if (entity.isNoAnimation()) {
                 if (entity.getDeltaMovement().horizontalDistanceSqr() > 0) {
                     this.animateWalk(AnimationNamelessGuardian.WALK, limbSwing, limbSwingAmount, 1.5F, 1.5F);
                 } else {

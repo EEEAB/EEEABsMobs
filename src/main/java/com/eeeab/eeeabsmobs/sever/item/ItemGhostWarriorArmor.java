@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class ItemGhostWarriorArmor extends ArmorItem {
+    public static final ResourceLocation LOCATION = new ResourceLocation(EEEABMobs.MOD_ID, "textures/armor/ghost_warrior_armor.png");
+    public static final ResourceLocation LEGS_LOCATION = new ResourceLocation(EEEABMobs.MOD_ID, "textures/armor/ghost_warrior_armor_legs.png");
+
     public ItemGhostWarriorArmor(EquipmentSlot type) {
         super(EMArmorMaterial.GHOST_WARRIOR_MATERIAL, type, new Item.Properties().tab(EMTabGroup.TABS).rarity(Rarity.EPIC).fireResistant());
     }
@@ -29,9 +32,9 @@ public class ItemGhostWarriorArmor extends ArmorItem {
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
         if (slot == EquipmentSlot.LEGS) {
-            return new ResourceLocation(EEEABMobs.MOD_ID, "textures/armor/ghost_warrior_armor_legs.png").toString();
+            return LEGS_LOCATION.toString();
         }
-        return new ResourceLocation(EEEABMobs.MOD_ID, "textures/armor/ghost_warrior_armor.png").toString();
+        return LOCATION.toString();
     }
 
     @Override

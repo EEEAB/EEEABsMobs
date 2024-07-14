@@ -199,18 +199,18 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
                 this.yHeadRot = this.yBodyRot = this.getYRot();
             }
 
-            if (!this.isNoAi() && !this.isActive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() != null && this.targetDistance <= 8) {
+            if (!this.isNoAi() && !this.isActive() && this.isNoAnimation() && this.getTarget() != null && this.targetDistance <= 8) {
                 this.playSound(SoundInit.GSH_FRICTION.get());
                 this.playAnimation(this.activeAnimation);
                 this.setActive(true);
             }
-            if (!this.isNoAi() && this.isActive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() == null && this.deactivateTick >= 200) {
+            if (!this.isNoAi() && this.isActive() && this.isNoAnimation() && this.getTarget() == null && this.deactivateTick >= 200) {
                 this.playSound(SoundInit.GSH_FRICTION.get());
                 this.playAnimation(this.deactivateAnimation);
                 this.setActive(false);
             }
 
-            if (!this.isNoAi() && this.isActive() && this.getAnimation() == this.getNoAnimation() && this.getTarget() != null) {
+            if (!this.isNoAi() && this.isActive() && this.isNoAnimation() && this.getTarget() != null) {
                 if (this.targetDistance <= 8) {
                     this.getNavigation().stop();
                 } else {

@@ -133,7 +133,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
 
     @Override//是否免疫药水效果
     public boolean addEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        return (this.getAnimation() == this.getNoAnimation() || effectInstance.getEffect() == EffectInit.VERTIGO_EFFECT.get()) && super.addEffect(effectInstance, entity);
+        return (this.noConflictingTasks() || effectInstance.getEffect() == EffectInit.VERTIGO_EFFECT.get()) && super.addEffect(effectInstance, entity);
     }
 
     @Override//被方块阻塞
@@ -373,7 +373,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                     new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, keyTrack1, true),
                     new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, keyTrack2, false),
                     new RibbonComponent(ParticleInit.FLAT_RIBBON.get(), 8, 0, 0, 0, 0.12F, 0.95, 0.35, 0.35, 0.75, true, true, new ParticleComponent[]{
-                            new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.SCALE, AnimData.KeyTrack.startAndEnd(1, 0))},false)
+                            new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.SCALE, AnimData.KeyTrack.startAndEnd(1, 0))}, false)
             });
         }
     }
@@ -413,9 +413,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                 if (this.random.nextFloat() < 0.6F) this.hurtCount++;
                 Double maxDistance = EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.maxDistanceTakeDamage.get();
                 if (ModEntityUtils.isProjectileSource(source) && this.distanceTo(entity) >= maxDistance) return false;
-                float maxDamageCap = (float) (EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.maximumDamageCap.damageCap.get() * 1.0F);
-                float maxHurtDamage = this.getMaxHealth() * maxDamageCap;
-                damage = Math.min(damage, maxHurtDamage);
+                damage = Math.min(damage, EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.maximumDamageCap.damageCap.get().floatValue());
                 return super.hurt(source, damage);
             } else if (source == DamageSource.OUT_OF_WORLD || source == DamageSource.GENERIC) {
                 return super.hurt(source, damage);
@@ -593,8 +591,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     @Override
     protected void dropCustomDeathLoot(DamageSource source, int pLooting, boolean pRecentlyHit) {
         super.dropCustomDeathLoot(source, pLooting, pRecentlyHit);
-        Entity entity = source.getEntity();
-        if (entity instanceof Player) {
+        if (source.getEntity() != null || this.getTarget() != null) {
             ItemEntity itementity = this.spawnAtLocation(ItemInit.HEART_OF_PAGAN.get());
             ItemEntity itementity2 = this.spawnAtLocation(ItemInit.SOUL_SUMMONING_NECKLACE.get());
             if (itementity != null && itementity2 != null) {
@@ -627,7 +624,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
 
     @Override
     public boolean noConflictingTasks() {
-        return this.getAnimation() == this.getNoAnimation();
+        return this.isNoAnimation();
     }
 
     @Override

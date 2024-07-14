@@ -18,6 +18,6 @@ public class ItemImmortalDebris extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level p_41422_, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, p_41422_, tooltip, flag);
-        tooltip.add(EMTUtils.simpleItemText("immortal_debris", EMTUtils.STYLE_GRAY));
+        tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), EMTUtils.STYLE_GRAY));
     }
 }

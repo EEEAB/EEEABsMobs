@@ -134,10 +134,10 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
         if (player.isShiftKeyDown()) {
             this.setDamage(0.0);
             this.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP);
-            player.displayClientMessage(Component.keybind("reset success").setStyle(EMTUtils.STYLE_GREEN), true);
+            player.displayClientMessage(Component.literal("reset success").setStyle(EMTUtils.STYLE_GREEN), true);
             return InteractionResult.SUCCESS;
         }
-        if (this.getAnimation() == this.getNoAnimation()) {
+        if (this.isNoAnimation()) {
             setActive(!isActive());
             this.playAnimation(isActive() ? this.noAnimation : this.yesAnimation);
             return InteractionResult.SUCCESS;

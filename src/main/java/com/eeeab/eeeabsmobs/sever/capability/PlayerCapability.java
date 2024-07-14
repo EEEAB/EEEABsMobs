@@ -81,7 +81,7 @@ public class PlayerCapability {
                     entity.finalizeSpawn((ServerLevel) player.level, player.level.getCurrentDifficultyAt(new BlockPos(vec3.x, vec3.y, vec3.z)), MobSpawnType.MOB_SUMMONED, null, null);
                     entity.moveTo(vec3);
                     entity.setOwner(player);
-                    if (target instanceof LivingEntity livingEntity)
+                    if (player != target && target instanceof LivingEntity livingEntity)
                         entity.setTarget(livingEntity);
                     player.level.addFreshEntity(entity);
                 }

@@ -73,7 +73,7 @@ public class ModelCorpseWarlock extends EMHierarchicalModel<EntityCorpseWarlock>
         flap(root, walkSpeed, walkDegree * 0.08F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
         walk(leftLeg, walkSpeed, walkDegree * 1.2F, true, 0.0F, 0.0F, limbSwing, limbSwingAmount);
         walk(rightLeg, walkSpeed, walkDegree * 1.2F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
-        if (entity.getAnimation() == entity.getNoAnimation()) {
+        if (entity.isNoAnimation()) {
             walk(rightArm, walkSpeed, walkDegree, true, -0.2F, -0.1F, limbSwing, limbSwingAmount);
             walk(leftArm, walkSpeed, walkDegree, false, -0.2F, 0.1F, limbSwing, limbSwingAmount);
             walk(cloak, walkSpeed * 0.5F, walkDegree * 0.5F, false, 0F, 0F, limbSwing, limbSwingAmount);

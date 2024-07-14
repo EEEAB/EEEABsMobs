@@ -318,21 +318,17 @@ public final class HandlerServerEvent {
         if (hurtEntity instanceof Player player) {
             PlayerCapability.PlayerCapabilityImpl playerCapability = HandlerCapability.getCapability(player, HandlerCapability.PLAYER_CAPABILITY);
             if (playerCapability != null) {
-                playerCapability.hurt(player, event.getSource(), event.getAmount());
+                playerCapability.hurt(player, source, event.getAmount());
             }
-            //if (attacker instanceof EntityAbsImmortal) {
-            //    if (EMArmorUtil.checkFullSuitOfArmor(EMArmorMaterial.IMMORTAL_MATERIAL, player)) {
-            //        float damage = event.getAmount();
-            //        damage -= damage * 0.1F;//减少10%伤害
-            //        event.setAmount(damage);
-            //    }
-            //}
         }
 
         FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(hurtEntity, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
-        if (frenzyCapability != null && frenzyCapability.isFrenzy() && !(source == DamageSource.OUT_OF_WORLD || source == DamageSource.GENERIC)) {
+        if (frenzyCapability != null && frenzyCapability.isFrenzy() && !(source == DamageSource.OUT_OF_WORLD || source == DamageSource.GENERIC) && !source.isBypassArmor()) {
             float damage = event.getAmount();
-            damage -= damage * (Math.min((frenzyCapability.getLevel() + 1F), 5)) * 0.1F;//至多减少50%伤害
+            if (hurtEntity.getHealth() > 1F) {
+                //至多减少50%伤害
+                damage -= damage * (Math.min((frenzyCapability.getLevel() + 1F), 5)) * 0.1F;
+            }
             event.setAmount(damage);
         }
     }

@@ -43,6 +43,11 @@ public final class EMConfigHandler {
                 builder.pop();
             }
             {
+                builder.push("Howitzer");
+                itemHowitzerCoolingTime = BUILDER.comment("Set item cool down time after player on use (seconds)").defineInRange("Set item cool down time", 5, 1, Integer.MAX_VALUE);
+                builder.pop();
+            }
+            {
                 builder.push("Guardian Axe");
                 GUARDIAN_AXE_TOOL = new ToolConfig(15D, 0.9D);
                 builder.pop();
@@ -67,6 +72,7 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.IntValue itemImmortalStaffStorageTime;
         public final ToolConfig GUARDIAN_AXE_TOOL;
         public final ToolConfig NETHERWORLD_KATANA_TOOL;
+        public final ForgeConfigSpec.IntValue itemHowitzerCoolingTime;
         public final ForgeConfigSpec.DoubleValue SSNCumulativeMaximumDamage;
         public final ForgeConfigSpec.IntValue SSNCoolingTime;
     }
@@ -131,12 +137,10 @@ public final class EMConfigHandler {
             builder.push("Immortal Shaman");
             healPercentage = BUILDER.comment("Immortal Shaman heal values (based on max health percentage)").defineInRange("Heal percentage", 0.5D, 0D, 1D);
             combatConfig = new AttributeConfig();
-            maximumDamageCap = new GeneralDamageCap(0.25);
             builder.pop();
         }
 
         public final AttributeConfig combatConfig;
-        public final GeneralDamageCap maximumDamageCap;
         public final ForgeConfigSpec.DoubleValue healPercentage;
     }
 
@@ -156,10 +160,14 @@ public final class EMConfigHandler {
         public Immortal(final ForgeConfigSpec.Builder builder) {
             builder.push("Immortal Boss");
             combatConfig = new AttributeConfig();
+            maximumDamageCap = new DamageCapConfig(20);
+            adaptConfig = new DamageSourceAdaptConfig(builder, 100, 15, 0.08D, 0.8D, true);
             builder.pop();
         }
 
         public final AttributeConfig combatConfig;
+        public final DamageCapConfig maximumDamageCap;
+        public final DamageSourceAdaptConfig adaptConfig;
     }
 
     public static class CorpseMobs {
@@ -193,13 +201,13 @@ public final class EMConfigHandler {
             builder.push("Corpse Warlock");
             maxDistanceTakeDamage = BUILDER.comment("Set the distance to take damage from projectiles").defineInRange("Attack distance", 12D, 1D, 32D);
             combatConfig = new AttributeConfig();
-            maximumDamageCap = new GeneralDamageCap(0.25);
+            maximumDamageCap = new DamageCapConfig(22);
             builder.pop();
         }
 
         public final ForgeConfigSpec.DoubleValue maxDistanceTakeDamage;
         public final AttributeConfig combatConfig;
-        public final GeneralDamageCap maximumDamageCap;
+        public final DamageCapConfig maximumDamageCap;
     }
 
     public static class GulingMobs {
@@ -246,21 +254,25 @@ public final class EMConfigHandler {
     public static class NamelessGuardian {
         public NamelessGuardian(final ForgeConfigSpec.Builder builder) {
             builder.push("Nameless Guardian");
-            suckBloodFactor = BUILDER.comment("Max life steal coefficient (based on max health percentage)").defineInRange("Suck blood factor", 0.05, 0, 1);
+            suckBloodMultiplier = BUILDER.comment("Set suck blood multiplier").defineInRange("Suck blood multiplier", 1D, 0D, 1024D);
             enableNonCombatHeal = BUILDER.comment("If 'False' disable non-combat heal").define("Enable non-combat heal", true);
             enableForcedSuckBlood = BUILDER.comment("If 'False' disable forced suck blood on power status(Does not take effect in Challenge mode)").define("Enable forced suck blood", true);
-            challengeMode = BUILDER.comment("Challenge mode!").define("Be careful! It's going to get tricky!", false);
+            challengeMode = BUILDER.comment("Be careful! It's going to get tricky!").define("Challenge mode!", false);
             combatConfig = new AttributeConfig();
-            maximumDamageCap = new GeneralDamageCap(0.05);
+            maximumDamageCap = new DamageCapConfig(20);
             builder.pop();
         }
 
-        public final ForgeConfigSpec.BooleanValue enableNonCombatHeal;//启用脱战治疗
-        public final ForgeConfigSpec.DoubleValue suckBloodFactor;//吸血系数上限(基于最大生命值的百分比)
-        public final ForgeConfigSpec.BooleanValue enableForcedSuckBlood;//启用强制吸血
-        public final ForgeConfigSpec.BooleanValue challengeMode;//挑战模式
+        //启用脱战治疗
+        public final ForgeConfigSpec.BooleanValue enableNonCombatHeal;
+        //吸血倍率
+        public final ForgeConfigSpec.DoubleValue suckBloodMultiplier;
+        //启用强制吸血
+        public final ForgeConfigSpec.BooleanValue enableForcedSuckBlood;
+        //挑战模式
+        public final ForgeConfigSpec.BooleanValue challengeMode;
         public final AttributeConfig combatConfig;
-        public final GeneralDamageCap maximumDamageCap;
+        public final DamageCapConfig maximumDamageCap;
     }
 
     public static class Entity {
@@ -296,18 +308,26 @@ public final class EMConfigHandler {
             this.enableSameMobsTypeInjury = BUILDER.comment("If 'False' able inflict damage between mobs of the same type").define("Mobs of the same type cannot cause harm", true);
             this.enableRenderFallingBlock = BUILDER.comment("If 'False' disable falling block rendering").define("Enable falling block rendering", true);
             this.enablePlayBossMusic = BUILDER.comment("If 'False' disable play boss music").define("Enable play boss music", true);
+            this.enableFrenzyDestroyBlock = BUILDER.comment("If 'False' disable frenzy potion destroy block").define("Enable frenzy potion destroy block", true);
             builder.pop();
         }
 
-        public final ForgeConfigSpec.BooleanValue enableCameraShake;//启用相机摇晃
-        public final ForgeConfigSpec.BooleanValue enableShowBloodBars;//启用显示boss血条
-        public final ForgeConfigSpec.BooleanValue enableSameMobsTypeInjury;//启用同类型生物之间无法造成伤害
-        public final ForgeConfigSpec.BooleanValue enableRenderFallingBlock;//启用渲染掉落方块
-        public final ForgeConfigSpec.BooleanValue enablePlayBossMusic;//启用播放boss战斗音乐
+        //启用相机摇晃
+        public final ForgeConfigSpec.BooleanValue enableCameraShake;
+        //启用显示boss血条
+        public final ForgeConfigSpec.BooleanValue enableShowBloodBars;
+        //启用同类型生物之间无法造成伤害
+        public final ForgeConfigSpec.BooleanValue enableSameMobsTypeInjury;
+        //启用渲染掉落方块
+        public final ForgeConfigSpec.BooleanValue enableRenderFallingBlock;
+        //启用播放boss战斗音乐
+        public final ForgeConfigSpec.BooleanValue enablePlayBossMusic;
+        //启用狂暴药水冲刺时破坏方块效果
+        public final ForgeConfigSpec.BooleanValue enableFrenzyDestroyBlock;
     }
 
 
-    //属性倍率
+    //通用属性倍率
     public static class AttributeConfig {
         public AttributeConfig() {
             this(1.0F, 1.0F);
@@ -323,12 +343,31 @@ public final class EMConfigHandler {
     }
 
     //通用伤害限制
-    public static class GeneralDamageCap {
-        public GeneralDamageCap(double damageCapPercentage) {
-            this.damageCap = BUILDER.comment("Set damage cap percentage (based on max health)").defineInRange("Damage cap percentage", damageCapPercentage, 0.01D, 1D);
+    public static class DamageCapConfig {
+        public DamageCapConfig(double damageCapPercentage) {
+            this.damageCap = BUILDER.comment("Set this mob damageCap").defineInRange("DamageCap", damageCapPercentage, 0D, 1024D);
         }
 
         public final ForgeConfigSpec.DoubleValue damageCap;
+    }
+
+    //通用伤害源适应
+    public static class DamageSourceAdaptConfig {
+        public DamageSourceAdaptConfig(final ForgeConfigSpec.Builder builder, int maxDamageSourceAdaptCount, int resetCountdown, double singleAdaptFactor, double maxAdaptFactor, boolean adaptsSameTypeMobs) {
+            builder.push("Damage Adapt");
+            this.maxDamageSourceAdaptCount = BUILDER.comment("Set this mob max damage source adapt count").defineInRange("Max damageSource adapt count", maxDamageSourceAdaptCount, 10, 1024);
+            this.resetCountdown = BUILDER.comment("Set the effective time for a single adapt damage source(second)").defineInRange("Effective time", resetCountdown, 10, 1024);
+            this.singleAdaptFactor = BUILDER.comment("Set the factor of each reduction of the same damage source").defineInRange("Single adapt factor", singleAdaptFactor, 0D, 1D);
+            this.maxAdaptFactor = BUILDER.comment("Set the max damage reduction factor").defineInRange("Max adapt factor", maxAdaptFactor, 0D, 1D);
+            this.adaptsSameTypeMobs = adaptsSameTypeMobs;
+            builder.pop();
+        }
+
+        public final ForgeConfigSpec.IntValue maxDamageSourceAdaptCount;
+        public final ForgeConfigSpec.IntValue resetCountdown;
+        public final ForgeConfigSpec.DoubleValue singleAdaptFactor;
+        public final ForgeConfigSpec.DoubleValue maxAdaptFactor;
+        public final boolean adaptsSameTypeMobs;
     }
 
     //通用物品配置

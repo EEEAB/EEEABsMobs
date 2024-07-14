@@ -20,6 +20,7 @@ public class ParticleInit {
 
     public static final RegistryObject<SimpleParticleType> GUARDIAN_SPARK = PARTICLES.register("guardian_spark", () -> new SimpleParticleType(true));
     public static final RegistryObject<SimpleParticleType> POISON = PARTICLES.register("poison", () -> new SimpleParticleType(false));
+    public static final RegistryObject<SimpleParticleType> VERTICAL_LINE = PARTICLES.register("vertical_line", () -> new SimpleParticleType(false));
     public static final RegistryObject<ParticleType<ParticleOrb.OrbData>> ORB = PARTICLES.register("orb", () -> new ParticleType<ParticleOrb.OrbData>(false, ParticleOrb.OrbData.DESERIALIZER) {
         @Override
         public Codec<ParticleOrb.OrbData> codec() {
@@ -60,7 +61,6 @@ public class ParticleInit {
             }
         });
     }
-
 
     public static void register(IEventBus bus) {
         PARTICLES.register(bus);

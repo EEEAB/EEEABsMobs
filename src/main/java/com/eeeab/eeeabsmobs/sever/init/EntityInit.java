@@ -78,6 +78,12 @@ public class EntityInit {
                             .sized(0.6f, 1.2f).clientTrackingRange(8)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_golem").toString()));
 
+    public static final RegistryObject<EntityType<EntityImmortalExecutioner>> IMMORTAL_EXECUTIONER =
+            ENTITIES.register("immortal_executioner",
+                    () -> EntityType.Builder.<EntityImmortalExecutioner>of(EntityImmortalExecutioner::new, MobCategory.MONSTER)
+                            .sized(0.8f, 2.8f).fireImmune().clientTrackingRange(8)
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_executioner").toString()));
+
     public static final RegistryObject<EntityType<EntityTheImmortal>> IMMORTAL_BOSS =
             ENTITIES.register("immortal",
                     () -> EntityType.Builder.<EntityTheImmortal>of(EntityTheImmortal::new, MobCategory.MONSTER)
@@ -94,7 +100,7 @@ public class EntityInit {
     public static final RegistryObject<EntityType<EntityGulingSentinelHeavy>> GULING_SENTINEL_HEAVY =
             ENTITIES.register("guling_sentinel_heavy",
                     () -> EntityType.Builder.<EntityGulingSentinelHeavy>of(EntityGulingSentinelHeavy::new, MobCategory.MONSTER)
-                            .sized(2.5f, 3.8f).fireImmune().clientTrackingRange(10)
+                            .sized(2.5f, 3.8f).fireImmune()/*.clientTrackingRange(10)*/
                             .setShouldReceiveVelocityUpdates(true)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "guling_sentinel_heavy").toString()));
 
@@ -213,11 +219,19 @@ public class EntityInit {
                             .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(10)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "grenade").toString()));
 
+    //电磁脉冲
     public static final RegistryObject<EntityType<EntityElectromagnetic>> ELECTROMAGNETIC =
             ENTITIES.register("electromagnetic",
                     () -> EntityType.Builder.<EntityElectromagnetic>of(EntityElectromagnetic::new, MobCategory.MISC)
                             .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "electromagnetic").toString()));
+
+    //异界传送门
+    public static final RegistryObject<EntityType<EntityAlienPortal>> ALIEN_PORTAL =
+            ENTITIES.register("alien_portal",
+                    () -> EntityType.Builder.<EntityAlienPortal>of(EntityAlienPortal::new, MobCategory.MISC)
+                            .sized(0.1F, 0.1F).setUpdateInterval(1)
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "alien_portal").toString()));
 
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);
@@ -233,6 +247,7 @@ public class EntityInit {
         event.put(EntityInit.IMMORTAL_KNIGHT.get(), EntityAbsImmortalSkeleton.setAttributes().build());
         event.put(EntityInit.IMMORTAL_SHAMAN.get(), EntityImmortalShaman.setAttributes().build());
         event.put(EntityInit.IMMORTAL_GOLEM.get(), EntityImmortalGolem.setAttributes().build());
+        event.put(EntityInit.IMMORTAL_EXECUTIONER.get(), EntityImmortalExecutioner.setAttributes().build());
         event.put(EntityInit.IMMORTAL_BOSS.get(), EntityTheImmortal.setAttributes().build());
         event.put(EntityInit.GULING_SENTINEL.get(), EntityGulingSentinel.setAttributes().build());
         event.put(EntityInit.GULING_SENTINEL_HEAVY.get(), EntityGulingSentinelHeavy.setAttributes().build());
