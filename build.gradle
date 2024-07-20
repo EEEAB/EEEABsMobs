@@ -103,6 +103,11 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    //Curios API
+    maven {
+        name = "Illusive Soulworks maven"
+        url = "https://maven.theillusivec4.top/"
+    }
 }
 
 dependencies {
@@ -110,9 +115,13 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     //Mob battle
     implementation fg.deobf("curse.maven:mob-battle-mod-268746:4748521")
-    //Shader
+    //Shader(Only Client running)
     implementation fg.deobf("curse.maven:xenon-564239:5216360")
     implementation fg.deobf("curse.maven:oculus-581495:5299671")
+    //Configured
+    implementation fg.deobf("curse.maven:configured-457570:5180900")
+    //Curios API
+    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     //Neat
     implementation fg.deobf("curse.maven:neat-238372:4580940")
     //Jei
