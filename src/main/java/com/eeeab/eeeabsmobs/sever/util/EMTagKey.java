@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -29,11 +30,13 @@ public class EMTagKey {
     //Other Mod
     private static final String ICE_AND_FIRE = "iceandfire";
     private static final String ALEX_S_CAVES = "alexscaves";
+    private static final String CATACLYSM = "cataclysm";
     public static final TagKey<EntityType<?>> BLINDED = registerOtherModTagKey(Registries.ENTITY_TYPE, ICE_AND_FIRE, "blinded");
     public static final TagKey<EntityType<?>> IMMUNE_TO_GORGON_STONE = registerOtherModTagKey(Registries.ENTITY_TYPE, ICE_AND_FIRE, "immune_to_gorgon_stone");
     public static final TagKey<EntityType<?>> RESISTS_RADIATION = registerOtherModTagKey(Registries.ENTITY_TYPE, ALEX_S_CAVES, "resists_radiation");
     public static final TagKey<EntityType<?>> RESISTS_TOTEM_OF_POSSESSION = registerOtherModTagKey(Registries.ENTITY_TYPE, ALEX_S_CAVES, "resists_totem_of_possession");
     public static final TagKey<EntityType<?>> RESISTS_TREMORSAURUS_ROAR = registerOtherModTagKey(Registries.ENTITY_TYPE, ALEX_S_CAVES, "resists_tremorsaurus_roar");
+    public static final TagKey<MobEffect> EFFECTIVE_FOR_BOSSES = registerOtherModTagKey(Registries.MOB_EFFECT, CATACLYSM, "effective_for_bosses");
 
     private static <T> TagKey<T> registerOtherModTagKey(ResourceKey<Registry<T>> registry, String modId, String key) {
         return TagKey.create(registry, new ResourceLocation(modId, key));

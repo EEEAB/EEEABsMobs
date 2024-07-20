@@ -21,9 +21,9 @@ public class EMDamageTypeProvider extends DamageTypeTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        this.tag(DamageTypeTags.IS_PROJECTILE).add(EMResourceKey.SHAMAN_BOMBING);
-        this.tag(DamageTypeTags.BYPASSES_ARMOR).add(EMResourceKey.GUARDIAN_LASER);
-        this.tag(EMTagKey.GENERAL_UNRESISTANT_TO).add(DamageTypes.FELL_OUT_OF_WORLD).add(DamageTypes.GENERIC_KILL);
-        this.tag(EMTagKey.MAGIC_UNRESISTANT_TO).add(DamageTypes.MAGIC, DamageTypes.INDIRECT_MAGIC, DamageTypes.SONIC_BOOM, DamageTypes.THORNS);
+        tag(DamageTypeTags.IS_PROJECTILE).add(EMResourceKey.SHAMAN_BOMBING);
+        tag(DamageTypeTags.BYPASSES_ARMOR).add(EMResourceKey.GUARDIAN_LASER);
+        tag(EMTagKey.GENERAL_UNRESISTANT_TO).add(DamageTypes.FELL_OUT_OF_WORLD).add(DamageTypes.GENERIC_KILL);
+        tag(EMTagKey.MAGIC_UNRESISTANT_TO).add(DamageTypes.MAGIC, DamageTypes.INDIRECT_MAGIC, DamageTypes.SONIC_BOOM, DamageTypes.THORNS);
     }
 }

@@ -18,7 +18,7 @@ public class EMStructureTagsProvider extends StructureTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        this.tag(EMTagKey.EYE_OF_GULING).add(EMResourceKey.GULING);
-        this.tag(EMTagKey.EYE_OF_BLOODY_ALTAR).add(EMResourceKey.BLOODY_ALTAR);
+        tag(EMTagKey.EYE_OF_GULING).add(EMResourceKey.GULING);
+        tag(EMTagKey.EYE_OF_BLOODY_ALTAR).add(EMResourceKey.BLOODY_ALTAR);
     }
 }
