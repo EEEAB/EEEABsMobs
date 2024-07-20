@@ -3,6 +3,7 @@ package com.eeeab.eeeabsmobs.sever.handler;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.EMItemModels;
 import com.eeeab.eeeabsmobs.client.model.armor.ModelGhostWarriorArmor;
+import com.eeeab.eeeabsmobs.sever.integration.curios.model.ModelSoulSummoningNecklace;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelBloodBall;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelGrenade;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelGuardianBlade;
@@ -59,6 +60,7 @@ public class HandlerRegister {
 
         event.registerLayerDefinition(EMModelLayer.GHOST_WARRIOR_ARMOR, () -> ModelGhostWarriorArmor.createBodyLayer(new CubeDeformation(0.5F)));
         event.registerLayerDefinition(EMModelLayer.GHOST_WARRIOR_ARMOR_LEGS, () -> ModelGhostWarriorArmor.createBodyLayer(new CubeDeformation(0.2F)));
+        event.registerLayerDefinition(EMModelLayer.SOUL_SUMMONING_NECKLACE, ModelSoulSummoningNecklace::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.THE_NETHERWORLD_KATANA, ModelTheNetherworldKatana::createBodyLayer);
     }
 
