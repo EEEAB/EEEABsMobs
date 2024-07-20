@@ -43,7 +43,7 @@ public class EEEABMobs {
         SoundInit.register(bus);
         StructuresInit.register(bus);
         bus.<FMLCommonSetupEvent>addListener(this::setup);
-        bus.<FMLClientSetupEvent>addListener(this::clientSetUp);
+        bus.<FMLClientSetupEvent>addListener(this::clientSetup);
         bus.<FMLLoadCompleteEvent>addListener(this::complete);
         PROXY.init(bus);
     }
@@ -59,7 +59,7 @@ public class EEEABMobs {
         });
     }
 
-    private void clientSetUp(final FMLClientSetupEvent event) {
+    private void clientSetup(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             CuriosRegistry.clientRegister();
         });
