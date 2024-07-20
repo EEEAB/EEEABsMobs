@@ -24,13 +24,14 @@ public class HandlerCapability {
     });
     public static final Capability<FrenzyCapability.IFrenzyCapability> FRENZY_EFFECT_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
     });
-    public static final Capability<PlayerCapability.PlayerCapabilityImpl> PLAYER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    public static final Capability<PlayerCapability.IPlayerCapability> PLAYER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
     });
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.register(VertigoCapability.IVertigoCapability.class);
         event.register(AbilityCapability.IAbilityCapability.class);
         event.register(FrenzyCapability.IFrenzyCapability.class);
+        event.register(PlayerCapability.IPlayerCapability.class);
     }
 
     @Nullable

@@ -127,7 +127,7 @@ public final class HandlerServerEvent {
         }
         useGuardianCoreStack(event);
 
-        PlayerCapability.PlayerCapabilityImpl playerCapability = HandlerCapability.getCapability(event.player, HandlerCapability.PLAYER_CAPABILITY);
+        PlayerCapability.IPlayerCapability playerCapability = HandlerCapability.getCapability(event.player, HandlerCapability.PLAYER_CAPABILITY);
         if (playerCapability != null) {
             playerCapability.tick(event.player);
         }
@@ -318,7 +318,7 @@ public final class HandlerServerEvent {
         }
 
         if (hurtEntity instanceof Player player) {
-            PlayerCapability.PlayerCapabilityImpl playerCapability = HandlerCapability.getCapability(player, HandlerCapability.PLAYER_CAPABILITY);
+            PlayerCapability.IPlayerCapability playerCapability = HandlerCapability.getCapability(player, HandlerCapability.PLAYER_CAPABILITY);
             if (playerCapability != null) {
                 playerCapability.hurt(player, source, event.getAmount());
             }
