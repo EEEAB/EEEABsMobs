@@ -35,7 +35,7 @@ public class EntityGrenade extends EntityMagicEffects {
                 //基于使用者(非玩家)决定攻击伤害
                 maxDamage = (float) this.caster.getAttributeValue(Attributes.ATTACK_DAMAGE);
             }
-            EntityExplode.explode(this.level(), this.position(), this.damageSources().explosion(this, this.caster), RADIUS, maxDamage);
+            EntityExplode.explode(this.level(), this.position(), this.damageSources().explosion(this, this.caster), this.caster, RADIUS, maxDamage);
             EntityCameraShake.cameraShake(this.level(), this.position(), 16F, 0.125F, 5, 15);
             this.discard();
         }

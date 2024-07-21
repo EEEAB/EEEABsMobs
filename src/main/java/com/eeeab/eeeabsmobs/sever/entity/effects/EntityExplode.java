@@ -32,11 +32,12 @@ public class EntityExplode extends EntityMagicEffects {
         super(type, level);
     }
 
-    public EntityExplode(Level level, DamageSource damageSource, float radius, float maxDamage) {
+    public EntityExplode(Level level, DamageSource damageSource, @Nullable LivingEntity caster, float radius, float maxDamage) {
         this(EntityInit.EXPLODE.get(), level);
         this.setRadius(radius);
         this.damageSource = damageSource;
         this.maxDamage = maxDamage;
+        this.caster = caster;
     }
 
     @Override
@@ -62,6 +63,9 @@ public class EntityExplode extends EntityMagicEffects {
         int j1 = Mth.floor(vec3.z + (double) f2 + 1.0D);
         List<Entity> list = this.level().getEntities(entity, new AABB(k1, i2, j2, l1, i1, j1));
         for (Entity hit : list) {
+            if (this.caster != null && hit == this.caster) {
+                continue;
+            }
             if (!hit.ignoreExplosion()) {
                 double d12 = Math.sqrt(hit.distanceToSqr(vec3)) / (double) f2;
                 if (d12 <= 1.0D) {
@@ -136,12 +140,13 @@ public class EntityExplode extends EntityMagicEffects {
      *
      * @param vec3         爆炸坐标
      * @param damageSource 伤害源
+     * @param caster       造成爆炸的实体
      * @param radius       半径
      * @param maxDamage    最大伤害限制
      */
-    public static void explode(Level world, Vec3 vec3, DamageSource damageSource, float radius, float maxDamage) {
+    public static void explode(Level world, Vec3 vec3, DamageSource damageSource, @Nullable LivingEntity caster, float radius, float maxDamage) {
         if (!world.isClientSide) {
-            EntityExplode explode = new EntityExplode(world, damageSource, radius, maxDamage);
+            EntityExplode explode = new EntityExplode(world, damageSource, caster, radius, maxDamage);
             explode.setPos(vec3);
             world.addFreshEntity(explode);
         }

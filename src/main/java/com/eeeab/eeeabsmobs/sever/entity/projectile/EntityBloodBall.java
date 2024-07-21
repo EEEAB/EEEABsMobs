@@ -114,7 +114,7 @@ public class EntityBloodBall extends Projectile implements IEntity {
                 if (this.isHeal)
                     livingEntity.heal(Math.min(livingEntity.getMaxHealth() * power * 0.05F, livingEntity.getMaxHealth() * 0.5F));
             } else {
-                EntityExplode.explode(this.level(), this.position(), this.damageSources().explosion(this, entity), Math.min(power + 1, 5F), 30F);
+                EntityExplode.explode(this.level(), this.position(), this.damageSources().explosion(this, entity), null, Math.min(power + 1, 5F), 30F);
                 EntityCameraShake.cameraShake(this.level(), this.position(), 16F, 0.125F, 5, 15);
             }
         }
