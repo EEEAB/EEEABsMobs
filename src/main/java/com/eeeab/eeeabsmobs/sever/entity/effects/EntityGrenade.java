@@ -72,6 +72,10 @@ public class EntityGrenade extends EntityMagicEffects {
         }
     }
 
+    public void setMaxDamage(float maxDamage) {
+        this.maxDamage = maxDamage;
+    }
+
     @Override
     protected void defineSynchedData() {
     }

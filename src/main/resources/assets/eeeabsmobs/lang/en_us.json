@@ -93,7 +93,7 @@
   "item.eeeabsmobs.guardian_core.tip_1": "Hold right-click to fire the laser and continuously consume item durability,causing 1% of the target's maximum HP + 5 base damage, and automatically restoring durability in the player's backpack when unused",
   "item.eeeabsmobs.guardian_core.tip_2": "It seems to have other uses besides being a weapon...",
   "tooltip.weapon.eeeabsmobs.guardian_core.tip": "Attack range %1$s",
-  "tooltip.weapon.eeeabsmobs.demolisher.tip": "Right-click to fire the grenade, which can smash the enemy as well as the user",
+  "tooltip.weapon.eeeabsmobs.demolisher.tip": "Right-click to fire a grenade and consume a player's backpack 'rock' type item, dealing a maximum %1$s explosion damage",
   "tooltip.other.eeeabsmobs.demolisher.tip": "Need more stones...",
   "item.eeeabsmobs.immortal_debris.tip": "It seems to be a fragment of the armor of some kind of creature...",
   "item.eeeabsmobs.heart_of_pagan.tip": "Used to make frenzy potions",

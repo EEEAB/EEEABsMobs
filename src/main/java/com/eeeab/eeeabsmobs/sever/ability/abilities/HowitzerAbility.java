@@ -3,6 +3,7 @@ package com.eeeab.eeeabsmobs.sever.ability.abilities;
 import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityPeriod;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityType;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGrenade;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -26,6 +27,7 @@ public class HowitzerAbility extends Ability<Player> {
             double yBodyRadians = Math.toRadians(user.yHeadRot + (180 * (user.getUsedItemHand() == InteractionHand.MAIN_HAND ? 1 : 2)));
             float width = user.getBbWidth();
             EntityGrenade grenade = new EntityGrenade(level, user);
+            grenade.setMaxDamage(EMConfigHandler.COMMON.ITEM.itemHowitzerGrenadeDamage.get().floatValue());
             Vec3 lookAngle = user.getLookAngle();
             Vec3 vec3 = user.position().add(lookAngle);
             grenade.shoot(lookAngle.x, lookAngle.y, lookAngle.z, 0.85F, 1F);
