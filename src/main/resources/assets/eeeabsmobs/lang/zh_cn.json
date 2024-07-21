@@ -109,6 +109,7 @@
   "other.eeeabsmobs.unable_breaks.tip": "无法破坏",
   "other.eeeabsmobs.cooling.tip": "冷却中...",
   "tooltip.other.eeeabsmobs.cd.tip": "冷却 %1$s 秒",
+  "tooltip.other.eeeabsmobs.no_cd.tip": "无冷却",
 
   "_comment": "药水效果",
   "effect.eeeabsmobs.erode_effect": "侵蚀",

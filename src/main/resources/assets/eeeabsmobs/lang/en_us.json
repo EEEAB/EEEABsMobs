@@ -109,6 +109,7 @@
   "other.eeeabsmobs.unable_breaks.tip": "Unbreakable",
   "other.eeeabsmobs.cooling.tip": "Cooling...",
   "tooltip.other.eeeabsmobs.cd.tip": "CD %1$s sec",
+  "tooltip.other.eeeabsmobs.no_cd.tip": "No CD",
 
   "_comment": "Effects",
   "effect.eeeabsmobs.erode_effect": "Erode",
