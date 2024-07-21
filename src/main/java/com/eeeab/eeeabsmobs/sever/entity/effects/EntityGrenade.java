@@ -16,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
 public class EntityGrenade extends EntityMagicEffects {
     private static final float GRAVITY = 0.03F;
     private static final float RADIUS = 2.5F;
-    private float maxDamage = 8F;
+    private float maxDamage = 10F;
 
     public EntityGrenade(EntityType<? extends EntityMagicEffects> entityType, Level level) {
         super(entityType, level);

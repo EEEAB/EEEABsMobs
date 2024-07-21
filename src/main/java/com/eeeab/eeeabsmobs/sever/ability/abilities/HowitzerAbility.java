@@ -14,7 +14,7 @@ public class HowitzerAbility extends Ability<Player> {
     public HowitzerAbility(AbilityType<Player, ? extends Ability<Player>> abilityType, Player user) {
         super(abilityType, user, new AbilityPeriod[]{
                 new AbilityPeriod.AbilityPeriodInstant(AbilityPeriod.AbilityPeriodType.ACTIVE)
-        }, 5);
+        }, 0);
     }
 
     @Override
@@ -23,12 +23,12 @@ public class HowitzerAbility extends Ability<Player> {
         Player user = this.getUser();
         if (!user.level().isClientSide) {
             ServerLevel level = (ServerLevel) user.level();
-            double yBodyRadians = Math.toRadians(user.yBodyRot + (180 * (user.getUsedItemHand() == InteractionHand.MAIN_HAND ? 1 : 2)));
+            double yBodyRadians = Math.toRadians(user.yHeadRot + (180 * (user.getUsedItemHand() == InteractionHand.MAIN_HAND ? 1 : 2)));
             float width = user.getBbWidth();
             EntityGrenade grenade = new EntityGrenade(level, user);
             Vec3 lookAngle = user.getLookAngle();
             Vec3 vec3 = user.position().add(lookAngle);
-            grenade.shoot(lookAngle.x, lookAngle.y, lookAngle.z, 1F, 1F);
+            grenade.shoot(lookAngle.x, lookAngle.y, lookAngle.z, 0.85F, 1F);
             grenade.setPos(vec3.x + width * 0.8F * Math.cos(yBodyRadians), user.getY(0.45D), vec3.z + width * 0.8F * Math.sin(yBodyRadians));
             level.addFreshEntity(grenade);
         }

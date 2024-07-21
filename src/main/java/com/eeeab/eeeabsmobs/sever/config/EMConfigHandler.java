@@ -44,7 +44,7 @@ public final class EMConfigHandler {
             }
             {
                 builder.push("Howitzer");
-                itemHowitzerCoolingTime = BUILDER.comment("Set item cool down time after player on use (seconds)").defineInRange("Set item cool down time", 5, 1, Integer.MAX_VALUE);
+                itemHowitzerCoolingTime = BUILDER.comment("Set item cool down time after player on use (seconds)").defineInRange("Set item cool down time", 2, 0, Integer.MAX_VALUE);
                 builder.pop();
             }
             {
