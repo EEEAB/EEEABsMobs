@@ -45,7 +45,8 @@ public final class EMConfigHandler {
             {
                 builder.push("Howitzer");
                 itemHowitzerCoolingTime = BUILDER.comment("Set item cool down time after player on use (seconds)").defineInRange("Set item cool down time", 2, 0, Integer.MAX_VALUE);
-                itemHowitzerGrenadeDamage = BUILDER.comment("Set Grenade maximum explosion damage").defineInRange("Set damage", 10D, 1D, 20D);
+                itemHowitzerGrenadeDamage = BUILDER.comment("Set Grenade maximum explosion damage(damage to the center of the explosion)").defineInRange("Set damage cap", 10D, 1D, 128D);
+                itemHowitzerGrenadeExplosionRadius = BUILDER.comment("Set Grenade explosion radius(the bigger the blast radius, the higher the damage)").defineInRange("Set explosion radius", 2.5D, 1D, 10D);
                 builder.pop();
             }
             {
@@ -75,6 +76,7 @@ public final class EMConfigHandler {
         public final ToolConfig NETHERWORLD_KATANA_TOOL;
         public final ForgeConfigSpec.IntValue itemHowitzerCoolingTime;
         public final ForgeConfigSpec.DoubleValue itemHowitzerGrenadeDamage;
+        public final ForgeConfigSpec.DoubleValue itemHowitzerGrenadeExplosionRadius;
         public final ForgeConfigSpec.DoubleValue SSNCumulativeMaximumDamage;
         public final ForgeConfigSpec.IntValue SSNCoolingTime;
     }

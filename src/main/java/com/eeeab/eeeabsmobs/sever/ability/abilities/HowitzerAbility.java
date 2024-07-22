@@ -28,6 +28,7 @@ public class HowitzerAbility extends Ability<Player> {
             float width = user.getBbWidth();
             EntityGrenade grenade = new EntityGrenade(level, user);
             grenade.setMaxDamage(EMConfigHandler.COMMON.ITEM.itemHowitzerGrenadeDamage.get().floatValue());
+            grenade.setRadius(EMConfigHandler.COMMON.ITEM.itemHowitzerGrenadeExplosionRadius.get().floatValue());
             Vec3 lookAngle = user.getLookAngle();
             Vec3 vec3 = user.position().add(lookAngle);
             grenade.shoot(lookAngle.x, lookAngle.y, lookAngle.z, 0.85F, 1F);
