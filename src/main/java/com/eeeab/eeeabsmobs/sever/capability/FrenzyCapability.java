@@ -7,6 +7,7 @@ import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.eeeab.eeeabsmobs.sever.integration.curios.ICuriosApi;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -21,6 +22,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -104,8 +106,10 @@ public class FrenzyCapability {
                     if (duration <= 10 && duration >= 0) {
                         if (entity instanceof Player player) {
                             //当玩家持有唤魂项链时 副作用持续时间减少一半
-                            if (player.getInventory().items.stream().anyMatch(i -> i.is(ItemInit.SOUL_SUMMONING_NECKLACE.get()))) {
-                                player.getCooldowns().addCooldown(ItemInit.SOUL_SUMMONING_NECKLACE.get(), 20);
+                            Item item = ItemInit.SOUL_SUMMONING_NECKLACE.get();
+                            if ((ICuriosApi.isLoaded() && ICuriosApi.INSTANCE.isPresentInventory(player, item))
+                                    || (player.getInventory().items.stream().anyMatch(i -> i.is(item)))) {
+                                player.getCooldowns().addCooldown(item, 20);
                                 durationTick /= 2;
                             }
                         }
