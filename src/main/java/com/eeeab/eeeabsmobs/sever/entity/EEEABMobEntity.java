@@ -2,19 +2,18 @@ package com.eeeab.eeeabsmobs.sever.entity;
 
 import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.util.MobSkinStyle;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -50,7 +49,6 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     private static final byte STOP_BOSS_MUSIC_ID = 78;
     private static final UUID HEALTH_UUID = UUID.fromString("cca33d36-6842-43d8-b615-0cad4460a18a");
     private static final UUID ATTACK_UUID = UUID.fromString("e1b02986-1699-4120-a687-40419a294482");
-    private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(EEEABMobEntity.class, EntityDataSerializers.INT);
 
     public EEEABMobEntity(EntityType<? extends EEEABMobEntity> type, Level level) {
         super(type, level);
@@ -298,22 +296,18 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     @Override//初始化NBT数据
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_VARIANT, 0);
     }
 
 
     @Override//退出时保存自定义NBT(不然数据将会重置)
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt("DATA_VARIANT", this.entityData.get(DATA_VARIANT));
     }
 
 
     @Override//加载世界时读写自定义NBT
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.entityData.set(DATA_VARIANT, compound.getInt("DATA_VARIANT"));
-
     }
 
     public List<LivingEntity> getNearByLivingEntities(double range) {
@@ -384,14 +378,6 @@ public abstract class EEEABMobEntity extends PathfinderMob {
 
     public float getHealthPercentage() {
         return (this.getHealth() / this.getMaxHealth()) * 100;
-    }
-
-    public MobSkinStyle getStyle() {
-        return MobSkinStyle.byId(this.entityData.get(DATA_VARIANT));
-    }
-
-    public void setStyle(MobSkinStyle style) {
-        this.entityData.set(DATA_VARIANT, style.getId());
     }
 
     public SoundEvent getBossMusic() {
