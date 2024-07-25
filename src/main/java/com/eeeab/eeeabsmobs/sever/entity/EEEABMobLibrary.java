@@ -4,6 +4,7 @@ import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.animation.EMAnimatedEntity;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.EEEABMobs;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -54,15 +55,19 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
     @Override
     public void tick() {
         super.tick();
-        //this.checkAnimationLegality();
+        this.checkAnimationLegality();
     }
 
     private void checkAnimationLegality() {
+        if (!EMConfigHandler.COMMON.OTHER.enableAnimationLegalityLogPrint.get()) return;
         Animation[] animations = this.getAnimations();
         if (animations != null && this.isAlive()) {
             for (Animation animation : Arrays.stream(animations).filter(a -> a != this.noAnimation && a != this.getAnimation() && a.isStarted()).toList()) {
-                if (this.tickCount % 20 == 0)
-                    EEEABMobs.LOGGER.error("{} - 存在非法动作数据: 实体{} 动画{}", this.level().isClientSide ? "客户端" : "服务端", this.getName().getString(), animation);
+                if (this.tickCount % 200 == 0)
+                    EEEABMobs.LOGGER.warn("{} → there is illegal action data: Mob= {} Animation= {}[{}]",
+                            this.level().isClientSide ? "Client" : "Server",
+                            this.getName().getString(), animation,
+                            ArrayUtils.indexOf(this.getAnimations(), animation));
             }
         }
     }
