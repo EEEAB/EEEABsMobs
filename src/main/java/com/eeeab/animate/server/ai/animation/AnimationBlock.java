@@ -13,6 +13,12 @@ public class AnimationBlock<T extends EEEABMobLibrary & EMAnimatedEntity> extend
     }
 
     @Override
+    public void stop() {
+        super.stop();
+        this.entity.blockEntity = null;
+    }
+
+    @Override
     public void tick() {
         super.tick();
         if (entity != null && entity.blockEntity != null) {
