@@ -19,6 +19,7 @@ public class EMModelLayer {
     public static final ModelLayerLocation IMMORTAL_GOLEM = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_golem"), "main");
     public static final ModelLayerLocation IMMORTAL_SKELETON = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_skeleton"), "main");
     public static final ModelLayerLocation IMMORTAL_SHAMAN = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_shaman"), "main");
+    public static final ModelLayerLocation IMMORTAL_EXECUTIONER = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_executioner"), "main");
     public static final ModelLayerLocation IMMORTAL = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_boss"), "main");
 
     //非生物实体

@@ -56,6 +56,7 @@ public class HandlerRegister {
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_GOLEM, ModelImmortalGolem::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_SKELETON, ModelAbsImmortalSkeleton::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_SHAMAN, ModelImmortalShaman::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.IMMORTAL_EXECUTIONER, ModelImmortalExecutioner::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.IMMORTAL, ModelTheImmortal::createBodyLayer);
 
         event.registerLayerDefinition(EMModelLayer.GHOST_WARRIOR_ARMOR, () -> ModelGhostWarriorArmor.createBodyLayer(new CubeDeformation(0.5F)));
@@ -70,7 +71,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.IMMORTAL_KNIGHT.get(), RenderAbsImmortalSkeleton::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_SHAMAN.get(), RenderImmortalShaman::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_GOLEM.get(), RenderImmortalGolem::new);
-        event.registerEntityRenderer(EntityInit.IMMORTAL_EXECUTIONER.get(), (context) -> new RenderUnknown<>(context, 1.4F, 0.6F));
+        event.registerEntityRenderer(EntityInit.IMMORTAL_EXECUTIONER.get(), RenderImmortalExecutioner::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_BOSS.get(), RenderTheImmortal::new);
         event.registerEntityRenderer(EntityInit.CORPSE.get(), RenderCorpse::new);
         event.registerEntityRenderer(EntityInit.CORPSE_VILLAGER.get(), RenderCorpseVillager::new);
@@ -107,6 +108,7 @@ public class HandlerRegister {
         event.registerSpriteSet(ParticleInit.ADV_ORB.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.CRIMSON.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.CRIMSON_EYE.get(), AdvancedParticleBase.Factory::new);
+        event.registerSpriteSet(ParticleInit.STRIP_SOUL_FIRE.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.FLAT_RIBBON.get(), ParticleRibbon.Factory::new);
         event.registerSpriteSet(ParticleInit.DUST.get(), ParticleDust.DustFactory::new);
         event.registerSpriteSet(ParticleInit.ORB.get(), ParticleOrb.OrbFactory::new);

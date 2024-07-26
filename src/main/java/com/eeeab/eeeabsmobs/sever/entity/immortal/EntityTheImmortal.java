@@ -79,6 +79,8 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
     private static final UUID HEALTH_UUID = UUID.fromString("E2F534E6-4A55-4B72-A9D2-3157D084A281");
     private static final UUID ARMOR_UUID = UUID.fromString("FA2FB8E8-FFE8-4D77-B23B-E0110D4A175F");
     private static final UUID ATTACK_UUID = UUID.fromString("F8DBD65D-3C4A-4851-83D3-4CB22964A196");
+    //用于标记每个阶段是否释放特殊的技能
+    private boolean releaseMark;
     private boolean switching;
     //每20Tick重置一次 用于判断短时间造成伤害次数
     private int hurtCount;
@@ -165,9 +167,10 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
         return false;
     }
 
+    //TODO 后续阶段暂时隐藏
     @Override
     public boolean isDeadOrDying() {
-        return super.isDeadOrDying() && this.getStage() == Stage.STAGE3;
+        return super.isDeadOrDying() /*&& this.getStage() == Stage.STAGE3*/;
     }
 
     @Override
@@ -266,7 +269,7 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
         this.coreControllerAnimation.updatePrevTimer();
         if (this.isPassenger()) this.stopRiding();
         if (!this.level().isClientSide) {
-            if (this.isActive() && !this.isNoAi() && this.isNoAnimation() && this.getTarget() != null && this.checkTeleportConditions(this.getTarget())) {
+            if (this.isActive() && !this.isNoAi() && this.isNoAnimation() && this.checkTeleportConditions(this.getTarget())) {
                 this.nextTeleportTick = 200 + this.random.nextInt(100);
                 this.playAnimation(this.teleportAnimation);
             }
@@ -382,7 +385,8 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
         super.setHealth(health);
         //判断是否切换阶段
         if (this.getHealth() <= 0 && this.getStage() != Stage.STAGE3) {
-            this.nextStage(Stage.byStage(this.getStage().index + 1));
+            //TODO 后续阶段暂时隐藏
+            //this.nextStage(Stage.byStage(this.getStage().index + 1));
         }
     }
 
@@ -393,16 +397,43 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
             this.lastDamageSource = source;
             if (this.isInvulnerableTo(source)) {
                 return false;
+            } else if (this.estimatedHealthAfterDealingDamage(damage) && !this.releaseMark) {
+                if (this.isNoAnimation()) {
+                    this.releaseMark = true;
+                    this.playAnimation(this.getSpecialSkillByStage(this.getStage()));
+                }
+                return false;
             } else if (source.getEntity() != null || source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
                 boolean flag = super.hurt(source, damage);
+
                 return flag;
             }
         }
         return false;
     }
 
+    /**
+     * 预估造成伤害后是否达到期望生命值百分比
+     *
+     * @param damage 造成伤害
+     * @return 是否达到
+     */
+    private boolean estimatedHealthAfterDealingDamage(float damage) {
+        return (this.getHealth() - damage) / this.getMaxHealth() <= 0.5F;
+    }
+
+    /**
+     * 根据不同阶段获取特殊技能
+     *
+     * @param stage 阶段
+     * @return 特殊技能动画
+     */
+    private Animation getSpecialSkillByStage(Stage stage) {
+        return null;
+    }
+
     private boolean checkTeleportConditions(LivingEntity target) {
-        return this.nextTeleportTick <= 0 && this.distanceToSqr(target) < Math.pow(3, 2) && this.random.nextInt(this.hurtCount >= 3 ? 50 : 200) == 0;
+        return this.nextTeleportTick <= 0 && this.getTarget() != null && this.distanceToSqr(target) < Math.pow(3, 2) && this.random.nextInt(this.hurtCount >= 3 ? 50 : 200) == 0;
     }
 
     private void floatImmortal() {
@@ -428,6 +459,7 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
         super.addAdditionalSaveData(compound);
         compound.putInt("stage", this.getStage().index);
         compound.putBoolean("switching", this.switching);
+        compound.putBoolean("releaseMark", this.releaseMark);
         compound.putBoolean("isActive", this.isActive());
         compound.putByte("heldIndex", this.getHeldIndex());
     }
@@ -437,6 +469,7 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
         super.readAdditionalSaveData(compound);
         this.entityData.set(DATA_STAGE, compound.getInt("stage"));
         this.switching = compound.getBoolean("switching");
+        this.releaseMark = compound.getBoolean("releaseMark");
         this.setActive(compound.getBoolean("isActive"));
         this.setHeldIndex(compound.getByte("heldIndex"));
         if (this.switching) {
@@ -587,6 +620,7 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
             }
             if (this.getHealth() <= 0) this.setHealth(0.1F);
         } finally {
+            this.releaseMark = false;
             this.changeAttribute(stage.addHealth, stage.addArmor, stage.addAttack);
             this.entityData.set(DATA_STAGE, stage.index);
             this.damageAdaptation.clearCache();
@@ -598,17 +632,23 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
         AttributeInstance health = this.getAttribute(Attributes.MAX_HEALTH);
         AttributeInstance armor = this.getAttribute(Attributes.ARMOR);
         AttributeInstance attack = this.getAttribute(Attributes.ATTACK_DAMAGE);
-        health.removePermanentModifier(HEALTH_UUID);
-        armor.removePermanentModifier(ARMOR_UUID);
-        attack.removePermanentModifier(ATTACK_UUID);
-        health.addPermanentModifier(new AttributeModifier(HEALTH_UUID, "Immortal add health", addHealth, AttributeModifier.Operation.ADDITION));
-        attack.addPermanentModifier(new AttributeModifier(ATTACK_UUID, "Immortal add attack", addAttack, AttributeModifier.Operation.ADDITION));
-        armor.addPermanentModifier(new AttributeModifier(ARMOR_UUID, "Immortal add armor", addArmor, AttributeModifier.Operation.ADDITION));
+        if (health != null) {
+            health.removePermanentModifier(HEALTH_UUID);
+            health.addPermanentModifier(new AttributeModifier(HEALTH_UUID, "Immortal add health", addHealth, AttributeModifier.Operation.ADDITION));
+        }
+        if (armor != null) {
+            armor.removePermanentModifier(ARMOR_UUID);
+            armor.addPermanentModifier(new AttributeModifier(ARMOR_UUID, "Immortal add armor", addArmor, AttributeModifier.Operation.ADDITION));
+        }
+        if (attack != null) {
+            attack.removePermanentModifier(ATTACK_UUID);
+            attack.addPermanentModifier(new AttributeModifier(ATTACK_UUID, "Immortal add attack", addAttack, AttributeModifier.Operation.ADDITION));
+        }
     }
 
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 200.0D).
-                add(Attributes.MOVEMENT_SPEED, 0.32D).
+                add(Attributes.MOVEMENT_SPEED, 0.36D).
                 add(Attributes.FOLLOW_RANGE, 64.0D).
                 add(Attributes.ATTACK_DAMAGE, 1.0D).
                 add(Attributes.KNOCKBACK_RESISTANCE, 1.0D).
@@ -633,6 +673,7 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
         public final float addArmor;
         public final float addAttack;
         public final byte heldIndex;
+
 
         public static Stage byStage(int type) {
             for (Stage value : values()) {

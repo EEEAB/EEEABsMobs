@@ -81,7 +81,7 @@ public class EntityInit {
     public static final RegistryObject<EntityType<EntityImmortalExecutioner>> IMMORTAL_EXECUTIONER =
             ENTITIES.register("immortal_executioner",
                     () -> EntityType.Builder.<EntityImmortalExecutioner>of(EntityImmortalExecutioner::new, MobCategory.MONSTER)
-                            .sized(0.8f, 2.8f).fireImmune().clientTrackingRange(8)
+                            .sized(0.8f, 2.5f).fireImmune().clientTrackingRange(8)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_executioner").toString()));
 
     public static final RegistryObject<EntityType<EntityTheImmortal>> IMMORTAL_BOSS =
