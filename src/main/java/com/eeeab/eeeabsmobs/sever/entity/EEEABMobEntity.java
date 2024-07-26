@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.sever.entity;
 
 import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -71,6 +72,10 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     }
 
     protected EMConfigHandler.AttributeConfig getAttributeConfig() {
+        return null;
+    }
+
+    protected EMConfigHandler.DamageCapConfig getDamageCap() {
         return null;
     }
 
@@ -150,6 +155,14 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     protected void customServerAiStep() {
         super.customServerAiStep();
         if (tickCount % 4 == 0) bossInfo.update();
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (this.getDamageCap() != null && !source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
+            amount = Math.min(amount, this.getDamageCap().damageCap.get().floatValue());
+        }
+        return super.hurt(source, amount);
     }
 
     @Override
