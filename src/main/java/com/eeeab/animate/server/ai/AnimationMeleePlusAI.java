@@ -13,11 +13,21 @@ public class AnimationMeleePlusAI<T extends EEEABMobLibrary & EMAnimatedEntity> 
     //当前播放攻击动作索引
     private int attackIndex;
     private int delayCounter;
+    private int delay = 5;
 
     @SafeVarargs
     public AnimationMeleePlusAI(T attacker, double speed, int attackInterval, Supplier<Animation>... animations) {
         super(attacker, speed, attackInterval, e -> e.active, animations);
         this.animations = animations;
+    }
+
+    @SafeVarargs
+    public AnimationMeleePlusAI(T attacker, double speed, int attackInterval, int delay, Supplier<Animation>... animations) {
+        this(attacker, speed, attackInterval, animations);
+        if (delay < 1) {
+            delay = 1;
+        }
+        this.delay = delay;
     }
 
     @Override
@@ -33,10 +43,10 @@ public class AnimationMeleePlusAI<T extends EEEABMobLibrary & EMAnimatedEntity> 
             this.attacker.getLookControl().setLookAt(target, 30.0F, 30.0F);
             double distSqr = this.attacker.distanceToSqr(target.getX(), target.getBoundingBox().minY, target.getZ());
             if (--this.delayCounter <= 0) {
-                this.delayCounter = 5 + this.attacker.getRandom().nextInt(5) + 1;
+                this.delayCounter = this.delay + this.attacker.getRandom().nextInt(this.delay) + 1;
                 if (distSqr > Math.pow(this.attacker.getAttributeValue(Attributes.FOLLOW_RANGE), 2.0)) {
                     if (this.attacker.getNavigation().isDone() && !this.attacker.getNavigation().moveTo(target, 1.0)) {
-                        this.delayCounter += 5;
+                        this.delayCounter += this.delay;
                     }
                 } else {
                     this.attacker.getNavigation().moveTo(target, this.speed);
@@ -44,6 +54,7 @@ public class AnimationMeleePlusAI<T extends EEEABMobLibrary & EMAnimatedEntity> 
             }
             if (animations != null && animations.length != 0) {
                 this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
+                distSqr = this.attacker.distanceToSqr(target.getX(), target.getBoundingBox().minY, target.getZ());
                 if (this.ticksUntilNextAttack == 0 && this.attacker.getMeleeAttackRangeSqr(target) >= distSqr) {
                     this.ticksUntilNextAttack = this.getAttackInterval();
                     this.attacker.playAnimation(this.getAnimationByPolling());
