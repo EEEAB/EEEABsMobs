@@ -458,7 +458,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         if (!this.level().isClientSide) {
             if (this.getTarget() != null && !this.getTarget().isAlive()) this.setTarget(null);
 
-            if (this.getTarget() != null && this.isActive() && !this.isPowered() && this.noConflictingTasks() && (this.isChallengeMode() || (this.isFirstMadness() && this.getHealthPercentage() <= 60) || (!this.isFirstMadness() && this.getNextMadnessTick() <= 0))) {
+            if (this.getTarget() != null && this.shouldSetPowered() && this.noConflictingTasks()) {
                 this.removeAllEffects();
                 this.setNoAi(false);
                 this.playAnimation(this.roarAnimation);
@@ -585,6 +585,10 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 this.level().playLocalSound(getX(), getY(), getZ(), SoundInit.NAMELESS_GUARDIAN_STEP.get(), this.getSoundSource(), 1F, 1.05F, false);
             }
         }
+    }
+
+    private boolean shouldSetPowered() {
+        return this.isActive() && !this.isPowered() && (this.isChallengeMode() || (this.isFirstMadness() && this.getHealthPercentage() <= 60) || (!this.isFirstMadness() && this.getNextMadnessTick() <= 0));
     }
 
     private void strongKnockBlock() {
@@ -750,6 +754,9 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             if (this.guardianInvulnerableTime > 0) {
                 return false;
             } else if (entity != null) {
+                if (this.shouldSetPowered()) {
+                    damage = 1F;
+                }
                 if (this.isPowered()) {
                     if (this.guardianInvulnerableTime <= 0) guardianInvulnerableTime = 20 /*不能小于等于10*/;
                     if (ModEntityUtils.isProjectileSource(source)) return false;
