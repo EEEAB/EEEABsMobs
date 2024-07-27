@@ -301,6 +301,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     @Override
+    protected EMConfigHandler.DamageCapConfig getDamageCap() {
+        return EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.maximumDamageCap;
+    }
+
+    @Override
     protected boolean showBossBloodBars() {
         return EMConfigHandler.COMMON.OTHER.enableShowBloodBars.get();
     }
@@ -749,7 +754,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                     if (this.guardianInvulnerableTime <= 0) guardianInvulnerableTime = 20 /*不能小于等于10*/;
                     if (ModEntityUtils.isProjectileSource(source)) return false;
                 }
-                damage = Math.min(damage, EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.maximumDamageCap.damageCap.get().floatValue());
                 return super.hurt(source, damage);
             } else if (source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
                 return super.hurt(source, damage);
