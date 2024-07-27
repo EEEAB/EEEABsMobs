@@ -830,7 +830,7 @@ public class ModelImmortalExecutioner extends EMHierarchicalModel<EntityImmortal
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(0.8343334f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM))).build();
-        public static final AnimationDefinition IMPACT_STORAGE = AnimationDefinition.Builder.withLength(2f)
+        public static final AnimationDefinition IMPACT_STORAGE = AnimationDefinition.Builder.withLength(3f)
                 .addAnimation("root",
                         new AnimationChannel(AnimationChannel.Targets.POSITION,
                                 new Keyframe(0f, KeyframeAnimations.posVec(0f, 0f, 0f),

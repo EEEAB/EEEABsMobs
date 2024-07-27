@@ -9,6 +9,7 @@ import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
 import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
+import com.eeeab.eeeabsmobs.client.particle.util.RibbonComponent;
 import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
@@ -19,9 +20,11 @@ import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
+import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -48,12 +51,15 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEntity {
-    public final Animation dieAnimation = Animation.create(34);
+    public final Animation dieAnimation = Animation.create(35);
     public final Animation avoidAnimation = Animation.create(15);
     public final Animation blockAnimation = Animation.create(15);
     public final Animation counterAnimation = Animation.create(15);
@@ -61,7 +67,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
     public final Animation attackAnimationRight = Animation.create(17);
     public final Animation sidesWayAnimationLeft = Animation.create(10);
     public final Animation sidesWayAnimationRight = Animation.create(10);
-    public final Animation impactStorageAnimation = Animation.create(40);
+    public final Animation impactStorageAnimation = Animation.create(60);
     public final Animation impactHoldAnimation = Animation.create(20);
     public final Animation impactStopAnimation = Animation.create(10);
     public final Animation cullStorageAnimation = Animation.create(20);
@@ -226,7 +232,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                 () -> this.sidesWayAnimationRight,
                 () -> this.sidesWayAnimationLeft
         ));
-        this.goalSelector.addGoal(2, new AnimationMeleePlusAI<>(this, 1.0, 5,
+        this.goalSelector.addGoal(2, new AnimationMeleePlusAI<>(this, 1.0, 5, 1,
                 () -> this.attackAnimationRight,
                 () -> this.attackAnimationLeft
         ));
@@ -282,15 +288,33 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
             } else if (tick > 8) {
                 this.checkAndPlayComboAnimations(this.random.nextFloat() < 0.6F && this.getTarget() != null && this.targetDistance < 10, this.cullStorageAnimation);
             }
+        } else if (this.getAnimation() == this.cullHoldAnimation) {
+            if (tick == 3)
+                this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundInit.IMMORTAL_EXECUTIONER_DASH.get(), this.getSoundSource(), 1F, 1F, false);
+            if (tick == 4) {
+                this.doRibbonEffect();
+                this.playSound(SoundInit.IMMORTAL_EXECUTIONER_SCRATCH.get(), 0.8F, this.getVoicePitch());
+            }
+        } else if (this.getAnimation() == this.attackAnimationRight || this.getAnimation() == this.attackAnimationLeft) {
+            if (tick == 7) this.playSound(SoundInit.IMMORTAL_EXECUTIONER_SCRATCH.get(), 0.8F, this.getVoicePitch());
+        } else if (this.getAnimation() == this.counterAnimation) {
+            if (tick == 5)
+                this.playSound(SoundInit.IMMORTAL_EXECUTIONER_SCRATCH.get(), 1.2F, this.getVoicePitch() - 0.2F);
         }
         if (this.level().isClientSide && this.fire != null && this.fire.length != 0) {
             float power = this.getFirePower();
             boolean isPower = power > 1F;
-            if (this.isAlive() && this.active && this.getAnimation() != this.impactHoldAnimation) {
-                if ((isPower && this.tickCount % 4 == 1) || this.tickCount % 8 == 1) {
-                    float scale = (8F + this.random.nextFloat()) * power;
-                    this.doSoulFireEffect(0, scale, isPower ? 4 : 8);
-                    this.doSoulFireEffect(180, scale, isPower ? 4 : 8);
+            if (this.isAlive() && this.active) {
+                if (this.getAnimation() != this.impactHoldAnimation) {
+                    if ((isPower && this.tickCount % 4 == 1) || this.tickCount % 8 == 1) {
+                        float scale = (8F + this.random.nextFloat()) * power;
+                        this.doSoulFireEffect(0, scale, isPower ? 4 : 8);
+                        this.doSoulFireEffect(180, scale, isPower ? 4 : 8);
+                    }
+                } else if (tick == 2) {
+                    this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundInit.IMMORTAL_EXECUTIONER_DASH.get(), this.getSoundSource(), 1.5F, 0.8F, false);
+                } else if (tick == 3) {
+                    this.doRibbonEffect();
                 }
             }
             if (this.deathTime < 20) {
@@ -345,10 +369,12 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
             boolean hitFlag = !source.is(DamageTypeTags.BYPASSES_ARMOR) && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F)
                     || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -attackArc + 90f / 2F);
             if (hitFlag && this.inBlocking()) {
+                this.playSound(SoundInit.IMMORTAL_EXECUTIONER_BLOCK.get());
                 return false;
             }
-            if (hitFlag && (ModEntityUtils.isProjectileSource(source) || this.random.nextFloat() < 0.6F) && this.isNoAnimation()) {
+            if (hitFlag && (ModEntityUtils.isProjectileSource(source) || this.random.nextFloat() < 0.6F) && this.isNoAnimation() && !this.hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
                 if (source.getEntity() instanceof LivingEntity block) this.blockEntity = block;
+                this.playSound(SoundInit.IMMORTAL_EXECUTIONER_BLOCK.get());
                 this.playAnimation(this.blockAnimation);
                 return false;
             }
@@ -365,12 +391,44 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
     }
 
     @Override
+    public double getMeleeAttackRangeSqr(LivingEntity entity) {
+        return this.getBbWidth() * 2.5F * this.getBbWidth() * 2.5F + entity.getBbWidth();
+    }
+
+    @Override
     protected void makePoofParticles() {
     }
 
     @Override
     public Animation getDeathAnimation() {
         return this.dieAnimation;
+    }
+
+    @Override
+    public Animation[] getAnimations() {
+        return this.animations;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSource) {
+        return SoundInit.IMMORTAL_EXECUTIONER_HURT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() {
+        return SoundInit.IMMORTAL_EXECUTIONER_DEATH.get();
+    }
+
+    public static AttributeSupplier.Builder setAttributes() {
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 120.0D).
+                add(Attributes.ATTACK_DAMAGE, 10.0D).
+                add(Attributes.ARMOR, 12.0D).
+                add(Attributes.MOVEMENT_SPEED, 0.34D).
+                add(Attributes.FOLLOW_RANGE, 48.0D).
+                add(Attributes.KNOCKBACK_RESISTANCE, 0.85D).
+                add(Attributes.ATTACK_KNOCKBACK, 0.15D);
     }
 
     /**
@@ -419,6 +477,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
     private void fastMove(float speed, float sideAvoidYaw) {
         Vec3 move = this.getDeltaMovement().add(speed * Math.cos(sideAvoidYaw), 0, speed * Math.sin(sideAvoidYaw));
         this.setDeltaMovement(move.x, this.getDeltaMovement().y, move.z);
+        this.doRibbonEffect();
     }
 
     private void doSoulFireEffect(int yaw, float scale, int duration) {
@@ -429,7 +488,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                 new ParticleComponent[]{
                         new ParticleComponent.PinLocation(this.fire),
                         new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.POS_Y,
-                                AnimData.constant(0.2F), true)
+                                AnimData.constant(0.2F), true),
                 });
     }
 
@@ -455,19 +514,18 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
         return result;
     }
 
-    public static AttributeSupplier.Builder setAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 120.0D).
-                add(Attributes.ATTACK_DAMAGE, 10.0D).
-                add(Attributes.ARMOR, 12.0D).
-                add(Attributes.MOVEMENT_SPEED, 0.34D).
-                add(Attributes.FOLLOW_RANGE, 48.0D).
-                add(Attributes.KNOCKBACK_RESISTANCE, 0.85D).
-                add(Attributes.ATTACK_KNOCKBACK, 0.15D);
-    }
-
-    @Override
-    public Animation[] getAnimations() {
-        return this.animations;
+    private void doRibbonEffect() {
+        if (this.level().isClientSide && this.fire != null && this.fire.length != 0) {
+            AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.ADV_ORB.get(), this.getX(), this.getY(), this.getZ(), 0, 0, 0, true, 0, 0, 0, 0, 0F,
+                    1, 1, 1, 1, 1, 10, true, false, false, new ParticleComponent[]{
+                            new ParticleComponent.PinLocation(this.fire),
+                            new RibbonComponent(ParticleInit.FLAT_RIBBON.get(), 8, 0, 0, 0, 0.12F, 0.06, 0.94, 1, 0.75, true, true,
+                                    new ParticleComponent[]{
+                                            new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.ALPHA, AnimData.KeyTrack.startAndEnd(0.5F, 1F)),
+                                            new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.SCALE, AnimData.KeyTrack.startAndEnd(1F, 0F))
+                                    }, false)
+                    });
+        }
     }
 
     static class ExecutionerSimpleAI extends AnimationAI<EntityImmortalExecutioner> {
@@ -497,7 +555,11 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
         }
 
         protected void doNextAnimation(Animation now, Animation next) {
-            if (this.entity.getAnimation() == now && this.entity.getAnimationTick() >= now.getDuration() - 1) {
+            this.doNextAnimation(now, next, now.getDuration() - 1);
+        }
+
+        protected void doNextAnimation(Animation now, Animation next, int lastTick) {
+            if (this.entity.getAnimation() == now && this.entity.getAnimationTick() >= lastTick) {
                 this.entity.playAnimation(next);
             }
         }
@@ -532,21 +594,21 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                     this.entity.getLookControl().setLookAt(this.target, 360F, 30F);
                     this.entity.lookAt(this.target, 360F, 30F);
                 }
-                this.doNextAnimation(animation, this.entity.impactHoldAnimation);
+                this.doNextAnimation(animation, this.entity.impactHoldAnimation, 25 + this.entity.getRandom().nextInt(animation.getDuration() - 25));
             } else if (animation == this.entity.impactHoldAnimation) {
                 this.entity.setDeltaMovement(0, 0, 0);
                 double baseMoveMultiplier = 15F;
-                double y = Math.ceil(this.entity.getY() - 0.5F);
+                double deltaY = Math.ceil(this.entity.getY() - 0.5F);
                 if (tick == 2) {
                     Vec3 preVec3 = this.entity.position();
-                    Vec3 targetVec3 = new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * baseMoveMultiplier, y, Math.sin(Math.toRadians(entity.getYRot() + 90)) * baseMoveMultiplier);
+                    Vec3 targetVec3 = new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * baseMoveMultiplier, deltaY, Math.sin(Math.toRadians(entity.getYRot() + 90)) * baseMoveMultiplier);
                     if (this.target != null) {
                         Vec3 point = ModEntityUtils.findPounceTargetPoint(this.entity, this.target, 5F);
                         baseMoveMultiplier = Math.min(point.distanceTo(preVec3), 20F);
                         if (baseMoveMultiplier >= 1) {
-                            y = Math.floor(point.y + 0.5) - this.entity.getY();
+                            deltaY = point.y - this.entity.getY();
                             Vec3 normalizedVector = point.subtract(preVec3).normalize().scale(baseMoveMultiplier);
-                            targetVec3 = new Vec3(normalizedVector.x, y, normalizedVector.z);
+                            targetVec3 = new Vec3(normalizedVector.x, deltaY, normalizedVector.z);
                         }
                     }
                     this.entity.move(MoverType.SELF, targetVec3);
@@ -582,10 +644,9 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                     if (tick < 4) {
                         super.tick();
                     } else if (tick == 4) {
-                        this.pursuit(15F, 5F);
+                        this.pursuit(15F, 5F, target.getY() - this.entity.getY());
                     } else if (tick == 5) {
                         this.doHurtTarget(100F, 3.8F, true);
-
                     } else if (tick > 6) {
                         this.entity.setYRot(this.entity.yRotO);
                     }
@@ -594,13 +655,13 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                     this.entity.playAnimation(this.entity.cullStopAnimation);
                 }
             } else if (animation == this.entity.counterAnimation) {
-                if (tick < 6) {
+                if (tick < 5) {
                     super.tick();
+                } else if (tick == 5) {
+                    this.pursuit(5F, 3F, target != null ? target.getY() - this.entity.getY() : this.entity.getY());
                 } else if (tick == 6) {
-                    this.pursuit(5F, 2.5F);
-                } else if (tick == 7) {
                     this.doHurtTarget(140F, 4F, false);
-                } else if (tick > 8) {
+                } else if (tick > 7) {
                     this.entity.setYRot(this.entity.yRotO);
                 }
             }
@@ -620,14 +681,14 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
             }
         }
 
-        private void pursuit(float pursuitDistance, float moveMultiplier) {
+        private void pursuit(float pursuitDistance, float moveMultiplier, double y) {
             float targetDistance = entity.targetDistance;
             if (entity.getTarget() != null && entity.getTarget().isAlive() && targetDistance < pursuitDistance && targetDistance > 0F) {
-                moveMultiplier = targetDistance;
+                moveMultiplier = targetDistance - 0.25F;
             }
             targetDistance = entity.targetDistance;
             if (entity.getTarget() == null || targetDistance > 1F)
-                entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier));
+                entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier, y, Math.sin(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier));
         }
     }
 

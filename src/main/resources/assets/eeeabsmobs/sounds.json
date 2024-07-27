@@ -68,89 +68,123 @@
       "eeeabsmobs:generic/entity/skeleton_death"
     ]
   },
-  "gs.hurt": {
-    "subtitle": "subtitles.gs.hurt",
+  "immortal.executioner.hurt": {
+    "subtitle": "subtitles.immortal.executioner.hurt",
+    "sounds": [
+      "eeeabsmobs:entity/immortal_executioner/hurt1",
+      "eeeabsmobs:entity/immortal_executioner/hurt2",
+      "eeeabsmobs:entity/immortal_executioner/hurt3"
+    ]
+  },
+  "immortal.executioner.death": {
+    "subtitle": "subtitles.immortal.executioner.death",
+    "sounds": [
+      "eeeabsmobs:entity/immortal_executioner/death"
+    ]
+  },
+  "immortal.executioner.dash": {
+    "subtitle": "subtitles.immortal.executioner.dash",
+    "sounds": [
+      "eeeabsmobs:entity/immortal_executioner/dash"
+    ]
+  },
+  "immortal.executioner.block": {
+    "subtitle": "subtitles.immortal.executioner.block",
+    "sounds": [
+      "eeeabsmobs:entity/immortal_executioner/block1",
+      "eeeabsmobs:entity/immortal_executioner/block2"
+    ]
+  },
+  "immortal.executioner.scratch": {
+    "subtitle": "subtitles.immortal.executioner.scratch",
+    "sounds": [
+      "eeeabsmobs:entity/immortal_executioner/scratch1",
+      "eeeabsmobs:entity/immortal_executioner/scratch2"
+    ]
+  },
+  "guling.sentinel.hurt": {
+    "subtitle": "subtitles.guling.sentinel.hurt",
     "sounds": [
       "eeeabsmobs:entity/guling_sentinel/hurt1",
       "eeeabsmobs:entity/guling_sentinel/hurt2",
       "eeeabsmobs:entity/guling_sentinel/hurt3"
     ]
   },
-  "gs.death": {
-    "subtitle": "subtitles.gs.death",
+  "guling.sentinel.death": {
+    "subtitle": "subtitles.guling.sentinel.death",
     "sounds": [
       "eeeabsmobs:entity/guling_sentinel/death"
     ]
   },
-  "gs.electromagnetic": {
-    "subtitle": "subtitles.gs.electromagnetic",
+  "guling.sentinel.electromagnetic": {
+    "subtitle": "subtitles.guling.sentinel.electromagnetic",
     "sounds": [
       "eeeabsmobs:entity/guling_sentinel/electromagnetic"
     ]
   },
-  "gsh.step": {
-    "subtitle": "subtitles.gsh.step",
+  "guling_sentinel_heavy.step": {
+    "subtitle": "subtitles.guling_sentinel_heavy.step",
     "sounds": [
       "eeeabsmobs:entity/guling_sentinel_heavy/step1",
       "eeeabsmobs:entity/guling_sentinel_heavy/step2",
       "eeeabsmobs:entity/guling_sentinel_heavy/step3"
     ]
   },
-  "gsh.idle": {
-    "subtitle": "subtitles.gsh.idle",
+  "guling_sentinel_heavy.idle": {
+    "subtitle": "subtitles.guling_sentinel_heavy.idle",
     "sounds": [
       "eeeabsmobs:entity/guling_sentinel_heavy/idle1",
       "eeeabsmobs:entity/guling_sentinel_heavy/idle2",
       "eeeabsmobs:entity/guling_sentinel_heavy/idle3"
     ]
   },
-  "gsh.spark": {
-    "subtitle": "subtitles.gsh.spark",
+  "guling_sentinel_heavy.spark": {
+    "subtitle": "subtitles.guling_sentinel_heavy.spark",
     "sounds": [
       "eeeabsmobs:entity/guling_sentinel_heavy/spark1",
       "eeeabsmobs:entity/guling_sentinel_heavy/spark2",
       "eeeabsmobs:entity/guling_sentinel_heavy/spark3"
     ]
   },
-  "gsh.pre_attack": {
-    "subtitle": "subtitles.gsh.pre_attack",
+  "guling_sentinel_heavy.pre_attack": {
+    "subtitle": "subtitles.guling_sentinel_heavy.pre_attack",
     "sounds": [
       "eeeabsmobs:entity/guling_sentinel_heavy/pre_attack1",
       "eeeabsmobs:entity/guling_sentinel_heavy/pre_attack2"
     ]
   },
-  "gsh.attack": {
-    "subtitle": "subtitles.gsh.attack",
+  "guling_sentinel_heavy.attack": {
+    "subtitle": "subtitles.guling_sentinel_heavy.attack",
     "sounds": [
       "eeeabsmobs:entity/guling_sentinel_heavy/attack1",
       "eeeabsmobs:entity/guling_sentinel_heavy/attack2",
       "eeeabsmobs:entity/guling_sentinel_heavy/attack3"
     ]
   },
-  "gsh.hurt": {
-    "subtitle": "subtitles.gsh.hurt",
+  "guling_sentinel_heavy.hurt": {
+    "subtitle": "subtitles.guling_sentinel_heavy.hurt",
     "sounds": [
       "eeeabsmobs:entity/guling_sentinel_heavy/hurt1",
       "eeeabsmobs:entity/guling_sentinel_heavy/hurt2",
       "eeeabsmobs:entity/guling_sentinel_heavy/hurt3"
     ]
   },
-  "gsh.death": {
-    "subtitle": "subtitles.gsh.death",
+  "guling_sentinel_heavy.death": {
+    "subtitle": "subtitles.guling_sentinel_heavy.death",
     "sounds": [
       "eeeabsmobs:entity/guling_sentinel_heavy/death1",
       "eeeabsmobs:entity/guling_sentinel_heavy/death2",
       "eeeabsmobs:entity/guling_sentinel_heavy/death3"
     ]
   },
-  "gsh.friction": {
-    "subtitle": "subtitles.gsh.friction",
+  "guling_sentinel_heavy.friction": {
+    "subtitle": "subtitles.guling_sentinel_heavy.friction",
     "sounds": [
       "eeeabsmobs:entity/guling_sentinel_heavy/friction"
     ]
   },
-  "gsh.electromagnetic": {
-    "subtitle": "subtitles.gsh.electromagnetic",
+  "guling_sentinel_heavy.electromagnetic": {
+    "subtitle": "subtitles.guling_sentinel_heavy.electromagnetic",
     "sounds": [
       "eeeabsmobs:entity/guling_sentinel_heavy/electromagnetic"
     ]
