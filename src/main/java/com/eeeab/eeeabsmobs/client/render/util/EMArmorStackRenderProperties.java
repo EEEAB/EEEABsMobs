@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.render.util;
 
 import com.eeeab.eeeabsmobs.client.model.armor.ModelGhostWarriorArmor;
-import com.eeeab.eeeabsmobs.client.model.layer.EMModelLayer;
+import com.eeeab.eeeabsmobs.client.model.util.EMModelLayer;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;

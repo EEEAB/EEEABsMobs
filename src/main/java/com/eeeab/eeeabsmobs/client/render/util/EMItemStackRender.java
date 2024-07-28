@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.client.render.util;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.item.ModelTheNetherworldKatana;
-import com.eeeab.eeeabsmobs.client.model.layer.EMModelLayer;
+import com.eeeab.eeeabsmobs.client.model.util.EMModelLayer;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.handler;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.client.model.EMItemModels;
+import com.eeeab.eeeabsmobs.client.model.util.EMItemModels;
 import com.eeeab.eeeabsmobs.client.model.armor.ModelGhostWarriorArmor;
 import com.eeeab.eeeabsmobs.sever.integration.curios.model.ModelSoulSummoningNecklace;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelBloodBall;
@@ -9,7 +9,7 @@ import com.eeeab.eeeabsmobs.client.model.effects.ModelGrenade;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelGuardianBlade;
 import com.eeeab.eeeabsmobs.client.model.entity.*;
 import com.eeeab.eeeabsmobs.client.model.item.ModelTheNetherworldKatana;
-import com.eeeab.eeeabsmobs.client.model.layer.EMModelLayer;
+import com.eeeab.eeeabsmobs.client.model.util.EMModelLayer;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.ParticleGuardianSpark;
 import com.eeeab.eeeabsmobs.client.particle.ParticlePoison;

@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.client.model;
+package com.eeeab.eeeabsmobs.client.model.util;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.mojang.blaze3d.vertex.PoseStack;

@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.client.model.layer;
+package com.eeeab.eeeabsmobs.client.model.util;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import net.minecraft.client.model.geom.ModelLayerLocation;
