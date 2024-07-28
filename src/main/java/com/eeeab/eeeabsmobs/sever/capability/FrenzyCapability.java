@@ -123,7 +123,7 @@ public class FrenzyCapability {
                     if (this.count <= 0 && player.tickCount % 10 == 0) player.getFoodData().eat(1, 1F);
                     if (player.isSprinting() && !player.getUseItem().getItem().isEdible()) {
                         if (this.count < 20) this.count++;
-                    } else this.count--;
+                    } else if (this.count > 0) this.count--;
                     if (this.count >= 20 && player.getFoodData().getFoodLevel() > 0) {
                         player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 20, this.level, false, false, true));
                         player.causeFoodExhaustion(0.25F);
