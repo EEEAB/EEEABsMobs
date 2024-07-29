@@ -390,6 +390,13 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         this.goalSelector.addGoal(1, new AnimationDeactivate<>(this, () -> deactivateAnimation));
         this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, () -> roarAnimation));
         this.goalSelector.addGoal(1, new AnimationAI<>(this) {
+            private int duration;
+
+            @Override
+            public void start() {
+                super.start();
+                duration = Difficulty.HARD.equals(entity.level().getDifficulty()) ? HARD_MODE_STATE_TICK : WEAK_STATE_TICK;
+            }
 
             @Override
             protected boolean test(Animation animation) {
@@ -400,12 +407,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             public void tick() {
                 setDeltaMovement(0, getDeltaMovement().y, 0);
                 if (entity.getAnimation() == entity.weakAnimation1) {
-                    if (entity.getAnimationTick() == entity.weakAnimation1.getDuration() - 1) {
+                    if (entity.getAnimationTick() >= entity.weakAnimation1.getDuration() - 1) {
                         entity.playAnimation(entity.weakAnimation2);
                     }
                 } else if (entity.getAnimation() == entity.weakAnimation2) {
-                    int duration = Difficulty.HARD.equals(entity.level().getDifficulty()) ? HARD_MODE_STATE_TICK : WEAK_STATE_TICK;
-                    if (entity.getAnimationTick() == duration) {
+                    if (entity.getAnimationTick() >= duration) {
                         entity.playAnimation(entity.weakAnimation3);
                     }
                 }
