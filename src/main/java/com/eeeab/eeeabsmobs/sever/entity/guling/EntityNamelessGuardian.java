@@ -96,7 +96,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public final Animation robustAttackAnimation = Animation.create(70);
     public final Animation smashAttackAnimation = Animation.create(40);
     public final Animation pounceAttackAnimation1 = Animation.create(16);
-    public final Animation pounceAttackAnimation2 = Animation.createLoop(38);
+    public final Animation pounceAttackAnimation2 = Animation.create(38);
     public final Animation pounceAttackAnimation3 = Animation.create(18);
     public final Animation activateAnimation = Animation.create(56);
     public final Animation deactivateAnimation = Animation.create(40);
