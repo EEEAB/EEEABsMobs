@@ -982,7 +982,7 @@ public class AnimationNamelessGuardian {
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(0.6f, KeyframeAnimations.degreeVec(78.48f, -46.45f, -84.37f),
                                     AnimationChannel.Interpolations.LINEAR))).build();
-    public static final AnimationDefinition POUNCE = AnimationDefinition.Builder.withLength(1.92f).looping()
+    public static final AnimationDefinition POUNCE = AnimationDefinition.Builder.withLength(1.92f)
             .addAnimation("rightArm",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(-52.5f, 10f, 0f),

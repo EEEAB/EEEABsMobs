@@ -43,10 +43,8 @@ public enum EMAnimationHandler {
                     MinecraftForge.EVENT_BUS.post(new AnimationEvent.Tick<>(entity, animation, entity.getAnimationTick()));
                 }
                 if (entity.getAnimationTick() == animation.getDuration()) {
-                    if (!animation.isLooping()) {
-                        animation.stop();
-                        entity.setAnimation(entity.getNoAnimation());
-                    }
+                    animation.stop();
+                    entity.setAnimation(entity.getNoAnimation());
                     entity.setAnimationTick(0);
                 }
             }

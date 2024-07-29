@@ -15,37 +15,23 @@ public class Animation extends AnimationState {
      * 动画时长
      */
     private final int duration;
-    /**
-     * 是否循环
-     */
-    private final boolean looping;
 
-    private Animation(int duration, boolean looping) {
+    private Animation(int duration) {
         this.duration = duration;
-        this.looping = looping;
     }
 
     public static Animation create(int duration) {
-        return new Animation(duration, false);
-    }
-
-    public static Animation createLoop(int duration) {
-        return new Animation(duration, true);
+        return new Animation(duration);
     }
 
     public int getDuration() {
         return duration;
     }
 
-    public boolean isLooping() {
-        return looping;
-    }
-
     @Override
     public String toString() {
         return "{" +
                 "duration=" + duration +
-                ", looping=" + looping +
                 '}';
     }
 }
