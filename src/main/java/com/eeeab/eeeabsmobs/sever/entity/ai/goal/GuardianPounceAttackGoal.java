@@ -137,7 +137,7 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
                         }
                     }
                 }
-            } else if (tick == keyFrame) {
+            } else {
                 entity.playAnimation(entity.pounceAttackAnimation3);
             }
         } else if (entity.getAnimation() == entity.pounceAttackAnimation3) {
