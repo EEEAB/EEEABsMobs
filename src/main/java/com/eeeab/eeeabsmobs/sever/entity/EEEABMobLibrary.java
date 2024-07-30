@@ -14,6 +14,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * <b>EEEABMobLibrary</b><br/>
@@ -44,9 +45,9 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
         boolean attack = super.hurt(source, damage);
         if (attack) {
             if (getHealth() > 0.0F && (getAnimation() == getNoAnimation() || hurtInterruptsAnimation) && canplayHurtAnimation) {
-                EMAnimationHandler.INSTANCE.sendEMAnimationMessage(this, getHurtAnimation());
+                this.playAnimation(this.getHurtAnimation());
             } else if (getHealth() <= 0.0F) {
-                EMAnimationHandler.INSTANCE.sendEMAnimationMessage(this, getDeathAnimation());
+                this.playAnimation(this.getDeathAnimation());
             }
         }
         return attack;
@@ -60,14 +61,17 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
 
     private void checkAnimationLegality() {
         if (!EMConfigHandler.COMMON.OTHER.enableAnimationLegalityLogPrint.get()) return;
-        Animation[] animations = this.getAnimations();
-        if (animations != null && this.isAlive()) {
-            for (Animation animation : Arrays.stream(animations).filter(a -> a != this.noAnimation && a != this.getAnimation() && a.isStarted()).toList()) {
-                if (this.tickCount % 200 == 0)
+        if (this.tickCount % 200 == 0) {
+            Animation[] animations = this.getAnimations();
+            if (animations != null && this.isAlive()) {
+                List<Animation> filterAnimations = Arrays.stream(animations).filter(a -> a != this.noAnimation && a != this.getAnimation()
+                        && a.isStarted() && !a.isSuperposition()).toList();
+                for (Animation animation : filterAnimations) {
                     EEEABMobs.LOGGER.warn("{} → there is illegal action data: Mob= {} Animation= {}[{}]",
                             this.level().isClientSide ? "Client" : "Server",
                             this.getName().getString(), animation,
                             ArrayUtils.indexOf(this.getAnimations(), animation));
+                }
             }
         }
     }
@@ -116,7 +120,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
     }
 
     public boolean isNoAnimation() {
-        return this.animation == this.noAnimation;
+        return this.animation == this.getNoAnimation();
     }
 
     protected void onAnimationStart(Animation animation) {
