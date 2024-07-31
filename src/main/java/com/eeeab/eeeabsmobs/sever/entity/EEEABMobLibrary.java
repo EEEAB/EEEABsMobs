@@ -7,6 +7,7 @@ import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
@@ -47,6 +48,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
             if (getHealth() > 0.0F && (getAnimation() == getNoAnimation() || hurtInterruptsAnimation) && canplayHurtAnimation) {
                 this.playAnimation(this.getHurtAnimation());
             } else if (getHealth() <= 0.0F) {
+                this.stopAllSuperpositionAnimation();
                 this.playAnimation(this.getDeathAnimation());
             }
         }
@@ -121,6 +123,12 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
 
     public boolean isNoAnimation() {
         return this.animation == this.getNoAnimation();
+    }
+
+    public void stopAllSuperpositionAnimation() {
+        if (this.level().isClientSide && this.getAnimations() != null) {
+            Arrays.stream(this.getAnimations()).filter(Animation::isSuperposition).forEach(AnimationState::stop);
+        }
     }
 
     protected void onAnimationStart(Animation animation) {
