@@ -4,6 +4,7 @@ import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -34,95 +35,9 @@ public abstract class ParticleComponent {
 
     }
 
-    //public abstract static class AnimData {
-    //    public float evaluate(float t) {
-    //        return 0;
-    //    }
-    //}
-    //
-    //public static class KeyTrack extends AnimData {
-    //    float[] values;
-    //    float[] times;
-    //
-    //    public KeyTrack(float[] values, float[] times) {
-    //        this.values = values;
-    //        this.times = times;
-    //        if (values.length != times.length)
-    //            System.out.println("Malformed key track. Must have same number of keys and values or key track will evaluate to 0.");
-    //    }
-    //
-    //    @Override
-    //    public float evaluate(float t) {
-    //        if (values.length != times.length) return 0;
-    //        for (int i = 0; i < times.length; i++) {
-    //            float time = times[i];
-    //            if (t == time) return values[i];
-    //            else if (t < time) {
-    //                if (i == 0) return values[0];
-    //                float a = (t - times[i - 1]) / (time - times[i - 1]);
-    //                return values[i - 1] * (1 - a) + values[i] * a;
-    //            } else {
-    //                if (i == values.length - 1) return values[i];
-    //            }
-    //        }
-    //        return 0;
-    //    }
-    //
-    //    public static KeyTrack startAndEnd(float startValue, float endValue) {
-    //        return new KeyTrack(new float[]{startValue, endValue}, new float[]{0, 1});
-    //    }
-    //
-    //    public static KeyTrack oscillate(float value1, float value2, int frequency) {
-    //        if (frequency <= 1) new KeyTrack(new float[]{value1, value2}, new float[]{0, 1});
-    //        float step = 1.0f / frequency;
-    //        float[] times = new float[frequency + 1];
-    //        float[] values = new float[frequency + 1];
-    //        for (int i = 0; i < frequency + 1; i++) {
-    //            float value = i % 2 == 0 ? value1 : value2;
-    //            times[i] = step * i;
-    //            values[i] = value;
-    //        }
-    //        return new KeyTrack(values, times);
-    //    }
-    //}
-    //
-    //public static class Oscillator extends AnimData {
-    //    float value1, value2;
-    //    float frequency;
-    //    float phaseShift;
-    //
-    //    public Oscillator(float value1, float value2, float frequency, float phaseShift) {
-    //        this.value1 = value1;
-    //        this.value2 = value2;
-    //        this.frequency = frequency;
-    //        this.phaseShift = phaseShift;
-    //    }
-    //
-    //    @Override
-    //    public float evaluate(float t) {
-    //        float a = (value2 - value1) / 2f;
-    //        return (float) (value1 + a + a * Math.cos(t * frequency + phaseShift));
-    //    }
-    //}
-    //
-    //public static class Constant extends AnimData {
-    //    float value;
-    //
-    //    public Constant(float value) {
-    //        this.value = value;
-    //    }
-    //
-    //    @Override
-    //    public float evaluate(float t) {
-    //        return value;
-    //    }
-    //}
-
-    //public static Constant constant(float value) {
-    //    return new Constant(value);
-    //}
-
-    /** 通用粒子效果组件*/
+    /**
+     * 通用粒子效果组件
+     */
     public static class PropertyControl extends ParticleComponent {
         public enum EnumParticleProperty {
             /* Moving particle */
@@ -210,25 +125,21 @@ public abstract class ParticleComponent {
                 else particle.scale = value;
             } else if (property == EnumParticleProperty.YAW) {
                 if (particle.rotation instanceof ParticleRotation.EulerAngles eulerRot) {
-                    //ParticleRotation.EulerAngles eulerRot = (ParticleRotation.EulerAngles) particle.rotation;
                     if (additive) eulerRot.yaw += value;
                     else eulerRot.yaw = value;
                 }
             } else if (property == EnumParticleProperty.PITCH) {
                 if (particle.rotation instanceof ParticleRotation.EulerAngles eulerRot) {
-                    //ParticleRotation.EulerAngles eulerRot = (ParticleRotation.EulerAngles) particle.rotation;
                     if (additive) eulerRot.pitch += value;
                     else eulerRot.pitch = value;
                 }
             } else if (property == EnumParticleProperty.ROLL) {
                 if (particle.rotation instanceof ParticleRotation.EulerAngles eulerRot) {
-                    //ParticleRotation.EulerAngles eulerRot = (ParticleRotation.EulerAngles) particle.rotation;
                     if (additive) eulerRot.roll += value;
                     else eulerRot.roll = value;
                 }
             } else if (property == EnumParticleProperty.PARTICLE_ANGLE) {
                 if (particle.rotation instanceof ParticleRotation.FaceCamera faceCameraRot) {
-                    //ParticleRotation.FaceCamera faceCameraRot = (ParticleRotation.FaceCamera) particle.rotation;
                     if (additive) faceCameraRot.faceCameraAngle += value;
                     else faceCameraRot.faceCameraAngle = value;
                 }
@@ -391,7 +302,6 @@ public abstract class ParticleComponent {
             start.cross(up);
             start.normalize();
             Vector3f newPos = start;
-            //newPos.transform(quat);
             newPos.rotate(quat);
             newPos.mul(r);
 
@@ -402,10 +312,11 @@ public abstract class ParticleComponent {
         }
     }
 
-    /**面向相机粒子效果组件(不适用ParticleRotation.FaceCamera)*/
+    /**
+     * 面向相机粒子效果组件(不适用ParticleRotation.FaceCamera)
+     */
     public static class FaceMotion extends ParticleComponent {
         public FaceMotion() {
-
         }
 
         @Override
@@ -416,18 +327,56 @@ public abstract class ParticleComponent {
             double d = Math.sqrt(dx * dx + dy * dy + dz * dz);
             if (d != 0) {
                 if (particle.rotation instanceof ParticleRotation.EulerAngles eulerRot) {
-                    //ParticleRotation.EulerAngles eulerRot = (ParticleRotation.EulerAngles) particle.rotation;
                     double a = dy / d;
                     a = Math.max(-1, Math.min(1, a));
                     float pitch = -(float) Math.asin(a);
                     float yaw = -(float) (Math.atan2(dz, dx) + Math.PI);
                     eulerRot.roll = pitch;
                     eulerRot.yaw = yaw;
-//                particle.roll = (float) Math.PI / 2;
                 } else if (particle.rotation instanceof ParticleRotation.OrientVector orientRot) {
-                    //ParticleRotation.OrientVector orientRot = (ParticleRotation.OrientVector) particle.rotation;
                     orientRot.orientation = new Vec3(dx, dy, dz).normalize();
                 }
+            }
+        }
+    }
+
+
+    /**
+     * 旋转移动组件
+     *
+     * @author EEEAB
+     */
+    public static class RotatingMotion extends ParticleComponent {
+        private final Vec3[] location;
+        private final AnimData strength;
+        private final float rotation;
+
+        /**
+         * RotatingMotion
+         *
+         * @param location 环绕中心坐标
+         * @param strength 旋转强度
+         * @param rotation 旋转弧度
+         */
+        public RotatingMotion(Vec3[] location, AnimData strength, float rotation) {
+            this.location = location;
+            this.strength = strength;
+            this.rotation = rotation;
+        }
+
+        @Override
+        public void preUpdate(AdvancedParticleBase particle) {
+            float ageFrac = particle.getAge() / (particle.getLifetime() - 1);
+            if (location.length > 0) {
+                Vec3 destinationVec = location[0];
+                Vec3 currPos = new Vec3(particle.getPosX(), particle.getPosY(), particle.getPosZ());
+                Vec3 diff = destinationVec.subtract(currPos);
+                //根据旋转角度计算切线方向的力 y轴作为旋转轴
+                Vec3 tangentForce = diff.cross(new Vec3(0, 1, 0));
+                tangentForce = tangentForce.normalize().scale(Mth.sin(rotation) * strength.evaluate(ageFrac));
+                particle.setMotionX(tangentForce.x);
+                particle.setMotionY(tangentForce.y);
+                particle.setMotionZ(tangentForce.z);
             }
         }
     }
