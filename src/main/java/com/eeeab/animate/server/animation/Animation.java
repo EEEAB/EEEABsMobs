@@ -31,8 +31,8 @@ public class Animation extends AnimationState {
         return new Animation(duration, false);
     }
 
-    public static Animation create(int duration, boolean superposition) {
-        return new Animation(duration, superposition);
+    public static Animation coexist(int duration) {
+        return new Animation(duration, true);
     }
 
     public int getDuration() {
