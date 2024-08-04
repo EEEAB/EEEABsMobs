@@ -85,7 +85,7 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
         } else if (entity.getAnimation() == entity.pounceAttackAnimation2) {
             int tick = entity.getAnimationTick();
             int keyFrame = isPowered ? 24 : 28;
-            if (tick < keyFrame) {
+            if (tick < keyFrame && pounceVec.length() != 0) {
                 entity.setDeltaMovement(pounceVec.x * moveSpeed * madnessSpeedMultiplier, -entity.getAttributeValue(ForgeMod.ENTITY_GRAVITY.get()) * 5.0F, pounceVec.z * moveSpeed * speedMultiplier);
                 if (entity.hasEffect(MobEffects.MOVEMENT_SLOWDOWN)) {
                     entity.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
