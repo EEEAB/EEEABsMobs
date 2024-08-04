@@ -73,6 +73,7 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
             }
             int tick = entity.getAnimationTick();
             if (tick == 1) {
+                pounceVec = Vec3.ZERO;
                 entity.playSound(SoundInit.NAMELESS_GUARDIAN_PRE_POUNCE.get(), 1.5F, entity.getVoicePitch());
             } else if (tick >= entity.pounceAttackAnimation1.getDuration() - 1) {
                 if (target != null) {
