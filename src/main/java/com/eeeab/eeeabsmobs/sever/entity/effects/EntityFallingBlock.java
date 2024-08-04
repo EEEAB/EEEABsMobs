@@ -1,6 +1,8 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -9,14 +11,18 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
 
 public class EntityFallingBlock extends Entity {
     public static float DROP_FACTORS = 0.1f;
@@ -24,12 +30,12 @@ public class EntityFallingBlock extends Entity {
     private static final EntityDataAccessor<Float> ANIM_V_Y = SynchedEntityData.defineId(EntityFallingBlock.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> DURATION = SynchedEntityData.defineId(EntityFallingBlock.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<BlockState> BLOCK_STATE = SynchedEntityData.defineId(EntityFallingBlock.class, EntityDataSerializers.BLOCK_STATE);
+    private static final EntityDataAccessor<Quaternionf> QUATERNION = SynchedEntityData.defineId(EntityFallingBlock.class, EntityDataSerializers.QUATERNION);
     public float animY = 0;
     public float prevAnimY = 0;
 
     public enum FallingMoveType {
-        RENDER_MOVE,
-        OVERALL_MOVE
+        RENDER_MOVE, OVERALL_MOVE, SIMULATE_RUPTURE
     }
 
     public EntityFallingBlock(EntityType<EntityFallingBlock> entityType, Level level) {
@@ -37,12 +43,11 @@ public class EntityFallingBlock extends Entity {
         this.setDuration(20);
     }
 
-
     public EntityFallingBlock(Level worldIn, BlockState blockState, float vy) {
         super(EntityInit.FALLING_BLOCK.get(), worldIn);
         this.setMode(FallingMoveType.RENDER_MOVE);
-        setBlockState(blockState);
-        setAnimVY(vy);
+        this.setBlockState(blockState);
+        this.setAnimVY(vy);
     }
 
     public EntityFallingBlock(Level level, double px, double py, double pz, BlockState blockState, int duration) {
@@ -57,17 +62,26 @@ public class EntityFallingBlock extends Entity {
         this.setDeltaMovement(Vec3.ZERO);
     }
 
+    public EntityFallingBlock(Level level, BlockState blockState, Quaternionf quaternionf, int duration, float vy) {
+        super(EntityInit.FALLING_BLOCK.get(), level);
+        this.setMode(FallingMoveType.SIMULATE_RUPTURE);
+        this.setBlockState(blockState);
+        this.setQuaternionf(quaternionf);
+        this.setDuration(duration);
+        this.setAnimVY(vy);
+    }
 
     protected void defineSynchedData() {
         this.entityData.define(BLOCK_STATE, Blocks.DIRT.defaultBlockState());
         this.entityData.define(MODE, FallingMoveType.RENDER_MOVE.toString());
         this.entityData.define(ANIM_V_Y, 1F);
         this.entityData.define(DURATION, 20);
+        this.entityData.define(QUATERNION, new Quaternionf());
     }
 
 
     public void tick() {
-        if (getMode() == FallingMoveType.RENDER_MOVE) setDeltaMovement(0, 0, 0);
+        if (getMode() != FallingMoveType.OVERALL_MOVE) setDeltaMovement(0, 0, 0);
         super.tick();
         if (getMode() == FallingMoveType.OVERALL_MOVE) {
             if (!this.isNoGravity()) {
@@ -78,13 +92,37 @@ public class EntityFallingBlock extends Entity {
             if ((this.onGround() && this.tickCount > this.getDuration()) || this.tickCount > 300) {
                 this.discard();
             }
+        } else if (getMode() == FallingMoveType.RENDER_MOVE) {
+            this.updateY(getAnimVY(), DROP_FACTORS);
         } else {
+            if (this.level().isClientSide) {
+                if (this.tickCount == 1 && this.random.nextInt(4) == 0) {
+                    BlockState blockstate = this.getBlockState();
+                    if (blockstate != null && blockstate.getRenderShape() != RenderShape.INVISIBLE) {
+                        for (int i = 0; i < 3; ++i) {
+                            double d0 = this.getX() + (double) Mth.randomBetween(this.random, -0.2F, 0.2F);
+                            double d1 = this.getY() + 0.5;
+                            double d2 = this.getZ() + (double) Mth.randomBetween(this.random, -0.2F, 0.2F);
+                            this.level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, blockstate), d0, d1, d2, 0.0D, 0.0D, 0.0D);
+                        }
+                    }
+                }
+            }
             float animVY = getAnimVY();
-            prevAnimY = animY;
-            animY += animVY;
-            setAnimVY(animVY - DROP_FACTORS);
-            if (animY < -0.5) discard();
+            if (animVY < 0 && this.tickCount <= this.getDuration()) {
+                //保持一致 避免渲染计算插值时导致抽搐问题
+                prevAnimY = animY;
+                return;
+            }
+            this.updateY(animVY, 0.2f);
         }
+    }
+
+    private void updateY(float animVY, float dropFactors) {
+        prevAnimY = animY;
+        animY += animVY;
+        if (animY < -0.5) discard();
+        setAnimVY(animVY - dropFactors);
     }
 
 
@@ -92,6 +130,13 @@ public class EntityFallingBlock extends Entity {
     public void setDeltaMovement(double x, double y, double z) {
         if (getMode() == FallingMoveType.OVERALL_MOVE) {
             super.setDeltaMovement(x, y, z);
+        }
+    }
+
+    @Override
+    public void setDeltaMovement(@NotNull Vec3 deltaMovement) {
+        if (getMode() == FallingMoveType.OVERALL_MOVE) {
+            super.setDeltaMovement(deltaMovement);
         }
     }
 
@@ -150,5 +195,13 @@ public class EntityFallingBlock extends Entity {
 
     public void setDuration(int duration) {
         getEntityData().set(DURATION, duration);
+    }
+
+    public Quaternionf getQuaternionf() {
+        return getEntityData().get(QUATERNION);
+    }
+
+    public void setQuaternionf(Quaternionf quaternionf) {
+        getEntityData().set(QUATERNION, quaternionf);
     }
 }

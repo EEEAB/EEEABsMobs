@@ -53,6 +53,9 @@ public class RenderFallingBlock extends EntityRenderer<EntityFallingBlock> {
             } else {
                 matrixStackIn.translate(0, 0.5f, 0);
                 matrixStackIn.translate(0, Mth.lerp(partialTicks, entityIn.prevAnimY, entityIn.animY), 0);
+                if (entityIn.getMode() == EntityFallingBlock.FallingMoveType.SIMULATE_RUPTURE) {
+                    matrixStackIn.mulPose(entityIn.getQuaternionf());
+                }
                 matrixStackIn.translate(0, -1, 0);
                 matrixStackIn.translate(-0.5f, -0.5f, -0.5f);
             }

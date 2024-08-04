@@ -23,6 +23,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
+import org.joml.Quaternionf;
 
 import java.util.Random;
 
@@ -275,6 +276,26 @@ public class ModEntityUtils {
         if (!block.isAir() && block.isRedstoneConductor(level, pos) && !block.hasBlockEntity() && !blockAbove.blocksMotion()) {
             EntityFallingBlock fallingBlock = new EntityFallingBlock(level, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, block, 10);
             fallingBlock.push(0, 0.2 + random.nextGaussian() * 0.2, 0);
+            level.addFreshEntity(fallingBlock);
+        }
+    }
+
+    /**
+     * 生成模拟裂纹方块(渲染移动)
+     *
+     * @param level         服务端
+     * @param pos           区块坐标
+     * @param quaternionf   四元数
+     * @param fallingFactor y轴下降系数
+     */
+    public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos, Quaternionf quaternionf, int duration, float fallingFactor) {
+        BlockPos abovePos = new BlockPos(pos).above();//获取上面方块的坐标,以用来判断是否需要生成下落的方块
+        BlockState block = level.getBlockState(pos);//获取下落方块,以用于渲染方块材质
+        BlockState blockAbove = level.getBlockState(abovePos);//获取上面方块的状态,,以用来判断是否需要生成下落的方块
+
+        if (!block.isAir() && block.isRedstoneConductor(level, pos) && !block.hasBlockEntity() && !blockAbove.blocksMotion()) {
+            EntityFallingBlock fallingBlock = new EntityFallingBlock(level, block, quaternionf, duration, fallingFactor);
+            fallingBlock.setPos(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
             level.addFreshEntity(fallingBlock);
         }
     }
