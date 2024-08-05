@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public abstract class EntityAbsImmortal extends EEEABMobLibrary implements GlowEntity, VenerableEntity<EntityAbsImmortal> {
+public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy, GlowEntity, VenerableEntity<EntityAbsImmortal> {
     protected int attackTick;
     protected boolean attacking;
     private boolean isSummon;
