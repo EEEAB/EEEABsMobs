@@ -112,7 +112,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public final Animation shakeGroundAttackAnimation3 = Animation.create(60);
     private final Animation[] animations = new Animation[]{
             dieAnimation,
-            dieAnimation,
             roarAnimation,
             attackAnimation1,
             attackAnimation2,
