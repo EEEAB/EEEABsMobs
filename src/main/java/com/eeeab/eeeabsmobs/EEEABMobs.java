@@ -1,12 +1,14 @@
 package com.eeeab.eeeabsmobs;
 
 import com.eeeab.eeeabsmobs.client.ClientProxy;
+import com.eeeab.animate.client.gui.AnimationControllerScreen;
 import com.eeeab.eeeabsmobs.sever.ServerProxy;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerServerEvent;
 import com.eeeab.eeeabsmobs.sever.init.*;
 import com.eeeab.eeeabsmobs.sever.integration.curios.CuriosRegistry;
 import com.eeeab.eeeabsmobs.sever.util.EMBrewingRecipe;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraftforge.common.MinecraftForge;
@@ -41,6 +43,7 @@ public class EEEABMobs {
         PotionInit.register(bus);
         ParticleInit.register(bus);
         SoundInit.register(bus);
+        MenuInit.register(bus);
         StructuresInit.register(bus);
         bus.<FMLCommonSetupEvent>addListener(this::setup);
         bus.<FMLClientSetupEvent>addListener(this::clientSetup);
@@ -62,6 +65,7 @@ public class EEEABMobs {
     private void clientSetup(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             CuriosRegistry.clientRegister();
+            MenuScreens.register(MenuInit.ANIMATION_CONTROLLER.get(), AnimationControllerScreen::new);
         });
     }
 

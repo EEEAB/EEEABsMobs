@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever;
 
+import com.eeeab.animate.server.message.PlayAnimationMessage;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 
 import com.eeeab.eeeabsmobs.sever.advancements.EMCriteriaTriggers;
@@ -41,6 +42,7 @@ public class ServerProxy {
         EEEABMobs.NETWORK.messageBuilder(MessagePlayerUseAbility.class, nextID()).encoder(MessagePlayerUseAbility::serialize).decoder(MessagePlayerUseAbility::deserialize).consumerNetworkThread(new MessagePlayerUseAbility.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(MessageFrenzyEffect.class, nextID()).encoder(MessageFrenzyEffect::serialize).decoder(MessageFrenzyEffect::deserialize).consumerNetworkThread(new MessageFrenzyEffect.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(AnimationMessage.class, nextID()).encoder(AnimationMessage::serialize).decoder(AnimationMessage::deserialize).consumerNetworkThread(new AnimationMessage.Handler()).add();
+        EEEABMobs.NETWORK.messageBuilder(PlayAnimationMessage.class, nextID()).encoder(PlayAnimationMessage::serialize).decoder(PlayAnimationMessage::deserialize).consumerNetworkThread(new PlayAnimationMessage.Handler<>()).add();
     }
 
     public void init(IEventBus bus) {

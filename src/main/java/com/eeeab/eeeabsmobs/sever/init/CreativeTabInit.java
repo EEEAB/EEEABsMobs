@@ -16,6 +16,10 @@ public class CreativeTabInit {
             .title(Component.translatable("itemGroup." + EEEABMobs.MOD_ID + ".creative_tab"))
             .icon(() -> new ItemStack(ItemInit.IMMORTAL_AXE.get()))
             .displayItems((enabledFeatures, entries) -> {
+                /*OP Item*/
+                entries.accept(ItemInit.REMOVE_MOB.get());
+                entries.accept(ItemInit.ANIMATION_CONTROLLER.get());
+
                 /* Block Item */
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.IMMORTAL_BLOCK));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.GHOST_STEEL_BLOCK));
@@ -26,7 +30,6 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_DEEPSLATE_BRICKS));
 
                 /* Misc Item */
-                entries.accept(ItemInit.REMOVE_MOB.get());
                 entries.accept(ItemInit.HEART_OF_PAGAN.get());
                 entries.accept(ItemInit.ANCIENT_DRIVE_CRYSTAL.get());
                 entries.accept(ItemInit.IMMORTAL_BONE.get());
