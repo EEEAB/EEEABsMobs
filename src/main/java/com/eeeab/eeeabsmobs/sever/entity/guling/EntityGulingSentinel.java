@@ -159,7 +159,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
             @Override
             public void tick() {
                         if (alwaysActive()) {
-            this.setActive(true);
+            setActive(true);
         }
                 LivingEntity entityTarget = this.entity.getTarget();
                 this.entity.setDeltaMovement(0, this.entity.onGround() ? 0 : this.entity.getDeltaMovement().y, 0);
@@ -205,6 +205,11 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
                 this.playSound(SoundInit.GSH_FRICTION.get());
                 this.playAnimation(this.activeAnimation);
                 this.setActive(true);
+            else if (this.alwaysActive() && !this.isActive()) {
+                this.playSound(SoundInit.GSH_FRICTION.get());
+                this.playAnimation(this.activeAnimation);
+                this.setActive(true);  
+            }
             }
             if (!this.isNoAi() && this.isActive() && this.isNoAnimation() && this.getTarget() == null && this.deactivateTick >= 200) {
                 this.playSound(SoundInit.GSH_FRICTION.get());
