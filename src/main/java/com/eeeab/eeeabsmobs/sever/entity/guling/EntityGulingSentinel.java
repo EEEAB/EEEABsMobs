@@ -66,7 +66,6 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
     public EntityGulingSentinel(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
         this.active = false;
-        this.alwaysActive = false;
     }
 
     @Override
@@ -139,7 +138,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.6D) {
             @Override
             public boolean canUse() {
-                return EntityGulingSentinel.this.alwaysActive && super.canUse();
+                return EntityGulingSentinel.this.active && super.canUse();
             }
         });
     }
@@ -289,7 +288,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
         this.entityData.set(DATA_ACTIVE, compound.getBoolean("isActive"));
         this.active = this.isActive();
         this.entityData.set(ALWAYS_ACTIVE, compound.getBoolean("alwaysActive"));
-        this.alwaysActive = this.alwaysActive();
+        this.active = this.alwaysActive();
     }
 
     @Override
