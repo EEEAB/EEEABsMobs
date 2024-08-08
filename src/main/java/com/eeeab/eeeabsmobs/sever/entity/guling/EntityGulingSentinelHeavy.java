@@ -203,7 +203,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this, EntityAbsGuling.class));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractGolem.class, 0, false, false, (golem) -> !(golem instanceof Shulker)));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.6D) {      
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.6D);     
         this.goalSelector.addGoal(6, new EMLookAtGoal(this, Mob.class, 6.0F));
         this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this) {
