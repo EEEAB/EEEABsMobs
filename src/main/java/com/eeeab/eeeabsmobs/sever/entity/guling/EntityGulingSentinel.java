@@ -61,6 +61,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
     private int deactivateTick;
     private static final EntityDimensions DEACTIVATE_SIZE = EntityDimensions.scalable(1, 1);
     private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EntityGulingSentinel.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> ALWAYS_ACTIVE = SynchedEntityData.defineId(EntityGulingSentinel.class, EntityDataSerializers.BOOLEAN);
 
     public EntityGulingSentinel(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
@@ -157,6 +158,9 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
 
             @Override
             public void tick() {
+                        if (alwaysActive()) {
+            setActive(true);
+        }
                 LivingEntity entityTarget = this.entity.getTarget();
                 this.entity.setDeltaMovement(0, this.entity.onGround() ? 0 : this.entity.getDeltaMovement().y, 0);
                 int tick = this.entity.getAnimationTick();
@@ -201,6 +205,8 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
                 this.playSound(SoundInit.GSH_FRICTION.get());
                 this.playAnimation(this.activeAnimation);
                 this.setActive(true);
+            } else if (this.alwaysActive() && !this.isActive()) {
+                this.setActive(true);  
             }
             if (!this.isNoAi() && this.isActive() && this.isNoAnimation() && this.getTarget() == null && this.deactivateTick >= 200) {
                 this.playSound(SoundInit.GSH_FRICTION.get());
@@ -233,7 +239,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
             if (this.attackTick > 0) {
                 this.attackTick--;
             }
-            if (this.isActive()) {
+            if (this.isActive() && !this.alwaysActive()) {
                 if (this.getTarget() == null) {
                     this.deactivateTick++;
                 } else if (this.deactivateTick > 0) {
@@ -273,6 +279,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_ACTIVE, false);
+        this.entityData.define(ALWAYS_ACTIVE, false);
     }
 
     @Override
@@ -280,12 +287,15 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
         super.readAdditionalSaveData(compound);
         this.entityData.set(DATA_ACTIVE, compound.getBoolean("isActive"));
         this.active = this.isActive();
+        this.entityData.set(ALWAYS_ACTIVE, compound.getBoolean("alwaysActive"));
+        this.active = this.alwaysActive();
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("isActive", this.entityData.get(DATA_ACTIVE));
+         compound.putBoolean("alwaysActive", this.entityData.get(ALWAYS_ACTIVE));
     }
 
     @Override
@@ -317,6 +327,13 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
     public void setActive(boolean isActive) {
         this.entityData.set(DATA_ACTIVE, isActive);
         this.deactivateTick = 0;
+    }
+        public boolean alwaysActive() {
+        return this.entityData.get(ALWAYS_ACTIVE);
+    }
+
+    public void setAlwaysActive(boolean alwaysActive) {
+        this.entityData.set(ALWAYS_ACTIVE, alwaysActive);
     }
 
     @Override
