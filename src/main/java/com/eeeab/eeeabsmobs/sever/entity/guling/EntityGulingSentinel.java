@@ -205,7 +205,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
                 this.playSound(SoundInit.GSH_FRICTION.get());
                 this.playAnimation(this.activeAnimation);
                 this.setActive(true);
-            else if (this.alwaysActive() && !this.isActive()) {
+            } else if (this.alwaysActive() && !this.isActive()) {
                 this.playSound(SoundInit.GSH_FRICTION.get());
                 this.playAnimation(this.activeAnimation);
                 this.setActive(true);  
