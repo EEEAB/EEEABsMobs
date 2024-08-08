@@ -91,6 +91,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             electromagneticAnimation
     };
     private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EntityGulingSentinelHeavy.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> ALWAYS_ACTIVE = SynchedEntityData.defineId(EntityGulingSentinelHeavy.class, EntityDataSerializers.BOOLEAN);
     private int deactivateTick;
     private int smashAttackTick;
     private int rangeAttackTick;
@@ -223,6 +224,9 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> smashAttackAnimation, 7F, 18, 1.5F, 1.5F, true) {
             @Override
             public void tick() {
+                 if (alwaysActive()) {
+            setActive(true);
+               }
                 this.entity.setDeltaMovement(0F, 0F, 0F);
                 LivingEntity target = this.entity.getTarget();
                 if (target != null) {
@@ -269,6 +273,8 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 this.playSound(SoundInit.GSH_FRICTION.get());
                 this.playAnimation(this.activeAnimation);
                 this.setActive(true);
+            }     else if (this.alwaysActive() && !this.isActive()) {
+                this.setActive(true);  
             }
             if (!this.isNoAi() && this.isActive() && this.isAlive() && this.isNoAnimation() && this.getTarget() == null && this.deactivateTick >= 300) {
                 this.playSound(SoundInit.GSH_FRICTION.get());
@@ -414,7 +420,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             }
 
             if (this.isActive()) {
-                if (this.getTarget() == null || (this.tickCount % 2 == 0 && !this.getSensing().hasLineOfSight(this.getTarget()))) {
+                if (!this.alwaysActive() && this.getTarget() == null || (this.tickCount % 2 == 0 && !this.getSensing().hasLineOfSight(this.getTarget()))) {
                     this.deactivateTick++;
                 } else if (this.deactivateTick > 0) {
                     this.deactivateTick--;
@@ -458,6 +464,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_ACTIVE, false);
+        this.entityData.define(ALWAYS_ACTIVE, false);
     }
 
     @Override
@@ -465,12 +472,15 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         super.readAdditionalSaveData(compound);
         this.entityData.set(DATA_ACTIVE, compound.getBoolean("isActive"));
         this.active = this.isActive();
+        this.entityData.set(ALWAYS_ACTIVE, compound.getBoolean("alwaysActive"));
+        this.active = this.alwaysActive();
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("isActive", this.entityData.get(DATA_ACTIVE));
+        compound.putBoolean("alwaysActive", this.entityData.get(ALWAYS_ACTIVE));
     }
 
     @Override
@@ -570,6 +580,13 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     public void setActive(boolean isActive) {
         this.entityData.set(DATA_ACTIVE, isActive);
         this.deactivateTick = 0;
+    }
+            public boolean alwaysActive() {
+        return this.entityData.get(ALWAYS_ACTIVE);
+    }
+
+    public void setAlwaysActive(boolean alwaysActive) {
+        this.entityData.set(ALWAYS_ACTIVE, alwaysActive);
     }
 
 
