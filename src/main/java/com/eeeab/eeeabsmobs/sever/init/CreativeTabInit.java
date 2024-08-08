@@ -14,7 +14,7 @@ public class CreativeTabInit {
 
     public static final RegistryObject<CreativeModeTab> EEEAB_MOBS_TAB = TABS.register("eeeabmobs_tab", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup." + EEEABMobs.MOD_ID + ".creative_tab"))
-            .icon(() -> new ItemStack(ItemInit.IMMORTAL_AXE.get()))
+            .icon(() -> new ItemStack(ItemInit.GUARDIAN_AXE.get()))
             .displayItems((enabledFeatures, entries) -> {
                 /*OP Item*/
                 entries.accept(ItemInit.REMOVE_MOB.get());
