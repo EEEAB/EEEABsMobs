@@ -274,6 +274,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_ACTIVE, false);
+        this.entityData.define(ALWAYS_ACTIVE, false);
     }
 
     @Override
