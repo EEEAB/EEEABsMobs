@@ -237,7 +237,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
             if (this.attackTick > 0) {
                 this.attackTick--;
             }
-            if (this.isActive()) {
+            if (this.isActive() && !this.alwaysActive()) {
                 if (this.getTarget() == null) {
                     this.deactivateTick++;
                 } else if (this.deactivateTick > 0) {
