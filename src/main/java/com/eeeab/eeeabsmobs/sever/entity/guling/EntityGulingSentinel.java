@@ -280,12 +280,15 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
         super.readAdditionalSaveData(compound);
         this.entityData.set(DATA_ACTIVE, compound.getBoolean("isActive"));
         this.active = this.isActive();
+        this.entityData.set(DATA_ACTIVE, compound.getBoolean("alwaysActive"));
+        this.active = this.alwaysActive();
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("isActive", this.entityData.get(DATA_ACTIVE));
+         compound.putBoolean("alwaysActive", this.entityData.get(DATA_ACTIVE));
     }
 
     @Override
@@ -317,6 +320,13 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
     public void setActive(boolean isActive) {
         this.entityData.set(DATA_ACTIVE, isActive);
         this.deactivateTick = 0;
+    }
+        public boolean alwaysActive() {
+        return this.entityData.get(DATA_ACTIVE);
+    }
+
+    public void setAlwaysActive(boolean alwaysActive) {
+        this.entityData.set(DATA_ACTIVE, alwaysActive);
     }
 
     @Override
