@@ -207,7 +207,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
             @Override
             public boolean canUse() {
-                return super.canUse() && EntityGulingSentinelHeavy.this.active;
+                return super.canUse() && alwaysActive();
             }
         });    
         this.goalSelector.addGoal(6, new EMLookAtGoal(this, Mob.class, 6.0F));
