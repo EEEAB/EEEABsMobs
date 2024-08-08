@@ -420,7 +420,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             }
 
             if (this.isActive()) {
-                if (!this.alwaysActive() && this.getTarget() == null || (this.tickCount % 2 == 0 && !this.getSensing().hasLineOfSight(this.getTarget()))) {
+                if (!this.alwaysActive() && this.getTarget() == null || (!this.alwaysActive() && this.tickCount % 2 == 0 && !this.getSensing().hasLineOfSight(this.getTarget()))) {
                     this.deactivateTick++;
                 } else if (this.deactivateTick > 0) {
                     this.deactivateTick--;
