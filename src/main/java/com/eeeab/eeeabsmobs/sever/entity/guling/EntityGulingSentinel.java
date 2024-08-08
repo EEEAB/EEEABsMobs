@@ -159,7 +159,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
             @Override
             public void tick() {
                         if (alwaysActive()) {
-            setActive(true);
+            this.setActive(true);
         }
                 LivingEntity entityTarget = this.entity.getTarget();
                 this.entity.setDeltaMovement(0, this.entity.onGround() ? 0 : this.entity.getDeltaMovement().y, 0);
