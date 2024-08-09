@@ -63,7 +63,8 @@ public class ItemDemolisher extends ProjectileWeaponItem {
                         player.getInventory().removeItem(projectile);
                     }
                 }
-                player.getCooldowns().addCooldown(this, EMConfigHandler.COMMON.ITEM.itemHowitzerCoolingTime.get() * 20);
+                player.getCooldowns().addCooldown(this, (int) (EMConfigHandler.COMMON.ITEM.itemHowitzerCoolingTime.get() * 20));
+                player.stopUsingItem();
             }
         }
     }
