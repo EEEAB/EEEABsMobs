@@ -23,7 +23,7 @@ import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public class EMItemModels {
-    public static final String[] HAND_MODEL_ITEMS = new String[]{"guardian_axe", "demolisher"};
+    public static final String[] HAND_MODEL_ITEMS = new String[]{"guardian_axe", "demolisher", "immortal_staff"};
 
     @SubscribeEvent
     public static void onModifyBakingResultEvent(ModelEvent.ModifyBakingResult event) {
