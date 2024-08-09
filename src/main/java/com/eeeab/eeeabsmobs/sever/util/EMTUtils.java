@@ -76,7 +76,7 @@ public class EMTUtils {
         return component;
     }
 
-    public static Component itemCoolTime(int args) {
+    public static Component itemCoolTime(double args) {
         return simpleText(TOOLTIP_OTHER_PREFIX, args == 0 ? "no_cd" : "cd", STYLE_GREEN, args);
     }
 
