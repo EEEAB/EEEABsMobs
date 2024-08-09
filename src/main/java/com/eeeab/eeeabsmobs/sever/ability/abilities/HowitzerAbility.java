@@ -31,8 +31,8 @@ public class HowitzerAbility extends Ability<Player> {
             grenade.setRadius(EMConfigHandler.COMMON.ITEM.itemHowitzerGrenadeExplosionRadius.get().floatValue());
             Vec3 lookAngle = user.getLookAngle();
             Vec3 vec3 = user.position().add(lookAngle);
-            grenade.shoot(lookAngle.x, lookAngle.y, lookAngle.z, 0.85F, 1F);
-            grenade.setPos(vec3.x + width * 0.8F * Math.cos(yBodyRadians), user.getY(0.45D), vec3.z + width * 0.8F * Math.sin(yBodyRadians));
+            grenade.shoot(lookAngle.x, lookAngle.y, lookAngle.z, 0.7F, 1F);
+            grenade.setPos(vec3.x + width * 0.6F * Math.cos(yBodyRadians), user.getY(0.6D), vec3.z + width * 0.6F * Math.sin(yBodyRadians));
             level.addFreshEntity(grenade);
         }
     }
