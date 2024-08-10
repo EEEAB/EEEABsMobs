@@ -28,11 +28,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
 public class EntityShamanBomb extends AbstractHurtingProjectile implements IEntity {
-    private static final float BASE_DAMAGE = 6.0F;
-    private static final float INERTIA_DANGEROUS = 1.25F;
+    private static final float INERTIA_DANGEROUS = 1.025F;
     private static final float INERTIA_DEFAULT = 0.95F;
-    private static final int DANGEROUS_TIMER = 40;
+    private static final int DANGEROUS_TIMER = 30;
     private static final int NO_DANGEROUS_TIMER = 50;
+    private float baseDamage = 6.0F;
     public boolean reboundFlag;
     private static final EntityDataAccessor<Boolean> DANGEROUS = SynchedEntityData.defineId(EntityShamanBomb.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> IS_PLAYER = SynchedEntityData.defineId(EntityShamanBomb.class, EntityDataSerializers.BOOLEAN);
@@ -49,7 +49,8 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
     @Override
     public void tick() {
         super.tick();
-        if (tickCount <= 20) {
+        scaleControlled.updatePrevTimer();
+        if (tickCount % 2 == 0) {
             if (isDangerous()) {
                 scaleControlled.increaseTimer(2);
             } else {
@@ -72,7 +73,7 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
             Entity ownerEntity = this.getOwner();//(发射|反弹)弹射物的实体
             boolean flag;
             if (ownerEntity instanceof LivingEntity owner && resultEntity instanceof LivingEntity livingEntity) {
-                flag = resultEntity.hurt(EMDamageSource.shamanBombing(this, owner), (livingEntity.getMaxHealth() * 0.1F * (isPlayer() ? 0 : 1F)) + BASE_DAMAGE);
+                flag = resultEntity.hurt(EMDamageSource.shamanBombing(this, owner), (livingEntity.getMaxHealth() * 0.1F * (isPlayer() ? 0 : 1F)) + baseDamage);
                 if (flag && resultEntity.isAlive()) {
                     this.doEnchantDamageEffects(owner, resultEntity);
                 }
@@ -188,6 +189,7 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
 
 
     public void setDangerous(boolean flag) {
+        if (flag) this.baseDamage = 8;
         this.entityData.set(DANGEROUS, flag);
     }
 

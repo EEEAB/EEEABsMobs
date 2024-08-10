@@ -102,7 +102,7 @@
   "item.eeeabsmobs.heart_of_pagan.tip": "用于炼制狂暴药水",
   "item.eeeabsmobs.soul_summoning_necklace.tip": "承受伤害累计达到 %1$s 召唤死尸",
   "tooltip.weapon.eeeabsmobs.immortal_sword.tip": "赋予被攻击者侵蚀状态",
-  "tooltip.weapon.eeeabsmobs.immortal_staff.tip": "按住右键 %1$s 秒发射巫师炸弹",
+  "tooltip.weapon.eeeabsmobs.immortal_staff.tip": "右键发射巫师炸弹，有25%基准发射强力弹丸，受幸运或霉运影响",
   "tooltip.weapon.eeeabsmobs.guardian_axe.tip": "朝地面右键释放技能，造成伤害基于武器+使用者攻击力，伤害视作魔法伤害并无视护甲，伤害上限为武器伤害的2倍，技能造成伤害随着距离衰减",
   "structure.eeeabsmobs.eye_of_bloody_altar.tip": "右键查找血色祭坛结构",
   "structure.eeeabsmobs.eye_of_guling.tip": "右键查找古陵结构",

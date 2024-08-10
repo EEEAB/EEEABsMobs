@@ -102,7 +102,7 @@
   "item.eeeabsmobs.heart_of_pagan.tip": "Used to make frenzy potions",
   "item.eeeabsmobs.soul_summoning_necklace.tip": "Take damage accumulates to %1$s summon Corpse",
   "tooltip.weapon.eeeabsmobs.immortal_sword.tip": "Give the attacker an erosion status",
-  "tooltip.weapon.eeeabsmobs.immortal_staff.tip": "Hold right-click for %1$s second to fire the Shaman Bomb",
+  "tooltip.weapon.eeeabsmobs.immortal_staff.tip": "Right-click to fire a shaman bomb, which has a 25% base to fire powerful projectiles, affected by luck or bad luck",
   "tooltip.weapon.eeeabsmobs.guardian_axe.tip": "Right-click on the ground to cast the skill, the skill damage is based on the weapon + the user's attack damage, this damage is considered magic damage and ignores armor.The damage is limited to 2 times the damage of the weapon, and the damage decreases with distance",
   "structure.eeeabsmobs.eye_of_bloody_altar.tip": "Right-click to find the Bloody Altar structure",
   "structure.eeeabsmobs.eye_of_guling.tip": "Right-click to find the guling structure",

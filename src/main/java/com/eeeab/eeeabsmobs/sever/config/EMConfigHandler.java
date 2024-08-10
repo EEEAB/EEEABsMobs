@@ -56,8 +56,7 @@ public final class EMConfigHandler {
             }
             {
                 builder.push("Immortal Staff");
-                itemImmortalStaffCoolingTime = BUILDER.comment("Set the cool down time after using the weapon (seconds)").defineInRange("Set item cool down time", 1, 0, 60);
-                itemImmortalStaffStorageTime = BUILDER.comment("Set the weapon recharge time (seconds)").defineInRange("Set item recharge time", 1, 0, 60);
+                itemImmortalStaffCoolingTime = BUILDER.comment("Set the cool down time after using the weapon (seconds)").defineInRange("Set item cool down time", 1.5, 0.5, 60);
                 builder.pop();
             }
             {
@@ -70,8 +69,7 @@ public final class EMConfigHandler {
         }
 
         public final ForgeConfigSpec.BooleanValue enableGhostWarriorArmorItemDurability;
-        public final ForgeConfigSpec.IntValue itemImmortalStaffCoolingTime;
-        public final ForgeConfigSpec.IntValue itemImmortalStaffStorageTime;
+        public final ForgeConfigSpec.DoubleValue itemImmortalStaffCoolingTime;
         public final ToolConfig GUARDIAN_AXE_TOOL;
         public final ToolConfig NETHERWORLD_KATANA_TOOL;
         public final ForgeConfigSpec.DoubleValue itemHowitzerCoolingTime;
