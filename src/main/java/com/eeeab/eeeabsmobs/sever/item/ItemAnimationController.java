@@ -36,7 +36,9 @@ public class ItemAnimationController extends Item {
         if (entity instanceof EMAnimatedEntity) {
             CompoundTag compoundTag = stack.getOrCreateTag();
             compoundTag.putInt(NBT_ENTITY_ID, entity.getId());
-            player.displayClientMessage(EMTUtils.simpleOtherText(this.getDescriptionId(), null, entity.getName().getString()), true);
+            if (player.level().isClientSide) {
+                player.displayClientMessage(EMTUtils.simpleOtherText(this.getDescriptionId(), null, entity.getName().getString()), true);
+            }
         }
         return true;
     }
@@ -63,6 +65,7 @@ public class ItemAnimationController extends Item {
                     public @NotNull Component getDisplayName() {
                         return livingEntity.getName();
                     }
+
                     @Override
                     public @NotNull AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
                         return new AnimationControllerMenu(containerId, playerInventory, livingEntity);
