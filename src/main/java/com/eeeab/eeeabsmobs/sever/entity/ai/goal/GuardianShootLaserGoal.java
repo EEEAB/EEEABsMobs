@@ -18,6 +18,12 @@ public class GuardianShootLaserGoal extends AnimationSimpleAI<EntityNamelessGuar
     }
 
     @Override
+    public void start() {
+        super.start();
+        this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_ACCUMULATING.get(), 2F, (this.entity.getRandom().nextFloat() - this.entity.getRandom().nextFloat()) * 0.2F + 3.5F);
+    }
+
+    @Override
     public void tick() {
         LivingEntity entityTarget = this.entity.getTarget();
         this.entity.setDeltaMovement(0, this.entity.onGround() ? 0 : this.entity.getDeltaMovement().y, 0);
@@ -54,6 +60,9 @@ public class GuardianShootLaserGoal extends AnimationSimpleAI<EntityNamelessGuar
             float xMaxRotAngle = 90F;
             if (entityTarget != null) {
                 this.entity.getLookControl().setLookAt(entityTarget.getX(), entityTarget.getY() + entityTarget.getBbHeight() / 2, entityTarget.getZ(), yMaxRotSpeed, xMaxRotAngle);
+            }
+            if (tick == 92) {
+                this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_ACCUMULATING_END.get(), 2F, (this.entity.getRandom().nextFloat() - this.entity.getRandom().nextFloat()) * 0.2F + 2.5F);
             }
         } else {
             this.entity.setYRot(this.entity.yRotO);
