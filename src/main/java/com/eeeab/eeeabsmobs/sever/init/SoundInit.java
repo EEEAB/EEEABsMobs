@@ -39,6 +39,7 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_DASH = create("immortal.executioner.dash");
     public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_BLOCK = create("immortal.executioner.block");
     public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_SCRATCH = create("immortal.executioner.scratch");
+    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_BURN = create("immortal.executioner.burn");
 
     //Guling Sentinel
     public static final RegistryObject<SoundEvent> GS_HURT = create("guling.sentinel.hurt");
@@ -60,7 +61,6 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_STEP = create("nameless.guardian.step");
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_IDLE = create("nameless.guardian.idle");
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_CREAK = create("nameless.guardian.creak");
-    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_PRE_SWING = create("nameless.guardian.pre_swing");
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_ACCUMULATING = create("nameless.guardian.accumulating");
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_ACCUMULATING_END = create("nameless.guardian.accumulating_end");
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_WHOOSH = create("nameless.guardian.whoosh");

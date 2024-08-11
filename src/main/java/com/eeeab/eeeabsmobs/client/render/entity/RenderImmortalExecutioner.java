@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 
 public class RenderImmortalExecutioner extends MobRenderer<EntityImmortalExecutioner, ModelImmortalExecutioner> {
@@ -35,8 +36,15 @@ public class RenderImmortalExecutioner extends MobRenderer<EntityImmortalExecuti
     }
 
     @Override
+    protected int getBlockLightLevel(EntityImmortalExecutioner entity, BlockPos pos) {
+        return 15;
+    }
+
+    @Override
     public void render(EntityImmortalExecutioner entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
         super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
-        entity.fire[0] = ModelPartUtils.getWorldPosition(entity, entity.yBodyRot, this.model.root(), FIRE);
+        if (entity.fire != null && entity.fire.length > 0) {
+            entity.fire[0] = ModelPartUtils.getWorldPosition(entity, entity.yBodyRot, this.model.root(), FIRE);
+        }
     }
 }

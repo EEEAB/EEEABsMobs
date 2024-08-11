@@ -88,6 +88,12 @@
       "eeeabsmobs:entity/immortal_executioner/dash"
     ]
   },
+  "immortal.executioner.burn": {
+    "subtitle": "subtitles.immortal.executioner.burn",
+    "sounds": [
+      "eeeabsmobs:effect/fire"
+    ]
+  },
   "immortal.executioner.block": {
     "subtitle": "subtitles.immortal.executioner.block",
     "sounds": [
@@ -99,7 +105,8 @@
     "subtitle": "subtitles.immortal.executioner.scratch",
     "sounds": [
       "eeeabsmobs:entity/immortal_executioner/scratch1",
-      "eeeabsmobs:entity/immortal_executioner/scratch2"
+      "eeeabsmobs:entity/immortal_executioner/scratch2",
+      "eeeabsmobs:entity/immortal_executioner/scratch3"
     ]
   },
   "guling.sentinel.hurt": {
@@ -212,12 +219,6 @@
     "subtitle": "subtitles.nameless.guardian.whoosh",
     "sounds": [
       "eeeabsmobs:entity/nameless_guardian/whoosh"
-    ]
-  },
-  "nameless.guardian.pre_swing": {
-    "subtitle": "nameless.guardian.pre_swing",
-    "sounds": [
-      "eeeabsmobs:entity/nameless_guardian/pre_swing"
     ]
   },
   "nameless.guardian.pre_pounce": {
