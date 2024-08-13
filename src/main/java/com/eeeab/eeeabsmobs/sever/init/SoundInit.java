@@ -40,6 +40,7 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_BLOCK = create("immortal.executioner.block");
     public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_SCRATCH = create("immortal.executioner.scratch");
     public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_BURN = create("immortal.executioner.burn");
+    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_DETONATION = create("immortal.executioner.detonation");
 
     //Guling Sentinel
     public static final RegistryObject<SoundEvent> GS_HURT = create("guling.sentinel.hurt");

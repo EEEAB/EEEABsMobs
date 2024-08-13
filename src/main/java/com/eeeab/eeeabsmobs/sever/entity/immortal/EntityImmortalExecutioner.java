@@ -11,6 +11,7 @@ import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
 import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
 import com.eeeab.eeeabsmobs.client.particle.util.RibbonComponent;
 import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
+import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.XpReward;
@@ -22,6 +23,7 @@ import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.nbt.CompoundTag;
@@ -78,6 +80,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
     public final Animation cullStorageAnimation = Animation.create(20);
     public final Animation cullHoldAnimation = Animation.create(15);
     public final Animation cullStopAnimation = Animation.create(10);
+    public final Animation detonationAnimation = Animation.create(40);
     private final Animation[] animations = new Animation[]{
             this.dieAnimation,
             this.avoidAnimation,
@@ -92,7 +95,8 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
             this.impactStopAnimation,
             this.cullStorageAnimation,
             this.cullHoldAnimation,
-            this.cullStopAnimation
+            this.cullStopAnimation,
+            this.detonationAnimation
     };
     private static final EntityDataAccessor<Float> DATA_FLAME_STRENGTH = SynchedEntityData.defineId(EntityImmortalExecutioner.class, EntityDataSerializers.FLOAT);
     @OnlyIn(Dist.CLIENT)
@@ -100,10 +104,14 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
     private int nextAvoidTick;
     private int nextStampTick;
     private int nextCullTick;
+    private int nextDetonationTick;
     private static final UniformInt AVOID_INTERVAL = TimeUtil.rangeOfSeconds(5, 12);
     private static final UniformInt STAMP_INTERVAL = TimeUtil.rangeOfSeconds(12, 16);
     private static final UniformInt CULL_INTERVAL = TimeUtil.rangeOfSeconds(6, 9);
+    private static final UniformInt DETONATION_INTERVAL = TimeUtil.rangeOfSeconds(15, 20);
     private int hurtCount;
+    private int detonationCount;
+    private static final int MAX_DETONATION_COUNT = 3;
     private static final int MAX_HURT_COUNT = 6;
 
     public EntityImmortalExecutioner(EntityType<EntityImmortalExecutioner> type, Level level) {
@@ -195,7 +203,10 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
         super.onAnimationFinish(animation);
         if (!this.level().isClientSide) {
             if (animation == this.cullStopAnimation) {
-                this.nextCullTick = CULL_INTERVAL.sample(this.random);
+                this.nextCullTick = this.getCoolingDuration(CULL_INTERVAL);
+            } else if (animation == this.detonationAnimation) {
+                this.detonationCount++;
+                this.setFlameStrength(this.getFlameStrength() + 0.2F);
             }
         }
     }
@@ -213,7 +224,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
     @Override
     protected void registerCustomGoals() {
         super.registerCustomGoals();
-        Consumer<LivingEntity> consumer = hitEntity -> this.executionerHurtTarget(hitEntity, this.getFirePower() > 1F);
+        Consumer<LivingEntity> consumer = this::executionerHurtTarget;
         this.goalSelector.addGoal(1, new AnimationDie<>(this));
         this.goalSelector.addGoal(1, new ExecutionerCullGoal(this));
         this.goalSelector.addGoal(1, new ExecutionerSharpImpactGoal(this));
@@ -236,9 +247,10 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
         this.goalSelector.addGoal(1, new ExecutionerSimpleAI(this, true,
                 () -> this.avoidAnimation,
                 () -> this.sidesWayAnimationRight,
-                () -> this.sidesWayAnimationLeft
+                () -> this.sidesWayAnimationLeft,
+                () -> this.detonationAnimation
         ));
-        this.goalSelector.addGoal(2, new AnimationMeleePlusAI<>(this, 1.0, 5, 1,
+        this.goalSelector.addGoal(3, new AnimationMeleePlusAI<>(this, 1.0, 10, 1,
                 () -> this.attackAnimationRight,
                 () -> this.attackAnimationLeft
         ));
@@ -250,17 +262,23 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
         if (!this.level().isClientSide) {
             if (this.getTarget() != null && !this.getTarget().isAlive()) this.setTarget(null);
             boolean isClose = this.getTarget() != null && (this.targetDistance < 6F || ModEntityUtils.checkTargetComingCloser(this, this.getTarget()) && this.targetDistance < 5F);
-            if (!this.isNoAi() && this.isNoAnimation()) {
-                if (isClose && this.nextAvoidTick <= 0 && (this.hurtCount == 0 && this.random.nextInt(100) == 0 || this.hurtCount != 0 && this.hurtCount < MAX_HURT_COUNT)) {
-                    this.nextAvoidTick = AVOID_INTERVAL.sample(this.random);
+            if (!this.isNoAi()) {
+                if (this.isNoAnimation() && isClose && this.nextAvoidTick <= 0 && (this.hurtCount == 0 && this.random.nextInt(100) == 0 || this.hurtCount != 0 && this.hurtCount < MAX_HURT_COUNT)) {
+                    this.nextAvoidTick = this.getCoolingDuration(AVOID_INTERVAL);
                     this.checkAndPlayComboAnimations(true, this.avoidAnimation, this.sidesWayAnimationLeft, this.sidesWayAnimationRight);
                 }
-                if (!isClose && this.getTarget() != null && this.nextStampTick <= 0) {
-                    this.nextStampTick = STAMP_INTERVAL.sample(this.random);
-                    this.playAnimation(this.impactStorageAnimation);
+                if (this.getTarget() != null) {
+                    if (this.isNoAnimation() && this.nextDetonationTick <= 0 && this.detonationCount < MAX_DETONATION_COUNT) {
+                        this.nextDetonationTick = DETONATION_INTERVAL.sample(this.random);
+                        this.playAnimation(this.detonationAnimation);
+                    }
+                    if (this.isNoAnimation() && this.targetDistance < 10 && this.nextCullTick <= 0) {
+                        this.playAnimation(this.cullStorageAnimation);
+                    }
                 }
-                if (this.getTarget() != null && this.targetDistance < 10 && this.nextCullTick <= 0) {
-                    this.playAnimation(this.cullStorageAnimation);
+                if (this.isNoAnimation() && !isClose && this.getTarget() != null && this.nextStampTick <= 0) {
+                    this.nextStampTick = this.getCoolingDuration(STAMP_INTERVAL);
+                    this.playAnimation(this.impactStorageAnimation);
                 }
             }
         }
@@ -307,16 +325,31 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
         } else if (this.getAnimation() == this.counterAnimation) {
             if (tick == 5)
                 this.playSound(SoundInit.IMMORTAL_EXECUTIONER_SCRATCH.get(), 1.2F, this.getVoicePitch() + 0.2F);
+        } else if (this.getAnimation() == this.detonationAnimation) {
+            this.setDeltaMovement(0, this.onGround() ? 0 : this.getDeltaMovement().y, 0);
+            if (tick >= 18 && tick <= 24 && tick % 2 == 0) {
+                if (tick == 18) this.doSoulFireGlowEffect();
+                int i = (tick - 17) / 2 + 1;
+                this.playSound(SoundInit.IMMORTAL_EXECUTIONER_DETONATION.get(), 1F + 0.5F * (i / 3F), 1.75F - (i / 3F));
+                ModParticleUtils.sphericalParticleOutburst(level(), 4F, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleTypes.SMOKE}, this, this.getBbHeight() * 0.5F, 0, 0, 1 - 0.5 * (i / 3F));
+                AABB attackRange = ModEntityUtils.makeAABBWithSize(this.getX(), this.getY(), this.getZ(), 0F, 6F, 12F, 6F);
+                for (LivingEntity entityHit : this.level().getEntitiesOfClass(LivingEntity.class, attackRange)) {
+                    if (entityHit == this) continue;
+                    if (this.executionerHurtTarget(entityHit)) {
+                        entityHit.setSecondsOnFire((int) (2.5 * this.getFlameStrength()));
+                    }
+                }
+            }
         }
         if (this.level().isClientSide && this.fire != null && this.fire.length != 0) {
             float power = this.getFirePower();
             boolean isPower = power > 1F;
             if (this.isAlive() && this.active) {
                 if (this.getAnimation() != this.impactHoldAnimation) {
-                    if ((isPower && this.tickCount % 4 == 1) || this.tickCount % 8 == 1) {
-                        float scale = Mth.clamp((8F + this.random.nextFloat()) * power, 0, 12);
-                        this.doSoulFireEffect(90, scale, isPower ? 4 : 8);
-                        this.doSoulFireEffect(180, scale, isPower ? 4 : 8);
+                    int speed = Mth.clamp((int) (8 / Math.max(power, 0.1)), 4, 8);
+                    if (this.tickCount % speed == 1) {
+                        this.doSoulFireEffect(90, power);
+                        this.doSoulFireEffect(180, power);
                     }
                 } else if (tick == 2) {
                     this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundInit.IMMORTAL_EXECUTIONER_DASH.get(), this.getSoundSource(), 1.5F, 0.8F, false);
@@ -359,6 +392,10 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                 this.nextCullTick--;
             }
 
+            if (this.nextDetonationTick > 0) {
+                this.nextDetonationTick--;
+            }
+
             if (this.tickCount % 15 == 0 && this.hurtCount > 0) {
                 this.hurtCount--;
             }
@@ -394,6 +431,8 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                 this.nextAvoidTick = AVOID_INTERVAL.sample(this.random);
                 this.checkAndPlayComboAnimations(true, this.avoidAnimation, this.sidesWayAnimationLeft, this.sidesWayAnimationRight);
             }
+            if (this.getAnimation() == this.detonationAnimation || this.getAnimation() == this.impactStorageAnimation)
+                damage *= 0.5F;
             return super.hurt(source, damage);
         } else if (source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
             return super.hurt(source, damage);
@@ -407,16 +446,19 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
         this.entityData.define(DATA_FLAME_STRENGTH, 1F);
     }
 
+
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putFloat("flameStrength", this.entityData.get(DATA_FLAME_STRENGTH));
+        compound.putFloat("flameStrength", this.getFlameStrength());
+        compound.putInt("detonationCount", this.detonationCount);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setFlameStrength(compound.getFloat("flameStrength"));
+        this.detonationCount = compound.getInt("detonationCount");
     }
 
     @Override
@@ -457,7 +499,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
 
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 120.0D).
-                add(Attributes.ATTACK_DAMAGE, 10.0D).
+                add(Attributes.ATTACK_DAMAGE, 8.0D).
                 add(Attributes.ARMOR, 12.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.34D).
                 add(Attributes.FOLLOW_RANGE, 48.0D).
@@ -471,28 +513,28 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
      * @return 火力值
      */
     public float getFirePower() {
-        float multiplier = this.entityData.get(DATA_FLAME_STRENGTH);
+        float multiplier = this.getFlameStrength();
         if (this.isInWaterRainOrBubble() || this.isFullyFrozen()) {
-            multiplier = 0.5F;
+            multiplier *= 0.8F;
         }
         if (this.isInLava() || this.isOnFire()) {
-            multiplier = 1.2F;
-        }
-        Animation animation = this.getAnimation();
-        if (animation == this.impactStorageAnimation || animation == this.impactHoldAnimation) {
             multiplier += 0.2F;
         }
         return multiplier;
+    }
+
+    public float getFlameStrength() {
+        return this.entityData.get(DATA_FLAME_STRENGTH);
     }
 
     public void setFlameStrength(float strength) {
         this.entityData.set(DATA_FLAME_STRENGTH, strength);
     }
 
-    public void executionerHurtTarget(LivingEntity hitEntity, boolean disableShield) {
+    public boolean executionerHurtTarget(LivingEntity hitEntity) {
         double baseDamage = this.getAttributeValue(Attributes.ATTACK_DAMAGE);
         boolean flag = hitEntity.hurt(this.damageSources().mobAttack(this), (float) (baseDamage * Math.max(this.getFirePower(), 0)));
-        if (flag && disableShield) {
+        if (this.getFirePower() > 1F) {
             if (hitEntity instanceof Player player && player.isBlocking()) {
                 player.disableShield(true);
             }
@@ -500,10 +542,16 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
         if (flag) {
             hitEntity.addEffect(new MobEffectInstance(EffectInit.ERODE_EFFECT.get(), 200), this);
         }
+        return flag;
     }
 
     public boolean inBlocking() {
         return !this.level().isClientSide && this.getAnimation() == this.blockAnimation && this.getAnimationTick() > 1;
+    }
+
+    private int getCoolingDuration(UniformInt uniformInt) {
+        int baseCD = uniformInt.sample(this.random);
+        return (int) (baseCD * (1F / Math.max(this.getFlameStrength(), 1)));
     }
 
     private void checkAndPlayComboAnimations(boolean conditions, @NotNull Animation... combos) {
@@ -518,16 +566,32 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
         this.doRibbonEffect();
     }
 
-    private void doSoulFireEffect(int yaw, float scale, int duration) {
-        AdvancedParticleBase.spawnParticle(level(), ParticleInit.STRIP_SOUL_FIRE.get(), this.getX(), this.getY(), this.getZ(),
+    private void doSoulFireEffect(int yaw, float power) {
+        int duration = Mth.clamp((int) (8 / Math.max(power, 0.1)), 4, 8);
+        float scale = 1F + Mth.clamp(5F * power, 0, 8);
+        AdvancedParticleBase.spawnParticle(level(), ParticleInit.STRIP_SOUL_FIRE.get(), this.fire[0].x, this.fire[0].y, this.fire[0].z,
                 0, 0, 0, false, yaw, 0, 0, 0, scale,
-                1, 1, 1, 0.5 + this.random.nextFloat() * 0.25F, 0, duration,
+                0.1, 0.98, 0.96, 0.5 + this.random.nextFloat() * 0.25F, 0, duration,
                 true, false, true,
                 new ParticleComponent[]{
                         new ParticleComponent.PinLocation(this.fire),
                         new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.POS_Y,
                                 AnimData.constant(0.2F), true),
                 });
+    }
+
+    private void doSoulFireGlowEffect() {
+        if (this.level().isClientSide) {
+            AdvancedParticleBase.spawnParticle(level(), ParticleInit.GLOW.get(), this.getX(), this.getY(), this.getZ(), 0, 0, 0, true, 0, 0, 0, 0, 24, 0.1, 0.98, 0.96, 1, 1, 24, true, true, false, new ParticleComponent[]{
+                    new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, new AnimData.KeyTrack(
+                            new float[]{0.0f, 0.7f, 0.0f},
+                            new float[]{0f, 0.5f, 1f}
+                    ), false),
+                    new ParticleComponent.PinLocation(this.fire),
+                    new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.POS_Y,
+                            AnimData.constant(-0.4F), true),
+            });
+        }
     }
 
     private EntityImmortalExecutioner.ImpartHitResult raytraceEntities(Vec3 from, Vec3 to) {
@@ -605,6 +669,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
 
     static class ExecutionerSharpImpactGoal extends ExecutionerSimpleAI {
         private LivingEntity target;
+        private Vec3 preVec3 = Vec3.ZERO;
 
         public ExecutionerSharpImpactGoal(EntityImmortalExecutioner entity) {
             super(entity, false, () -> entity.impactStorageAnimation, () -> entity.impactHoldAnimation, () -> entity.impactStopAnimation);
@@ -620,6 +685,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
         public void stop() {
             super.stop();
             this.target = null;
+            this.preVec3 = Vec3.ZERO;
         }
 
         @Override
@@ -632,13 +698,14 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                     this.entity.getLookControl().setLookAt(this.target, 360F, 30F);
                     this.entity.lookAt(this.target, 360F, 30F);
                 }
+                this.preVec3 = this.entity.position();
                 this.doNextAnimation(animation, this.entity.impactHoldAnimation, 25 + this.entity.getRandom().nextInt(animation.getDuration() - 25));
             } else if (animation == this.entity.impactHoldAnimation) {
                 this.entity.setDeltaMovement(0, 0, 0);
                 double baseMoveMultiplier = 15F;
                 double deltaY = Math.ceil(this.entity.getY() - 0.5F);
-                if (tick == 2) {
-                    Vec3 preVec3 = this.entity.position();
+                if (tick == 4) {
+                    this.preVec3 = this.entity.position();
                     Vec3 targetVec3 = new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * baseMoveMultiplier, deltaY, Math.sin(Math.toRadians(entity.getYRot() + 90)) * baseMoveMultiplier);
                     if (this.target != null) {
                         Vec3 point = ModEntityUtils.findPounceTargetPoint(this.entity, this.target, 5F);
@@ -650,8 +717,9 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                         }
                     }
                     this.entity.move(MoverType.SELF, targetVec3);
+                } else if (tick == 5 && preVec3.length() > 0) {
                     ImpartHitResult hitResult = this.entity.raytraceEntities(preVec3, this.entity.position());
-                    hitResult.getEntities().forEach(hitEntity -> this.entity.executionerHurtTarget(hitEntity, true));
+                    hitResult.getEntities().forEach(this.entity::executionerHurtTarget);
                     //计算两点之间路径含有方块碰撞 则添加撞击后的眩晕效果
                     if (hitResult.getBlockHit() != null && hitResult.getBlockHit().getType() == HitResult.Type.BLOCK) {
                         this.entity.setPos(hitResult.getBlockHit().getLocation().add(0, 0.5, 0));
@@ -698,7 +766,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                 } else if (tick == 5) {
                     this.pursuit(5F, 3F, target != null ? target.getY() - this.entity.getY() : this.entity.getY());
                 } else if (tick == 6) {
-                    this.doHurtTarget(140F, 4F, false);
+                    this.doHurtTarget(140F, 3F, false);
                 } else if (tick > 7) {
                     this.entity.setYRot(this.entity.yRotO);
                 }
@@ -711,7 +779,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                 float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, livingEntity);
                 float entityHitDistance = (float) Math.sqrt((livingEntity.getZ() - entity.getZ()) * (livingEntity.getZ() - entity.getZ()) + (livingEntity.getX() - entity.getX()) * (livingEntity.getX() - entity.getX())) - livingEntity.getBbWidth() / 2F;
                 if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                    entity.executionerHurtTarget(livingEntity, this.entity.getFirePower() > 1);
+                    entity.executionerHurtTarget(livingEntity);
                     if (knock) {
                         livingEntity.setDeltaMovement(livingEntity.getDeltaMovement().add(0, 0.45, 0));
                     }

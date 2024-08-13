@@ -101,6 +101,13 @@
       "eeeabsmobs:entity/immortal_executioner/block2"
     ]
   },
+  "immortal.executioner.detonation": {
+    "subtitle": "subtitles.immortal.executioner.detonation",
+    "sounds": [
+      "eeeabsmobs:entity/immortal_executioner/detonation1",
+      "eeeabsmobs:entity/immortal_executioner/detonation2"
+    ]
+  },
   "immortal.executioner.scratch": {
     "subtitle": "subtitles.immortal.executioner.scratch",
     "sounds": [
