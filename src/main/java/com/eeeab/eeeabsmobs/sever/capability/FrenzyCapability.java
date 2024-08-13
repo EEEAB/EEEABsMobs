@@ -198,14 +198,14 @@ public class FrenzyCapability {
         @Override
         public CompoundTag serializeNBT() {
             CompoundTag nbt = new CompoundTag();
-            nbt.putBoolean("is_frenzy", this.isFrenzy);
+            nbt.putBoolean("isFrenzy", this.isFrenzy);
             nbt.putInt("level", this.level);
             return nbt;
         }
 
         @Override
         public void deserializeNBT(CompoundTag nbt) {
-            this.isFrenzy = nbt.getBoolean("is_frenzy");
+            this.isFrenzy = nbt.getBoolean("isFrenzy");
             this.level = nbt.getInt("level");
         }
     }
