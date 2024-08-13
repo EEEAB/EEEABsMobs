@@ -116,15 +116,16 @@ public class ModParticleUtils {
      * @param particles     粒子
      * @param speedModifier 速度乘数
      * @param yOffSet       y轴偏移
-     * @param angle         角度
+     * @param angle         yaw角度
+     * @param yMoveModifier y轴移动乘数
      */
-    public static void annularParticleOutburst(Level world, double points, ParticleOptions[] particles, double x, double y, double z, double speedModifier, double yOffSet, float angle) {
+    public static void annularParticleOutburst(Level world, double points, ParticleOptions[] particles, double x, double y, double z, double speedModifier, double yOffSet, float angle, float yMoveModifier) {
         for (int i = 1; i <= points; i++) {
             double yaw = i * angle / points;
             double xSpeed = speedModifier * Math.cos(Math.toRadians(yaw));
             double zSpeed = speedModifier * Math.sin(Math.toRadians(yaw));
             for (ParticleOptions particle : particles) {
-                world.addParticle(particle, x, y + yOffSet, z, xSpeed, 0, zSpeed);
+                world.addParticle(particle, x, y + yOffSet, z, xSpeed, (0.001F + random.nextFloat() * 0.1F) * yMoveModifier, zSpeed);
             }
         }
     }
@@ -182,8 +183,8 @@ public class ModParticleUtils {
      * @param speedModifier  速度乘数
      */
     public static void annularParticleOutburstOnGround(Level level, ParticleOptions particle, LivingEntity entity, int quantity, int randomQuantity, double sizeModifier, double inFrontOffset, double sideOffset, double speedModifier) {
-        if (particle instanceof BlockParticleOption blockPO){
-            if (blockPO.getState().getRenderShape() == RenderShape.INVISIBLE){
+        if (particle instanceof BlockParticleOption blockPO) {
+            if (blockPO.getState().getRenderShape() == RenderShape.INVISIBLE) {
                 return;
             }
         }
