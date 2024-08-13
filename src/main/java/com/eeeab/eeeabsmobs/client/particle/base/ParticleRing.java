@@ -2,9 +2,11 @@ package com.eeeab.eeeabsmobs.client.particle.base;
 
 import com.eeeab.eeeabsmobs.client.render.EMRenderType;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
+import com.eeeab.eeeabsmobs.sever.util.QuaternionUtils;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Camera;
@@ -69,7 +71,6 @@ public class ParticleRing extends TextureSheetParticle {
         if (age >= lifetime) {
             remove();
         }
-        age++;
     }
 
     @Override
@@ -91,27 +92,27 @@ public class ParticleRing extends TextureSheetParticle {
         bCol = blue;
 
         Vec3 vec3 = renderInfo.getPosition();
-        float f = (float) (Mth.lerp((double) partialTicks, this.xo, this.x) - vec3.x());
-        float f1 = (float) (Mth.lerp((double) partialTicks, this.yo, this.y) - vec3.y());
-        float f2 = (float) (Mth.lerp((double) partialTicks, this.zo, this.z) - vec3.z());
+        float f = (float) (Mth.lerp(partialTicks, this.xo, this.x) - vec3.x());
+        float f1 = (float) (Mth.lerp(partialTicks, this.yo, this.y) - vec3.y());
+        float f2 = (float) (Mth.lerp(partialTicks, this.zo, this.z) - vec3.z());
         Quaternionf quaternion = new Quaternionf();
-        //ParticleRotation.FaceCamera faceCameraRot = (ParticleRotation.FaceCamera) rotation;
         if (facesCamera) {
             if (this.roll == 0.0F) {
                 quaternion = renderInfo.rotation();
             } else {
                 quaternion = new Quaternionf(renderInfo.rotation());
-                quaternion.rotateZ(Mth.lerp(partialTicks, this.oRoll, this.roll));
-                //quaternion.mul(Axis.ZP.rotation(f3));
+                float f3 = Mth.lerp(partialTicks, this.oRoll, this.roll);
+                quaternion.mul(Axis.ZP.rotation(f3));
             }
         } else {
-            Quaternionf quaternionf = new Quaternionf();
-            Quaternionf quatX = new Quaternionf(quaternionf.rotateZYX(xRot, 0, 0));
-            Quaternionf quatY = new Quaternionf(quaternionf.rotateZYX(0, yRot, 0));
+            Quaternionf quatX = QuaternionUtils.rotationXYZ(xRot, 0, 0, false);
+            Quaternionf quatY = QuaternionUtils.rotationXYZ(0, yRot, 0, false);
             quaternion.mul(quatY);
             quaternion.mul(quatX);
         }
 
+        Vector3f vector3f1 = new Vector3f(-1.0F, -1.0F, 0.0F);
+        quaternion.transform(vector3f1);
         Vector3f[] avector3f = new Vector3f[]{new Vector3f(-1.0F, -1.0F, 0.0F), new Vector3f(-1.0F, 1.0F, 0.0F), new Vector3f(1.0F, 1.0F, 0.0F), new Vector3f(1.0F, -1.0F, 0.0F)};
         float f3 = this.getQuadSize(partialTicks);
         for (int i = 0; i < 4; ++i) {
@@ -125,10 +126,10 @@ public class ParticleRing extends TextureSheetParticle {
         float f4 = this.getV0();
         float f5 = this.getV1();
         int j = this.getLightColor(partialTicks);
-        vertexConsumer.vertex((double) avector3f[0].x(), (double) avector3f[0].y(), (double) avector3f[0].z()).uv(f7, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
-        vertexConsumer.vertex((double) avector3f[1].x(), (double) avector3f[1].y(), (double) avector3f[1].z()).uv(f7, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
-        vertexConsumer.vertex((double) avector3f[2].x(), (double) avector3f[2].y(), (double) avector3f[2].z()).uv(f6, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
-        vertexConsumer.vertex((double) avector3f[3].x(), (double) avector3f[3].y(), (double) avector3f[3].z()).uv(f6, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        vertexConsumer.vertex(avector3f[0].x(), avector3f[0].y(), avector3f[0].z()).uv(f7, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        vertexConsumer.vertex(avector3f[1].x(), avector3f[1].y(), avector3f[1].z()).uv(f7, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        vertexConsumer.vertex(avector3f[2].x(), avector3f[2].y(), avector3f[2].z()).uv(f6, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        vertexConsumer.vertex(avector3f[3].x(), avector3f[3].y(), avector3f[3].z()).uv(f6, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
     }
 
     @Override
@@ -222,7 +223,7 @@ public class ParticleRing extends TextureSheetParticle {
         }
 
         @Override
-        public ParticleType<RingData> getType() {
+        public ParticleType<? extends RingData> getType() {
             return ParticleInit.RING.get();
         }
 
@@ -278,16 +279,16 @@ public class ParticleRing extends TextureSheetParticle {
 
         public static Codec<RingData> CODEC(ParticleType<RingData> particleType) {
             return RecordCodecBuilder.create((codecBuilder) -> codecBuilder.group(
-                    Codec.FLOAT.fieldOf("yRot").forGetter(RingData::getyRot),
-                    Codec.FLOAT.fieldOf("xRot").forGetter(RingData::getxRot),
-                    Codec.FLOAT.fieldOf("red").forGetter(RingData::getRed),
-                    Codec.FLOAT.fieldOf("green").forGetter(RingData::getGreen),
-                    Codec.FLOAT.fieldOf("blue").forGetter(RingData::getBlue),
-                    Codec.FLOAT.fieldOf("alpha").forGetter(RingData::getAlpha),
-                    Codec.FLOAT.fieldOf("scale").forGetter(RingData::getScale),
-                    Codec.INT.fieldOf("duration").forGetter(RingData::getDuration),
-                    Codec.BOOL.fieldOf("facesCamera").forGetter(RingData::getFacesCamera),
-                    Codec.STRING.fieldOf("behavior").forGetter((ringData) -> ringData.getBehavior().toString())
+                            Codec.FLOAT.fieldOf("yRot").forGetter(RingData::getyRot),
+                            Codec.FLOAT.fieldOf("xRot").forGetter(RingData::getxRot),
+                            Codec.FLOAT.fieldOf("red").forGetter(RingData::getRed),
+                            Codec.FLOAT.fieldOf("green").forGetter(RingData::getGreen),
+                            Codec.FLOAT.fieldOf("blue").forGetter(RingData::getBlue),
+                            Codec.FLOAT.fieldOf("alpha").forGetter(RingData::getAlpha),
+                            Codec.FLOAT.fieldOf("scale").forGetter(RingData::getScale),
+                            Codec.INT.fieldOf("duration").forGetter(RingData::getDuration),
+                            Codec.BOOL.fieldOf("facesCamera").forGetter(RingData::getFacesCamera),
+                            Codec.STRING.fieldOf("behavior").forGetter((ringData) -> ringData.getBehavior().toString())
                     ).apply(codecBuilder, (yRot, xRot, red, green, blue, alpha, scale, duration, facesCamera, behavior) ->
                             new RingData(yRot, xRot, duration, red, green, blue, alpha, scale, facesCamera, EnumRingBehavior.valueOf(behavior)))
             );
