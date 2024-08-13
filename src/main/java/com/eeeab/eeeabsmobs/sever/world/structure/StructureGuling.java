@@ -51,7 +51,7 @@ public class StructureGuling extends Structure {
 
     @Override
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
-        BlockPos blockPos = new BlockPos(context.chunkPos().getMinBlockX(), -64, context.chunkPos().getMinBlockZ());
+        BlockPos blockPos = new BlockPos(context.chunkPos().getMinBlockX(), -32, context.chunkPos().getMinBlockZ());
         return Optional.of(new GenerationStub(blockPos, (value) -> {
             generatePieces(value, context, blockPos);
         }));
@@ -110,7 +110,7 @@ public class StructureGuling extends Structure {
 
         private static StructurePlaceSettings makeSettings(Rotation rotation) {
             BlockIgnoreProcessor blockignoreprocessor = BlockIgnoreProcessor.STRUCTURE_BLOCK;
-            return (new StructurePlaceSettings()).setRotation(rotation).setMirror(Mirror.NONE).addProcessor(blockignoreprocessor).addProcessor(new ProtectedBlockProcessor(BlockTags.FEATURES_CANNOT_REPLACE));
+            return (new StructurePlaceSettings()).setRotation(rotation).setMirror(Mirror.NONE).addProcessor(blockignoreprocessor).addProcessor(new ProtectedBlockProcessor(BlockTags.FEATURES_CANNOT_REPLACE)).setKeepLiquids(false);
         }
 
         private static BlockPos makePosition(ResourceLocation location, BlockPos blockPos) {
