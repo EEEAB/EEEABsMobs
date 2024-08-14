@@ -23,7 +23,8 @@ public class EMBlockTagsProvider extends BlockTagsProvider {
                 BlockInit.GHOST_STEEL_BLOCK.get(),
                 BlockInit.TOMB_ARROWS_TRAP.get(),
                 BlockInit.TOMB_GAS_TRAP.get(),
-                BlockInit.TOMB_SUMMON_TRAP.get());
+                BlockInit.TOMB_SUMMON_TRAP.get(),
+                BlockInit.EROSION_ROCK_BRICKS.get());
         tag(BlockTags.MINEABLE_WITH_HOE).add(
                 BlockInit.SOUL_LIGHT.get());
         tag(BlockTags.NEEDS_IRON_TOOL).add(

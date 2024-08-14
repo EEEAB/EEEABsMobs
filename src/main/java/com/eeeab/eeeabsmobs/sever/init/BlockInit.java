@@ -15,6 +15,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -79,6 +81,10 @@ public class BlockInit {
             false);
 
     public static final RegistryObject<Block> TOMBSTONE = registryBlock("tombstone", BlockTombstone::new, true);
+
+    public static final RegistryObject<Block> EROSION_ROCK_BRICKS = registryBlock("erosion_rock_bricks", () -> new Block(BlockBehaviour.Properties
+            .copy(Blocks.DEEPSLATE_BRICKS)
+            .strength(10.0F, 1200.0F)), false);
 
     private static <T extends Block> RegistryObject<T> registryBlock(String name, Supplier<T> block, boolean isEntity) {
         RegistryObject<T> register = BLOCKS.register(name, block);
