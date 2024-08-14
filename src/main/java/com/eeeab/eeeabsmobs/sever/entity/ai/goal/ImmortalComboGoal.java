@@ -5,11 +5,7 @@ import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityTheImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
@@ -67,26 +63,9 @@ public class ImmortalComboGoal extends AnimationAI<EntityTheImmortal> {
             }
         }
         if (breakBlock) {
-            Vec3 attackVector = new Vec3(Math.cos(Math.toRadians(entity.yBodyRot)), 0, Math.sin(Math.toRadians(entity.yBodyRot))).scale(attackDistance);
-            AABB aabb = entity.getBoundingBox().expandTowards(attackVector);
-            int minx = Mth.floor(aabb.minX);
-            int miny = Mth.floor(aabb.minY);
-            int minz = Mth.floor(aabb.minZ);
-            BlockPos min = new BlockPos(minx, miny, minz);
-            int maxx = Mth.floor(aabb.maxX);
-            int maxy = Mth.floor(aabb.maxY);
-            int maxz = Mth.floor(aabb.maxZ);
-            BlockPos max = new BlockPos(maxx, maxy, maxz);
-            if (entity.level().hasChunksAt(min, max)) {
-                for (BlockPos blockPos : BlockPos.betweenClosed(min, max)) {
-                    if (ModEntityUtils.canDestroyBlock(entity.level(), blockPos, entity)) {
-                        entity.level().destroyBlock(blockPos, true);
-                        if (!hitFlag) {
-                            hitFlag = true;
-                            entity.level().broadcastEntityEvent(entity, (byte) 7);
-                        }
-                    }
-                }
+            int offset = (int) (attackDistance / 2);
+            if (ModEntityUtils.advancedBreakBlocks(entity.level(), entity, 50, offset, (int) attackDistance, offset, 0, offset, true, true)) {
+                entity.level().broadcastEntityEvent(entity, (byte) 7);
             }
         }
     }

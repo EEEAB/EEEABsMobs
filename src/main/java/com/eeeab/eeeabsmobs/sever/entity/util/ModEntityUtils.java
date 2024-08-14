@@ -317,4 +317,44 @@ public class ModEntityUtils {
             }
         }
     }
+
+    /**
+     * 破坏当前实体坐标为基准周围的方块
+     *
+     * @param level            服务端
+     * @param entity           实体
+     * @param maxBlockHardness 最高破坏硬度
+     * @param destroyRangeX    破坏范围x轴
+     * @param destroyRangeY    破坏范围y轴
+     * @param destroyRangeZ    破坏范围z轴
+     * @param offset           前后偏移量
+     * @param dropBlock        是否掉落方块
+     * @param playSound        是否播放破坏方块的音效
+     * @return 是否破坏成功
+     */
+    public static boolean advancedBreakBlocks(Level level, LivingEntity entity, float maxBlockHardness, int destroyRangeX, int destroyRangeY, int destroyRangeZ, int offsetY, float offset, boolean dropBlock, boolean playSound) {
+        double radians = Math.toRadians(entity.getYRot() + 90);
+        int j1 = Mth.floor(entity.getY());
+        int i2 = Mth.floor(entity.getX() + Math.cos(radians) * offset);
+        int j2 = Mth.floor(entity.getZ() + Math.sin(radians) * offset);
+        boolean flag = false;
+        for (int j = -destroyRangeX; j <= destroyRangeX; ++j) {
+            for (int k2 = offsetY; k2 <= destroyRangeY; ++k2) {
+                for (int k = -destroyRangeZ; k <= destroyRangeZ; ++k) {
+                    int l2 = i2 + j;
+                    int l = j1 + k2;
+                    int i1 = j2 + k;
+                    BlockPos blockpos = new BlockPos(l2, l, i1);
+                    BlockState blockstate = level.getBlockState(blockpos);
+                    if (blockstate.canEntityDestroy(level, blockpos, entity) && canDestroyBlock(level, blockpos, entity, maxBlockHardness)) {
+                        flag = level.destroyBlock(blockpos, dropBlock, entity) || flag;
+                    }
+                }
+            }
+        }
+        if (flag && playSound) {
+            level.levelEvent(null, 1022, entity.blockPosition(), 0);
+        }
+        return flag;
+    }
 }
