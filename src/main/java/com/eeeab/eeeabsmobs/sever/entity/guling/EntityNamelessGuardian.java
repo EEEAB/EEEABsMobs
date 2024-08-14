@@ -161,6 +161,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     //判断是否是首次进入强化状态
     private boolean fmFlag = true;
     private int attackTick;
+    private int destroyBlocksTick;
     //BGM高潮部分的时长
     public static final int MADNESS_TICK = 1300;
     public static final int NEVER_STOP = -1;
@@ -278,7 +279,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return sizeIn.height * 0.95F;
+        return sizeIn.height * 0.97F;
     }
 
     @Override
@@ -713,6 +714,13 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                     this.noUseSkillFromLongTick++;
                 }
             }
+
+            if (!this.isNoAi() && this.destroyBlocksTick > 0) {
+                this.destroyBlocksTick--;
+                if (this.destroyBlocksTick == 0 && ModEntityUtils.canMobDestroy(this)) {
+                    ModEntityUtils.advancedBreakBlocks(this.level(), this, 50F, 2, 4, 2, 0, 0, true, true);
+                }
+            }
         }
 
         this.coreControlled.incrementOrDecreaseTimer(this.isGlow());
@@ -769,6 +777,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 return super.hurt(source, damage);
             } else if (source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
                 return super.hurt(source, damage);
+            } else if (this.destroyBlocksTick <= 0) {
+                this.destroyBlocksTick = 20;
             }
         }
         return false;
