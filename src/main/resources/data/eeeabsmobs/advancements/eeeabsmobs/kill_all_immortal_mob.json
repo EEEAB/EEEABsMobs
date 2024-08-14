@@ -71,6 +71,34 @@
           }
         ]
       }
+    },
+    "eeeabsmobs:immortal_executioner": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "eeeabsmobs:immortal_executioner"
+            }
+          }
+        ]
+      }
+    },
+    "eeeabsmobs:immortal": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "eeeabsmobs:immortal"
+            }
+          }
+        ]
+      }
     }
   },
   "requirements":[
@@ -85,9 +113,15 @@
     ],
     [
       "eeeabsmobs:immortal_shaman"
+    ],
+    [
+      "eeeabsmobs:immortal_executioner"
+    ],
+    [
+      "eeeabsmobs:immortal"
     ]
   ],
   "rewards": {
-    "experience": 50
+    "experience": 100
   }
 }
