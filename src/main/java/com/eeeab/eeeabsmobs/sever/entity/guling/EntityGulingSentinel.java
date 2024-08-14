@@ -4,6 +4,9 @@ import com.eeeab.animate.server.ai.AnimationAI;
 import com.eeeab.animate.server.ai.animation.*;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
+import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
+import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
+import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.CrackinessEntity;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
@@ -12,6 +15,7 @@ import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianLaser;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
+import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.nbt.CompoundTag;
@@ -20,6 +24,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -170,7 +175,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
                         this.entity.setYRot(this.entity.yRotO);
                     }
                 }
-                if (tick == 5 && !this.entity.level().isClientSide) {
+                if (tick == 5) {
                     double px = this.entity.getX();
                     double py = this.entity.getY() + 1.4;
                     double pz = this.entity.getZ();
@@ -178,6 +183,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
                     float xHeadRotAngle = (float) (float) Math.toRadians(-this.entity.getXRot());
                     EntityGuardianLaser laser = new EntityGuardianLaser(EntityInit.GUARDIAN_LASER.get(), this.entity.level(), this.entity, px, py, pz, yHeadRotAngle, xHeadRotAngle, 5);
                     this.entity.level().addFreshEntity(laser);
+                    this.entity.level().broadcastEntityEvent(this.entity, (byte) 7);
                 } else if (tick == 28) {
                     this.entity.playSound(SoundInit.GS_ELECTROMAGNETIC.get(), 0.5F, this.entity.getVoicePitch());
                 }
@@ -192,6 +198,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
         EMAnimationHandler.INSTANCE.updateAnimations(this);
         if (!this.level().isClientSide) {
             if (this.getTarget() != null && !this.getTarget().isAlive()) this.setTarget(null);
+            if (this.getTarget() == null) this.yHeadRot = this.getYRot();
             if (!this.isNoAi() && !this.isActive()) {
                 if (EMConfigHandler.COMMON.MOB.GULING.GULING_SENTINEL.enableNonCombatHeal.get()) this.heal(0.5F);
                 this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
@@ -221,7 +228,8 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
                 }
                 if (this.attackTick <= 0) {
                     this.playAnimation(this.shootLaserAnimation);
-                    this.attackTick = 100 + this.random.nextInt(100);
+                    this.attackTick = 100 + this.random.nextInt(this.level().getDifficulty() == Difficulty.HARD ? 20 : 100);
+                    this.getNavigation().stop();
                 }
             }
         }
@@ -272,6 +280,20 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
             }
             return super.hurt(source, damage);
         }
+    }
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == 7) {
+            AdvancedParticleBase.spawnParticle(level(), ParticleInit.GLOW.get(), this.getX(), this.getY(), this.getZ(), 0, 0, 0, true, 0, 0, 0, 0, 14, 0.63, 1, 1, 1, 1, 28, true, true, false, new ParticleComponent[]{
+                    new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, new AnimData.KeyTrack(
+                            new float[]{0.0f, 0.6f, 0.6f, 0.0f},
+                            new float[]{0f, 0.3f, 0.8f, 1f}
+                    ), false),
+                    new ParticleComponent.PinLocation(new Vec3[]{this.position().add(0, this.getBbHeight() * 0.75, 0)})
+            });
+        }
+        super.handleEntityEvent(id);
     }
 
     @Override
@@ -374,7 +396,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
                 add(Attributes.FOLLOW_RANGE, 18.0D).
                 add(Attributes.ATTACK_DAMAGE, 1.0D).
                 add(Attributes.KNOCKBACK_RESISTANCE, 1.0D).
-                add(Attributes.ARMOR, 5.0D);
+                add(Attributes.ARMOR, 10.0D);
     }
 
     private static class NoneRotationControl extends BodyRotationControl {
