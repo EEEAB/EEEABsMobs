@@ -6,6 +6,7 @@ import com.eeeab.animate.server.message.PlayAnimationMessage;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.animate.server.inventory.AnimationControllerMenu;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -85,13 +86,21 @@ public class AnimationControllerScreen extends AbstractContainerScreen<Animation
             @Override
             public void moveCursorTo(int pos) {
                 super.moveCursorTo(pos);
-                setSuggestion(getValue().isEmpty() ? Component.literal("index").getString() : null);
+                doSuggestionMsg();
             }
 
             @Override
             public void insertText(@NotNull String text) {
                 super.insertText(text);
-                setSuggestion(getValue().isEmpty() ? Component.literal("index").getString() : null);
+                doSuggestionMsg();
+            }
+
+            private void doSuggestionMsg() {
+                int length = -1;
+                if (animationEntity instanceof EMAnimatedEntity animatedEntity && animatedEntity.getAnimations() != null) {
+                    length = animatedEntity.getAnimations().length;
+                }
+                setSuggestion(getValue().isEmpty() ? Component.literal(length > 0 ? "index[0-" + length + ")" : "index[0]").getString() : null);
             }
         };
         animationIndexEdit.setMaxLength(4);
@@ -110,6 +119,7 @@ public class AnimationControllerScreen extends AbstractContainerScreen<Animation
                         }
                     }
                 }
+                e.playDownSound(Minecraft.getInstance().getSoundManager());
             }
         }).bounds(this.leftPos + 17, this.topPos + 57, 46, 20).build();
         this.addRenderableWidget(playButton);
