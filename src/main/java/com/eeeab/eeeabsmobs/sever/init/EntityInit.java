@@ -233,6 +233,13 @@ public class EntityInit {
                             .sized(0.1F, 0.1F).setUpdateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "alien_portal").toString()));
 
+    //不朽魔法阵
+    public static final RegistryObject<EntityType<EntityImmortalMagicCircle>> MAGIC_CIRCLE =
+            ENTITIES.register("magic_circle",
+                    () -> EntityType.Builder.<EntityImmortalMagicCircle>of(EntityImmortalMagicCircle::new, MobCategory.MISC)
+                            .sized(0.1F, 0.1F).setUpdateInterval(1)
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "magic_circle").toString()));
+
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);
     }

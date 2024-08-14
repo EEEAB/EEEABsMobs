@@ -14,6 +14,7 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
     private final ModelPart upper;
     private final ModelPart lower;
     private final ModelPart head;
+    private final ModelPart jaw;
     private final ModelPart rightArm;
     private final ModelPart miniRightArm;
     private final ModelPart miniRightArmUnder;
@@ -26,11 +27,13 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
     private final ModelPart[] spine;
 
     public ModelTheImmortal(ModelPart root) {
+        this.setMovementScale(1.2F);
         this.root = root.getChild("root");
         this.upper = this.root.getChild("upper");
         this.lower = this.root.getChild("lower");
         ModelPart body = this.upper.getChild("body");
         this.head = this.upper.getChild("head");
+        this.jaw = this.head.getChild("jaw");
         this.core = this.upper.getChild("core");
         this.rightArm = body.getChild("rightArm");
         this.miniRightArm = body.getChild("miniRightArm");
@@ -41,8 +44,8 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
         this.miniLeftArmUnder = this.miniLeftArm.getChild("miniLeftArmUnder");
         this.leftFist = this.leftArm.getChild("leftArmUnder").getChild("leftFist");
         this.spine = new ModelPart[]{
-                body.getChild("spine1"),
                 body.getChild("spine1").getChild("spine2"),
+                body.getChild("spine1"),
         };
     }
 
@@ -168,16 +171,35 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
     @Override
     public void setupAnim(EntityTheImmortal entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
+        //Animation
+        this.animate(entity.dieAnimation, AnimationTheImmortal.DIE, ageInTicks);
+        this.animate(entity.spawnAnimation, AnimationTheImmortal.SPAWN, ageInTicks);
+        this.animate(entity.switchStage2Animation, AnimationTheImmortal.STAGE_1, ageInTicks);
+        this.animate(entity.switchStage3Animation, AnimationTheImmortal.STAGE_2, ageInTicks);
+        this.animate(entity.teleportAnimation, AnimationTheImmortal.TELEPORT, ageInTicks);
+        this.animate(entity.punchCombo1Animation, AnimationTheImmortal.PUNCH_COMBO_1, ageInTicks);
+        this.animate(entity.smashGround1Animation, AnimationTheImmortal.SMASH_GROUND_1, ageInTicks);
+        this.animate(entity.pouncePreAnimation, AnimationTheImmortal.GRAPPLE_PRE, ageInTicks);
+        this.animate(entity.pounceHoldAnimation, AnimationTheImmortal.GRAPPLE_HOLD, ageInTicks);
+        this.animate(entity.pounceEndAnimation, AnimationTheImmortal.GRAPPLE_END, ageInTicks);
+        this.animate(entity.pounceSmashAnimation, AnimationTheImmortal.GRAPPLE_SMASH, ageInTicks);
+        this.animate(entity.pouncePickAnimation, AnimationTheImmortal.GRAPPLE_PICK, ageInTicks);
         //LookAt
         Animation animation = entity.getAnimation();
         lookAtAnimation(netHeadYaw, headPitch, 1.0F, this.head);
         float delta = ageInTicks - entity.tickCount;
         float frame = entity.frame + delta;
         if (animation == entity.getNoAnimation() && !entity.isActive()) {
+            core.xScale = 0F;
+            core.yScale = 0F;
+            core.zScale = 0F;
             setStaticRotationPoint(root, 0F, 12F, 0F);
             setStaticRotationPoint(upper, 0F, 8F, 0F);
-            setStaticRotationAngle(head, 22.5F, 0F, 0F);
+            setStaticRotationAngle(head, 22F, 2F, -10F);
             setStaticRotationPoint(head, 0F, 3F, 0F);
+            setStaticRotationAngle(jaw, 22.5F, 0F, 0F);
+            setStaticRotationPoint(core, 0F, 30F, -26F);
+            setStaticRotationAngle(core, -27.5F, 0F, 0F);
             setStaticRotationPoint(leftArm, -9F, 2F, -1F);
             setStaticRotationPoint(rightArm, 9F, 2F, -1F);
             setStaticRotationAngle(miniLeftArm, 20F, 0F, 0F);
@@ -186,20 +208,21 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
             setStaticRotationAngle(miniLeftArmUnder, -14.1614F, -37.8095F, -65.1283F);
             setStaticRotationAngle(lower, -5F, 0F, 0F);
         }
-        if (entity.isActive() && !entity.isDeadOrDying()) {
+        if (entity.isActive() && !entity.isDeadOrDying() && !entity.glowControllerAnimation.isStop()) {
             //Idle
             float speed = 0.1F;
             float degree = 0.8F;
             this.bob(root, speed, degree, false, frame, 1);
             this.bob(head, speed, speed, false, frame, 1);
             this.walk(head, speed, degree * 0.1F, true, 0, 0, frame, 1);
+            this.walk(jaw, speed, degree * 0.11F, true, 0, 0, frame, 1);
             this.walk(rightFist, speed, degree * 0.05F, true, 0, 0, frame, 1);
             this.walk(leftFist, speed, degree * 0.05F, true, 0, 0, frame, 1);
             this.bob(core, speed - 0.02F, degree * 0.1F, false, frame, 1);
             this.bob(rightArm, speed, degree + 0.2F, false, frame, 1);
             this.bob(leftArm, speed, degree + 0.2F, false, frame, 1);
-            this.chainSwing(spine, speed + 0.1F, degree, -3, limbSwing, limbSwingAmount);
-            this.chainSwing(spine, speed, degree * 0.25F, -1.5, frame, 1);
+            this.chainSwing(spine, speed + 0.1F, degree, 3, limbSwing, limbSwingAmount);
+            this.chainSwing(spine, speed, degree * 0.25F, 1.5, frame, 1);
             this.core.xRot += Mth.sin(frame * 0.01F) * 180F * Mth.PI / 180F;
             this.core.yRot += Mth.sin(frame * 0.01F) * 180F * Mth.PI / 180F;
             this.core.zRot += Mth.sin(frame * 0.015F) * 360F * Mth.PI / 180F;
@@ -226,11 +249,5 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
             //this.head.xRot += (Mth.cos(limbSwing * cycle) - 2.0F) * limbSwingAmount * 0.1F * dampingFactor - 0.1F * (-idle) * -0.1F;
             //this.upper.y += Mth.sin(rebound) * limbSwingAmount;
         }
-        //Animation
-        this.animate(entity.dieAnimation, AnimationTheImmortal.DIE, ageInTicks);
-        this.animate(entity.spawnAnimation, AnimationTheImmortal.SPAWN, ageInTicks);
-        this.animate(entity.switchStage2Animation, AnimationTheImmortal.STAGE2, ageInTicks);
-        this.animate(entity.switchStage3Animation, AnimationTheImmortal.STAGE3, ageInTicks);
-        this.animate(entity.teleportAnimation, AnimationTheImmortal.TELEPORT, ageInTicks);
     }
 }
