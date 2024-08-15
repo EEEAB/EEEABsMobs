@@ -12,10 +12,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
-import net.minecraft.world.entity.monster.AbstractIllager;
-import net.minecraft.world.entity.monster.SpellcasterIllager;
-import net.minecraft.world.entity.monster.Zombie;
-import net.minecraft.world.entity.monster.ZombifiedPiglin;
+import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public abstract class EntityAbsCorpse extends EEEABMobLibrary implements GlowEntity, VenerableEntity<EntityAbsCorpse> {
+public abstract class EntityAbsCorpse extends EEEABMobLibrary implements Enemy, GlowEntity, VenerableEntity<EntityAbsCorpse> {
     private UUID ownerUUID;
     private boolean isSummon;
     boolean valuable;

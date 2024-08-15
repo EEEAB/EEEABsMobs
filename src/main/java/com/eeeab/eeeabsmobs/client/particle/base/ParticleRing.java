@@ -69,7 +69,6 @@ public class ParticleRing extends TextureSheetParticle {
         if (age >= lifetime) {
             remove();
         }
-        age++;
     }
 
     @Override
@@ -91,24 +90,19 @@ public class ParticleRing extends TextureSheetParticle {
         bCol = blue;
 
         Vec3 vec3 = renderInfo.getPosition();
-        float f = (float) (Mth.lerp((double) partialTicks, this.xo, this.x) - vec3.x());
-        float f1 = (float) (Mth.lerp((double) partialTicks, this.yo, this.y) - vec3.y());
-        float f2 = (float) (Mth.lerp((double) partialTicks, this.zo, this.z) - vec3.z());
-        Quaternion quaternion = new Quaternion(0, 0, 0, 1);
-        //ParticleRotation.FaceCamera faceCameraRot = (ParticleRotation.FaceCamera) rotation;
+        float f = (float) (Mth.lerp(partialTicks, this.xo, this.x) - vec3.x());
+        float f1 = (float) (Mth.lerp(partialTicks, this.yo, this.y) - vec3.y());
+        float f2 = (float) (Mth.lerp(partialTicks, this.zo, this.z) - vec3.z());
+        Quaternion quaternion = new Quaternion(0.0F, 0.0F, 0.0F, 1.0F);
         if (facesCamera) {
             if (this.roll == 0.0F) {
                 quaternion = renderInfo.rotation();
             } else {
                 quaternion = new Quaternion(renderInfo.rotation());
-                //quaternion.rotateZ(Mth.lerp(partialTicks, this.oRoll, this.roll));
                 float f3 = Mth.lerp(partialTicks, this.oRoll, this.roll);
                 quaternion.mul(Vector3f.ZP.rotation(f3));
             }
         } else {
-            //Quaternionf quaternionf = new Quaternion();
-            //Quaternionf quatX = new Quaternionf(quaternionf.rotateZYX(xRot, 0, 0));
-            //Quaternionf quatY = new Quaternionf(quaternionf.rotateZYX(0, yRot, 0));
             Quaternion quatX = new Quaternion(xRot, 0, 0, false);
             Quaternion quatY = new Quaternion(0, yRot, 0, false);
             quaternion.mul(quatY);
@@ -119,7 +113,6 @@ public class ParticleRing extends TextureSheetParticle {
         float f3 = this.getQuadSize(partialTicks);
         for (int i = 0; i < 4; ++i) {
             Vector3f vector3f = avector3f[i];
-            //vector3f.rotate(quaternion);
             vector3f.transform(quaternion);
             vector3f.mul(f3);
             vector3f.add(f, f1, f2);
@@ -129,10 +122,10 @@ public class ParticleRing extends TextureSheetParticle {
         float f4 = this.getV0();
         float f5 = this.getV1();
         int j = this.getLightColor(partialTicks);
-        vertexConsumer.vertex((double) avector3f[0].x(), (double) avector3f[0].y(), (double) avector3f[0].z()).uv(f7, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
-        vertexConsumer.vertex((double) avector3f[1].x(), (double) avector3f[1].y(), (double) avector3f[1].z()).uv(f7, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
-        vertexConsumer.vertex((double) avector3f[2].x(), (double) avector3f[2].y(), (double) avector3f[2].z()).uv(f6, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
-        vertexConsumer.vertex((double) avector3f[3].x(), (double) avector3f[3].y(), (double) avector3f[3].z()).uv(f6, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        vertexConsumer.vertex(avector3f[0].x(), avector3f[0].y(), avector3f[0].z()).uv(f7, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        vertexConsumer.vertex(avector3f[1].x(), avector3f[1].y(), avector3f[1].z()).uv(f7, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        vertexConsumer.vertex(avector3f[2].x(), avector3f[2].y(), avector3f[2].z()).uv(f6, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        vertexConsumer.vertex(avector3f[3].x(), avector3f[3].y(), avector3f[3].z()).uv(f6, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
     }
 
     @Override
@@ -226,7 +219,7 @@ public class ParticleRing extends TextureSheetParticle {
         }
 
         @Override
-        public ParticleType<RingData> getType() {
+        public ParticleType<? extends RingData> getType() {
             return ParticleInit.RING.get();
         }
 

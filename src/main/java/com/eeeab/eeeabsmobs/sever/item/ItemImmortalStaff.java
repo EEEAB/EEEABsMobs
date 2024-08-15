@@ -22,15 +22,15 @@ public class ItemImmortalStaff extends Item {
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeCharged) {
-        int charge = this.getUseDuration(stack) - timeCharged;
-        if (entity instanceof Player player && charge > EMConfigHandler.COMMON.ITEM.itemImmortalStaffStorageTime.get() * 20) {
+        if (entity instanceof Player player) {
             InteractionHand hand = player.getUsedItemHand();
-            player.swing(hand, true);
             AbilityCapability.IAbilityCapability capability = AbilityHandler.INSTANCE.getAbilityCapability(player);
             if (capability != null) {
                 AbilityHandler.INSTANCE.sendPlayerAbilityMessage(player, AbilityHandler.IMMORTAL_STAFF_ABILITY_TYPE);
-                player.getCooldowns().addCooldown(this, EMConfigHandler.COMMON.ITEM.itemImmortalStaffCoolingTime.get() * 20);
+                player.getCooldowns().addCooldown(this, (int) (EMConfigHandler.COMMON.ITEM.itemImmortalStaffCoolingTime.get() * 20));
             }
+            player.swing(hand, true);
+            player.stopUsingItem();
         }
     }
 
@@ -59,6 +59,6 @@ public class ItemImmortalStaff extends Item {
         super.appendHoverText(stack, level, tooltip, flagIn);
         EMConfigHandler.Item item = EMConfigHandler.COMMON.ITEM;
         tooltip.add(EMTUtils.itemCoolTime(item.itemImmortalStaffCoolingTime.get()));
-        tooltip.add(EMTUtils.simpleWeaponText(this.getDescriptionId(), EMTUtils.STYLE_GRAY, item.itemImmortalStaffCoolingTime.get()));
+        tooltip.add(EMTUtils.simpleWeaponText(this.getDescriptionId(), EMTUtils.STYLE_GRAY));
     }
 }

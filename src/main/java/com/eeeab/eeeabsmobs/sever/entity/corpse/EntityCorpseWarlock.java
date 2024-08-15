@@ -164,6 +164,11 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     }
 
     @Override
+    protected EMConfigHandler.DamageCapConfig getDamageCap() {
+        return EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.maximumDamageCap;
+    }
+
+    @Override
     protected void registerGoals() {
         super.registerGoals();
         this.targetSelector.addGoal(0, new FloatGoal(this));
@@ -413,7 +418,6 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                 if (this.random.nextFloat() < 0.6F) this.hurtCount++;
                 Double maxDistance = EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.maxDistanceTakeDamage.get();
                 if (ModEntityUtils.isProjectileSource(source) && this.distanceTo(entity) >= maxDistance) return false;
-                damage = Math.min(damage, EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.maximumDamageCap.damageCap.get().floatValue());
                 return super.hurt(source, damage);
             } else if (source == DamageSource.OUT_OF_WORLD || source == DamageSource.GENERIC) {
                 return super.hurt(source, damage);

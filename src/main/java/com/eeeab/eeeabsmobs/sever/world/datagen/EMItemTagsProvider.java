@@ -2,10 +2,13 @@ package com.eeeab.eeeabsmobs.sever.world.datagen;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Items;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,5 +22,12 @@ public class EMItemTagsProvider extends ItemTagsProvider {
         this.tag(ItemTags.MUSIC_DISCS)
                 .add(ItemInit.GUARDIANS_MUSIC_DISC.get())
                 .add(ItemInit.THE_ARMY_OF_MINOTAUR_MUSIC_DISC.get());
+        tag(EMTagKey.DEMOLISHER_SUPPORTED_PROJECTILES)
+                .addTag(Tags.Items.STONE)
+                .add(Items.COBBLESTONE)
+                .add(Items.MOSSY_COBBLESTONE)
+                .add(Items.COBBLED_DEEPSLATE)
+                .add(Items.BLACKSTONE)
+                .remove(Items.INFESTED_STONE);
     }
 }

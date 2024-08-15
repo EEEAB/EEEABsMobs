@@ -24,6 +24,7 @@ public class ItemInit {
     //物品
     public static final RegistryObject<Item> LOGO_ITEM = ITEMS.register("logo_item", ItemLogo::new);
     public static final RegistryObject<Item> REMOVE_MOB = ITEMS.register("remove_mob", () -> new ItemRemoveMob(new Item.Properties().tab(EMTabGroup.TABS).stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> ANIMATION_CONTROLLER = ITEMS.register("animation_controller", ItemAnimationController::new);
     public static final RegistryObject<Item> IMMORTAL_BONE = ITEMS.register("immortal_bone", () -> new ItemImmortalBone(new Item.Properties().tab(EMTabGroup.TABS)));
     public static final RegistryObject<Item> IMMORTAL_DEBRIS = ITEMS.register("immortal_debris", () -> new ItemImmortalDebris(new Item.Properties().tab(EMTabGroup.TABS)));
     public static final RegistryObject<Item> IMMORTAL_INGOT = ITEMS.register("immortal_ingot", () -> new Item(new Item.Properties().tab(EMTabGroup.TABS)));

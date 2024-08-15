@@ -33,27 +33,35 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> IMMORTAL_GOLEM_HURT = create("immortal.golem.hurt");
     public static final RegistryObject<SoundEvent> IMMORTAL_GOLEM_DEATH = create("immortal.golem.death");
 
+    //Immortal Executioner
+    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_HURT = create("immortal.executioner.hurt");
+    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_DEATH = create("immortal.executioner.death");
+    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_DASH = create("immortal.executioner.dash");
+    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_BLOCK = create("immortal.executioner.block");
+    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_SCRATCH = create("immortal.executioner.scratch");
+    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_BURN = create("immortal.executioner.burn");
+    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_DETONATION = create("immortal.executioner.detonation");
+
     //Guling Sentinel
-    public static final RegistryObject<SoundEvent> GS_HURT = create("gs.hurt");
-    public static final RegistryObject<SoundEvent> GS_DEATH = create("gs.death");
-    public static final RegistryObject<SoundEvent> GS_ELECTROMAGNETIC = create("gs.electromagnetic");
+    public static final RegistryObject<SoundEvent> GS_HURT = create("guling.sentinel.hurt");
+    public static final RegistryObject<SoundEvent> GS_DEATH = create("guling.sentinel.death");
+    public static final RegistryObject<SoundEvent> GS_ELECTROMAGNETIC = create("guling.sentinel.electromagnetic");
 
     //Guling Sentinel-Heavy
-    public static final RegistryObject<SoundEvent> GSH_STEP = create("gsh.step");
-    public static final RegistryObject<SoundEvent> GSH_IDLE = create("gsh.idle");
-    public static final RegistryObject<SoundEvent> GSH_FRICTION = create("gsh.friction");
-    public static final RegistryObject<SoundEvent> GSH_ELECTROMAGNETIC = create("gsh.electromagnetic");
-    public static final RegistryObject<SoundEvent> GSH_SPARK = create("gsh.spark");
-    public static final RegistryObject<SoundEvent> GSH_PRE_ATTACK = create("gsh.pre_attack");
-    public static final RegistryObject<SoundEvent> GSH_ATTACK = create("gsh.attack");
-    public static final RegistryObject<SoundEvent> GSH_HURT = create("gsh.hurt");
-    public static final RegistryObject<SoundEvent> GSH_DEATH = create("gsh.death");
+    public static final RegistryObject<SoundEvent> GSH_STEP = create("guling_sentinel_heavy.step");
+    public static final RegistryObject<SoundEvent> GSH_IDLE = create("guling_sentinel_heavy.idle");
+    public static final RegistryObject<SoundEvent> GSH_FRICTION = create("guling_sentinel_heavy.friction");
+    public static final RegistryObject<SoundEvent> GSH_ELECTROMAGNETIC = create("guling_sentinel_heavy.electromagnetic");
+    public static final RegistryObject<SoundEvent> GSH_SPARK = create("guling_sentinel_heavy.spark");
+    public static final RegistryObject<SoundEvent> GSH_PRE_ATTACK = create("guling_sentinel_heavy.pre_attack");
+    public static final RegistryObject<SoundEvent> GSH_ATTACK = create("guling_sentinel_heavy.attack");
+    public static final RegistryObject<SoundEvent> GSH_HURT = create("guling_sentinel_heavy.hurt");
+    public static final RegistryObject<SoundEvent> GSH_DEATH = create("guling_sentinel_heavy.death");
 
     //Nameless Guardian
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_STEP = create("nameless.guardian.step");
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_IDLE = create("nameless.guardian.idle");
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_CREAK = create("nameless.guardian.creak");
-    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_PRE_SWING = create("nameless.guardian.pre_swing");
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_ACCUMULATING = create("nameless.guardian.accumulating");
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_ACCUMULATING_END = create("nameless.guardian.accumulating_end");
     public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_WHOOSH = create("nameless.guardian.whoosh");

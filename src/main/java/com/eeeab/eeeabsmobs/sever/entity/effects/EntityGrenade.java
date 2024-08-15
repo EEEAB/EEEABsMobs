@@ -16,8 +16,8 @@ import net.minecraft.world.phys.Vec3;
 
 public class EntityGrenade extends EntityMagicEffects {
     private static final float GRAVITY = 0.03F;
-    private static final float RADIUS = 2.5F;
-    private float maxDamage = 8F;
+    private float radius = 2.5F;
+    private float maxDamage = 10F;
 
     public EntityGrenade(EntityType<? extends EntityMagicEffects> entityType, Level level) {
         super(entityType, level);
@@ -36,7 +36,7 @@ public class EntityGrenade extends EntityMagicEffects {
                 //基于使用者(非玩家)决定攻击伤害
                 maxDamage = (float) this.caster.getAttributeValue(Attributes.ATTACK_DAMAGE);
             }
-            EntityExplode.explode(this.level, this.position(), DamageSource.explosion(this.caster), RADIUS, maxDamage);
+            EntityExplode.explode(this.level, this.position(), DamageSource.explosion(this.caster), this.caster, this.radius, this.maxDamage);
             EntityCameraShake.cameraShake(this.level, this.position(), 16F, 0.125F, 5, 15);
             this.discard();
         }
@@ -71,6 +71,14 @@ public class EntityGrenade extends EntityMagicEffects {
         } else {
             return caster == null || !caster.isPassengerOfSameVehicle(entity);
         }
+    }
+
+    public void setMaxDamage(float maxDamage) {
+        this.maxDamage = maxDamage;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
     }
 
     @Override

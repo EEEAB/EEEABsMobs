@@ -26,8 +26,6 @@ import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
-import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
@@ -40,13 +38,11 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -91,6 +87,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             electromagneticAnimation
     };
     private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EntityGulingSentinelHeavy.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_ALWAYS_ACTIVE = SynchedEntityData.defineId(EntityGulingSentinelHeavy.class, EntityDataSerializers.BOOLEAN);
     private int deactivateTick;
     private int smashAttackTick;
     private int rangeAttackTick;
@@ -167,6 +164,11 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     }
 
     @Override
+    protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
+        return sizeIn.height * 0.85F;
+    }
+
+    @Override
     @NotNull
     protected BodyRotationControl createBodyControl() {
         return new EMBodyRotationControl(this);
@@ -202,12 +204,18 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this, EntityAbsGuling.class));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractGolem.class, 0, false, false, (golem) -> !(golem instanceof Shulker)));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && EntityGulingSentinelHeavy.this.isActive();
+            }
+        });
         this.goalSelector.addGoal(6, new EMLookAtGoal(this, Mob.class, 6.0F));
         this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this) {
             @Override
             public boolean canUse() {
-                return super.canUse() && EntityGulingSentinelHeavy.this.active;
+                return super.canUse() && EntityGulingSentinelHeavy.this.isActive();
             }
         });
     }
@@ -265,15 +273,21 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
                 this.yHeadRot = this.yBodyRot = this.getYRot();
             }
-            if (!this.isNoAi() && !this.isActive() && this.isNoAnimation() && this.getTarget() != null && this.targetDistance <= 12) {
-                this.playSound(SoundInit.GSH_FRICTION.get());
-                this.playAnimation(this.activeAnimation);
+            if (this.isAlwaysActive()) {
                 this.setActive(true);
-            }
-            if (!this.isNoAi() && this.isActive() && this.isAlive() && this.isNoAnimation() && this.getTarget() == null && this.deactivateTick >= 300) {
-                this.playSound(SoundInit.GSH_FRICTION.get());
-                this.playAnimation(this.deactivateAnimation);
-                this.setActive(false);
+                this.active = true;
+                this.deactivateTick = 0;
+            } else if (!this.isNoAi() && this.isNoAnimation()) {
+                if (!this.isActive() && this.getTarget() != null && this.targetDistance <= 12) {
+                    this.playSound(SoundInit.GSH_FRICTION.get());
+                    this.playAnimation(this.activeAnimation);
+                    this.setActive(true);
+                }
+                if (this.isActive() && this.isAlive() && this.getTarget() == null && this.deactivateTick >= 300) {
+                    this.playSound(SoundInit.GSH_FRICTION.get());
+                    this.playAnimation(this.deactivateAnimation);
+                    this.setActive(false);
+                }
             }
             if (!this.isNoAi() && this.isActive() && this.isNoAnimation() && this.smashAttackTick <= 0 && this.getTarget() != null && ((targetDistance <= 6.5F && ModEntityUtils.checkTargetComingCloser(this, this.getTarget())) || this.targetDistance < 6.0F)) {
                 this.playAnimation(this.smashAttackAnimation);
@@ -413,7 +427,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 this.electromagneticTick--;
             }
 
-            if (this.isActive()) {
+            if (this.isActive() && !this.isAlwaysActive()) {
                 if (this.getTarget() == null || (this.tickCount % 2 == 0 && !this.getSensing().hasLineOfSight(this.getTarget()))) {
                     this.deactivateTick++;
                 } else if (this.deactivateTick > 0) {
@@ -458,12 +472,14 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_ACTIVE, false);
+        this.entityData.define(DATA_ALWAYS_ACTIVE, false);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.entityData.set(DATA_ACTIVE, compound.getBoolean("isActive"));
+        this.entityData.set(DATA_ALWAYS_ACTIVE, compound.getBoolean("isAlwaysActive"));
         this.active = this.isActive();
     }
 
@@ -471,6 +487,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("isActive", this.entityData.get(DATA_ACTIVE));
+        compound.putBoolean("isAlwaysActive", this.entityData.get(DATA_ALWAYS_ACTIVE));
     }
 
     @Override
@@ -572,6 +589,13 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         this.deactivateTick = 0;
     }
 
+    public boolean isAlwaysActive() {
+        return this.entityData.get(DATA_ALWAYS_ACTIVE);
+    }
+
+    public void setAlwaysActive(boolean alwaysActive) {
+        this.entityData.set(DATA_ALWAYS_ACTIVE, alwaysActive);
+    }
 
     static class GSHMeleeAttackGoal extends AnimationAI<EntityGulingSentinelHeavy> {
 

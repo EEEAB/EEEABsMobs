@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " # ",
+    "#A#",
+    "D# "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:deepslate_bricks"
+    },
+    "D": {
+      "item": "minecraft:dispenser"
+    },
+    "A": {
+      "item": "eeeabsmobs:ancient_drive_crystal"
+    }
+  },
+  "result": {
+    "item": "eeeabsmobs:demolisher",
+    "count": 1
+  }
+}

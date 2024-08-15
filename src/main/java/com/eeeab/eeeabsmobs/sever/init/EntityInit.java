@@ -81,13 +81,13 @@ public class EntityInit {
     public static final RegistryObject<EntityType<EntityImmortalExecutioner>> IMMORTAL_EXECUTIONER =
             ENTITIES.register("immortal_executioner",
                     () -> EntityType.Builder.<EntityImmortalExecutioner>of(EntityImmortalExecutioner::new, MobCategory.MONSTER)
-                            .sized(0.8f, 2.8f).fireImmune().clientTrackingRange(8)
+                            .sized(0.8f, 2.45f).fireImmune().clientTrackingRange(8)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_executioner").toString()));
 
     public static final RegistryObject<EntityType<EntityTheImmortal>> IMMORTAL_BOSS =
             ENTITIES.register("immortal",
                     () -> EntityType.Builder.<EntityTheImmortal>of(EntityTheImmortal::new, MobCategory.MONSTER)
-                            .sized(2.8f, 5.0f).fireImmune().clientTrackingRange(10)
+                            .sized(2.8f, 4.95f).fireImmune().clientTrackingRange(10)
                             .setShouldReceiveVelocityUpdates(true)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal").toString()));
 
@@ -100,14 +100,14 @@ public class EntityInit {
     public static final RegistryObject<EntityType<EntityGulingSentinelHeavy>> GULING_SENTINEL_HEAVY =
             ENTITIES.register("guling_sentinel_heavy",
                     () -> EntityType.Builder.<EntityGulingSentinelHeavy>of(EntityGulingSentinelHeavy::new, MobCategory.MONSTER)
-                            .sized(2.5f, 3.8f).fireImmune()/*.clientTrackingRange(10)*/
+                            .sized(2.45f, 3.45f).fireImmune()/*.clientTrackingRange(10)*/
                             .setShouldReceiveVelocityUpdates(true)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "guling_sentinel_heavy").toString()));
 
     public static final RegistryObject<EntityType<EntityNamelessGuardian>> NAMELESS_GUARDIAN =
             ENTITIES.register("nameless_guardian",
                     () -> EntityType.Builder.<EntityNamelessGuardian>of(EntityNamelessGuardian::new, MobCategory.MONSTER)
-                            .sized(2.0f, 4.0f).fireImmune().clientTrackingRange(10)
+                            .sized(2.25f, 3.74f).fireImmune().clientTrackingRange(10)
                             .setShouldReceiveVelocityUpdates(true)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "nameless_guardian").toString()));
 
@@ -232,6 +232,13 @@ public class EntityInit {
                     () -> EntityType.Builder.<EntityAlienPortal>of(EntityAlienPortal::new, MobCategory.MISC)
                             .sized(0.1F, 0.1F).setUpdateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "alien_portal").toString()));
+
+    //不朽魔法阵
+    public static final RegistryObject<EntityType<EntityImmortalMagicCircle>> MAGIC_CIRCLE =
+            ENTITIES.register("magic_circle",
+                    () -> EntityType.Builder.<EntityImmortalMagicCircle>of(EntityImmortalMagicCircle::new, MobCategory.MISC)
+                            .sized(0.1F, 0.1F).setUpdateInterval(1)
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "magic_circle").toString()));
 
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);

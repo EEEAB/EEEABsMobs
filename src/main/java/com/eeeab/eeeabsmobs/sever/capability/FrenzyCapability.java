@@ -7,6 +7,7 @@ import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.eeeab.eeeabsmobs.sever.integration.curios.ICuriosApi;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -22,6 +23,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -68,6 +70,7 @@ public class FrenzyCapability {
             this.level = level;
         }
 
+
         @Override
         public int getLevel() {
             return this.level;
@@ -104,8 +107,10 @@ public class FrenzyCapability {
                     if (duration <= 10 && duration >= 0) {
                         if (entity instanceof Player player) {
                             //当玩家持有唤魂项链时 副作用持续时间减少一半
-                            if (player.getInventory().items.stream().anyMatch(i -> i.is(ItemInit.SOUL_SUMMONING_NECKLACE.get()))) {
-                                player.getCooldowns().addCooldown(ItemInit.SOUL_SUMMONING_NECKLACE.get(), 20);
+                            Item item = ItemInit.SOUL_SUMMONING_NECKLACE.get();
+                            if ((ICuriosApi.isLoaded() && ICuriosApi.INSTANCE.isPresentInventory(player, item))
+                                    || (player.getInventory().items.stream().anyMatch(i -> i.is(item)))) {
+                                player.getCooldowns().addCooldown(item, 20);
                                 durationTick /= 2;
                             }
                         }
@@ -119,7 +124,7 @@ public class FrenzyCapability {
                     if (this.count <= 0 && player.tickCount % 10 == 0) player.getFoodData().eat(1, 1F);
                     if (player.isSprinting() && !player.getUseItem().getItem().isEdible()) {
                         if (this.count < 20) this.count++;
-                    } else this.count--;
+                    } else if (this.count > 0) this.count--;
                     if (this.count >= 20 && player.getFoodData().getFoodLevel() > 0) {
                         player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 20, this.level, false, false, true));
                         player.causeFoodExhaustion(0.25F);
@@ -194,14 +199,14 @@ public class FrenzyCapability {
         @Override
         public CompoundTag serializeNBT() {
             CompoundTag nbt = new CompoundTag();
-            nbt.putBoolean("is_frenzy", this.isFrenzy);
+            nbt.putBoolean("isFrenzy", this.isFrenzy);
             nbt.putInt("level", this.level);
             return nbt;
         }
 
         @Override
         public void deserializeNBT(CompoundTag nbt) {
-            this.isFrenzy = nbt.getBoolean("is_frenzy");
+            this.isFrenzy = nbt.getBoolean("isFrenzy");
             this.level = nbt.getInt("level");
         }
     }

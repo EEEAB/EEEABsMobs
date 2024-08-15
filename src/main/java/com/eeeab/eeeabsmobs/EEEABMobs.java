@@ -1,33 +1,28 @@
 package com.eeeab.eeeabsmobs;
 
 import com.eeeab.eeeabsmobs.client.ClientProxy;
+import com.eeeab.animate.client.gui.AnimationControllerScreen;
 import com.eeeab.eeeabsmobs.sever.ServerProxy;
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerServerEvent;
 import com.eeeab.eeeabsmobs.sever.init.*;
+import com.eeeab.eeeabsmobs.sever.integration.curios.CuriosRegistry;
 import com.eeeab.eeeabsmobs.sever.util.EMBrewingRecipe;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.List;
 
 @Mod(EEEABMobs.MOD_ID)
 @Mod.EventBusSubscriber(modid = EEEABMobs.MOD_ID)
@@ -47,47 +42,33 @@ public class EEEABMobs {
         PotionInit.register(bus);
         ParticleInit.register(bus);
         SoundInit.register(bus);
+        MenuInit.register(bus);
         StructuresInit.register(bus);
-
         bus.<FMLCommonSetupEvent>addListener(this::setup);
-        bus.<InterModEnqueueEvent>addListener(this::modQueue);
+        bus.<FMLClientSetupEvent>addListener(this::clientSetup);
         bus.<FMLLoadCompleteEvent>addListener(this::complete);
-
         PROXY.init(bus);
-        bus.addListener(this::onModConfigInit);
-        bus.addListener(HandlerCapability::registerCapabilities);
-        bus.addListener(PROXY::register);
-
-        MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(new HandlerServerEvent());
-        MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, HandlerCapability::attachEntityCapability);
-
-    }
-
-    @SubscribeEvent
-    public void onModConfigInit(final ModConfigEvent event) {
-        ModConfig config = event.getConfig();
-        if (config.getSpec() == EMConfigHandler.SPEC) {
-            EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackSpeedValue = EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackSpeed.get().floatValue();
-            EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamageValue = EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamage.get().floatValue();
-            EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackSpeedValue = EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackSpeed.get().floatValue();
-            EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackDamageValue = EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackDamage.get().floatValue();
-        }
     }
 
     private void setup(final FMLCommonSetupEvent event) {
+        MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(new HandlerServerEvent());
+        MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, HandlerCapability::attachEntityCapability);
         PROXY.registerMessage();
         event.enqueueWork(() -> {
+            CuriosRegistry.register();
             BrewingRecipeRegistry.addRecipe(new EMBrewingRecipe(Potions.STRONG_STRENGTH, ItemInit.HEART_OF_PAGAN.get(), PotionInit.FRENZY_POTION.get()));
         });
     }
 
-    private void modQueue(final InterModEnqueueEvent event) {
-        List<IModInfo> mods = ModList.get().getMods();
-        //mods.stream().map(IModInfo::getModId).forEach(EEEABMobs.LOGGER::info);
+    private void clientSetup(final FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            CuriosRegistry.clientRegister();
+            MenuScreens.register(MenuInit.ANIMATION_CONTROLLER.get(), AnimationControllerScreen::new);
+        });
     }
 
-    private void complete(FMLLoadCompleteEvent event) {
+    private void complete(final FMLLoadCompleteEvent event) {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         PROXY.loadComplete(bus);
     }

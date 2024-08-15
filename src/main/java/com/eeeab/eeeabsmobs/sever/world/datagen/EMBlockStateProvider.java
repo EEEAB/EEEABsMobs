@@ -19,6 +19,7 @@ public class EMBlockStateProvider extends BlockStateProvider {
         cubeAll(BlockInit.GHOST_STEEL_BLOCK);
         cubeAll(BlockInit.EROSION_DEEPSLATE_BRICKS);
         cubeAll(BlockInit.SOUL_LIGHT);
+        cubeAll(BlockInit.EROSION_ROCK_BRICKS);
         //cubeAll(BlockInit.TOMBSTONE);
     }
 

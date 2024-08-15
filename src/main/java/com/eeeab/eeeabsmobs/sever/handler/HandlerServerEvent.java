@@ -12,6 +12,7 @@ import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityAbsCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalExecutioner;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
@@ -125,7 +126,7 @@ public final class HandlerServerEvent {
         }
         useGuardianCoreStack(event);
 
-        PlayerCapability.PlayerCapabilityImpl playerCapability = HandlerCapability.getCapability(event.player, HandlerCapability.PLAYER_CAPABILITY);
+        PlayerCapability.IPlayerCapability playerCapability = HandlerCapability.getCapability(event.player, HandlerCapability.PLAYER_CAPABILITY);
         if (playerCapability != null) {
             playerCapability.tick(event.player);
         }
@@ -316,7 +317,7 @@ public final class HandlerServerEvent {
         }
 
         if (hurtEntity instanceof Player player) {
-            PlayerCapability.PlayerCapabilityImpl playerCapability = HandlerCapability.getCapability(player, HandlerCapability.PLAYER_CAPABILITY);
+            PlayerCapability.IPlayerCapability playerCapability = HandlerCapability.getCapability(player, HandlerCapability.PLAYER_CAPABILITY);
             if (playerCapability != null) {
                 playerCapability.hurt(player, source, event.getAmount());
             }
@@ -361,9 +362,13 @@ public final class HandlerServerEvent {
             if (projectile instanceof EntityBloodBall bloodBall && !bloodBall.isHeal() && hitResult.getEntity() instanceof EntityCorpseWarlock) {
                 event.setCanceled(true);
             }
-            if (projectile instanceof AbstractArrow arrow && arrow.getOwner() instanceof EntityAbsImmortal && hitResult.getEntity() instanceof EntityAbsImmortal) {
-                if (EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get())
+            if (projectile instanceof AbstractArrow arrow) {
+                if (!arrow.fireImmune() && !arrow.isOnFire() && hitResult.getEntity() instanceof EntityImmortalExecutioner) {
+                    arrow.setSecondsOnFire(100);
+                }
+                if (arrow.getOwner() instanceof EntityAbsImmortal && hitResult.getEntity() instanceof EntityAbsImmortal && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()) {
                     event.setCanceled(true);
+                }
             }
         }
     }

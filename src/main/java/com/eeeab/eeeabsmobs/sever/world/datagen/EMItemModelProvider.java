@@ -36,6 +36,7 @@ public class EMItemModelProvider extends ItemModelProvider {
         //杂项
         simpleItem(ItemInit.LOGO_ITEM);
         simpleItem(ItemInit.REMOVE_MOB);
+        simpleItem(ItemInit.ANIMATION_CONTROLLER);
         simpleItem(ItemInit.GULING_EYE);
         simpleItem(ItemInit.BLOODY_ALTAR_EYE);
         simpleItem(ItemInit.GUARDIANS_MUSIC_DISC);

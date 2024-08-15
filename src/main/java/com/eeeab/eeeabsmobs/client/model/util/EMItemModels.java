@@ -1,8 +1,10 @@
-package com.eeeab.eeeabsmobs.client.model;
+package com.eeeab.eeeabsmobs.client.model.util;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -12,6 +14,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -20,8 +23,7 @@ import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public class EMItemModels {
-    //public static final String[] HAND_MODEL_ITEMS = new String[]{"guardian_axe"};
-    public static final String[] HAND_MODEL_ITEMS = new String[]{};
+    public static final String[] HAND_MODEL_ITEMS = new String[]{"guardian_axe", "guardian_core", "demolisher", "immortal_staff", "netherworld_katana"};
 
     @SubscribeEvent
     public static void onModifyBakingResultEvent(ModelEvent.BakingCompleted event) {
@@ -73,16 +75,15 @@ public class EMItemModels {
                     return bakedModelDefault.getOverrides();
                 }
 
-                //TODO
-/*                @Override
-                public BakedModel applyTransform(ItemDisplayContext transformType, PoseStack poseStack, boolean applyLeftHandTransform) {
+                @Override
+                public BakedModel applyTransform(ItemTransforms.TransformType cameraTransformType, PoseStack mat, boolean applyLeftHandTransform) {
                     BakedModel modelToUse = bakedModelDefault;
-                    if (transformType == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || transformType == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
-                            || transformType == ItemDisplayContext.THIRD_PERSON_LEFT_HAND || transformType == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
+                    if (cameraTransformType == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND || cameraTransformType == ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND
+                            || cameraTransformType == ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND || cameraTransformType == ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND) {
                         modelToUse = bakedModelHand;
                     }
-                    return ForgeHooksClient.handleCameraTransforms(poseStack, modelToUse, transformType, applyLeftHandTransform);
-                }*/
+                    return ForgeHooksClient.handleCameraTransforms(mat, modelToUse, cameraTransformType, applyLeftHandTransform);
+                }
             };
             map.put(modelInventory, modelWrapper);
         }

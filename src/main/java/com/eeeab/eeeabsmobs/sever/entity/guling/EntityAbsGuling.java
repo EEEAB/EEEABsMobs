@@ -12,12 +12,13 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class EntityAbsGuling extends EEEABMobLibrary {
+public abstract class EntityAbsGuling extends EEEABMobLibrary implements Enemy {
     public EntityAbsGuling(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
     }

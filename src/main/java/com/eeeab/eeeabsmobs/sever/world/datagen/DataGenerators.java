@@ -16,6 +16,7 @@ public class DataGenerators {
         ExistingFileHelper helper = event.getExistingFileHelper();
         boolean includeServer = event.includeServer();
         generator.addProvider(includeServer, new EMItemModelProvider(generator, helper));
+        generator.addProvider(includeServer, new EMMobEffectProvider(generator, helper));
         generator.addProvider(includeServer, new EMStructureTagsProvider(generator, helper));
         generator.addProvider(includeServer, new EMBiomeTagsProvider(generator, helper));
         generator.addProvider(includeServer, new EMEntityTypeTagsProvider(generator, helper));

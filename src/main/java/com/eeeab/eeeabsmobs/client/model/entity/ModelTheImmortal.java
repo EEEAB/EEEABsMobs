@@ -14,6 +14,7 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
     private final ModelPart upper;
     private final ModelPart lower;
     private final ModelPart head;
+    private final ModelPart jaw;
     private final ModelPart rightArm;
     private final ModelPart miniRightArm;
     private final ModelPart miniRightArmUnder;
@@ -22,14 +23,17 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
     private final ModelPart miniLeftArmUnder;
     private final ModelPart rightFist;
     private final ModelPart leftFist;
-    public final ModelPart core;
+    private final ModelPart core;
+    private final ModelPart[] spine;
 
     public ModelTheImmortal(ModelPart root) {
+        this.setMovementScale(1.2F);
         this.root = root.getChild("root");
         this.upper = this.root.getChild("upper");
         this.lower = this.root.getChild("lower");
         ModelPart body = this.upper.getChild("body");
         this.head = this.upper.getChild("head");
+        this.jaw = this.head.getChild("jaw");
         this.core = this.upper.getChild("core");
         this.rightArm = body.getChild("rightArm");
         this.miniRightArm = body.getChild("miniRightArm");
@@ -39,6 +43,10 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
         this.miniLeftArm = body.getChild("miniLeftArm");
         this.miniLeftArmUnder = this.miniLeftArm.getChild("miniLeftArmUnder");
         this.leftFist = this.leftArm.getChild("leftArmUnder").getChild("leftFist");
+        this.spine = new ModelPart[]{
+                body.getChild("spine1").getChild("spine2"),
+                body.getChild("spine1"),
+        };
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -69,8 +77,10 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
         PartDefinition cube_r17 = body.addOrReplaceChild("cube_r17", CubeListBuilder.create().texOffs(111, 31).addBox(-5.0F, -4.5F, -2.5F, 12.0F, 12.0F, 3.0F, new CubeDeformation(1.0F))
                 .texOffs(93, 82).addBox(-6.0F, 2.3F, -12.8F, 12.0F, 9.0F, 12.0F, new CubeDeformation(1.0F)), PartPose.offsetAndRotation(8.3679F, -25.0072F, -0.2448F, 1.5143F, 0.7362F, 0.3241F));
         PartDefinition cube_r18 = body.addOrReplaceChild("cube_r18", CubeListBuilder.create().texOffs(0, 28).addBox(-10.2F, -10.5F, -10.8F, 21.0F, 21.0F, 21.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.0872F, -1.2852F, 4.9646F, 0.3046F, 0.7708F, 0.2142F));
-        PartDefinition cube_r19 = body.addOrReplaceChild("cube_r19", CubeListBuilder.create().texOffs(94, 225).addBox(-3.7474F, 0.649F, -7.2673F, 11.0F, 16.0F, 11.0F, new CubeDeformation(-0.5F)), PartPose.offsetAndRotation(-0.1313F, 21.2647F, 19.8601F, 0.8337F, 0.6138F, 0.5551F));
-        PartDefinition cube_r20 = body.addOrReplaceChild("cube_r20", CubeListBuilder.create().texOffs(94, 225).addBox(-5.5F, -8.0F, -5.5F, 11.0F, 16.0F, 11.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.1909F, 15.5647F, 14.8944F, 0.3896F, 0.7554F, 0.2708F));
+        PartDefinition spine1 = body.addOrReplaceChild("spine1", CubeListBuilder.create(), PartPose.offset(-0.0909F, 15.3647F, 15.9944F));
+        PartDefinition cube_r19 = spine1.addOrReplaceChild("cube_r19", CubeListBuilder.create().texOffs(94, 225).addBox(-5.5F, -8.0F, -5.5F, 11.0F, 16.0F, 11.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.2F, 0.0F, 0.3896F, 0.7554F, 0.2708F));
+        PartDefinition spine2 = spine1.addOrReplaceChild("spine2", CubeListBuilder.create(), PartPose.offset(0.0772F, 14.2908F, 8.5204F));
+        PartDefinition cube_r20 = spine2.addOrReplaceChild("cube_r20", CubeListBuilder.create().texOffs(94, 225).addBox(-3.7474F, 0.649F, -7.2673F, 11.0F, 16.0F, 11.0F, new CubeDeformation(-0.5F)), PartPose.offsetAndRotation(-0.0175F, -8.3909F, -3.5547F, 0.8337F, 0.6138F, 0.5551F));
         PartDefinition leftArm = body.addOrReplaceChild("leftArm", CubeListBuilder.create(), PartPose.offset(25.2895F, -19.037F, 15.8276F));
         PartDefinition cube_r21 = leftArm.addOrReplaceChild("cube_r21", CubeListBuilder.create().texOffs(38, 192).addBox(-3.5478F, -10.9907F, -10.6662F, 0.0F, 12.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(10.5801F, -17.7127F, 2.286F, -0.9286F, 0.4523F, -0.3292F));
         PartDefinition cube_r22 = leftArm.addOrReplaceChild("cube_r22", CubeListBuilder.create().texOffs(38, 192).addBox(2.6883F, -11.9726F, -10.7928F, 0.0F, 12.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(13.7921F, -15.5094F, -3.2545F, 0.1018F, 0.9985F, 1.0466F));
@@ -141,15 +151,15 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
         PartDefinition cube_r59 = claw6.addOrReplaceChild("cube_r59", CubeListBuilder.create().texOffs(22, 173).mirror().addBox(-0.8855F, -3.6076F, -0.202F, 7.0F, 8.0F, 0.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-0.0822F, -0.5564F, -0.9716F, -2.7527F, -0.2655F, 1.308F));
         PartDefinition core = upper.addOrReplaceChild("core", CubeListBuilder.create(), PartPose.offsetAndRotation(0.0F, -10.9014F, -0.109F, 0.2618F, 0.0F, 0.0F));
         PartDefinition cube_r60 = core.addOrReplaceChild("cube_r60", CubeListBuilder.create().texOffs(143, 28).addBox(-4.5F, -4.5F, -4.5F, 9.0F, 9.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.3171F, 0.8035F, 0.232F));
-        PartDefinition lower = root.addOrReplaceChild("lower", CubeListBuilder.create(), PartPose.offsetAndRotation(0.0F, -29.0F, 2.8344F, 0.2618F, 0.0F, 0.0F));
-        PartDefinition cube_r61 = lower.addOrReplaceChild("cube_r61", CubeListBuilder.create().texOffs(0, 216).addBox(-0.9853F, -0.1706F, -10.6247F, 3.0F, 15.0F, 21.0F, new CubeDeformation(0.5F)), PartPose.offsetAndRotation(13.5777F, 3.9545F, 15.2776F, 0.3656F, -0.7279F, -0.5069F));
-        PartDefinition cube_r62 = lower.addOrReplaceChild("cube_r62", CubeListBuilder.create().texOffs(50, 216).addBox(2.6412F, -1.6601F, -7.1467F, 3.0F, 18.0F, 18.0F, new CubeDeformation(0.5F)), PartPose.offsetAndRotation(8.7433F, -6.3148F, 7.3086F, 0.4973F, -0.6546F, -0.7127F));
-        PartDefinition cube_r63 = lower.addOrReplaceChild("cube_r63", CubeListBuilder.create().texOffs(0, 216).mirror().addBox(-2.0147F, -0.1706F, -10.6247F, 3.0F, 15.0F, 21.0F, new CubeDeformation(0.5F)).mirror(false), PartPose.offsetAndRotation(-13.5777F, 3.9545F, 15.2776F, 0.3656F, 0.7279F, 0.5069F));
-        PartDefinition cube_r64 = lower.addOrReplaceChild("cube_r64", CubeListBuilder.create().texOffs(50, 216).mirror().addBox(-5.6412F, -1.6601F, -7.1467F, 3.0F, 18.0F, 18.0F, new CubeDeformation(0.5F)).mirror(false), PartPose.offsetAndRotation(-8.7433F, -6.3148F, 7.3086F, 0.4973F, 0.6546F, 0.7127F));
-        PartDefinition cube_r65 = lower.addOrReplaceChild("cube_r65", CubeListBuilder.create().texOffs(0, 184).addBox(-9.0F, -6.5398F, -3.0F, 15.0F, 27.0F, 3.0F, new CubeDeformation(0.2F)), PartPose.offsetAndRotation(1.5F, -6.5298F, -9.321F, -0.4363F, 0.0F, 0.0F));
-        PartDefinition cube_r66 = lower.addOrReplaceChild("cube_r66", CubeListBuilder.create().texOffs(38, 165).addBox(-1.5F, -5.0F, -1.5F, 5.0F, 11.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -6.1515F, -17.1417F, -0.583F, -0.6956F, 0.3999F));
-        PartDefinition cube_r67 = lower.addOrReplaceChild("cube_r67", CubeListBuilder.create().texOffs(38, 186).mirror().addBox(-16.3677F, -1.2821F, -0.8157F, 15.0F, 12.0F, 3.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, -11.3112F, -13.3936F, -0.4998F, 0.1958F, 0.0779F));
-        PartDefinition cube_r68 = lower.addOrReplaceChild("cube_r68", CubeListBuilder.create().texOffs(38, 186).addBox(1.3677F, -1.2821F, -0.8157F, 15.0F, 12.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -11.3112F, -13.3936F, -0.4998F, -0.1958F, -0.0779F));
+        PartDefinition lower = root.addOrReplaceChild("lower", CubeListBuilder.create(), PartPose.offsetAndRotation(0.0F, -38.0F, 2.8344F, 0.2618F, 0.0F, 0.0F));
+        PartDefinition cube_r61 = lower.addOrReplaceChild("cube_r61", CubeListBuilder.create().texOffs(0, 216).addBox(-0.9853F, -0.1706F, -10.6247F, 3.0F, 15.0F, 21.0F, new CubeDeformation(0.5F)), PartPose.offsetAndRotation(13.5777F, 12.6478F, 12.9483F, 0.3656F, -0.7279F, -0.5069F));
+        PartDefinition cube_r62 = lower.addOrReplaceChild("cube_r62", CubeListBuilder.create().texOffs(50, 216).addBox(2.6412F, -1.6601F, -7.1467F, 3.0F, 18.0F, 18.0F, new CubeDeformation(0.5F)), PartPose.offsetAndRotation(8.7433F, 2.3785F, 4.9792F, 0.4973F, -0.6546F, -0.7127F));
+        PartDefinition cube_r63 = lower.addOrReplaceChild("cube_r63", CubeListBuilder.create().texOffs(0, 216).mirror().addBox(-2.0147F, -0.1706F, -10.6247F, 3.0F, 15.0F, 21.0F, new CubeDeformation(0.5F)).mirror(false), PartPose.offsetAndRotation(-13.5777F, 12.6478F, 12.9483F, 0.3656F, 0.7279F, 0.5069F));
+        PartDefinition cube_r64 = lower.addOrReplaceChild("cube_r64", CubeListBuilder.create().texOffs(50, 216).mirror().addBox(-5.6412F, -1.6601F, -7.1467F, 3.0F, 18.0F, 18.0F, new CubeDeformation(0.5F)).mirror(false), PartPose.offsetAndRotation(-8.7433F, 2.3785F, 4.9792F, 0.4973F, 0.6546F, 0.7127F));
+        PartDefinition cube_r65 = lower.addOrReplaceChild("cube_r65", CubeListBuilder.create().texOffs(0, 184).addBox(-9.0F, -6.5398F, -3.0F, 15.0F, 27.0F, 3.0F, new CubeDeformation(0.2F)), PartPose.offsetAndRotation(1.5F, 2.1635F, -11.6503F, -0.4363F, 0.0F, 0.0F));
+        PartDefinition cube_r66 = lower.addOrReplaceChild("cube_r66", CubeListBuilder.create().texOffs(38, 165).addBox(-1.5F, -5.0F, -1.5F, 5.0F, 11.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 2.5418F, -19.4711F, -0.583F, -0.6956F, 0.3999F));
+        PartDefinition cube_r67 = lower.addOrReplaceChild("cube_r67", CubeListBuilder.create().texOffs(38, 186).mirror().addBox(-16.3677F, -1.2821F, -0.8157F, 15.0F, 12.0F, 3.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, -2.6178F, -15.7229F, -0.4998F, 0.1958F, 0.0779F));
+        PartDefinition cube_r68 = lower.addOrReplaceChild("cube_r68", CubeListBuilder.create().texOffs(38, 186).addBox(1.3677F, -1.2821F, -0.8157F, 15.0F, 12.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -2.6178F, -15.7229F, -0.4998F, -0.1958F, -0.0779F));
         return LayerDefinition.create(meshdefinition, 256, 256);
     }
 
@@ -161,16 +171,35 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
     @Override
     public void setupAnim(EntityTheImmortal entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
+        //Animation
+        this.animate(entity.dieAnimation, AnimationTheImmortal.DIE, ageInTicks);
+        this.animate(entity.spawnAnimation, AnimationTheImmortal.SPAWN, ageInTicks);
+        this.animate(entity.switchStage2Animation, AnimationTheImmortal.STAGE_1, ageInTicks);
+        this.animate(entity.switchStage3Animation, AnimationTheImmortal.STAGE_2, ageInTicks);
+        this.animate(entity.teleportAnimation, AnimationTheImmortal.TELEPORT, ageInTicks);
+        this.animate(entity.punchCombo1Animation, AnimationTheImmortal.PUNCH_COMBO_1, ageInTicks);
+        this.animate(entity.smashGround1Animation, AnimationTheImmortal.SMASH_GROUND_1, ageInTicks);
+        this.animate(entity.pouncePreAnimation, AnimationTheImmortal.GRAPPLE_PRE, ageInTicks);
+        this.animate(entity.pounceHoldAnimation, AnimationTheImmortal.GRAPPLE_HOLD, ageInTicks);
+        this.animate(entity.pounceEndAnimation, AnimationTheImmortal.GRAPPLE_END, ageInTicks);
+        this.animate(entity.pounceSmashAnimation, AnimationTheImmortal.GRAPPLE_SMASH, ageInTicks);
+        this.animate(entity.pouncePickAnimation, AnimationTheImmortal.GRAPPLE_PICK, ageInTicks);
         //LookAt
         Animation animation = entity.getAnimation();
         lookAtAnimation(netHeadYaw, headPitch, 1.0F, this.head);
         float delta = ageInTicks - entity.tickCount;
         float frame = entity.frame + delta;
         if (animation == entity.getNoAnimation() && !entity.isActive()) {
+            core.xScale = 0F;
+            core.yScale = 0F;
+            core.zScale = 0F;
             setStaticRotationPoint(root, 0F, 12F, 0F);
             setStaticRotationPoint(upper, 0F, 8F, 0F);
-            setStaticRotationAngle(head, 22.5F, 0F, 0F);
+            setStaticRotationAngle(head, 22F, 2F, -10F);
             setStaticRotationPoint(head, 0F, 3F, 0F);
+            setStaticRotationAngle(jaw, 22.5F, 0F, 0F);
+            setStaticRotationPoint(core, 0F, 30F, -26F);
+            setStaticRotationAngle(core, -27.5F, 0F, 0F);
             setStaticRotationPoint(leftArm, -9F, 2F, -1F);
             setStaticRotationPoint(rightArm, 9F, 2F, -1F);
             setStaticRotationAngle(miniLeftArm, 20F, 0F, 0F);
@@ -179,18 +208,21 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
             setStaticRotationAngle(miniLeftArmUnder, -14.1614F, -37.8095F, -65.1283F);
             setStaticRotationAngle(lower, -5F, 0F, 0F);
         }
-        if (entity.isActive() && !entity.isDeadOrDying()) {
+        if (entity.isActive() && !entity.isDeadOrDying() && !entity.glowControllerAnimation.isStop()) {
             //Idle
             float speed = 0.1F;
             float degree = 0.8F;
             this.bob(root, speed, degree, false, frame, 1);
             this.bob(head, speed, speed, false, frame, 1);
             this.walk(head, speed, degree * 0.1F, true, 0, 0, frame, 1);
+            this.walk(jaw, speed, degree * 0.11F, true, 0, 0, frame, 1);
             this.walk(rightFist, speed, degree * 0.05F, true, 0, 0, frame, 1);
             this.walk(leftFist, speed, degree * 0.05F, true, 0, 0, frame, 1);
             this.bob(core, speed - 0.02F, degree * 0.1F, false, frame, 1);
             this.bob(rightArm, speed, degree + 0.2F, false, frame, 1);
             this.bob(leftArm, speed, degree + 0.2F, false, frame, 1);
+            this.chainSwing(spine, speed + 0.1F, degree, 3, limbSwing, limbSwingAmount);
+            this.chainSwing(spine, speed, degree * 0.25F, 1.5, frame, 1);
             this.core.xRot += Mth.sin(frame * 0.01F) * 180F * Mth.PI / 180F;
             this.core.yRot += Mth.sin(frame * 0.01F) * 180F * Mth.PI / 180F;
             this.core.zRot += Mth.sin(frame * 0.015F) * 360F * Mth.PI / 180F;
@@ -217,11 +249,5 @@ public class ModelTheImmortal extends EMHierarchicalModel<EntityTheImmortal> {
             //this.head.xRot += (Mth.cos(limbSwing * cycle) - 2.0F) * limbSwingAmount * 0.1F * dampingFactor - 0.1F * (-idle) * -0.1F;
             //this.upper.y += Mth.sin(rebound) * limbSwingAmount;
         }
-        //Animation
-        this.animate(entity.dieAnimation, AnimationTheImmortal.DIE, ageInTicks);
-        this.animate(entity.spawnAnimation, AnimationTheImmortal.SPAWN, ageInTicks);
-        this.animate(entity.switchStage2Animation, AnimationTheImmortal.STAGE2, ageInTicks);
-        this.animate(entity.switchStage3Animation, AnimationTheImmortal.STAGE3, ageInTicks);
-        this.animate(entity.teleportAnimation, AnimationTheImmortal.TELEPORT, ageInTicks);
     }
 }

@@ -34,7 +34,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "eeeabsmobs:immortal_debris",
+          "name": "minecraft:gold_ingot",
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -69,8 +69,8 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 5,
           "name": "minecraft:cobweb",
+          "weight": 5,
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -87,8 +87,8 @@
         },
         {
           "type": "minecraft:item",
+          "name": "minecraft:bone",
           "weight": 10,
-          "name": "eeeabsmobs:immortal_bone",
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -103,8 +103,8 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 5,
           "name": "minecraft:rotten_flesh",
+          "weight": 5,
           "functions": [
             {
               "function": "minecraft:set_count",

@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.client.model.layer;
+package com.eeeab.eeeabsmobs.client.model.util;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -19,6 +19,7 @@ public class EMModelLayer {
     public static final ModelLayerLocation IMMORTAL_GOLEM = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_golem"), "main");
     public static final ModelLayerLocation IMMORTAL_SKELETON = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_skeleton"), "main");
     public static final ModelLayerLocation IMMORTAL_SHAMAN = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_shaman"), "main");
+    public static final ModelLayerLocation IMMORTAL_EXECUTIONER = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_executioner"), "main");
     public static final ModelLayerLocation IMMORTAL = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_boss"), "main");
 
     //非生物实体
@@ -29,6 +30,7 @@ public class EMModelLayer {
     //盔甲
     public static final ModelLayerLocation GHOST_WARRIOR_ARMOR = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "ghost_warrior_armor"), "main");
     public static final ModelLayerLocation GHOST_WARRIOR_ARMOR_LEGS = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "ghost_warrior_armor_legs"), "main");
+    public static final ModelLayerLocation SOUL_SUMMONING_NECKLACE = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "soul_summoning_necklace"), "main");
 
     //物品
     public static final ModelLayerLocation THE_NETHERWORLD_KATANA = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "netherworld_katana"), "main");

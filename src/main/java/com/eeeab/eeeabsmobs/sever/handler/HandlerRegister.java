@@ -1,18 +1,16 @@
 package com.eeeab.eeeabsmobs.sever.handler;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.client.model.EMItemModels;
+import com.eeeab.eeeabsmobs.client.model.util.EMItemModels;
 import com.eeeab.eeeabsmobs.client.model.armor.ModelGhostWarriorArmor;
+import com.eeeab.eeeabsmobs.client.particle.*;
+import com.eeeab.eeeabsmobs.sever.integration.curios.model.ModelSoulSummoningNecklace;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelBloodBall;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelGrenade;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelGuardianBlade;
 import com.eeeab.eeeabsmobs.client.model.entity.*;
 import com.eeeab.eeeabsmobs.client.model.item.ModelTheNetherworldKatana;
-import com.eeeab.eeeabsmobs.client.model.layer.EMModelLayer;
-import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
-import com.eeeab.eeeabsmobs.client.particle.ParticleGuardianSpark;
-import com.eeeab.eeeabsmobs.client.particle.ParticlePoison;
-import com.eeeab.eeeabsmobs.client.particle.ParticleVerticalLine;
+import com.eeeab.eeeabsmobs.client.model.util.EMModelLayer;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
@@ -55,10 +53,12 @@ public class HandlerRegister {
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_GOLEM, ModelImmortalGolem::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_SKELETON, ModelAbsImmortalSkeleton::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_SHAMAN, ModelImmortalShaman::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.IMMORTAL_EXECUTIONER, ModelImmortalExecutioner::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.IMMORTAL, ModelTheImmortal::createBodyLayer);
 
         event.registerLayerDefinition(EMModelLayer.GHOST_WARRIOR_ARMOR, () -> ModelGhostWarriorArmor.createBodyLayer(new CubeDeformation(0.5F)));
         event.registerLayerDefinition(EMModelLayer.GHOST_WARRIOR_ARMOR_LEGS, () -> ModelGhostWarriorArmor.createBodyLayer(new CubeDeformation(0.2F)));
+        event.registerLayerDefinition(EMModelLayer.SOUL_SUMMONING_NECKLACE, ModelSoulSummoningNecklace::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.THE_NETHERWORLD_KATANA, ModelTheNetherworldKatana::createBodyLayer);
     }
 
@@ -68,7 +68,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.IMMORTAL_KNIGHT.get(), RenderAbsImmortalSkeleton::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_SHAMAN.get(), RenderImmortalShaman::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_GOLEM.get(), RenderImmortalGolem::new);
-        event.registerEntityRenderer(EntityInit.IMMORTAL_EXECUTIONER.get(), (context) -> new RenderUnknown<>(context, 1.4F, 0.6F));
+        event.registerEntityRenderer(EntityInit.IMMORTAL_EXECUTIONER.get(), RenderImmortalExecutioner::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_BOSS.get(), RenderTheImmortal::new);
         event.registerEntityRenderer(EntityInit.CORPSE.get(), RenderCorpse::new);
         event.registerEntityRenderer(EntityInit.CORPSE_VILLAGER.get(), RenderCorpseVillager::new);
@@ -96,6 +96,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.GRENADE.get(), RenderGrenade::new);
         event.registerEntityRenderer(EntityInit.ELECTROMAGNETIC.get(), EmptyRender::new);
         event.registerEntityRenderer(EntityInit.ALIEN_PORTAL.get(), RenderAlienPortal::new);
+        event.registerEntityRenderer(EntityInit.MAGIC_CIRCLE.get(), RenderImmortalMagicCircle::new);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -105,12 +106,16 @@ public class HandlerRegister {
         event.register(ParticleInit.ADV_ORB.get(), AdvancedParticleBase.Factory::new);
         event.register(ParticleInit.CRIMSON.get(), AdvancedParticleBase.Factory::new);
         event.register(ParticleInit.CRIMSON_EYE.get(), AdvancedParticleBase.Factory::new);
+        event.register(ParticleInit.STRIP_SOUL_FIRE.get(), AdvancedParticleBase.Factory::new);
+        event.register(ParticleInit.GLOW.get(),AdvancedParticleBase.Factory::new);
         event.register(ParticleInit.FLAT_RIBBON.get(), ParticleRibbon.Factory::new);
         event.register(ParticleInit.DUST.get(), ParticleDust.DustFactory::new);
         event.register(ParticleInit.ORB.get(), ParticleOrb.OrbFactory::new);
         event.register(ParticleInit.GUARDIAN_SPARK.get(), ParticleGuardianSpark.GuardianSparkFactory::new);
         event.register(ParticleInit.POISON.get(), ParticlePoison.PoisonFactory::new);
         event.register(ParticleInit.RING.get(), ParticleRing.RingFactory::new);
+        event.register(ParticleInit.PUNCTURED_AIR_FLOW.get(), ParticlePuncturedAirFlow.PuncturedAirFlowFactory::new);
+        event.register(ParticleInit.CRIT_RING.get(), ParticleCritRing.CritRingFactory::new);
         event.register(ParticleInit.VERTICAL_LINE.get(), ParticleVerticalLine.VerticalLineFactory::new);
     }
 

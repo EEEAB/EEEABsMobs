@@ -48,7 +48,8 @@ public class AnimationMessage {
                         if (message.animationsIndex == -1) {
                             animationEntity.setAnimation(animationEntity.getNoAnimation());
                         } else {
-                            animationEntity.getAnimation().stop();
+                            //判断当前动画是否是可堆叠的 是可堆叠则由客户端单独计算结束时间并停止动画
+                            if (!animationEntity.getAnimation().isSuperposition()) animationEntity.getAnimation().stop();
                             animationEntity.setAnimation(animationEntity.getAnimations()[message.animationsIndex]);
                         }
                         animationEntity.setAnimationTick(0);

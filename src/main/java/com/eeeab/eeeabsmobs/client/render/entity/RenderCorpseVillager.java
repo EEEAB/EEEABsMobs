@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.client.render.entity;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelCorpse;
-import com.eeeab.eeeabsmobs.client.model.layer.EMModelLayer;
+import com.eeeab.eeeabsmobs.client.model.util.EMModelLayer;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseVillager;

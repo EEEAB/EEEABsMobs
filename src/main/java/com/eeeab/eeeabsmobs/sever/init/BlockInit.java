@@ -82,6 +82,10 @@ public class BlockInit {
 
     public static final RegistryObject<Block> TOMBSTONE = registryBlock("tombstone", BlockTombstone::new, true, (CreativeModeTab) null);
 
+    public static final RegistryObject<Block> EROSION_ROCK_BRICKS = registryBlock("erosion_rock_bricks", () -> new Block(BlockBehaviour.Properties
+            .copy(Blocks.DEEPSLATE_BRICKS)
+            .strength(10.0F, 1200.0F)), false, (CreativeModeTab) null);
+
 
     private static <T extends Block> RegistryObject<T> registryBlock(String name, Supplier<T> block, boolean isEntity, CreativeModeTab tab) {
         RegistryObject<T> register = BLOCKS.register(name, block);

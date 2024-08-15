@@ -171,45 +171,33 @@ public class AdvancedParticleBase extends TextureSheetParticle {
         float f1 = (float) (Mth.lerp(partialTicks, this.yo, this.y) - Vector3d.y());
         float f2 = (float) (Mth.lerp(partialTicks, this.zo, this.z) - Vector3d.z());
 
-
-        Quaternion quaternion = new Quaternion(0, 0, 0, 1);
-        if (rotation instanceof ParticleRotation.FaceCamera) {
-            ParticleRotation.FaceCamera faceCameraRot = (ParticleRotation.FaceCamera) rotation;
+        Quaternion quaternion = new Quaternion(0,0,0,1);
+        if (rotation instanceof ParticleRotation.FaceCamera faceCameraRot) {
             if (faceCameraRot.faceCameraAngle == 0.0F && faceCameraRot.prevFaceCameraAngle == 0.0F) {
                 quaternion = renderInfo.rotation();
             } else {
                 quaternion = new Quaternion(renderInfo.rotation());
-                //quaternion.mul(Mth.lerp(partialTicks, faceCameraRot.prevFaceCameraAngle, faceCameraRot.faceCameraAngle));
                 float f3 = Mth.lerp(partialTicks, faceCameraRot.prevFaceCameraAngle, faceCameraRot.faceCameraAngle);
                 quaternion.mul(Vector3f.ZP.rotation(f3));
             }
-        } else if (rotation instanceof ParticleRotation.EulerAngles) {
-            ParticleRotation.EulerAngles eulerRot = (ParticleRotation.EulerAngles) rotation;
+        } else if (rotation instanceof ParticleRotation.EulerAngles eulerRot) {
             float rotX = eulerRot.prevPitch + (eulerRot.pitch - eulerRot.prevPitch) * partialTicks;
             float rotY = eulerRot.prevYaw + (eulerRot.yaw - eulerRot.prevYaw) * partialTicks;
             float rotZ = eulerRot.prevRoll + (eulerRot.roll - eulerRot.prevRoll) * partialTicks;
-            //Quaternion quaternionf = new Quaternion(0,0,0,1);
             Quaternion quatX = new Quaternion(rotX, 0, 0, false);
             Quaternion quatY = new Quaternion(0, rotY, 0, false);
             Quaternion quatZ = new Quaternion(0, 0, rotZ, false);
-            //Quaternionf quatX = new Quaternionf(quaternionf.rotateZYX(rotX, 0, 0));
-            //Quaternionf quatY = new Quaternionf(quaternionf.rotateZYX(0, rotY, 0));
-            //Quaternionf quatZ = new Quaternionf(quaternionf.rotateZYX(0, 0, rotZ));
             quaternion.mul(quatZ);
             quaternion.mul(quatY);
             quaternion.mul(quatX);
-        } else if (rotation instanceof ParticleRotation.OrientVector) {
-            ParticleRotation.OrientVector orientRot = (ParticleRotation.OrientVector) rotation;
+        } else if (rotation instanceof ParticleRotation.OrientVector orientRot) {
             double x = orientRot.prevOrientation.x + (orientRot.orientation.x - orientRot.prevOrientation.x) * partialTicks;
             double y = orientRot.prevOrientation.y + (orientRot.orientation.y - orientRot.prevOrientation.y) * partialTicks;
             double z = orientRot.prevOrientation.z + (orientRot.orientation.z - orientRot.prevOrientation.z) * partialTicks;
             float pitch = (float) Math.asin(-y);
             float yaw = (float) (Mth.atan2(x, z));
-            //Quaternionf quaternionf = new Quaternionf();
             Quaternion quatX = new Quaternion(pitch, 0, 0, false);
             Quaternion quatY = new Quaternion(0, yaw, 0, false);
-            //Quaternionf quatX = new Quaternionf(quaternionf.rotateZYX(pitch, 0, 0));
-            //Quaternionf quatY = new Quaternionf(quaternionf.rotateZYX(0, yaw, 0));
             quaternion.mul(quatY);
             quaternion.mul(quatX);
         }
@@ -220,7 +208,6 @@ public class AdvancedParticleBase extends TextureSheetParticle {
         for (int i = 0; i < 4; ++i) {
             Vector3f vector3f = avector3f[i];
             vector3f.transform(quaternion);
-            //vector3f.rotate(quaternion);
             vector3f.mul(f4);
             vector3f.add(f, f1, f2);
         }

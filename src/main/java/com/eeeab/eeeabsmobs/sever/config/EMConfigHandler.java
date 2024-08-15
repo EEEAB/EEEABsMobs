@@ -44,7 +44,9 @@ public final class EMConfigHandler {
             }
             {
                 builder.push("Howitzer");
-                itemHowitzerCoolingTime = BUILDER.comment("Set item cool down time after player on use (seconds)").defineInRange("Set item cool down time", 5, 1, Integer.MAX_VALUE);
+                itemHowitzerCoolingTime = BUILDER.comment("Set item cool down time after player on use (seconds)").defineInRange("Set item cool down time", 2D, 0.5D, 60D);
+                itemHowitzerGrenadeDamage = BUILDER.comment("Set Grenade maximum explosion damage(damage to the center of the explosion)").defineInRange("Set damage cap", 10D, 1D, 128D);
+                itemHowitzerGrenadeExplosionRadius = BUILDER.comment("Set Grenade explosion radius(the bigger the blast radius, the higher the damage)").defineInRange("Set explosion radius", 2.5D, 1D, 10D);
                 builder.pop();
             }
             {
@@ -54,8 +56,7 @@ public final class EMConfigHandler {
             }
             {
                 builder.push("Immortal Staff");
-                itemImmortalStaffCoolingTime = BUILDER.comment("Set the cool down time after using the weapon (seconds)").defineInRange("Set item cool down time", 1, 0, 60);
-                itemImmortalStaffStorageTime = BUILDER.comment("Set the weapon recharge time (seconds)").defineInRange("Set item recharge time", 1, 0, 60);
+                itemImmortalStaffCoolingTime = BUILDER.comment("Set the cool down time after using the weapon (seconds)").defineInRange("Set item cool down time", 1.5, 0.5, 60);
                 builder.pop();
             }
             {
@@ -68,11 +69,12 @@ public final class EMConfigHandler {
         }
 
         public final ForgeConfigSpec.BooleanValue enableGhostWarriorArmorItemDurability;
-        public final ForgeConfigSpec.IntValue itemImmortalStaffCoolingTime;
-        public final ForgeConfigSpec.IntValue itemImmortalStaffStorageTime;
+        public final ForgeConfigSpec.DoubleValue itemImmortalStaffCoolingTime;
         public final ToolConfig GUARDIAN_AXE_TOOL;
         public final ToolConfig NETHERWORLD_KATANA_TOOL;
-        public final ForgeConfigSpec.IntValue itemHowitzerCoolingTime;
+        public final ForgeConfigSpec.DoubleValue itemHowitzerCoolingTime;
+        public final ForgeConfigSpec.DoubleValue itemHowitzerGrenadeDamage;
+        public final ForgeConfigSpec.DoubleValue itemHowitzerGrenadeExplosionRadius;
         public final ForgeConfigSpec.DoubleValue SSNCumulativeMaximumDamage;
         public final ForgeConfigSpec.IntValue SSNCoolingTime;
     }
@@ -98,6 +100,7 @@ public final class EMConfigHandler {
             IMMORTAL_KNIGHT = new ImmortalKnight(builder);
             IMMORTAL_SHAMAN = new ImmortalShaman(builder);
             IMMORTAL_GOLEM = new ImmortalGolem(builder);
+            IMMORTAL_EXECUTIONER = new ImmortalExecutioner(builder);
             THE_IMMORTAL = new Immortal(builder);
             builder.pop();
         }
@@ -106,6 +109,7 @@ public final class EMConfigHandler {
         public final ImmortalKnight IMMORTAL_KNIGHT;
         public final ImmortalShaman IMMORTAL_SHAMAN;
         public final ImmortalGolem IMMORTAL_GOLEM;
+        public final ImmortalExecutioner IMMORTAL_EXECUTIONER;
         public final Immortal THE_IMMORTAL;
     }
 
@@ -153,6 +157,19 @@ public final class EMConfigHandler {
         }
 
         public final AttributeConfig combatConfig;
+    }
+
+    //不朽斩魂者
+    public static class ImmortalExecutioner {
+        public ImmortalExecutioner(final ForgeConfigSpec.Builder builder) {
+            builder.push("Immortal Executioner");
+            combatConfig = new AttributeConfig();
+            maximumDamageCap = new DamageCapConfig(22);
+            builder.pop();
+        }
+
+        public final AttributeConfig combatConfig;
+        public final DamageCapConfig maximumDamageCap;
     }
 
     //不朽
@@ -309,6 +326,7 @@ public final class EMConfigHandler {
             this.enableRenderFallingBlock = BUILDER.comment("If 'False' disable falling block rendering").define("Enable falling block rendering", true);
             this.enablePlayBossMusic = BUILDER.comment("If 'False' disable play boss music").define("Enable play boss music", true);
             this.enableFrenzyDestroyBlock = BUILDER.comment("If 'False' disable frenzy potion destroy block").define("Enable frenzy potion destroy block", true);
+            this.enableAnimationLegalityLogPrint = BUILDER.comment("If 'True' enable print illegal animation logs(For developers only)").define("Enable print illegal logs", false);
             builder.pop();
         }
 
@@ -324,6 +342,8 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.BooleanValue enablePlayBossMusic;
         //启用狂暴药水冲刺时破坏方块效果
         public final ForgeConfigSpec.BooleanValue enableFrenzyDestroyBlock;
+        //启用记录错误动作日志
+        public final ForgeConfigSpec.BooleanValue enableAnimationLegalityLogPrint;
     }
 
 

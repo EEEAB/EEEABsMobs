@@ -1,10 +1,10 @@
 package com.eeeab.animate.server.handler;
 
-import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.animate.server.animation.EMAnimatedEntity;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.event.AnimationEvent;
 import com.eeeab.animate.server.message.AnimationMessage;
-import com.eeeab.eeeabsmobs.EEEABMobs;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.PacketDistributor;
@@ -43,10 +43,8 @@ public enum EMAnimationHandler {
                     MinecraftForge.EVENT_BUS.post(new AnimationEvent.Tick<>(entity, animation, entity.getAnimationTick()));
                 }
                 if (entity.getAnimationTick() == animation.getDuration()) {
-                    if (!animation.isLooping()) {
-                        animation.stop();
-                        entity.setAnimation(entity.getNoAnimation());
-                    }
+                    animation.stop();
+                    entity.setAnimation(entity.getNoAnimation());
                     entity.setAnimationTick(0);
                 }
             }

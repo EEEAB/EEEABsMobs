@@ -21,7 +21,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderShamanBomb extends EntityRenderer<EntityShamanBomb> {
-    private final float SCALE = 2.0F;
+    private static final float SCALE = 2.0F;
     private static final ResourceLocation N_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/projectile/shaman_bomb.png");
     private static final ResourceLocation D_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/projectile/shaman_bomb_dangerous.png");
     private final RandomSource random = RandomSource.create();
@@ -44,9 +44,10 @@ public class RenderShamanBomb extends EntityRenderer<EntityShamanBomb> {
     @Override
     public void render(EntityShamanBomb entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
         matrixStack.pushPose();
-        int timer = entity.scaleControlled.getTimer();
-        float scale = timer * 0.1F;
+        float fraction = entity.scaleControlled.getAnimationFraction(partialTicks);
+        float scale = SCALE * fraction;
         matrixStack.scale(scale, scale, scale);
+        matrixStack.translate(0F, 0.5F - 0.5F * fraction, 0F);
         matrixStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
         matrixStack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
         drawCircle(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);

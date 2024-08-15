@@ -6,6 +6,7 @@ import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseToPlayer;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.eeeab.eeeabsmobs.sever.integration.curios.ICuriosApi;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -45,47 +46,68 @@ public class PlayerCapability {
 
         @Override
         public void tick(Player player) {
-            if (SSNInvulnerableTime > 0) {
-                SSNInvulnerableTime--;
+            if (this.SSNInvulnerableTime > 0) {
+                this.SSNInvulnerableTime--;
             }
         }
 
         @Override
         public void hurt(Player player, DamageSource source, float damage) {
-            if (/*只计算由实体造成伤害*/source.getEntity() != null && SSNInvulnerableTime <= 0) {
+            Entity entity = source.getEntity();
+            if (entity != null && SSNInvulnerableTime <= 0) {
                 this.SSNInvulnerableTime = 10;
-                for (ItemStack stack : player.getInventory().items) {
-                    Item item = stack.getItem();
-                    if (stack.is(ItemInit.SOUL_SUMMONING_NECKLACE.get())) {
-                        if (!player.getCooldowns().isOnCooldown(item)) {
-                            this.SSNCumulativeDamage += damage;
-                            if (this.SSNCumulativeDamage >= EMConfigHandler.COMMON.ITEM.SSNCumulativeMaximumDamage.get().floatValue()) {
-                                this.doSpawnCorpse(player, source.getEntity());
-                                player.getCooldowns().addCooldown(item, EMConfigHandler.COMMON.ITEM.SSNCoolingTime.get() * 20);
-                                this.SSNCumulativeDamage = 0;
-                            }
-                        }
-                        return;//减少不必要的遍历
+                Item item = ItemInit.SOUL_SUMMONING_NECKLACE.get();
+                if (ICuriosApi.isLoaded()) {
+                    if (ICuriosApi.INSTANCE.isPresentInventory(player, item)) {
+                        this.doSSNCapability(player, entity, item, damage);
                     }
+                } else if (this.ifPresentItem(player, item.getDefaultInstance())) {
+                    this.doSSNCapability(player, entity, item, damage);
+                }
+
+            }
+        }
+
+        /**
+         * 唤魂项链能力
+         *
+         * @param player 玩家
+         * @param target 伤害源实体
+         * @param item   唤魂项链
+         * @param damage 造成的伤害值
+         */
+        private void doSSNCapability(Player player, Entity target, Item item, float damage) {
+            if (!player.getCooldowns().isOnCooldown(item)) {
+                this.SSNCumulativeDamage += damage;
+                if (this.SSNCumulativeDamage >= EMConfigHandler.COMMON.ITEM.SSNCumulativeMaximumDamage.get().floatValue()) {
+                    player.getCooldowns().addCooldown(item, EMConfigHandler.COMMON.ITEM.SSNCoolingTime.get() * 20);
+                    if (!player.level.isClientSide) {
+                        Vec3 vec3 = player.position();
+                        EntityCorpseToPlayer entity = EntityInit.CORPSE_TO_PLAYER.get().create(player.level);
+                        if (entity != null) {
+                            entity.setInitSpawn();
+                            entity.finalizeSpawn((ServerLevel) player.level, player.level.getCurrentDifficultyAt(new BlockPos(vec3.x, vec3.y, vec3.z)), MobSpawnType.MOB_SUMMONED, null, null);
+                            entity.moveTo(vec3);
+                            entity.setOwner(player);
+                            if (player != target && target instanceof LivingEntity livingEntity)
+                                entity.setTarget(livingEntity);
+                            player.level.addFreshEntity(entity);
+                        }
+                    }
+                    this.SSNCumulativeDamage = 0;
                 }
             }
         }
 
-        //唤魂项链召唤死尸
-        private void doSpawnCorpse(Player player, Entity target) {
-            if (!player.level.isClientSide) {
-                Vec3 vec3 = player.position();
-                EntityCorpseToPlayer entity = EntityInit.CORPSE_TO_PLAYER.get().create(player.level);
-                if (entity != null) {
-                    entity.setInitSpawn();
-                    entity.finalizeSpawn((ServerLevel) player.level, player.level.getCurrentDifficultyAt(new BlockPos(vec3.x, vec3.y, vec3.z)), MobSpawnType.MOB_SUMMONED, null, null);
-                    entity.moveTo(vec3);
-                    entity.setOwner(player);
-                    if (player != target && target instanceof LivingEntity livingEntity)
-                        entity.setTarget(livingEntity);
-                    player.level.addFreshEntity(entity);
-                }
-            }
+        /**
+         * 检查玩家背包内是否包含某个物品
+         *
+         * @param player    玩家
+         * @param itemStack 物品栈 包含物品标签和物品本身
+         * @return 是否存在
+         */
+        private boolean ifPresentItem(Player player, ItemStack itemStack) {
+            return player.getInventory().contains(itemStack);
         }
 
         @Override

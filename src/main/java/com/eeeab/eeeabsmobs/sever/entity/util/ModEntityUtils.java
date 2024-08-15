@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.util;
 
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityFallingBlock;
+import com.mojang.math.Quaternion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -279,6 +280,27 @@ public class ModEntityUtils {
         }
     }
 
+
+    /**
+     * 生成模拟裂纹方块(渲染移动)
+     *
+     * @param level         服务端
+     * @param pos           区块坐标
+     * @param quaternionf   四元数
+     * @param fallingFactor y轴下降系数
+     */
+    public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos, Quaternion quaternionf, int duration, float fallingFactor) {
+        BlockPos abovePos = new BlockPos(pos).above();//获取上面方块的坐标,以用来判断是否需要生成下落的方块
+        BlockState block = level.getBlockState(pos);//获取下落方块,以用于渲染方块材质
+        BlockState blockAbove = level.getBlockState(abovePos);//获取上面方块的状态,,以用来判断是否需要生成下落的方块
+
+        if (!block.isAir() && block.isRedstoneConductor(level, pos) && !block.hasBlockEntity() && !blockAbove.getMaterial().blocksMotion()) {
+            EntityFallingBlock fallingBlock = new EntityFallingBlock(level, block, quaternionf, duration, fallingFactor);
+            fallingBlock.setPos(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
+            level.addFreshEntity(fallingBlock);
+        }
+    }
+
     /**
      * 添加药水效果(可堆叠等级 上限5级)
      */
@@ -295,5 +317,45 @@ public class ModEntityUtils {
                 target.addEffect(new MobEffectInstance(mobEffect, duration, level, ambient, visible, showIcon));
             }
         }
+    }
+
+    /**
+     * 破坏当前实体坐标为基准周围的方块
+     *
+     * @param level            服务端
+     * @param entity           实体
+     * @param maxBlockHardness 最高破坏硬度
+     * @param destroyRangeX    破坏范围x轴
+     * @param destroyRangeY    破坏范围y轴
+     * @param destroyRangeZ    破坏范围z轴
+     * @param offset           前后偏移量
+     * @param dropBlock        是否掉落方块
+     * @param playSound        是否播放破坏方块的音效
+     * @return 是否破坏成功
+     */
+    public static boolean advancedBreakBlocks(Level level, LivingEntity entity, float maxBlockHardness, int destroyRangeX, int destroyRangeY, int destroyRangeZ, int offsetY, float offset, boolean dropBlock, boolean playSound) {
+        double radians = Math.toRadians(entity.getYRot() + 90);
+        int j1 = Mth.floor(entity.getY());
+        int i2 = Mth.floor(entity.getX() + Math.cos(radians) * offset);
+        int j2 = Mth.floor(entity.getZ() + Math.sin(radians) * offset);
+        boolean flag = false;
+        for (int j = -destroyRangeX; j <= destroyRangeX; ++j) {
+            for (int k2 = offsetY; k2 <= destroyRangeY; ++k2) {
+                for (int k = -destroyRangeZ; k <= destroyRangeZ; ++k) {
+                    int l2 = i2 + j;
+                    int l = j1 + k2;
+                    int i1 = j2 + k;
+                    BlockPos blockpos = new BlockPos(l2, l, i1);
+                    BlockState blockstate = level.getBlockState(blockpos);
+                    if (blockstate.canEntityDestroy(level, blockpos, entity) && canDestroyBlock(level, blockpos, entity, maxBlockHardness)) {
+                        flag = level.destroyBlock(blockpos, dropBlock, entity) || flag;
+                    }
+                }
+            }
+        }
+        if (flag && playSound) {
+            level.levelEvent(null, 1022, entity.blockPosition(), 0);
+        }
+        return flag;
     }
 }

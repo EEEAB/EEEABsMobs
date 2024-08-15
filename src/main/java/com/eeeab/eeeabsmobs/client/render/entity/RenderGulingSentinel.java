@@ -2,19 +2,15 @@ package com.eeeab.eeeabsmobs.client.render.entity;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelGulingSentinel;
-import com.eeeab.eeeabsmobs.client.model.layer.EMModelLayer;
+import com.eeeab.eeeabsmobs.client.model.util.EMModelLayer;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerCrackiness;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
 import com.eeeab.eeeabsmobs.sever.entity.CrackinessEntity;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityGulingSentinel;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityGulingSentinelHeavy;
 import com.google.common.collect.ImmutableMap;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.monster.Shulker;
 
 import java.util.Map;
 

@@ -30,7 +30,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 //客户端事件处理器
 @OnlyIn(Dist.CLIENT)
 public class HandlerClientEvent {
-    private static final ResourceLocation FRENZY_OUTLINE_LOCATION = new ResourceLocation(EEEABMobs.MOD_ID,"textures/gui/frenzy_outline.png");
+    private static final ResourceLocation FRENZY_OUTLINE_LOCATION = new ResourceLocation(EEEABMobs.MOD_ID,"textures/screens/frenzy_outline.png");
 
     //改变玩家相机角度
     @SubscribeEvent

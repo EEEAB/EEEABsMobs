@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client;
 
-import com.eeeab.eeeabsmobs.client.model.EMItemModels;
+import com.eeeab.eeeabsmobs.client.model.util.EMItemModels;
 import com.eeeab.eeeabsmobs.client.render.util.EMArmorStackRenderProperties;
 import com.eeeab.eeeabsmobs.client.render.util.EMItemStackRenderProperties;
 import com.eeeab.eeeabsmobs.client.sound.ability.GuardianLaserSoundInstance;

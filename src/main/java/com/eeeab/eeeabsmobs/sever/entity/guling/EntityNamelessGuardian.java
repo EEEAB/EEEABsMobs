@@ -95,7 +95,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public final Animation robustAttackAnimation = Animation.create(70);
     public final Animation smashAttackAnimation = Animation.create(40);
     public final Animation pounceAttackAnimation1 = Animation.create(16);
-    public final Animation pounceAttackAnimation2 = Animation.createLoop(38);
+    public final Animation pounceAttackAnimation2 = Animation.create(38);
     public final Animation pounceAttackAnimation3 = Animation.create(18);
     public final Animation activateAnimation = Animation.create(56);
     public final Animation deactivateAnimation = Animation.create(40);
@@ -110,7 +110,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public final Animation shakeGroundAttackAnimation2 = Animation.create(56);
     public final Animation shakeGroundAttackAnimation3 = Animation.create(60);
     private final Animation[] animations = new Animation[]{
-            dieAnimation,
             dieAnimation,
             roarAnimation,
             attackAnimation1,
@@ -161,6 +160,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     //判断是否是首次进入强化状态
     private boolean fmFlag = true;
     private int attackTick;
+    private int destroyBlocksTick;
     //BGM高潮部分的时长
     public static final int MADNESS_TICK = 1300;
     public static final int NEVER_STOP = -1;
@@ -278,7 +278,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return sizeIn.height * 0.95F;
+        return sizeIn.height * 0.97F;
     }
 
     @Override
@@ -297,6 +297,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     @Override
     protected EMConfigHandler.AttributeConfig getAttributeConfig() {
         return EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.combatConfig;
+    }
+
+    @Override
+    protected EMConfigHandler.DamageCapConfig getDamageCap() {
+        return EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.maximumDamageCap;
     }
 
     @Override
@@ -384,6 +389,13 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         this.goalSelector.addGoal(1, new AnimationDeactivate<>(this, () -> deactivateAnimation));
         this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, () -> roarAnimation));
         this.goalSelector.addGoal(1, new AnimationAI<>(this) {
+            private int duration;
+
+            @Override
+            public void start() {
+                super.start();
+                duration = Difficulty.HARD.equals(entity.level.getDifficulty()) ? HARD_MODE_STATE_TICK : WEAK_STATE_TICK;
+            }
 
             @Override
             protected boolean test(Animation animation) {
@@ -394,12 +406,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             public void tick() {
                 setDeltaMovement(0, getDeltaMovement().y, 0);
                 if (entity.getAnimation() == entity.weakAnimation1) {
-                    if (entity.getAnimationTick() == entity.weakAnimation1.getDuration() - 1) {
+                    if (entity.getAnimationTick() >= entity.weakAnimation1.getDuration() - 1) {
                         entity.playAnimation(entity.weakAnimation2);
                     }
                 } else if (entity.getAnimation() == entity.weakAnimation2) {
-                    int duration = Difficulty.HARD.equals(entity.level.getDifficulty()) ? HARD_MODE_STATE_TICK : WEAK_STATE_TICK;
-                    if (entity.getAnimationTick() == duration) {
+                    if (entity.getAnimationTick() >= duration) {
                         entity.playAnimation(entity.weakAnimation3);
                     }
                 }
@@ -452,7 +463,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         if (!this.level.isClientSide) {
             if (this.getTarget() != null && !this.getTarget().isAlive()) this.setTarget(null);
 
-            if (this.getTarget() != null && this.isActive() && !this.isPowered() && this.noConflictingTasks() && (this.isChallengeMode() || (this.isFirstMadness() && this.getHealthPercentage() <= 60) || (!this.isFirstMadness() && this.getNextMadnessTick() <= 0))) {
+            if (this.getTarget() != null && this.shouldSetPowered() && this.noConflictingTasks()) {
                 this.removeAllEffects();
                 this.setNoAi(false);
                 this.playAnimation(this.roarAnimation);
@@ -581,6 +592,10 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         }
     }
 
+    private boolean shouldSetPowered() {
+        return this.isActive() && !this.isPowered() && (this.isChallengeMode() || (this.isFirstMadness() && this.getHealthPercentage() <= 60) || (!this.isFirstMadness() && this.getNextMadnessTick() <= 0));
+    }
+
     private void strongKnockBlock() {
         List<Entity> entities = getNearByEntities(Entity.class, 8, 8, 8, 8);
         double mx = 0, my = 0;
@@ -698,6 +713,13 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                     this.noUseSkillFromLongTick++;
                 }
             }
+
+            if (!this.isNoAi() && this.destroyBlocksTick > 0) {
+                this.destroyBlocksTick--;
+                if (this.destroyBlocksTick == 0 && ModEntityUtils.canMobDestroy(this)) {
+                    ModEntityUtils.advancedBreakBlocks(this.level, this, 50F, 2, 4, 2, 0, 0, true, true);
+                }
+            }
         }
 
         this.coreControlled.incrementOrDecreaseTimer(this.isGlow());
@@ -744,14 +766,18 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             if (this.guardianInvulnerableTime > 0) {
                 return false;
             } else if (entity != null) {
+                if (this.shouldSetPowered()) {
+                    damage = 1F;
+                }
                 if (this.isPowered()) {
                     if (this.guardianInvulnerableTime <= 0) guardianInvulnerableTime = 20 /*不能小于等于10*/;
                     if (ModEntityUtils.isProjectileSource(source)) return false;
                 }
-                damage = Math.min(damage, EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.maximumDamageCap.damageCap.get().floatValue());
                 return super.hurt(source, damage);
             } else if (source == DamageSource.OUT_OF_WORLD || source == DamageSource.GENERIC) {
                 return super.hurt(source, damage);
+            } else if (this.destroyBlocksTick <= 0) {
+                this.destroyBlocksTick = 20;
             }
         }
         return false;
@@ -965,7 +991,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 }
 
                 boolean canLaser = this.random.nextFloat() < 0.6F && this.isPowered && checkModeOrPreventTimeouts(120) && (((checkAttackHeight ? this.guardian.targetDistance > 10.0D : this.guardian.targetDistance > 4.0D) && (entityRelativeAngle < 60.0 || entityRelativeAngle > 300) && this.guardian.targetDistance < EntityGuardianLaser.GUARDIAN_RADIUS && this.guardian.getLaserTick() <= 0) || this.guardian.isTimeOutToUseSkill());
-                boolean canShakeGround = (checkAttackHeight || target.isOnGround()) && !this.guardian.isTimeOutToUseSkill() && this.random.nextFloat() < 0.6F && (this.guardian.getHealthPercentage() <= 75 || !this.guardian.isFirstMadness()) && this.guardian.targetDistance < 6.0D && this.guardian.getShakeGroundTick() <= 0 && checkModeOrPreventTimeouts(180);
+                boolean canShakeGround = (checkAttackHeight || target.isOnGround()) && !this.guardian.isTimeOutToUseSkill() && this.random.nextFloat() < 0.6F && (this.guardian.getHealthPercentage() <= 75 || !this.guardian.isFirstMadness()) && this.guardian.targetDistance < 6.0D && this.guardian.getShakeGroundTick() <= 0 && !this.guardian.shouldSetPowered() && checkModeOrPreventTimeouts(180);
                 boolean canLeap = this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 12.0D && this.guardian.targetDistance < 24.0 && this.guardian.getLeapTick() <= 0 && checkModeOrPreventTimeouts(100);
                 boolean canPouch = checkAttackHeight && checkModeOrPreventTimeouts(80) && (this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 6.0D && this.guardian.targetDistance < 14.0 && this.guardian.getPounceTick() <= 0 || this.guardian.isTimeOutToUseSkill());
                 if (canShakeGround) {
@@ -1247,6 +1273,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     private int getCoolingTimerUtil(int maxCooling, int minCooling, float healthPercentage) {
+        if (this.isChallengeMode()) return minCooling;
         float maximumCoolingPercentage = 1 - healthPercentage;
         float ratio = 1 - (this.getHealthPercentage() / 100);
         if (ratio > maximumCoolingPercentage) {
