@@ -1274,6 +1274,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     private int getCoolingTimerUtil(int maxCooling, int minCooling, float healthPercentage) {
+        if (this.isChallengeMode()) return minCooling;
         float maximumCoolingPercentage = 1 - healthPercentage;
         float ratio = 1 - (this.getHealthPercentage() / 100);
         if (ratio > maximumCoolingPercentage) {
