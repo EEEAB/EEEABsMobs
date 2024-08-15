@@ -36,6 +36,7 @@ import java.util.UUID;
 public abstract class EEEABMobEntity extends PathfinderMob {
     private final EMBossInfoServer bossInfo = new EMBossInfoServer(this);
     private DamageSource killDataCause;//死亡的伤害源
+    public DamageSource lastDamageSource;//受到的伤害源
     public Player killDataAttackingPlayer;
     public float targetDistance = -1;//与实体距离
     public float targetAngle = -1;//目标与实体之间的角度
@@ -158,9 +159,28 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     }
 
     @Override
+    public void setHealth(float health) {
+        if (!this.level().isClientSide && health < this.getHealth()) {
+            health = this.getNewHealthByCap(health, this.getDamageCap());
+            this.lastDamageSource = null;
+        }
+        super.setHealth(health);
+    }
+
+    protected float getNewHealthByCap(float health, EMConfigHandler.DamageCapConfig config) {
+        if (config != null) {
+            float oldDamage = this.getHealth() - health;
+            float newDamage = Math.min(oldDamage, this.lastDamageSource == null || this.lastDamageSource.is(EMTagKey.GENERAL_UNRESISTANT_TO)
+                    ? oldDamage : config.damageCap.get().floatValue());
+            health = this.getHealth() - newDamage;
+        }
+        return health;
+    }
+
+    @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (this.getDamageCap() != null && !source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
-            amount = Math.min(amount, this.getDamageCap().damageCap.get().floatValue());
+        if (!this.level().isClientSide) {
+            this.lastDamageSource = source;
         }
         return super.hurt(source, amount);
     }

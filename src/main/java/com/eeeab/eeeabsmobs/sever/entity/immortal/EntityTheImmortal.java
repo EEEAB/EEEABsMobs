@@ -108,7 +108,6 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
     private int hurtCount;
     private int nextTeleportTick;
     private int immortalInvulnerableTime;
-    private DamageSource lastDamageSource;
     private final DamageAdaptation damageAdaptation;
     public final ControlledAnimation coreControllerAnimation = new ControlledAnimation(10);
     public final ControlledAnimation glowControllerAnimation = new ControlledAnimation(20);
@@ -438,11 +437,9 @@ public class EntityTheImmortal extends EntityAbsImmortal implements IBoss {
     public void setHealth(float health) {
         //判断是否扣血
         if (health < this.getHealth()) {
-            float oldDamage = this.getHealth() - health;
-            float damageCap = EMConfigHandler.COMMON.MOB.IMMORTAL.THE_IMMORTAL.maximumDamageCap.damageCap.get().floatValue();
-            float damage = Math.min(oldDamage, this.lastDamageSource == null || this.lastDamageSource.is(EMTagKey.GENERAL_UNRESISTANT_TO) ? oldDamage : damageCap);
-            damage = this.damageAdaptation.damageAfterAdaptingOnce(this.lastDamageSource, damage);
-            health = this.getHealth() - damage;
+            float nowHealth = this.getHealth();
+            float damage = nowHealth - this.getNewHealthByCap(health, EMConfigHandler.COMMON.MOB.IMMORTAL.THE_IMMORTAL.maximumDamageCap);
+            health = nowHealth - this.damageAdaptation.damageAfterAdaptingOnce(this.lastDamageSource, damage);
             if (this.switching || this.immortalInvulnerableTime > 0) {
                 this.immortalInvulnerableTime = 10;
                 return;
