@@ -59,7 +59,7 @@ public class ItemAnimationController extends Item {
         ItemStack itemStack = player.getItemInHand(usedHand);
         if (itemStack.hasTag()) {
             Entity entity = level.getEntity(itemStack.getTag().getInt(NBT_ENTITY_ID));
-            if (player instanceof ServerPlayer serverPlayer && entity instanceof LivingEntity livingEntity && entity instanceof EMAnimatedEntity) {
+            if (player instanceof ServerPlayer serverPlayer && entity instanceof LivingEntity livingEntity && entity instanceof EMAnimatedEntity && entity.isAlive()) {
                 NetworkHooks.openScreen(serverPlayer, new MenuProvider() {
                     @Override
                     public @NotNull Component getDisplayName() {
@@ -72,7 +72,7 @@ public class ItemAnimationController extends Item {
                     }
                 }, buf -> buf.writeInt(livingEntity.getId()));
             }
-            if (entity == null) {
+            if (entity == null || !entity.isAlive()) {
                 itemStack.getTag().remove(NBT_ENTITY_ID);
             } else {
                 player.getCooldowns().addCooldown(this, 20);
