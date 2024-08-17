@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.util.damage;
 
+import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.util.RandomSource;
@@ -11,7 +12,6 @@ import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +19,7 @@ import java.util.Map;
  * 伤害适应
  *
  * @author EEEAB
- * @version 1.2
+ * @version 1.3
  */
 public class DamageAdaptation {
     /**
@@ -44,6 +44,7 @@ public class DamageAdaptation {
     private final boolean adaptsSameTypeMobs;
     private static final RandomSource random = RandomSource.create();
     private final Map<String, DamageInfo> ADAPT_MAP = new HashMap<>();
+    private boolean hurting;
 
     public DamageAdaptation(int adaptDamageTypesCount, int resetCountdown, float singleAdaptFactor, float maxAdaptFactor, boolean adaptsSameTypeMobs) {
         this.adaptDamageTypesCount = adaptDamageTypesCount;
@@ -55,57 +56,61 @@ public class DamageAdaptation {
 
     public DamageAdaptation(EMConfigHandler.DamageSourceAdaptConfig config) {
         this.adaptDamageTypesCount = config.maxDamageSourceAdaptCount.get();
-        this.resetCountdown = config.resetCountdown.get() * 1000;
+        this.resetCountdown = config.resetCountdown.get() * 20;
         this.singleAdaptFactor = config.singleAdaptFactor.get().floatValue();
         this.maxAdaptFactor = config.maxAdaptFactor.get().floatValue();
         this.adaptsSameTypeMobs = config.adaptsSameTypeMobs;
     }
 
     public void tick(LivingEntity entity) {
-        if (entity.tickCount % (this.resetCountdown / 1000 * 20) == 0) {
-            this.updateCache();
+        if (!this.hurting && entity.tickCount % resetCountdown == 0) {
+            this.updateCache(entity);
         }
     }
 
-    public float damageAfterAdaptingOnce(@Nullable DamageSource source, float amount) {
-        String key = getKey(source, this.adaptsSameTypeMobs);
-        if (key == null) {
-            return amount;
-        }
-        DamageInfo info = ADAPT_MAP.getOrDefault(key, null);
-        long systemMs = System.currentTimeMillis();
-        if (info != null) {
-            // 如果当前时间超过最后受伤时间加上重置倒计时，则重置该伤害类型
-            if (systemMs - info.getTimestamp() > resetCountdown) {
-                ADAPT_MAP.remove(key);
-            } else {
-                float newAdaptFactor = Math.min(info.getAdaptFactor() + singleAdaptFactor, maxAdaptFactor);
-                float adaptedAmount = amount * (1 - newAdaptFactor);
-                //累计适应因子 更新时间戳
-                info.setAdaptFactor(newAdaptFactor);
-                info.setTimestamp(systemMs);
-                ADAPT_MAP.put(key, info);
-                return Math.max(adaptedAmount, 0);
+    public float damageAfterAdaptingOnce(LivingEntity entity, @Nullable DamageSource source, float amount) {
+        try {
+            this.hurting = true;
+            String key = getKey(source, this.adaptsSameTypeMobs);
+            if (key == null) {
+                return amount;
             }
-        }
-        if (ADAPT_MAP.size() > adaptDamageTypesCount) {
-            List<String> keys = ADAPT_MAP.keySet().stream().toList();
-            ADAPT_MAP.remove(keys.get(random.nextInt(keys.size())));
+            DamageInfo info = ADAPT_MAP.getOrDefault(key, null);
+            long tickStamp = entity.tickCount;
+            if (info != null) {
+                //判断适应伤害是否失效
+                if (tickStamp > info.getTimestamp() + resetCountdown) {
+                    ADAPT_MAP.remove(key);
+                } else {
+                    float newAdaptFactor = Math.min(info.getAdaptFactor() + singleAdaptFactor, maxAdaptFactor);
+                    float adaptedAmount = amount * (1F - newAdaptFactor);
+                    //累计适应因子 更新刻度戳
+                    info.setAdaptFactor(newAdaptFactor);
+                    info.setTimestamp(tickStamp);
+                    ADAPT_MAP.put(key, info);
+                    return Math.max(adaptedAmount, 0);
+                }
+            }
+            //当适应类型个数超出上限时 先尝试删除失效的适应伤害 再随机移除一种适应伤害
+            if (ADAPT_MAP.size() >= adaptDamageTypesCount) {
+                updateCache(entity);
+                if (ADAPT_MAP.size() >= adaptDamageTypesCount) {
+                    List<String> keys = ADAPT_MAP.keySet().stream().toList();
+                    ADAPT_MAP.remove(keys.get(random.nextInt(keys.size())));
+                }
+            }
+            ADAPT_MAP.put(key, new DamageInfo(tickStamp, singleAdaptFactor));
             return amount;
+        } catch (Exception e) {
+            EEEABMobs.LOGGER.error("An unexpected exception occurred when calculating damage:", e);
+            return amount;
+        } finally {
+            this.hurting = false;
         }
-        ADAPT_MAP.put(key, new DamageInfo(systemMs, singleAdaptFactor));
-        return amount;
     }
 
-    public void updateCache() {
-        Iterator<Map.Entry<String, DamageInfo>> iterator = ADAPT_MAP.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, DamageInfo> entry = iterator.next();
-            long systemMs = System.currentTimeMillis();
-            if (systemMs - entry.getValue().getTimestamp() > resetCountdown) {
-                iterator.remove();
-            }
-        }
+    public void updateCache(LivingEntity entity) {
+        ADAPT_MAP.entrySet().removeIf(entry -> entity.tickCount > entry.getValue().getTimestamp() + resetCountdown);
     }
 
     public void clearCache() {
