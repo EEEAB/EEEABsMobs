@@ -1,18 +1,29 @@
 package com.eeeab.animate.client.model;
 
-import net.minecraft.client.model.HierarchicalModel;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.animation.AnimationDefinition;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Vector3f;
+
+import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
-public abstract class EMHierarchicalModel<E extends Entity> extends HierarchicalModel<E> {
+public abstract class EMHierarchicalModel<E extends Entity> extends EntityModel<E> {
+    private static final Vector3f ANIMATION_VECTOR_CACHE = new Vector3f();
     private float movementScale = 1.0F;
 
-    @Override
     public abstract ModelPart root();
+
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+        this.root().render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    }
 
     @Override
     public abstract void setupAnim(E entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch);
@@ -75,21 +86,21 @@ public abstract class EMHierarchicalModel<E extends Entity> extends Hierarchical
     /**
      * 模型x摇摆动画
      */
-    public void walk(ModelPart box,float speed, float degree, boolean invert, float offset, float weight, float walk, float walkAmount) {
+    public void walk(ModelPart box, float speed, float degree, boolean invert, float offset, float weight, float walk, float walkAmount) {
         box.xRot += this.calculateRotation(speed, degree, invert, offset, weight, walk, walkAmount);
     }
 
     /**
      * 模型z摇摆动画
      */
-    public void flap(ModelPart box,float speed, float degree, boolean invert, float offset, float weight, float walk, float walkAmount) {
+    public void flap(ModelPart box, float speed, float degree, boolean invert, float offset, float weight, float walk, float walkAmount) {
         box.zRot += this.calculateRotation(speed, degree, invert, offset, weight, walk, walkAmount);
     }
 
     /**
      * 模型y摇摆动画
      */
-    public void swing(ModelPart box,float speed, float degree, boolean invert, float offset, float weight, float walk, float walkAmount) {
+    public void swing(ModelPart box, float speed, float degree, boolean invert, float offset, float weight, float walk, float walkAmount) {
         box.yRot += this.calculateRotation(speed, degree, invert, offset, weight, walk, walkAmount);
     }
 
@@ -107,7 +118,7 @@ public abstract class EMHierarchicalModel<E extends Entity> extends Hierarchical
      */
     public void chainSwing(ModelPart[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount) {
         float offset = this.calculateChainOffset(rootOffset, boxes);
-        for(int index = 0; index < boxes.length; ++index) {
+        for (int index = 0; index < boxes.length; ++index) {
             boxes[index].yRot += this.calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
         }
     }
@@ -117,7 +128,7 @@ public abstract class EMHierarchicalModel<E extends Entity> extends Hierarchical
      */
     public void chainWave(ModelPart[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount) {
         float offset = this.calculateChainOffset(rootOffset, boxes);
-        for(int index = 0; index < boxes.length; ++index) {
+        for (int index = 0; index < boxes.length; ++index) {
             boxes[index].xRot += this.calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
         }
 
@@ -128,7 +139,7 @@ public abstract class EMHierarchicalModel<E extends Entity> extends Hierarchical
      */
     public void chainFlap(ModelPart[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount) {
         float offset = this.calculateChainOffset(rootOffset, boxes);
-        for(int index = 0; index < boxes.length; ++index) {
+        for (int index = 0; index < boxes.length; ++index) {
             boxes[index].zRot += this.calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
         }
     }
@@ -137,14 +148,14 @@ public abstract class EMHierarchicalModel<E extends Entity> extends Hierarchical
      * 计算链偏移
      */
     private float calculateChainOffset(double rootOffset, ModelPart... boxes) {
-        return (float)(rootOffset * Math.PI / (double)(2 * boxes.length));
+        return (float) (rootOffset * Math.PI / (double) (2 * boxes.length));
     }
 
     /**
      * 计算链旋转
      */
     private float calculateChainRotation(float speed, float degree, float swing, float swingAmount, float offset, int boxIndex) {
-        return Mth.cos(swing * speed * this.movementScale + offset * (float)boxIndex) * swingAmount * degree * this.movementScale;
+        return Mth.cos(swing * speed * this.movementScale + offset * (float) boxIndex) * swingAmount * degree * this.movementScale;
     }
 
     protected static float toRadians(double degree) {
@@ -158,4 +169,26 @@ public abstract class EMHierarchicalModel<E extends Entity> extends Hierarchical
     public void setMovementScale(float movementScale) {
         this.movementScale = movementScale;
     }
+
+    /****************** 以下是基于 AnimationDefinition 播放动画方法 ****************** */
+
+    public Optional<ModelPart> getAnyDescendantWithName(String name) {
+        return name.equals("root") ? Optional.of(this.root()) : this.root().getAllParts().filter((part) -> part.hasChild(name)).findFirst().map((part) -> part.getChild(name));
+    }
+
+    protected void animate(AnimationState animationState, AnimationDefinition animationDefinition, float ageInTicks) {
+        this.animate(animationState, animationDefinition, ageInTicks, 1.0F);
+    }
+
+    protected void animate(AnimationState animationState, AnimationDefinition animationDefinition, float ageInTicks, float speed) {
+        animationState.updateTime(ageInTicks, speed);
+        animationState.ifStarted((state) -> EMKeyframeAnimations.animate(this, animationDefinition, state.getAccumulatedTime(), 1.0F, ANIMATION_VECTOR_CACHE));
+    }
+
+    protected void animateWalk(AnimationDefinition animationDefinition, float limbSwing, float limbSwingAmount, float maxAnimationSpeed, float animationScaleFactor) {
+        long i = (long) (limbSwing * 50.0F * maxAnimationSpeed);
+        float f = Math.min(limbSwingAmount * animationScaleFactor, 1.0F);
+        EMKeyframeAnimations.animate(this, animationDefinition, i, f, ANIMATION_VECTOR_CACHE);
+    }
+
 }
