@@ -178,7 +178,7 @@ public final class EMConfigHandler {
             builder.push("Immortal Boss");
             combatConfig = new AttributeConfig();
             maximumDamageCap = new DamageCapConfig(20);
-            adaptConfig = new DamageSourceAdaptConfig(builder, 100, 15, 0.08D, 0.8D, true);
+            adaptConfig = new DamageSourceAdaptConfig(builder, 100, 30, 0.1D, 0.8D, true);
             builder.pop();
         }
 
