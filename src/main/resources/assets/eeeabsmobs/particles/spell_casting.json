@@ -1,15 +1,15 @@
 {
   "textures": [
-    "eeeabsmobs:spell_casting_0",
-    "eeeabsmobs:spell_casting_1",
-    "eeeabsmobs:spell_casting_2",
-    "eeeabsmobs:spell_casting_3",
-    "eeeabsmobs:spell_casting_4",
-    "eeeabsmobs:spell_casting_5",
-    "eeeabsmobs:spell_casting_6",
-    "eeeabsmobs:spell_casting_7",
-    "eeeabsmobs:spell_casting_8",
-    "eeeabsmobs:spell_casting_9",
-    "eeeabsmobs:spell_casting_10"
+    "minecraft:soul_0",
+    "minecraft:soul_1",
+    "minecraft:soul_2",
+    "minecraft:soul_3",
+    "minecraft:soul_4",
+    "minecraft:soul_5",
+    "minecraft:soul_6",
+    "minecraft:soul_7",
+    "minecraft:soul_8",
+    "minecraft:soul_9",
+    "minecraft:soul_10"
   ]
 }
