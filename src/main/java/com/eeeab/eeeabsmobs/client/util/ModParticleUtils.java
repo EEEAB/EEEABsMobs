@@ -3,15 +3,20 @@ package com.eeeab.eeeabsmobs.client.util;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleData;
 import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.function.Function;
 
 /**
  * 粒子效果工具类
@@ -226,6 +231,55 @@ public class ModParticleUtils {
             double vz = speedModifier * Mth.sin((float) yaw);
             for (ParticleOptions particle : particles) {
                 world.addParticle(particle, x, y, z, vx, vy, vz);
+            }
+        }
+    }
+
+    /**
+     * 块粒子向中心两侧扩散效果
+     *
+     * @param x                  起始x坐标
+     * @param y                  起始y坐标
+     * @param z                  起始z坐标
+     * @param theta              旋转角度（弧度）
+     * @param count              生成粒子的数量
+     * @param blockOffsetOffsets 块的偏移量数组，用于计算粒子的产生位置
+     * @param blockStateProvider 提供块状态的函数，用于决定粒子类型
+     * @param lengthFactor       生成大小系数
+     */
+    public static void generateParticleEffects(Level level, double x, double y, double z, double theta, int count, float[][] blockOffsetOffsets, Function<BlockPos, BlockState> blockStateProvider, double lengthFactor) {
+        double perpX = Math.cos(theta);
+        double perpZ = Math.sin(theta);
+        theta += Math.PI / 2;
+        double vecX = Math.cos(theta);
+        double vecZ = Math.sin(theta);
+
+        int hitY = Mth.floor(y - 0.2);
+        for (float[] offset : blockOffsetOffsets) {
+            float ox = offset[0], oy = offset[1];
+            int hitX = Mth.floor(x + ox);
+            int hitZ = Mth.floor(z + oy);
+            BlockPos hit = new BlockPos(hitX, hitY, hitZ);
+            BlockState block = blockStateProvider.apply(hit);
+            if (block.getRenderShape() != RenderShape.INVISIBLE) {
+                for (int n = 0; n < count; n++) {
+                    double pa = Math.random() * 2 * Math.PI;
+                    //发射距离
+                    double pd = Math.random() * (0.6 * lengthFactor) - (0.1 * lengthFactor);
+                    double px = x + Math.cos(pa) * pd;
+                    double pz = z + Math.sin(pa) * pd;
+                    //速度
+                    double magnitude = Math.random() * (4 * lengthFactor) + (5 * lengthFactor);
+                    double velX = perpX * magnitude;
+                    //垂直速度
+                    double velY = Math.random() * (3 * lengthFactor) + (6 * lengthFactor);
+                    double velZ = perpZ * magnitude;
+                    if (vecX * (pz - z) - vecZ * (px - x) > 0) {
+                        velX = -velX;
+                        velZ = -velZ;
+                    }
+                    level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, block), px, y, pz, velX, velY, velZ);
+                }
             }
         }
     }

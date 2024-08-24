@@ -31,7 +31,6 @@ import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMResourceKey;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -67,7 +66,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.*;
 import net.minecraft.world.level.material.FluidState;
@@ -1159,40 +1157,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     public void doSplashParticlesEffect(int count) {
         if (this.level().isClientSide) {
-            double theta = yBodyRot * (Math.PI / 180);
-            double perpX = Math.cos(theta);
-            double perpZ = Math.sin(theta);
-            theta += Math.PI / 2;
-            double vecX = Math.cos(theta);
-            double vecZ = Math.sin(theta);
-            double x = getX() + 4.0 * vecX;
+            double theta = Math.toRadians(this.getYRot());
+            double x = getX() + 4.0 * Math.cos(theta + Math.PI / 2);
             double y = getBoundingBox().minY + 0.1;
-            double z = getZ() + 4.0 * vecZ;
-            int hitY = Mth.floor(getY() - 0.2);
-            for (float[] robustAttackBlockOffset : ROBUST_ATTACK_BLOCK_OFFSETS) {
-                float ox = robustAttackBlockOffset[0], oy = robustAttackBlockOffset[1];
-                int hitX = Mth.floor(x + ox);
-                int hitZ = Mth.floor(z + oy);
-                BlockPos hit = new BlockPos(hitX, hitY, hitZ);
-                BlockState block = level().getBlockState(hit);
-                if (block.getRenderShape() != RenderShape.INVISIBLE) {
-                    for (int n = 0; n < count; n++) {
-                        double pa = random.nextDouble() * 2 * Math.PI;
-                        double pd = random.nextDouble() * 0.6 + 0.1;
-                        double px = x + Math.cos(pa) * pd;
-                        double pz = z + Math.sin(pa) * pd;
-                        double magnitude = random.nextDouble() * 4 + 5;
-                        double velX = perpX * magnitude;
-                        double velY = random.nextDouble() * 3 + 6;
-                        double velZ = perpZ * magnitude;
-                        if (vecX * (pz - getZ()) - vecZ * (px - getX()) > 0) {
-                            velX = -velX;
-                            velZ = -velZ;
-                        }
-                        level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, block), px, y, pz, velX, velY, velZ);
-                    }
-                }
-            }
+            double z = getZ() + 4.0 * Math.sin(theta + Math.PI / 2);
+            ModParticleUtils.generateParticleEffects(level(), x, y, z, theta, count, ROBUST_ATTACK_BLOCK_OFFSETS, pos -> level().getBlockState(pos), 2F);
         }
     }
 

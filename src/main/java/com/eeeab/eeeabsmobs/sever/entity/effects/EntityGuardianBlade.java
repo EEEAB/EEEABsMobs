@@ -1,23 +1,18 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -97,41 +92,12 @@ public class EntityGuardianBlade extends EntityMagicEffects {
 
     private void breakBlockEffect() {
         if (this.level().isClientSide) {
-            double theta = this.getYRot() * (Math.PI / 180);
-            double perpX = Math.cos(theta);
-            double perpZ = Math.sin(theta);
-            theta += Math.PI / 2;
-            double vecX = Math.cos(theta);
-            double vecZ = Math.sin(theta);
-            double x = getX() + 1 * vecX;
+            double theta = Math.toRadians(this.getYRot());
+            double x = getX() + Math.cos(theta + Math.PI / 2);
             double y = getBoundingBox().minY + 0.1;
-            double z = getZ() + 1 * vecZ;
-            int hitY = Mth.floor(getY() - 0.2);
-            for (float[] floats : BLOCK_OFFSETS) {
-                float ox = floats[0], oy = floats[1];
-                int hitX = Mth.floor(x + ox);
-                int hitZ = Mth.floor(z + oy);
-                BlockPos hit = new BlockPos(hitX, hitY, hitZ);
-                BlockState block = level().getBlockState(hit);
-                if (block.getRenderShape() != RenderShape.INVISIBLE) {
-                    double count = Math.max(0, Math.floor(15 * this.controlled.getAnimationProgressTemporaryInvesed()) - 2);
-                    for (int n = 0; n < count; n++) {
-                        double pa = random.nextDouble() * 2 * Math.PI;
-                        double pd = random.nextDouble() * 0.6 - 0.1;
-                        double px = x + Math.cos(pa) * pd;
-                        double pz = z + Math.sin(pa) * pd;
-                        double magnitude = random.nextDouble() * 4 + 5;
-                        double velX = perpX * magnitude;
-                        double velY = random.nextDouble() * 3 + 6;
-                        double velZ = perpZ * magnitude;
-                        if (vecX * (pz - getZ()) - vecZ * (px - getX()) > 0) {
-                            velX = -velX;
-                            velZ = -velZ;
-                        }
-                        level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, block), px, y, pz, velX, velY, velZ);
-                    }
-                }
-            }
+            double z = getZ() + Math.sin(theta + Math.PI / 2);
+            int count = (int) Math.max(0, Math.floor(15 * this.controlled.getAnimationProgressTemporaryInvesed()) - 2);
+            ModParticleUtils.generateParticleEffects(level(), x, y, z, theta, count, BLOCK_OFFSETS, pos -> level().getBlockState(pos), 1F);
             if (this.controlled.getTimer() % 6 == 0) {
                 level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), getRandomX(0.5F), getRandomY(), getRandomZ(0.5F), 0, this.random.nextFloat() * 0.05F, 0);
             }
