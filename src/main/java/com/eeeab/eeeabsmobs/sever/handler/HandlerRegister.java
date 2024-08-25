@@ -107,7 +107,9 @@ public class HandlerRegister {
         event.registerSpriteSet(ParticleInit.CRIMSON.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.CRIMSON_EYE.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.STRIP_SOUL_FIRE.get(), AdvancedParticleBase.Factory::new);
-        event.registerSpriteSet(ParticleInit.GLOW.get(),AdvancedParticleBase.Factory::new);
+        event.registerSpriteSet(ParticleInit.GLOW.get(), AdvancedParticleBase.Factory::new);
+        event.registerSpriteSet(ParticleInit.BIG_RING.get(), AdvancedParticleBase.Factory::new);
+        event.registerSpriteSet(ParticleInit.ADV_PUNCTURED_AIR_FLOW.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.FLAT_RIBBON.get(), ParticleRibbon.Factory::new);
         event.registerSpriteSet(ParticleInit.DUST.get(), ParticleDust.DustFactory::new);
         event.registerSpriteSet(ParticleInit.ORB.get(), ParticleOrb.OrbFactory::new);
@@ -116,7 +118,6 @@ public class HandlerRegister {
         event.registerSpriteSet(ParticleInit.RING.get(), ParticleRing.RingFactory::new);
         event.registerSpriteSet(ParticleInit.PUNCTURED_AIR_FLOW.get(), ParticlePuncturedAirFlow.PuncturedAirFlowFactory::new);
         event.registerSpriteSet(ParticleInit.CRIT_RING.get(), ParticleCritRing.CritRingFactory::new);
-        event.registerSpriteSet(ParticleInit.VERTICAL_LINE.get(), ParticleVerticalLine.VerticalLineFactory::new);
     }
 
     @SubscribeEvent
