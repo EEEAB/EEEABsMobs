@@ -21,6 +21,7 @@ import java.util.Locale;
 @OnlyIn(Dist.CLIENT)
 public class ParticleDust extends TextureSheetParticle {
     private final float scale;
+    private final boolean emissive;
     private final EnumDustBehavior behavior;
     private final float airDiffusionSpeed;
 
@@ -30,7 +31,7 @@ public class ParticleDust extends TextureSheetParticle {
         CONSTANT
     }
 
-    public ParticleDust(ClientLevel world, double x, double y, double z, double vx, double vy, double vz, double scale, int duration, EnumDustBehavior behavior, double airDiffusionSpeed) {
+    public ParticleDust(ClientLevel world, double x, double y, double z, double vx, double vy, double vz, double scale, int duration, EnumDustBehavior behavior, double airDiffusionSpeed, boolean emissive) {
         super(world, x, y, z);
         this.scale = (float) scale * 0.5f * 0.1f;
         lifetime = duration;
@@ -40,6 +41,7 @@ public class ParticleDust extends TextureSheetParticle {
         this.behavior = behavior;
         roll = oRoll = (float) (random.nextInt(4) * Math.PI / 2);
         this.airDiffusionSpeed = (float) airDiffusionSpeed;
+        this.emissive = emissive;
     }
 
     @Override
@@ -53,6 +55,11 @@ public class ParticleDust extends TextureSheetParticle {
         xd *= airDiffusionSpeed;
         yd *= airDiffusionSpeed;
         zd *= airDiffusionSpeed;
+    }
+
+    @Override
+    protected int getLightColor(float partialTick) {
+        return this.emissive ? 240 : super.getLightColor(partialTick);
     }
 
     @Override
@@ -83,7 +90,7 @@ public class ParticleDust extends TextureSheetParticle {
 
         @Override
         public Particle createParticle(DustData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-            ParticleDust particleDust = new ParticleDust(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getScale(), typeIn.getDuration(), typeIn.getBehavior(), typeIn.getAirDiffusionSpeed());
+            ParticleDust particleDust = new ParticleDust(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getScale(), typeIn.getDuration(), typeIn.getBehavior(), typeIn.getAirDiffusionSpeed(), typeIn.getEmissive());
             particleDust.setSpriteFromAge(spriteSet);
             particleDust.setColor(typeIn.getR(), typeIn.getG(), typeIn.getB());
             return particleDust;
@@ -105,11 +112,13 @@ public class ParticleDust extends TextureSheetParticle {
                 int duration = reader.readInt();
                 reader.expect(' ');
                 float airDrag = (float) reader.readDouble();
-                return new DustData(particleTypeIn, r, g, b, scale, duration, EnumDustBehavior.CONSTANT, airDrag);
+                reader.expect(' ');
+                boolean emissive = reader.readBoolean();
+                return new DustData(particleTypeIn, r, g, b, scale, duration, EnumDustBehavior.CONSTANT, airDrag, emissive);
             }
 
             public DustData fromNetwork(ParticleType<DustData> particleTypeIn, FriendlyByteBuf buffer) {
-                return new DustData(particleTypeIn, buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readInt(), EnumDustBehavior.CONSTANT, buffer.readFloat());
+                return new DustData(particleTypeIn, buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readInt(), EnumDustBehavior.CONSTANT, buffer.readFloat(), buffer.readBoolean());
             }
         };
 
@@ -122,8 +131,9 @@ public class ParticleDust extends TextureSheetParticle {
         private final int duration;
         private final EnumDustBehavior behavior;
         private final float airDiffusionSpeed;
+        private final boolean emissive;
 
-        public DustData(ParticleType<DustData> type, float r, float g, float b, float scale, int duration, EnumDustBehavior behavior, float airDiffusionSpeed) {
+        public DustData(ParticleType<DustData> type, float r, float g, float b, float scale, int duration, EnumDustBehavior behavior, float airDiffusionSpeed, boolean emissive) {
             this.type = type;
             this.r = r;
             this.g = g;
@@ -132,6 +142,12 @@ public class ParticleDust extends TextureSheetParticle {
             this.behavior = behavior;
             this.airDiffusionSpeed = airDiffusionSpeed;
             this.duration = duration;
+            this.emissive = emissive;
+        }
+
+
+        public DustData(ParticleType<DustData> type, float r, float g, float b, float scale, int duration, EnumDustBehavior behavior, float airDiffusionSpeed) {
+            this(type, r, g, b, scale, duration, behavior, airDiffusionSpeed, false);
         }
 
         @Override
@@ -191,17 +207,23 @@ public class ParticleDust extends TextureSheetParticle {
             return this.airDiffusionSpeed;
         }
 
+        @OnlyIn(Dist.CLIENT)
+        public boolean getEmissive() {
+            return this.emissive;
+        }
+
         public static Codec<DustData> CODEC(ParticleType<DustData> particleType) {
             return RecordCodecBuilder.create((codecBuilder) -> codecBuilder.group(
-                    Codec.FLOAT.fieldOf("r").forGetter(DustData::getR),
-                    Codec.FLOAT.fieldOf("g").forGetter(DustData::getG),
-                    Codec.FLOAT.fieldOf("b").forGetter(DustData::getB),
-                    Codec.FLOAT.fieldOf("scale").forGetter(DustData::getScale),
-                    Codec.STRING.fieldOf("behavior").forGetter((dustData) -> dustData.getBehavior().toString()),
-                    Codec.INT.fieldOf("duration").forGetter(DustData::getDuration),
-                    Codec.FLOAT.fieldOf("airDiffusionSpeed").forGetter(DustData::getAirDiffusionSpeed)
-                    ).apply(codecBuilder, (r, g, b, scale, behavior, duration, airDiffusionSpeed) ->
-                            new DustData(particleType, r, g, b, scale, duration, EnumDustBehavior.valueOf(behavior), airDiffusionSpeed))
+                            Codec.FLOAT.fieldOf("r").forGetter(DustData::getR),
+                            Codec.FLOAT.fieldOf("g").forGetter(DustData::getG),
+                            Codec.FLOAT.fieldOf("b").forGetter(DustData::getB),
+                            Codec.FLOAT.fieldOf("scale").forGetter(DustData::getScale),
+                            Codec.STRING.fieldOf("behavior").forGetter((dustData) -> dustData.getBehavior().toString()),
+                            Codec.INT.fieldOf("duration").forGetter(DustData::getDuration),
+                            Codec.FLOAT.fieldOf("airDiffusionSpeed").forGetter(DustData::getAirDiffusionSpeed),
+                            Codec.BOOL.fieldOf("emissive").forGetter(DustData::getEmissive)
+                    ).apply(codecBuilder, (r, g, b, scale, behavior, duration, airDiffusionSpeed, emissive) ->
+                            new DustData(particleType, r, g, b, scale, duration, EnumDustBehavior.valueOf(behavior), airDiffusionSpeed, emissive))
             );
         }
     }
