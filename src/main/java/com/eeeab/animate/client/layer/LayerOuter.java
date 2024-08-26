@@ -44,12 +44,23 @@ public class LayerOuter<T extends LivingEntity, M extends EMHierarchicalModel<T>
     @Override
     public void render(PoseStack stack, MultiBufferSource bufferSource, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         if (predicate.outer(entity))
-            renderLayer(stack, bufferSource.getBuffer(RenderType.entityTranslucent(resourceLocation)), packedLightIn, entity);
+            renderLayer(stack, bufferSource.getBuffer(RenderType.entityTranslucent(resourceLocation)), packedLightIn, partialTicks, entity);
     }
 
-    private void renderLayer(PoseStack stack, VertexConsumer vertexConsumer, int packedLightIn, T entity) {
+    private void renderLayer(PoseStack stack, VertexConsumer vertexConsumer, int packedLightIn, float partialTicks, T entity) {
         int i = overlayTexture ? LivingEntityRenderer.getOverlayCoords(entity, 0F) : OverlayTexture.NO_OVERLAY;
-        this.getParentModel().renderToBuffer(stack, vertexConsumer, packedLightIn, i, 1, 1, 1, 1);
+        float alpha = getAlpha(entity, partialTicks);
+        getParentModel().renderToBuffer(stack, vertexConsumer, packedLightIn, i, alpha, alpha, alpha, alpha);
+    }
+
+    /**
+     * 获取渲染图层透明度
+     *
+     * @param entity 实体
+     * @return 透明度
+     */
+    protected float getAlpha(T entity, float partialTicks) {
+        return 1F;
     }
 
     @FunctionalInterface
