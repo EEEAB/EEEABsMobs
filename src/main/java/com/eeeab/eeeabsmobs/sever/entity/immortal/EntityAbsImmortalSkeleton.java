@@ -233,20 +233,26 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     public boolean hurt(DamageSource source, float damage) {
         Entity entity = source.getEntity();
         boolean hitFlag = true;
+        byte pierceLevel = 0;
         float attackArc = 220;
         if (entity != null) {
             float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this, entity.position());
             hitFlag = (entityRelativeAngle <= attackArc / 2f && entityRelativeAngle >= -attackArc / 2f) || (entityRelativeAngle >= 360 - attackArc / 2f || entityRelativeAngle <= -attackArc + 90f / 2f);
         }
-        if (hitFlag && this.checkHoldItemCanBlock() && entity instanceof LivingEntity livingEntity && !source.is(DamageTypeTags.BYPASSES_ARMOR) && (this.isNoAnimation() || this.getAnimation() == this.blockAnimation)) {
+        if (source.getDirectEntity() instanceof AbstractArrow arrow) pierceLevel = arrow.getPierceLevel();
+        if (hitFlag && this.checkHoldItemCanBlock() && entity instanceof LivingEntity livingEntity && !source.is(DamageTypeTags.BYPASSES_ARMOR) && !source.is(DamageTypeTags.BYPASSES_SHIELD) && (this.isNoAnimation() || this.getAnimation() == this.blockAnimation)) {
             this.blockEntity = livingEntity;
             if (livingEntity.getItemInHand(livingEntity.getUsedItemHand()).getItem() instanceof AxeItem || damage >= this.getMaxHealth()) {
                 this.playSound(SoundEvents.SHIELD_BREAK);
                 this.blockCoolTick = 100;
-            } else {
+            } else if (pierceLevel == 0) {
                 this.playSound(SoundEvents.SHIELD_BLOCK);
             }
             if (this.getAnimation() != this.blockAnimation) this.playAnimation(this.blockAnimation);
+            if (pierceLevel > 0) {
+                damage *= 0.6F + Math.min(pierceLevel * 0.1F, 0.4F);
+                return super.hurt(source, damage);
+            }
             return false;
         }
         return super.hurt(source, damage);

@@ -46,6 +46,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
@@ -338,6 +339,8 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                     }
                 }
             }
+        } else if (this.getAnimation() == this.blockAnimation) {
+            this.setDeltaMovement(0, 0, 0);
         }
         if (this.level().isClientSide && this.fire != null && this.fire.length != 0) {
             float power = this.getFirePower();
@@ -412,21 +415,24 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
         } else if (source.getEntity() != null) {
             this.hurtCount++;
             float attackArc = 220F;
+            byte pierceLevel = 0;
             float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this, source.getEntity().position());
             boolean hitFlag = !this.isNoAi() && !source.is(DamageTypeTags.BYPASSES_ARMOR) && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F)
                     || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -attackArc + 90f / 2F);
+            if (source.getDirectEntity() instanceof AbstractArrow arrow) pierceLevel = arrow.getPierceLevel();
             boolean projectileFlag = ModEntityUtils.isProjectileSource(source);
+            boolean noPierce = pierceLevel == 0;
             if (hitFlag && this.inBlocking()) {
-                if (this.random.nextBoolean()) this.playSound(SoundInit.IMMORTAL_EXECUTIONER_BLOCK.get());
-                if (projectileFlag) return false;
-                else damage *= 0.2F;
+                if (noPierce && this.random.nextBoolean()) this.playSound(SoundInit.IMMORTAL_EXECUTIONER_BLOCK.get());
+                if (projectileFlag && noPierce) return false;
+                else damage *= 0.5F + Math.min(pierceLevel * 0.125F, 0.5F);
             }
             if (hitFlag && (projectileFlag || this.random.nextFloat() < 0.45F) && this.isNoAnimation() && !this.hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
                 if (source.getEntity() instanceof LivingEntity block) this.blockEntity = block;
-                this.playSound(SoundInit.IMMORTAL_EXECUTIONER_BLOCK.get());
+                if (noPierce) this.playSound(SoundInit.IMMORTAL_EXECUTIONER_BLOCK.get());
                 this.playAnimation(this.blockAnimation);
-                if (projectileFlag) return false;
-                else damage *= 0.2F;
+                if (projectileFlag && noPierce) return false;
+                else damage *= 0.5F + Math.min(pierceLevel * 0.125F, 0.5F);
             }
             if (this.getTarget() != null && this.isNoAnimation() && this.hurtCount >= MAX_HURT_COUNT) {
                 this.hurtCount = 0;
