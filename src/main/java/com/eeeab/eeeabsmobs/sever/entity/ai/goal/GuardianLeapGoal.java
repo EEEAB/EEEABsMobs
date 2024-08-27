@@ -6,7 +6,7 @@ import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -72,8 +72,13 @@ public class GuardianLeapGoal extends AnimationSimpleAI<EntityNamelessGuardian> 
         }
     }
 
-    public static Vec3 findTargetPoint(Entity attacker, Entity target) {
+    private static Vec3 findTargetPoint(LivingEntity attacker, LivingEntity target) {
         Vec3 vec3 = target.position();
-        return (new Vec3(vec3.x - attacker.getX(), vec3.y - attacker.getY(), vec3.z - attacker.getZ()));
+        float width = Math.max(target.getBbWidth(), 1.5F);
+        RandomSource random = attacker.getRandom();
+        double radians = Math.toRadians(attacker.getYRot() + 90);
+        double randomXOffset = -(1.5 + width) * Math.cos(radians) + (random.nextDouble() - 0.5) * width * 2;
+        double randomZOffset = -(1.5 + width) * Math.sin(radians) + (random.nextDouble() - 0.5) * width * 2;
+        return (new Vec3(vec3.x - attacker.getX() + randomXOffset, vec3.y - attacker.getY(), vec3.z - attacker.getZ() + randomZOffset));
     }
 }
