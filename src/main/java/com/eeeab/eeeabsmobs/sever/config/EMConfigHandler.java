@@ -164,12 +164,12 @@ public final class EMConfigHandler {
         public ImmortalExecutioner(final ForgeConfigSpec.Builder builder) {
             builder.push("Immortal Executioner");
             combatConfig = new AttributeConfig();
-            maximumDamageCap = new DamageCapConfig(22);
+            maximumDetonationCount = BUILDER.comment("Set the number of times to strengthen this mob").defineInRange("Detonation Count", 3, 0, 1024);
             builder.pop();
         }
 
         public final AttributeConfig combatConfig;
-        public final DamageCapConfig maximumDamageCap;
+        public final ForgeConfigSpec.IntValue maximumDetonationCount;
     }
 
     //不朽
