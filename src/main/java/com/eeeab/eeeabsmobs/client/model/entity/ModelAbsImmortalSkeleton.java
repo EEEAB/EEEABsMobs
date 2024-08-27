@@ -82,8 +82,10 @@ public class ModelAbsImmortalSkeleton extends EMHierarchicalModel<EntityAbsImmor
             this.bob(this.rightArm, cycle * 0.2F, cycle * 0.2F, false, frame, 1);
             this.bob(this.head, cycle * -0.2F, cycle * -0.2F, false, frame, 1);
             this.bob(this.head, cycle, cycle * 0.5F, false, limbSwing, limbSwingAmount);
-            this.walk(this.leftArm, 0.15F, 0.05F, true, 0, 0, frame, 1);
-            this.walk(this.rightArm, 0.15F, 0.05F, false, 0, 0, frame, 1);
+            if (entity.getAnimation() != entity.blockAnimation) {
+                this.walk(this.leftArm, 0.15F, 0.05F, true, 0, 0, frame, 1);
+                this.walk(this.rightArm, 0.15F, 0.05F, false, 0, 0, frame, 1);
+            }
             this.walk(this.leftLeg, cycle, cycle * 1.2F, false, 0.0F, -0.05F, limbSwing, limbSwingAmount);
             this.walk(this.rightLeg, cycle, cycle * 1.2F, true, 0.0F, -0.05F, limbSwing, limbSwingAmount);
             if (entity.getCareerType() == EntityAbsImmortalSkeleton.CareerType.ARCHER) {
