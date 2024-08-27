@@ -365,7 +365,7 @@ public final class HandlerServerEvent {
                 event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
             }
             if (projectile instanceof AbstractArrow arrow) {
-                if (!arrow.fireImmune() && !arrow.isOnFire() && hitResult.getEntity() instanceof EntityImmortalExecutioner) {
+                if (arrow.getPierceLevel() == 0 && !arrow.fireImmune() && !arrow.isOnFire() && hitResult.getEntity() instanceof EntityImmortalExecutioner) {
                     arrow.setSecondsOnFire(100);
                 }
                 if (arrow.getOwner() instanceof EntityAbsImmortal && hitResult.getEntity() instanceof EntityAbsImmortal && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()) {
