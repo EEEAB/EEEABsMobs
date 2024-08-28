@@ -42,6 +42,7 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
         super.start();
         isPowered = entity.isPowered();
         madnessSpeedMultiplier = speedMultiplier;
+        pounceVec = Vec3.ZERO;
         if (isPowered) {
             madnessSpeedMultiplier += 0.5F;
         }
@@ -68,12 +69,11 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
         if (entity.getAnimation() == entity.pounceAttackAnimation1) {
             entity.setDeltaMovement(0, entity.onGround() ? 0 : entity.getDeltaMovement().y(), 0);
             if (target != null) {
-                entity.getLookControl().setLookAt(target, 30F, 30F);
-                entity.lookAt(target, 30F, 30F);
+                entity.getLookControl().setLookAt(target, 90F, 90F);
+                entity.lookAt(target, 90F, 90F);
             }
             int tick = entity.getAnimationTick();
             if (tick == 1) {
-                pounceVec = Vec3.ZERO;
                 entity.playSound(SoundInit.NAMELESS_GUARDIAN_PRE_POUNCE.get(), 1.5F, entity.getVoicePitch());
             } else if (tick >= entity.pounceAttackAnimation1.getDuration() - 1) {
                 if (target != null) {
