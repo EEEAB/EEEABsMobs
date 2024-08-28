@@ -109,15 +109,14 @@ public class HandlerRegister {
         event.registerSpriteSet(ParticleInit.STRIP_SOUL_FIRE.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.GLOW.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.BIG_RING.get(), AdvancedParticleBase.Factory::new);
-        event.registerSpriteSet(ParticleInit.ADV_PUNCTURED_AIR_FLOW.get(), AdvancedParticleBase.Factory::new);
+        event.registerSpriteSet(ParticleInit.CRIT_RING.get(), AdvancedParticleBase.Factory::new);
+        event.registerSpriteSet(ParticleInit.PUNCTURED_AIR_RING.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.FLAT_RIBBON.get(), ParticleRibbon.Factory::new);
         event.registerSpriteSet(ParticleInit.DUST.get(), ParticleDust.DustFactory::new);
         event.registerSpriteSet(ParticleInit.ORB.get(), ParticleOrb.OrbFactory::new);
         event.registerSpriteSet(ParticleInit.GUARDIAN_SPARK.get(), ParticleGuardianSpark.GuardianSparkFactory::new);
         event.registerSpriteSet(ParticleInit.POISON.get(), ParticlePoison.PoisonFactory::new);
         event.registerSpriteSet(ParticleInit.RING.get(), ParticleRing.RingFactory::new);
-        event.registerSpriteSet(ParticleInit.PUNCTURED_AIR_FLOW.get(), ParticlePuncturedAirFlow.PuncturedAirFlowFactory::new);
-        event.registerSpriteSet(ParticleInit.CRIT_RING.get(), ParticleCritRing.CritRingFactory::new);
     }
 
     @SubscribeEvent
