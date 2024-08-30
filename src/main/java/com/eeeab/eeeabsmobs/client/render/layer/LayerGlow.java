@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -54,6 +55,10 @@ public class LayerGlow<T extends LivingEntity & GlowEntity, M extends EntityMode
         this.getParentModel().renderToBuffer(stack, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, r, g, b, alpha);
     }
 
+    protected void renderLayer(T entity, PoseStack stack, VertexConsumer vertexConsumer, int packedLightIn, float r, float g, float b, float alpha) {
+        this.getParentModel().renderToBuffer(stack, vertexConsumer, packedLightIn, LivingEntityRenderer.getOverlayCoords(entity, 0F), r, g, b, alpha);
+    }
+    
     /**
      * 获取渲染图层的亮度
      *
