@@ -29,7 +29,7 @@ public class RendererBloodBall extends EntityRenderer<EntityBloodBall> {
     public void render(EntityBloodBall entity, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         final float scale = 2.5F;
         poseStack.pushPose();
-        float progress = entity.scaleControlled.getAnimationFraction();
+        float progress = entity.scaleControlled.getAnimationFraction(partialTick);
         float f = ((float) entity.tickCount + partialTick) * Mth.clamp(2F * progress, 0.1F, 2F);
         VertexConsumer vertexconsumer = buffer.getBuffer(EMRenderType.entityTranslucentEmissive(TEXTURE));
         poseStack.translate(0, 0.5F, 0);
