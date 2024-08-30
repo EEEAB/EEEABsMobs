@@ -10,6 +10,7 @@ import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
 import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
 import com.eeeab.eeeabsmobs.client.particle.util.RibbonComponent;
 import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
+import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
@@ -41,6 +42,7 @@ import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -99,7 +101,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     private int hurtCount;
     private int nextHealTick;
     private List<EntityCorpse> entities = new ArrayList<>();
-    public static final int[] SPAWN_COUNT = new int[]{2, 4, 6};
+    private static final int[] SPAWN_COUNT = new int[]{2, 4, 6};
     private static final int MAX_HURT_COUNT = 3;
     private static final UniformInt NEXT_HEAL_TIME = TimeUtil.rangeOfSeconds(15, 25);
     private static final TargetingConditions IGNORE_ALLIES = TargetingConditions.forCombat().selector(e -> {
@@ -108,6 +110,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         }
         return true;
     });
+    public final ControlledAnimation glowControllerAnimation = new ControlledAnimation(10);
     private static final EntityDataAccessor<Boolean> DATA_IS_HEAL = SynchedEntityData.defineId(EntityCorpseWarlock.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Optional<BlockPos>> DATA_REST_POSITION = SynchedEntityData.defineId(EntityCorpseWarlock.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
     @OnlyIn(Dist.CLIENT)
@@ -219,12 +222,13 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     @Override
     public void tick() {
         super.tick();
+        this.glowControllerAnimation.updatePrevTimer();
         EMAnimationHandler.INSTANCE.updateAnimations(this);
         if (!this.level().isClientSide && !this.isNoAi() && this.noConflictingTasks() && this.getTarget() == null && this.tickCount % 2 == 0 && this.random.nextInt(400) == 0) {
             this.playAnimation(babbleAnimation);
         }
 
-        if (!this.level().isClientSide && !this.isNoAi() && this.noConflictingTasks() && this.getTarget() == null && this.tickCount % 10 == 0 && this.isNoAtRestPos() && this.nextDPTick <= 0) {
+        if (!this.level().isClientSide && !this.isNoAi() && this.isNoAnimation() && this.getTarget() == null && this.tickCount % 10 == 0 && this.isNoAtRestPos() && this.nextDPTick <= 0) {
             this.nextDPTick = 1200;
             this.playAnimation(resetPosAnimation);
         }
@@ -245,8 +249,8 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                 this.playAnimation(vampireAnimation);
             }
         }
-
-        if (this.getAnimation() == vampireAnimation) {
+        Animation animation = this.getAnimation();
+        if (animation == vampireAnimation) {
             int tick = this.getAnimationTick();
             if (!this.level().isClientSide) {
                 for (EntityCorpse corps : this.entities) {
@@ -263,9 +267,11 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                 }
                 LivingEntity target = this.getTarget();
                 if (tick == 50) {
+                    boolean isNotEmpty = this.entities.stream().anyMatch(LivingEntity::isAlive);
                     this.entities.forEach(LivingEntity::kill);
-                    this.setIsHeal((target != null && this.getHealthPercentage() < 50) || (target == null && this.getHealthPercentage() != 100));
-                    this.performRangedAttack(target, 1.0F);
+                    this.setIsHeal(isNotEmpty && ((target != null && this.getHealthPercentage() < 50) || (target == null && this.getHealthPercentage() != 100)));
+                    if (!isNotEmpty) this.level().broadcastEntityEvent(this, (byte) 13);
+                    this.performRangedAttack(target, !isNotEmpty ? 4F : this.entities.size());
                 } else if (tick > 60) {
                     this.setDeltaMovement(0, 0, 0);
                     if (!this.isHeal() && target != null) {
@@ -297,11 +303,9 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                         this.level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.REDSTONE_BLOCK.defaultBlockState()), d0, d1, d2, 0D, 0D, 0D);
                     }
                     this.level().playLocalSound(this.myPos[1].x, this.myPos[1].y, this.myPos[1].z, SoundInit.CORPSE_WARLOCK_TEAR.get(), this.getSoundSource(), this.getSoundVolume(), this.getVoicePitch(), false);
-                } else if (this.isHeal() && tick == 80) {
-                    this.doHealEffect();
                 }
             }
-        } else if (this.getAnimation() == teleportAnimation || this.getAnimation() == resetPosAnimation) {
+        } else if (animation == teleportAnimation || animation == resetPosAnimation) {
             int tick = this.getAnimationTick();
             if (tick == 1) {
                 this.setInvisible(true);
@@ -309,19 +313,19 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             } else if (tick == 15) {
                 this.doTeleportEffect();
             } else if (tick >= 20) {
-                this.setInvisible(false);
+                this.setInvisible(this.hasEffect(MobEffects.INVISIBILITY));
             }
-        } else if (this.getAnimation() == babbleAnimation) {
+        } else if (animation == babbleAnimation) {
             if (this.getTarget() != null && this.distanceTo(this.getTarget()) < 12) {
-                this.setAnimation(this.getNoAnimation());//中断施法
+                this.playAnimation(this.teleportAnimation);//中断施法
             }
             this.doCrimsonEyeEffect(2.5F);
-        } else if (this.getAnimation() == attackAnimation) {
+        } else if (animation == attackAnimation) {
             this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
             if (this.level().isClientSide && this.getAnimationTick() == 5) {
                 ModParticleUtils.randomAnnularParticleOutburst(this.level(), 50, new ParticleOptions[]{ParticleTypes.SMOKE}, this.getX(), this.getY(), this.getZ(), 0.4F);
             }
-        } else if (this.getAnimation() == robustAnimation) {
+        } else if (animation == robustAnimation) {
             int tick = this.getAnimationTick();
             if (tick > 35) {
                 this.doCrimsonEyeEffect(-1F);
@@ -332,12 +336,12 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         }
     }
 
-    private void doHealEffect() {
-        for (int i = 0; i < 5; ++i) {
-            double d0 = this.random.nextGaussian() * 0.02D;
-            double d1 = this.random.nextGaussian() * 0.02D;
-            double d2 = this.random.nextGaussian() * 0.02D;
-            this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0D), this.getRandomY() + 0.1D, this.getRandomZ(1.0D), d0, d1, d2);
+    private void doAroundSelfEffect(ParticleOptions particleOptions) {
+        for (int i = 0; i < 10; ++i) {
+            double d0 = this.random.nextGaussian() * 0.15D;
+            double d1 = this.random.nextGaussian() * 0.15D;
+            double d2 = this.random.nextGaussian() * 0.15D;
+            this.level().addParticle(particleOptions, this.getRandomX(1.5D), this.getRandomY() + 0.15D, this.getRandomZ(1.5D), d0, d1, d2);
         }
     }
 
@@ -396,6 +400,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                 this.nextHealTick--;
             }
         }
+        this.glowControllerAnimation.incrementOrDecreaseTimer(this.isGlow());
     }
 
     @Override
@@ -411,7 +416,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                 if (animation == teleportAnimation) {
                     return false;
                 } else if (animation == babbleAnimation) {
-                    this.setAnimation(this.getNoAnimation());
+                    this.playAnimation(this.teleportAnimation);
                 } else if (animation == vampireAnimation || animation == robustAnimation) {
                     damage *= 0.2F;
                 }
@@ -440,8 +445,10 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
 
     @Override
     public void handleEntityEvent(byte id) {
-        if (id == 14) {
-            this.doHealEffect();
+        if (id == 13) {
+            this.doAroundSelfEffect(ParticleTypes.ANGRY_VILLAGER);
+        } else if (id == 14) {
+            this.doAroundSelfEffect(ParticleTypes.HAPPY_VILLAGER);
         }
         super.handleEntityEvent(id);
     }
@@ -557,14 +564,14 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
 
 
     /**
-     * Attack the specified entity using a ranged attack.
+     * 使用远程攻击攻击指定的实体
      *
-     * @param entity
-     * @param velocity
+     * @param entity   攻击目标
+     * @param strength 强度
      */
     @Override
-    public void performRangedAttack(@Nullable LivingEntity entity, float velocity) {
-        EntityBloodBall bloodBall = new EntityBloodBall(this.level(), 30, this.isHeal(), this.entities.size());
+    public void performRangedAttack(@Nullable LivingEntity entity, float strength) {
+        EntityBloodBall bloodBall = new EntityBloodBall(this.level(), 30, this.isHeal(), (int) strength);
         if (entity != null) {
             bloodBall.setTargetUUID(entity.getUUID());
         }
@@ -628,7 +635,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
 
     @Override
     public boolean noConflictingTasks() {
-        return this.isNoAnimation();
+        return this.isNoAnimation() && !this.hasEffect(EffectInit.VERTIGO_EFFECT.get());
     }
 
     @Override
@@ -647,7 +654,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
 
     @Override
     public boolean isGlow() {
-        return this.getAnimation() == vampireAnimation || this.getAnimation() == teleportAnimation || this.getAnimation() == robustAnimation;
+        return this.isAlive() && (this.getAnimation() == vampireAnimation || this.getAnimation() == teleportAnimation || this.getAnimation() == robustAnimation || this.getAnimation() == this.babbleAnimation);
     }
 
     public boolean isHeal() {
@@ -715,6 +722,8 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             LivingEntity target = this.entity.getTarget();
             if (this.lookAtTarget && target != null) {
                 this.entity.getLookControl().setLookAt(target, 30F, 30F);
+            } else {
+                this.entity.setYRot(this.entity.yRotO);
             }
         }
     }
@@ -731,14 +740,15 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             boolean flag = this.spellCaster.getNextHealTick() <= 0;
             boolean flag1 = this.spellCaster.tickCount >= this.nextAttackTickCount;
             boolean flag2 = this.spellCaster.checkCanSummonCorpse();
+            boolean flag3 = this.spellCaster.noConflictingTasks();
             if (target != null && target.isAlive()) {
-                if (!this.spellCaster.noConflictingTasks()) {
+                if (!flag3) {
                     return false;
                 } else {
                     return flag1 && flag2;
                 }
             }
-            return flag && flag1 && flag2 && this.spellCaster.getHealthPercentage() != 100;
+            return flag && flag1 && flag2 && flag3 && this.spellCaster.getHealthPercentage() != 100;
         }
 
         @Override
@@ -804,7 +814,8 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         protected void inSpellCasting() {
             if (this.list != null && !this.list.isEmpty()) {
                 this.list.stream().filter(c -> c.isAlive() && this.spellCaster == c.getOwner() && !c.hasEffect(EffectInit.FRENZY_EFFECT.get())).forEach(c -> {
-                    c.addEffect(new MobEffectInstance(EffectInit.FRENZY_EFFECT.get(), 10 * 20, this.spellCaster.assessTargetAI().type));
+                    int type = this.spellCaster.assessTargetAI().type;
+                    c.addEffect(new MobEffectInstance(EffectInit.FRENZY_EFFECT.get(), 200 + 100 * type, type));
                     c.valuable = false;
                 });
             }
@@ -839,7 +850,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                 LivingEntity target = this.spellCaster.getTarget();
                 if (target != null) {
                     float distance = this.spellCaster.distanceTo(target) - target.getBbWidth() / 2f;
-                    return (distance < 16F && this.spellCaster.getRandom().nextInt(200) == 0) || (distance < 8F && ModEntityUtils.checkTargetComingCloser(this.spellCaster, target)) || distance < 6F;
+                    return (distance < 16F && this.spellCaster.getRandom().nextInt(100) == 0) || (distance < 8F && ModEntityUtils.checkTargetComingCloser(this.spellCaster, target)) || distance < 6F;
                 }
             }
             return false;
