@@ -319,16 +319,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     @Override
-    public int getMaxHeadXRot() {
-        return 30;
-    }
-
-    @Override
-    public int getMaxHeadYRot() {
-        return 30;
-    }
-
-    @Override
     protected boolean isAffectedByFluids() {
         return !(this.getAnimation() == this.leapAnimation || this.getAnimation() == this.smashDownAnimation);
     }

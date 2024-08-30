@@ -93,16 +93,6 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
         return size.height * 0.75F;
     }
 
-    @Override
-    public int getMaxHeadXRot() {
-        return 180;
-    }
-
-    @Override
-    public int getMaxHeadYRot() {
-        return 180;
-    }
-
     @Override//被方块阻塞
     public void makeStuckInBlock(BlockState state, Vec3 motionMultiplier) {
         if (!state.is(Blocks.COBWEB)) {
