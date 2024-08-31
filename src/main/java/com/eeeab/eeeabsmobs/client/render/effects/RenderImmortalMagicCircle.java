@@ -15,7 +15,9 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 public class RenderImmortalMagicCircle extends EntityRenderer<EntityImmortalMagicCircle> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/magic_circle/speed.png");
+    private static final ResourceLocation SPEED_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/magic_circle/speed.png");
+    private static final ResourceLocation STRENGTH_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/magic_circle/strength.png");
+    private static final ResourceLocation NONE_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/magic_circle/none.png");
 
     public RenderImmortalMagicCircle(EntityRendererProvider.Context context) {
         super(context);
@@ -23,12 +25,12 @@ public class RenderImmortalMagicCircle extends EntityRenderer<EntityImmortalMagi
 
     @Override
     public void render(EntityImmortalMagicCircle entity, float entityYaw, float delta, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
-        VertexConsumer consumer = bufferIn.getBuffer(EMRenderType.getGlowingEffect(TEXTURE));
+        VertexConsumer consumer = bufferIn.getBuffer(EMRenderType.getGlowingEffect(getTextureLocation(entity)));
         matrixStackIn.pushPose();
         float speed = (entity.tickCount + delta) * entity.getSpeed();
         float scale = entity.NO ? entity.getScale() * entity.processController.getAnimationFraction(delta) : entity.getScale();
         float alpha = entity.NO ? 1F : entity.processController.getAnimationFraction(delta);
-        matrixStackIn.mulPose(Axis.YP.rotationDegrees(90F - entity.getYRot() + speed));
+        matrixStackIn.mulPose(Axis.YP.rotationDegrees(-entity.getYaw() + 180F + speed));
         matrixStackIn.translate(0.0, 0.001F, 0.0);
         matrixStackIn.scale(-scale, -scale, -scale);
         this.renderFlatQuad(matrixStackIn, consumer, packedLightIn, alpha);
@@ -37,7 +39,17 @@ public class RenderImmortalMagicCircle extends EntityRenderer<EntityImmortalMagi
 
     @Override
     public ResourceLocation getTextureLocation(EntityImmortalMagicCircle entity) {
-        return TEXTURE;
+        switch (entity.getMagicCircleType()) {
+            case SPEED -> {
+                return SPEED_TEXTURE;
+            }
+            case STRENGTH -> {
+                return STRENGTH_TEXTURE;
+            }
+            default -> {
+                return NONE_TEXTURE;
+            }
+        }
     }
 
     private void renderFlatQuad(PoseStack matrixStackIn, VertexConsumer builder, int packedLightIn, float alpha) {

@@ -1,11 +1,14 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
+import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
+import com.eeeab.eeeabsmobs.sever.util.EMMathUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -14,13 +17,32 @@ import org.jetbrains.annotations.NotNull;
 public class EntityImmortalMagicCircle extends EntityMagicEffects {
     private static final EntityDataAccessor<Float> DATA_SCALE = SynchedEntityData.defineId(EntityImmortalMagicCircle.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_SPEED = SynchedEntityData.defineId(EntityImmortalMagicCircle.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_YAW = SynchedEntityData.defineId(EntityImmortalMagicCircle.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> DATA_DURATION = SynchedEntityData.defineId(EntityImmortalMagicCircle.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<String> DATA_TYPE = SynchedEntityData.defineId(EntityImmortalMagicCircle.class, EntityDataSerializers.STRING);
     public final ControlledAnimation processController = new ControlledAnimation(5);
     public boolean NO = true;
 
     public enum MagicCircleType {
-        NONE, SPEED, STRENGTH, NEGATIVE, GUARD;
+        NONE,
+        SPEED(0.22F, 0.76F, 0.87F),
+        STRENGTH(0.92F, 0.7F, 0.02F),
+        NEGATIVE,
+        GUARD;
+
+        MagicCircleType() {
+            this.r = this.g = this.b = 1F;
+        }
+
+        MagicCircleType(float r, float g, float b) {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+        }
+
+        public final float r;
+        public final float g;
+        public final float b;
     }
 
     public EntityImmortalMagicCircle(EntityType<EntityImmortalMagicCircle> type, Level level) {
@@ -53,6 +75,17 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
             if (processController.decreaseTimerChain().isStop()) {
                 discard();
             }
+        } else {
+            if (level().isClientSide && this.random.nextInt(4) == 0) {
+                float factor = EMMathUtils.getTickFactor(tickCount, getDuration(), true);
+                for (float i = 0; i < 10 * factor; i++) {
+                    double x = this.getX() + Mth.randomBetween(this.random, -getScale(), getScale());
+                    double z = this.getZ() + Mth.randomBetween(this.random, -getScale(), getScale());
+                    MagicCircleType type = getMagicCircleType();
+                    ParticleOrb.OrbData orbData = new ParticleOrb.OrbData(type.r, type.g, type.b, 2F, (int) (15 + 5F * this.random.nextFloat()));
+                    level().addParticle(orbData, x, this.getY() + 0.1, z, 0, 0.2 + this.random.nextGaussian() * 0.02D, 0);
+                }
+            }
         }
     }
 
@@ -69,6 +102,7 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
         super.defineSynchedData();
         this.entityData.define(DATA_SCALE, 1F);
         this.entityData.define(DATA_SPEED, 0F);
+        this.entityData.define(DATA_YAW, 0F);
         this.entityData.define(DATA_DURATION, 20);
         this.entityData.define(DATA_TYPE, MagicCircleType.NONE.toString());
     }
@@ -77,14 +111,21 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
     protected void addAdditionalSaveData(CompoundTag compoundTag) {
         compoundTag.putFloat("scale", getScale());
         compoundTag.putFloat("speed", getSpeed());
+        compoundTag.putFloat("yaw", getYaw());
         compoundTag.putInt("duration", getDuration());
+        compoundTag.putString("magicType", getMagicCircleType().toString());
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compoundTag) {
         setScale(compoundTag.getFloat("scale"));
         setSpeed(compoundTag.getFloat("speed"));
+        setYaw(compoundTag.getFloat("yaw"));
         setDuration(compoundTag.getInt("duration"));
+        try {
+            setMagicCircleType(MagicCircleType.valueOf(compoundTag.getString("magicType")));
+        } catch (Exception ignored) {
+        }
     }
 
     @Override
@@ -108,6 +149,14 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
         entityData.set(DATA_SPEED, speed);
     }
 
+    public float getYaw() {
+        return entityData.get(DATA_YAW);
+    }
+
+    public void setYaw(float yaw) {
+        entityData.set(DATA_YAW, yaw);
+    }
+
     public int getDuration() {
         return entityData.get(DATA_DURATION);
     }
@@ -126,7 +175,7 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
         entityData.set(DATA_TYPE, type.toString());
     }
 
-    public static void spawn(Level level, Vec3 pos, float scale, float speed, int duration, MagicCircleType type) {
+    public static void spawn(Level level, Vec3 pos, float scale, float speed, int duration, float yaw, MagicCircleType type) {
         if (!level.isClientSide) {
             EntityImmortalMagicCircle entity = new EntityImmortalMagicCircle(level);
             entity.setScale(scale);
@@ -134,6 +183,7 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
             entity.setDuration(10 + duration);
             entity.setMagicCircleType(type);
             entity.setPos(pos);
+            entity.setYaw(yaw);
             level.addFreshEntity(entity);
         }
     }
