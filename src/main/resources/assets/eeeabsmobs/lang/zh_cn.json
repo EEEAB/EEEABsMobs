@@ -120,6 +120,13 @@
   "effect.eeeabsmobs.vertigo_effect": "眩晕",
   "effect.eeeabsmobs.frenzy_effect": "狂暴",
 
+  "_comment": "JEI 描述",
+  "jei.eeeabsmobs.eye_of_structure.tip": "会像末影之眼一样引导你前往对应的结构。",
+  "effect.eeeabsmobs.erode_effect.description": "持续减少穿在身上的护甲耐久，等级越高减少幅度越高。",
+  "effect.eeeabsmobs.armor_lower_effect.description": "每一级都额外降低20%的护甲值与盔甲韧性。",
+  "effect.eeeabsmobs.vertigo_effect.description": "眩晕期间无法使用物品与放置方块、攻击生物与破坏方块、移动与转动视角。",
+  "effect.eeeabsmobs.frenzy_effect.description": "获得基础攻击提升与百分比减伤，按住疾跑键突刺，破坏方块以及撞晕生物，在药效结束后陷入虚弱状态，等级越高效果越强。",
+
   "_comment": "药水",
   "item.minecraft.potion.effect.frenzy_potion": "狂暴药水",
   "item.minecraft.splash_potion.effect.frenzy_potion": "喷溅型狂暴药水",

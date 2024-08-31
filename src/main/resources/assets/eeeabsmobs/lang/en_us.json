@@ -120,6 +120,13 @@
   "effect.eeeabsmobs.vertigo_effect": "Vertigo",
   "effect.eeeabsmobs.frenzy_effect": "Frenzy",
 
+  "_comment": "JEI Description",
+  "jei.eeeabsmobs.eye_of_structure.tip": "It will guide you to the corresponding structure just like an Ender Eye does.",
+  "effect.eeeabsmobs.erode_effect.description": "Continuously reduces the durability of armor worn, with higher levels causing greater reduction.",
+  "effect.eeeabsmobs.armor_lower_effect.description": "Each level provides an additional 20% reduction in armor and armor toughness.",
+  "effect.eeeabsmobs.vertigo_effect.description": "During vertigo, unable to use items or place blocks, attack mobs or break blocks, move or turn the view.",
+  "effect.eeeabsmobs.frenzy_effect.description": "Gains base attack boost and percentage damage reduction. While effect is active, holding the sprint button allows for a lunge attack, breaking blocks, and stunning mobs. After the effect wears off, the user enters a weakened state. The higher the level, the stronger the effect.",
+
   "_comment": "Potion",
   "item.minecraft.potion.effect.frenzy_potion": "Potion of Frenzy",
   "item.minecraft.splash_potion.effect.frenzy_potion": "Splash Potion of Frenzy",
