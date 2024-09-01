@@ -87,7 +87,7 @@ public class EntityInit {
     public static final RegistryObject<EntityType<EntityTheImmortal>> IMMORTAL_BOSS =
             ENTITIES.register("immortal",
                     () -> EntityType.Builder.<EntityTheImmortal>of(EntityTheImmortal::new, MobCategory.MONSTER)
-                            .sized(2.8f, 4.95f).fireImmune().clientTrackingRange(10)
+                            .sized(2.8f, 4.45f).fireImmune().clientTrackingRange(10)
                             .setShouldReceiveVelocityUpdates(true)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal").toString()));
 
@@ -100,8 +100,7 @@ public class EntityInit {
     public static final RegistryObject<EntityType<EntityGulingSentinelHeavy>> GULING_SENTINEL_HEAVY =
             ENTITIES.register("guling_sentinel_heavy",
                     () -> EntityType.Builder.<EntityGulingSentinelHeavy>of(EntityGulingSentinelHeavy::new, MobCategory.MONSTER)
-                            .sized(2.45f, 3.45f).fireImmune()/*.clientTrackingRange(10)*/
-                            .setShouldReceiveVelocityUpdates(true)
+                            .sized(2.45f, 3.45f).fireImmune()
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "guling_sentinel_heavy").toString()));
 
     public static final RegistryObject<EntityType<EntityNamelessGuardian>> NAMELESS_GUARDIAN =

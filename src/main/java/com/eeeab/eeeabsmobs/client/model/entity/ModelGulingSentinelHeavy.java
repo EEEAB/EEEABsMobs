@@ -103,11 +103,8 @@ public class ModelGulingSentinelHeavy extends EMHierarchicalModel<EntityGulingSe
             }
         }
         //LookAt
-        if (entity.getAnimation() == entity.rangeAttackAnimation && entity.getAnimationTick() > 10) {
-            lookAtAnimation(netHeadYaw, headPitch, 2F, this.upper);
-        } else {
-            lookAtAnimation(netHeadYaw, headPitch, 1.5F, this.head);
-        }
+        lookAtAnimation(netHeadYaw, headPitch, 1F, this.head);
+
         if (entity.getAnimation() == entity.electromagneticAnimation) {
             float amount = entity.electromagneticConControlled.getAnimationFraction();
             this.core.x += (float) (Math.random() - 0.5) * 1.5F * amount;

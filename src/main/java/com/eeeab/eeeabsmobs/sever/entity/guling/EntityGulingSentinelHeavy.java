@@ -290,13 +290,13 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                     this.setActive(false);
                 }
             }
-            if (!this.isNoAi() && this.isActive() && this.isNoAnimation() && this.smashAttackTick <= 0 && this.getTarget() != null && ((targetDistance <= 6.5F && ModEntityUtils.checkTargetComingCloser(this, this.getTarget())) || this.targetDistance < 6.0F)) {
+            if (this.checkCanAttack() && this.smashAttackTick <= 0 && ((targetDistance <= 6.5F && ModEntityUtils.checkTargetComingCloser(this, this.getTarget())) || this.targetDistance < 6.0F)) {
                 this.playAnimation(this.smashAttackAnimation);
             }
-            if (!this.isNoAi() && this.isActive() && this.isNoAnimation() && this.getTarget() != null && this.rangeAttackTick <= 0 && Math.pow(this.targetDistance, 2.0) > this.getMeleeAttackRangeSqr(this.getTarget()) + 5) {
+            if (this.checkCanAttack() && this.rangeAttackTick <= 0 && Math.pow(this.targetDistance, 2.0) > this.getMeleeAttackRangeSqr(this.getTarget()) + 5) {
                 this.playAnimation(this.rangeAttackAnimation);
             }
-            if (!this.isNoAi() && this.isActive() && this.isNoAnimation() && this.getTarget() != null && this.electromagneticTick <= 0 && (this.getHealthPercentage() <= 80 || this.tickCount > 1200) && this.targetDistance < 6.5F) {
+            if (this.checkCanAttack() && this.electromagneticTick <= 0 && (this.getHealthPercentage() <= 80 || this.tickCount > 1200) && this.targetDistance < 6.5F) {
                 this.playAnimation(this.electromagneticAnimation);
             }
         }
@@ -343,7 +343,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                         this.gshHurtTarget(hitEntity, 3F, true);
                         double ratioX = Math.sin(this.getYRot() * ((float) Math.PI / 180F));
                         double ratioZ = (-Math.cos(this.getYRot() * ((float) Math.PI / 180F)));
-                        ModEntityUtils.forceKnockBack(hitEntity, 0.5F, ratioX, ratioZ, 1.0F, false);
+                        ModEntityUtils.forceKnockBack(this, hitEntity, 0.5F, ratioX, ratioZ, true);
                     }
                 }
             } else if (tick == 39) {
@@ -491,6 +491,10 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         compound.putBoolean("isAlwaysActive", this.entityData.get(DATA_ALWAYS_ACTIVE));
     }
 
+    private boolean checkCanAttack() {
+        return !this.isNoAi() && this.isActive() && this.isNoAnimation() && this.getTarget() != null && this.canAttack(this.getTarget());
+    }
+
     @Override
     public Animation[] getAnimations() {
         return this.animations;
@@ -613,7 +617,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         public void tick() {
             int tick = this.entity.getAnimationTick();
             LivingEntity target = this.entity.getTarget();
-            this.entity.setDeltaMovement(0F, 0F, 0F);
+            this.entity.setDeltaMovement(0F, entity.getDeltaMovement().y, 0F);
             if (!(tick < 15 && tick > 10) && target != null) {
                 this.entity.getLookControl().setLookAt(target, 30F, 30F);
             } else {
@@ -630,7 +634,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                         entity.gshHurtTarget(livingEntity, 1F, true);
                         double ratioX = -Math.sin(entity.yBodyRot * ((float) Math.PI / 180F));
                         double ratioZ = Math.cos(entity.yBodyRot * ((float) Math.PI / 180F));
-                        ModEntityUtils.forceKnockBack(livingEntity, 0.8F, ratioX, ratioZ, 1.5F, false);
+                        ModEntityUtils.forceKnockBack(entity, livingEntity, 0.8F, ratioX, ratioZ, true);
                     }
                 }
             } else if (tick == 18) {
@@ -648,6 +652,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                     float entityHitDistance = (float) Math.sqrt((livingEntity.getZ() - entity.getZ()) * (livingEntity.getZ() - entity.getZ()) + (livingEntity.getX() - entity.getX()) * (livingEntity.getX() - entity.getX())) - livingEntity.getBbWidth() / 2F;
                     if ((entityHitDistance <= range && (entityRelativeAngle <= rightArc / 2F && entityRelativeAngle >= -leftArc / 2F) || (entityRelativeAngle >= 360 - 90F / 2F || entityRelativeAngle <= -360 + 90F / 2F))) {
                         entity.gshHurtTarget(livingEntity, 1.25F, false);
+                        ModEntityUtils.forceKnockBack(entity, livingEntity, 0.25F, this.entity.getX() - livingEntity.getX(), this.entity.getZ() - livingEntity.getZ(), true);
                     }
                 }
             }
@@ -677,7 +682,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             LivingEntity target = this.entity.getTarget();
             this.entity.setYRot(this.entity.yBodyRot);
             if (this.lostTargetDelay > 0) this.lostTargetDelay--;
-            if (target != null && target.isAlive() && this.lostTargetDelay < 10) {
+            if (target != null && target.isAlive() && this.entity.canAttack(target) && this.lostTargetDelay < 10) {
                 if (!this.entity.getSensing().hasLineOfSight(target)) {
                     this.lostTargetDelay += 2;
                 }
@@ -703,7 +708,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 Vec3 vec3 = findTargetPoint(this.entity, target);
                 this.entity.setDeltaMovement(vec3.x * moveSpeed, this.entity.getDeltaMovement().y, vec3.z * moveSpeed);
             } else {
-                this.entity.setDeltaMovement(0F, 0F, 0F);
+                this.entity.setDeltaMovement(0F, this.entity.getDeltaMovement().y, 0F);
             }
         }
 
@@ -727,6 +732,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         @Override
         public void tick() {
             int tick = entity.getAnimationTick();
+            this.entity.setDeltaMovement(0, this.entity.onGround() && !this.entity.isNoGravity() ? -0.01 : this.entity.getDeltaMovement().y, 0);
             if (!this.entity.level().isClientSide) {
                 if (tick == 43 || tick == 65 || tick == 87) {
                     final int count = 10;
