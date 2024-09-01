@@ -134,7 +134,7 @@ public class EntityGuardianLaser extends EntityMagicEffects {
             List<LivingEntity> hit = raytraceEntities(level(), new Vec3(getX(), getY(), getZ()), new Vec3(endPosX, endPosY, endPosZ)).entities;
             if (blockSide != null) {
                 spawnExplosionParticles(2);
-                if (!level().isClientSide && !isPlayer() && EMConfigHandler.COMMON.ENTITY.GUARDIAN_LASER.enableGenerateScorchEntity.get()) {
+                if (!level().isClientSide && !isPlayer() && EMConfigHandler.COMMON.ENTITY.enableGenerateScorchEntity.get()) {
                     EntityScorch scorch = new EntityScorch(level(), prevCollidePosX, prevCollidePosY, prevCollidePosZ);
                     level().addFreshEntity(scorch);
                 }
@@ -222,7 +222,7 @@ public class EntityGuardianLaser extends EntityMagicEffects {
 
 
     private void calculateEndPos() {
-        double radius = isPlayer() ? EMConfigHandler.COMMON.ENTITY.GUARDIAN_LASER.playerShootRadius.get() : GUARDIAN_RADIUS;
+        double radius = isPlayer() ? EMConfigHandler.COMMON.ENTITY.guardianLaserShootRadius.get() : GUARDIAN_RADIUS;
         if (level().isClientSide()) {
             endPosX = getX() + radius * Math.cos(yHeadRotAngle) * Math.cos(xHeadRotAngle);
             endPosZ = getZ() + radius * Math.sin(yHeadRotAngle) * Math.cos(xHeadRotAngle);
@@ -271,7 +271,7 @@ public class EntityGuardianLaser extends EntityMagicEffects {
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
-        Double radius = EMConfigHandler.COMMON.ENTITY.GUARDIAN_LASER.playerShootRadius.get();
+        Double radius = EMConfigHandler.COMMON.ENTITY.guardianLaserShootRadius.get();
         return isPlayer() ? distance < (radius * radius) * 2 : distance < (GUARDIAN_RADIUS * GUARDIAN_RADIUS) * 2;
     }
 

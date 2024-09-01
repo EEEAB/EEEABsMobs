@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.util;
 
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityFallingBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -252,6 +253,7 @@ public class ModEntityUtils {
      * @param fallingFactor y轴下降系数
      */
     public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos, float fallingFactor) {
+        if (!EMConfigHandler.COMMON.ENTITY.enableSpawnFallingBlock.get()) return;
         Random random = new Random();
         BlockPos abovePos = new BlockPos(pos).above();//获取上面方块的坐标,以用来判断是否需要生成下落的方块
         BlockState block = level.getBlockState(pos);//获取下落方块,以用于渲染方块材质
@@ -278,6 +280,7 @@ public class ModEntityUtils {
      * @param pos   区块坐标
      */
     public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos) {
+        if (!EMConfigHandler.COMMON.ENTITY.enableSpawnFallingBlock.get()) return;
         RandomSource random = RandomSource.create();
         BlockPos abovePos = new BlockPos(pos).above();//获取上面方块的坐标,以用来判断是否需要生成下落的方块
         BlockState block = level.getBlockState(pos);//获取下落方块,以用于渲染方块材质
@@ -299,6 +302,7 @@ public class ModEntityUtils {
      * @param fallingFactor y轴下降系数
      */
     public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos, Quaternionf quaternionf, int duration, float fallingFactor) {
+        if (!EMConfigHandler.COMMON.ENTITY.enableSpawnFallingBlock.get()) return;
         BlockPos abovePos = new BlockPos(pos).above();//获取上面方块的坐标,以用来判断是否需要生成下落的方块
         BlockState block = level.getBlockState(pos);//获取下落方块,以用于渲染方块材质
         BlockState blockAbove = level.getBlockState(abovePos);//获取上面方块的状态,,以用来判断是否需要生成下落的方块

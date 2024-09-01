@@ -15,7 +15,7 @@ import java.util.List;
  * 翻译字段工具类
  *
  * @author EEEAB
- * @version 1.2
+ * @version 1.3
  */
 public class EMTUtils {
 
@@ -31,6 +31,8 @@ public class EMTUtils {
 
     //general
     public static final String TIP_SUFFIX = ".tip";
+
+    public static final String CONFIG_SUFFIX = ".config";
 
     public static final String OTHER_PREFIX = "other.";
 
@@ -61,17 +63,20 @@ public class EMTUtils {
     //other
     public static final String STRUCTURE_PREFIX = "structure.";
 
-
     public static Component simpleText(String prefix, String key, Style style, @Nullable Object... args) {
+        return simpleText(prefix, key, style, TIP_SUFFIX, args);
+    }
+
+    public static Component simpleText(String prefix, String key, Style style, String suffix, @Nullable Object... args) {
         MutableComponent component;
         String finalPrefix = prefix + MOD_ID;
         if (style == null) style = Style.EMPTY;
         if (args == null) args = new Object[0];
         if (key == null) {
-            component = Component.translatable(finalPrefix + TIP_SUFFIX.substring(1), args).setStyle(style);
+            component = Component.translatable(finalPrefix + suffix.substring(1), args).setStyle(style);
         } else {
             key = subDescriptionId(key);
-            component = Component.translatable(finalPrefix + key + TIP_SUFFIX, args).setStyle(style);
+            component = Component.translatable(finalPrefix + key + suffix, args).setStyle(style);
         }
         return component;
     }
@@ -106,6 +111,10 @@ public class EMTUtils {
 
     public static Component simpleLeftClickText(String key, Style style, @Nullable Object... args) {
         return simpleText(LEFT_CLICK, key, style, args);
+    }
+
+    public static Component simpleConfigText(String key, Style style, @Nullable Object... args) {
+        return simpleText(OTHER_PREFIX, key, style, CONFIG_SUFFIX, args);
     }
 
     /**

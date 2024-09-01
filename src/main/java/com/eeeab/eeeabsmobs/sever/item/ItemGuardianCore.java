@@ -110,7 +110,7 @@ public class ItemGuardianCore extends Item {
             tooltip.add(EMTUtils.UNABLE_BREAKS);
             tooltip.add(EMTUtils.simpleShiftDownText(null, EMTUtils.STYLE_GREEN));
         } else {
-            tooltip.add(EMTUtils.simpleWeaponText(this.getDescriptionId(), EMTUtils.STYLE_GREEN, EMConfigHandler.COMMON.ENTITY.GUARDIAN_LASER.playerShootRadius.get()));
+            tooltip.add(EMTUtils.simpleWeaponText(this.getDescriptionId(), EMTUtils.STYLE_GREEN, EMConfigHandler.COMMON.ENTITY.guardianLaserShootRadius.get()));
             tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, EMTUtils.STYLE_GRAY, this.getDescriptionId()));
         }
     }
