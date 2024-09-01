@@ -44,17 +44,15 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
         float baseDamageMultiplier = isPowered ? 1.0F : 0.8F;
         entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
         if (animation == entity.attackAnimation4) {
-            int lookAtFrame = isPowered ? 12 : 8;
-            if (tick < lookAtFrame && target != null) {
+            if ((tick >= 15 || tick < 11) && target != null) {
                 entity.getLookControl().setLookAt(target, 30F, 30F);
                 this.entity.lookAt(target, 30F, 30F);
             } else {
                 this.entity.setYRot(this.entity.yRotO);
             }
-            if (tick == 8) {
+            if (tick == 10) {
+                pursuit();
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 1.95f, this.entity.getVoicePitch());
-            } else if (tick == 11) {
-                pursuit(5F, 1.5F);
             } else if (tick == 12) {
                 List<LivingEntity> entities = this.entity.getNearByLivingEntities(range);
                 for (LivingEntity hitEntity : entities) {
@@ -71,16 +69,14 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
             }
         } else if (animation == entity.attackAnimation5) {
             tick = this.entity.getAnimationTick();
-            int lookAtFrame = isPowered ? 10 : 4;
-            if (tick < lookAtFrame && target != null) {
+            if ((tick >= 15 || tick < 8) && target != null) {
                 entity.getLookControl().setLookAt(target, 30F, 30F);
                 this.entity.lookAt(target, 30F, 30F);
             } else {
                 this.entity.setYRot(this.entity.yRotO);
             }
-            if (tick == 5) {
-                pursuit(-1F, 1.4F);
-            } else if (tick == 6) {
+            if (tick == 8) {
+                pursuit();
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.05f, this.entity.getVoicePitch() + 0.15f);
             } else if (tick == 10) {
                 List<LivingEntity> entities = this.entity.getNearByLivingEntities(range);
@@ -95,21 +91,20 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
                         ModEntityUtils.forceKnockBack(entity, hitEntity, 0.5F, ratioX, ratioZ, !isPowered);
                     }
                 }
-            } else if (tick == 20 && entity.checkCanAttackRange(2.5F, range) && canToggleAnimation(70)) {
+            } else if (tick == 20 && entity.checkCanAttackRange(1.5F, range) && canToggleAnimation(70)) {
                 this.entity.playAnimation(entity.attackAnimation6);
             }
         } else if (animation == entity.attackAnimation6) {
             tick = this.entity.getAnimationTick();
             baseDamageMultiplier += 0.2F;
-            int lookAtFrame = isPowered ? 14 : 12;
-            if (tick < lookAtFrame && target != null) {
+            if ((tick > 26 || tick < 8) && target != null) {
                 entity.getLookControl().setLookAt(target, 30F, 30F);
                 this.entity.lookAt(target, 30F, 30F);
             } else {
                 this.entity.setYRot(this.entity.yRotO);
             }
-            if (tick == 7) {
-                pursuit(5F, 2.5F);
+            if (tick == 8) {
+                pursuit();
             } else if (tick == 10) {
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.2f, this.entity.getVoicePitch() + 0.15f);
             } else if (tick == 12) {
@@ -142,13 +137,9 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
                 (isPowered && entity.getRandom().nextFloat() < 0.9F);
     }
 
-    private void pursuit(float pursuitDistance, float moveMultiplier) {
-        float targetDistance = this.entity.targetDistance;
-        if (this.entity.getTarget() != null && targetDistance < pursuitDistance && targetDistance > 0) {
-            moveMultiplier = --targetDistance;
+    private void pursuit() {
+        if (this.entity.getTarget() == null || this.entity.targetDistance > 1.8F) {
+            this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * 1.8F, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * 1.8F));
         }
-        targetDistance = this.entity.targetDistance;
-        if (this.entity.getTarget() == null || targetDistance > 1.8F)
-            this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier));
     }
 }
