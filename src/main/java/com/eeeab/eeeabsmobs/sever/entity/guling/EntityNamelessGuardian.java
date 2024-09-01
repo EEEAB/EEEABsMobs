@@ -905,6 +905,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     static class GuardianAIGoal extends Goal {
         private final EntityNamelessGuardian guardian;
         private final RandomSource random;
+        private boolean attackFlag;
         private boolean isPowered;
         private double targetX;
         private double targetY;
@@ -967,7 +968,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 boolean canRobust = dist <= 144D && this.isPowered && (this.guardian.getMadnessTick() == 0 || this.guardian.isChallengeMode() && this.guardian.getRobustTick() == 0);
                 boolean canSmash = (checkAttackHeight || target.onGround()) && (this.random.nextFloat() < 0.6F && dist <= (this.isPowered ? 50D : 25D) && this.guardian.getSmashTick() <= 0);
                 if (dist < 25D && !canSmash && !canRobust) {
-                    Animation attackAnimation = this.random.nextBoolean() ? this.guardian.attackAnimation1 : this.guardian.attackAnimation4;
+                    Animation attackAnimation = this.attackFlag ? this.guardian.attackAnimation1 : this.guardian.attackAnimation4;
+                    this.attackFlag = !this.attackFlag;
                     this.guardian.playAnimation(attackAnimation);
                 } else if (canRobust) {
                     this.guardian.playAnimation(this.guardian.robustAttackAnimation);
