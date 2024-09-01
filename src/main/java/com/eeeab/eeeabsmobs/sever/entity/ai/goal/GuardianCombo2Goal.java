@@ -42,7 +42,7 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
         LivingEntity target = this.entity.getTarget();
         int tick = this.entity.getAnimationTick();
         float baseDamageMultiplier = isPowered ? 1.0F : 0.8F;
-        entity.setDeltaMovement(0, entity.onGround() ? 0 : entity.getDeltaMovement().y, 0);
+        entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
         if (animation == entity.attackAnimation4) {
             int lookAtFrame = isPowered ? 12 : 8;
             if (tick < lookAtFrame && target != null) {
@@ -92,7 +92,7 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
                         entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                         double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
                         double ratioZ = (-Math.cos(entity.getYRot() * ((float) Math.PI / 180F)));
-                        ModEntityUtils.forceKnockBack(hitEntity, 0.5F, ratioX, ratioZ, 1.0F, false);
+                        ModEntityUtils.forceKnockBack(entity, hitEntity, 0.5F, ratioX, ratioZ, !isPowered);
                     }
                 }
             } else if (tick == 20 && entity.checkCanAttackRange(2.5F, range) && canToggleAnimation(70)) {

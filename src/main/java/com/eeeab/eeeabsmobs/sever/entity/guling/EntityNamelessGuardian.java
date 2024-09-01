@@ -489,11 +489,9 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             }
         }
 
-        this.pushEntitiesAway(1.7F, getBbHeight(), 1.7F, 1.7F);
+        if (this.isNoAnimation()) this.pushEntitiesAway(1.7F, getBbHeight(), 1.7F, 1.7F);
 
-        if (!this.isActive()) {
-            this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
-        }
+        if (!this.isActive()) this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
 
         if (this.getAnimation() != this.getNoAnimation()
                 && this.getAnimation() != this.pounceAttackAnimation1

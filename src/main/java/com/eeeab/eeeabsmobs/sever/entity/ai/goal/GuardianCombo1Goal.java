@@ -41,7 +41,7 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
     @Override
     public void tick() {
         LivingEntity target = entity.getTarget();
-        entity.setDeltaMovement(0, entity.onGround() ? 0 : entity.getDeltaMovement().y, 0);
+        entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
         if (entity.getAnimation() == entity.attackAnimation1) {
             int tick = entity.getAnimationTick();
             int lookAtFrame = isPowered ? 15 : 8;
@@ -65,7 +65,7 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
                         double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
                         double ratioZ = (-Math.cos(entity.getYRot() * ((float) Math.PI / 180F)));
                         entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
-                        ModEntityUtils.forceKnockBack(hitEntity, 0.35F, ratioX, ratioZ, 1.0F, false);
+                        ModEntityUtils.forceKnockBack(entity, hitEntity, 1F, ratioX, ratioZ, !isPowered);
                     }
                 }
             } else if (tick == 20 && entity.checkCanAttackRange(2.0, range) && canToggleAnimation(90)) {
@@ -97,7 +97,7 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
                         entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                         double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
                         double ratioZ = (-Math.cos(entity.getYRot() * ((float) Math.PI / 180F)));
-                        ModEntityUtils.forceKnockBack(hitEntity, 0.35F, ratioX, ratioZ, 1.0F, false);
+                        ModEntityUtils.forceKnockBack(entity, hitEntity, 0.8F, ratioX, ratioZ, !isPowered);
                     }
                 }
             } else if (tick == 25) {
@@ -132,7 +132,7 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
                     entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                     double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
                     double ratioZ = (-Math.cos(entity.getYRot() * ((float) Math.PI / 180F)));
-                    ModEntityUtils.forceKnockBack(hitEntity, 1.0F, ratioX, ratioZ, 0.01F, false);
+                    ModEntityUtils.forceKnockBack(entity, hitEntity, 2F, ratioX, ratioZ, false);
                 }
                 entity.playSound(SoundEvents.GENERIC_EXPLODE, 1.25F, 1F + entity.getRandom().nextFloat() * 0.1F);
             } else if (tick > 15 && tick < 22) {

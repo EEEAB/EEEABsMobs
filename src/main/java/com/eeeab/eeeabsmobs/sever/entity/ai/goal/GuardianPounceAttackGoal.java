@@ -127,7 +127,7 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
                             entity.guardianHurtTarget(entity, hitEntity, 0.05F, 1.0F, baseDamageMultiplier, false, false, false);
                             double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
                             double ratioZ = (-Math.cos(entity.getYRot() * ((float) Math.PI / 180F)));
-                            ModEntityUtils.forceKnockBack(hitEntity, 1.5f, ratioX, ratioZ, 0.01f, false);
+                            ModEntityUtils.forceKnockBack(entity, hitEntity, 1.5F, ratioX, ratioZ, true);
                             double duration = 1.5;
                             if (Difficulty.HARD.equals(entity.level().getDifficulty())) duration = 2.5;
                             if (hitEntity instanceof Player player && !player.isCreative() && !player.isBlocking()) {

@@ -217,20 +217,30 @@ public class ModEntityUtils {
     }
 
     /**
-     * 击退指定实体(受事件影响)
+     * 击退指定实体
+     *
+     * @param attacker 攻击者
+     * @param target   目标实体
+     * @param strength 击退强度
+     * @param ratioX   x轴击退比率
+     * @param ratioZ   z轴击退比率
+     * @param optional 是否受到事件/实体击退抗性/举盾的影响
      */
-    public static void forceKnockBack(LivingEntity attackTarget, float strength, double ratioX, double ratioZ, double knockBackResistanceReduction, boolean canceledEventKnockBack) {
-        LivingKnockBackEvent event = ForgeHooks.onLivingKnockBack(attackTarget, strength, ratioX, ratioZ);
-        if (canceledEventKnockBack && event.isCanceled()) return;
-        strength = event.getStrength();
-        ratioX = event.getRatioX();
-        ratioZ = event.getRatioZ();
-        strength = (float) ((double) strength * (1.0D - attackTarget.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE) * knockBackResistanceReduction));
-        if (!(strength <= 0.0F)) {
-            attackTarget.hasImpulse = true;
-            Vec3 vector3d = attackTarget.getDeltaMovement();
-            Vec3 vector3d1 = (new Vec3(ratioX, 0.0D, ratioZ)).normalize().scale((double) strength);
-            attackTarget.setDeltaMovement(vector3d.x / 2.0D - vector3d1.x, attackTarget.onGround() ? Math.min(0.4D, vector3d.y / 2.0D + (double) strength) : vector3d.y, vector3d.z / 2.0D - vector3d1.z);
+    public static void forceKnockBack(LivingEntity attacker, LivingEntity target, float strength, double ratioX, double ratioZ, boolean optional) {
+        LivingKnockBackEvent event = ForgeHooks.onLivingKnockBack(attacker, strength, ratioX, ratioZ);
+        if (optional && event.isCanceled()) return;
+        strength = optional ? event.getStrength() : strength;
+        ratioX = optional ? event.getRatioX() : ratioX;
+        ratioZ = optional ? event.getRatioZ() : ratioZ;
+        if (optional) {
+            strength *= (float) (1.0F - target.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
+        }
+        if (strength > 0) {
+            attacker.hasImpulse = true;
+            if (!optional) target.hurtMarked = true;
+            Vec3 vector3d = attacker.getDeltaMovement();
+            Vec3 vector3d1 = (new Vec3(ratioX, 0.0D, ratioZ)).normalize().scale(strength);
+            target.setDeltaMovement(vector3d.x / 2.0D - vector3d1.x, attacker.onGround() ? Math.min(0.4D, vector3d.y / 2.0D + strength) : vector3d.y, vector3d.z / 2.0D - vector3d1.z);
         }
     }
 
