@@ -19,7 +19,7 @@ import java.util.Map;
  * 伤害适应
  *
  * @author EEEAB
- * @version 1.3
+ * @version 1.4
  */
 public class DamageAdaptation {
     /**
@@ -102,7 +102,7 @@ public class DamageAdaptation {
             ADAPT_MAP.put(key, new DamageInfo(tickStamp, singleAdaptFactor));
             return amount;
         } catch (Exception e) {
-            EEEABMobs.LOGGER.error("An unexpected exception occurred when calculating damage:", e);
+            EEEABMobs.LOGGER.error("An unexpected exception occurred when calculating damage: {}", e.getMessage());
             return amount;
         } finally {
             this.hurting = false;
@@ -119,18 +119,16 @@ public class DamageAdaptation {
 
     private static @Nullable String getKey(@Nullable DamageSource source, boolean adaptsSameTypeMobs) {
         if (source == null) {
-            return "unknown:source";
+            return "unknown_source";
         } else if (source.getEntity() == null && !source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
-            return "unknown:entity";
+            return spliceCharacters(source.getMsgId(), "unknown");
         } else if (source.getEntity() != null) {
             Entity entity = source.getEntity();
-            String id = adaptsSameTypeMobs ? entity.getClass().getName() : entity.getStringUUID();
-            String key;
+            String id = adaptsSameTypeMobs ? entity.getType().getDescriptionId() : entity.getStringUUID();
+            String key = id;
             if (entity instanceof Player player) {
                 InteractionHand hand = player.getUsedItemHand();
                 key = spliceCharacters(id, player.getItemInHand(hand).getItem().getDescriptionId());
-            } else {
-                key = spliceCharacters(id, source.getMsgId());
             }
             return key;
         } else {
