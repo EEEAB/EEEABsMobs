@@ -171,6 +171,7 @@
   "other.eeeabsmobs.mob_attack.config": "设置实体攻击倍数",
   "other.eeeabsmobs.suck_blood.config": "设置实体吸血倍数",
   "other.eeeabsmobs.damage_cap.config": "设置实体受到伤害上限",
+  "other.eeeabsmobs.invulnerable_tick.config": "设置实体额外无敌游戏刻",
   "other.eeeabsmobs.heal_percentage.config": "设置实体治疗百分比",
   "other.eeeabsmobs.damage_adapt_1.config": "设置最大适应伤害源个数",
   "other.eeeabsmobs.damage_adapt_2.config": "设置单个适应伤害的有效时间",

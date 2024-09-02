@@ -171,6 +171,7 @@
   "other.eeeabsmobs.mob_attack.config": "Set mob attack multiplier",
   "other.eeeabsmobs.suck_blood.config": "Set mob suck blood multiplier",
   "other.eeeabsmobs.damage_cap.config": "Set mob damage cap",
+  "other.eeeabsmobs.invulnerable_tick.config": "Set mob extra invulnerable tick",
   "other.eeeabsmobs.heal_percentage.config": "Set mob heal percentage",
   "other.eeeabsmobs.damage_adapt_1.config": "Set maximum adaptive damage source count",
   "other.eeeabsmobs.damage_adapt_2.config": "Set duration of single adaptive damage effect",

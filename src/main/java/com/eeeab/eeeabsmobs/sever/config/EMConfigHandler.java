@@ -196,8 +196,7 @@ public final class EMConfigHandler {
         public ImmortalShaman(final ForgeConfigSpec.Builder builder) {
             builder.push("Immortal Shaman");
             healPercentage = BUILDER.comment("Immortal Shaman heal values (based on max health percentage)")
-                    .translation(getTranslationKey("heal_percentage"))
-                    .defineInRange("Heal percentage", 0.5D, 0D, 1D);
+                    .translation(getTranslationKey("heal_percentage")).defineInRange("Heal percentage", 0.5D, 0D, 1D);
             combatConfig = new AttributeConfig();
             builder.pop();
         }
@@ -223,8 +222,7 @@ public final class EMConfigHandler {
             builder.push("Immortal Executioner");
             combatConfig = new AttributeConfig();
             maximumDetonationCount = BUILDER.comment("Set the number of times to strengthen this mob")
-                    .translation(getTranslationKey("immortal_executioner"))
-                    .defineInRange("Ignite Count", 3, 0, 1024);
+                    .translation(getTranslationKey("immortal_executioner")).defineInRange("Ignite Count", 3, 0, 1024);
             builder.pop();
         }
 
@@ -265,8 +263,7 @@ public final class EMConfigHandler {
             builder.push("Corpse & Corpse Villager");
             combatConfig = new AttributeConfig();
             enableConvertToCorpse = BUILDER.comment("If 'False', When zombies or villagers are killed by corpses, they will not converted into corpses themselves")
-                    .translation(getTranslationKey("corpse"))
-                    .define("Converted to corpse", true);
+                    .translation(getTranslationKey("corpse")).define("Converted to corpse", true);
             builder.pop();
         }
 
@@ -279,8 +276,7 @@ public final class EMConfigHandler {
         public CorpseWarlock(final ForgeConfigSpec.Builder builder) {
             builder.push("Corpse Warlock");
             maxDistanceTakeDamage = BUILDER.comment("Set the effective distance at which projectiles can deal damage")
-                    .translation(getTranslationKey("effective_range"))
-                    .defineInRange("Set Projectile Damage Range", 12D, 1D, 32D);
+                    .translation(getTranslationKey("effective_range")).defineInRange("Set Projectile Damage Range", 12D, 1D, 32D);
             combatConfig = new AttributeConfig();
             maximumDamageCap = new DamageCapConfig(22);
             builder.pop();
@@ -310,8 +306,7 @@ public final class EMConfigHandler {
         public GulingSentinel(final ForgeConfigSpec.Builder builder) {
             builder.push("Guling Sentinel");
             enableNonCombatHeal = BUILDER.comment("If 'False' disable out-of-combat heal")
-                    .translation(getTranslationKey("out_of_combat"))
-                    .define("Enable out-of-combat healing", true);
+                    .translation(getTranslationKey("out_of_combat")).define("Enable out-of-combat healing", true);
             combatConfig = new AttributeConfig();
             builder.pop();
         }
@@ -326,8 +321,7 @@ public final class EMConfigHandler {
         public GulingSentinelHeavy(final ForgeConfigSpec.Builder builder) {
             builder.push("Guling Sentinel-Heavy");
             enableNonCombatHeal = BUILDER.comment("If 'False' disable out-of-combat heal")
-                    .translation(getTranslationKey("out_of_combat"))
-                    .define("Enable out-of-combat healing", true);
+                    .translation(getTranslationKey("out_of_combat")).define("Enable out-of-combat healing", true);
             combatConfig = new AttributeConfig();
             builder.pop();
         }
@@ -342,8 +336,9 @@ public final class EMConfigHandler {
         public NamelessGuardian(final ForgeConfigSpec.Builder builder) {
             builder.push("Nameless Guardian");
             suckBloodMultiplier = BUILDER.comment("Set suck blood multiplier")
-                    .translation(getTranslationKey("suck_blood"))
-                    .defineInRange("Suck blood multiplier", 1D, 0D, 1024D);
+                    .translation(getTranslationKey("suck_blood")).defineInRange("Suck blood multiplier", 1D, 0D, 1024D);
+            extraInvulnerableTick = BUILDER.comment("Set extra invulnerable tick(Does not take effect in Challenge mode)")
+                    .translation(getTranslationKey("invulnerable_tick")).defineInRange("Extra invulnerable tick", 20, 0, 1200);
             enableNonCombatHeal = BUILDER.comment("If 'False' disable out-of-combat heal")
                     .translation(getTranslationKey("out_of_combat")).define("Enable out-of-combat healing", true);
             enableForcedSuckBlood = BUILDER.comment("If 'False' disable forced suck blood on power status(Does not take effect in Challenge mode)")
@@ -363,6 +358,8 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.BooleanValue enableForcedSuckBlood;
         //挑战模式
         public final ForgeConfigSpec.BooleanValue challengeMode;
+        //额外的无敌刻
+        public final ForgeConfigSpec.IntValue extraInvulnerableTick;
         public final AttributeConfig combatConfig;
         public final DamageCapConfig maximumDamageCap;
     }
@@ -409,11 +406,9 @@ public final class EMConfigHandler {
 
         public AttributeConfig(float healthMultiplier, float attackMultiplier) {
             this.healthMultiplier = BUILDER.comment("Set this mob health multiplier")
-                    .translation(getTranslationKey("mob_health"))
-                    .defineInRange("Health multiplier", healthMultiplier, 0D, Double.MAX_VALUE);
+                    .translation(getTranslationKey("mob_health")).defineInRange("Health multiplier", healthMultiplier, 0D, Double.MAX_VALUE);
             this.attackMultiplier = BUILDER.comment("Set this mob attack multiplier")
-                    .translation(getTranslationKey("mob_attack"))
-                    .defineInRange("Attack multiplier", attackMultiplier, 0D, Double.MAX_VALUE);
+                    .translation(getTranslationKey("mob_attack")).defineInRange("Attack multiplier", attackMultiplier, 0D, Double.MAX_VALUE);
         }
 
         public final ForgeConfigSpec.DoubleValue healthMultiplier;
@@ -436,17 +431,13 @@ public final class EMConfigHandler {
         public DamageSourceAdaptConfig(final ForgeConfigSpec.Builder builder, int maxDamageSourceAdaptCount, int resetCountdown, double singleAdaptFactor, double maxAdaptFactor, boolean adaptsSameTypeMobs) {
             builder.push("Damage Adapt");
             this.maxDamageSourceAdaptCount = BUILDER.comment("Set this mob maximum adaptive damage source count")
-                    .translation(getTranslationKey("damage_adapt_1"))
-                    .defineInRange("Maximum adaptive damage source count", maxDamageSourceAdaptCount, 10, 1024);
+                    .translation(getTranslationKey("damage_adapt_1")).defineInRange("Maximum adaptive damage source count", maxDamageSourceAdaptCount, 10, 1024);
             this.resetCountdown = BUILDER.comment("Set the effective time for a single adaptive damage source(second)")
-                    .translation(getTranslationKey("damage_adapt_2"))
-                    .defineInRange("Effective time", resetCountdown, 10, 1024);
+                    .translation(getTranslationKey("damage_adapt_2")).defineInRange("Effective time", resetCountdown, 10, 1024);
             this.singleAdaptFactor = BUILDER.comment("Set the factor of each reduction of the same damage source")
-                    .translation(getTranslationKey("damage_adapt_3"))
-                    .defineInRange("Single adapt factor", singleAdaptFactor, 0D, 1D);
+                    .translation(getTranslationKey("damage_adapt_3")).defineInRange("Single adapt factor", singleAdaptFactor, 0D, 1D);
             this.maxAdaptFactor = BUILDER.comment("Set the max damage reduction factor")
-                    .translation(getTranslationKey("damage_adapt_4"))
-                    .defineInRange("Max adapt factor", maxAdaptFactor, 0D, 1D);
+                    .translation(getTranslationKey("damage_adapt_4")).defineInRange("Max adapt factor", maxAdaptFactor, 0D, 1D);
             this.adaptsSameTypeMobs = adaptsSameTypeMobs;
             builder.pop();
         }
@@ -464,11 +455,9 @@ public final class EMConfigHandler {
             this.attackSpeedValue = attackSpeed;
             this.attackDamageValue = attackDamage;
             this.attackDamage = BUILDER.comment("Set tool attack damage")
-                    .translation(getTranslationKey("tool_damage"))
-                    .defineInRange("Attack damage", attackDamage, 0d, Float.MAX_VALUE);
+                    .translation(getTranslationKey("tool_damage")).defineInRange("Attack damage", attackDamage, 0d, Float.MAX_VALUE);
             this.attackSpeed = BUILDER.comment("Set tool attack speed")
-                    .translation(getTranslationKey("tool_speed"))
-                    .defineInRange("Attack speed", attackSpeed, 0d, Float.MAX_VALUE);
+                    .translation(getTranslationKey("tool_speed")).defineInRange("Attack speed", attackSpeed, 0d, Float.MAX_VALUE);
         }
 
         public final ForgeConfigSpec.DoubleValue attackDamage;

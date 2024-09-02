@@ -73,6 +73,7 @@ import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraftforge.common.ForgeConfigSpec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -757,7 +758,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                     damage = 1F;
                 }
                 if (this.isPowered()) {
-                    if (this.guardianInvulnerableTime <= 0) guardianInvulnerableTime = 20 /*不能小于等于10*/;
+                    if (this.guardianInvulnerableTime <= 0) {
+                        ForgeConfigSpec.IntValue eit = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.extraInvulnerableTick;
+                        this.guardianInvulnerableTime = eit.get();
+                        if (this.isChallengeMode()) this.guardianInvulnerableTime = eit.getDefault();
+                    }
                     if (ModEntityUtils.isProjectileSource(source)) return false;
                 }
                 return super.hurt(source, damage);
