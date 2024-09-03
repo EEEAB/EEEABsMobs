@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.util;
 
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.util.QuaternionUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -7,12 +8,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -24,7 +25,18 @@ import java.util.function.Consumer;
  */
 public class ShockWaveUtils {
 
-    public static List<LivingEntity> doRingShockWave(Level level, Vec3 center, double radius, float baseBouncing, @Nullable Integer lifeTime) {
+    /**
+     * 通用撼地攻击
+     *
+     * @param level           服务端
+     * @param center          生成中心坐标
+     * @param radius          生成半径
+     * @param baseBouncing    基础起伏
+     * @param customLife      是否自定义存在时长
+     * @param defaultLifeTime 默认存在时长
+     * @return 包含在范围内的实体集合
+     */
+    public static List<LivingEntity> doRingShockWave(Level level, Vec3 center, double radius, float baseBouncing, boolean customLife, int defaultLifeTime) {
         Vec3 closestEdge = new Vec3(Math.round(center.x), Math.floor(center.y), Math.round(center.z));
         Vec3 centerOfBlock = new Vec3(Math.floor(center.x) + 0.5D, Math.floor(center.y), Math.floor(center.z) + 0.5D);
         center = (closestEdge.distanceToSqr(center) < centerOfBlock.distanceToSqr(center)) ? closestEdge : centerOfBlock;
@@ -37,7 +49,7 @@ public class ShockWaveUtils {
             for (int j = xFrom; j <= xTo; j++) {
                 Vec2 vec2 = new Vec2(j, i);
                 double y = center.y;
-                BlockPos pos = new BlockPos.MutableBlockPos(vec2.x(), y, vec2.z());
+                BlockPos pos = new BlockPos.MutableBlockPos(vec2.x(), checkSpawnY(level, vec2.x(), vec2.z(), y), vec2.z());
                 Vec3 blockCenter = new Vec3(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
                 Vec3 centerToBlock = blockCenter.subtract(center);
                 double distance = centerToBlock.horizontalDistance();
@@ -54,10 +66,11 @@ public class ShockWaveUtils {
                     rotator.mul(QuaternionUtils.YP.rotationDegrees(level.random.nextFloat() * 40F - 20F));
                     rotator.mul(QuaternionUtils.ZP.rotationDegrees(level.random.nextFloat() * 12F - 6F));
                     float bouncing = (float) (baseBouncing + distance * bounceExponent);
-                    if (lifeTime == null) {
-                        lifeTime = 20 + level.random.nextInt((int) radius * 20);
+                    int liftTime = defaultLifeTime;
+                    if (!customLife) {
+                        liftTime = defaultLifeTime + level.random.nextInt((int) radius * defaultLifeTime);
                     }
-                    ModEntityUtils.spawnFallingBlockByPos((ServerLevel) level, pos, rotator, lifeTime, bouncing);
+                    ModEntityUtils.spawnFallingBlockByPos((ServerLevel) level, pos, rotator, liftTime, bouncing);
                 }
             }
         }
@@ -102,7 +115,7 @@ public class ShockWaveUtils {
             if (continuous || attacker.getRandom().nextFloat() < 0.6F) {
                 int hitX = Mth.floor(px);
                 int hitZ = Mth.floor(pz);
-                BlockPos pos = new BlockPos(hitX, hitY, hitZ);
+                BlockPos pos = new BlockPos.MutableBlockPos(hitX, checkSpawnY(level, hitX, hitZ, hitY), hitZ);
                 if (randomOffset) ModEntityUtils.spawnFallingBlockByPos(level, pos, factor);
                 else {
                     double d0 = hitX - attacker.getX();
@@ -113,6 +126,27 @@ public class ShockWaveUtils {
             }
         }
     }
+
+    /**
+     * @return 用于确定实体生成的y轴位置
+     */
+    private static double checkSpawnY(Level level, double x, double z, double y) {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(x, Math.round(y), z);
+        if (!level.getBlockState(pos).isAir()) {
+            if (!level.getBlockState(pos.above()).isAir()) {
+                return pos.getY() + 1;
+            }
+            return y;
+        }
+        for (int offset = 1; offset <= EMConfigHandler.COMMON.ENTITY.fallingBlockBelowCheckRange.get(); offset++) {
+            BlockState stateBelow = level.getBlockState(pos.below(offset));
+            if (!stateBelow.isAir()) {
+                return pos.getY() - offset;
+            }
+        }
+        return y;
+    }
+
 
     private record Vec2(float x, float z) {
     }

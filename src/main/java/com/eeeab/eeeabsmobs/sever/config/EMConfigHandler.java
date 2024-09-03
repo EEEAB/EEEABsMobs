@@ -120,6 +120,8 @@ public final class EMConfigHandler {
                         .translation(getTranslationKey("falling_block_1")).define("Enable falling block spawn", true);
                 this.enableRenderFallingBlock = BUILDER.comment("If 'False' disable falling block rendering")
                         .translation(getTranslationKey("falling_block_2")).define("Enable falling block render", true);
+                this.fallingBlockBelowCheckRange = BUILDER.comment("Set the maximum range for downward block detection to determine the Y-axis position where the entity spawns")
+                        .translation(getTranslationKey("falling_block_3")).defineInRange("Set below check range", 3, 1, 10);
                 builder.pop();
             }
             builder.pop();
@@ -133,6 +135,8 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.BooleanValue enableSpawnFallingBlock;
         //启用渲染掉落方块
         public final ForgeConfigSpec.BooleanValue enableRenderFallingBlock;
+        //下探检查下落方块生成位置最大范围
+        public final ForgeConfigSpec.IntValue fallingBlockBelowCheckRange;
     }
 
     public static class Mob {
