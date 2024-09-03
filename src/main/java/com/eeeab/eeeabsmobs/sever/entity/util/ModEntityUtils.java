@@ -278,8 +278,10 @@ public class ModEntityUtils {
      *
      * @param level 服务端
      * @param pos   区块坐标
+     * @param mx    向量x
+     * @param mz    向量z
      */
-    public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos) {
+    public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos, double mx, double mz) {
         if (!EMConfigHandler.COMMON.ENTITY.enableSpawnFallingBlock.get()) return;
         RandomSource random = RandomSource.create();
         BlockPos abovePos = new BlockPos(pos).above();//获取上面方块的坐标,以用来判断是否需要生成下落的方块
@@ -288,7 +290,7 @@ public class ModEntityUtils {
 
         if (!block.isAir() && block.isRedstoneConductor(level, pos) && !block.hasBlockEntity() && !blockAbove.blocksMotion()) {
             EntityFallingBlock fallingBlock = new EntityFallingBlock(level, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, block, 10);
-            fallingBlock.push(0, 0.2 + random.nextGaussian() * 0.2, 0);
+            fallingBlock.push(mx, 0.2 + random.nextGaussian() * 0.2, mz);
             level.addFreshEntity(fallingBlock);
         }
     }

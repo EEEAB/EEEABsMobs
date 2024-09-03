@@ -25,6 +25,7 @@ import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityFallingBlock;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianLaser;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.entity.util.ShockWaveUtils;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
@@ -70,7 +71,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.*;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -1024,7 +1024,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     /**
-     * 无名守卫者通用撼地攻击
+     * 无名守卫者撼地攻击
      *
      * @param damageSource         伤害源
      * @param distance             距离
@@ -1040,57 +1040,28 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
      */
     public void shockAttack(DamageSource damageSource, int distance, float maxFallingDistance, double spreadArc, double offset, float hitEntityMaxHealth,
                             float baseDamageMultiplier, float damageMultiplier, boolean disableShield, boolean randomOffset, boolean continuous) {
-        ServerLevel level = (ServerLevel) this.level();
-        double perpFacing = this.yBodyRot * (Math.PI / 180);
-        double facingAngle = perpFacing + Math.PI / 2;
-        double spread = Math.PI * spreadArc;
-        int arcLen = Mth.ceil(distance * spread);
-        double minY = this.getBoundingBox().minY - 2D;
-        double maxY = this.getBoundingBox().maxY;
-        int hitY = Mth.floor(this.getBoundingBox().minY - 0.5);
-        for (int i = 0; i < arcLen; i++) {
-            double theta = (i / (arcLen - 1.0) - 0.5) * spread + facingAngle;
-            double vx = Math.cos(theta);
-            double vz = Math.sin(theta);
-            double px = this.getX() + vx * distance + offset * Math.cos((double) (this.yBodyRot + 90.0F) * Math.PI / 180.0D);
-            double pz = this.getZ() + vz * distance + offset * Math.sin((double) (this.yBodyRot + 90.0F) * Math.PI / 180.0D);
-            AABB aabb = new AABB(px - 1.5D, minY, pz - 1.5D, px + 1.5D, maxY, pz + 1.5D);
-            List<Entity> entities = level().getEntitiesOfClass(Entity.class, aabb);
-            float factor = 1F - ((float) distance / 2F - 2F) / maxFallingDistance;
-            for (Entity hit : entities) {
-                if (hit.onGround()) {
-                    if (hit == this || hit instanceof EntityFallingBlock) {
-                        continue;
-                    }
-                    if (hit instanceof LivingEntity livingEntity) {
-                        this.guardianHurtTarget(damageSource, this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, false, disableShield, false);
-                    }
-                    double magnitude = level().random.nextGaussian() * 0.15F + 0.1F;
-                    double angle = this.getAngleBetweenEntities(this, hit);
-                    double x1 = Math.cos(Math.toRadians(angle - 90));
-                    double z1 = Math.sin(Math.toRadians(angle - 90));
-                    float x = 0F, y = 0F, z = 0F;
-                    x += (float) (x1 * magnitude * 0.15);
-                    y += (float) (0.1 + factor * 0.15) * 0.5F;
-                    z += (float) (z1 * magnitude * 0.15);
-                    if (hit instanceof ServerPlayer) {
-                        ((ServerPlayer) hit).connection.send(new ClientboundSetEntityMotionPacket(hit));
-                    }
-                    if (continuous) y *= 0.5F;
-                    hit.setDeltaMovement(hit.getDeltaMovement().add(x, y, z));
+        float factor = 1F - ((float) distance / 2F - 2F) / maxFallingDistance;
+        ShockWaveUtils.doAdvShockWave(this, distance, maxFallingDistance, spreadArc, offset, randomOffset, continuous, hit -> {
+            if (hit.onGround()) {
+                if (hit instanceof EntityFallingBlock) return;
+                if (hit instanceof LivingEntity livingEntity) {
+                    this.guardianHurtTarget(damageSource, this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, false, disableShield, false);
                 }
-            }
-            if (continuous || this.getRandom().nextBoolean()) {
-                int hitX = Mth.floor(px);
-                int hitZ = Mth.floor(pz);
-                BlockPos pos = new BlockPos(hitX, hitY, hitZ);
-                if (randomOffset) {
-                    ModEntityUtils.spawnFallingBlockByPos(level, pos, factor);
-                } else {
-                    ModEntityUtils.spawnFallingBlockByPos(level, pos);
+                double magnitude = level().random.nextGaussian() * 0.15F + 0.1F;
+                double angle = this.getAngleBetweenEntities(this, hit);
+                double x1 = Math.cos(Math.toRadians(angle - 90));
+                double z1 = Math.sin(Math.toRadians(angle - 90));
+                float x = 0F, y = 0F, z = 0F;
+                x += (float) (x1 * magnitude * 0.15);
+                y += (float) (0.1 + factor * 0.15) * 0.5F;
+                z += (float) (z1 * magnitude * 0.15);
+                if (hit instanceof ServerPlayer serverPlayer) {
+                    serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(hit));
                 }
+                if (continuous) y *= 0.5F;
+                hit.setDeltaMovement(hit.getDeltaMovement().add(x, y, z));
             }
-        }
+        },0);
     }
 
     private void doRoarEffect() {
