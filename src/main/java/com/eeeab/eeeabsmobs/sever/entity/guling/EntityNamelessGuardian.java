@@ -755,7 +755,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 return false;
             } else if (entity != null) {
                 if (this.shouldSetPowered()) {
-                    damage = 1F;
+                    damage = Math.min(damage, 1F);
                 }
                 if (this.isPowered()) {
                     if (this.guardianInvulnerableTime <= 0) {
@@ -1061,7 +1061,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 if (continuous) y *= 0.5F;
                 hit.setDeltaMovement(hit.getDeltaMovement().add(x, y, z));
             }
-        },0);
+        }, 0);
     }
 
     private void doRoarEffect() {
