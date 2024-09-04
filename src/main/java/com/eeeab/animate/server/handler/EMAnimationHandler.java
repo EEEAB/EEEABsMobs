@@ -1,5 +1,6 @@
 package com.eeeab.animate.server.handler;
 
+import com.eeeab.animate.server.message.StopAnimationMessage;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.animate.server.animation.EMAnimatedEntity;
 import com.eeeab.animate.server.animation.Animation;
@@ -23,6 +24,16 @@ public enum EMAnimationHandler {
             entity.setAnimationTick(0);
             animation.start(entity.tickCount);
             EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new AnimationMessage(entity.getId(), ArrayUtils.indexOf(entity.getAnimations(), animation)));
+        }
+    }
+
+    public <T extends Entity & EMAnimatedEntity> void sendEMAnimationMessage(T entity, boolean onlyStopSuperposition) {
+        if (!entity.level().isClientSide) {
+            if (entity.getAnimations() == null || entity.getAnimations().length == 0) {
+                System.out.println(entity.getName().getString() + " animations is null");
+                return;
+            }
+            EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new StopAnimationMessage(entity.getId(), onlyStopSuperposition));
         }
     }
 

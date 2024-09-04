@@ -7,7 +7,6 @@ import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
@@ -126,9 +125,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
     }
 
     public void stopAllSuperpositionAnimation() {
-        if (this.level().isClientSide && this.getAnimations() != null) {
-            Arrays.stream(this.getAnimations()).filter(Animation::isSuperposition).forEach(AnimationState::stop);
-        }
+        EMAnimationHandler.INSTANCE.sendEMAnimationMessage(this, true);
     }
 
     protected void onAnimationStart(Animation animation) {
