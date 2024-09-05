@@ -11,14 +11,16 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public abstract class EntityMagicEffects extends Entity implements IEntity {
+public abstract class EntityMagicEffects extends Entity implements IEntity, TraceableEntity {
     public LivingEntity caster;
     private static final EntityDataAccessor<Integer> DATA_CASTER_ID = SynchedEntityData.defineId(EntityMagicEffects.class, EntityDataSerializers.INT);
 
@@ -42,6 +44,11 @@ public abstract class EntityMagicEffects extends Entity implements IEntity {
     @Override
     public void tick() {
         this.baseTick();
+    }
+
+    @Override
+    public boolean isAttackable() {
+        return false;
     }
 
     @Override//在实体上渲染火焰效果
@@ -78,6 +85,12 @@ public abstract class EntityMagicEffects extends Entity implements IEntity {
         this.xRotO = this.getXRot();
     }
 
+    @Nullable
+    @Override
+    public LivingEntity getOwner() {
+        return caster;
+    }
+
     @Override
     public boolean isPickable() {
         return false;
@@ -104,5 +117,4 @@ public abstract class EntityMagicEffects extends Entity implements IEntity {
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
-
 }
