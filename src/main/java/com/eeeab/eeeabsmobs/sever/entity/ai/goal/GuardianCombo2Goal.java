@@ -42,17 +42,16 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
         LivingEntity target = this.entity.getTarget();
         int tick = this.entity.getAnimationTick();
         float baseDamageMultiplier = isPowered ? 1.0F : 0.8F;
-        entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
         if (animation == entity.attackAnimation4) {
-            if ((tick >= 15 || tick < 11) && target != null) {
+            if (tick < 11 && target != null) {
                 entity.getLookControl().setLookAt(target, 30F, 30F);
                 this.entity.lookAt(target, 30F, 30F);
             } else {
                 this.entity.setYRot(this.entity.yRotO);
             }
             if (tick == 10) {
-                pursuit();
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 1.95f, this.entity.getVoicePitch());
+                pursuit(5F, 1.8F, 1F);
             } else if (tick == 12) {
                 List<LivingEntity> entities = this.entity.getNearByLivingEntities(range);
                 for (LivingEntity hitEntity : entities) {
@@ -69,16 +68,16 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
             }
         } else if (animation == entity.attackAnimation5) {
             tick = this.entity.getAnimationTick();
-            if ((tick >= 15 || tick < 8) && target != null) {
+            if (tick < 12 && target != null) {
                 entity.getLookControl().setLookAt(target, 30F, 30F);
                 this.entity.lookAt(target, 30F, 30F);
             } else {
                 this.entity.setYRot(this.entity.yRotO);
             }
-            if (tick == 8) {
-                pursuit();
+            if (tick == 9) {
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.05f, this.entity.getVoicePitch() + 0.15f);
-            } else if (tick == 10) {
+                pursuit(3F, 1.8F, 1.5F);
+            }else if (tick == 13) {
                 List<LivingEntity> entities = this.entity.getNearByLivingEntities(range);
                 for (LivingEntity hitEntity : entities) {
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
@@ -97,14 +96,14 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
         } else if (animation == entity.attackAnimation6) {
             tick = this.entity.getAnimationTick();
             baseDamageMultiplier += 0.2F;
-            if ((tick > 26 || tick < 8) && target != null) {
+            if (tick < 11 && target != null) {
                 entity.getLookControl().setLookAt(target, 30F, 30F);
                 this.entity.lookAt(target, 30F, 30F);
             } else {
                 this.entity.setYRot(this.entity.yRotO);
             }
             if (tick == 8) {
-                pursuit();
+                pursuit(6F, 3F, 2.5F);
             } else if (tick == 10) {
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.2f, this.entity.getVoicePitch() + 0.15f);
             } else if (tick == 12) {
@@ -137,9 +136,13 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
                 (isPowered && entity.getRandom().nextFloat() < 0.9F);
     }
 
-    private void pursuit() {
-        if (this.entity.getTarget() == null || this.entity.targetDistance > 1.8F) {
-            this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * 1.8F, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * 1.8F));
+    private void pursuit(float pursuitDistance, float moveMultiplier, float offset) {
+        float targetDistance = entity.targetDistance;
+        if (entity.getTarget() != null && targetDistance < pursuitDistance && targetDistance > 0) {
+            moveMultiplier = targetDistance - offset;
         }
+        targetDistance = entity.targetDistance;
+        if (entity.getTarget() == null || targetDistance > 2F)
+            entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier));
     }
 }
