@@ -13,7 +13,7 @@ public class EffectErode extends EMEffect {
     private final Random random = new Random();
 
     public EffectErode() {
-        super(MobEffectCategory.HARMFUL, -15132648, false);
+        super(MobEffectCategory.HARMFUL, 1648179, false);
     }
 
     @Override

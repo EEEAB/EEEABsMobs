@@ -7,7 +7,7 @@ import net.minecraft.world.entity.ai.attributes.*;
 public class EffectArmorLower extends EMEffect {
 
     public EffectArmorLower() {
-        super(MobEffectCategory.HARMFUL, 4879982, false);
+        super(MobEffectCategory.HARMFUL, 7004023, false);
         this.addAttributeModifier(Attributes.ARMOR, "0eacf76e-1e90-42e6-9479-2a5af12dd6cf", -0.2D, AttributeModifier.Operation.MULTIPLY_TOTAL);
         this.addAttributeModifier(Attributes.ARMOR_TOUGHNESS, "fb595864-b59d-4c57-aa85-7879268e3a4c", -0.2D, AttributeModifier.Operation.MULTIPLY_TOTAL);
     }
