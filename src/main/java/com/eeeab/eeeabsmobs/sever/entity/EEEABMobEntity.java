@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.sever.entity;
 
 import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -84,22 +85,34 @@ public abstract class EEEABMobEntity extends PathfinderMob {
         return super.isInvulnerableTo(damageSource);
     }
 
-    @Override//是否免疫爆炸
+    /**
+     * @return 是否免疫爆炸
+     */
+    @Override
     public boolean ignoreExplosion() {
         return super.ignoreExplosion();
     }
 
-    @Override//是否在实体上渲染着火效果
+    /**
+     * @return 是否在实体上渲染着火效果
+     */
+    @Override
     public boolean displayFireAnimation() {
         return super.displayFireAnimation();
     }
 
-    @Override//是否免疫摔伤
+    /**
+     * @return 是否免疫摔伤
+     */
+    @Override
     public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource damageSource) {
         return super.causeFallDamage(fallDistance, multiplier, damageSource);
     }
 
-    @Override//是否免疫药水效果
+    /**
+     * @return 是否可以被添加药水效果
+     */
+    @Override
     public boolean addEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
         return super.addEffect(effectInstance, entity);
     }
@@ -170,8 +183,13 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     protected float getNewHealthByCap(float health, EMConfigHandler.DamageCapConfig config) {
         if (config != null) {
             float oldDamage = this.getHealth() - health;
-            float newDamage = Math.min(oldDamage, this.lastDamageSource == null || this.lastDamageSource.is(EMTagKey.GENERAL_UNRESISTANT_TO)
-                    ? oldDamage : config.damageCap.get().floatValue());
+            float newDamage = oldDamage;
+            float damageCap = config.damageCap.get().floatValue();
+            if (this.lastDamageSource == null) {
+                newDamage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(Math.min(oldDamage, damageCap), this.getArmorValue(), (float) this.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1F);
+            } else if (!this.lastDamageSource.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
+                newDamage = Math.min(oldDamage, damageCap);
+            }
             health = this.getHealth() - newDamage;
         }
         return health;
