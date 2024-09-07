@@ -8,6 +8,7 @@ import com.eeeab.eeeabsmobs.sever.capability.FrenzyCapability;
 import com.eeeab.eeeabsmobs.sever.capability.PlayerCapability;
 import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.EEEABMobEntity;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityAbsCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
@@ -163,6 +164,14 @@ public final class HandlerServerEvent {
         }
     }
 
+    //当实体生命值≤0时触发
+    @SubscribeEvent
+    public void onLivingDeathEvent(LivingDeathEvent event) {
+        LivingEntity entity = event.getEntity();
+        if (event.isCancelable() && entity instanceof EEEABMobEntity && entity.getHealth() > 0) {
+            event.setCanceled(true);
+        }
+    }
 
     //新效果或者已存在但是等级更高或时间更长的效果 添加到实体触发
     @SubscribeEvent
