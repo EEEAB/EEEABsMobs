@@ -305,6 +305,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     @Override
+    protected boolean intervalProtect() {
+        return EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.intervalProtect.get() || this.isChallengeMode();
+    }
+
+    @Override
     protected boolean showBossBloodBars() {
         return EMConfigHandler.COMMON.OTHER.enableShowBloodBars.get();
     }

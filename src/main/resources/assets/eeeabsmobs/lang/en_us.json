@@ -192,6 +192,7 @@
   "other.eeeabsmobs.other_5.config": "Enable frenzy potion destroy block",
   "other.eeeabsmobs.other_6.config": "Enable print illegal logs",
   "other.eeeabsmobs.challenge_mode.config": "Enable challenge mode",
+  "other.eeeabsmobs.interval_protect.config": "Enable frame damage protection",
   "other.eeeabsmobs.falling_block_1.config": "Enable falling block spawn",
   "other.eeeabsmobs.falling_block_2.config": "Enable falling block render",
   "other.eeeabsmobs.falling_block_3.config": "Set below check range",

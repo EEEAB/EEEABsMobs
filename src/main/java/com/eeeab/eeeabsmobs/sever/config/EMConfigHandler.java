@@ -238,12 +238,15 @@ public final class EMConfigHandler {
     public static class Immortal {
         public Immortal(final ForgeConfigSpec.Builder builder) {
             builder.push("Immortal Boss");
+            intervalProtect = BUILDER.translation(getTranslationKey("interval_protect")).define("Frame Damage Protection", true);
             combatConfig = new AttributeConfig();
             maximumDamageCap = new DamageCapConfig(20);
             adaptConfig = new DamageSourceAdaptConfig(builder, 100, 30, 0.1D, 0.6D, true);
             builder.pop();
         }
 
+        //帧伤保护机制
+        public final ForgeConfigSpec.BooleanValue intervalProtect;
         public final AttributeConfig combatConfig;
         public final DamageCapConfig maximumDamageCap;
         public final DamageSourceAdaptConfig adaptConfig;
@@ -341,14 +344,16 @@ public final class EMConfigHandler {
             builder.push("Nameless Guardian");
             suckBloodMultiplier = BUILDER.comment("Set suck blood multiplier")
                     .translation(getTranslationKey("suck_blood")).defineInRange("Suck blood multiplier", 1D, 0D, 1024D);
-            extraInvulnerableTick = BUILDER.comment("Set extra invulnerable tick(Does not take effect in Challenge mode)")
+            extraInvulnerableTick = BUILDER.comment("Set extra invulnerable tick(This setting does not take effect in Challenge Mode)")
                     .translation(getTranslationKey("invulnerable_tick")).defineInRange("Extra invulnerable tick", 20, 0, 1200);
             enableNonCombatHeal = BUILDER.comment("If 'False' disable out-of-combat heal")
                     .translation(getTranslationKey("out_of_combat")).define("Enable out-of-combat healing", true);
-            enableForcedSuckBlood = BUILDER.comment("If 'False' disable forced suck blood on power status(Does not take effect in Challenge mode)")
+            enableForcedSuckBlood = BUILDER.comment("If 'False' disable forced suck blood on power status(This setting does not take effect in Challenge Mode)")
                     .translation(getTranslationKey("forced_suck_blood")).define("Enable forced suck blood", true);
             challengeMode = BUILDER.comment("Be careful! It's going to get tricky!")
-                    .translation(getTranslationKey("challenge_mode")).define("Challenge mode", false);
+                    .translation(getTranslationKey("challenge_mode")).define("Challenge Mode", false);
+            intervalProtect = BUILDER.comment("This setting does not take effect in Challenge Mode")
+                    .translation(getTranslationKey("interval_protect")).define("Frame Damage Protection", true);
             combatConfig = new AttributeConfig();
             maximumDamageCap = new DamageCapConfig(20);
             builder.pop();
@@ -364,6 +369,8 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.BooleanValue challengeMode;
         //额外的无敌刻
         public final ForgeConfigSpec.IntValue extraInvulnerableTick;
+        //帧伤保护机制
+        public final ForgeConfigSpec.BooleanValue intervalProtect;
         public final AttributeConfig combatConfig;
         public final DamageCapConfig maximumDamageCap;
     }

@@ -19,7 +19,7 @@ import java.util.Map;
  * 伤害适应
  *
  * @author EEEAB
- * @version 1.4
+ * @version 1.5
  */
 public class DamageAdaptation {
     /**
@@ -44,6 +44,7 @@ public class DamageAdaptation {
     private final boolean adaptsSameTypeMobs;
     private static final RandomSource random = RandomSource.create();
     private final Map<String, DamageInfo> ADAPT_MAP = new HashMap<>();
+    private boolean adaptBypassesDamage;
     private boolean hurting;
 
     public DamageAdaptation(int adaptDamageTypesCount, int resetCountdown, float singleAdaptFactor, float maxAdaptFactor, boolean adaptsSameTypeMobs) {
@@ -62,6 +63,11 @@ public class DamageAdaptation {
         this.adaptsSameTypeMobs = config.adaptsSameTypeMobs;
     }
 
+    public DamageAdaptation setAdaptBypassesDamage(boolean adaptBypassesDamage) {
+        this.adaptBypassesDamage = adaptBypassesDamage;
+        return this;
+    }
+
     public void tick(LivingEntity entity) {
         if (!this.hurting && entity.tickCount % resetCountdown == 0) {
             this.updateCache(entity);
@@ -71,7 +77,7 @@ public class DamageAdaptation {
     public float damageAfterAdaptingOnce(LivingEntity entity, @Nullable DamageSource source, float amount) {
         try {
             this.hurting = true;
-            String key = getKey(source, this.adaptsSameTypeMobs);
+            String key = getKey(source, adaptsSameTypeMobs, adaptBypassesDamage);
             if (key == null) {
                 return amount;
             }
@@ -117,11 +123,11 @@ public class DamageAdaptation {
         ADAPT_MAP.clear();
     }
 
-    private static @Nullable String getKey(@Nullable DamageSource source, boolean adaptsSameTypeMobs) {
+    private static @Nullable String getKey(@Nullable DamageSource source, boolean adaptsSameTypeMobs, boolean adaptBypassesDamage) {
         if (source == null) {
             return "unknown_source";
         } else if (source.getEntity() == null && !source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
-            return spliceCharacters(source.getMsgId(), "unknown");
+            return spliceCharacters(source.getMsgId(), "unknown_entity");
         } else if (source.getEntity() != null) {
             Entity entity = source.getEntity();
             String id = adaptsSameTypeMobs ? entity.getType().getDescriptionId() : entity.getStringUUID();
@@ -132,7 +138,7 @@ public class DamageAdaptation {
             }
             return key;
         } else {
-            return null;
+            return adaptBypassesDamage ? spliceCharacters(source.getMsgId(), "bypasses_source") : null;
         }
     }
 
