@@ -43,13 +43,8 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
     @Override
     public boolean hurt(DamageSource source, float damage) {
         boolean attack = super.hurt(source, damage);
-        if (attack) {
-            if (getHealth() > 0.0F && (getAnimation() == getNoAnimation() || hurtInterruptsAnimation) && canplayHurtAnimation) {
-                this.playAnimation(this.getHurtAnimation());
-            } else if (getHealth() <= 0.0F) {
-                this.stopAllSuperpositionAnimation();
-                this.playAnimation(this.getDeathAnimation());
-            }
+        if (attack && this.getHealth() > 0.0F && (this.isNoAnimation() || this.hurtInterruptsAnimation) && this.canplayHurtAnimation) {
+            this.playAnimation(this.getHurtAnimation());
         }
         return attack;
     }
@@ -74,6 +69,14 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
                             ArrayUtils.indexOf(this.getAnimations(), animation));
                 }
             }
+        }
+    }
+
+    @Override
+    protected void dying() {
+        if (this.getAnimation() != this.getDeathAnimation()) {
+            this.stopAllSuperpositionAnimation();
+            this.playAnimation(this.getDeathAnimation());
         }
     }
 
