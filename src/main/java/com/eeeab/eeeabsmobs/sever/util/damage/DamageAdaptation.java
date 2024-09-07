@@ -99,7 +99,7 @@ public class DamageAdaptation {
                     ADAPT_MAP.remove(keys.get(random.nextInt(keys.size())));
                 }
             }
-            ADAPT_MAP.put(key, new DamageInfo(tickStamp, singleAdaptFactor));
+            ADAPT_MAP.put(key, new DamageInfo(tickStamp, 0));
             return amount;
         } catch (Exception e) {
             EEEABMobs.LOGGER.error("An unexpected exception occurred when calculating damage: {}", e.getMessage());
