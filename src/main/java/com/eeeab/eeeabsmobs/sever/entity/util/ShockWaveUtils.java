@@ -88,19 +88,20 @@ public class ShockWaveUtils {
      * @param maxFallingDistance 最大y轴起伏
      * @param spreadArc          攻击角度
      * @param offset             前后偏移
+     * @param attackY            攻击纵深
      * @param randomOffset       是否生成方块随机y轴偏移
      * @param continuous         是否在同一时刻发生
      * @param hitProvider        提供具体攻击的函数
      * @param knockBackStrength  击飞方块强度 !randomOffset生效
      */
-    public static void doAdvShockWave(LivingEntity attacker, int distance, float maxFallingDistance, double spreadArc, double offset, boolean randomOffset, boolean continuous, Consumer<Entity> hitProvider, float knockBackStrength) {
+    public static void doAdvShockWave(LivingEntity attacker, int distance, float maxFallingDistance, double spreadArc, double offset, double attackY, boolean randomOffset, boolean continuous, Consumer<Entity> hitProvider, float knockBackStrength) {
         ServerLevel level = (ServerLevel) attacker.level();
         double perpFacing = attacker.yBodyRot * (Math.PI / 180);
         double facingAngle = perpFacing + Math.PI / 2;
         double spread = Math.PI * spreadArc;
         int arcLen = Mth.ceil(distance * spread);
-        double minY = attacker.getBoundingBox().minY - 2D;
-        double maxY = attacker.getBoundingBox().maxY;
+        double minY = attacker.getBoundingBox().minY - attackY;
+        double maxY = attacker.getBoundingBox().maxY + attackY;
         int hitY = Mth.floor(attacker.getBoundingBox().minY - 0.5);
         for (int i = 0; i < arcLen; i++) {
             double theta = (i / (arcLen - 1.0) - 0.5) * spread + facingAngle;
