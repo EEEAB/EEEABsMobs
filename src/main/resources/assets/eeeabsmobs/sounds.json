@@ -297,7 +297,7 @@
   "giant_axe_hit": {
     "subtitle": "subtitles.giant_axe_hit",
     "sounds": [
-      "eeeabsmobs:effect/giant_axe_hit"
+      "eeeabsmobs:effect/fall_of_anvil"
     ]
   },
   "crimson_ray": {
@@ -310,6 +310,12 @@
     "subtitle": "subtitles.break",
     "sounds": [
       "eeeabsmobs:effect/break"
+    ]
+  },
+  "undamaged": {
+    "subtitle": "subtitles.undamaged",
+    "sounds": [
+      "eeeabsmobs:effect/fall_of_anvil"
     ]
   },
   "nameless.guardian.death": {

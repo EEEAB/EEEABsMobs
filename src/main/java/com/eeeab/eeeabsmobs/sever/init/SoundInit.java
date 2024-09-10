@@ -14,6 +14,7 @@ public class SoundInit {
     //Generic
     public static final RegistryObject<SoundEvent> LASER = create("laser");
     public static final RegistryObject<SoundEvent> GIANT_AXE_HIT = create("giant_axe_hit");
+    public static final RegistryObject<SoundEvent> UNDAMAGED = create("undamaged");
     public static final RegistryObject<SoundEvent> CRIMSON_RAY = create("crimson_ray");
     public static final RegistryObject<SoundEvent> BREAK = create("break");
 
