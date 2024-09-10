@@ -1047,7 +1047,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public void shockAttack(DamageSource damageSource, int distance, float maxFallingDistance, double spreadArc, double offset, float hitEntityMaxHealth,
                             float baseDamageMultiplier, float damageMultiplier, boolean disableShield, boolean randomOffset, boolean continuous) {
         float factor = 1F - ((float) distance / 2F - 2F) / maxFallingDistance;
-        ShockWaveUtils.doAdvShockWave(this, distance, maxFallingDistance, spreadArc, offset, randomOffset, continuous, hit -> {
+        ShockWaveUtils.doAdvShockWave(this, distance, maxFallingDistance, spreadArc, offset, 2F, randomOffset, continuous, hit -> {
             if (hit.onGround()) {
                 if (hit instanceof EntityFallingBlock) return;
                 if (hit instanceof LivingEntity livingEntity) {

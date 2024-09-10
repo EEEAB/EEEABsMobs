@@ -115,7 +115,7 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
                 }
                 if (tick % 2 == 0) {
                     //List<LivingEntity> livingEntities = entity.level().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(0.5, 0, 0.5));
-                    List<LivingEntity> livingEntities = entity.getNearByLivingEntities(3F, 4F, 3F, 3F);
+                    List<LivingEntity> livingEntities = entity.getNearByLivingEntities(3F, 5F, 3F, 5F);
                     for (LivingEntity hitEntity : livingEntities) {
                         if (hitEntity == entity) {
                             continue;

@@ -55,7 +55,7 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
             } else if (tick == 10) {
                 entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.05f, entity.getVoicePitch() + 0.15f);
             } else if (tick == 12) {
-                List<LivingEntity> entities = entity.getNearByLivingEntities(range - 0.5F, 4F, range - 0.5F, range - 0.5F);
+                List<LivingEntity> entities = entity.getNearByLivingEntities(range, 5F, range, range + 1F);
                 for (LivingEntity hitEntity : entities) {
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
                     float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
@@ -86,7 +86,7 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
             } else if (tick == 12) {
                 pursuit(5F, 1.5F, 1F);
             } else if (tick == 15) {
-                List<LivingEntity> entities = entity.getNearByLivingEntities(range - 0.1F, 4F, range - 0.1F, range - 0.1F);
+                List<LivingEntity> entities = entity.getNearByLivingEntities(range - 0.1F, 5F, range - 0.1F, range + 1F);
                 for (LivingEntity hitEntity : entities) {
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
                     float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
@@ -116,7 +116,7 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
                 entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.2f, entity.getVoicePitch() - 0.2f);
                 pursuit(-1F, 2.4F, 0.5F);
             } else if (tick == 15) {
-                List<LivingEntity> entities = entity.getNearByLivingEntities(range + 0.1F, 5.0F, range + 0.1F, range + 0.1F);
+                List<LivingEntity> entities = entity.getNearByLivingEntities(range + 0.1F, 6.0F, range + 0.1F, range + 1F);
                 for (LivingEntity hitEntity : entities) {
                     double duration = 1.5;
                     if (Difficulty.HARD.equals(entity.level().getDifficulty())) duration = 2.5;
@@ -146,11 +146,11 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
 
     private void pursuit(float pursuitDistance, float moveMultiplier, float offset) {
         float targetDistance = entity.targetDistance;
-        if (entity.getTarget() != null && targetDistance < pursuitDistance && targetDistance > 0) {
+        if (entity.getTarget() != null && targetDistance < pursuitDistance && targetDistance > 0F) {
             moveMultiplier = targetDistance - offset;
         }
         targetDistance = entity.targetDistance;
-        if (entity.getTarget() == null || targetDistance > 1.8F)
+        if (entity.getTarget() == null || (targetDistance > 1.8F && Math.abs(entity.getTarget().getY() - entity.getY()) <= 2D))
             entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier));
     }
 }
