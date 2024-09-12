@@ -45,19 +45,21 @@ public class ModelAbsImmortalSkeleton extends EMHierarchicalModel<EntityAbsImmor
         PartDefinition upper = root.addOrReplaceChild("upper", CubeListBuilder.create(), PartPose.offset(1.0F, -12.0F, 0.0F));
         PartDefinition head = upper.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(-0.25F))
                 .texOffs(32, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(-0.85F))
-                .texOffs(0, 33).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, -12.0F, 0.0F));
-        PartDefinition body = upper.addOrReplaceChild("body", CubeListBuilder.create().texOffs(18, 17).addBox(-4.0F, -12.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
-                .texOffs(16, 49).addBox(-4.0F, -12.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+                .texOffs(0, 31).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, -12.0F, 0.0F));
+        PartDefinition body = upper.addOrReplaceChild("body", CubeListBuilder.create().texOffs(26, 17).addBox(-4.0F, -12.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
+                .texOffs(16, 47).addBox(-4.0F, -12.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, 0.0F, 0.0F));
         PartDefinition leftArm = upper.addOrReplaceChild("leftArm", CubeListBuilder.create().texOffs(9, 16).addBox(-0.1038F, -1.4128F, -1.0F, 2.0F, 12.0F, 2.0F, new CubeDeformation(0.0F))
-                .texOffs(40, 49).addBox(-0.1038F, -2.0128F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.3F)), PartPose.offsetAndRotation(4.1F, -10.5F, 0.0F, 0.0F, 0.0F, -0.0873F));
+                .texOffs(40, 47).addBox(-0.1038F, -2.0128F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.3F)), PartPose.offsetAndRotation(4.1F, -10.5F, 0.0F, 0.0F, 0.0F, -0.0873F));
         PartDefinition rightArm = upper.addOrReplaceChild("rightArm", CubeListBuilder.create().texOffs(9, 16).mirror().addBox(-1.9924F, -1.3257F, -1.0F, 2.0F, 12.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false)
-                .texOffs(40, 49).mirror().addBox(-3.9924F, -2.0257F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.3F)).mirror(false), PartPose.offsetAndRotation(-4.0F, -10.5F, 0.0F, 0.0F, 0.0F, 0.0873F));
+                .texOffs(40, 47).mirror().addBox(-3.9924F, -2.0257F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.3F)).mirror(false), PartPose.offsetAndRotation(-4.0F, -10.5F, 0.0F, 0.0F, 0.0F, 0.0873F));
         PartDefinition lower = root.addOrReplaceChild("lower", CubeListBuilder.create(), PartPose.offset(1.0F, -12.0F, 0.0F));
         PartDefinition leftLeg = lower.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(0, 16).addBox(-1.2F, 0.0F, -1.0F, 2.0F, 12.0F, 2.0F, new CubeDeformation(0.0F))
-                .texOffs(0, 49).addBox(-2.2F, -0.2F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.22F)), PartPose.offset(2.2F, 0.0F, 0.0F));
+                .texOffs(0, 47).addBox(-2.2F, -0.2F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.22F))
+                .texOffs(32, 36).addBox(-2.2F, 5.6F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.52F)), PartPose.offset(2.2F, 0.0F, 0.0F));
         PartDefinition rightLeg = lower.addOrReplaceChild("rightLeg", CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-1.0F, 0.0F, -1.0F, 2.0F, 12.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false)
-                .texOffs(0, 49).mirror().addBox(-2.0F, -0.2F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.22F)).mirror(false), PartPose.offset(-2.0F, 0.0F, 0.0F));
-        return LayerDefinition.create(meshdefinition, 64, 128);
+                .texOffs(0, 47).mirror().addBox(-2.0F, -0.2F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.22F)).mirror(false)
+                .texOffs(32, 36).mirror().addBox(-2.0F, 5.6F, -2.05F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.52F)).mirror(false), PartPose.offset(-2.0F, 0.0F, 0.0F));
+        return LayerDefinition.create(meshdefinition, 64, 64);
     }
 
 

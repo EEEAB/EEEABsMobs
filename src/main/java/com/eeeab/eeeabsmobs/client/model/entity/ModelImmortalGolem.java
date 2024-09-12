@@ -43,7 +43,7 @@ public class ModelImmortalGolem extends EMHierarchicalModel<EntityImmortalGolem>
         PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
         PartDefinition upper = root.addOrReplaceChild("upper", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
         PartDefinition head = upper.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -7.5F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(-0.3F))
-                .texOffs(34, 0).addBox(-4.0F, -6.5F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(-0.6F)), PartPose.offset(0.0F, -18.0F, 0.0F));
+                .texOffs(32, 0).addBox(-4.0F, -6.5F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(-0.6F)), PartPose.offset(0.0F, -18.0F, 0.0F));
         PartDefinition body = upper.addOrReplaceChild("body", CubeListBuilder.create().texOffs(11, 22).addBox(-3.5F, 0.0F, -2.0F, 7.0F, 10.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -18.0F, 0.0F));
         PartDefinition leftArm = body.addOrReplaceChild("leftArm", CubeListBuilder.create().texOffs(35, 24).addBox(-1.5F, -1.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.0F, 1.0F, 0.0F, -1.5708F, 0.0F, 0.0F));
         PartDefinition leftHand = leftArm.addOrReplaceChild("leftHand", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
@@ -52,7 +52,7 @@ public class ModelImmortalGolem extends EMHierarchicalModel<EntityImmortalGolem>
         PartDefinition lower = root.addOrReplaceChild("lower", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
         PartDefinition leftLeg = lower.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(1, 26).addBox(-1.0F, 1.0F, -1.1F, 2.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(2.0F, -9.0F, 0.1F));
         PartDefinition rightLeg = lower.addOrReplaceChild("rightLeg", CubeListBuilder.create().texOffs(1, 26).mirror().addBox(-1.0F, 1.0F, -1.1F, 2.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(-2.0F, -9.0F, 0.1F));
-        return LayerDefinition.create(meshdefinition, 128, 128);
+        return LayerDefinition.create(meshdefinition, 64, 64);
     }
 
     @Override
