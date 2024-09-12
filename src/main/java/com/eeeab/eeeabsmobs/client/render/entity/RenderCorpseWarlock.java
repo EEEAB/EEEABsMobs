@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.render.entity;
 
-import com.eeeab.animate.client.layer.LayerOuter;
+import com.eeeab.eeeabsmobs.client.render.layer.LayerOuter;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelCorpseWarlock;
 import com.eeeab.eeeabsmobs.client.model.util.EMModelLayer;

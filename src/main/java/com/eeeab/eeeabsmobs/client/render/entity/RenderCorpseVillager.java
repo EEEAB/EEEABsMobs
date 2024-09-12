@@ -6,7 +6,7 @@ import com.eeeab.eeeabsmobs.client.model.util.EMModelLayer;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseVillager;
-import com.eeeab.animate.client.layer.LayerOuter;
+import com.eeeab.eeeabsmobs.client.render.layer.LayerOuter;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;

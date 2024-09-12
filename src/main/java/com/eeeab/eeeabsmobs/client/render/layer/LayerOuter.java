@@ -1,4 +1,4 @@
-package com.eeeab.animate.client.layer;
+package com.eeeab.eeeabsmobs.client.render.layer;
 
 import com.eeeab.animate.client.model.EMHierarchicalModel;
 import com.mojang.blaze3d.vertex.PoseStack;
