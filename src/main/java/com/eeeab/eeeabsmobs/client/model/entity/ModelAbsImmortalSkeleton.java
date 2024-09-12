@@ -48,10 +48,10 @@ public class ModelAbsImmortalSkeleton extends EMHierarchicalModel<EntityAbsImmor
                 .texOffs(0, 31).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, -12.0F, 0.0F));
         PartDefinition body = upper.addOrReplaceChild("body", CubeListBuilder.create().texOffs(26, 17).addBox(-4.0F, -12.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(16, 47).addBox(-4.0F, -12.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, 0.0F, 0.0F));
-        PartDefinition leftArm = upper.addOrReplaceChild("leftArm", CubeListBuilder.create().texOffs(9, 16).addBox(-0.1038F, -1.4128F, -1.0F, 2.0F, 12.0F, 2.0F, new CubeDeformation(0.0F))
-                .texOffs(40, 47).addBox(-0.1038F, -2.0128F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.3F)), PartPose.offsetAndRotation(4.1F, -10.5F, 0.0F, 0.0F, 0.0F, -0.0873F));
-        PartDefinition rightArm = upper.addOrReplaceChild("rightArm", CubeListBuilder.create().texOffs(9, 16).mirror().addBox(-1.9924F, -1.3257F, -1.0F, 2.0F, 12.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false)
-                .texOffs(40, 47).mirror().addBox(-3.9924F, -2.0257F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.3F)).mirror(false), PartPose.offsetAndRotation(-4.0F, -10.5F, 0.0F, 0.0F, 0.0F, 0.0873F));
+        PartDefinition leftArm = upper.addOrReplaceChild("leftArm", CubeListBuilder.create().texOffs(9, 16).addBox(-0.1038F, -1.4128F, -1.0F, 2.0F, 12.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.1F, -10.5F, 0.0F, 0.0F, 0.0F, -0.0873F));
+        PartDefinition cube_r1 = leftArm.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(40, 47).addBox(0.0F, -1.6F, -3.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.3F)), PartPose.offsetAndRotation(-0.1038F, -0.4128F, 1.0F, 0.0F, 0.0F, -0.0873F));
+        PartDefinition rightArm = upper.addOrReplaceChild("rightArm", CubeListBuilder.create().texOffs(9, 16).mirror().addBox(-1.9924F, -1.3257F, -1.0F, 2.0F, 12.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-4.0F, -10.5F, 0.0F, 0.0F, 0.0F, 0.0873F));
+        PartDefinition cube_r2 = rightArm.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(40, 47).mirror().addBox(-4.0F, -1.6F, -3.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.3F)).mirror(false), PartPose.offsetAndRotation(0.0038F, -0.4128F, 1.0F, 0.0F, 0.0F, 0.0873F));
         PartDefinition lower = root.addOrReplaceChild("lower", CubeListBuilder.create(), PartPose.offset(1.0F, -12.0F, 0.0F));
         PartDefinition leftLeg = lower.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(0, 16).addBox(-1.2F, 0.0F, -1.0F, 2.0F, 12.0F, 2.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 47).addBox(-2.2F, -0.2F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.22F))
@@ -78,25 +78,24 @@ public class ModelAbsImmortalSkeleton extends EMHierarchicalModel<EntityAbsImmor
         //Idle & Walk
         if (entity.isAlive()) {
             float cycle = 0.8F;
-            this.walk(this.upper, 0.1F, 0.005F, true, 0, -0.005F, frame, 1);
+            this.walk(this.upper, 0.1F, 0.005F, true, 0, -0.025F, frame, 1);
             this.bob(this.upper, cycle * 0.2F, cycle * 0.2F, false, frame, 1);
             this.bob(this.leftArm, cycle * 0.2F, cycle * 0.2F, false, frame, 1);
             this.bob(this.rightArm, cycle * 0.2F, cycle * 0.2F, false, frame, 1);
             this.bob(this.head, cycle * -0.2F, cycle * -0.2F, false, frame, 1);
-            this.bob(this.head, cycle, cycle * 0.5F, false, limbSwing, limbSwingAmount);
+            this.bob(this.head, cycle, cycle * 0.6F, false, limbSwing, limbSwingAmount);
             if (entity.getAnimation() != entity.blockAnimation) {
-                this.walk(this.leftArm, 0.15F, 0.05F, true, 0, 0, frame, 1);
-                this.walk(this.rightArm, 0.15F, 0.05F, false, 0, 0, frame, 1);
+                this.walk(this.leftArm, 0.15F, 0.05F, true, 0.15F, 0, frame, 1);
+                this.walk(this.rightArm, 0.15F, 0.05F, false, 0.15F, 0, frame, 1);
             }
-            this.walk(this.leftLeg, cycle, cycle * 1.2F, false, 0.0F, -0.05F, limbSwing, limbSwingAmount);
-            this.walk(this.rightLeg, cycle, cycle * 1.2F, true, 0.0F, -0.05F, limbSwing, limbSwingAmount);
-            if (entity.getCareerType() == EntityAbsImmortalSkeleton.CareerType.ARCHER) {
-                //setStaticRotationAngle(rightArm, -50F, -20F, -10F);
-                //setStaticRotationAngle(leftArm, -35F, 25F, 10F);
-                this.animateWalk(AnimationImmortalSkeleton.WALK, limbSwing, limbSwingAmount, 1.0F, 2F);
+            this.walk(this.leftLeg, cycle, cycle * 1.4F, false, 0, 0, limbSwing, limbSwingAmount);
+            this.walk(this.rightLeg, cycle, cycle * 1.4F, true, 0, 0, limbSwing, limbSwingAmount);
+            this.flap(this.root, cycle, cycle * 0.08F, true, 0, 0, limbSwing, limbSwingAmount);
+            if (entity.getVariant() == EntityAbsImmortalSkeleton.CareerType.ARCHER) {
+                this.animateWalk(AnimationImmortalSkeleton.WALK, limbSwing, limbSwingAmount, 1F, 2F);
             } else if (entity.isNoAnimation()) {
-                this.walk(this.leftArm, cycle, cycle * 1.2F, false, 0.0F, -0.05F, limbSwing, limbSwingAmount);
-                this.walk(this.rightArm, cycle, cycle * 1.2F, true, 0.0F, -0.05F, limbSwing, limbSwingAmount);
+                this.walk(this.leftArm, cycle, cycle * 1.2F, false, 0, -0.05F, limbSwing, limbSwingAmount);
+                this.walk(this.rightArm, cycle, cycle * 1.2F, true, 0, 0.05F, limbSwing, limbSwingAmount);
             }
         }
         if (entity.getAnimation() == entity.castAnimation) {
@@ -145,7 +144,6 @@ public class ModelAbsImmortalSkeleton extends EMHierarchicalModel<EntityAbsImmor
 
     @OnlyIn(Dist.CLIENT)
     private static class AnimationImmortalSkeleton {
-
 
         public static final AnimationDefinition WALK = AnimationDefinition.Builder.withLength(0f).looping()
                 .addAnimation("leftArm",

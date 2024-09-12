@@ -39,12 +39,12 @@ public class RenderAbsImmortalSkeleton extends MobRenderer<EntityAbsImmortalSkel
 
     @Override
     protected void scale(EntityAbsImmortalSkeleton entity, PoseStack poseStack, float partialTickTime) {
-        float scale = entity.getCareerType().scale;
+        float scale = entity.getVariant().scale;
         poseStack.scale(scale, scale, scale);
     }
 
     @Override
     public ResourceLocation getTextureLocation(EntityAbsImmortalSkeleton entity) {
-        return entity instanceof EntityImmortalKnight || entity.getCareerType() == EntityAbsImmortalSkeleton.CareerType.WARRIOR ? VARIANTS_TEXTURE : TEXTURE;
+        return entity instanceof EntityImmortalKnight || entity.getVariant() == EntityAbsImmortalSkeleton.CareerType.WARRIOR ? VARIANTS_TEXTURE : TEXTURE;
     }
 }
