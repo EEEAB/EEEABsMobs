@@ -19,7 +19,7 @@ public class RenderImmortalShaman extends MobRenderer<EntityImmortalShaman, Mode
     private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_shaman/immortal_shaman.png");
     private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_shaman/immortal_shaman_decoration.png");
     private static final ResourceLocation OUTER_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_shaman/immortal_shaman_outer.png");
-    public static final ResourceLocation EYES_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/immortal_skeleton_eyes.png");
+    public static final ResourceLocation EYES_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_shaman/immortal_shaman_eyes.png");
 
     public RenderImmortalShaman(EntityRendererProvider.Context context) {
         super(context, new ModelImmortalShaman(context.bakeLayer(EMModelLayer.IMMORTAL_SHAMAN)), 0.45F);
