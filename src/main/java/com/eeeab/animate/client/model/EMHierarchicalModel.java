@@ -185,6 +185,11 @@ public abstract class EMHierarchicalModel<E extends Entity> extends EntityModel<
         animationState.ifStarted((state) -> EMKeyframeAnimations.animate(this, animationDefinition, state.getAccumulatedTime(), 1.0F, ANIMATION_VECTOR_CACHE));
     }
 
+    protected void animate(AnimationState animationState, AnimationDefinition animationDefinition, float ageInTicks, float speed, float scale) {
+        animationState.updateTime(ageInTicks, speed);
+        animationState.ifStarted((state) -> EMKeyframeAnimations.animate(this, animationDefinition, state.getAccumulatedTime(), scale, ANIMATION_VECTOR_CACHE));
+    }
+
     protected void animateWalk(AnimationDefinition animationDefinition, float limbSwing, float limbSwingAmount, float maxAnimationSpeed, float animationScaleFactor) {
         long i = (long) (limbSwing * 50.0F * maxAnimationSpeed);
         float f = Math.min(limbSwingAmount * animationScaleFactor, 1.0F);
