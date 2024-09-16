@@ -22,8 +22,12 @@ public class EMDamageTypeProvider extends DamageTypeTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         tag(DamageTypeTags.IS_PROJECTILE).add(EMResourceKey.SHAMAN_BOMBING);
-        tag(DamageTypeTags.BYPASSES_ARMOR).add(EMResourceKey.GUARDIAN_LASER);
-        tag(EMTagKey.GENERAL_UNRESISTANT_TO).add(DamageTypes.FELL_OUT_OF_WORLD).add(DamageTypes.GENERIC_KILL);
-        tag(EMTagKey.MAGIC_UNRESISTANT_TO).add(DamageTypes.MAGIC, DamageTypes.INDIRECT_MAGIC, DamageTypes.SONIC_BOOM, DamageTypes.THORNS);
+        tag(DamageTypeTags.WITCH_RESISTANT_TO).add(EMResourceKey.IMMORTAL_MAGIC);
+        tag(DamageTypeTags.BYPASSES_COOLDOWN).add(EMResourceKey.IMMORTAL_MAGIC);
+        tag(DamageTypeTags.BYPASSES_RESISTANCE).add(EMResourceKey.IMMORTAL_MAGIC);
+        tag(DamageTypeTags.BYPASSES_ARMOR).add(EMResourceKey.GUARDIAN_LASER, EMResourceKey.IMMORTAL_MAGIC);
+        tag(DamageTypeTags.BYPASSES_SHIELD).remove(EMResourceKey.IMMORTAL_MAGIC);
+        tag(EMTagKey.GENERAL_UNRESISTANT_TO).add(DamageTypes.FELL_OUT_OF_WORLD, DamageTypes.GENERIC_KILL);
+        tag(EMTagKey.MAGIC_UNRESISTANT_TO).add(DamageTypes.MAGIC, DamageTypes.INDIRECT_MAGIC, DamageTypes.SONIC_BOOM, DamageTypes.THORNS, EMResourceKey.IMMORTAL_MAGIC);
     }
 }

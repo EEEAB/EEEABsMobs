@@ -20,4 +20,9 @@ public class EMDamageSource {
         return new DamageSource(laser.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).
                 getHolderOrThrow(EMResourceKey.GUARDIAN_LASER), laser, caster);
     }
+
+    public static DamageSource immortalMagicAttack(Entity magic, Entity caster) {
+        return new DamageSource(magic.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).
+                getHolderOrThrow(EMResourceKey.IMMORTAL_MAGIC), magic, caster);
+    }
 }
