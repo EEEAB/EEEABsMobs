@@ -38,16 +38,7 @@ public class ModParticleUtils {
      * @param speedModifiers 速度乘数
      */
     public static void particleOutburst(Level world, int points, ParticleOptions[] particles, double x, double y, double z, float[][] speedModifiers) {
-        double d = random.nextGaussian() * 0.05D;
-        double e = random.nextGaussian() * 0.05D;
-        for (int j = 0; j < points; ++j) {
-            double newX = random.nextDouble() - 0.5D + random.nextGaussian() * 0.15D + d;
-            double newZ = random.nextDouble() - 0.5D + random.nextGaussian() * 0.15D + e;
-            double newY = random.nextDouble() - 0.5D + random.nextDouble() * 0.5D;
-            for (int i = 0; i < particles.length; i++) {
-                world.addParticle(particles[i], x, y, z, newX / speedModifiers[i][0], newY / speedModifiers[i][1], newZ / speedModifiers[i][2]);
-            }
-        }
+        particleOutburst(world, points, particles, x, y, z, speedModifiers, 1);
     }
 
     /**
@@ -103,14 +94,7 @@ public class ModParticleUtils {
      * @param yOffSet       y轴偏移
      */
     public static void annularParticleOutburst(Level world, double points, ParticleOptions[] particles, double x, double y, double z, double speedModifier, double yOffSet) {
-        for (int i = 1; i <= points; i++) {
-            double yaw = i * 360F / points;
-            double xSpeed = speedModifier * Math.cos(Math.toRadians(yaw));
-            double zSpeed = speedModifier * Math.sin(Math.toRadians(yaw));
-            for (ParticleOptions particle : particles) {
-                world.addParticle(particle, x, y + yOffSet, z, xSpeed, 0, zSpeed);
-            }
-        }
+        annularParticleOutburst(world, points, particles, x, y, z, speedModifier, yOffSet, 360F, 0F);
     }
 
 
