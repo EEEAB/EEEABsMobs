@@ -137,6 +137,7 @@
   "death.attack.shaman_bomb": "%1$s was blown to pieces by a shaman bomb",
   "death.attack.guardian_robust_attack": "%1$s was smashed flat by %2$s",
   "death.attack.guardian_laser_attack":"%1$s was shot by a laser from %2$s",
+  "death.attack.immortal_magic":"%1$s was killed by %2$s using immortal magic",
 
   "_comment": "Music Desc",
   "item.eeeabsmobs.guardians_music_disc.desc": "Guardians - Evan King",
