@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.sever.entity.effects;
 
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.util.EMMathUtils;
 import net.minecraft.nbt.CompoundTag;
@@ -9,7 +10,11 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -25,24 +30,27 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
 
     public enum MagicCircleType {
         NONE,
-        SPEED(0.22F, 0.76F, 0.87F),
-        STRENGTH(0.92F, 0.7F, 0.02F),
-        NEGATIVE,
-        GUARD;
+        SPEED(0.22F, 0.76F, 0.87F, MobEffects.MOVEMENT_SPEED, MobEffects.DIG_SPEED),
+        POWER(0.92F, 0.7F, 0.02F, MobEffects.DAMAGE_BOOST),
+        HARMFUL(0.52F, 0.16F, 0.88F, MobEffects.MOVEMENT_SLOWDOWN, MobEffects.WEAKNESS),
+        BENEFICIAL(0F, 0.72F, 0.47F, MobEffects.REGENERATION, MobEffects.ABSORPTION);
 
         MagicCircleType() {
             this.r = this.g = this.b = 1F;
+            this.effect = new MobEffect[0];
         }
 
-        MagicCircleType(float r, float g, float b) {
+        MagicCircleType(float r, float g, float b, MobEffect... effect) {
             this.r = r;
             this.g = g;
             this.b = b;
+            this.effect = effect;
         }
 
         public final float r;
         public final float g;
         public final float b;
+        public final MobEffect[] effect;
     }
 
     public EntityImmortalMagicCircle(EntityType<EntityImmortalMagicCircle> type, Level level) {
@@ -71,19 +79,36 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
         if (NO && processController.increaseTimerChain().isEnd()) {
             NO = false;
         }
-        if (!NO && tickCount > getDuration()) {
-            if (processController.decreaseTimerChain().isStop()) {
-                discard();
-            }
-        } else {
-            if (level().isClientSide && this.random.nextInt(4) == 0) {
-                float factor = EMMathUtils.getTickFactor(tickCount, getDuration(), true);
-                for (float i = 0; i < 10 * factor; i++) {
-                    double x = this.getX() + Mth.randomBetween(this.random, -getScale(), getScale());
-                    double z = this.getZ() + Mth.randomBetween(this.random, -getScale(), getScale());
-                    MagicCircleType type = getMagicCircleType();
-                    ParticleOrb.OrbData orbData = new ParticleOrb.OrbData(type.r, type.g, type.b, 2F, (int) (15 + 5F * this.random.nextFloat()));
-                    level().addParticle(orbData, x, this.getY() + 0.1, z, 0, 0.2 + this.random.nextGaussian() * 0.02D, 0);
+
+        if (!NO) {
+            if (tickCount > getDuration()) {
+                if (processController.decreaseTimerChain().isStop()) {
+                    discard();
+                }
+            } else {
+                if (!level().isClientSide && tickCount % 5 == 0) {
+                    MobEffect[] effects = this.getMagicCircleType().effect;
+                    if (effects.length > 0) {
+                        for (LivingEntity inRange : level().getEntitiesOfClass(LivingEntity.class, ModEntityUtils.makeAABBWithSize(getX(), getY(), getZ(), 0, getScale(), 1, getScale()))) {
+                            for (MobEffect effect : effects) {
+                                if (inRange.hasEffect(effect)) {
+                                    MobEffectInstance instance = inRange.getEffect(effect);
+                                    if (instance != null && instance.getAmplifier() >= 1) continue;
+                                }
+                                ModEntityUtils.addEffectStackingAmplifier(inRange, effect, getDuration(), 2, true, true, true, false);
+                            }
+                        }
+                    }
+                }
+                if (level().isClientSide && this.random.nextInt(4) == 0) {
+                    float factor = EMMathUtils.getTickFactor(tickCount, getDuration(), true);
+                    for (float i = 0; i < 10 * factor; i++) {
+                        double x = this.getX() + Mth.randomBetween(this.random, -getScale(), getScale());
+                        double z = this.getZ() + Mth.randomBetween(this.random, -getScale(), getScale());
+                        MagicCircleType type = getMagicCircleType();
+                        ParticleOrb.OrbData orbData = new ParticleOrb.OrbData(type.r, type.g, type.b, 2F, (int) (15 + 5F * this.random.nextFloat()));
+                        level().addParticle(orbData, x, this.getY() + 0.1, z, 0, 0.2 + this.random.nextGaussian() * 0.02D, 0);
+                    }
                 }
             }
         }
@@ -100,7 +125,7 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_SCALE, 1F);
+        this.entityData.define(DATA_SCALE, 2F);
         this.entityData.define(DATA_SPEED, 0F);
         this.entityData.define(DATA_YAW, 0F);
         this.entityData.define(DATA_DURATION, 20);

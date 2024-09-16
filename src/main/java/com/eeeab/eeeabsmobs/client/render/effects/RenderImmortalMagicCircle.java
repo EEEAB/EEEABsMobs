@@ -12,9 +12,11 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 
 public class RenderImmortalMagicCircle extends FlatTextureRenderer<EntityImmortalMagicCircle> {
-    private static final ResourceLocation SPEED_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/magic_circle/speed.png");
-    private static final ResourceLocation STRENGTH_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/magic_circle/strength.png");
     private static final ResourceLocation NONE_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/magic_circle/none.png");
+    private static final ResourceLocation SPEED_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/magic_circle/speed.png");
+    private static final ResourceLocation POWER_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/magic_circle/power.png");
+    private static final ResourceLocation HARMFUL_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/magic_circle/harmful.png");
+    private static final ResourceLocation BENEFICIAL_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/magic_circle/beneficial.png");
 
     public RenderImmortalMagicCircle(EntityRendererProvider.Context context) {
         super(context);
@@ -24,7 +26,9 @@ public class RenderImmortalMagicCircle extends FlatTextureRenderer<EntityImmorta
     public ResourceLocation getTextureLocation(EntityImmortalMagicCircle entity) {
         return switch (entity.getMagicCircleType()) {
             case SPEED -> SPEED_TEXTURE;
-            case STRENGTH -> STRENGTH_TEXTURE;
+            case POWER -> POWER_TEXTURE;
+            case HARMFUL -> HARMFUL_TEXTURE;
+            case BENEFICIAL -> BENEFICIAL_TEXTURE;
             default -> NONE_TEXTURE;
         };
     }
