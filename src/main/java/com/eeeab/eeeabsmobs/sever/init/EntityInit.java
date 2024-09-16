@@ -10,6 +10,7 @@ import com.eeeab.eeeabsmobs.sever.entity.guling.EntityGulingSentinel;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityGulingSentinelHeavy;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.*;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityTheImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGrenade;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityPoisonArrow;
@@ -232,12 +233,19 @@ public class EntityInit {
                             .sized(0.1F, 0.1F).setUpdateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "alien_portal").toString()));
 
-    //不朽魔法阵
+    //不朽法阵
     public static final RegistryObject<EntityType<EntityImmortalMagicCircle>> MAGIC_CIRCLE =
             ENTITIES.register("magic_circle",
                     () -> EntityType.Builder.<EntityImmortalMagicCircle>of(EntityImmortalMagicCircle::new, MobCategory.MISC)
                             .sized(0.1F, 0.1F).setUpdateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "magic_circle").toString()));
+
+    //不朽火球
+    public static final RegistryObject<EntityType<EntityImmortalFireball>> IMMORTAL_FIREBALL =
+            ENTITIES.register("immortal_fireball",
+                    () -> EntityType.Builder.<EntityImmortalFireball>of(EntityImmortalFireball::new, MobCategory.MISC)
+                            .sized(0.5f, 0.5f).clientTrackingRange(4).updateInterval(1)
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_fireball").toString()));
 
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);
