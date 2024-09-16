@@ -26,7 +26,7 @@ public class ModelGrenade extends EMHierarchicalModel<EntityGrenade> {
     }
 
     public void setupAnim(EntityGrenade entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.ball.yRot = (float) (netHeadYaw * (Math.PI / 180F));
-        this.ball.xRot = (float) (headPitch * (Math.PI / 180F));
+        this.ball.yRot = toRadians(netHeadYaw);
+        this.ball.xRot = toRadians(headPitch);
     }
 }
