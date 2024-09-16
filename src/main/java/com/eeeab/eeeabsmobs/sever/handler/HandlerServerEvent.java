@@ -9,9 +9,9 @@ import com.eeeab.eeeabsmobs.sever.capability.PlayerCapability;
 import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobEntity;
+import com.eeeab.eeeabsmobs.sever.entity.IBoss;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityAbsCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalExecutioner;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
@@ -308,7 +308,7 @@ public final class HandlerServerEvent {
     @SubscribeEvent
     public void onLivingEntityKnockBack(LivingKnockBackEvent event) {
         LivingEntity living = event.getEntity();
-        if (event.isCancelable() && living instanceof EntityNamelessGuardian) {
+        if (event.isCancelable() && living instanceof IBoss) {
             event.setCanceled(true);
         }
     }
