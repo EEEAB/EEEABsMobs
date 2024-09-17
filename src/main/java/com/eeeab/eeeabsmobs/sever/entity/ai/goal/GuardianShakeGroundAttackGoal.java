@@ -38,6 +38,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
         entity.setDeltaMovement(0, entity.onGround() ? 0 : entity.getDeltaMovement().y, 0);
         if (animation == this.entity.shakeGroundAttackAnimation1) {
             if (tick > 10 && tick < 25 && target != null) {
+                entity.getLookControl().setLookAt(target, 30F, 30F);
                 this.entity.lookAt(target, 30F, 30F);
             } else {
                 this.entity.setYRot(this.entity.yRotO);
@@ -67,6 +68,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
         } else if (animation == this.entity.shakeGroundAttackAnimation2) {
             tick = this.entity.getAnimationTick();
             if (tick > 8 && tick < 18 && target != null) {
+                entity.getLookControl().setLookAt(target, 30F, 30F);
                 this.entity.lookAt(target, 30F, 30F);
             } else {
                 this.entity.setYRot(this.entity.yRotO);
@@ -96,6 +98,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
         } else if (animation == this.entity.shakeGroundAttackAnimation3) {
             tick = this.entity.getAnimationTick();
             if (tick > 8 && tick < 25 && target != null) {
+                entity.getLookControl().setLookAt(target, 30F, 30F);
                 this.entity.lookAt(target, 30F, 30F);
             } else {
                 this.entity.setYRot(this.entity.yRotO);

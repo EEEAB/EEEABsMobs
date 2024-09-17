@@ -497,15 +497,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
         if (this.isNoAnimation()) this.pushEntitiesAway(1.7F, getBbHeight(), 1.7F, 1.7F);
 
-        if (!this.isActive()) this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
-
-        if (this.getAnimation() != this.getNoAnimation()
-                && this.getAnimation() != this.pounceAttackAnimation1
-                && this.getAnimation() != this.pounceAttackAnimation2
-                && this.getAnimation() != this.pounceAttackAnimation3
-                && this.getAnimation() != this.roarAnimation
-                && this.getAnimation() != this.laserAnimation
-                || !this.isActive()) {
+        if (!this.isActive()) {
+            this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
             this.yHeadRot = this.yBodyRot = this.getYRot();
         }
 
@@ -523,7 +516,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             } else if (tick > 8) {
                 this.strongKnockBlock();
             }
-            if (this.getTarget() != null) this.lookAt(getTarget(), 30F, 30F);
+            LivingEntity target = getTarget();
+            if (target != null) {
+                this.getLookControl().setLookAt(target, 30F, 30F);
+                this.lookAt(target, 30F, 30F);
+            }
         } else if (this.getAnimation() == this.attackAnimation6) {
             if (tick == 14) this.doSplashParticlesEffect(20);
         } else if (this.getAnimation() == this.shakeGroundAttackAnimation1) {
@@ -554,6 +551,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         } else if (this.getAnimation() == this.activateAnimation) {
             LivingEntity target = getTarget();
             if (target != null && tick > 40) {
+                this.getLookControl().setLookAt(target, 30F, 30F);
                 this.lookAt(target, 30F, 30F);
             }
         }
@@ -954,6 +952,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             if (target == null) return;
             double dist = this.guardian.distanceToSqr(this.targetX, this.targetY, this.targetZ);
             this.guardian.getLookControl().setLookAt(target, 30.0F, 30.0F);
+            this.guardian.lookAt(target, 30.0F, 30.0F);
             if (--this.rePath <= 0 && (
                     this.targetX == 0.0D && this.targetY == 0.0D && this.targetZ == 0.0D ||
                             target.distanceToSqr(this.targetX, this.targetY, this.targetZ) >= 1.0D) ||

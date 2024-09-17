@@ -69,8 +69,8 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
         if (entity.getAnimation() == entity.pounceAttackAnimation1) {
             entity.setDeltaMovement(0, entity.onGround() ? 0 : entity.getDeltaMovement().y(), 0);
             if (target != null) {
-                entity.getLookControl().setLookAt(target, 90F, 90F);
-                entity.lookAt(target, 90F, 90F);
+                entity.getLookControl().setLookAt(target, 30F, 30F);
+                entity.lookAt(target, 30F, 30F);
             }
             int tick = entity.getAnimationTick();
             if (tick == 1) {
