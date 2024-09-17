@@ -54,15 +54,15 @@ public class RenderGuardianLaser extends EntityRenderer<EntityGuardianLaser> {
         double posX = laser.xo + (laser.getX() - laser.xo) * delta;
         double posY = laser.yo + (laser.getY() - laser.yo) * delta;
         double posZ = laser.zo + (laser.getZ() - laser.zo) * delta;
-        float yaw = laser.prevYHeadRotAngle + (laser.yHeadRotAngle - laser.prevYHeadRotAngle) * delta;
-        float pitch = laser.prevXHeadRotAngle + (laser.xHeadRotAngle - laser.prevXHeadRotAngle) * delta;
+        float yaw = laser.preYaw + (laser.yaw - laser.preYaw) * delta;
+        float pitch = laser.prePitch + (laser.pitch - laser.prePitch) * delta;
 
         float length = (float) Math.sqrt(Math.pow(collidePosX - posX, 2) + Math.pow(collidePosY - posY, 2) + Math.pow(collidePosZ - posZ, 2));
         int frame = Mth.floor((laser.displayControlled.getTimer() - 1 + delta) * 2);
         if (frame < 0) {
             frame = 6;
         }
-        if (laser.isAccumulating()) return;
+        if (!laser.isAccumulating()) return;
         VertexConsumer vertex$builder = bufferIn.getBuffer(EMRenderType.getGlowingEffect(getTextureLocation(laser)));
         renderStart(frame, matrixStackIn, vertex$builder, packedLightIn);
         renderBeam(length, 180f / (float) Math.PI * yaw, 180f / (float) Math.PI * pitch, frame, matrixStackIn, vertex$builder, packedLightIn);
