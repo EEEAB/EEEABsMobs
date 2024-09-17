@@ -19,8 +19,8 @@ import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityElectromagnetic;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityElectromagnetic;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGrenade;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
@@ -43,8 +43,8 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
@@ -232,7 +232,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> smashAttackAnimation, 7F, 18, 1.5F, 1.5F, true) {
             @Override
             public void tick() {
-                this.entity.setDeltaMovement(0F, 0F, 0F);
+                this.entity.setDeltaMovement(0F, this.entity.onGround() && !this.entity.isNoGravity() ? -0.01F : this.entity.getDeltaMovement().y, 0F);
                 LivingEntity target = this.entity.getTarget();
                 if (target != null) {
                     if (this.entity.getAnimationTick() < 15) {
@@ -252,7 +252,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             }
         });
         this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, () -> rangeAttackAnimation));
-        this.goalSelector.addGoal(2, new AnimationMeleePlusAI<>(this, 1.0, 40, () -> attackAnimationLeft, () -> attackAnimationRight));
+        this.goalSelector.addGoal(2, new AnimationMeleePlusAI<>(this, 1.0, 20, () -> attackAnimationLeft, () -> attackAnimationRight));
     }
 
     @Override
@@ -271,7 +271,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             if (this.getTarget() != null && !this.getTarget().isAlive()) this.setTarget(null);
             if (!this.isNoAi() && !this.isActive()) {
                 if (EMConfigHandler.COMMON.MOB.GULING.GULING_SENTINEL_HEAVY.enableNonCombatHeal.get()) this.heal(0.5F);
-                this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
+                this.setDeltaMovement(0F, this.getDeltaMovement().y, 0F);
                 this.yHeadRot = this.yBodyRot = this.getYRot();
             }
             if (this.isAlwaysActive()) {
@@ -361,7 +361,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 }
             }
         } else if (this.getAnimation() == this.electromagneticAnimation) {
-            this.setDeltaMovement(0, this.onGround() ? 0 : this.getDeltaMovement().y, 0);
+            this.setDeltaMovement(0F, this.onGround() && !this.isNoGravity() ? -0.01F : this.getDeltaMovement().y, 0F);
             if (tick == 1) {
                 this.playSound(SoundInit.GSH_PRE_ATTACK.get(), 0.75F, 0.5F);
             } else if (tick > 20 && tick < 90) {
@@ -617,7 +617,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         public void tick() {
             int tick = this.entity.getAnimationTick();
             LivingEntity target = this.entity.getTarget();
-            this.entity.setDeltaMovement(0F, entity.getDeltaMovement().y, 0F);
+            this.entity.setDeltaMovement(0F, this.entity.onGround() && !this.entity.isNoGravity() ? -0.01F : this.entity.getDeltaMovement().y, 0F);
             if (!(tick < 15 && tick > 10) && target != null) {
                 this.entity.getLookControl().setLookAt(target, 30F, 30F);
             } else {
@@ -687,7 +687,8 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                     this.lostTargetDelay += 2;
                 }
                 this.moveGoal(target);
-                this.entity.getLookControl().setLookAt(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), 30F, 30F);
+                this.entity.getLookControl().setLookAt(target, 15F, 15F);
+                this.entity.lookAt(target, 15F, 15F);
             } else {
                 this.entity.playAnimation(this.entity.rangeAttackStopAnimation);
                 return;
@@ -708,7 +709,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 Vec3 vec3 = findTargetPoint(this.entity, target);
                 this.entity.setDeltaMovement(vec3.x * moveSpeed, this.entity.getDeltaMovement().y, vec3.z * moveSpeed);
             } else {
-                this.entity.setDeltaMovement(0F, this.entity.getDeltaMovement().y, 0F);
+                this.entity.setDeltaMovement(0F, this.entity.onGround() && !this.entity.isNoGravity() ? -0.01F : this.entity.getDeltaMovement().y, 0F);
             }
         }
 
@@ -732,7 +733,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         @Override
         public void tick() {
             int tick = entity.getAnimationTick();
-            this.entity.setDeltaMovement(0, this.entity.onGround() && !this.entity.isNoGravity() ? -0.01 : this.entity.getDeltaMovement().y, 0);
+            this.entity.setDeltaMovement(0F, this.entity.onGround() && !this.entity.isNoGravity() ? -0.01F : this.entity.getDeltaMovement().y, 0F);
             if (!this.entity.level().isClientSide) {
                 if (tick == 43 || tick == 65 || tick == 87) {
                     final int count = 10;
