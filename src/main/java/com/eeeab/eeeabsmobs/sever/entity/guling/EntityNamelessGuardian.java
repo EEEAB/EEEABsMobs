@@ -74,6 +74,7 @@ import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeMod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -399,7 +400,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
             @Override
             public void tick() {
-                setDeltaMovement(0, getDeltaMovement().y, 0);
+                entity.anchorToGround();
                 if (entity.getAnimation() == entity.weakAnimation1) {
                     if (entity.getAnimationTick() >= entity.weakAnimation1.getDuration() - 1) {
                         entity.playAnimation(entity.weakAnimation2);
@@ -509,7 +510,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             this.setPowered(true);
             this.doRoarEffect();
         } else if (this.getAnimation() == this.concussionAnimation) {
-            this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
+            this.anchorToGround();
             if (tick == 8) {
                 ModParticleUtils.sphericalParticleOutburst(level(), 10F, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleInit.GUARDIAN_SPARK.get()}, this, 2.5F, 0, 0, 3);
                 EntityCameraShake.cameraShake(level(), position(), 30, 0.125F, 0, 20);
@@ -876,6 +877,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 add(Attributes.ATTACK_DAMAGE, 15.0D).
                 add(Attributes.FOLLOW_RANGE, 50.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.3D).
+                add(ForgeMod.ENTITY_GRAVITY.get(), 0.1D).
                 add(Attributes.KNOCKBACK_RESISTANCE, 1.0D);
     }
 
@@ -889,6 +891,10 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     public float getAttackDamageAttributeValue() {
         return (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
+    }
+
+    public void anchorToGround() {
+        this.setDeltaMovement(0F, this.onGround() && !this.isNoGravity() ? -0.01F : this.getDeltaMovement().y, 0F);
     }
 
     @Override
@@ -991,7 +997,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
                 boolean canLaser = this.random.nextFloat() < 0.6F && this.isPowered && checkModeOrPreventTimeouts(120) && (((checkAttackHeight ? this.guardian.targetDistance > 10.0D : this.guardian.targetDistance > 4.0D) && (entityRelativeAngle < 60.0 || entityRelativeAngle > 300) && this.guardian.targetDistance < EntityGuardianLaser.GUARDIAN_RADIUS && this.guardian.getLaserTick() <= 0) || this.guardian.isTimeOutToUseSkill());
                 boolean canShakeGround = (checkAttackHeight || target.onGround()) && !this.guardian.isTimeOutToUseSkill() && this.random.nextFloat() < 0.6F && (this.guardian.getHealthPercentage() <= 75 || !this.guardian.isFirstMadness()) && this.guardian.targetDistance < 6.0D && this.guardian.getShakeGroundTick() <= 0 && !this.guardian.shouldSetPowered() && checkModeOrPreventTimeouts(180);
-                boolean canLeap = this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 12.0D && this.guardian.targetDistance < 24.0 && this.guardian.getLeapTick() <= 0 && checkModeOrPreventTimeouts(100);
+                boolean canLeap = this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 16.0D && this.guardian.targetDistance < 24.0 && this.guardian.getLeapTick() <= 0 && checkModeOrPreventTimeouts(100);
                 boolean canPouch = checkAttackHeight && checkModeOrPreventTimeouts(80) && (this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 6.0D && this.guardian.targetDistance < 14.0 && this.guardian.getPounceTick() <= 0 || this.guardian.isTimeOutToUseSkill());
                 if (canShakeGround) {
                     this.guardian.playAnimation(this.guardian.shakeGroundAttackAnimation1);
