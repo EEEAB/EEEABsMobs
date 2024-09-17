@@ -39,6 +39,7 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
     @Override
     public void tick() {
         Animation animation = this.entity.getAnimation();
+        entity.anchorToGround();
         LivingEntity target = this.entity.getTarget();
         int tick = this.entity.getAnimationTick();
         float baseDamageMultiplier = isPowered ? 1.0F : 0.8F;
@@ -51,19 +52,19 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
             }
             if (tick == 10) {
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 1.95f, this.entity.getVoicePitch());
-                pursuit(5F, 1.8F, 1F);
             } else if (tick == 12) {
+                pursuit(1.7F);
                 List<LivingEntity> entities = this.entity.getNearByLivingEntities(range);
                 for (LivingEntity hitEntity : entities) {
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
                     float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
                     if ((entityHitDistance <= range && (entityRelativeAngle <= (attackArc + 70) / 2F && entityRelativeAngle >= -(attackArc - 20) / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
                         entity.guardianHurtTarget(entity, hitEntity, 0.025F, 1.0F, baseDamageMultiplier, true, true, true);
-                        hitEntity.setDeltaMovement(hitEntity.getDeltaMovement().add(0, 0.6, 0));
+                        hitEntity.setDeltaMovement(hitEntity.getDeltaMovement().add(0, 0.45, 0));
                         entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                     }
                 }
-            } else if (tick == 20 && entity.checkCanAttackRange(2.0F, range) && canToggleAnimation(80)) {
+            } else if (tick == 20 && entity.checkCanAttackRange(2.0, range) && canToggleAnimation(80)) {
                 this.entity.playAnimation(entity.attackAnimation5);
             }
         } else if (animation == entity.attackAnimation5) {
@@ -74,10 +75,10 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
             } else {
                 this.entity.setYRot(this.entity.yRotO);
             }
-            if (tick == 9) {
+            if (tick == 10) {
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.05f, this.entity.getVoicePitch() + 0.15f);
-                pursuit(5F, 1.8F, 1.5F);
-            } else if (tick == 13) {
+            } else if (tick == 12) {
+                pursuit(1.2F);
                 List<LivingEntity> entities = this.entity.getNearByLivingEntities(range + 0.5F);
                 for (LivingEntity hitEntity : entities) {
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
@@ -90,7 +91,7 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
                         ModEntityUtils.forceKnockBack(entity, hitEntity, 0.5F, ratioX, ratioZ, !isPowered);
                     }
                 }
-            } else if (tick == 20 && entity.checkCanAttackRange(1.5F, range) && canToggleAnimation(70)) {
+            } else if (tick == 20 && entity.checkCanAttackRange(1.5, range) && canToggleAnimation(70)) {
                 this.entity.playAnimation(entity.attackAnimation6);
             }
         } else if (animation == entity.attackAnimation6) {
@@ -102,10 +103,9 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
             } else {
                 this.entity.setYRot(this.entity.yRotO);
             }
-            if (tick == 8) {
-                pursuit(6F, 3F, 2.5F);
-            } else if (tick == 10) {
+            if (tick == 10) {
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.2f, this.entity.getVoicePitch() + 0.15f);
+                pursuit(1.7F);
             } else if (tick == 12) {
                 for (int i = 0; i < 6; i++) {
                     entity.shockAttack(entity.damageSources().mobAttack(entity), i, -0.5F, 0.3F, 2F, 0.025F, 0.5F, (isPowered ? 1.0F : 0.8F), false, true, true);
@@ -136,13 +136,12 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
                 (isPowered && entity.getRandom().nextFloat() < 0.9F);
     }
 
-    private void pursuit(float pursuitDistance, float moveMultiplier, float offset) {
+    private void pursuit(float scale) {
+        LivingEntity target = entity.getTarget();
         float targetDistance = entity.targetDistance;
-        if (entity.getTarget() != null && targetDistance < pursuitDistance && targetDistance > 0) {
-            moveMultiplier = targetDistance - offset;
+        if (target == null || (targetDistance > 2F && Math.abs(target.getY() - entity.getY()) <= 4D)) {
+            double radians = Math.toRadians(entity.getYRot() + 90);
+            entity.move(MoverType.SELF, new Vec3(Math.cos(radians), 0, Math.sin(radians)).scale(scale));
         }
-        targetDistance = entity.targetDistance;
-        if (entity.getTarget() == null || (targetDistance > 2F && Math.abs(entity.getTarget().getY() - entity.getY()) < pursuitDistance))
-            entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * moveMultiplier));
     }
 }
