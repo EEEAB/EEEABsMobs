@@ -9,8 +9,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import java.util.function.Supplier;
 
 public class AnimationMeleePlusAI<T extends EEEABMobLibrary & EMAnimatedEntity> extends AnimationMeleeAI<T> {
-    private final Supplier<Animation>[] animations;
-    //当前播放攻击动作索引
     private int attackIndex;
     private int delayCounter;
     private int delay = 5;
@@ -18,7 +16,6 @@ public class AnimationMeleePlusAI<T extends EEEABMobLibrary & EMAnimatedEntity> 
     @SafeVarargs
     public AnimationMeleePlusAI(T attacker, double speed, int attackInterval, Supplier<Animation>... animations) {
         super(attacker, speed, attackInterval, e -> e.active, animations);
-        this.animations = animations;
     }
 
     @SafeVarargs
@@ -33,7 +30,7 @@ public class AnimationMeleePlusAI<T extends EEEABMobLibrary & EMAnimatedEntity> 
     @Override
     public boolean canUse() {
         LivingEntity target = this.attacker.getTarget();
-        return this.attacker.active && target != null && target.isAlive() && this.attacker.canAttack(target);
+        return this.customFlag.test(this.attacker) && target != null && target.isAlive() && this.attacker.canAttack(target);
     }
 
     @Override
@@ -42,7 +39,16 @@ public class AnimationMeleePlusAI<T extends EEEABMobLibrary & EMAnimatedEntity> 
         if (target != null) {
             this.attacker.getLookControl().setLookAt(target, 30.0F, 30.0F);
             double distSqr = this.attacker.distanceToSqr(target.getX(), target.getBoundingBox().minY, target.getZ());
+            if (animations != null && animations.length != 0) {
+                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
+                if (this.ticksUntilNextAttack == 0 && this.attacker.getMeleeAttackRangeSqr(target) >= distSqr) {
+                    this.ticksUntilNextAttack = this.getAttackInterval();
+                    this.attacker.playAnimation(this.getAnimationByPolling());
+                    this.delayCounter += 5;
+                }
+            }
             if (--this.delayCounter <= 0) {
+                distSqr = this.attacker.distanceToSqr(target.getX(), target.getBoundingBox().minY, target.getZ());
                 this.delayCounter = this.delay + this.attacker.getRandom().nextInt(this.delay) + 1;
                 if (distSqr > Math.pow(this.attacker.getAttributeValue(Attributes.FOLLOW_RANGE), 2.0)) {
                     if (this.attacker.getNavigation().isDone() && !this.attacker.getNavigation().moveTo(target, 1.0)) {
@@ -50,15 +56,6 @@ public class AnimationMeleePlusAI<T extends EEEABMobLibrary & EMAnimatedEntity> 
                     }
                 } else {
                     this.attacker.getNavigation().moveTo(target, this.speed);
-                }
-            }
-            if (animations != null && animations.length != 0) {
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-                distSqr = this.attacker.distanceToSqr(target.getX(), target.getBoundingBox().minY, target.getZ());
-                if (this.ticksUntilNextAttack == 0 && this.attacker.getMeleeAttackRangeSqr(target) >= distSqr) {
-                    this.ticksUntilNextAttack = this.getAttackInterval();
-                    this.attacker.playAnimation(this.getAnimationByPolling());
-                    this.delayCounter += 5;
                 }
             }
         }
