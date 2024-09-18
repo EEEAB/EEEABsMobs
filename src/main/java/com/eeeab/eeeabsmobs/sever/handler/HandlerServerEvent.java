@@ -309,6 +309,7 @@ public final class HandlerServerEvent {
     public void onLivingEntityKnockBack(LivingKnockBackEvent event) {
         LivingEntity living = event.getEntity();
         if (event.isCancelable() && living instanceof IBoss) {
+            event.setStrength(0F);
             event.setCanceled(true);
         }
     }
