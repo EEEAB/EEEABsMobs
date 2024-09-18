@@ -346,6 +346,14 @@ public final class HandlerServerEvent {
         }
     }
 
+    @SubscribeEvent
+    public void onLivingEntityBreathe(LivingBreatheEvent event){
+        LivingEntity entity = event.getEntity();
+        if (entity.hasEffect(EffectInit.FRENZY_EFFECT.get())){
+            event.setCanBreathe(true);
+        }
+    }
+
     //实体设置目标时
     @SubscribeEvent
     public void onLivingEntityChangeTarget(LivingChangeTargetEvent event) {
