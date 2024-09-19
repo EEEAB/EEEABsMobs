@@ -1190,13 +1190,15 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public boolean guardianHurtTarget(DamageSource damageSource, EntityNamelessGuardian guardian, LivingEntity hitEntity, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier,
                                       boolean shouldHeal, boolean disableShield, boolean ignoreHit) {
         float finalDamage = ((guardian.getAttackDamageAttributeValue() * baseDamageMultiplier) + hitEntity.getMaxHealth() * hitEntityMaxHealth) * damageMultiplier;
+        double suckBloodMultiplier = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.suckBloodMultiplier.get();
+        //治疗值 = 攻击力15% + 生命上限1.5% - 目标护甲值5%
+        float armor = Mth.clamp(hitEntity.getArmorValue() * 0.05F, 0F, 1.5F);
+        float heal = (guardian.getAttackDamageAttributeValue() * 0.15F) + (guardian.getMaxHealth() * 0.015F) - armor;
         if (damageSource.is(EMResourceKey.GUARDIAN_LASER)) {
+            heal = guardian.getAttackDamageAttributeValue() * 0.12F + (guardian.getMaxHealth() * 0.012F) - armor;
             finalDamage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(finalDamage, hitEntity.getArmorValue(), (float) hitEntity.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0.8F);
         }
         boolean flag = hitEntity.hurt(damageSource, finalDamage);
-        double suckBloodMultiplier = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.suckBloodMultiplier.get();
-        //治疗值 = 攻击力15% + 生命上限1.5% - 目标护甲值5%
-        float heal = (guardian.getAttackDamageAttributeValue() * 0.15F) + (guardian.getMaxHealth() * 0.015F) - (Mth.clamp(hitEntity.getArmorValue() * 0.05F, 0F, 1.5F));
         boolean blocking = hitEntity instanceof Player && hitEntity.isBlocking();
         boolean checkConfig = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.enableForcedSuckBlood.get() || this.isChallengeMode();
         if ((flag || (ignoreHit && this.isPowered() && !blocking && checkConfig)) && shouldHeal) {
