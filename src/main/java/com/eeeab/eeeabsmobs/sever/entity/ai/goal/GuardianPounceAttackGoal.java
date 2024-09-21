@@ -1,17 +1,15 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
+import com.eeeab.animate.server.ai.AnimationAI;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.animate.server.ai.AnimationAI;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -26,6 +24,7 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
     private final EntityNamelessGuardian entity;
     private Vec3 pounceVec = Vec3.ZERO;
     private final float speedMultiplier;
+    private double moveSpeed;
     private boolean isPowered;
     private float madnessSpeedMultiplier;
     private int consecutive;
@@ -43,6 +42,7 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
         isPowered = entity.isPowered();
         madnessSpeedMultiplier = speedMultiplier;
         pounceVec = Vec3.ZERO;
+        moveSpeed = entity.getAttributeValue(Attributes.MOVEMENT_SPEED);
         if (isPowered) {
             madnessSpeedMultiplier += 0.5F;
         }
@@ -64,10 +64,9 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
     @Override
     public void tick() {
         LivingEntity target = entity.getTarget();
-        double moveSpeed = entity.getAttributeValue(Attributes.MOVEMENT_SPEED);
         float baseDamageMultiplier = isPowered ? 0.8F : 0.6F;
         if (entity.getAnimation() == entity.pounceAttackAnimation1) {
-            entity.setDeltaMovement(0, entity.onGround() ? 0 : entity.getDeltaMovement().y(), 0);
+            entity.anchorToGround();
             if (target != null) {
                 entity.getLookControl().setLookAt(target, 30F, 30F);
                 entity.lookAt(target, 30F, 30F);
@@ -77,7 +76,8 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
                 entity.playSound(SoundInit.NAMELESS_GUARDIAN_PRE_POUNCE.get(), 1.5F, entity.getVoicePitch());
             } else if (tick >= entity.pounceAttackAnimation1.getDuration() - 1) {
                 if (target != null) {
-                    pounceVec = findTargetPoint(entity, target);
+                    double radians = Math.toRadians(entity.getYRot() + 90);
+                    pounceVec = new Vec3(Math.cos(radians), 0, Math.sin(radians));
                     entity.playAnimation(entity.pounceAttackAnimation2);
                 } else {
                     entity.playAnimation(entity.pounceAttackAnimation3);
@@ -88,29 +88,20 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
             int keyFrame = isPowered ? 24 : 28;
             if (tick < keyFrame && pounceVec.length() != 0) {
                 entity.setDeltaMovement(pounceVec.x * moveSpeed * madnessSpeedMultiplier, -entity.getAttributeValue(ForgeMod.ENTITY_GRAVITY.get()) * 5.0F, pounceVec.z * moveSpeed * speedMultiplier);
-                if (entity.hasEffect(MobEffects.MOVEMENT_SLOWDOWN)) {
-                    entity.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
-                }
-                if (!entity.level().isClientSide &&
-                        /* 判断是否开启生物破坏规则,这关乎那些不想被怪物破坏方块的玩家考虑~ */
-                        ModEntityUtils.canMobDestroy(entity)) {
+                if (!entity.level().isClientSide && ModEntityUtils.canMobDestroy(entity)) {
                     AABB bb = entity.getBoundingBox();
                     int minx = Mth.floor(bb.minX - 0.75D);
                     int miny = Mth.floor(bb.minY + 0.0D);
                     int minz = Mth.floor(bb.minZ - 0.75D);
                     BlockPos min = new BlockPos(minx, miny, minz);
-
                     int maxx = Mth.floor(bb.maxX + 0.75D);
                     int maxy = Mth.floor(bb.maxY + 0.15D);
                     int maxz = Mth.floor(bb.maxZ + 0.75D);
                     BlockPos max = new BlockPos(maxx, maxy, maxz);
                     if (entity.level().hasChunksAt(min, max)) {
                         BlockPos.betweenClosedStream(min, max).
-                                filter((pos) -> ModEntityUtils.canDestroyBlock(entity.level(), pos, entity,
-                                        /* 高于2.0即不能破坏,不能让它什么都能撞坏~ */ 1.9F)
-                                        && entity.level().getBlockEntity(pos) == null).
-                                forEach((pos) ->
-                                        entity.level().destroyBlock(pos, false));
+                                filter((pos) -> ModEntityUtils.canDestroyBlock(entity.level(), pos, entity, 2F)).
+                                forEach((pos) -> entity.level().destroyBlock(pos, false));
                     }
                 }
                 if (tick % 2 == 0) {
@@ -152,13 +143,7 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
         }
     }
 
-    public static Vec3 findTargetPoint(Entity attacker, Entity target) {
-        Vec3 vec3 = target.position();
-        return (new Vec3(vec3.x - attacker.getX(), 0.0, vec3.z - attacker.getZ())).normalize();
-    }
-
     private boolean checkModeOrPreventTimeouts() {
         return entity.isChallengeMode() || (entity.getMadnessTick() > 200 && entity.isPowered());
     }
-
 }
