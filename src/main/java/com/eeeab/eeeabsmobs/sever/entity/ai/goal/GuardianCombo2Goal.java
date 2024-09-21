@@ -44,23 +44,24 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
         int tick = this.entity.getAnimationTick();
         float baseDamageMultiplier = isPowered ? 1.0F : 0.8F;
         if (animation == entity.attackAnimation4) {
-            if (tick < 11 && target != null) {
+            if (tick < 10 && target != null) {
                 entity.getLookControl().setLookAt(target, 30F, 30F);
                 this.entity.lookAt(target, 30F, 30F);
             } else {
                 this.entity.setYRot(this.entity.yRotO);
             }
-            if (tick == 10) {
+            if (tick == 9) {
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 1.95f, this.entity.getVoicePitch());
-            } else if (tick == 12) {
+            } else if (tick == 11) {
                 pursuit(1.7F);
+            } else if (tick == 13) {
                 List<LivingEntity> entities = this.entity.getNearByLivingEntities(range);
                 for (LivingEntity hitEntity : entities) {
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
                     float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
                     if ((entityHitDistance <= range && (entityRelativeAngle <= (attackArc + 70) / 2F && entityRelativeAngle >= -(attackArc - 20) / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
                         entity.guardianHurtTarget(entity, hitEntity, 0.025F, 1.0F, baseDamageMultiplier, true, true, true);
-                        hitEntity.setDeltaMovement(hitEntity.getDeltaMovement().add(0, 0.45, 0));
+                        hitEntity.setDeltaMovement(hitEntity.getDeltaMovement().add(0, 0.4, 0));
                         entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                     }
                 }
@@ -69,7 +70,7 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
             }
         } else if (animation == entity.attackAnimation5) {
             tick = this.entity.getAnimationTick();
-            if (tick < 12 && target != null) {
+            if (tick < 10 && target != null) {
                 entity.getLookControl().setLookAt(target, 30F, 30F);
                 this.entity.lookAt(target, 30F, 30F);
             } else {
@@ -77,8 +78,8 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
             }
             if (tick == 10) {
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.05f, this.entity.getVoicePitch() + 0.15f);
-            } else if (tick == 12) {
-                pursuit(1.2F);
+                pursuit(1.5F);
+            } else if (tick == 13) {
                 List<LivingEntity> entities = this.entity.getNearByLivingEntities(range + 0.5F);
                 for (LivingEntity hitEntity : entities) {
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
@@ -97,7 +98,7 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
         } else if (animation == entity.attackAnimation6) {
             tick = this.entity.getAnimationTick();
             baseDamageMultiplier += 0.2F;
-            if (tick < 11 && target != null) {
+            if (tick < 9 && target != null) {
                 entity.getLookControl().setLookAt(target, 30F, 30F);
                 this.entity.lookAt(target, 30F, 30F);
             } else {
@@ -105,7 +106,7 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
             }
             if (tick == 10) {
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.2f, this.entity.getVoicePitch() + 0.15f);
-                pursuit(1.7F);
+                pursuit(1.6F);
             } else if (tick == 12) {
                 for (int i = 0; i < 6; i++) {
                     entity.shockAttack(entity.damageSources().mobAttack(entity), i, -0.5F, 0.3F, 2F, 0.025F, 0.5F, (isPowered ? 1.0F : 0.8F), false, true, true);
