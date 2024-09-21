@@ -1,15 +1,15 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
+import com.eeeab.eeeabsmobs.sever.entity.util.ShockWaveUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -33,21 +33,22 @@ public class GuardianLeapGoal extends AnimationSimpleAI<EntityNamelessGuardian> 
             } else {
                 entity.setYRot(entity.yRotO);
                 if (tick == 12) {
+                    doLeapEffect();
                     Vec3 vec3 = findTargetPoint(entity, target);
-                    entity.setDeltaMovement(vec3.x * 0.155D, 1.2 + Mth.clamp(vec3.y * 0.055D, 0D, 12D), vec3.z * 0.155D);
+                    entity.setDeltaMovement(vec3.x * 0.155D, 1 + Mth.clamp(vec3.y * 0.055D, 0D, 12D), vec3.z * 0.155D);
                 }
             }
         } else if (tick == 12) {
+            doLeapEffect();
             float radians = (float) Math.toRadians(entity.yBodyRot + 90);
-            entity.setDeltaMovement(3.0 * Math.cos(radians), 1.2, 3.0 * Math.sin(radians));
+            entity.setDeltaMovement(3.0 * Math.cos(radians), 1, 3.0 * Math.sin(radians));
+        } else {
+            entity.setYRot(entity.yRotO);
         }
 
         if (tick > 12) {
             boolean onGround = entity.onGround();
-            if (!this.entity.level().isClientSide &&
-                    /* 判断是否开启生物破坏规则,这关乎那些不想被怪物破坏方块的玩家考虑~ */
-                    ModEntityUtils.canMobDestroy(this.entity)
-                    && !onGround) {
+            if (!this.entity.level().isClientSide && ModEntityUtils.canMobDestroy(this.entity) && !onGround) {
                 AABB bb = this.entity.getBoundingBox();
                 int minx = Mth.floor(bb.minX - 0.75D);
                 int miny = Mth.floor(bb.minY + 0.0D);
@@ -59,11 +60,8 @@ public class GuardianLeapGoal extends AnimationSimpleAI<EntityNamelessGuardian> 
                 BlockPos max = new BlockPos(maxx, maxy, maxz);
                 if (this.entity.level().hasChunksAt(min, max)) {
                     BlockPos.betweenClosedStream(min, max).
-                            filter((pos) -> {
-                                BlockState blockState = this.entity.level().getBlockState(pos);
-                                return this.entity.level().getBlockEntity(pos) == null && (blockState.is(Blocks.BLUE_ICE) || blockState.is(Blocks.ICE));
-                            }).
-                            forEach((pos) -> this.entity.level().destroyBlock(pos, false));
+                            filter((pos) -> ModEntityUtils.canDestroyBlock(this.entity.level(), pos, this.entity, 2F)).
+                            forEach((pos) -> this.entity.level().destroyBlock(pos, true));
                 }
             }
             if (onGround) {
@@ -72,9 +70,15 @@ public class GuardianLeapGoal extends AnimationSimpleAI<EntityNamelessGuardian> 
         }
     }
 
+    private void doLeapEffect() {
+        Vec3 position = entity.position();
+        EntityCameraShake.cameraShake(entity.level(), position, 10F, 0.125F, 5, 0);
+        ShockWaveUtils.doRingShockWave(entity.level(), position, 2D, -0.1F, false, 20);
+    }
+
     private static Vec3 findTargetPoint(LivingEntity attacker, LivingEntity target) {
         Vec3 vec3 = target.position();
-        float width = Math.max(target.getBbWidth(), 1.5F);
+        float width = Math.min(target.getBbWidth(), 1.5F);
         RandomSource random = attacker.getRandom();
         double radians = Math.toRadians(attacker.getYRot() + 90);
         double randomXOffset = -(1.5 + width) * Math.cos(radians) + (random.nextDouble() - 0.5) * width * 2;
