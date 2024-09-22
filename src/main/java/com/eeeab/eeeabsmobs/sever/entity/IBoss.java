@@ -15,7 +15,7 @@ public interface IBoss extends IEntity {
         if (boss.getSensing().hasLineOfSight(player)) {
             double pY = player.getY();
             double bY = boss.getY();
-            flag = player.isFallFlying() || Math.abs(pY - bY) <= height;
+            flag = player.isFallFlying() || player.isPassenger() || Math.abs(pY - bY) <= height;
         }
         if (!flag) boss.playSound(SoundInit.UNDAMAGED.get(), 0.4F, 2F);
         return !flag;
