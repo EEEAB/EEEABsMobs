@@ -140,6 +140,9 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
     private void pursuit(float scale) {
         LivingEntity target = entity.getTarget();
         float targetDistance = entity.targetDistance;
+        if (entity.getTarget() != null && targetDistance < entity.getBbWidth() * 2 && targetDistance > 0) {
+            scale = Math.max(--targetDistance - entity.getBbWidth() / 2, scale);
+        }
         if (target == null || (targetDistance > 2F && Math.abs(target.getY() - entity.getY()) <= 4D)) {
             double radians = Math.toRadians(entity.getYRot() + 90);
             entity.move(MoverType.SELF, new Vec3(Math.cos(radians), 0, Math.sin(radians)).scale(scale));
