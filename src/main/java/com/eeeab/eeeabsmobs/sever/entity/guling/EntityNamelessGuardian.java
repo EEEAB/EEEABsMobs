@@ -977,7 +977,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                     this.rePath += 15;
                 }
             }
-            dist = this.guardian.distanceToSqr(this.targetX, this.targetY, this.targetZ);
+            dist = this.guardian.distanceToSqr(target);
             if (this.guardian.attackTick <= 0 && this.guardian.getSensing().hasLineOfSight(target)) {
                 boolean checkAttackHeight = target.getY() - guardian.getY() < 4 && target.getY() - this.guardian.getY() > -4;
                 double entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this.guardian, target);
