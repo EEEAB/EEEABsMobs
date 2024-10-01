@@ -36,11 +36,13 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -136,7 +138,8 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
 
     @Override//是否免疫药水效果
     public boolean addEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        return (this.noConflictingTasks() || effectInstance.getEffect() == EffectInit.VERTIGO_EFFECT.get()) && super.addEffect(effectInstance, entity);
+        MobEffect effect = effectInstance.getEffect();
+        return (this.noConflictingTasks() || effect == EffectInit.VERTIGO_EFFECT.get() || effect == MobEffects.GLOWING) && super.addEffect(effectInstance, entity);
     }
 
     @Override//被方块阻塞
@@ -162,6 +165,11 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     }
 
     @Override
+    public int getTeamColor() {
+        return this.getTeam() == null ? 11998484 : super.getTeamColor();
+    }
+
+    @Override
     protected EMConfigHandler.AttributeConfig getAttributeConfig() {
         return EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.combatConfig;
     }
@@ -169,6 +177,15 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     @Override
     protected EMConfigHandler.DamageCapConfig getDamageCap() {
         return EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.maximumDamageCap;
+    }
+
+    @Override
+    protected void onAnimationFinish(Animation animation) {
+        if (!this.level().isClientSide) {
+            if (animation == this.teleportAnimation) {
+                this.addEffect(new MobEffectInstance(MobEffects.GLOWING, 50, 0, false, false));
+            }
+        }
     }
 
     @Override
@@ -479,17 +496,24 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         if (target != null && target.isAlive()) {
             radian = Math.toRadians(this.getAngleBetweenEntities(this, target) + 90);
         } else {
-            radian = Math.toRadians(this.random.nextInt(360));
+            radian = Math.toRadians(this.getYRot() + this.random.nextIntBetweenInclusive(-180, 180));
         }
         double d0 = this.getX() - (this.random.nextInt(12) + 12) * Math.cos(radian);
         double d1 = this.getY() + (double) (this.random.nextInt(64) - 32);
         double d2 = this.getZ() - (this.random.nextInt(12) + 12) * Math.sin(radian);
+        BlockPos restPos = this.getRestPos().orElse(null);
+        if (restPos != null && this.position().distanceTo(restPos.getCenter()) > 32) {
+            d0 = restPos.getX() + 0.5F;
+            d1 = restPos.getY();
+            d2 = restPos.getZ() + 0.5F;
+        }
         EntityTeleportEvent event = ForgeEventFactory.onEntityTeleportCommand(this, d0, d1, d2);
         if (event.isCanceled()) return false;
         boolean flag = this.randomTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ(), false);
         if (flag) {
             if (!this.isSilent()) {
                 this.level().playSound(null, this.xo, this.yo, this.zo, SoundEvents.ENDERMAN_TELEPORT, this.getSoundSource(), 1.0F, 1.0F);
+                this.level().playSound(null, BlockPos.containing(this.position()), SoundEvents.BELL_RESONATE, this.getSoundSource(), 1.0F, 1.1F);
                 this.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
             }
         }
@@ -850,7 +874,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                 LivingEntity target = this.spellCaster.getTarget();
                 if (target != null) {
                     float distance = this.spellCaster.distanceTo(target) - target.getBbWidth() / 2f;
-                    return (distance < 16F && this.spellCaster.getRandom().nextInt(100) == 0) || (distance < 8F && ModEntityUtils.checkTargetComingCloser(this.spellCaster, target)) || distance < 6F;
+                    return ((distance < 16F || !this.spellCaster.getSensing().hasLineOfSight(target)) && this.spellCaster.getRandom().nextInt(100) == 0) || (distance < 8F && ModEntityUtils.checkTargetComingCloser(this.spellCaster, target)) || distance < 6F;
                 }
             }
             return false;
