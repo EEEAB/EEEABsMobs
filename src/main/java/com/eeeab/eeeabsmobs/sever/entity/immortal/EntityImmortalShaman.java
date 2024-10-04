@@ -30,11 +30,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -55,6 +57,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -286,11 +289,10 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
 
     @Override
     public boolean hurt(DamageSource source, float damage) {
-        Entity entity = source.getEntity();
         if (this.level().isClientSide) {
             return false;
-        } else if (entity != null) {
-            if (this.getAnimation() == this.spellCastingHealAnimation && !(this.hurtTime > 0)) {
+        } else {
+            if ((source.getEntity() != null || source.is(DamageTypes.LAVA)) && this.getAnimation() == this.spellCastingHealAnimation && !(this.hurtTime > 0)) {
                 this.hurtCountBeforeHeal++;
             }
             if (this.isWeakness()) {
@@ -299,10 +301,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
                 damage *= 0.5F;
             }
             return super.hurt(source, damage);
-        } else if (source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
-            return super.hurt(source, damage);
         }
-        return false;
     }
 
 

@@ -413,6 +413,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
         if (this.level().isClientSide) {
             return false;
         } else if (source.getEntity() != null) {
+            float preDamage = damage;
             this.hurtCount++;
             float attackArc = 220F;
             byte pierceLevel = 0;
@@ -441,11 +442,9 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
             }
             if (this.getAnimation() == this.detonationAnimation || this.getAnimation() == this.impactStorageAnimation)
                 damage *= 0.5F;
-            return super.hurt(source, damage);
-        } else if (source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
-            return super.hurt(source, damage);
+            if (source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) damage = preDamage;
         }
-        return false;
+        return super.hurt(source, damage);
     }
 
     @Override

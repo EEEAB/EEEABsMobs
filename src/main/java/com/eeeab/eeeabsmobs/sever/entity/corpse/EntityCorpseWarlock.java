@@ -149,6 +149,16 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         }
     }
 
+    @Override//减少实体在水下的空气供应
+    protected int decreaseAirSupply(int air) {
+        return air;
+    }
+
+    @Override//是否免疫摔伤
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource damageSource) {
+        return false;
+    }
+
     @Override
     protected boolean canRide(Entity vehicle) {
         return false;
@@ -427,25 +437,20 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             return false;
         } else if (this.isInvulnerableTo(source)) {
             return false;
-        } else {
-            if (entity != null) {
-                Animation animation = this.getAnimation();
-                if (animation == teleportAnimation) {
-                    return false;
-                } else if (animation == babbleAnimation) {
-                    this.playAnimation(this.teleportAnimation);
-                } else if (animation == vampireAnimation || animation == robustAnimation) {
-                    damage *= 0.2F;
-                }
-                if (this.random.nextFloat() < 0.6F) this.hurtCount++;
-                Double maxDistance = EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.maxDistanceTakeDamage.get();
-                if (ModEntityUtils.isProjectileSource(source) && this.distanceTo(entity) >= maxDistance) return false;
-                return super.hurt(source, damage);
-            } else if (source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
-                return super.hurt(source, damage);
-            }
         }
-        return false;
+        Animation animation = this.getAnimation();
+        if (animation == teleportAnimation) {
+            return false;
+        } else if (animation == vampireAnimation || animation == robustAnimation) {
+            if (!source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) damage *= 0.2F;
+        }
+        if (entity != null) {
+            if (animation == babbleAnimation) this.playAnimation(this.teleportAnimation);
+            if (this.random.nextFloat() < 0.6F) this.hurtCount++;
+            Double maxDistance = EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.maxDistanceTakeDamage.get();
+            if (ModEntityUtils.isProjectileSource(source) && this.distanceTo(entity) >= maxDistance) return false;
+        }
+        return super.hurt(source, damage);
     }
 
     @Override
