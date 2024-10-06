@@ -25,12 +25,13 @@ public class ItemImmortalStaff extends Item {
         if (entity instanceof Player player) {
             InteractionHand hand = player.getUsedItemHand();
             AbilityCapability.IAbilityCapability capability = AbilityHandler.INSTANCE.getAbilityCapability(player);
-            if (capability != null) {
-                AbilityHandler.INSTANCE.sendPlayerAbilityMessage(player, AbilityHandler.IMMORTAL_STAFF_ABILITY_TYPE);
+            if (player.getCooldowns().isOnCooldown(this)) {
+                return;
+            } else if (capability != null) {
                 player.getCooldowns().addCooldown(this, (int) (EMConfigHandler.COMMON.ITEM.itemImmortalStaffCoolingTime.get() * 20));
+                AbilityHandler.INSTANCE.sendPlayerAbilityMessage(player, AbilityHandler.IMMORTAL_STAFF_ABILITY_TYPE);
             }
             player.swing(hand, true);
-            player.stopUsingItem();
         }
     }
 
