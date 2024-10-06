@@ -355,6 +355,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 this.resetTimeOutToUseSkill();
             } else if (animation == this.roarAnimation) {
                 this.setMadnessTick(this.isChallengeMode() ? NEVER_STOP : MADNESS_TICK);
+                this.setPowered(true);
                 this.setRobustTick();
                 if (this.isFirstMadness() && !this.isChallengeMode()) this.fmFlag = false;
                 this.laserTick = this.pounceTick = this.smashTick = this.attackTick = 0;
@@ -507,7 +508,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         if (this.getAnimation() == this.dieAnimation) {
             this.doExplodeEffect();
         } else if (this.getAnimation() == this.roarAnimation) {
-            this.setPowered(true);
             this.doRoarEffect();
         } else if (this.getAnimation() == this.concussionAnimation) {
             this.anchorToGround();
