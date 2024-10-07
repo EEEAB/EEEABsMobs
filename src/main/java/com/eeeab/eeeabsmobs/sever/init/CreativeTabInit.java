@@ -16,7 +16,7 @@ public class CreativeTabInit {
             .title(Component.translatable("itemGroup." + EEEABMobs.MOD_ID + ".creative_tab"))
             .icon(() -> new ItemStack(ItemInit.GUARDIAN_AXE.get()))
             .displayItems((enabledFeatures, entries) -> {
-                /*OP Item*/
+                /* OP Item */
                 entries.accept(ItemInit.REMOVE_MOB.get());
                 entries.accept(ItemInit.ANIMATION_CONTROLLER.get());
 
@@ -52,6 +52,9 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.GHOST_WARRIOR_CHESTPLATE.get());
                 entries.accept(ItemInit.GHOST_WARRIOR_LEGGINGS.get());
                 entries.accept(ItemInit.GHOST_WARRIOR_BOOTS.get());
+
+                /*  Smithing Template */
+                entries.accept(ItemInit.GHOST_WARRIOR_UPGRADE_SMITHING_TEMPLATE.get());
 
                 /* Disc Item */
                 entries.accept(ItemInit.GUARDIANS_MUSIC_DISC.get());

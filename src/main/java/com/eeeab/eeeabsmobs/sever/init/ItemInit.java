@@ -5,6 +5,7 @@ import com.eeeab.eeeabsmobs.sever.item.*;
 import com.eeeab.eeeabsmobs.sever.item.ItemGhostWarriorArmor;
 import com.eeeab.eeeabsmobs.sever.item.eye.ItemGulingEye;
 import com.eeeab.eeeabsmobs.sever.item.eye.ItemBloodyAltarEye;
+import com.eeeab.eeeabsmobs.sever.item.util.EMSmithingTemplate;
 import com.eeeab.eeeabsmobs.sever.item.util.EMToolsTier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -51,6 +52,7 @@ public class ItemInit {
     public static final RegistryObject<Item> GHOST_WARRIOR_CHESTPLATE = ITEMS.register("ghost_warrior_chestplate", () -> new ItemGhostWarriorArmor(ArmorItem.Type.CHESTPLATE));
     public static final RegistryObject<Item> GHOST_WARRIOR_BOOTS = ITEMS.register("ghost_warrior_boots", () -> new ItemGhostWarriorArmor(ArmorItem.Type.BOOTS));
     public static final RegistryObject<Item> GHOST_WARRIOR_LEGGINGS = ITEMS.register("ghost_warrior_leggings", () -> new ItemGhostWarriorArmor(ArmorItem.Type.LEGGINGS));
+    public static final RegistryObject<Item> GHOST_WARRIOR_UPGRADE_SMITHING_TEMPLATE =ITEMS.register("ghost_warrior_upgrade_smithing_template", EMSmithingTemplate::createGhostWarriorUpgradeTemplate);
     public static final RegistryObject<Item> IMMORTAL_AXE = ITEMS.register("immortal_axe", () -> new ItemImmortalAxe(EMToolsTier.IMMORTAL_TIER, 6F, -2.8F, new Item.Properties()));
     public static final RegistryObject<Item> IMMORTAL_SWORD = ITEMS.register("immortal_sword", () -> new ItemImmortalSword(EMToolsTier.IMMORTAL_TIER, 5, -2.4F, new Item.Properties()));
     public static final RegistryObject<ItemGuardianAxe> GUARDIAN_AXE = ITEMS.register("guardian_axe", () -> new ItemGuardianAxe(EMToolsTier.GUARDIAN_AXE_TIER, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));

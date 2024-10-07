@@ -63,6 +63,13 @@
   "item.eeeabsmobs.ancient_drive_crystal": "Ancient Drive Crystal",
   "item.eeeabsmobs.demolisher": "Demolisher",
 
+  "_comment": "Smithing Template",
+  "upgrade.eeeabsmobs.ghost_warrior_upgrade":"Ghost Steel Upgrade",
+  "item.eeeabsmobs.smithing_template.ghost_warrior_upgrade.applies_to":"Netherite Equipment",
+  "item.eeeabsmobs.smithing_template.ghost_warrior_upgrade.ingredients":"Ghost Steel Ingot",
+  "item.eeeabsmobs.smithing_template.ghost_warrior_upgrade.base_slot_description":"Add netherite armor",
+  "item.eeeabsmobs.smithing_template.ghost_warrior_upgrade.additions_slot_description":"Add Ghost Steel Ingot",
+
   "_comment": "Blocks",
   "block.eeeabsmobs.immortal_block": "Immortal Block",
   "block.eeeabsmobs.ghost_steel_block": "Ghost Steel Block",

@@ -63,6 +63,13 @@
   "item.eeeabsmobs.ancient_drive_crystal": "远古驱动水晶",
   "item.eeeabsmobs.demolisher": "粉碎者",
 
+  "_comment": "锻造模板",
+  "upgrade.eeeabsmobs.ghost_warrior_upgrade":"幽冥钢升级",
+  "item.eeeabsmobs.smithing_template.ghost_warrior_upgrade.applies_to":"下界合金装备",
+  "item.eeeabsmobs.smithing_template.ghost_warrior_upgrade.ingredients":"幽冥钢锭",
+  "item.eeeabsmobs.smithing_template.ghost_warrior_upgrade.base_slot_description":"放入下界合金盔甲",
+  "item.eeeabsmobs.smithing_template.ghost_warrior_upgrade.additions_slot_description":"放入幽冥钢锭",
+
   "_comment": "方块",
   "block.eeeabsmobs.immortal_block": "不朽块",
   "block.eeeabsmobs.ghost_steel_block": "幽冥钢块",
