@@ -28,7 +28,7 @@ public class ItemDemolisher extends ProjectileWeaponItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         AbilityCapability.IAbilityCapability capability = AbilityHandler.INSTANCE.getAbilityCapability(player);
         if (capability != null) {
-            //获取弹药类型 只要物品标签包含#stone都支持
+            //获取弹药类型:支持含有#demolisher_supported_projectiles物品标签的物品
             ItemStack projectile = player.getProjectile(player.getItemInHand(usedHand));
             if (projectile.isEmpty() && !player.getAbilities().instabuild) {
                 player.displayClientMessage(EMTUtils.simpleOtherText(this.getDescriptionId(), null), true);
@@ -45,7 +45,7 @@ public class ItemDemolisher extends ProjectileWeaponItem {
             AbilityCapability.IAbilityCapability capability = AbilityHandler.INSTANCE.getAbilityCapability(player);
             if (capability != null) {
                 boolean instabuild = !player.getAbilities().instabuild;
-                //获取弹药类型 只要物品标签包含#stone都支持
+                //获取弹药类型:支持含有#demolisher_supported_projectiles物品标签的物品
                 ItemStack projectile = player.getProjectile(stack);
                 if (player.getCooldowns().isOnCooldown(this)) {
                     return;
@@ -54,6 +54,7 @@ public class ItemDemolisher extends ProjectileWeaponItem {
                     player.stopUsingItem();
                     return;
                 }
+                player.getCooldowns().addCooldown(this, (int) (EMConfigHandler.COMMON.ITEM.itemHowitzerCoolingTime.get() * 20));
                 AbilityHandler.INSTANCE.sendPlayerAbilityMessage(player, AbilityHandler.HOWITZER_ABILITY_TYPE);
                 player.playSound(SoundInit.GSH_SPARK.get());
                 //判断是否需要消耗弹药
@@ -63,7 +64,7 @@ public class ItemDemolisher extends ProjectileWeaponItem {
                         player.getInventory().removeItem(projectile);
                     }
                 }
-                player.getCooldowns().addCooldown(this, (int) (EMConfigHandler.COMMON.ITEM.itemHowitzerCoolingTime.get() * 20));
+                player.swing(player.getUsedItemHand());
                 player.stopUsingItem();
             }
         }
