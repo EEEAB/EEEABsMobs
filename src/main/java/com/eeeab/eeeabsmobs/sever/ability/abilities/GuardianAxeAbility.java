@@ -27,9 +27,9 @@ public class GuardianAxeAbility extends Ability<Player> {
             Vec3 point = ModEntityUtils.checkSummonEntityPoint(user, user.getX(), user.getZ(), user.getY(-5), user.getY());
             for (Vec3 vec3 : vec3s) {
                 float f0 = (float) Mth.atan2(vec3.z, vec3.x);
-                double x = point.x + Mth.cos(f0) * 2.0D;
+                double x = point.x + Mth.cos(f0) * 3.0D;
                 double y = point.y;
-                double z = point.z + Mth.sin(f0) * 2.0D;
+                double z = point.z + Mth.sin(f0) * 3.0D;
                 EntityGuardianBlade blade = new EntityGuardianBlade(user.level(), user, x, y, z, f0, false);
                 user.level().addFreshEntity(blade);
             }

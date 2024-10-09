@@ -15,8 +15,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -55,8 +57,20 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
             if (capability != null) {
                 player.playSound(SoundEvents.GENERIC_EXPLODE, 1.5F, 1F + player.getRandom().nextFloat() * 0.1F);
                 EntityCameraShake.cameraShake(level, player.position(), 8, 0.125F, 0, 20);
-                if (level.isClientSide)
-                    ModParticleUtils.roundParticleOutburst(level, 50, new ParticleOptions[]{ParticleInit.GUARDIAN_SPARK.get()}, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 0.5F);
+                if (level.isClientSide) {
+                    double x, y, z;
+                    if (player.position().distanceTo(blockPos.getCenter()) > 5) {
+                        float f0 = (float) Math.toRadians(player.getYRot() + 90);
+                        x = player.getX() + Mth.cos(f0) * 3.0D;
+                        y = player.getY() + 0.1D;
+                        z = player.getZ() + Mth.sin(f0) * 3.0D;
+                    } else {
+                        x = blockPos.getX();
+                        y = blockPos.getY();
+                        z = blockPos.getZ();
+                    }
+                    ModParticleUtils.roundParticleOutburst(level, 40, new ParticleOptions[]{ParticleInit.GUARDIAN_SPARK.get(), ParticleTypes.SOUL_FIRE_FLAME}, x, y, z, 0.25F);
+                }
                 AbilityHandler.INSTANCE.sendPlayerAbilityMessage(player, AbilityHandler.GUARDIAN_AXE_ABILITY_TYPE);
                 player.getCooldowns().addCooldown(this, 100);
                 return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide);
