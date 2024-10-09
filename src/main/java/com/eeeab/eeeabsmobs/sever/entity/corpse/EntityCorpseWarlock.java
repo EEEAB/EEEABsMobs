@@ -36,7 +36,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -1030,7 +1029,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                 } else {
                     this.spellCaster.setYRot(this.spellCaster.yRotO);
                 }
-                double minY = Math.min(target.getY(), this.spellCaster.getY()) - EntityCrimsonRay.ATTACK_RADIUS;
+                double minY = Math.min(target.getY(), this.spellCaster.getY()) - 16;
                 double maxY = Math.max(target.getY(), this.spellCaster.getY()) + 1.0D;
                 if (tick >= 40 && tick % 10 == 0) {
                     for (int i = 0; i < 5; i++) {
@@ -1048,7 +1047,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         private void spawnRay(double x, double z, double minY, double maxY) {
             if (!this.spellCaster.level().isClientSide) {
                 Vec3 sPos = ModEntityUtils.checkSummonEntityPoint(this.spellCaster, x, z, minY, maxY);
-                EntityCrimsonRay.PreAttack ray = new EntityCrimsonRay.PreAttack(this.spellCaster.level(), sPos, this.spellCaster);
+                EntityCrimsonRay.PreAttack ray = new EntityCrimsonRay.PreAttack(this.spellCaster.level(), sPos, this.spellCaster, 16 + this.spellCaster.getRandom().nextInt(5));
                 ray.setPos(sPos);
                 this.spellCaster.level().addFreshEntity(ray);
             }
