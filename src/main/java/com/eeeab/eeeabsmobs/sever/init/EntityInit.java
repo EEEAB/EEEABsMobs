@@ -162,7 +162,7 @@ public class EntityInit {
     public static final RegistryObject<EntityType<EntityGuardianBlade>> GUARDIAN_BLADE =
             ENTITIES.register("guardian_blade",
                     () -> EntityType.Builder.<EntityGuardianBlade>of(EntityGuardianBlade::new, MobCategory.MISC)
-                            .sized(0.4f, 3f).setUpdateInterval(1)
+                            .sized(0.3f, 3.5f).setUpdateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "guardian_blade").toString()));
 
     //烧焦的地面
