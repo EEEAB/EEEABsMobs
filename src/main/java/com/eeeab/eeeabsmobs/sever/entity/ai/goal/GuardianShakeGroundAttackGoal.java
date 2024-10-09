@@ -135,22 +135,13 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
     private void doSpawnBlade(int count, float offset) {
         Vec3 looking = entity.getLookAngle();
         for (int i = -count; i < count; i++) {
-            if (count % 2 == 0 && i == 0) {
-                doSpawnBlade(looking);
-                count++;
-            } else {
-                doSpawnBlade(looking.yRot(i * offset));
-            }
+            Vec3 vec3 = looking.yRot(i * offset);
+            float f0 = (float) Mth.atan2(vec3.z, vec3.x);
+            double x = entity.getX() + Mth.cos(f0) * 2.5D;
+            double y = entity.getY();
+            double z = entity.getZ() + Mth.sin(f0) * 2.5D;
+            EntityGuardianBlade blade = new EntityGuardianBlade(entity.level(), entity, x, y, z, f0, false);
+            entity.level().addFreshEntity(blade);
         }
     }
-
-    private void doSpawnBlade(Vec3 vec3) {
-        float f0 = (float) Mth.atan2(vec3.z, vec3.x);
-        double x = entity.getX() + Mth.cos(f0) * 2.5D;
-        double y = entity.getY();
-        double z = entity.getZ() + Mth.sin(f0) * 2.5D;
-        EntityGuardianBlade blade = new EntityGuardianBlade(entity.level(), entity, x, y, z, f0, false);
-        entity.level().addFreshEntity(blade);
-    }
-
 }
