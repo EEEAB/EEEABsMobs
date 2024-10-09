@@ -18,20 +18,21 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class EntityCrimsonRay extends EntityAbsLightBeam {
-    public static final double ATTACK_RADIUS = 16;
+    private static final EntityDataAccessor<Integer> DATA_ATTACK_HEIGHT = SynchedEntityData.defineId(EntityCrimsonRay.class, EntityDataSerializers.INT);
 
     public EntityCrimsonRay(EntityType<? extends EntityCrimsonRay> type, Level level) {
         super(type, level, 1);
     }
 
-    public EntityCrimsonRay(Level world, LivingEntity caster, Vec3 pos, int duration) {
+    public EntityCrimsonRay(Level world, LivingEntity caster, Vec3 pos, int duration, int attackHeight) {
         this(EntityInit.CRIMSON_RAY.get(), world);
         this.caster = caster;
         this.setPitch((float) (Math.PI / 2));
         this.setYaw((float) ((this.getYRot() - 90.0F) * Math.PI / 180.0F));
         this.setDuration(duration);
         this.setPos(pos);
-        this.calculateEndPos(ATTACK_RADIUS);
+        this.setAttackHeight(attackHeight);
+        this.calculateEndPos(16);
         if (!level().isClientSide) {
             setCasterId(caster.getId());
         }
@@ -43,7 +44,7 @@ public class EntityCrimsonRay extends EntityAbsLightBeam {
             if (this.tickCount == this.getCountDown()) {
                 this.playSound(SoundInit.CRIMSON_RAY.get(), 0.25F, (this.random.nextFloat() - this.random.nextFloat()) * -0.2F + 1.0F);
             }
-            this.calculateEndPos(ATTACK_RADIUS);
+            this.calculateEndPos(this.getAttackHeight());
             List<LivingEntity> hit = raytraceEntities(level(), new Vec3(getX(), getY(), getZ()), new Vec3(endPosX, endPosY, endPosZ)).getEntities();
             if (blockSide != null) {
                 if (!level().isClientSide) {
@@ -68,6 +69,20 @@ public class EntityCrimsonRay extends EntityAbsLightBeam {
     }
 
     @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_ATTACK_HEIGHT, 16);
+    }
+
+    public int getAttackHeight() {
+        return getEntityData().get(DATA_ATTACK_HEIGHT);
+    }
+
+    public void setAttackHeight(int attackHeight) {
+        getEntityData().set(DATA_ATTACK_HEIGHT, attackHeight);
+    }
+
+    @Override
     protected void spawnExplosionParticles() {
         for (int i = 0; i < 2; i++) {
             final float velocity = 0.12F;
@@ -81,22 +96,24 @@ public class EntityCrimsonRay extends EntityAbsLightBeam {
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
-        return distance < Math.pow(ATTACK_RADIUS, 3);
+        return distance < 4096;
     }
 
     public static class PreAttack extends EntityMagicEffects {
         private final ControlledAnimation phaseController = new ControlledAnimation(2);
         private static final EntityDataAccessor<Integer> DATA_PHASE = SynchedEntityData.defineId(PreAttack.class, EntityDataSerializers.INT);
+        public int attackHeight = 16;
         private Vec3 pos;
 
         public PreAttack(EntityType<?> type, Level level) {
             super(type, level);
         }
 
-        public PreAttack(Level level, Vec3 pos, LivingEntity caster) {
+        public PreAttack(Level level, Vec3 pos, LivingEntity caster, int attackHeight) {
             this(EntityInit.CRIMSON_RAY_PRE.get(), level);
             this.pos = pos;
             this.caster = caster;
+            this.attackHeight = attackHeight;
         }
 
         @Override
@@ -122,7 +139,7 @@ public class EntityCrimsonRay extends EntityAbsLightBeam {
                         break;
                     case 5:
                         if (this.phaseController.increaseTimerChain().isEnd()) {
-                            this.level().addFreshEntity(new EntityCrimsonRay(this.level(), this.caster, this.pos, 10));
+                            this.level().addFreshEntity(new EntityCrimsonRay(this.level(), this.caster, this.pos, 10, this.attackHeight));
                             this.discard();
                         }
                 }
@@ -131,7 +148,7 @@ public class EntityCrimsonRay extends EntityAbsLightBeam {
 
         @Override
         public boolean shouldRenderAtSqrDistance(double distance) {
-            return distance < Math.pow(ATTACK_RADIUS, 3);
+            return distance < 4096;
         }
 
         public int getPhase() {
