@@ -38,17 +38,4 @@ public class RenderImmortalShaman extends MobRenderer<EntityImmortalShaman, Mode
     public ResourceLocation getTextureLocation(EntityImmortalShaman entity) {
         return TEXTURE;
     }
-
-    @Override
-    public void render(EntityImmortalShaman entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
-        super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
-        if ((entity.getAnimation() == entity.spellCastingFRAnimation
-                || entity.getAnimation() == entity.spellCastingBombAnimation
-                || entity.getAnimation() == entity.spellCastingSummonAnimation
-                || entity.getAnimation() == entity.spellCastingHealAnimation)
-                && entity.heartPos != null && entity.heartPos.length > 0)
-            entity.heartPos[0] = entity.position().add(0, entity.getBbHeight() * 0.7F, 0);
-    }
-
-
 }

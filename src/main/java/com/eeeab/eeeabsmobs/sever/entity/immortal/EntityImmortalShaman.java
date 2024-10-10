@@ -22,7 +22,6 @@ import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.init.*;
-import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -30,10 +29,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -55,9 +52,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -89,15 +83,9 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
     @Nullable
     private Sheep wololoTarget;
 
-    @OnlyIn(Dist.CLIENT)
-    public Vec3[] heartPos;
-
     public EntityImmortalShaman(EntityType<? extends EntityImmortalShaman> type, Level level) {
         super(type, level);
         this.active = true;
-        if (this.level().isClientSide) {
-            this.heartPos = new Vec3[]{new Vec3(0, 0, 0)};
-        }
     }
 
     @Override
@@ -371,16 +359,12 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
     }
 
     private void addParticlesAroundHeart(int duration) {
-        if (this.heartPos != null && this.heartPos.length > 0 && this.heartPos[0] != null) {
-            if (this.getAnimationTick() < duration) {
-                ModParticleUtils.advAttractorParticle(ParticleInit.SPELL_CASTING.get(), this, 8, 0f, 2f, 12, new ParticleComponent[]{
-                        new ParticleComponent.Attractor(heartPos, 1.2f, 0.0f, ParticleComponent.Attractor.EnumAttractorBehavior.EXPONENTIAL),
-                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, AnimData.KeyTrack.startAndEnd(0f, 1f), false)
-                }, true);
-            }
-            //if (this.tickCount % 3 == 0) {
-            //    this.level().addParticle(ParticleTypes.SMOKE, this.heartPos[0].x, this.heartPos[0].y, this.heartPos[0].z, 0, 0, 0);
-            //}
+        int tick = this.getAnimationTick();
+        if (tick < duration && tick % 2 == 0) {
+            ModParticleUtils.advAttractorParticle(ParticleInit.SPELL_CASTING.get(), this, 12, 0f, 2f, 12, new ParticleComponent[]{
+                    new ParticleComponent.Attractor(new Vec3[]{this.position().add(0, this.getBbHeight() * 0.65F, 0)}, 1.2f, 0.1f, ParticleComponent.Attractor.EnumAttractorBehavior.EXPONENTIAL),
+                    new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, AnimData.KeyTrack.startAndEnd(0f, 0.6f), false)
+            }, true);
         }
     }
 
