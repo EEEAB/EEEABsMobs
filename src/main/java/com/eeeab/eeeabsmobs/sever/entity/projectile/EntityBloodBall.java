@@ -6,11 +6,14 @@ import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityExplode;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -20,6 +23,7 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -29,12 +33,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class EntityBloodBall extends Projectile implements IEntity {
-    private int power;
     private int duration;
     private boolean locating;
     private final boolean isHeal;
     private static final int MAX_ACTIVE = 400;
+    private static final EntityDataAccessor<Integer> DATA_POWER = SynchedEntityData.defineId(EntityBloodBall.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Optional<UUID>> DATA_TARGET_UUID = SynchedEntityData.defineId(EntityBloodBall.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final BlockParticleOption REDSTONE_PARTICLE = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.REDSTONE_BLOCK.defaultBlockState());
     public final ControlledAnimation scaleControlled = new ControlledAnimation(20);
 
     public EntityBloodBall(EntityType<? extends EntityBloodBall> entityType, Level level) {
@@ -46,7 +51,7 @@ public class EntityBloodBall extends Projectile implements IEntity {
         super(EntityInit.BLOOD_BALL.get(), level);
         this.duration = duration;
         this.isHeal = isHeal;
-        this.power = power;
+        this.setPower(Mth.clamp(power, 0, 10));
     }
 
     @Override
@@ -70,6 +75,13 @@ public class EntityBloodBall extends Projectile implements IEntity {
                 Entity owner = this.getOwner();
                 if (this.tickCount < this.duration && owner != null && owner.isAlive()) {
                     this.setPos(owner.position().add(0, 5, 0));
+                } else if (this.level().isClientSide) {
+                    for (int i = 0; i < 2; ++i) {
+                        double dx = this.getX() + this.random.nextGaussian() * 0.15D;
+                        double dy = this.getY(1) - this.random.nextGaussian() * 0.15D;
+                        double dz = this.getZ() + this.random.nextGaussian() * 0.15D;
+                        this.level().addParticle(REDSTONE_PARTICLE, dx, dy, dz, -this.getDeltaMovement().x() * 0.25F, -this.getDeltaMovement().y() * 0.25F, -this.getDeltaMovement().z() * 0.25F);
+                    }
                 }
                 this.scaleControlled.increaseTimer();
             }
@@ -111,12 +123,12 @@ public class EntityBloodBall extends Projectile implements IEntity {
     private void preDestroy(@Nullable Entity entity) {
         if (!this.level().isClientSide) {
             if (this.getOwner() == entity && entity instanceof LivingEntity livingEntity) {
-                if (this.isHeal){
-                    livingEntity.heal(Math.min(livingEntity.getMaxHealth() * power * 0.05F, livingEntity.getMaxHealth() * 0.5F));
+                if (this.isHeal) {
+                    livingEntity.heal(Math.min(livingEntity.getMaxHealth() * 0.05F * this.getPower(), livingEntity.getMaxHealth() * 0.5F));
                     this.level().broadcastEntityEvent(livingEntity, (byte) 14);
                 }
             } else {
-                EntityExplode.explode(this.level(), this.position(), this.damageSources().explosion(this, entity), null, Math.min(power + 1, 5F), 30F);
+                EntityExplode.explode(this.level(), this.position(), this.damageSources().explosion(this, entity), null, Math.min(this.getPower() + 1, 5F), 30F);
                 EntityCameraShake.cameraShake(this.level(), this.position(), 16F, 0.125F, 5, 15);
             }
         }
@@ -199,6 +211,7 @@ public class EntityBloodBall extends Projectile implements IEntity {
     @Override
     protected void defineSynchedData() {
         this.entityData.define(DATA_TARGET_UUID, Optional.empty());
+        this.entityData.define(DATA_POWER, 0);
     }
 
     @Override
@@ -208,7 +221,7 @@ public class EntityBloodBall extends Projectile implements IEntity {
             nbt.putUUID("target_uuid", this.getTargetUUID());
         }
         nbt.putBoolean("locating", this.locating);
-        nbt.putInt("power", this.power);
+        nbt.putInt("power", this.getPower());
     }
 
     /**
@@ -221,6 +234,14 @@ public class EntityBloodBall extends Projectile implements IEntity {
             this.setTargetUUID(nbt.getUUID("target_uuid"));
         }
         this.locating = nbt.getBoolean("locating");
-        this.power = nbt.getInt("power");
+        this.setPower(nbt.getInt("power"));
+    }
+
+    public int getPower() {
+        return this.entityData.get(DATA_POWER);
+    }
+
+    public void setPower(int power) {
+        this.entityData.set(DATA_POWER, power);
     }
 }

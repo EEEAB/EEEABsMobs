@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
@@ -27,11 +26,11 @@ public class RendererBloodBall extends EntityRenderer<EntityBloodBall> {
 
     @Override
     public void render(EntityBloodBall entity, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        final float scale = 2.5F;
+        float scale = 2F + entity.getPower() * 0.1F;
         poseStack.pushPose();
         float progress = entity.scaleControlled.getAnimationFraction(partialTick);
-        float f = ((float) entity.tickCount + partialTick) * Mth.clamp(2F * progress, 0.1F, 2F);
-        VertexConsumer vertexconsumer = buffer.getBuffer(EMRenderType.entityTranslucentEmissive(TEXTURE));
+        float f = ((float) entity.tickCount + partialTick) * Mth.clamp(2F * progress, 0.1F, 1F);
+        VertexConsumer vertexconsumer = buffer.getBuffer(EMRenderType.entityTranslucent(TEXTURE));
         poseStack.translate(0, 0.5F, 0);
         poseStack.scale(scale * progress, scale * progress, scale * progress);
         poseStack.mulPose(Axis.XP.rotationDegrees(Mth.sin(f * 0.1F) * 180.0F));
@@ -43,11 +42,6 @@ public class RendererBloodBall extends EntityRenderer<EntityBloodBall> {
         this.model.setupAnim(entity, 0, 0, 0, Mth.rotLerp(partialTick, entity.yRotO, entity.getYRot()), f);
         poseStack.popPose();
         super.render(entity, yaw, partialTick, poseStack, buffer, packedLight);
-    }
-
-    @Override
-    protected int getBlockLightLevel(EntityBloodBall entity, BlockPos pos) {
-        return 15;
     }
 
     @Override
