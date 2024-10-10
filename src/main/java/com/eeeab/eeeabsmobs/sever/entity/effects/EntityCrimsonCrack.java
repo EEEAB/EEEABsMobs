@@ -80,11 +80,11 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
                     List<LivingEntity> entities = this.getNearByEntities(LivingEntity.class, ATTACK_RANGE, ATTACK_RANGE, ATTACK_RANGE, ATTACK_RANGE);
                     if (!this.level().isClientSide) {
                         for (LivingEntity target : entities) {
-                            if (target == this.caster /*|| target instanceof EntityAbsCorpse && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()*/)
+                            if (target == this.caster)
                                 continue;
                             boolean flag = target.hurt(this.damageSources().indirectMagic(this, caster), 5F + target.getMaxHealth() * 0.015F);
                             if (flag && target.isAlive()) {
-                                target.setDeltaMovement(target.getDeltaMovement().subtract(this.position().normalize().scale(0.08F)));
+                                target.setDeltaMovement(target.getDeltaMovement().add(this.position().subtract(target.position()).normalize().scale(0.1F)));
                                 ModEntityUtils.addEffectStackingAmplifier(target, EffectInit.ARMOR_LOWER_EFFECT.get(), 300, 5, true, true, true, true);
                                 this.doEnchantDamageEffects(this.caster, target);
                             }
@@ -111,7 +111,7 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
                 double rootY = this.getY();
                 double rootZ = this.getZ();
                 AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.ADV_ORB.get(), rootX + ox, rootY + oy, rootZ + oz, 0, 0, 0, true, 0, 0, 0, 0, 2.5F, 1, 1, 1, 1, 1, 12, true, false, false, new ParticleComponent[]{
-                        new ParticleComponent.Attractor(this.myPos, 1.0f, 1f, ParticleComponent.Attractor.EnumAttractorBehavior.EXPONENTIAL),
+                        new ParticleComponent.Attractor(this.myPos, 1.0f, ATTACK_RANGE / 2, ParticleComponent.Attractor.EnumAttractorBehavior.EXPONENTIAL),
                         new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, AnimData.KeyTrack.startAndEnd(0f, 0.6f), false),
                         new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.BLUE, AnimData.KeyTrack.constant(0F), false),
                         new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.GREEN, AnimData.KeyTrack.constant(0F), false),
