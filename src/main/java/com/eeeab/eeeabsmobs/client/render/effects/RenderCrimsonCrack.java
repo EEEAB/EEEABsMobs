@@ -32,7 +32,7 @@ public class RenderCrimsonCrack extends FlatTextureRenderer<EntityCrimsonCrack> 
         matrixStackIn.pushPose();
         Quaternionf quaternionf = this.entityRenderDispatcher.cameraOrientation();
         matrixStackIn.mulPose(quaternionf);
-        matrixStackIn.scale(-2F, -2F, -2F);
+        matrixStackIn.scale(-1.5F, -1.5F, -1.5F);
         float minU = 0 + 32F / TEXTURE_WIDTH * crack.getPhase();
         float minV = 0;
         float maxU = minU + 32F / TEXTURE_WIDTH;

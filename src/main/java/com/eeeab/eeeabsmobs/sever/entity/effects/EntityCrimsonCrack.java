@@ -21,10 +21,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.util.List;
-
 public class EntityCrimsonCrack extends EntityMagicEffects {
-    public static final float ATTACK_RANGE = 3.8F;
+    public static final float ATTACK_RANGE = 3F;
     private static final EntityDataAccessor<Integer> DATA_PHASE = SynchedEntityData.defineId(EntityCrimsonCrack.class, EntityDataSerializers.INT);
     public final ControlledAnimation phaseControlled = new ControlledAnimation(30);
     public final ControlledAnimation displayControlled = new ControlledAnimation(20);
@@ -77,16 +75,17 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
                 if (this.phaseControlled.increaseTimerChain().isEnd()) {
                     this.displayControlled.decreaseTimer();
                 } else {
-                    List<LivingEntity> entities = this.getNearByEntities(LivingEntity.class, ATTACK_RANGE, ATTACK_RANGE, ATTACK_RANGE, ATTACK_RANGE);
                     if (!this.level().isClientSide) {
-                        for (LivingEntity target : entities) {
+                        for (LivingEntity target : this.getNearByEntities(LivingEntity.class, 5, 5, 5, 5)) {
                             if (target == this.caster)
                                 continue;
-                            boolean flag = target.hurt(this.damageSources().indirectMagic(this, caster), 5F + target.getMaxHealth() * 0.015F);
-                            if (flag && target.isAlive()) {
-                                target.setDeltaMovement(target.getDeltaMovement().add(this.position().subtract(target.position()).normalize().scale(0.1F)));
-                                ModEntityUtils.addEffectStackingAmplifier(target, EffectInit.ARMOR_LOWER_EFFECT.get(), 300, 5, true, true, true, true);
-                                this.doEnchantDamageEffects(this.caster, target);
+                            target.setDeltaMovement(target.getDeltaMovement().add(this.position().subtract(target.position()).normalize().scale(0.1F)));
+                            if (this.distanceTo(target) <= ATTACK_RANGE) {
+                                boolean flag = target.hurt(this.damageSources().indirectMagic(this, caster), 5F + target.getMaxHealth() * 0.015F);
+                                if (flag && target.isAlive()) {
+                                    ModEntityUtils.addEffectStackingAmplifier(target, EffectInit.ARMOR_LOWER_EFFECT.get(), 300, 5, true, true, true, true);
+                                    this.doEnchantDamageEffects(this.caster, target);
+                                }
                             }
                         }
                     }
@@ -113,8 +112,9 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
                 AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.ADV_ORB.get(), rootX + ox, rootY + oy, rootZ + oz, 0, 0, 0, true, 0, 0, 0, 0, 2.5F, 1, 1, 1, 1, 1, 12, true, false, false, new ParticleComponent[]{
                         new ParticleComponent.Attractor(this.myPos, 1.0f, ATTACK_RANGE / 2, ParticleComponent.Attractor.EnumAttractorBehavior.EXPONENTIAL),
                         new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, AnimData.KeyTrack.startAndEnd(0f, 0.6f), false),
-                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.BLUE, AnimData.KeyTrack.constant(0F), false),
-                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.GREEN, AnimData.KeyTrack.constant(0F), false),
+                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.RED, AnimData.KeyTrack.constant(0.57F), false),
+                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.BLUE, AnimData.KeyTrack.constant(0.13F), false),
+                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.GREEN, AnimData.KeyTrack.constant(0.13F), false),
                 });
             }
         }
