@@ -934,14 +934,14 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             if (this.target == null) {
                 return;
             }
-            if (this.attackDelay > 5) {
+            if (this.attackDelay > 6) {
                 this.spellCaster.getLookControl().setLookAt(target, 30F, 30F);
             }
-            if (this.attackDelay <= 5) {
+            if (this.attackDelay <= 6) {
                 this.spellCaster.getLookControl().setLookAt(targetX, targetY, targetZ, 30F, 30F);
             }
 
-            if (this.attackDelay == 6) {
+            if (this.attackDelay == 7) {
                 double x = this.target.getX();
                 this.targetY = Mth.floor(this.target.getY() + 1.0);
                 double z = this.target.getZ();
@@ -964,12 +964,12 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         @Override
         protected void inSpellCasting() {
             if (!this.spellCaster.level().isClientSide) {
-                double radians = 0;
+                double radians = 0, targetWidth = 0;
                 if (this.target != null) {
-                    radians = Math.toRadians(this.spellCaster.getAngleBetweenEntities(this.spellCaster, this.target) + 90);
-                    this.targetY = Mth.floor(this.target.getY() + 1.0);
+                    radians = Math.toRadians(this.target.yBodyRot + 180);
+                    targetWidth = Math.min(this.target.getBbWidth(), 1.5);
                 }
-                EntityCrimsonCrack crack = new EntityCrimsonCrack(this.spellCaster.level(), this.spellCaster, new Vec3(this.targetX - 2.0F * Math.cos(radians), this.targetY + 0.56125F, this.targetZ - 2.0F * Math.sin(radians)));
+                EntityCrimsonCrack crack = new EntityCrimsonCrack(this.spellCaster.level(), this.spellCaster, new Vec3(this.targetX - targetWidth * Math.cos(radians), this.targetY + 0.56125F, this.targetZ - targetWidth * Math.sin(radians)));
                 this.spellCaster.level().addFreshEntity(crack);
             }
         }
