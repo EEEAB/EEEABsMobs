@@ -55,6 +55,7 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
                 entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.05f, entity.getVoicePitch() + 0.15f);
             } else if (tick == 10) {
                 pursuit(1.5F);
+            } else if (tick == 11) {
                 List<LivingEntity> entities = entity.getNearByLivingEntities(range, 5F, range, range + 1F);
                 for (LivingEntity hitEntity : entities) {
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
