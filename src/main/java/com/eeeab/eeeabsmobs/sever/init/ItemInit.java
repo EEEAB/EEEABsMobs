@@ -39,9 +39,9 @@ public class ItemInit {
     //物品
     public static final RegistryObject<Item> LOGO_ITEM = ITEMS.register("logo_item", ItemLogo::new);
     public static final RegistryObject<Item> REMOVE_MOB = ITEMS.register("remove_mob", ItemRemoveMob::new);
-    public static final RegistryObject<Item> IMMORTAL_BONE = ITEMS.register("immortal_bone", ItemImmortalBone::new);
+    public static final RegistryObject<Item> IMMORTAL_BONE = ITEMS.register("immortal_bone", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> IMMORTAL_STAFF = ITEMS.register("immortal_staff", ItemImmortalStaff::new);
-    public static final RegistryObject<Item> IMMORTAL_DEBRIS = ITEMS.register("immortal_debris", ItemImmortalDebris::new);
+    public static final RegistryObject<Item> IMMORTAL_DEBRIS = ITEMS.register("immortal_debris", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ANCIENT_TOMB_EYE = ITEMS.register("guling_eye", ItemGulingEye::new);
     public static final RegistryObject<Item> BLOODY_ALTAR_EYE = ITEMS.register("bloody_altar_eye", ItemBloodyAltarEye::new);
     public static final RegistryObject<Item> GUARDIAN_CORE = ITEMS.register("guardian_core", ItemGuardianCore::new);
@@ -52,8 +52,8 @@ public class ItemInit {
     public static final RegistryObject<Item> GHOST_WARRIOR_CHESTPLATE = ITEMS.register("ghost_warrior_chestplate", () -> new ItemGhostWarriorArmor(ArmorItem.Type.CHESTPLATE));
     public static final RegistryObject<Item> GHOST_WARRIOR_BOOTS = ITEMS.register("ghost_warrior_boots", () -> new ItemGhostWarriorArmor(ArmorItem.Type.BOOTS));
     public static final RegistryObject<Item> GHOST_WARRIOR_LEGGINGS = ITEMS.register("ghost_warrior_leggings", () -> new ItemGhostWarriorArmor(ArmorItem.Type.LEGGINGS));
-    public static final RegistryObject<Item> GHOST_WARRIOR_UPGRADE_SMITHING_TEMPLATE =ITEMS.register("ghost_warrior_upgrade_smithing_template", EMSmithingTemplate::createGhostWarriorUpgradeTemplate);
-    public static final RegistryObject<Item> IMMORTAL_AXE = ITEMS.register("immortal_axe", () -> new ItemImmortalAxe(EMToolsTier.IMMORTAL_TIER, 6F, -2.8F, new Item.Properties()));
+    public static final RegistryObject<Item> GHOST_WARRIOR_UPGRADE_SMITHING_TEMPLATE = ITEMS.register("ghost_warrior_upgrade_smithing_template", EMSmithingTemplate::createGhostWarriorUpgradeTemplate);
+    public static final RegistryObject<Item> IMMORTAL_AXE = ITEMS.register("immortal_axe", () -> new AxeItem(EMToolsTier.IMMORTAL_TIER, 6F, -2.8F, new Item.Properties()));
     public static final RegistryObject<Item> IMMORTAL_SWORD = ITEMS.register("immortal_sword", () -> new ItemImmortalSword(EMToolsTier.IMMORTAL_TIER, 5, -2.4F, new Item.Properties()));
     public static final RegistryObject<ItemGuardianAxe> GUARDIAN_AXE = ITEMS.register("guardian_axe", () -> new ItemGuardianAxe(EMToolsTier.GUARDIAN_AXE_TIER, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
     public static final RegistryObject<Item> GUARDIANS_MUSIC_DISC = ITEMS.register("guardians_music_disc", () -> new RecordItem(8, SoundInit.GUARDIANS, new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant(), 3640));
