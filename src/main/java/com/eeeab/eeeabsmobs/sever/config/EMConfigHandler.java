@@ -145,12 +145,14 @@ public final class EMConfigHandler {
             IMMORTAL = new ImmortalMobs(builder);
             CORPSES = new CorpseMobs(builder);
             GULING = new GulingMobs(builder);
+            MINION = new MinionMobs(builder);
             builder.pop();
         }
 
         public final CorpseMobs CORPSES;
         public final ImmortalMobs IMMORTAL;
         public final GulingMobs GULING;
+        public final MinionMobs MINION;
     }
 
     public static class ImmortalMobs {
@@ -283,7 +285,7 @@ public final class EMConfigHandler {
         public CorpseWarlock(final ForgeConfigSpec.Builder builder) {
             builder.push("Corpse Warlock");
             maxDistanceTakeDamage = BUILDER.comment("Set the effective distance at which projectiles can deal damage")
-                    .translation(getTranslationKey("effective_range")).defineInRange("Set Projectile Damage Range", 12D, 1D, 32D);
+                    .translation(getTranslationKey("effective_range")).defineInRange("Set projectile damage range", 12D, 1D, 32D);
             combatConfig = new AttributeConfig();
             maximumDamageCap = new DamageCapConfig(22);
             builder.pop();
@@ -373,6 +375,30 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.BooleanValue intervalProtect;
         public final AttributeConfig combatConfig;
         public final DamageCapConfig maximumDamageCap;
+    }
+
+    //召唤类生物
+    public static class MinionMobs {
+        public MinionMobs(final ForgeConfigSpec.Builder builder) {
+            builder.push("Minion Mobs");
+            CORPSE_MINION = new CorpseToPlayer(builder);
+            builder.pop();
+        }
+
+        public final CorpseToPlayer CORPSE_MINION;
+    }
+
+    public static class CorpseToPlayer {
+        public CorpseToPlayer(final ForgeConfigSpec.Builder builder) {
+            builder.push("Corpse Minion");
+            combatConfig = new AttributeConfig();
+            minionDeathHealAmount = BUILDER.comment("Set corpse minion to restore its owner's health")
+                    .translation(getTranslationKey("corpse_to_player")).defineInRange("Death Heal Amount", 5D, 0D, 1024D);
+            builder.pop();
+        }
+
+        public final AttributeConfig combatConfig;
+        public final ForgeConfigSpec.DoubleValue minionDeathHealAmount;
     }
 
     //其他设置

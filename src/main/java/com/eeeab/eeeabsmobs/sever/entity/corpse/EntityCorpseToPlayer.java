@@ -5,6 +5,7 @@ import com.eeeab.animate.server.ai.animation.AnimationActivate;
 import com.eeeab.animate.server.ai.animation.AnimationMelee;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.*;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player.OwnerProtectToPlayerGoal;
@@ -17,7 +18,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
@@ -90,6 +94,11 @@ public class EntityCorpseToPlayer extends EEEABMobLibrary implements IEntity, Gl
         return false;
     }
 
+    @Override
+    protected EMConfigHandler.AttributeConfig getAttributeConfig() {
+        return EMConfigHandler.COMMON.MOB.MINION.CORPSE_MINION.combatConfig;
+    }
+
     public void setInitSpawn() {
         this.playAnimation(spawnAnimation);
         this.active = false;
@@ -160,6 +169,19 @@ public class EntityCorpseToPlayer extends EEEABMobLibrary implements IEntity, Gl
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_ACTIVE, true);
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        if (!this.level().isClientSide && this.getOwner() != null && source.getEntity() != null) {
+            float healAmount = EMConfigHandler.COMMON.MOB.MINION.CORPSE_MINION.minionDeathHealAmount.get().floatValue();
+            this.getOwner().heal(healAmount);
+            if (healAmount > 0 && this.level() instanceof ServerLevel serverLevel) {
+                this.level().playSound(null,this.getOwner().blockPosition(),SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS,1F, 0.9F + this.random.nextFloat() * 0.2F);
+                serverLevel.sendParticles(ParticleTypes.HEART, this.getOwner().getX(), this.getOwner().getY(0.95D), this.getOwner().getZ(), 1, 0.1D, 0.1D, 0.1D, 0.5D);
+            }
+        }
+        super.die(source);
     }
 
     @Override
