@@ -105,15 +105,10 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
                     }
                 }
                 if (tick % 2 == 0) {
-                    //List<LivingEntity> livingEntities = entity.level().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(0.5, 0, 0.5));
-                    List<LivingEntity> livingEntities = entity.getNearByLivingEntities(3F, 5F, 3F, 5F);
+                    List<LivingEntity> livingEntities = entity.getNearByLivingEntities(2.5F, 5F, 2.5F, 5F);
                     for (LivingEntity hitEntity : livingEntities) {
-                        if (hitEntity == entity) {
-                            continue;
-                        }
                         float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
                         float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
-
                         if (entityHitDistance <= 3F && (entityRelativeAngle <= 120 / 2F && entityRelativeAngle >= -120 / 2F) || (entityRelativeAngle >= 360 - 120 / 2F || entityRelativeAngle <= -360 + 120 / 2F)) {
                             entity.guardianHurtTarget(entity, hitEntity, 0.05F, 1.0F, baseDamageMultiplier, false, false, false);
                             double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
