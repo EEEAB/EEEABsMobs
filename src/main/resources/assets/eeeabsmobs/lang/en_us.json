@@ -104,12 +104,12 @@
   "item.eeeabsmobs.guardian_core.tip_2": "It seems to have other uses besides being a weapon...",
   "tooltip.weapon.eeeabsmobs.guardian_core.tip": "Attack range %1$s",
   "tooltip.weapon.eeeabsmobs.demolisher.tip": "Right-click to fire a grenade and consume a player's backpack 'stone' type item, dealing a maximum %1$s explosion damage",
-  "tooltip.other.eeeabsmobs.demolisher.tip": "Need more stones...",
-  "item.eeeabsmobs.immortal_debris.tip": "It seems to be a fragment of the armor of some kind of creature...",
+  "tooltip.other.eeeabsmobs.demolisher.tip": "Needs more stones...",
+  "item.eeeabsmobs.immortal_debris.tip": "It seems to be an armor fragment of some kind of creature...",
   "item.eeeabsmobs.heart_of_pagan.tip": "Used to make frenzy potions",
   "item.eeeabsmobs.soul_summoning_necklace.tip": "Take damage accumulates to %1$s summon Corpse",
-  "tooltip.weapon.eeeabsmobs.immortal_sword.tip": "Give the attacker an erosion status",
-  "tooltip.weapon.eeeabsmobs.immortal_staff.tip": "Right-click to launch a shaman bomb, with a 25% base chance to fire a special projectile(this base probability is affected by luck or bad luck)",
+  "tooltip.weapon.eeeabsmobs.immortal_sword.tip": "Gives the attacker the erosion status",
+  "tooltip.weapon.eeeabsmobs.immortal_staff.tip": "Right-click to launch a shaman bomb, with a 25% base chance to fire a special projectile (this base probability is affected by luck or bad luck)",
   "tooltip.weapon.eeeabsmobs.guardian_axe.tip": "Right-click on the ground to release a skill that deals magic damage equal to the user's weapon damage (ignoring armor, with the damage decreasing over distance)",
   "structure.eeeabsmobs.eye_of_bloody_altar.tip": "Right-click to find the Bloody Altar structure",
   "structure.eeeabsmobs.eye_of_guling.tip": "Right-click to find the Guling structure",
@@ -131,7 +131,7 @@
   "jei.eeeabsmobs.eye_of_structure.tip": "It will guide you to the corresponding structure just like an Ender Eye does.",
   "effect.eeeabsmobs.erode_effect.description": "Continuously reduces the durability of armor worn, with higher levels causing greater reduction.",
   "effect.eeeabsmobs.armor_lower_effect.description": "Each level provides an additional 20% reduction in armor and armor toughness.",
-  "effect.eeeabsmobs.vertigo_effect.description": "During vertigo, unable to use items or place blocks, attack mobs or break blocks, move or turn the view.",
+  "effect.eeeabsmobs.vertigo_effect.description": "During vertigo, you are unable to use items or place blocks, attack mobs or break blocks, or look around",
   "effect.eeeabsmobs.frenzy_effect.description": "Obtain a boost in base attributes and damage reduction. While holding the sprint key, perform a charge. During the charge, you will destroy blocks around you and daze mobs. In water, you will not take suffocation damage. \nSide effect: After the effect ends, you will be weakened.",
 
   "_comment": "Potion",
@@ -172,7 +172,7 @@
 
   "_comment": "Config",
   "other.eeeabsmobs.item_cd.config": "Set item cool down time",
-  "other.eeeabsmobs.armor_depleted.config": "Enable armor can be depleted",
+  "other.eeeabsmobs.armor_depleted.config": "Enable if armor can be depleted",
   "other.eeeabsmobs.tool_damage.config": "Set tool attack damage",
   "other.eeeabsmobs.tool_speed.config": "Set tool attack speed",
   "other.eeeabsmobs.mob_health.config": "Set mob health multiplier",
@@ -206,5 +206,5 @@
   "other.eeeabsmobs.falling_block_2.config": "Enable falling block render",
   "other.eeeabsmobs.falling_block_3.config": "Set below check range",
   "other.eeeabsmobs.guardian_laser.config": "Enable scorch generate",
-  "other.eeeabsmobs.corpse.config": "Enable Zombies and Villagers killed turn into Corpse"
+  "other.eeeabsmobs.corpse.config": "Enable killed Zombies and Villagers turning into Corpses"
 }
