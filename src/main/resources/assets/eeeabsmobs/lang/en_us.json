@@ -105,7 +105,6 @@
   "tooltip.weapon.eeeabsmobs.guardian_core.tip": "Attack range %1$s",
   "tooltip.weapon.eeeabsmobs.demolisher.tip": "Right-click to fire a grenade and consume a player's backpack 'stone' type item, dealing a maximum %1$s explosion damage",
   "tooltip.other.eeeabsmobs.demolisher.tip": "Needs more stones...",
-  "item.eeeabsmobs.immortal_debris.tip": "It seems to be an armor fragment of some kind of creature...",
   "item.eeeabsmobs.heart_of_pagan.tip": "Used to make frenzy potions",
   "item.eeeabsmobs.soul_summoning_necklace.tip": "Take damage accumulates to %1$s summon Corpse",
   "tooltip.weapon.eeeabsmobs.immortal_sword.tip": "Gives the attacker the erosion status",
