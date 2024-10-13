@@ -758,7 +758,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             if (this.guardianInvulnerableTime > 0) {
                 return false;
             } else if (entity != null) {
-                if (entity instanceof Player player && this.checkPlayerAttackLegality(player, this, 4)) return false;
                 if (this.shouldSetPowered()) {
                     damage = Math.min(damage, 1F);
                 }
