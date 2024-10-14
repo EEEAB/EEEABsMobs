@@ -58,7 +58,7 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     public EEEABMobEntity(EntityType<? extends EEEABMobEntity> type, Level level) {
         super(type, level);
         this.xpReward = this.getEntityReward().getXp();
-        this.intervalProtector = new DamageAdaptation(50, 5, 0.5F, 0.9995F, true).setAdaptBypassesDamage(true);
+        this.intervalProtector = new DamageAdaptation(50, 5, 0.35F, 0.9995F, true).setAdaptBypassesDamage(true);
         //加载配置文件并修改值
         EMConfigHandler.AttributeConfig config = this.getAttributeConfig();
         if (config != null) {
