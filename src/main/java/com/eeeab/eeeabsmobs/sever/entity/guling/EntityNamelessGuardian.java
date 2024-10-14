@@ -162,6 +162,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     private boolean fmFlag = true;
     private int attackTick;
     private int destroyBlocksTick;
+    private int illegalityCount;
     //BGM高潮部分的时长
     public static final int MADNESS_TICK = 1300;
     public static final int NEVER_STOP = -1;
@@ -350,9 +351,14 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         if (!this.level().isClientSide) {
             if (animation == this.deactivateAnimation || animation == this.activateAnimation) {
                 this.fmFlag = true;
-                this.attackTick = this.madnessTick = this.guardianInvulnerableTime = 0;
+                this.attackTick = this.madnessTick = this.nextMadnessTick = this.guardianInvulnerableTime = 0;
                 this.setExecuteWeak(false);
+                this.setPowered(false);
                 this.resetTimeOutToUseSkill();
+                if (this.outOfCombatFlag()) {
+                    this.setIllegalityCount(0);
+                    this.heal(this.getMaxHealth());
+                }
             } else if (animation == this.roarAnimation) {
                 this.setMadnessTick(this.isChallengeMode() ? NEVER_STOP : MADNESS_TICK);
                 this.setPowered(true);
@@ -471,7 +477,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 this.active = true;
             } else if (this.noConflictingTasks() && !this.isNoAi()) {
                 if (this.isActive()) {
-                    if (this.getTarget() == null && !this.isPowered() && zza == 0 && this.isAtRestPos()) {
+                    if ((this.outOfCombatFlag() || this.getTarget() == null && !this.isPowered()) && zza == 0 && this.isAtRestPos()) {
                         this.playAnimation(this.deactivateAnimation);
                         this.setActive(false);
                     }
@@ -482,7 +488,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             }
 
             if (!this.isUnnatural()) {
-                if (this.noConflictingTasks() && this.getTarget() == null && this.getNavigation().isDone() && !this.isAtRestPos() && this.isActive()) {
+                if (this.noConflictingTasks() && (this.getTarget() == null || this.outOfCombatFlag()) && this.getNavigation().isDone() && !this.isAtRestPos() && this.isActive()) {
                     this.moveToRestPos();
                 }
             }
@@ -758,9 +764,9 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             if (this.guardianInvulnerableTime > 0) {
                 return false;
             } else if (entity != null) {
-                if (this.shouldSetPowered()) {
-                    damage = Math.min(damage, 1F);
-                }
+                if (!this.isUnnatural() && entity instanceof Player player)
+                    this.checkPlayerAttackLegality(player, this, 4);
+                if (this.shouldSetPowered() || this.outOfCombatFlag()) damage = Math.min(damage, 1F);
                 if (this.isPowered()) {
                     if (this.guardianInvulnerableTime <= 0) {
                         ForgeConfigSpec.IntValue eit = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.extraInvulnerableTick;
@@ -852,6 +858,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         this.setUnnatural(compound.getBoolean("isUnnatural"));
         this.setMadnessTick(compound.getInt("madnessCountdownTick"));
         this.setNextMadnessTick(compound.getInt("nextMadnessTick"));
+        this.readBossSaveData(compound);
         active = isActive();
     }
 
@@ -867,6 +874,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         compound.putBoolean("isUnnatural", this.entityData.get(DATA_IS_UNNATURAL));
         compound.putBoolean("isActive", this.entityData.get(DATA_ACTIVE));
         compound.putInt("nextMadnessTick", this.nextMadnessTick);
+        this.addBossSaveData(compound);
     }
 
     public static AttributeSupplier.Builder setAttributes() {
@@ -942,7 +950,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
         @Override
         public boolean canUse() {
-            return this.guardian.getTarget() != null && this.guardian.getTarget().isAlive() && this.guardian.isActive() && this.guardian.noConflictingTasks();
+            return this.guardian.getTarget() != null && this.guardian.getTarget().isAlive() && this.guardian.isActive() && this.guardian.noConflictingTasks() && !this.guardian.outOfCombatFlag();
         }
 
         @Override
@@ -1365,6 +1373,21 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     private void tickPart(EntityNamelessGuardianPart part, double x, double y, double z) {
         part.setPos(this.getX() + x, this.getY() + y, this.getZ() + z);
+    }
+
+    @Override
+    public int getIllegalityCount() {
+        return this.illegalityCount;
+    }
+
+    @Override
+    public void setIllegalityCount(int count) {
+        this.illegalityCount = count;
+    }
+
+    @Override
+    public int getMaxIllegalityCount() {
+        return (int) (this.getMaxHealth() / 40);
     }
 
     @Override
