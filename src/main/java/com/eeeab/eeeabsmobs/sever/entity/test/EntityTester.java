@@ -4,6 +4,7 @@ import com.eeeab.animate.server.ai.animation.AnimationActivate;
 import com.eeeab.animate.server.ai.animation.AnimationDeactivate;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.XpReward;
@@ -22,6 +23,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -44,6 +46,11 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
     public EntityTester(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
         active = true;
+        AttributeInstance healthAttribute = this.getAttribute(Attributes.MAX_HEALTH);
+        if (healthAttribute != null) {
+            healthAttribute.setBaseValue(EMConfigHandler.COMMON.MOB.testerMaxHealth.get());
+            this.setHealth(this.getMaxHealth());
+        }
     }
 
     @Override
@@ -95,11 +102,24 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
     public boolean hurt(DamageSource source, float damage) {
         if (this.level().isClientSide) {
             return false;
-        } else if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            this.setDamage(damage);
-            damage = 0;
+        } else if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && source.getEntity() == null && EMConfigHandler.COMMON.MOB.immuneToEnvironmentalOrStatusDamage.get()) {
+            return false;
+        } else {
+            this.lastDamageSource = source;
+            return super.hurt(source, damage);
         }
-        return super.hurt(source, damage);
+    }
+
+    @Override
+    public void setHealth(float health) {
+        if (!this.level().isClientSide && health < this.getHealth()) {
+            if (this.lastDamageSource != null && !this.lastDamageSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+                this.setDamage(this.getHealth() - health);
+                health = this.getMaxHealth();
+                this.lastDamageSource = null;
+            }
+        }
+        super.setHealth(health);
     }
 
     @Nullable
