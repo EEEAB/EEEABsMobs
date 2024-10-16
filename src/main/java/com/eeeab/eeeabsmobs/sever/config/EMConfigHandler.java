@@ -146,6 +146,12 @@ public final class EMConfigHandler {
             CORPSES = new CorpseMobs(builder);
             GULING = new GulingMobs(builder);
             MINION = new MinionMobs(builder);
+            {
+                builder.push("Tester");
+                testerMaxHealth = BUILDER.translation(getTranslationKey("tester_1")).defineInRange("Set Tester max health", 20D, 1D, 1024D);
+                immuneToEnvironmentalOrStatusDamage = BUILDER.translation(getTranslationKey("tester_2")).define("Enable immune to environmental or status damage", true);
+                builder.pop();
+            }
             builder.pop();
         }
 
@@ -153,6 +159,10 @@ public final class EMConfigHandler {
         public final ImmortalMobs IMMORTAL;
         public final GulingMobs GULING;
         public final MinionMobs MINION;
+        //测试者最大生命值
+        public final ForgeConfigSpec.DoubleValue testerMaxHealth;
+        //测试者免疫由环境或者状态因素造成的伤害
+        public final ForgeConfigSpec.BooleanValue immuneToEnvironmentalOrStatusDamage;
     }
 
     public static class ImmortalMobs {
@@ -298,7 +308,7 @@ public final class EMConfigHandler {
 
     public static class GulingMobs {
         public GulingMobs(final ForgeConfigSpec.Builder builder) {
-            builder.push("Structure-Guling");
+            builder.push("Structure Guling");
             GULING_SENTINEL = new GulingSentinel(builder);
             GULING_SENTINEL_HEAVY = new GulingSentinelHeavy(builder);
             NAMELESS_GUARDIAN = new NamelessGuardian(builder);

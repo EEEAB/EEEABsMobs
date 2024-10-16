@@ -204,6 +204,8 @@
   "other.eeeabsmobs.falling_block_1.config": "Enable falling block spawn",
   "other.eeeabsmobs.falling_block_2.config": "Enable falling block render",
   "other.eeeabsmobs.falling_block_3.config": "Set below check range",
+  "other.eeeabsmobs.tester_1.config": "Set Tester max health",
+  "other.eeeabsmobs.tester_2.config": "Enable immune to environmental or status damage",
   "other.eeeabsmobs.guardian_laser.config": "Enable scorch generate",
   "other.eeeabsmobs.corpse.config": "Enable killed Zombies and Villagers turning into Corpses"
 }

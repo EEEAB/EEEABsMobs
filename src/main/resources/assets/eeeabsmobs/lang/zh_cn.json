@@ -204,6 +204,8 @@
   "other.eeeabsmobs.falling_block_1.config": "启用下落方块生成",
   "other.eeeabsmobs.falling_block_2.config": "启用下落方块渲染",
   "other.eeeabsmobs.falling_block_3.config": "设置生成下落方块纵向探测范围",
+  "other.eeeabsmobs.tester_1.config": "设置测试者的生命上限",
+  "other.eeeabsmobs.tester_2.config": "启用免疫由环境或者状态因素造成的伤害",
   "other.eeeabsmobs.guardian_laser.config": "启用激光射向地面的烧焦效果",
   "other.eeeabsmobs.corpse.config": "启用杀死僵尸/村民后转化为死尸"
 }
