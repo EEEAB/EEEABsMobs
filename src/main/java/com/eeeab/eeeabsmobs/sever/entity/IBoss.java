@@ -32,7 +32,6 @@ public interface IBoss extends IEntity {
      * @param flag 条件为ture则增长次数反之减少
      */
     default void changeIllegalityCount(boolean flag) {
-        if (outOfCombatFlag()) return;
         setIllegalityCount(Mth.clamp(getIllegalityCount() + (flag ? 1 : -1), 0, getMaxIllegalityCount()));
     }
 
