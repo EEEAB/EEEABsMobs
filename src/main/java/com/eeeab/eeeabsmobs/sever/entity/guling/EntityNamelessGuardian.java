@@ -754,18 +754,17 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     public boolean hurt(DamageSource source, float damage) {
-        if (!this.level().isClientSide/* 在服务端进行判断 */) {
+        if (!this.level().isClientSide) {
             Entity entity = source.getEntity();
             if ((!active || getTarget() == null) && entity instanceof LivingEntity livingEntity
                     && !(livingEntity instanceof Player player && player.isCreative() || this.level().getDifficulty() == Difficulty.PEACEFUL)
                     && (!EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() || !(livingEntity instanceof EntityAbsGuling))) {
-                this.setLastHurtByMob(livingEntity);//使得可以有多个仇恨目标
+                this.setLastHurtByMob(livingEntity);
             }
             if (this.guardianInvulnerableTime > 0) {
                 return false;
             } else if (entity != null) {
-                if (!this.isUnnatural() && entity instanceof Player player)
-                    this.checkPlayerAttackLegality(player, this, 4);
+                if (!this.isUnnatural() && this.isNoAnimation() && entity instanceof Player player) this.checkPlayerAttackLegality(player, this, 4);
                 if (this.shouldSetPowered() || this.outOfCombatFlag()) damage = Math.min(damage, 1F);
                 if (this.isPowered()) {
                     if (this.guardianInvulnerableTime <= 0) {
