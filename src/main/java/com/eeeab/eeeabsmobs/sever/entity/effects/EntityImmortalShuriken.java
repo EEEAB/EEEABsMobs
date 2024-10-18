@@ -20,6 +20,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
@@ -33,11 +34,10 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-public class EntityImmortalFireball extends EntityMagicEffects {
+public class EntityImmortalShuriken extends EntityMagicEffects {
     private static final double TRACKING_DISTANCE_THRESHOLD = 3D;
     private static final double RE_FIND_RANGE = 20D;
     private static final int MAX_ACTIVE = 600;
-    private int pauseFrames = 10;
     private LivingEntity target;
     private UUID targetUUID;
     private boolean closeFlag;
@@ -45,24 +45,20 @@ public class EntityImmortalFireball extends EntityMagicEffects {
     private double preY;
     private double preZ;
     private int difficultyLevel;
-    private static final EntityDataAccessor<Integer> DATA_DURATION = SynchedEntityData.defineId(EntityImmortalFireball.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_DURATION = SynchedEntityData.defineId(EntityImmortalShuriken.class, EntityDataSerializers.INT);
     private final Predicate<LivingEntity> LIVING_ENTITY_SELECTOR = entity -> entity.getMobType() != ModMobType.IMMORTAL && !entity.getType().is(EMTagKey.IMMORTAL_IGNORE_HUNT_TARGETS) && entity.isAttackable()
             && (entity instanceof Enemy || entity instanceof NeutralMob || (entity instanceof Player player && !player.isCreative() && !player.isSpectator())) && (this.caster == null || !this.caster.isAlliedTo(entity));
 
-    public EntityImmortalFireball(EntityType<?> type, Level level) {
+    public EntityImmortalShuriken(EntityType<?> type, Level level) {
         super(type, level);
         this.noPhysics = true;
     }
 
-    public EntityImmortalFireball(Level level, LivingEntity caster, LivingEntity target, int duration, int pauseFrames) {
-        super(EntityInit.IMMORTAL_FIREBALL.get(), level);
+    public EntityImmortalShuriken(Level level, LivingEntity caster, LivingEntity target, int duration) {
+        super(EntityInit.IMMORTAL_SHURIKEN.get(), level);
         this.caster = caster;
         this.target = target;
-        this.pauseFrames = pauseFrames;
         this.difficultyLevel = this.level().getDifficulty().getId();
-        if (duration < 20) {
-            duration = 20;
-        }
         this.setDuration(duration);
         if (!level().isClientSide) {
             setCasterId(caster.getId());
@@ -72,83 +68,103 @@ public class EntityImmortalFireball extends EntityMagicEffects {
     @Override
     public void tick() {
         super.tick();
-        this.move(MoverType.SELF, this.getDeltaMovement());
-        if (!this.level().isClientSide) {
-            if (this.target != null) {
-                this.preX = this.target.getX();
-                this.preY = this.target.getY(0.3);
-                this.preZ = this.target.getZ();
-            } else if (this.targetUUID != null && this.level() instanceof ServerLevel serverLevel) {
-                this.target = (LivingEntity) serverLevel.getEntity(this.targetUUID);
+        if (this.level().isClientSide || (caster == null || !caster.isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
+            this.move(MoverType.SELF, this.getDeltaMovement());
+            HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+            if (hitresult.getType() != HitResult.Type.MISS && this.checkCanShoot()) {
+                this.onHit(hitresult);
+                this.level().broadcastEntityEvent(this, (byte) 7);
+                this.discard();
             }
 
-            if (!this.closeFlag && this.tickCount % 5 + this.random.nextInt(3) == 0 && (this.target == null || !this.target.isAlive())) {
-                LivingEntity entity = this.reFindTarget();
-                if (entity == null) {
-                    this.target = null;
-                    this.targetUUID = null;
-                    this.closeFlag = false;
-                } else {
-                    this.target = entity;
+            if (!this.level().isClientSide) {
+                if (this.target != null) {
+                    this.preX = this.target.getX();
+                    this.preY = this.target.getY(0.3);
+                    this.preZ = this.target.getZ();
+                } else if (this.targetUUID != null && this.level() instanceof ServerLevel serverLevel) {
+                    this.target = (LivingEntity) serverLevel.getEntity(this.targetUUID);
+                }
+
+                if (!this.closeFlag && this.tickCount % 5 + this.random.nextInt(3) == 0 && (this.target == null || !this.target.isAlive())) {
+                    LivingEntity entity = this.reFindTarget();
+                    if (entity == null) {
+                        this.target = null;
+                        this.targetUUID = null;
+                        this.closeFlag = false;
+                    } else {
+                        this.target = entity;
+                    }
                 }
             }
 
             this.checkInsideBlocks();
 
-            HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
-            if (hitresult.getType() != HitResult.Type.MISS && this.checkCanShoot()) {
-                this.level().broadcastEntityEvent(this, (byte) 7);
-                this.onHit(hitresult);
-                this.discard();
-            }
-
-            ProjectileUtil.rotateTowardsMovement(this, 0.5F);
-
             if (this.tickCount > MAX_ACTIVE) {
                 this.discard();
-            } else if (this.checkCanShoot()) {
-                Vec3 direction = this.findTargetPoint();
-                double distance = direction.length();
-                if (distance == 0) return;
-                float distanced = this.distanceToPre();
-                double speed = Math.min(distance * 0.4 + (0.2 * EMMathUtils.getTickFactor(distanced, 20, true)), 0.6);
-                if (this.closeFlag || distanced <= TRACKING_DISTANCE_THRESHOLD) {
-                    if (!this.closeFlag)
-                        this.setDeltaMovement(this.getDeltaMovement().subtract(0, 0.03, 0).normalize());
-                    this.setDeltaMovement(this.getDeltaMovement().scale(1.02));
-                    this.closeFlag = true;
-                    return;
+            } else if (!this.level().isClientSide) {
+                if (this.checkCanShoot()) {
+                    Vec3 direction = this.findTargetPoint();
+                    double distance = direction.length();
+                    if (distance == 0) {
+                        this.setDeltaMovement(Vec3.ZERO);
+                        return;
+                    }
+                    float distanced = this.distanceToPre();
+                    double speed = Math.min(distance * 0.4 + (0.2 * EMMathUtils.getTickFactor(distanced, 20, true)), 0.6);
+                    if (this.closeFlag || distanced <= TRACKING_DISTANCE_THRESHOLD) {
+                        if (!this.closeFlag)
+                            this.setDeltaMovement(this.getDeltaMovement().subtract(0, 0.03, 0).normalize());
+                        this.setDeltaMovement(this.getDeltaMovement().scale(1.01));
+                        this.closeFlag = true;
+                        return;
+                    }
+                    Vec3 movement = direction.scale(speed);
+                    this.setDeltaMovement(movement);
+                } else {
+                    this.setDeltaMovement(this.getDeltaMovement().scale(0.95));
                 }
-                Vec3 movement = direction.scale(speed);
-                this.setDeltaMovement(movement);
-            } else if (this.tickCount == this.pauseFrames) {
-                this.setDeltaMovement(Vec3.ZERO);
+                ProjectileUtil.rotateTowardsMovement(this, 0.5F);
+            } else {
+                Vec3 movement = this.getDeltaMovement();
+                //float partialTicks = Minecraft.getInstance().getFrameTime();
+                //double interpolatedX = Mth.lerp(partialTicks, this.xOld, this.getX());
+                //double interpolatedY = Mth.lerp(partialTicks, this.yOld + this.getBbHeight() / 2, this.getY(0.5));
+                //double interpolatedZ = Mth.lerp(partialTicks, this.zOld, this.getZ());
+                //AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.ADV_ORB.get(), interpolatedX, interpolatedY, interpolatedZ, movement.x, movement.y, movement.z, true, 0, 0, 0, 0, 0F,
+                //        0.36F, 0.74F, 0.98F, 1, 1, 1, true, false, false, new ParticleComponent[]{
+                //                new RibbonComponent(ParticleInit.FLAT_RIBBON.get(), 6, 0, 0, 0, 0.12F, 0.36F, 0.74F, 0.98F, 1, true, true,
+                //                        new ParticleComponent[]{
+                //                                new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.SCALE, AnimData.KeyTrack.startAndEnd(0.7125F, 0F))
+                //                        }, false)
+                //        });
+                boolean shoot = this.checkCanShoot() && movement.horizontalDistanceSqr() > 2.5000003E-7D;
+                double ySpeed = shoot ? -movement.y * 0.25F : 0.125F + 0.125F * this.random.nextFloat();
+                double xSpeed = -movement.x * 0.25F;
+                double zSpeed = -movement.z * 0.25F;
+                for (int i = 0; i < (shoot ? 5 : 2); i++) {
+                    double x = this.getX() + this.random.nextGaussian() * 0.2;
+                    double y = this.getY(0.3) + this.random.nextGaussian() * 0.1D;
+                    double z = this.getZ() + this.random.nextGaussian() * 0.2;
+                    float colorOffset = 0.15F * this.random.nextFloat();
+                    this.level().addParticle(new ParticleDust.DustData(ParticleInit.DUST.get(), 0.18F - colorOffset, 0.44F - colorOffset, 0.6F - colorOffset, (float) (5D + random.nextDouble() * 5D), 12, ParticleDust.EnumDustBehavior.SHRINK, 1, true), x, y, z, xSpeed, ySpeed, zSpeed);
+                }
+                if (this.tickCount % 5 == 0) {
+                    this.level().addParticle(new ParticleOrb.OrbData(0.08F, 0.12F, 0.17F, 2F, 10), this.getRandomX(0.5), this.getY(0.5), this.getRandomZ(0.5), xSpeed, ySpeed, xSpeed);
+                }
             }
         } else {
-            boolean shoot = this.checkCanShoot() && this.getDeltaMovement().horizontalDistanceSqr() > 2.5000003E-7D;
-            double ySpeed = shoot ? -this.getDeltaMovement().y() * 0.25F : 0.125F + 0.125F * this.random.nextFloat();
-            double xSpeed = -this.getDeltaMovement().x() * 0.25F;
-            double zSpeed = -this.getDeltaMovement().z() * 0.25F;
-            for (int i = 0; i < (shoot ? 5 : 2); i++) {
-                double x = this.getX() + this.random.nextGaussian() * 0.2;
-                double y = this.getY(0.3) + this.random.nextGaussian() * 0.1D;
-                double z = this.getZ() + this.random.nextGaussian() * 0.2;
-                float colorOffset = 0.15F * this.random.nextFloat();
-                this.level().addParticle(new ParticleDust.DustData(ParticleInit.DUST.get(), 0.18F - colorOffset, 0.44F - colorOffset, 0.6F - colorOffset, (float) (5D + random.nextDouble() * 5D), 12, ParticleDust.EnumDustBehavior.SHRINK, 1, true), x, y, z, xSpeed, ySpeed, zSpeed);
-            }
-            if (this.tickCount % 5 == 0) {
-                this.level().addParticle(new ParticleOrb.OrbData(0.08F, 0.12F, 0.17F, 2F, 30), this.getRandomX(0.5), this.getY(0.5), this.getRandomZ(0.5), xSpeed, ySpeed, xSpeed);
-            }
+            this.discard();
         }
     }
 
     @Override
     public void handleEntityEvent(byte id) {
         if (id == 7) {
-            double radians = Math.toRadians(this.getYRot() - 90);
+            Vec3 movement = this.getDeltaMovement();
             ParticleDust.DustData particle1 = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.18F, 0.44F, 0.6F, 15F, 20, ParticleDust.EnumDustBehavior.SHRINK, 0.9F, true);
             ParticleOrb.OrbData particle2 = new ParticleOrb.OrbData(0.08F, 0.12F, 0.17F, 2F, 15);
-            ModParticleUtils.roundParticleOutburst(this.level(), 8, new ParticleOptions[]{particle1, particle2}, this.getX() + 2 * Math.cos(radians), this.getY(0.3), this.getZ() + 2 * Math.sin(radians), 0.25F);
+            ModParticleUtils.roundParticleOutburst(this.level(), 8, new ParticleOptions[]{particle1, particle2}, this.getX() + movement.x, this.getY(0.3), this.getZ() + movement.z, 0.25F);
         }
         super.handleEntityEvent(id);
     }
@@ -158,7 +174,10 @@ public class EntityImmortalFireball extends EntityMagicEffects {
         super.onHitEntity(result);
         Entity entity = result.getEntity();
         if (entity instanceof LivingEntity hitEntity) {
-            if (entity.hurt(EMDamageSource.immortalMagicAttack(this, this.caster), 1.5F + hitEntity.getMaxHealth() * 0.025F)) {
+            float baseDamage = 1.5F;
+            MobEffectInstance instance = hitEntity.getEffect(EffectInit.ERODE_EFFECT.get());
+            if (instance != null) baseDamage += (instance.getAmplifier() + 1) * 0.5F;
+            if (entity.hurt(EMDamageSource.immortalMagicAttack(this, this.caster), baseDamage + hitEntity.getMaxHealth() * 0.025F)) {
                 ModEntityUtils.addEffectStackingAmplifier(hitEntity, EffectInit.ERODE_EFFECT.get(), 300, this.difficultyLevel, true, true, true, true);
             }
         } else {
@@ -205,7 +224,7 @@ public class EntityImmortalFireball extends EntityMagicEffects {
     }
 
     private boolean canHitEntity(Entity entity) {
-        if (!entity.canBeHitByProjectile() || (entity instanceof EntityAbsImmortal && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get())) {
+        if (!entity.canBeHitByProjectile() || (entity == caster) || (entity instanceof EntityAbsImmortal && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get())) {
             return false;
         } else {
             return caster == null || !caster.isPassengerOfSameVehicle(entity);

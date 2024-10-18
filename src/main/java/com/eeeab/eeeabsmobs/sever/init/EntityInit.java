@@ -240,12 +240,12 @@ public class EntityInit {
                             .sized(0.1F, 0.1F).setUpdateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "magic_circle").toString()));
 
-    //不朽火球
-    public static final RegistryObject<EntityType<EntityImmortalFireball>> IMMORTAL_FIREBALL =
-            ENTITIES.register("immortal_fireball",
-                    () -> EntityType.Builder.<EntityImmortalFireball>of(EntityImmortalFireball::new, MobCategory.MISC)
-                            .sized(0.5f, 0.5f).clientTrackingRange(4).updateInterval(1)
-                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_fireball").toString()));
+    //不朽手里剑
+    public static final RegistryObject<EntityType<EntityImmortalShuriken>> IMMORTAL_SHURIKEN =
+            ENTITIES.register("immortal_shuriken",
+                    () -> EntityType.Builder.<EntityImmortalShuriken>of(EntityImmortalShuriken::new, MobCategory.MISC)
+                            .sized(0.5F, 0.5F).clientTrackingRange(8).updateInterval(1)
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_shuriken").toString()));
 
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);

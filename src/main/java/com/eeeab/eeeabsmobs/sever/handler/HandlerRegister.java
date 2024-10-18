@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.handler;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.client.model.effects.ModelImmortalFireball;
+import com.eeeab.eeeabsmobs.client.model.effects.ModelImmortalShuriken;
 import com.eeeab.eeeabsmobs.client.model.util.EMItemModels;
 import com.eeeab.eeeabsmobs.client.model.armor.ModelGhostWarriorArmor;
 import com.eeeab.eeeabsmobs.client.particle.*;
@@ -56,7 +56,7 @@ public class HandlerRegister {
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_SHAMAN, ModelImmortalShaman::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_EXECUTIONER, ModelImmortalExecutioner::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.IMMORTAL, ModelTheImmortal::createBodyLayer);
-        event.registerLayerDefinition(EMModelLayer.IMMORTAL_FIREBALL, ModelImmortalFireball::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.IMMORTAL_FIREBALL, ModelImmortalShuriken::createBodyLayer);
 
         event.registerLayerDefinition(EMModelLayer.GHOST_WARRIOR_ARMOR, () -> ModelGhostWarriorArmor.createBodyLayer(new CubeDeformation(0.5F)));
         event.registerLayerDefinition(EMModelLayer.GHOST_WARRIOR_ARMOR_LEGS, () -> ModelGhostWarriorArmor.createBodyLayer(new CubeDeformation(0.2F)));
@@ -99,7 +99,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.ELECTROMAGNETIC.get(), EmptyRender::new);
         event.registerEntityRenderer(EntityInit.ALIEN_PORTAL.get(), RenderAlienPortal::new);
         event.registerEntityRenderer(EntityInit.MAGIC_CIRCLE.get(), RenderImmortalMagicCircle::new);
-        event.registerEntityRenderer(EntityInit.IMMORTAL_FIREBALL.get(), RenderImmortalFireball::new);
+        event.registerEntityRenderer(EntityInit.IMMORTAL_SHURIKEN.get(), RenderImmortalShuriken::new);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
