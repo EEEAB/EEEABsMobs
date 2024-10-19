@@ -58,7 +58,7 @@ public class EntityGuardianLaser extends EntityAbsLightBeam {
             } else if (this.caster instanceof EntityNamelessGuardian) {
                 this.updateWithGuardian();
             } else if (this.caster != null) {
-                this.updateWithEntity(0F);
+                this.updateWithEntity(0F, 0.75F);
             }
         }
 
@@ -148,15 +148,15 @@ public class EntityGuardianLaser extends EntityAbsLightBeam {
     }
 
     private void updateWithGuardian() {
-        this.updateWithEntity(1.35F);
+        this.updateWithEntity(1.35F, 0.8F);
     }
 
-    private void updateWithEntity(float offset) {
+    private void updateWithEntity(float offset, float yOffset) {
         double radians = Math.toRadians(this.caster.yHeadRot + 90);
         this.setYaw((float) radians);
         this.setPitch((float) ((double) (-this.caster.getXRot()) * Math.PI / 180.0));
         double offsetX = Math.cos(radians) * offset;
         double offsetZ = Math.sin(radians) * offset;
-        this.setPos(this.caster.getX() + offsetX, this.caster.getY() + (caster.getBbHeight() * 0.75f), this.caster.getZ() + offsetZ);
+        this.setPos(this.caster.getX() + offsetX, this.caster.getY(yOffset), this.caster.getZ() + offsetZ);
     }
 }
