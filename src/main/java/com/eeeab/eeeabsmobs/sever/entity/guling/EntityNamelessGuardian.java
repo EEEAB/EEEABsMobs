@@ -529,13 +529,13 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 this.lookAt(target, 30F, 30F);
             }
         } else if (this.getAnimation() == this.attackAnimation6) {
-            if (tick == 14) this.doSplashParticlesEffect(20);
+            if (tick == 15) this.doSplashParticlesEffect(20);
         } else if (this.getAnimation() == this.shakeGroundAttackAnimation1) {
-            if (tick == 24) this.doSplashParticlesEffect(25);
+            if (tick == 25) this.doSplashParticlesEffect(25);
         } else if (this.getAnimation() == this.shakeGroundAttackAnimation2) {
-            if (tick == 17) this.doSplashParticlesEffect(20);
+            if (tick == 18) this.doSplashParticlesEffect(20);
         } else if (this.getAnimation() == this.shakeGroundAttackAnimation3) {
-            if (tick == 26) this.doSplashParticlesEffect(30);
+            if (tick == 27) this.doSplashParticlesEffect(30);
         } else if (this.getAnimation() == this.robustAttackAnimation) {
             if (tick < 35) {
                 this.preRobustAttack();
@@ -628,7 +628,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 25, ParticleDust.EnumDustBehavior.SHRINK, 1.0f);
             ModParticleUtils.annularParticleOutburst(level(), 15, new ParticleOptions[]{dustData}, getX(), this.getY(), getZ(), 0.8F, 0.1);
         } else if (id == 8) {
-            ModParticleUtils.roundParticleOutburst(level(), 200, new ParticleOptions[]{ParticleTypes.LARGE_SMOKE, ParticleTypes.SMOKE, ParticleTypes.EXPLOSION}, getX(), this.getY(0.1), getZ(), 1);
+            ModParticleUtils.roundParticleOutburst(level(), 200, new ParticleOptions[]{ParticleTypes.LARGE_SMOKE, ParticleTypes.SMOKE, ParticleTypes.EXPLOSION}, getX(), this.getY(0.5), getZ(), 1);
         }
         super.handleEntityEvent(id);
     }
@@ -1182,7 +1182,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         if (!this.level().isClientSide) {
             if (tick == 50) {
                 this.level().broadcastEntityEvent(this, (byte) 8);
-                this.level().explode(this, this.getX(), this.getY(), this.getZ(), 5F, false, Level.ExplosionInteraction.NONE);
+                this.level().explode(this, this.getX(), this.getY(0.5), this.getZ(), 6F, false, Level.ExplosionInteraction.NONE);
                 EntityCameraShake.cameraShake(level(), position(), 20, 0.2F, 10, 20);
             }
         }
