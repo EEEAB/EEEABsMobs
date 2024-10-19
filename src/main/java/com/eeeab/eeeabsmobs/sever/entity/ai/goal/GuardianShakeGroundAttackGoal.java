@@ -58,7 +58,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
                         entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1F, 1.2F, true, true, true);
                     }
                 }
-                doSpawnBlade(2, 0.4F);
+                doSpawnBlade(5, 1.75F);
             } else if (tick == 25) {
                 this.entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                 EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.125F, 5, 10);
@@ -88,7 +88,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
                         entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1F, 1.0F, true, true, true);
                     }
                 }
-                doSpawnBlade(2, 0.4F);
+                doSpawnBlade(5, 1.75F);
             } else if (tick == 18) {
                 this.entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                 EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.125F, 5, 10);
@@ -125,17 +125,19 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
                         entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1.5F, 1.2F, true, true, true);
                     }
                 }
-                doSpawnBlade(3, 0.3F);
+                doSpawnBlade(6, 2F);
                 this.entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                 EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.2F, 5, 10);
             }
         }
     }
 
-    private void doSpawnBlade(int count, float offset) {
+    private void doSpawnBlade(int count, float totalOffset) {
         Vec3 looking = entity.getLookAngle();
-        for (int i = -count; i < count; i++) {
-            Vec3 vec3 = looking.yRot(i * offset);
+        float angleStep = totalOffset / (count + 1);
+        for (int i = 0; i < count; i++) {
+            float angle = -totalOffset / 2.0f + (i + 1) * angleStep;
+            Vec3 vec3 = looking.yRot(angle);
             float f0 = (float) Mth.atan2(vec3.z, vec3.x);
             double x = entity.getX() + Mth.cos(f0) * 2.5D;
             double y = entity.getY();
