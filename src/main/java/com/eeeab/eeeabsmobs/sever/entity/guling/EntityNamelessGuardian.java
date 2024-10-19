@@ -357,7 +357,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 this.resetTimeOutToUseSkill();
                 if (this.outOfCombatFlag()) {
                     this.setIllegalityCount(0);
-                    this.heal(this.getMaxHealth());
+                    if (EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.enableNonCombatHeal.get()) this.heal(this.getMaxHealth());
                 }
             } else if (animation == this.roarAnimation) {
                 this.setMadnessTick(this.isChallengeMode() ? NEVER_STOP : MADNESS_TICK);
