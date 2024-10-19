@@ -103,7 +103,7 @@ public final class EMConfigHandler {
 
     public static class Entity {
         public Entity(final ForgeConfigSpec.Builder builder) {
-            builder.push("Entity");
+            builder.push("Entities");
             {
                 builder.push("Guardian Laser");
                 this.enableGenerateScorchEntity = BUILDER.comment("If 'False' disable scorch generate on the ground")
@@ -266,7 +266,7 @@ public final class EMConfigHandler {
 
     public static class CorpseMobs {
         public CorpseMobs(final ForgeConfigSpec.Builder builder) {
-            builder.push("Structure-Bloody Altar");
+            builder.push("Corpse Mobs");
             CORPSE = new Corpse(builder);
             CORPSE_WARLOCK = new CorpseWarlock(builder);
             builder.pop();
@@ -308,7 +308,7 @@ public final class EMConfigHandler {
 
     public static class GulingMobs {
         public GulingMobs(final ForgeConfigSpec.Builder builder) {
-            builder.push("Structure Guling");
+            builder.push("Guling Mobs");
             GULING_SENTINEL = new GulingSentinel(builder);
             GULING_SENTINEL_HEAVY = new GulingSentinelHeavy(builder);
             NAMELESS_GUARDIAN = new NamelessGuardian(builder);
@@ -414,7 +414,7 @@ public final class EMConfigHandler {
     //其他设置
     public static class Other {
         public Other(final ForgeConfigSpec.Builder builder) {
-            builder.push("Other");
+            builder.push("Others");
             this.enableCameraShake = BUILDER.comment("If 'False' disable camera shake")
                     .translation(getTranslationKey("other_1")).define("Enable camera shake", true);
             this.enableShowBloodBars = BUILDER.comment("If 'False' disable bosses blood bars")
