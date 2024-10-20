@@ -135,12 +135,19 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
                 if (target != null) {
                     this.entity.getLookControl().setLookAt(target, 30F, 30F);
                     if (animation == this.entity.crossBowChangeAnimation) {
-                        if (tick == animation.getDuration() - 1) {
+                        boolean isLoaded = this.entity.isHolding(is -> is.getItem() instanceof CrossbowItem && CrossbowItem.isCharged(is));
+                        if (tick == animation.getDuration() - 1 || isLoaded) {
+                            if (!isLoaded && this.entity.isHolding(is -> is.getItem() instanceof CrossbowItem)) {
+                                CrossbowItem.setCharged(this.entity.getUseItem(), true);
+                            }
                             this.entity.playAnimation(this.entity.crossBowHoldAnimation);
                         }
                     } else if (animation == this.entity.crossBowHoldAnimation) {
                         if (tick == 9) {
                             this.entity.performRangedAttack(target, 0F);
+                            if (this.entity.isHolding(is -> is.getItem() instanceof CrossbowItem)) {
+                                CrossbowItem.setCharged(this.entity.getUseItem(), false);
+                            }
                         }
                     }
                 }
