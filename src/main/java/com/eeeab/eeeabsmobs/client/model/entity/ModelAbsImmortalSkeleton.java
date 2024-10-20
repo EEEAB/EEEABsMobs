@@ -78,10 +78,13 @@ public class ModelAbsImmortalSkeleton extends EMHierarchicalModel<EntityAbsImmor
         //Idle & Walk
         if (entity.isAlive()) {
             float cycle = 0.8F;
+            if (!(entity.isArcher() || entity.isMage())) cycle = 0.65F;
             this.walk(this.upper, 0.1F, 0.005F, true, 0, -0.025F, frame, 1);
             this.bob(this.upper, cycle * 0.2F, cycle * 0.2F, false, frame, 1);
             this.bob(this.leftArm, cycle * 0.2F, cycle * 0.2F, false, frame, 1);
             this.bob(this.rightArm, cycle * 0.2F, cycle * 0.2F, false, frame, 1);
+            this.flap(this.leftArm, cycle, cycle * 0.2F, true, -0.5F, 0.25F, limbSwing, limbSwingAmount);
+            this.flap(this.rightArm, cycle, cycle * 0.2F, true, -0.5F, -0.25F, limbSwing, limbSwingAmount);
             this.bob(this.head, cycle * -0.2F, cycle * -0.2F, false, frame, 1);
             this.bob(this.head, cycle, cycle * 0.6F, false, limbSwing, limbSwingAmount);
             if (entity.getAnimation() != entity.blockAnimation) {
@@ -91,11 +94,11 @@ public class ModelAbsImmortalSkeleton extends EMHierarchicalModel<EntityAbsImmor
             this.walk(this.leftLeg, cycle, cycle * 1.4F, false, 0, 0, limbSwing, limbSwingAmount);
             this.walk(this.rightLeg, cycle, cycle * 1.4F, true, 0, 0, limbSwing, limbSwingAmount);
             this.flap(this.root, cycle, cycle * 0.08F, true, 0, 0, limbSwing, limbSwingAmount);
-            if (entity.getVariant() == EntityAbsImmortalSkeleton.CareerType.ARCHER) {
+            if (entity.isArcher()) {
                 this.animateWalk(AnimationImmortalSkeleton.WALK, limbSwing, limbSwingAmount, 1F, 2F);
             } else if (entity.isNoAnimation()) {
-                this.walk(this.leftArm, cycle, cycle * 1.2F, false, 0, -0.05F, limbSwing, limbSwingAmount);
-                this.walk(this.rightArm, cycle, cycle * 1.2F, true, 0, 0.05F, limbSwing, limbSwingAmount);
+                this.walk(this.leftArm, cycle, cycle * 1.2F, false, 0, 0, limbSwing, limbSwingAmount);
+                this.walk(this.rightArm, cycle, cycle * 1.2F, true, 0, 0, limbSwing, limbSwingAmount);
             }
         }
         if (entity.getAnimation() == entity.castAnimation) {
@@ -109,11 +112,7 @@ public class ModelAbsImmortalSkeleton extends EMHierarchicalModel<EntityAbsImmor
             this.leftArm.zRot = -2.3561945F;
             this.rightArm.yRot = 0.0F;
             this.leftArm.yRot = 0.0F;
-        }/* else if (entity.getEMAnimation() == entity.meleeAnimation) {
-            AnimationUtils.swingWeaponDown(this.rightArm, this.leftArm, entity, this.attackTime, ageInTicks);
-        } else if (entity.getEMAnimation() == entity.swingArmAnimation) {
-            AnimationUtils.animateZombieArms(this.leftArm, this.rightArm, true, this.attackTime, ageInTicks);
-        } */ else if (entity.getAnimation() == entity.bowAnimation) {
+        } else if (entity.getAnimation() == entity.bowAnimation) {
             setStaticRotationAngle(rightArm, -85F, -10F, -10F);
             setStaticRotationAngle(leftArm, -75F, 25F, 10F);
         } else if (entity.getAnimation() == entity.crossBowChangeAnimation) {
@@ -122,7 +121,7 @@ public class ModelAbsImmortalSkeleton extends EMHierarchicalModel<EntityAbsImmor
             AnimationUtils.animateCrossbowHold(this.rightArm, this.leftArm, this.head, true);
         }
         this.animate(entity.spawnAnimation, AnimationCommon.SPAWN, ageInTicks);
-        this.animate(entity.swingArmAnimation, AnimationImmortalSkeleton.SWINGARM, ageInTicks);
+        this.animate(entity.swingArmAnimation, entity.getMainHandItem().isEmpty() ? AnimationImmortalSkeleton.SWINGARM : AnimationImmortalSkeleton.MELEE1, ageInTicks);
         this.animate(entity.meleeAnimation1, AnimationImmortalSkeleton.MELEE1, ageInTicks);
         this.animate(entity.meleeAnimation2, AnimationImmortalSkeleton.MELEE2, ageInTicks);
         this.animate(entity.roarAnimation, AnimationImmortalSkeleton.ROAR, ageInTicks);
@@ -137,7 +136,6 @@ public class ModelAbsImmortalSkeleton extends EMHierarchicalModel<EntityAbsImmor
         this.root.translateAndRotate(poseStack);
         this.upper.translateAndRotate(poseStack);
         model$part.translateAndRotate(poseStack);
-        //offsetStackPosition(poseStack, isRightArm);
         poseStack.translate(0D, 0.09D, 0.058D);
         poseStack.scale(0.9375F, 0.9375F, 0.9375F);
     }
