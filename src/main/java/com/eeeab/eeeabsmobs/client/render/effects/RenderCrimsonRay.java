@@ -7,9 +7,7 @@ import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCrimsonRay;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
@@ -19,7 +17,7 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
-public class RenderCrimsonRay extends EntityRenderer<EntityCrimsonRay> {
+public class RenderCrimsonRay extends RenderAbsLightBeam<EntityCrimsonRay> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/crimson_ray.png");
     private static final float TEXTURE_WIDTH = 256;
     private static final float TEXTURE_HEIGHT = 32;
@@ -27,7 +25,7 @@ public class RenderCrimsonRay extends EntityRenderer<EntityCrimsonRay> {
     private static final float BEAM_RADIUS = 0.8f;
 
     public RenderCrimsonRay(EntityRendererProvider.Context mgr) {
-        super(mgr);
+        super(mgr, START_RADIUS, BEAM_RADIUS);
     }
 
     @Override
@@ -61,8 +59,8 @@ public class RenderCrimsonRay extends EntityRenderer<EntityCrimsonRay> {
         return TEXTURE;
     }
 
-    //圆
-    private void renderFlatQuad(int frame, PoseStack matrixStackIn, VertexConsumer builder, int packedLightIn, boolean faceCamera) {
+    @Override
+    protected void renderFlatQuad(int frame, PoseStack matrixStackIn, VertexConsumer builder, int packedLightIn, boolean faceCamera) {
         float minU = 0 + 16F / TEXTURE_WIDTH * frame;
         float minV = 0;
         float maxU = minU + 16F / TEXTURE_WIDTH;
@@ -94,7 +92,8 @@ public class RenderCrimsonRay extends EntityRenderer<EntityCrimsonRay> {
         matrixStackIn.popPose();
     }
 
-    private void renderEnd(int frame, Direction side, PoseStack matrixStackIn, VertexConsumer builder, int packedLightIn) {
+    @Override
+    protected void renderEnd(int frame, Direction side, PoseStack matrixStackIn, VertexConsumer builder, int packedLightIn) {
         matrixStackIn.pushPose();
         Quaternionf quat = this.entityRenderDispatcher.cameraOrientation();
         matrixStackIn.mulPose(quat);
@@ -111,51 +110,6 @@ public class RenderCrimsonRay extends EntityRenderer<EntityCrimsonRay> {
         matrixStackIn.mulPose(rotation);
         matrixStackIn.translate(0, 0, -0.01F);
         renderFlatQuad(frame, matrixStackIn, builder, packedLightIn, true);
-        matrixStackIn.popPose();
-    }
-
-    //光束
-    private void drawBeam(float length, int frame, PoseStack matrixStackIn, VertexConsumer builder, int packedLightIn) {
-        float minU = 0;
-        float minV = 16 / TEXTURE_HEIGHT + 1 / TEXTURE_HEIGHT * frame;// 通过控制帧数,来渲染二维UV的最高位置
-        float maxU = minU + 20 / TEXTURE_WIDTH;
-        float maxV = minV + 1 / TEXTURE_HEIGHT;
-        PoseStack.Pose matrix$stack$entry = matrixStackIn.last();
-        Matrix4f matrix4f = matrix$stack$entry.pose();
-        Matrix3f matrix3f = matrix$stack$entry.normal();
-        float SIZE = BEAM_RADIUS;
-        drawVertex(matrix4f, matrix3f, builder, -SIZE, 0, 0, minU, minV, packedLightIn);
-        drawVertex(matrix4f, matrix3f, builder, -SIZE, length, 0, minU, maxV, packedLightIn);
-        drawVertex(matrix4f, matrix3f, builder, SIZE, length, 0, maxU, maxV, packedLightIn);
-        drawVertex(matrix4f, matrix3f, builder, SIZE, 0, 0, maxU, minV, packedLightIn);
-    }
-
-    private void renderBeam(float length, float yaw, float pitch, int frame, PoseStack matrixStackIn, VertexConsumer builder, int packedLightIn) {
-        matrixStackIn.pushPose();
-        matrixStackIn.mulPose(Axis.XP.rotationDegrees(90F));
-        matrixStackIn.mulPose(Axis.ZP.rotationDegrees(yaw - 90F));
-        matrixStackIn.mulPose(Axis.XP.rotationDegrees(-pitch));
-
-        matrixStackIn.pushPose();
-        matrixStackIn.mulPose(Axis.YP.rotationDegrees(Minecraft.getInstance().gameRenderer.getMainCamera().getXRot() + 90F));
-        drawBeam(length, frame, matrixStackIn, builder, packedLightIn);
-        matrixStackIn.popPose();
-
-        matrixStackIn.pushPose();
-        matrixStackIn.mulPose(Axis.YP.rotationDegrees(-Minecraft.getInstance().gameRenderer.getMainCamera().getXRot() - 90F));
-        drawBeam(length, frame, matrixStackIn, builder, packedLightIn);
-        matrixStackIn.popPose();
-
-        matrixStackIn.pushPose();
-        matrixStackIn.mulPose(Axis.YP.rotationDegrees(-Minecraft.getInstance().gameRenderer.getMainCamera().getXRot() + 180F));
-        drawBeam(length, frame, matrixStackIn, builder, packedLightIn);
-        matrixStackIn.popPose();
-
-        matrixStackIn.pushPose();
-        matrixStackIn.mulPose(Axis.YP.rotationDegrees(-Minecraft.getInstance().gameRenderer.getMainCamera().getXRot() - 180F));
-        drawBeam(length, frame, matrixStackIn, builder, packedLightIn);
-        matrixStackIn.popPose();
-
         matrixStackIn.popPose();
     }
 
@@ -190,7 +144,8 @@ public class RenderCrimsonRay extends EntityRenderer<EntityCrimsonRay> {
         }
     }
 
-    private static void drawVertex(Matrix4f matrix, Matrix3f normals, VertexConsumer vertexBuilder, float offsetX, float offsetY, float offsetZ, float textureX, float textureY, int packedLightIn) {
+    @Override
+    protected void drawVertex(Matrix4f matrix, Matrix3f normals, VertexConsumer vertexBuilder, float offsetX, float offsetY, float offsetZ, float textureX, float textureY, int packedLightIn) {
         vertexBuilder.vertex(matrix, offsetX, offsetY, offsetZ).color(1F, 1F, 1F, 1F).uv(textureX, textureY).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLightIn).normal(normals, 1F, 0F, 1F).endVertex();
     }
 }
