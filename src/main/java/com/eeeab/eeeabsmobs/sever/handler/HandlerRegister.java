@@ -22,6 +22,7 @@ import com.eeeab.eeeabsmobs.client.render.entity.*;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.particle.SuspendedTownParticle;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
@@ -119,6 +120,7 @@ public class HandlerRegister {
         event.registerSpriteSet(ParticleInit.ORB.get(), ParticleOrb.OrbFactory::new);
         event.registerSpriteSet(ParticleInit.GUARDIAN_SPARK.get(), ParticleGuardianSpark.GuardianSparkFactory::new);
         event.registerSpriteSet(ParticleInit.POISON.get(), ParticlePoison.PoisonFactory::new);
+        event.registerSpriteSet(ParticleInit.WARLOCK_HEAL.get(), SuspendedTownParticle.HappyVillagerProvider::new);
         event.registerSpriteSet(ParticleInit.RING.get(), ParticleRing.RingFactory::new);
     }
 
