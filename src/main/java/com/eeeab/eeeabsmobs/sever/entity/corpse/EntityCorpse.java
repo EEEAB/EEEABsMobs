@@ -239,7 +239,7 @@ public class EntityCorpse extends EntityAbsCorpse implements IEntity {
 
     public static AttributeSupplier.Builder setAttributes() {
         return createMobAttributes().add(Attributes.MAX_HEALTH, 30.0D).
-                add(Attributes.MOVEMENT_SPEED, 0.3D).
+                add(Attributes.MOVEMENT_SPEED, 0.25D).
                 add(Attributes.FOLLOW_RANGE, 32.0D).
                 add(Attributes.ATTACK_DAMAGE, 6D);
     }
