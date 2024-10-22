@@ -48,7 +48,7 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
         active = true;
         AttributeInstance healthAttribute = this.getAttribute(Attributes.MAX_HEALTH);
         if (healthAttribute != null) {
-            healthAttribute.setBaseValue(EMConfigHandler.COMMON.MOB.testerMaxHealth.get());
+            healthAttribute.setBaseValue(EMConfigHandler.COMMON.ENTITY.testerMaxHealth.get());
             this.setHealth(this.getMaxHealth());
         }
     }
@@ -102,7 +102,7 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
     public boolean hurt(DamageSource source, float damage) {
         if (this.level().isClientSide) {
             return false;
-        } else if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && source.getEntity() == null && EMConfigHandler.COMMON.MOB.immuneToEnvironmentalOrStatusDamage.get()) {
+        } else if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && source.getEntity() == null && EMConfigHandler.COMMON.ENTITY.immuneToEnvironmentalOrStatusDamage.get()) {
             return false;
         } else {
             this.lastDamageSource = source;

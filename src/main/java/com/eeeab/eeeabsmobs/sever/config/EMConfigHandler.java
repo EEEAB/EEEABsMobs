@@ -124,6 +124,12 @@ public final class EMConfigHandler {
                         .translation(getTranslationKey("falling_block_3")).defineInRange("Set below check range", 3, 1, 10);
                 builder.pop();
             }
+            {
+                builder.push("Tester");
+                this.testerMaxHealth = BUILDER.translation(getTranslationKey("tester_1")).defineInRange("Set max health", 20D, 1D, 1024D);
+                this.immuneToEnvironmentalOrStatusDamage = BUILDER.translation(getTranslationKey("tester_2")).define("Enable immune to environmental or status damage", true);
+                builder.pop();
+            }
             builder.pop();
         }
 
@@ -137,6 +143,10 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.BooleanValue enableRenderFallingBlock;
         //下探检查下落方块生成位置最大范围
         public final ForgeConfigSpec.IntValue fallingBlockBelowCheckRange;
+        //测试者最大生命值
+        public final ForgeConfigSpec.DoubleValue testerMaxHealth;
+        //测试者免疫由环境或者状态因素造成的伤害
+        public final ForgeConfigSpec.BooleanValue immuneToEnvironmentalOrStatusDamage;
     }
 
     public static class Mob {
@@ -146,12 +156,6 @@ public final class EMConfigHandler {
             CORPSES = new CorpseMobs(builder);
             GULING = new GulingMobs(builder);
             MINION = new MinionMobs(builder);
-            {
-                builder.push("Tester");
-                testerMaxHealth = BUILDER.translation(getTranslationKey("tester_1")).defineInRange("Set Tester max health", 20D, 1D, 1024D);
-                immuneToEnvironmentalOrStatusDamage = BUILDER.translation(getTranslationKey("tester_2")).define("Enable immune to environmental or status damage", true);
-                builder.pop();
-            }
             builder.pop();
         }
 
@@ -159,10 +163,6 @@ public final class EMConfigHandler {
         public final ImmortalMobs IMMORTAL;
         public final GulingMobs GULING;
         public final MinionMobs MINION;
-        //测试者最大生命值
-        public final ForgeConfigSpec.DoubleValue testerMaxHealth;
-        //测试者免疫由环境或者状态因素造成的伤害
-        public final ForgeConfigSpec.BooleanValue immuneToEnvironmentalOrStatusDamage;
     }
 
     public static class ImmortalMobs {
@@ -415,18 +415,34 @@ public final class EMConfigHandler {
     public static class Other {
         public Other(final ForgeConfigSpec.Builder builder) {
             builder.push("Others");
-            this.enableCameraShake = BUILDER.comment("If 'False' disable camera shake")
-                    .translation(getTranslationKey("other_1")).define("Enable camera shake", true);
-            this.enableShowBloodBars = BUILDER.comment("If 'False' disable bosses blood bars")
-                    .translation(getTranslationKey("other_2")).define("Enable bosses blood bars", true);
-            this.enableSameMobsTypeInjury = BUILDER.comment("If 'False' able inflict damage between mobs of the same team")
-                    .translation(getTranslationKey("other_3")).define("Friendly fire among allies", true);
-            this.enablePlayBossMusic = BUILDER.comment("If 'False' disable play boss music")
-                    .translation(getTranslationKey("other_4")).define("Enable play boss music", true);
-            this.enableFrenzyDestroyBlock = BUILDER.comment("If 'True' enable frenzy potion destroy block")
-                    .translation(getTranslationKey("other_5")).define("Enable frenzy potion destroy block", false);
-            this.enableAnimationLegalityLogPrint = BUILDER.comment("If 'True' enable print illegal animation logs(For developers only)")
-                    .translation(getTranslationKey("other_6")).define("Enable print illegal logs", false);
+            {
+                builder.push("CameraView");
+                this.enableCameraShake = BUILDER.comment("If 'False' disable camera shake")
+                        .translation(getTranslationKey("other_1")).define("Enable camera shake", true);
+                builder.pop();
+            }
+            {
+                builder.push("BossesGeneral");
+                this.enableShowBloodBars = BUILDER.comment("If 'False' disable bosses blood bars")
+                        .translation(getTranslationKey("other_2")).define("Enable bosses blood bars", true);
+                this.enablePlayBossMusic = BUILDER.comment("If 'False' disable play boss music")
+                        .translation(getTranslationKey("other_4")).define("Enable play boss music", true);
+                builder.pop();
+            }
+            {
+                builder.push("Misc");
+                this.enableFrenzyDestroyBlock = BUILDER.comment("If 'True' enable frenzy potion destroy block")
+                        .translation(getTranslationKey("other_5")).define("Enable frenzy potion destroy block", false);
+                this.enableSameMobsTypeInjury = BUILDER.comment("If 'False' able inflict damage between mobs of the same team")
+                        .translation(getTranslationKey("other_3")).define("Friendly fire among allies", true);
+                builder.pop();
+            }
+            {
+                builder.push("Debug");
+                this.enableAnimationLegalityLogPrint = BUILDER.comment("If 'True' enable print illegal animation logs(For developers only)")
+                        .translation(getTranslationKey("other_6")).define("Enable print illegal logs", false);
+                builder.pop();
+            }
             builder.pop();
         }
 
