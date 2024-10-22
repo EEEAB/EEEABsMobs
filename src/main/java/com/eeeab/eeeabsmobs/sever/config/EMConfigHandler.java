@@ -423,8 +423,8 @@ public final class EMConfigHandler {
                     .translation(getTranslationKey("other_3")).define("Friendly fire among allies", true);
             this.enablePlayBossMusic = BUILDER.comment("If 'False' disable play boss music")
                     .translation(getTranslationKey("other_4")).define("Enable play boss music", true);
-            this.enableFrenzyDestroyBlock = BUILDER.comment("If 'False' disable frenzy potion destroy block")
-                    .translation(getTranslationKey("other_5")).define("Enable frenzy potion destroy block", true);
+            this.enableFrenzyDestroyBlock = BUILDER.comment("If 'True' enable frenzy potion destroy block")
+                    .translation(getTranslationKey("other_5")).define("Enable frenzy potion destroy block", false);
             this.enableAnimationLegalityLogPrint = BUILDER.comment("If 'True' enable print illegal animation logs(For developers only)")
                     .translation(getTranslationKey("other_6")).define("Enable print illegal logs", false);
             builder.pop();
