@@ -11,6 +11,7 @@ import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player.OwnerProtectToPlayerGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player.OwnerResetToPlayerGoal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModMobType;
+import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -177,8 +178,10 @@ public class EntityCorpseToPlayer extends EEEABMobLibrary implements IEntity, Gl
             float healAmount = EMConfigHandler.COMMON.MOB.MINION.CORPSE_MINION.minionDeathHealAmount.get().floatValue();
             this.getOwner().heal(healAmount);
             if (healAmount > 0 && this.level() instanceof ServerLevel serverLevel) {
-                this.level().playSound(null,this.getOwner().blockPosition(),SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS,1F, 0.9F + this.random.nextFloat() * 0.2F);
-                serverLevel.sendParticles(ParticleTypes.HEART, this.getOwner().getX(), this.getOwner().getY(0.95D), this.getOwner().getZ(), 1, 0.1D, 0.1D, 0.1D, 0.5D);
+                this.level().playSound(null, this.getOwner().blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1F, 0.9F + this.random.nextFloat() * 0.2F);
+                for (int i = 0; i < 5; i++) {
+                    serverLevel.sendParticles(ParticleInit.WARLOCK_HEAL.get(), this.getOwner().getRandomX(1.5), this.getOwner().getY(0.5D), this.getOwner().getRandomZ(1.5), 1, this.random.nextGaussian() * 0.1D, this.random.nextGaussian() * 0.1D, this.random.nextGaussian() * 0.1D, 0.5D);
+                }
             }
         }
         super.die(source);
