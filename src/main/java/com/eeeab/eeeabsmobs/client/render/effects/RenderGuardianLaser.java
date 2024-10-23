@@ -16,7 +16,7 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 @OnlyIn(Dist.CLIENT)
-public class RenderGuardianLaser extends RenderAbsLightBeam<EntityGuardianLaser> {
+public class RenderGuardianLaser extends RenderAbsBeam<EntityGuardianLaser> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/guardian_laser.png");
     private static final float TEXTURE_WIDTH = 256;
     private static final float TEXTURE_HEIGHT = 32;

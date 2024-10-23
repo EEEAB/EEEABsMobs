@@ -17,7 +17,7 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
-public class RenderCrimsonRay extends RenderAbsLightBeam<EntityCrimsonRay> {
+public class RenderCrimsonRay extends RenderAbsBeam<EntityCrimsonRay> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/crimson_ray.png");
     private static final float TEXTURE_WIDTH = 256;
     private static final float TEXTURE_HEIGHT = 32;

@@ -10,7 +10,7 @@ import com.eeeab.eeeabsmobs.sever.entity.guling.EntityGulingSentinel;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityGulingSentinelHeavy;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.*;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityTheImmortal;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGrenade;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityPoisonArrow;
@@ -85,9 +85,9 @@ public class EntityInit {
                             .sized(0.8f, 2.45f).fireImmune().clientTrackingRange(8)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_executioner").toString()));
 
-    public static final RegistryObject<EntityType<EntityTheImmortal>> IMMORTAL_BOSS =
+    public static final RegistryObject<EntityType<EntityImmortal>> IMMORTAL_BOSS =
             ENTITIES.register("immortal",
-                    () -> EntityType.Builder.<EntityTheImmortal>of(EntityTheImmortal::new, MobCategory.MONSTER)
+                    () -> EntityType.Builder.<EntityImmortal>of(EntityImmortal::new, MobCategory.MONSTER)
                             .sized(2.8f, 4.45f).fireImmune().clientTrackingRange(10)
                             .setShouldReceiveVelocityUpdates(true)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal").toString()));
@@ -152,11 +152,7 @@ public class EntityInit {
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "falling_block").toString()));
 
     //守卫者激光
-    public static final RegistryObject<EntityType<EntityGuardianLaser>> GUARDIAN_LASER =
-            ENTITIES.register("guardian_laser",
-                    () -> EntityType.Builder.<EntityGuardianLaser>of(EntityGuardianLaser::new, MobCategory.MISC)
-                            .sized(0.1f, 0.1f).setUpdateInterval(1)
-                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "guardian_laser").toString()));
+    public static final RegistryObject<EntityType<EntityGuardianLaser>> GUARDIAN_LASER = registerCommonBeamEntity(EntityGuardianLaser::new, "guardian_laser");
 
     //守卫者之刃
     public static final RegistryObject<EntityType<EntityGuardianBlade>> GUARDIAN_BLADE =
@@ -201,11 +197,7 @@ public class EntityInit {
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "crimson_crack").toString()));
 
     //腥红射线
-    public static final RegistryObject<EntityType<EntityCrimsonRay>> CRIMSON_RAY =
-            ENTITIES.register("crimson_ray",
-                    () -> EntityType.Builder.<EntityCrimsonRay>of(EntityCrimsonRay::new, MobCategory.MISC)
-                            .sized(0.1f, 0.1f).setUpdateInterval(1)
-                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "crimson_ray").toString()));
+    public static final RegistryObject<EntityType<EntityCrimsonRay>> CRIMSON_RAY = registerCommonBeamEntity(EntityCrimsonRay::new, "crimson_ray");
     public static final RegistryObject<EntityType<EntityCrimsonRay.PreAttack>> CRIMSON_RAY_PRE =
             ENTITIES.register("crimson_ray_pre",
                     () -> EntityType.Builder.<EntityCrimsonRay.PreAttack>of(EntityCrimsonRay.PreAttack::new, MobCategory.MISC)
@@ -247,8 +239,15 @@ public class EntityInit {
                             .sized(0.5F, 0.5F).clientTrackingRange(8).updateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_shuriken").toString()));
 
+    //不朽激光
+    public static final RegistryObject<EntityType<EntityImmortalLaser>> IMMORTAL_LASER = registerCommonBeamEntity(EntityImmortalLaser::new, "immortal_laser");
+
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);
+    }
+
+    private static <T extends EntityAbsBeam> RegistryObject<EntityType<T>> registerCommonBeamEntity(EntityType.EntityFactory<T> entityFactory, String name) {
+        return ENTITIES.register(name, () -> EntityType.Builder.of(entityFactory, MobCategory.MISC).sized(0.1F, 0.1F).setUpdateInterval(1).build(new ResourceLocation(EEEABMobs.MOD_ID, name).toString()));
     }
 
     @SubscribeEvent
@@ -262,7 +261,7 @@ public class EntityInit {
         event.put(EntityInit.IMMORTAL_SHAMAN.get(), EntityImmortalShaman.setAttributes().build());
         event.put(EntityInit.IMMORTAL_GOLEM.get(), EntityImmortalGolem.setAttributes().build());
         event.put(EntityInit.IMMORTAL_EXECUTIONER.get(), EntityImmortalExecutioner.setAttributes().build());
-        event.put(EntityInit.IMMORTAL_BOSS.get(), EntityTheImmortal.setAttributes().build());
+        event.put(EntityInit.IMMORTAL_BOSS.get(), EntityImmortal.setAttributes().build());
         event.put(EntityInit.GULING_SENTINEL.get(), EntityGulingSentinel.setAttributes().build());
         event.put(EntityInit.GULING_SENTINEL_HEAVY.get(), EntityGulingSentinelHeavy.setAttributes().build());
         event.put(EntityInit.NAMELESS_GUARDIAN.get(), EntityNamelessGuardian.setAttributes().build());

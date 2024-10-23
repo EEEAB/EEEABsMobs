@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class EntityCrimsonRay extends EntityAbsLightBeam {
+public class EntityCrimsonRay extends EntityAbsBeam {
     private static final EntityDataAccessor<Integer> DATA_ATTACK_HEIGHT = SynchedEntityData.defineId(EntityCrimsonRay.class, EntityDataSerializers.INT);
 
     public EntityCrimsonRay(EntityType<? extends EntityCrimsonRay> type, Level level) {

@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-//参考自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/server/entity/effects/EntitySolarBeam.java
-public class EntityAbsLightBeam extends EntityMagicEffects {
+//基于自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/server/entity/effects/EntitySolarBeam.java
+public class EntityAbsBeam extends EntityMagicEffects {
     public float yaw, pitch;
     public float preYaw, prePitch;
     public double endPosX, endPosY, endPosZ;
@@ -28,12 +28,12 @@ public class EntityAbsLightBeam extends EntityMagicEffects {
     public Direction blockSide = null;
     public boolean ON = true;
     public ControlledAnimation displayControlled = new ControlledAnimation(3);
-    private static final EntityDataAccessor<Float> DATA_YAW = SynchedEntityData.defineId(EntityAbsLightBeam.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> DATA_PITCH = SynchedEntityData.defineId(EntityAbsLightBeam.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Integer> DATA_DURATION = SynchedEntityData.defineId(EntityAbsLightBeam.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> DATA_COUNT_DOWN = SynchedEntityData.defineId(EntityAbsLightBeam.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> DATA_YAW = SynchedEntityData.defineId(EntityAbsBeam.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_PITCH = SynchedEntityData.defineId(EntityAbsBeam.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Integer> DATA_DURATION = SynchedEntityData.defineId(EntityAbsBeam.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_COUNT_DOWN = SynchedEntityData.defineId(EntityAbsBeam.class, EntityDataSerializers.INT);
 
-    public EntityAbsLightBeam(EntityType<?> type, Level level, int countDown) {
+    public EntityAbsBeam(EntityType<?> type, Level level, int countDown) {
         super(type, level);
         this.setCountDown(countDown);
         noCulling = true;

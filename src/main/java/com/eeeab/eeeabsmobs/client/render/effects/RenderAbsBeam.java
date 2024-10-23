@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.render.effects;
 
 import com.eeeab.eeeabsmobs.client.render.EMRenderType;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityAbsLightBeam;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityAbsBeam;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -21,13 +21,13 @@ import org.joml.Quaternionf;
 
 @OnlyIn(Dist.CLIENT)
 //基于自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/client/render/entity/RenderSolarBeam.java
-public abstract class RenderAbsLightBeam<T extends EntityAbsLightBeam> extends EntityRenderer<T> {
+public abstract class RenderAbsBeam<T extends EntityAbsBeam> extends EntityRenderer<T> {
     private static final float TEXTURE_WIDTH = 256;
     private static final float TEXTURE_HEIGHT = 32;
     private final float quadRadius;
     private final float beamRadius;
 
-    public RenderAbsLightBeam(EntityRendererProvider.Context mgr, float quadRadius, float beamRadius) {
+    public RenderAbsBeam(EntityRendererProvider.Context mgr, float quadRadius, float beamRadius) {
         super(mgr);
         this.quadRadius = quadRadius;
         this.beamRadius = beamRadius;

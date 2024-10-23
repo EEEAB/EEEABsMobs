@@ -23,7 +23,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.List;
 
-public class EntityGuardianLaser extends EntityAbsLightBeam {
+public class EntityGuardianLaser extends EntityAbsBeam {
     public static final double GUARDIAN_RADIUS = 32;
     private static final EntityDataAccessor<Boolean> DATA_IS_PLAYER = SynchedEntityData.defineId(EntityGuardianLaser.class, EntityDataSerializers.BOOLEAN);
 
