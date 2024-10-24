@@ -11,7 +11,6 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -133,8 +132,8 @@ public class EntityAbsBeam extends EntityMagicEffects {
     }
 
 
-    public LaserHitResult raytraceEntities(Level world, Vec3 from, Vec3 to) {
-        LaserHitResult result = new LaserHitResult();
+    public HitResult raytraceEntities(Level world, Vec3 from, Vec3 to) {
+        HitResult result = new HitResult();
         result.setBlockHit(world.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this)));
         if (result.getBlockHit() != null) {
             Vec3 hitVec = result.getBlockHit().getLocation();
@@ -153,7 +152,7 @@ public class EntityAbsBeam extends EntityMagicEffects {
             if (entity == this.caster) {
                 continue;
             }
-            float pad = entity.getPickRadius() + 0.5f;
+            float pad = entity.getPickRadius() + getBaseScale();
             AABB aabb = entity.getBoundingBox().inflate(pad, pad, pad);
             Optional<Vec3> hit = aabb.clip(from, to);
             if (aabb.contains(from)) {
@@ -165,7 +164,11 @@ public class EntityAbsBeam extends EntityMagicEffects {
         return result;
     }
 
-    public static class LaserHitResult {
+    protected float getBaseScale() {
+        return 0.5F;
+    }
+
+    public static class HitResult {
         private BlockHitResult blockHit;
         private final List<LivingEntity> entities = new ArrayList<>();
 
@@ -177,8 +180,8 @@ public class EntityAbsBeam extends EntityMagicEffects {
             return entities;
         }
 
-        public void setBlockHit(HitResult rayTraceResult) {
-            if (rayTraceResult.getType() == HitResult.Type.BLOCK)
+        public void setBlockHit(net.minecraft.world.phys.HitResult rayTraceResult) {
+            if (rayTraceResult.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK)
                 this.blockHit = (BlockHitResult) rayTraceResult;
         }
 
