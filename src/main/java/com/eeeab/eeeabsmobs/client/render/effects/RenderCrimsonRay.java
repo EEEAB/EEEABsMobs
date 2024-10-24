@@ -29,32 +29,6 @@ public class RenderCrimsonRay extends RenderAbsBeam<EntityCrimsonRay> {
     }
 
     @Override
-    public void render(EntityCrimsonRay ray, float entityYaw, float delta, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
-        double collidePosX = ray.prevCollidePosX + (ray.collidePosX - ray.prevCollidePosX) * delta;
-        double collidePosY = ray.prevCollidePosY + (ray.collidePosY - ray.prevCollidePosY) * delta;
-        double collidePosZ = ray.prevCollidePosZ + (ray.collidePosZ - ray.prevCollidePosZ) * delta;
-        double posX = ray.xo + (ray.getX() - ray.xo) * delta;
-        double posY = ray.yo + (ray.getY() - ray.yo) * delta;
-        double posZ = ray.zo + (ray.getZ() - ray.zo) * delta;
-        float yaw = ray.preYaw + (ray.yaw - ray.preYaw) * delta;
-        float pitch = ray.prePitch + (ray.pitch - ray.prePitch) * delta;
-
-        float length = (float) Math.sqrt(Math.pow(collidePosX - posX, 2) + Math.pow(collidePosY - posY, 2) + Math.pow(collidePosZ - posZ, 2));
-        int frame = Mth.floor((ray.displayControlled.getTimer() - 1 + delta) * 2);
-        if (frame < 0) {
-            frame = 6;
-        }
-        if (!ray.isAccumulating()) return;
-        VertexConsumer vertex$builder = bufferIn.getBuffer(EMRenderType.getGlowingEffect(getTextureLocation(ray)));
-        renderStart(ray, frame, matrixStackIn, vertex$builder, delta, packedLightIn);
-        renderBeam(length, 180f / (float) Math.PI * yaw, 180f / (float) Math.PI * pitch, frame, matrixStackIn, vertex$builder, packedLightIn);
-        matrixStackIn.pushPose();
-        matrixStackIn.translate(collidePosX - posX, collidePosY - posY, collidePosZ - posZ);
-        renderEnd(frame, ray.blockSide, matrixStackIn, vertex$builder, packedLightIn);
-        matrixStackIn.popPose();
-    }
-
-    @Override
     public ResourceLocation getTextureLocation(EntityCrimsonRay entity) {
         return TEXTURE;
     }
@@ -83,7 +57,8 @@ public class RenderCrimsonRay extends RenderAbsBeam<EntityCrimsonRay> {
         }
     }
 
-    private void renderStart(EntityCrimsonRay ray, int frame, PoseStack matrixStackIn, VertexConsumer builder, float delta, int packedLightIn) {
+    @Override
+    protected void renderStart(EntityCrimsonRay ray, int frame, PoseStack matrixStackIn, VertexConsumer builder, float delta, int packedLightIn) {
         matrixStackIn.pushPose();
         float speed = (ray.tickCount + delta) * 3F;
         matrixStackIn.mulPose(Axis.YP.rotationDegrees(90.0F - ray.getYRot() + speed));
@@ -93,7 +68,7 @@ public class RenderCrimsonRay extends RenderAbsBeam<EntityCrimsonRay> {
     }
 
     @Override
-    protected void renderEnd(int frame, Direction side, PoseStack matrixStackIn, VertexConsumer builder, int packedLightIn) {
+    protected void renderEnd(EntityCrimsonRay ray, int frame, Direction side, PoseStack matrixStackIn, VertexConsumer builder, float delta, int packedLightIn) {
         matrixStackIn.pushPose();
         Quaternionf quat = this.entityRenderDispatcher.cameraOrientation();
         matrixStackIn.mulPose(quat);

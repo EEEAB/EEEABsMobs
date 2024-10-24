@@ -60,9 +60,9 @@ public class RenderGuardianLaser extends RenderAbsBeam<EntityGuardianLaser> {
     }
 
     @Override
-    protected void renderStart(int frame, PoseStack matrixStackIn, VertexConsumer builder, int packedLightIn) {
+    protected void renderStart(EntityGuardianLaser laser, int frame, PoseStack matrixStackIn, VertexConsumer builder, float delta, int packedLightIn) {
         if (playerView) return;
-        super.renderStart(frame, matrixStackIn, builder, packedLightIn);
+        super.renderStart(laser, frame, matrixStackIn, builder, delta, packedLightIn);
     }
 
     @Override

@@ -54,11 +54,11 @@ public abstract class RenderAbsBeam<T extends EntityAbsBeam> extends EntityRende
         }
         if (!laser.isAccumulating()) return;
         VertexConsumer vertex$builder = bufferIn.getBuffer(EMRenderType.getGlowingEffect(getTextureLocation(laser)));
-        renderStart(frame, matrixStackIn, vertex$builder, packedLightIn);
+        renderStart(laser, frame, matrixStackIn, vertex$builder, delta, packedLightIn);
         renderBeam(length, 180f / (float) Math.PI * yaw, 180f / (float) Math.PI * pitch, frame, matrixStackIn, vertex$builder, packedLightIn);
         matrixStackIn.pushPose();
         matrixStackIn.translate(collidePosX - posX, collidePosY - posY, collidePosZ - posZ);
-        renderEnd(frame, laser.blockSide, matrixStackIn, vertex$builder, packedLightIn);
+        renderEnd(laser, frame, laser.blockSide, matrixStackIn, vertex$builder, delta, packedLightIn);
         matrixStackIn.popPose();
     }
 
@@ -79,7 +79,7 @@ public abstract class RenderAbsBeam<T extends EntityAbsBeam> extends EntityRende
     }
 
     //渲染激光起始位置
-    protected void renderStart(int frame, PoseStack matrixStackIn, VertexConsumer builder, int packedLightIn) {
+    protected void renderStart(T entity, int frame, PoseStack matrixStackIn, VertexConsumer builder, float delta, int packedLightIn) {
         matrixStackIn.pushPose();
         Quaternionf quaternionf = this.entityRenderDispatcher.cameraOrientation();
         matrixStackIn.mulPose(quaternionf);
@@ -88,7 +88,7 @@ public abstract class RenderAbsBeam<T extends EntityAbsBeam> extends EntityRende
     }
 
     //渲染激光后半部分
-    protected void renderEnd(int frame, Direction side, PoseStack matrixStackIn, VertexConsumer builder, int packedLightIn) {
+    protected void renderEnd(T entity, int frame, Direction side, PoseStack matrixStackIn, VertexConsumer builder, float delta, int packedLightIn) {
         matrixStackIn.pushPose();
         Quaternionf quat = this.entityRenderDispatcher.cameraOrientation();
         matrixStackIn.mulPose(quat);
