@@ -79,7 +79,7 @@ public class EntityGuardianLaser extends EntityAbsBeam {
                     new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.RED, AnimData.KeyTrack.startAndEnd(1f, 0.3f), false),
             }, false);
         }
-        if (this.tickCount > this.getCountDown()) {
+        if (this.tickCount >= this.getCountDown()) {
             this.calculateEndPos(isPlayer() ? EMConfigHandler.COMMON.ENTITY.guardianLaserShootRadius.get() : GUARDIAN_RADIUS);
             List<LivingEntity> hit = raytraceEntities(level(), new Vec3(getX(), getY(), getZ()), new Vec3(endPosX, endPosY, endPosZ)).getEntities();
             if (this.blockSide != null) {
