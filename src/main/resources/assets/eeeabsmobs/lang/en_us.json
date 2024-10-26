@@ -120,6 +120,9 @@
   "tooltip.other.eeeabsmobs.cd.tip": "CD %1$s sec",
   "tooltip.other.eeeabsmobs.no_cd.tip": "No CD",
 
+  "_comment": "Attributes",
+  "eeeabsmobs.crit_chance": "Crit Rate",
+
   "_comment": "Effects",
   "effect.eeeabsmobs.erode_effect": "Erode",
   "effect.eeeabsmobs.armor_lower_effect": "Armor Reduction",

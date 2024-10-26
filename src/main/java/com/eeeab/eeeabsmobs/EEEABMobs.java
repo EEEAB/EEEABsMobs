@@ -39,15 +39,16 @@ public class EEEABMobs {
         BlockEntityInit.register(bus);
         EntityInit.register(bus);
         CreativeTabInit.register(bus);
+        AttributeInit.register(bus);
         EffectInit.register(bus);
         PotionInit.register(bus);
         ParticleInit.register(bus);
         SoundInit.register(bus);
         MenuInit.register(bus);
         StructuresInit.register(bus);
-        bus.<FMLCommonSetupEvent>addListener(this::setup);
-        bus.<FMLClientSetupEvent>addListener(this::clientSetup);
-        bus.<FMLLoadCompleteEvent>addListener(this::complete);
+        bus.addListener(this::setup);
+        bus.addListener(this::clientSetup);
+        bus.addListener(this::complete);
         PROXY.init(bus);
     }
 

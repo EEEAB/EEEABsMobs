@@ -16,17 +16,22 @@ import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalExecutioner;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
+import com.eeeab.eeeabsmobs.sever.init.AttributeInit;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.message.MessageFrenzyEffect;
 import com.eeeab.eeeabsmobs.sever.message.MessageVertigoEffect;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
+import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.AbstractGolem;
@@ -319,19 +324,11 @@ public final class HandlerServerEvent {
     public void onLivingEntityHurt(LivingHurtEvent event) {
         DamageSource source = event.getSource();
         Entity directEntity = source.getDirectEntity();
-        Entity attacker = source.getEntity();
         LivingEntity hurtEntity = event.getEntity();
 
         if (directEntity instanceof EntityShamanBomb shamanBomb) {
             if (shamanBomb.reboundFlag && !shamanBomb.isPlayer()) {
                 hurtEntity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), 100, 0, false, false));
-            }
-        }
-
-        if (hurtEntity instanceof Player player) {
-            PlayerCapability.IPlayerCapability playerCapability = HandlerCapability.getCapability(player, HandlerCapability.PLAYER_CAPABILITY);
-            if (playerCapability != null) {
-                playerCapability.hurt(player, source, event.getAmount());
             }
         }
 
@@ -344,12 +341,32 @@ public final class HandlerServerEvent {
             }
             event.setAmount(damage);
         }
+
+        AttributeInstance attribute = hurtEntity.getAttribute(AttributeInit.CRIT_CHANCE.get());
+        Entity attacker = source.getEntity();
+        if (attribute != null && attacker != null) {
+            double chance = attribute.getValue() - 1D;
+            if (chance > 0 && hurtEntity.getRandom().nextFloat() <= chance) {
+                float damage = event.getAmount();
+                damage *= 1.5F;
+                event.setAmount(damage);
+                hurtEntity.level().playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.PLAYER_ATTACK_CRIT, hurtEntity.getSoundSource(), 1.0F, 1.0F);
+                if (hurtEntity.level() instanceof ServerLevel serverLevel) serverLevel.getChunkSource().broadcastAndSend(attacker, new ClientboundAnimatePacket(hurtEntity, 4));
+            }
+        }
+
+        if (hurtEntity instanceof Player player) {
+            PlayerCapability.IPlayerCapability playerCapability = HandlerCapability.getCapability(player, HandlerCapability.PLAYER_CAPABILITY);
+            if (playerCapability != null) {
+                playerCapability.hurt(player, source, event.getAmount());
+            }
+        }
     }
 
     @SubscribeEvent
-    public void onLivingEntityBreathe(LivingBreatheEvent event){
+    public void onLivingEntityBreathe(LivingBreatheEvent event) {
         LivingEntity entity = event.getEntity();
-        if (entity.hasEffect(EffectInit.FRENZY_EFFECT.get())){
+        if (entity.hasEffect(EffectInit.FRENZY_EFFECT.get())) {
             event.setCanBreathe(true);
         }
     }

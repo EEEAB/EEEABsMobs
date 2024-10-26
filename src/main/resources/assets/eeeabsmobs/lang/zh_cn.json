@@ -120,6 +120,9 @@
   "tooltip.other.eeeabsmobs.cd.tip": "冷却 %1$s 秒",
   "tooltip.other.eeeabsmobs.no_cd.tip": "无冷却",
 
+  "_comment": "属性",
+  "eeeabsmobs.crit_chance": "受到暴击率",
+
   "_comment": "药水效果",
   "effect.eeeabsmobs.erode_effect": "侵蚀",
   "effect.eeeabsmobs.armor_lower_effect": "弱防",
