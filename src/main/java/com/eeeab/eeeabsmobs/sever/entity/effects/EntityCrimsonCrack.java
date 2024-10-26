@@ -83,7 +83,7 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
                             if (this.distanceTo(target) <= ATTACK_RANGE) {
                                 boolean flag = target.hurt(this.damageSources().indirectMagic(this, caster), 5F + target.getMaxHealth() * 0.015F);
                                 if (flag && target.isAlive()) {
-                                    ModEntityUtils.addEffectStackingAmplifier(target, EffectInit.ARMOR_LOWER_EFFECT.get(), 300, 5, true, true, true, true);
+                                    ModEntityUtils.addEffectStackingAmplifier(null, target, EffectInit.ARMOR_LOWER_EFFECT.get(), 300, 5, true, true, true, true, false);
                                     this.doEnchantDamageEffects(this.caster, target);
                                 }
                             }

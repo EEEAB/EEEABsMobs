@@ -178,7 +178,7 @@ public class EntityImmortalShuriken extends EntityMagicEffects {
             MobEffectInstance instance = hitEntity.getEffect(EffectInit.ERODE_EFFECT.get());
             if (instance != null) baseDamage += (instance.getAmplifier() + 1) * 0.5F;
             if (entity.hurt(EMDamageSource.immortalMagicAttack(this, this.caster), baseDamage + hitEntity.getMaxHealth() * 0.025F)) {
-                ModEntityUtils.addEffectStackingAmplifier(hitEntity, EffectInit.ERODE_EFFECT.get(), 300, this.difficultyLevel, true, true, true, true);
+                ModEntityUtils.addEffectStackingAmplifier(this.caster, hitEntity, EffectInit.ERODE_EFFECT.get(), 300, this.difficultyLevel, true, true, true, true, true);
             }
         } else {
             entity.hurt(this.damageSources().magic(), 11.4514F);

@@ -95,7 +95,7 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
                                     MobEffectInstance instance = inRange.getEffect(effect);
                                     if (instance != null && instance.getAmplifier() >= 1) continue;
                                 }
-                                ModEntityUtils.addEffectStackingAmplifier(inRange, effect, getDuration(), 2, true, true, true, false);
+                                ModEntityUtils.addEffectStackingAmplifier(null, inRange, effect, getDuration(), 2, true, true, true, false, false);
                             }
                         }
                     }

@@ -26,6 +26,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import org.joml.Quaternionf;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 /**
@@ -320,23 +321,23 @@ public class ModEntityUtils {
      * 给指定实体添加药水效果
      *
      * @param refreshDuration 是否刷新持续时间
+     * @param force           是否强制添加药水效果
      */
-    public static void addEffectStackingAmplifier(LivingEntity target, MobEffect mobEffect, int duration, int maxLevel, boolean ambient, boolean visible, boolean showIcon, boolean refreshDuration) {
+    public static void addEffectStackingAmplifier(@Nullable Entity entity, LivingEntity target, MobEffect mobEffect, int duration, int maxLevel, boolean ambient, boolean visible, boolean showIcon, boolean refreshDuration, boolean force) {
         if (!target.hasEffect(mobEffect)) {
             target.addEffect(new MobEffectInstance(mobEffect, duration, 0, ambient, visible, showIcon));
         } else {
             MobEffectInstance instance = target.getEffect(mobEffect);
             if (instance != null) {
                 int level = instance.getAmplifier();
-                if (level < Math.max(maxLevel - 1, 0)) {
-                    level++;
-                }
+                if (level < Math.max(maxLevel - 1, 0)) level++;
                 /*
                     假如原先已有药水效果:在原有的基础上提升1级的同时持续时间减半(不小于duration添加的时长)
                     当原先的药水效果时长为-1时:则会在基础上提升1级的同时使用duration添加的时长,在失效时会自动恢复到原先等级的药水效果且时效依旧永久
                  */
                 duration = refreshDuration ? duration : Math.max(instance.getDuration() / 2, duration);
-                target.addEffect(new MobEffectInstance(mobEffect, duration, level, ambient, visible, showIcon));
+                if (force) target.forceAddEffect(new MobEffectInstance(mobEffect, duration, level, ambient, visible, showIcon), entity);
+                else target.addEffect(new MobEffectInstance(mobEffect, duration, level, ambient, visible, showIcon), entity);
             }
         }
     }
