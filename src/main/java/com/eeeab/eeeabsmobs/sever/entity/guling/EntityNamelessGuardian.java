@@ -29,7 +29,6 @@ import com.eeeab.eeeabsmobs.sever.entity.util.ShockWaveUtils;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.EMResourceKey;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -217,7 +216,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     public float getStepHeight() {
-        return 1.5F;
+        return 3F;
     }
 
     @Override//可以站立的流体
@@ -1200,10 +1199,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         //治疗值 = 攻击力15% + 生命上限1.5% - 目标护甲值5%
         float armor = Mth.clamp(hitEntity.getArmorValue() * 0.05F, 0F, 1.5F);
         float heal = (guardian.getAttackDamageAttributeValue() * 0.15F) + (guardian.getMaxHealth() * 0.015F) - armor;
-        if (damageSource.is(EMResourceKey.GUARDIAN_LASER)) {
-            heal = guardian.getAttackDamageAttributeValue() * 0.12F + (guardian.getMaxHealth() * 0.012F) - armor;
-            finalDamage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(finalDamage, hitEntity.getArmorValue(), (float) hitEntity.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0.8F);
-        }
         boolean flag = hitEntity.hurt(damageSource, finalDamage);
         boolean blocking = hitEntity instanceof Player && hitEntity.isBlocking();
         boolean checkConfig = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.enableForcedSuckBlood.get() || this.isChallengeMode();

@@ -93,7 +93,7 @@ public class EntityGuardianLaser extends EntityAbsBeam {
                 for (LivingEntity target : hit) {
                     target.setSecondsOnFire(3);
                     if (this.caster instanceof EntityNamelessGuardian guardian) {
-                        guardian.guardianHurtTarget(EMDamageSource.guardianLaserAttack(this, guardian), guardian, target, 0.035F, 0.22F, 1F, true, false, false);
+                        guardian.guardianHurtTarget(EMDamageSource.guardianLaserAttack(this, guardian), guardian, target, 0.035F, 0.22F, 1F, guardian.isChallengeMode(), false, false);
                     } else if (this.caster != null) {
                         target.hurt(this.damageSources().mobAttack(this.caster), 5F + target.getMaxHealth() * 0.01F);
                     }
