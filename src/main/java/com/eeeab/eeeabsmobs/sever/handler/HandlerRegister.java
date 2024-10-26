@@ -56,7 +56,7 @@ public class HandlerRegister {
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_SKELETON, ModelAbsImmortalSkeleton::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_SHAMAN, ModelImmortalShaman::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_EXECUTIONER, ModelImmortalExecutioner::createBodyLayer);
-        event.registerLayerDefinition(EMModelLayer.IMMORTAL, ModelTheImmortal::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.IMMORTAL, ModelImmortal::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.IMMORTAL_FIREBALL, ModelImmortalShuriken::createBodyLayer);
 
         event.registerLayerDefinition(EMModelLayer.GHOST_WARRIOR_ARMOR, () -> ModelGhostWarriorArmor.createBodyLayer(new CubeDeformation(0.5F)));
@@ -72,7 +72,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.IMMORTAL_SHAMAN.get(), RenderImmortalShaman::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_GOLEM.get(), RenderImmortalGolem::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_EXECUTIONER.get(), RenderImmortalExecutioner::new);
-        event.registerEntityRenderer(EntityInit.IMMORTAL_BOSS.get(), RenderTheImmortal::new);
+        event.registerEntityRenderer(EntityInit.IMMORTAL_BOSS.get(), RenderImmortal::new);
         event.registerEntityRenderer(EntityInit.CORPSE.get(), RenderCorpse::new);
         event.registerEntityRenderer(EntityInit.CORPSE_VILLAGER.get(), RenderCorpseVillager::new);
         event.registerEntityRenderer(EntityInit.CORPSE_WARLOCK.get(), RenderCorpseWarlock::new);
@@ -101,6 +101,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.ALIEN_PORTAL.get(), RenderAlienPortal::new);
         event.registerEntityRenderer(EntityInit.MAGIC_CIRCLE.get(), RenderImmortalMagicCircle::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_SHURIKEN.get(), RenderImmortalShuriken::new);
+        event.registerEntityRenderer(EntityInit.IMMORTAL_LASER.get(), RenderImmortalLaser::new);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -112,8 +113,10 @@ public class HandlerRegister {
         event.registerSpriteSet(ParticleInit.CRIMSON_EYE.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.STRIP_SOUL_FIRE.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.GLOW.get(), AdvancedParticleBase.Factory::new);
+        event.registerSpriteSet(ParticleInit.ADV_RING.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.BIG_RING.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.CRIT_RING.get(), AdvancedParticleBase.Factory::new);
+        event.registerSpriteSet(ParticleInit.THUMP_RING.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.PUNCTURED_AIR_RING.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.FLAT_RIBBON.get(), ParticleRibbon.Factory::new);
         event.registerSpriteSet(ParticleInit.DUST.get(), ParticleDust.DustFactory::new);
@@ -121,6 +124,7 @@ public class HandlerRegister {
         event.registerSpriteSet(ParticleInit.GUARDIAN_SPARK.get(), ParticleGuardianSpark.GuardianSparkFactory::new);
         event.registerSpriteSet(ParticleInit.POISON.get(), ParticlePoison.PoisonFactory::new);
         event.registerSpriteSet(ParticleInit.WARLOCK_HEAL.get(), SuspendedTownParticle.HappyVillagerProvider::new);
+        event.registerSpriteSet(ParticleInit.IMMORTAL_EXPLOSION.get(), ParticleImmortalExplosion.ImmortalExplosionFactory::new);
         event.registerSpriteSet(ParticleInit.RING.get(), ParticleRing.RingFactory::new);
     }
 
