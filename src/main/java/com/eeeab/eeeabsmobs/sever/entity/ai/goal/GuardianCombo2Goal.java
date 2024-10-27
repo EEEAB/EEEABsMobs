@@ -76,7 +76,7 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
             } else {
                 this.entity.setYRot(this.entity.yRotO);
             }
-            if (tick == 10) {
+            if (tick == 9) {
                 this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.05f, this.entity.getVoicePitch() + 0.15f);
                 pursuit(1.5F);
             } else if (tick == 13) {
@@ -104,9 +104,10 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
             } else {
                 this.entity.setYRot(this.entity.yRotO);
             }
-            if (tick == 10) {
-                this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.2f, this.entity.getVoicePitch() + 0.15f);
+            if (tick == 8) {
                 pursuit(1.6F);
+            } else if (tick == 9) {
+                this.entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.2f, this.entity.getVoicePitch() + 0.15f);
             } else if (tick == 12) {
                 for (int i = 0; i < 6; i++) {
                     entity.shockAttack(entity.damageSources().mobAttack(entity), i, -0.5F, 0.3F, 2F, 0.025F, 0.5F, (isPowered ? 1.0F : 0.8F), false, true, true);
