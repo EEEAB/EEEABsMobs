@@ -61,7 +61,7 @@ public class GuardianLeapGoal extends AnimationSimpleAI<EntityNamelessGuardian> 
                 if (this.entity.level().hasChunksAt(min, max)) {
                     BlockPos.betweenClosedStream(min, max).
                             filter((pos) -> ModEntityUtils.canDestroyBlock(this.entity.level(), pos, this.entity, 2F)).
-                            forEach((pos) -> this.entity.level().destroyBlock(pos, true));
+                            forEach((pos) -> this.entity.level().destroyBlock(pos, entity.checkCanDropItems()));
                 }
             }
             if (onGround) {

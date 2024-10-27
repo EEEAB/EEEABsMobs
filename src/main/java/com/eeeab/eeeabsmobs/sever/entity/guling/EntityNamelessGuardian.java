@@ -714,7 +714,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             if (!this.isNoAi() && this.destroyBlocksTick > 0) {
                 this.destroyBlocksTick--;
                 if (this.destroyBlocksTick == 0 && ModEntityUtils.canMobDestroy(this)) {
-                    ModEntityUtils.advancedBreakBlocks(this.level(), this, 50F, 2, 4, 2, 0, 0, true, true);
+                    ModEntityUtils.advancedBreakBlocks(this.level(), this, 50F, 2, 4, 2, 0, 0, this.checkCanDropItems(), true);
                 }
             }
         }

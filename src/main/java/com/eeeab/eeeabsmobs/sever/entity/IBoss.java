@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity;
 
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
@@ -56,5 +57,12 @@ public interface IBoss extends IEntity {
         }
         if (!flag) boss.playSound(SoundInit.UNDAMAGED.get(), 1F, 2F);
         changeIllegalityCount(!flag);
+    }
+
+    /**
+     * @return 检查boss通用配置判断是否可以在破坏方块的时候掉落物品
+     */
+    default boolean checkCanDropItems() {
+        return EMConfigHandler.COMMON.OTHER.enableBossCanBreakingBlockDropItem.get();
     }
 }

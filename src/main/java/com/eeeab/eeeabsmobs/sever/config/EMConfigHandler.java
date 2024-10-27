@@ -80,7 +80,7 @@ public final class EMConfigHandler {
                 builder.pop();
             }
             {
-                builder.push("Ghost Warrior Armor & Weapons");
+                builder.push("Ghost Warrior Series");
                 enableGhostWarriorArmorItemDurability = BUILDER.comment("If 'True' armor will be depleted")
                         .translation(getTranslationKey("armor_depleted"))
                         .define("Enable armor can be depleted", false);
@@ -249,7 +249,7 @@ public final class EMConfigHandler {
     //不朽
     public static class Immortal {
         public Immortal(final ForgeConfigSpec.Builder builder) {
-            builder.push("Immortal Boss");
+            builder.push("The Immortal");
             intervalProtect = BUILDER.translation(getTranslationKey("interval_protect")).define("Frame Damage Protection", true);
             combatConfig = new AttributeConfig();
             maximumDamageCap = new DamageCapConfig(20);
@@ -416,31 +416,33 @@ public final class EMConfigHandler {
         public Other(final ForgeConfigSpec.Builder builder) {
             builder.push("Others");
             {
-                builder.push("CameraView");
+                builder.push("Camera");
                 this.enableCameraShake = BUILDER.comment("If 'False' disable camera shake")
-                        .translation(getTranslationKey("other_1")).define("Enable camera shake", true);
+                        .translation(getTranslationKey("camera_1")).define("Enable camera shake", true);
                 builder.pop();
             }
             {
-                builder.push("BossesGeneral");
+                builder.push("Bosses");
                 this.enableShowBloodBars = BUILDER.comment("If 'False' disable bosses blood bars")
-                        .translation(getTranslationKey("other_2")).define("Enable bosses blood bars", true);
+                        .translation(getTranslationKey("bosses_1")).define("Enable bosses blood bars", true);
                 this.enablePlayBossMusic = BUILDER.comment("If 'False' disable play boss music")
-                        .translation(getTranslationKey("other_4")).define("Enable play boss music", true);
+                        .translation(getTranslationKey("bosses_2")).define("Enable play bosses musics", true);
+                this.enableBossCanBreakingBlockDropItem = BUILDER.comment("If 'False' disable bosses breaking blocks drop items")
+                        .translation(getTranslationKey("bosses_3")).define("Enable bosses breaking blocks drop items", false);
                 builder.pop();
             }
             {
                 builder.push("Misc");
-                this.enableFrenzyDestroyBlock = BUILDER.comment("If 'True' enable frenzy potion destroy block")
-                        .translation(getTranslationKey("other_5")).define("Enable frenzy potion destroy block", false);
                 this.enableSameMobsTypeInjury = BUILDER.comment("If 'False' able inflict damage between mobs of the same team")
-                        .translation(getTranslationKey("other_3")).define("Friendly fire among allies", true);
+                        .translation(getTranslationKey("misc_1")).define("Friendly fire among allies", true);
+                this.enableFrenzyDestroyBlock = BUILDER.comment("If 'False' disable frenzy potion destroy block")
+                        .translation(getTranslationKey("misc_2")).define("Enable frenzy potion destroy block", false);
                 builder.pop();
             }
             {
                 builder.push("Debug");
-                this.enableAnimationLegalityLogPrint = BUILDER.comment("If 'True' enable print illegal animation logs(For developers only)")
-                        .translation(getTranslationKey("other_6")).define("Enable print illegal logs", false);
+                this.enableAnimationLegalityLogPrint = BUILDER.comment("If 'False' disable print illegal animation logs(For developers only)")
+                        .translation(getTranslationKey("debug_1")).define("Enable print illegal logs", false);
                 builder.pop();
             }
             builder.pop();
@@ -450,10 +452,12 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.BooleanValue enableCameraShake;
         //启用显示boss血条
         public final ForgeConfigSpec.BooleanValue enableShowBloodBars;
-        //启用同类型生物之间无法造成伤害
-        public final ForgeConfigSpec.BooleanValue enableSameMobsTypeInjury;
         //启用播放boss战斗音乐
         public final ForgeConfigSpec.BooleanValue enablePlayBossMusic;
+        //启用boss破坏方块掉落对应方块物品
+        public final ForgeConfigSpec.BooleanValue enableBossCanBreakingBlockDropItem;
+        //启用同类型生物之间无法造成伤害
+        public final ForgeConfigSpec.BooleanValue enableSameMobsTypeInjury;
         //启用狂暴药水冲刺时破坏方块效果
         public final ForgeConfigSpec.BooleanValue enableFrenzyDestroyBlock;
         //启用记录错误动作日志

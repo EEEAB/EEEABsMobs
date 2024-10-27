@@ -67,10 +67,6 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
         float baseDamageMultiplier = isPowered ? 0.8F : 0.6F;
         if (entity.getAnimation() == entity.pounceAttackAnimation1) {
             entity.anchorToGround();
-            if (target != null) {
-                entity.getLookControl().setLookAt(target, 30F, 30F);
-                entity.lookAt(target, 30F, 30F);
-            }
             int tick = entity.getAnimationTick();
             if (tick == 1) {
                 entity.playSound(SoundInit.NAMELESS_GUARDIAN_PRE_POUNCE.get(), 1.5F, entity.getVoicePitch());
@@ -82,6 +78,10 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
                 } else {
                     entity.playAnimation(entity.pounceAttackAnimation3);
                 }
+            }
+            if (target != null) {
+                entity.getLookControl().setLookAt(target, 30F, 30F);
+                entity.lookAt(target, 30F, 30F);
             }
         } else if (entity.getAnimation() == entity.pounceAttackAnimation2) {
             int tick = entity.getAnimationTick();
@@ -101,7 +101,7 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
                     if (entity.level().hasChunksAt(min, max)) {
                         BlockPos.betweenClosedStream(min, max).
                                 filter((pos) -> ModEntityUtils.canDestroyBlock(entity.level(), pos, entity, 2F)).
-                                forEach((pos) -> entity.level().destroyBlock(pos, false));
+                                forEach((pos) -> entity.level().destroyBlock(pos, entity.checkCanDropItems()));
                     }
                 }
                 if (tick % 2 == 0) {
