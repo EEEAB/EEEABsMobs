@@ -68,7 +68,7 @@ public final class EMConfigHandler {
                 builder.pop();
             }
             {
-                builder.push("Guardian Axe");
+                builder.push("Guardian Battleaxe");
                 GUARDIAN_AXE_TOOL = new ToolConfig(15D, 0.9D);
                 builder.pop();
             }
@@ -81,16 +81,16 @@ public final class EMConfigHandler {
             }
             {
                 builder.push("Ghost Warrior Series");
-                enableGhostWarriorArmorItemDurability = BUILDER.comment("If 'True' armor will be depleted")
-                        .translation(getTranslationKey("armor_depleted"))
-                        .define("Enable armor can be depleted", false);
+                enableGhostWarriorSeriesItemDurability = BUILDER.comment("If 'True' armor or weapon will be depleted")
+                        .translation(getTranslationKey("series_depleted"))
+                        .define("Enable armor or weapon can be depleted", false);
                 NETHERWORLD_KATANA_TOOL = new ToolConfig(14D, 1.4D);
                 builder.pop();
             }
             builder.pop();
         }
 
-        public final ForgeConfigSpec.BooleanValue enableGhostWarriorArmorItemDurability;
+        public final ForgeConfigSpec.BooleanValue enableGhostWarriorSeriesItemDurability;
         public final ForgeConfigSpec.DoubleValue itemImmortalStaffCoolingTime;
         public final ToolConfig GUARDIAN_AXE_TOOL;
         public final ToolConfig NETHERWORLD_KATANA_TOOL;

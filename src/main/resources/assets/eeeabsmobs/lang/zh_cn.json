@@ -174,7 +174,7 @@
 
   "_comment": "配置",
   "other.eeeabsmobs.item_cd.config": "设置物品冷却时间",
-  "other.eeeabsmobs.armor_depleted.config": "启用护甲耐久条",
+  "other.eeeabsmobs.series_depleted.config": "启用护甲与武器的耐久条",
   "other.eeeabsmobs.tool_damage.config": "设置物品攻击伤害",
   "other.eeeabsmobs.tool_speed.config": "设置物品攻击速度",
   "other.eeeabsmobs.mob_health.config": "设置实体血量倍数",

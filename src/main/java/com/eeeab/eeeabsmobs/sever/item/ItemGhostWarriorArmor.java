@@ -38,16 +38,13 @@ public class ItemGhostWarriorArmor extends ArmorItem {
 
     @Override
     public boolean canBeDepleted() {
-        return EMConfigHandler.COMMON.ITEM.enableGhostWarriorArmorItemDurability.get() && super.canBeDepleted();
+        return EMConfigHandler.COMMON.ITEM.enableGhostWarriorSeriesItemDurability.get() && super.canBeDepleted();
     }
 
 
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        if (!EMConfigHandler.COMMON.ITEM.enableGhostWarriorArmorItemDurability.get()) tooltip.add(EMTUtils.UNABLE_BREAKS);
-        //List<Component> componentList = EMTUtils.complexText(EMTUtils.ARMOR_PREFIX, false, EMTUtils.STYLE_GREEN,
-        //        "full_suit_of_armor", "ghost_warrior_full_suit_of_armor");
-        //tooltip.addAll(componentList);
+        if (!EMConfigHandler.COMMON.ITEM.enableGhostWarriorSeriesItemDurability.get()) tooltip.add(EMTUtils.UNABLE_BREAKS);
     }
 }

@@ -174,7 +174,7 @@
 
   "_comment": "Config",
   "other.eeeabsmobs.item_cd.config": "Set item cool down time",
-  "other.eeeabsmobs.armor_depleted.config": "Enable if armor can be depleted",
+  "other.eeeabsmobs.series_depleted.config": "Enable if armor or weapon can be depleted",
   "other.eeeabsmobs.tool_damage.config": "Set tool attack damage",
   "other.eeeabsmobs.tool_speed.config": "Set tool attack speed",
   "other.eeeabsmobs.mob_health.config": "Set mob health multiplier",
