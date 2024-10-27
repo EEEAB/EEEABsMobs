@@ -1,8 +1,8 @@
 package com.eeeab.eeeabsmobs.client.render.layer;
 
-import com.eeeab.animate.client.model.EMHierarchicalModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -15,16 +15,16 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
- * EEEAB 模型外图层
+ * 生物模型外图层
  *
  * @param <T> 实体
  * @param <M> 实体模型
  */
 @OnlyIn(Dist.CLIENT)
-public class LayerOuter<T extends LivingEntity, M extends EMHierarchicalModel<T>> extends RenderLayer<T, M> {
-    private final ResourceLocation resourceLocation;
-    private final OuterPredicate<T> predicate;
-    private final boolean overlayTexture;
+public class LayerOuter<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
+    protected final ResourceLocation resourceLocation;
+    protected final OuterPredicate<T> predicate;
+    protected final boolean overlayTexture;
 
     public LayerOuter(RenderLayerParent<T, M> parent, ResourceLocation resourceLocation) {
         this(parent, resourceLocation, true, t -> true);
@@ -43,11 +43,10 @@ public class LayerOuter<T extends LivingEntity, M extends EMHierarchicalModel<T>
 
     @Override
     public void render(PoseStack stack, MultiBufferSource bufferSource, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (predicate.outer(entity))
-            renderLayer(stack, bufferSource.getBuffer(RenderType.entityTranslucent(resourceLocation)), packedLightIn, partialTicks, entity);
+        if (predicate.outer(entity)) renderLayer(stack, bufferSource.getBuffer(RenderType.entityTranslucent(resourceLocation)), packedLightIn, partialTicks, entity, this.overlayTexture);
     }
 
-    private void renderLayer(PoseStack stack, VertexConsumer vertexConsumer, int packedLightIn, float partialTicks, T entity) {
+    protected void renderLayer(PoseStack stack, VertexConsumer vertexConsumer, int packedLightIn, float partialTicks, T entity, boolean overlayTexture) {
         int i = overlayTexture ? LivingEntityRenderer.getOverlayCoords(entity, 0F) : OverlayTexture.NO_OVERLAY;
         float alpha = getAlpha(entity, partialTicks);
         getParentModel().renderToBuffer(stack, vertexConsumer, packedLightIn, i, alpha, alpha, alpha, alpha);
