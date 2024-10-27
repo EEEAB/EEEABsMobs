@@ -892,7 +892,7 @@ public class AnimationNamelessGuardian {
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(0.44f, KeyframeAnimations.degreeVec(-43.81f, 8.35f, 0f),
                                     AnimationChannel.Interpolations.LINEAR),
-                            new Keyframe(0.6f, KeyframeAnimations.degreeVec(-52.5f, 10f, 0f),
+                            new Keyframe(0.6f, KeyframeAnimations.degreeVec(-52.5f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR)))
             .addAnimation("leftArmUnder",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -970,19 +970,21 @@ public class AnimationNamelessGuardian {
                     new AnimationChannel(AnimationChannel.Targets.POSITION,
                             new Keyframe(0f, KeyframeAnimations.posVec(0f, 1f, -5f),
                                     AnimationChannel.Interpolations.LINEAR),
-                            new Keyframe(0.44f, KeyframeAnimations.posVec(8.35f, 0.17f, -0.83f),
+                            new Keyframe(0.24f, KeyframeAnimations.posVec(2.45f, -1.55f, -6.09f),
                                     AnimationChannel.Interpolations.LINEAR),
-                            new Keyframe(0.6f, KeyframeAnimations.posVec(10f, 0f, 0f),
+                            new Keyframe(0.44f, KeyframeAnimations.posVec(10f, 0f, -7f),
+                                    AnimationChannel.Interpolations.LINEAR),
+                            new Keyframe(0.6f, KeyframeAnimations.posVec(10f, 1f, -5f),
                                     AnimationChannel.Interpolations.LINEAR)))
             .addAnimation("axe",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(-2.5f, -10f, 20f),
                                     AnimationChannel.Interpolations.LINEAR),
-                            new Keyframe(0.44f, KeyframeAnimations.degreeVec(65.09f, -40.42f, -67.1f),
+                            new Keyframe(0.44f, KeyframeAnimations.degreeVec(84.29f, -37.42f, -90.75f),
                                     AnimationChannel.Interpolations.LINEAR),
-                            new Keyframe(0.6f, KeyframeAnimations.degreeVec(78.48f, -46.45f, -84.37f),
+                            new Keyframe(0.6f, KeyframeAnimations.degreeVec(84.29f, -37.42f, -90.75f),
                                     AnimationChannel.Interpolations.LINEAR))).build();
-    public static final AnimationDefinition POUNCE = AnimationDefinition.Builder.withLength(1.92f)
+    public static final AnimationDefinition POUNCE = AnimationDefinition.Builder.withLength(1.92f).looping()
             .addAnimation("rightArm",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(-52.5f, 10f, 0f),
@@ -1127,11 +1129,11 @@ public class AnimationNamelessGuardian {
                                     AnimationChannel.Interpolations.LINEAR)))
             .addAnimation("axe",
                     new AnimationChannel(AnimationChannel.Targets.POSITION,
-                            new Keyframe(0f, KeyframeAnimations.posVec(10f, 0f, 0f),
+                            new Keyframe(0f, KeyframeAnimations.posVec(10f, 1f, -5f),
                                     AnimationChannel.Interpolations.LINEAR)))
             .addAnimation("axe",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(78.48f, -46.45f, -84.37f),
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(84.29f, -37.42f, -90.75f),
                                     AnimationChannel.Interpolations.LINEAR))).build();
     public static final AnimationDefinition AFTER_POUNCE = AnimationDefinition.Builder.withLength(0.92f)
             .addAnimation("rightArm",
@@ -1150,7 +1152,7 @@ public class AnimationNamelessGuardian {
                                     AnimationChannel.Interpolations.LINEAR)))
             .addAnimation("leftArm",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(-52.5f, 10f, 0f),
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(-52.5f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(0.64f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR)))
@@ -1228,15 +1230,17 @@ public class AnimationNamelessGuardian {
                                     AnimationChannel.Interpolations.LINEAR)))
             .addAnimation("axe",
                     new AnimationChannel(AnimationChannel.Targets.POSITION,
-                            new Keyframe(0f, KeyframeAnimations.posVec(10f, 0f, 0f),
+                            new Keyframe(0f, KeyframeAnimations.posVec(10f, 1f, -5f),
                                     AnimationChannel.Interpolations.LINEAR),
-                            new Keyframe(0.32f, KeyframeAnimations.posVec(-0.71f, 0.47f, -2.35f),
+                            new Keyframe(0.16f, KeyframeAnimations.posVec(4.14f, -1.26f, -6.67f),
+                                    AnimationChannel.Interpolations.LINEAR),
+                            new Keyframe(0.32f, KeyframeAnimations.posVec(-1.71f, 0.47f, -2.35f),
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(0.64f, KeyframeAnimations.posVec(0f, 1f, -5f),
                                     AnimationChannel.Interpolations.LINEAR)))
             .addAnimation("axe",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(78.48f, -46.45f, -84.37f),
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(84.29f, -37.42f, -90.75f),
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(0.32f, KeyframeAnimations.degreeVec(37.25f, -18.9f, -27.64f),
                                     AnimationChannel.Interpolations.LINEAR),
@@ -1497,10 +1501,18 @@ public class AnimationNamelessGuardian {
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(1.8f, KeyframeAnimations.posVec(0f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR)))
+            .addAnimation("root",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                    AnimationChannel.Interpolations.LINEAR)))
+            .addAnimation("upper",
+                    new AnimationChannel(AnimationChannel.Targets.POSITION,
+                            new Keyframe(0f, KeyframeAnimations.posVec(0f, 0f, 0f),
+                                    AnimationChannel.Interpolations.LINEAR)))
             .addAnimation("upper",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(2f, 0f, 0f),
-                                    AnimationChannel.Interpolations.CATMULLROM),
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                    AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(0.24f, KeyframeAnimations.degreeVec(-10f, 0f, 8f),
                                     AnimationChannel.Interpolations.CATMULLROM),
                             new Keyframe(0.52f, KeyframeAnimations.degreeVec(-10f, 0f, 8f),
@@ -1588,6 +1600,10 @@ public class AnimationNamelessGuardian {
                             new Keyframe(1.2f, KeyframeAnimations.degreeVec(10f, 5f, -15f),
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(1.8f, KeyframeAnimations.degreeVec(-2.5f, -10f, 20f),
+                                    AnimationChannel.Interpolations.LINEAR)))
+            .addAnimation("lower",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR))).build();
     public static final AnimationDefinition ATTACK_2 = AnimationDefinition.Builder.withLength(1.76f)
             .addAnimation("rightArm",
@@ -2359,7 +2375,7 @@ public class AnimationNamelessGuardian {
             .addAnimation("rightArm",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(-30f, 25f, 25f),
-                                    AnimationChannel.Interpolations.CATMULLROM),
+                                    AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(0.4f, KeyframeAnimations.degreeVec(13.17f, 32.48f, 0.72f),
                                     AnimationChannel.Interpolations.CATMULLROM),
                             new Keyframe(0.64f, KeyframeAnimations.degreeVec(13.17f, 32.48f, 0.72f),
@@ -2415,7 +2431,7 @@ public class AnimationNamelessGuardian {
             .addAnimation("leftArm",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                    AnimationChannel.Interpolations.CATMULLROM),
+                                    AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(0.4f, KeyframeAnimations.degreeVec(-23.26f, -9.76f, -10.19f),
                                     AnimationChannel.Interpolations.CATMULLROM),
                             new Keyframe(0.64f, KeyframeAnimations.degreeVec(18.52f, -6.38f, -6.92f),
@@ -2571,9 +2587,13 @@ public class AnimationNamelessGuardian {
                             new Keyframe(2f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR)))
             .addAnimation("upper",
+                    new AnimationChannel(AnimationChannel.Targets.POSITION,
+                            new Keyframe(0f, KeyframeAnimations.posVec(0f, 0f, 0f),
+                                    AnimationChannel.Interpolations.LINEAR)))
+            .addAnimation("upper",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(2f, 0f, 0f),
-                                    AnimationChannel.Interpolations.CATMULLROM),
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
+                                    AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(0.4f, KeyframeAnimations.degreeVec(0f, 30f, -5f),
                                     AnimationChannel.Interpolations.CATMULLROM),
                             new Keyframe(0.64f, KeyframeAnimations.degreeVec(-2.95f, 40.09f, -10.87f),
@@ -2581,7 +2601,7 @@ public class AnimationNamelessGuardian {
                             new Keyframe(0.76f, KeyframeAnimations.degreeVec(-6.34f, -9.4f, -10.29f),
                                     AnimationChannel.Interpolations.CATMULLROM),
                             new Keyframe(0.88f, KeyframeAnimations.degreeVec(-12.78f, -42.4f, -9.9f),
-                                    AnimationChannel.Interpolations.CATMULLROM),
+                                    AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(1.56f, KeyframeAnimations.degreeVec(-12.78f, -42.4f, -9.9f),
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(2f, KeyframeAnimations.degreeVec(2f, 0f, 0f),
@@ -2641,6 +2661,10 @@ public class AnimationNamelessGuardian {
                             new Keyframe(1.56f, KeyframeAnimations.degreeVec(-88.38f, 53.2f, -153.68f),
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(2f, KeyframeAnimations.degreeVec(-2.5f, -10f, 20f),
+                                    AnimationChannel.Interpolations.LINEAR)))
+            .addAnimation("lower",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR))).build();
     public static final AnimationDefinition ATTACK_5 = AnimationDefinition.Builder.withLength(1.8f)
             .addAnimation("rightArm",
@@ -2651,7 +2675,7 @@ public class AnimationNamelessGuardian {
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(0.6f, KeyframeAnimations.posVec(-2f, -5f, -8f),
                                     AnimationChannel.Interpolations.LINEAR),
-                            new Keyframe(0.72f, KeyframeAnimations.posVec(-2f, -2f, -5f),
+                            new Keyframe(0.76f, KeyframeAnimations.posVec(-2f, -2f, -5f),
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(1.2f, KeyframeAnimations.posVec(-2f, -2f, -5f),
                                     AnimationChannel.Interpolations.LINEAR),
@@ -2665,10 +2689,12 @@ public class AnimationNamelessGuardian {
                                     AnimationChannel.Interpolations.CATMULLROM),
                             new Keyframe(0.6f, KeyframeAnimations.degreeVec(-96.38f, -44.46f, -3.48f),
                                     AnimationChannel.Interpolations.CATMULLROM),
-                            new Keyframe(0.72f, KeyframeAnimations.degreeVec(-100.81f, 64.97f, -17.77f),
+                            new Keyframe(0.64f, KeyframeAnimations.degreeVec(-82.69f, -6.54f, -17.95f),
                                     AnimationChannel.Interpolations.CATMULLROM),
+                            new Keyframe(0.76f, KeyframeAnimations.degreeVec(-134.54f, 83.51f, -52.31f),
+                                    AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(1.2f, KeyframeAnimations.degreeVec(-134.54f, 83.51f, -52.31f),
-                                    AnimationChannel.Interpolations.CATMULLROM),
+                                    AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(1.8f, KeyframeAnimations.degreeVec(-30f, 25f, 25f),
                                     AnimationChannel.Interpolations.LINEAR)))
             .addAnimation("rightArmUnder",
@@ -2714,9 +2740,9 @@ public class AnimationNamelessGuardian {
                             new Keyframe(0.6f, KeyframeAnimations.degreeVec(26.09f, -4.35f, -4.95f),
                                     AnimationChannel.Interpolations.CATMULLROM),
                             new Keyframe(0.72f, KeyframeAnimations.degreeVec(41.22f, 3.41f, -20.65f),
-                                    AnimationChannel.Interpolations.CATMULLROM),
+                                    AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(1.2f, KeyframeAnimations.degreeVec(41.22f, 3.41f, -20.65f),
-                                    AnimationChannel.Interpolations.CATMULLROM),
+                                    AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(1.8f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR)))
             .addAnimation("rightLeg",
@@ -2846,9 +2872,9 @@ public class AnimationNamelessGuardian {
                             new Keyframe(0.6f, KeyframeAnimations.degreeVec(-20.21f, -37.55f, 1.97f),
                                     AnimationChannel.Interpolations.CATMULLROM),
                             new Keyframe(0.72f, KeyframeAnimations.degreeVec(-6.8f, 5.82f, -8.89f),
-                                    AnimationChannel.Interpolations.CATMULLROM),
+                                    AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(1.2f, KeyframeAnimations.degreeVec(-6.8f, 5.82f, -8.89f),
-                                    AnimationChannel.Interpolations.CATMULLROM),
+                                    AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(1.8f, KeyframeAnimations.degreeVec(2f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR)))
             .addAnimation("head",

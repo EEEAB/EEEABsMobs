@@ -1645,7 +1645,7 @@ public class AnimationNamelessGuardian2 {
                                     AnimationChannel.Interpolations.CATMULLROM)))
             .addAnimation("rightArmUnder",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(-105f, 0f, 0f),
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(-95f, 0f, 0f),
                                     AnimationChannel.Interpolations.CATMULLROM),
                             new Keyframe(0.24f, KeyframeAnimations.degreeVec(-17.5f, 0f, 0f),
                                     AnimationChannel.Interpolations.CATMULLROM),
@@ -1708,6 +1708,10 @@ public class AnimationNamelessGuardian2 {
                             new Keyframe(1f, KeyframeAnimations.degreeVec(30f, 0f, 0f),
                                     AnimationChannel.Interpolations.CATMULLROM),
                             new Keyframe(1.76f, KeyframeAnimations.degreeVec(60f, 0f, 0f),
+                                    AnimationChannel.Interpolations.CATMULLROM)))
+            .addAnimation("leftLeg",
+                    new AnimationChannel(AnimationChannel.Targets.POSITION,
+                            new Keyframe(0f, KeyframeAnimations.posVec(0f, 0f, 0f),
                                     AnimationChannel.Interpolations.CATMULLROM)))
             .addAnimation("leftLeg",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
@@ -1790,6 +1794,10 @@ public class AnimationNamelessGuardian2 {
                             new Keyframe(1.76f, KeyframeAnimations.degreeVec(-25f, 0f, 0f),
                                     AnimationChannel.Interpolations.CATMULLROM)))
             .addAnimation("upper",
+                    new AnimationChannel(AnimationChannel.Targets.POSITION,
+                            new Keyframe(0f, KeyframeAnimations.posVec(0f, 0f, 0f),
+                                    AnimationChannel.Interpolations.CATMULLROM)))
+            .addAnimation("upper",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     AnimationChannel.Interpolations.CATMULLROM),
@@ -1805,7 +1813,7 @@ public class AnimationNamelessGuardian2 {
                                     AnimationChannel.Interpolations.CATMULLROM)))
             .addAnimation("head",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(5f, 0f, 0f),
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     AnimationChannel.Interpolations.CATMULLROM),
                             new Keyframe(0.24f, KeyframeAnimations.degreeVec(10f, 0f, 0f),
                                     AnimationChannel.Interpolations.CATMULLROM),
@@ -1838,6 +1846,10 @@ public class AnimationNamelessGuardian2 {
                             new Keyframe(1f, KeyframeAnimations.degreeVec(25f, 0f, 0f),
                                     AnimationChannel.Interpolations.CATMULLROM),
                             new Keyframe(1.76f, KeyframeAnimations.degreeVec(25f, 0f, 0f),
+                                    AnimationChannel.Interpolations.CATMULLROM)))
+            .addAnimation("lower",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     AnimationChannel.Interpolations.CATMULLROM))).build();
     public static final AnimationDefinition SMASH_DOWN = AnimationDefinition.Builder.withLength(1f)
             .addAnimation("rightArm",
