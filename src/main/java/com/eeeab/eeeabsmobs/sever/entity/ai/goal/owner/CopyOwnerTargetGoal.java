@@ -5,11 +5,11 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 
-public class OwnerCopyTargetGoal<T extends Mob & VenerableEntity<T>> extends TargetGoal {
+public class CopyOwnerTargetGoal<T extends Mob & VenerableEntity<T>> extends TargetGoal {
     private final T venerable;
     private final TargetingConditions copyOwnerTargeting = TargetingConditions.forNonCombat().ignoreLineOfSight().ignoreInvisibilityTesting();
 
-    public OwnerCopyTargetGoal(T venerable) {
+    public CopyOwnerTargetGoal(T venerable) {
         super(venerable, false);
         this.venerable = venerable;
     }

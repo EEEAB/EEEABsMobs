@@ -9,12 +9,12 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
 
-public class OwnerResetToPlayerGoal<T extends Mob & VenerableEntity<Player>> extends Goal {
+public class ReFindPlayerGoal<T extends Mob & VenerableEntity<Player>> extends Goal {
     private final RandomSource random = RandomSource.create();
     private final double findRadius;
     private final T target;
 
-    public OwnerResetToPlayerGoal(T venerable, double findRadius) {
+    public ReFindPlayerGoal(T venerable, double findRadius) {
         this.target = venerable;
         this.findRadius = findRadius;
     }

@@ -7,7 +7,7 @@ import com.eeeab.animate.server.ai.animation.*;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerCopyTargetGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.CopyOwnerTargetGoal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
@@ -196,7 +196,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         this.goalSelector.addGoal(1, new AnimationAreaMelee<>(this, () -> meleeAnimation2, 6, 2.8F, 1.0F, 1.0F, 90F, 2.8F, true));
         this.goalSelector.addGoal(1, new AnimationBlock<>(this, () -> blockAnimation));
         this.goalSelector.addGoal(2, new AnimationDie<>(this));
-        this.targetSelector.addGoal(2, new OwnerCopyTargetGoal<>(this));
+        this.targetSelector.addGoal(2, new CopyOwnerTargetGoal<>(this));
         Predicate<EntityAbsImmortalSkeleton> AKPredicate = e -> e.checkHoldItemIsCareerWeapon(CareerType.ARCHER, CareerType.KNIGHT);
         int randomInterval = this.random.nextInt(10);
         this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 20 + randomInterval, 10F, Items.CROSSBOW, AKPredicate, () -> crossBowChangeAnimation));

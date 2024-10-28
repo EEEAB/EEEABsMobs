@@ -4,11 +4,11 @@ import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 
-public class OwnerDieGoal<T extends Mob & VenerableEntity<T>> extends Goal {
+public class WhenOwnerDeadGoal<T extends Mob & VenerableEntity<T>> extends Goal {
     private final T venerable;
     private int downCount;
 
-    public OwnerDieGoal(T venerable) {
+    public WhenOwnerDeadGoal(T venerable) {
         this.venerable = venerable;
         downCount = venerable.getRandom().nextInt(20);
     }

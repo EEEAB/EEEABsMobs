@@ -11,9 +11,9 @@ import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerCopyTargetGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerDieGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerResetGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.CopyOwnerTargetGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.WhenOwnerDeadGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.ReFindOwnerGoal;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -80,9 +80,9 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
         this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> attackAnimation, 7, 1.5f, 1.0f, 1.0f));
         this.goalSelector.addGoal(1, new AnimationHurt<>(this, false));
         this.goalSelector.addGoal(2, new AnimationMeleeAI<>(this, 1.0D, () -> attackAnimation));
-        this.goalSelector.addGoal(1, new OwnerResetGoal<>(this, EntityImmortalShaman.class, 20D));
-        this.targetSelector.addGoal(2, new OwnerCopyTargetGoal<>(this));
-        this.goalSelector.addGoal(3, new OwnerDieGoal<>(this));
+        this.goalSelector.addGoal(1, new ReFindOwnerGoal<>(this, EntityImmortalShaman.class, 20D));
+        this.targetSelector.addGoal(2, new CopyOwnerTargetGoal<>(this));
+        this.goalSelector.addGoal(3, new WhenOwnerDeadGoal<>(this));
     }
 
 

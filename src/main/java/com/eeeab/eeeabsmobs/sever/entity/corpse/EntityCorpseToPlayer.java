@@ -8,8 +8,8 @@ import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.*;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player.OwnerProtectToPlayerGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player.OwnerResetToPlayerGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player.PlayerHatredRedirectionGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player.ReFindPlayerGoal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModMobType;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
@@ -123,8 +123,8 @@ public class EntityCorpseToPlayer extends EEEABMobLibrary implements IEntity, Gl
         this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> attackAnimation3, 9, 2F, 1.5F, 1.5F));
         this.goalSelector.addGoal(2, new AnimationMeleeAI<>(this, 1.2D, 5, () -> attackAnimation1, () -> attackAnimation2, () -> attackAnimation3));
         this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(2, new OwnerResetToPlayerGoal<>(this, 12F));
-        this.goalSelector.addGoal(3, new OwnerProtectToPlayerGoal<>(this, 12F));
+        this.goalSelector.addGoal(2, new ReFindPlayerGoal<>(this, 12F));
+        this.goalSelector.addGoal(3, new PlayerHatredRedirectionGoal<>(this, 12F));
     }
 
     @Override

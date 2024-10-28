@@ -7,13 +7,13 @@ import net.minecraft.world.entity.ai.goal.Goal;
 
 import java.util.List;
 
-public class OwnerResetGoal<T extends Mob & VenerableEntity<T>> extends Goal {
+public class ReFindOwnerGoal<T extends Mob & VenerableEntity<T>> extends Goal {
     private final RandomSource random = RandomSource.create();
     private final Class<? extends Mob> ownerClass;
     private final double findRadius;
     private final T target;
 
-    public OwnerResetGoal(T venerable, Class<? extends Mob> ownerClass, double findRadius) {
+    public ReFindOwnerGoal(T venerable, Class<? extends Mob> ownerClass, double findRadius) {
         this.target = venerable;
         this.ownerClass = ownerClass;
         this.findRadius = findRadius;

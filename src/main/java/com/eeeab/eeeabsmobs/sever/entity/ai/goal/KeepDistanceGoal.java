@@ -1,13 +1,13 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
-import com.eeeab.eeeabsmobs.sever.entity.EEEABMobEntity;
 import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 
 import java.util.EnumSet;
 
-public class KeepDistanceGoal<T extends EEEABMobEntity & NeedStopAiEntity> extends Goal {
+public class KeepDistanceGoal<T extends Mob & NeedStopAiEntity> extends Goal {
     private final T mob;
     private final double speedModifier;
     private final float attackRadius;
@@ -46,7 +46,7 @@ public class KeepDistanceGoal<T extends EEEABMobEntity & NeedStopAiEntity> exten
     public void tick() {
         LivingEntity target = this.mob.getTarget();
         if (target != null) {
-            double distance = this.mob.targetDistance;
+            double distance = this.mob.distanceTo(target) - target.getBbWidth() / 2F;
             if (!(distance > (double) this.attackRadius)) {//当实体距离小于攻击半径
                 this.mob.getNavigation().stop();
                 ++this.timerTick;
