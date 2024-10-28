@@ -1,10 +1,9 @@
-package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
+package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
 import com.eeeab.animate.server.ai.AnimationAI;
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalMagicCircle;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityTheImmortal;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.entity.util.ShockWaveUtils;
 import com.eeeab.eeeabsmobs.sever.util.EMMathUtils;
@@ -14,13 +13,13 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
 
-public class ImmortalPounceGoal extends AnimationAI<EntityTheImmortal> {
+public class ImmortalPounceGoal extends AnimationAI<EntityImmortal> {
     private static final float MAX_DISTANCE = 32F;
     private Vec3 pounceVec = Vec3.ZERO;
     private LivingEntity targetCache;
     private float distanceFactor;
 
-    public ImmortalPounceGoal(EntityTheImmortal entity) {
+    public ImmortalPounceGoal(EntityImmortal entity) {
         super(entity);
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
@@ -50,22 +49,22 @@ public class ImmortalPounceGoal extends AnimationAI<EntityTheImmortal> {
         Animation animation = entity.getAnimation();
         int tick = entity.getAnimationTick();
         if (animation == entity.pouncePreAnimation) {
-            if (tick < 15) {
+            if (tick < 10) {
                 if (targetCache != null && targetCache.isAlive()) {
                     entity.lookAt(targetCache, 90F, 30F);
                     entity.getLookControl().setLookAt(targetCache, 90F, 30F);
                     Vec3 vec3 = entity.position();
                     pounceVec = new Vec3(targetCache.getX() - vec3.x, 0.0, targetCache.getZ() - vec3.z).normalize();
-                    distanceFactor = getDistanceFactor(targetCache, false);
+                    distanceFactor = getDistanceFactor(targetCache, MAX_DISTANCE, false);
                     if (tick == 5) {
-                        EntityImmortalMagicCircle.spawn(entity.level(), entity.position().add(0, 0.75, 0), 3F, -1F, (int) (20 + (90 * distanceFactor)), EntityImmortalMagicCircle.MagicCircleType.SPEED);
+                        EntityImmortalMagicCircle.spawn(entity.level(), entity.position().add(0, 0.25, 0), 3F, -1F, (int) (20 + (90 * distanceFactor)), entity.getYRot(), EntityImmortalMagicCircle.MagicCircleType.SPEED);
                     }
                 } else if (entity.getTarget() != null) targetCache = entity.getTarget();
             } else {
                 if (pounceVec.length() == 0) {
                     entity.playAnimation(entity.pounceEndAnimation);
                 } else {
-                    EntityCameraShake.cameraShake(entity.level(), entity.position(), MAX_DISTANCE, 0.125F, 0, 5);
+                    entity.shakeGround(0F, MAX_DISTANCE, 0.1F, 2, 4);
                     entity.playAnimation(entity.pounceHoldAnimation);
                 }
             }
@@ -74,31 +73,34 @@ public class ImmortalPounceGoal extends AnimationAI<EntityTheImmortal> {
                 entity.playAnimation(entity.pounceEndAnimation);
             } else {
                 if (tick < 40) {
+                    boolean flag = targetCache != null;
+                    if (flag) entity.getLookControl().setLookAt(targetCache, 10F, 10F);
                     float tickFactor = EMMathUtils.getTickFactor(tick, 40F, true);
                     float speedMultiplier = EMMathUtils.calculateSpeedMultiplier(tickFactor, distanceFactor, 3F, 15F);
-                    double moveSpeed = entity.getAttributeValue(Attributes.MOVEMENT_SPEED);
-                    entity.setDeltaMovement(pounceVec.x * moveSpeed * speedMultiplier, entity.getDeltaMovement().y, pounceVec.z * moveSpeed * speedMultiplier);
+                    //避免过快 限制移速在2级速度药水(每1级提升初速20%)
+                    double baseValue = entity.getAttributeBaseValue(Attributes.MOVEMENT_SPEED);
+                    double moveSpeed = Math.min(entity.getAttributeValue(Attributes.MOVEMENT_SPEED), baseValue + baseValue * 0.4);
                     if (tick % 2 == 0) doHurtTarget(4.5F, 5F, 3.5F, 1F, 0.1F, false);
-                    if (targetCache != null && entity.distanceToSqr(targetCache) <= entity.getMeleeAttackRangeSqr(targetCache) + 9) {
-                        distanceFactor = getDistanceFactor(targetCache, true);
-                        //避免过近距离导致无意义的前移
-                        if (distanceFactor >= 0.8) distanceFactor = 0;
+                    if (flag && entity.distanceToSqr(targetCache) <= entity.getMeleeAttackRangeSqr(targetCache) + 9) {
+                        speedMultiplier *= 0.5F;
+                        distanceFactor = Math.min(getDistanceFactor(targetCache, MAX_DISTANCE / 2, true), 0.8F);
                         entity.playAnimation(entity.getRandom().nextBoolean() ? entity.pounceSmashAnimation : entity.pouncePickAnimation);
                     } else if (speedMultiplier < 0.45F) {
                         this.entity.playAnimation(entity.pounceEndAnimation);
                     }
+                    entity.setDeltaMovement(pounceVec.x * moveSpeed * speedMultiplier, entity.getDeltaMovement().y, pounceVec.z * moveSpeed * speedMultiplier);
                 } else {
                     this.entity.playAnimation(entity.pounceEndAnimation);
                 }
             }
         } else if (animation == entity.pounceSmashAnimation) {
-            if (tick < 9) {
+            if (tick < 10) {
                 lookAtTarget();
             } else {
                 entity.setYRot(entity.yRotO);
                 if (tick == 10) {
                     double radians = Math.toRadians(entity.getYRot() + 90);
-                    for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), entity.position().add(3F * Math.cos(radians), -1, 3F * Math.sin(radians)), 3.5D, 0F)) {
+                    for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), entity.position().add(3F * Math.cos(radians), -1, 3F * Math.sin(radians)), 3.5D, 0F, false, 20)) {
                         if (entityHit == entity) {
                             continue;
                         }
@@ -106,7 +108,7 @@ public class ImmortalPounceGoal extends AnimationAI<EntityTheImmortal> {
                         entity.knockBack(entityHit, 0.2, 0.5, false);
                     }
                 } else if (tick == 11) {
-                    EntityCameraShake.cameraShake(entity.level(), entity.position(), MAX_DISTANCE / 2, 0.125F, 3, 2);
+                    entity.shakeGround(0.2F, MAX_DISTANCE / 2, 0.125F, 4, 2);
                 } else if (tick > 30 && targetCache != null) {
                     entity.getLookControl().setLookAt(targetCache, 10F, 30F);
                 }
@@ -114,16 +116,19 @@ public class ImmortalPounceGoal extends AnimationAI<EntityTheImmortal> {
         } else if (animation == entity.pouncePickAnimation) {
             if (tick < 12) {
                 lookAtTarget();
-                if (tick >= 5) {
-                    float tickFactor = EMMathUtils.getTickFactor(tick, 7F, false);
-                    float speedMultiplier = EMMathUtils.calculateSpeedMultiplier(tickFactor, distanceFactor, 3.5F, 2F);
-                    double moveSpeed = entity.getAttributeValue(Attributes.MOVEMENT_SPEED);
+                if (tick >= 5 && distanceFactor > 0) {
+                    float tickFactor = EMMathUtils.getTickFactor(tick, 5F, false);
+                    float speedMultiplier = EMMathUtils.calculateSpeedMultiplier(tickFactor, distanceFactor, 3F, 1.5F);
+                    double moveSpeed = Math.min(entity.getAttributeValue(Attributes.MOVEMENT_SPEED), entity.getAttributeBaseValue(Attributes.MOVEMENT_SPEED));
                     double radians = Math.toRadians(entity.getYRot() + 90);
                     entity.setDeltaMovement(Math.cos(radians) * moveSpeed * speedMultiplier, entity.getDeltaMovement().y, Math.sin(radians) * moveSpeed * speedMultiplier);
                 }
+                if (tick == 10) {
+                    doHurtTarget(5F, 6F, 4.5F, 0F, 1F, true);
+                    entity.shakeGround(0F, MAX_DISTANCE / 2, 0.125F, 4, 2);
+                }
             } else {
-                if (tick == 12) doHurtTarget(5F, 6F, 4.5F, 0F, 1F, true);
-                else if (tick > 15 && targetCache != null) {
+                if (tick > 15 && targetCache != null) {
                     entity.getLookControl().setLookAt(targetCache, 15F, 30F);
                 }
                 entity.setYRot(entity.yRotO);
@@ -141,7 +146,7 @@ public class ImmortalPounceGoal extends AnimationAI<EntityTheImmortal> {
         for (LivingEntity entityHit : entity.getNearByEntities(LivingEntity.class, range, height, range, range)) {
             float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, entityHit);
             float entityHitDistance = (float) Math.sqrt((entityHit.getZ() - entity.getZ()) * (entityHit.getZ() - entity.getZ()) + (entityHit.getX() - entity.getX()) * (entityHit.getX() - entity.getX())) - entityHit.getBbWidth() / 2f;
-            if (entityHitDistance <= hitDistance && ((entityRelativeAngle >= -attackArc / 2 && entityRelativeAngle <= attackArc / 2) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
+            if (entityHitDistance < 0.75 || (entityHitDistance <= hitDistance && ((entityRelativeAngle >= -attackArc / 2 && entityRelativeAngle <= attackArc / 2) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F)))) {
                 if (!hitFlag) {
                     hitFlag = true;
                     entity.level().broadcastEntityEvent(entity, (byte) 8);
@@ -152,8 +157,8 @@ public class ImmortalPounceGoal extends AnimationAI<EntityTheImmortal> {
         }
     }
 
-    private float getDistanceFactor(LivingEntity target, boolean inversion) {
-        return EMMathUtils.getTickFactor(Math.min(entity.distanceTo(target), MAX_DISTANCE * 2F), MAX_DISTANCE, inversion);
+    private float getDistanceFactor(LivingEntity target, float distance, boolean inversion) {
+        return EMMathUtils.getTickFactor(Math.min(entity.distanceTo(target), distance * 2F), distance, inversion);
     }
 
     private void lookAtTarget() {

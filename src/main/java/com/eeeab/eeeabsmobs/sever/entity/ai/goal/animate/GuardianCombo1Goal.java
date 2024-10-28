@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
+package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;

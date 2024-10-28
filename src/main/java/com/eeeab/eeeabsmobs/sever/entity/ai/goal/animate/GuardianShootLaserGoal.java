@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
+package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianLaser;

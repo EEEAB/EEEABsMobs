@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
-import com.eeeab.animate.server.ai.AnimationAI;
+import com.eeeab.animate.server.ai.AnimationGroupAI;
 import com.eeeab.animate.server.ai.AnimationMeleePlusAI;
 import com.eeeab.animate.server.ai.animation.AnimationAreaMelee;
 import com.eeeab.animate.server.ai.animation.AnimationBlock;
@@ -60,7 +60,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -241,7 +240,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                 1F, 1F, 80F, 40F, 3.5F, true).setCustomHitMethod(consumer));
         this.goalSelector.addGoal(1, new AnimationAreaMelee<>(this, () -> this.attackAnimationRight, 8, 3F,
                 1F, 1F, 40F, 80F, 3.5F, true).setCustomHitMethod(consumer));
-        this.goalSelector.addGoal(1, new ExecutionerSimpleAI(this, true,
+        this.goalSelector.addGoal(1, new ExecutionerGroupAI(this, true,
                 () -> this.avoidAnimation,
                 () -> this.sidesWayAnimationRight,
                 () -> this.sidesWayAnimationLeft,
@@ -636,20 +635,13 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
         }
     }
 
-    static class ExecutionerSimpleAI extends AnimationAI<EntityImmortalExecutioner> {
+    static class ExecutionerGroupAI extends AnimationGroupAI<EntityImmortalExecutioner> {
         private final boolean lookAtTarget;
-        private final Supplier<Animation>[] animations;
 
         @SafeVarargs
-        public ExecutionerSimpleAI(EntityImmortalExecutioner entity, boolean lookAtTarget, Supplier<Animation>... animations) {
-            super(entity);
+        public ExecutionerGroupAI(EntityImmortalExecutioner entity, boolean lookAtTarget, Supplier<Animation>... animations) {
+            super(entity, animations);
             this.lookAtTarget = lookAtTarget;
-            this.animations = animations;
-        }
-
-        @Override
-        protected boolean test(Animation animation) {
-            return Arrays.stream(this.animations).anyMatch(supplier -> animation == supplier.get());
         }
 
         @Override
@@ -661,19 +653,9 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                 this.entity.lookAt(target, 30F, 30F);
             }
         }
-
-        protected void doNextAnimation(Animation now, Animation next) {
-            this.doNextAnimation(now, next, now.getDuration() - 1);
-        }
-
-        protected void doNextAnimation(Animation now, Animation next, int lastTick) {
-            if (this.entity.getAnimation() == now && this.entity.getAnimationTick() >= lastTick) {
-                this.entity.playAnimation(next);
-            }
-        }
     }
 
-    static class ExecutionerSharpImpactGoal extends ExecutionerSimpleAI {
+    static class ExecutionerSharpImpactGoal extends ExecutionerGroupAI {
         private LivingEntity target;
         private Vec3 preVec3 = Vec3.ZERO;
 
@@ -705,7 +687,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                     this.entity.lookAt(this.target, 360F, 30F);
                 }
                 this.preVec3 = this.entity.position();
-                this.doNextAnimation(animation, this.entity.impactHoldAnimation, 25 + this.entity.getRandom().nextInt(animation.getDuration() - 25));
+                this.nextAnimation(animation, this.entity.impactHoldAnimation, 25 + this.entity.getRandom().nextInt(animation.getDuration() - 25));
             } else if (animation == this.entity.impactHoldAnimation) {
                 this.entity.setDeltaMovement(0, 0, 0);
                 double baseMoveMultiplier = 15F;
@@ -715,7 +697,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                     Vec3 targetVec3 = new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * baseMoveMultiplier, deltaY, Math.sin(Math.toRadians(entity.getYRot() + 90)) * baseMoveMultiplier);
                     if (this.target != null) {
                         Vec3 point = ModEntityUtils.findPounceTargetPoint(this.entity, this.target, 5F);
-                        baseMoveMultiplier = Math.min(point.distanceTo(preVec3), 15F);//TODO 待测试
+                        baseMoveMultiplier = Math.min(point.distanceTo(preVec3), 15F);
                         if (baseMoveMultiplier >= 1) {
                             deltaY = point.y - this.entity.getY();
                             Vec3 normalizedVector = point.subtract(preVec3).normalize().scale(baseMoveMultiplier);
@@ -732,12 +714,12 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                         this.entity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), 50, 0, false, false));
                     }
                 }
-                this.doNextAnimation(animation, this.entity.impactStopAnimation);
+                this.nextAnimation(animation, this.entity.impactStopAnimation);
             }
         }
     }
 
-    static class ExecutionerCullGoal extends ExecutionerSimpleAI {
+    static class ExecutionerCullGoal extends ExecutionerGroupAI {
 
         public ExecutionerCullGoal(EntityImmortalExecutioner entity) {
             super(entity, true, () -> entity.cullStorageAnimation, () -> entity.cullHoldAnimation, () -> entity.cullStopAnimation, () -> entity.counterAnimation);
@@ -750,7 +732,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
             int tick = this.entity.getAnimationTick();
             if (animation == this.entity.cullStorageAnimation) {
                 super.tick();
-                this.doNextAnimation(animation, this.entity.cullHoldAnimation);
+                this.nextAnimation(animation, this.entity.cullHoldAnimation);
             } else if (animation == this.entity.cullHoldAnimation) {
                 if (target != null) {
                     if (tick < 4) {
@@ -762,7 +744,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                     } else if (tick > 6) {
                         this.entity.setYRot(this.entity.yRotO);
                     }
-                    this.doNextAnimation(animation, this.entity.cullStopAnimation);
+                    this.nextAnimation(animation, this.entity.cullStopAnimation);
                 } else {
                     this.entity.playAnimation(this.entity.cullStopAnimation);
                 }
