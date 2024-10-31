@@ -118,7 +118,6 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
     @Override
     protected void registerCustomGoals() {
         this.goalSelector.addGoal(1, new AnimationDie<>(this));
-        this.goalSelector.addGoal(1, new AnimationHurt<>(this, false));
         this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> spellCastingHealAnimation));
         this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> spellCastingSummonAnimation));
         this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> spellCastingBombAnimation));
