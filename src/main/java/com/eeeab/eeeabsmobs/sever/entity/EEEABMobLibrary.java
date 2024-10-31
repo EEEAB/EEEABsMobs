@@ -32,11 +32,11 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
     }
 
     public Animation getDeathAnimation() {
-        return this.noAnimation;
+        return null;
     }
 
     public Animation getHurtAnimation() {
-        return this.noAnimation;
+        return null;
     }
 
 
@@ -74,7 +74,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
 
     @Override
     protected void dying() {
-        if (this.getAnimation() != this.getDeathAnimation()) {
+        if (this.getDeathAnimation() != null && this.getAnimation() != this.getDeathAnimation()) {
             this.stopAllSuperpositionAnimation();
             this.playAnimation(this.getDeathAnimation());
         }

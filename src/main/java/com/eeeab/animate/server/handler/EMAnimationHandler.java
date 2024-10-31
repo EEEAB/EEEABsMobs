@@ -10,15 +10,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.PacketDistributor;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
 
 public enum EMAnimationHandler {
     INSTANCE;
 
-    public <T extends Entity & EMAnimatedEntity> void sendEMAnimationMessage(T entity, Animation animation) {
+    public <T extends Entity & EMAnimatedEntity> void sendEMAnimationMessage(T entity, @NotNull(value = "animation cannot be null", exception = IllegalArgumentException.class) Animation animation) {
         if (!entity.level().isClientSide) {
-            if (animation == null) {
-                throw new IllegalArgumentException("animation is null");
-            }
             entity.getAnimation().stop();
             entity.setAnimation(animation);
             entity.setAnimationTick(0);
@@ -30,7 +28,7 @@ public enum EMAnimationHandler {
     public <T extends Entity & EMAnimatedEntity> void sendEMAnimationMessage(T entity, boolean onlyStopSuperposition) {
         if (!entity.level().isClientSide) {
             if (entity.getAnimations() == null || entity.getAnimations().length == 0) {
-                System.out.println(entity.getName().getString() + " animations is null");
+                System.out.println(entity.getName().getString() + " animations cannot be null");
                 return;
             }
             EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new StopAnimationMessage(entity.getId(), onlyStopSuperposition));
@@ -61,5 +59,4 @@ public enum EMAnimationHandler {
             }
         }
     }
-
 }
