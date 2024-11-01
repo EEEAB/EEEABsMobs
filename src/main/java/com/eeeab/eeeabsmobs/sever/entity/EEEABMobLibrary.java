@@ -3,8 +3,6 @@ package com.eeeab.eeeabsmobs.sever.entity;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.animation.EMAnimatedEntity;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
-import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -12,9 +10,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * <b>EEEABMobLibrary</b><br/>
@@ -47,29 +42,6 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
             this.playAnimation(this.getHurtAnimation());
         }
         return attack;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        this.checkAnimationLegality();
-    }
-
-    private void checkAnimationLegality() {
-        if (!EMConfigHandler.COMMON.OTHER.enableAnimationLegalityLogPrint.get()) return;
-        if (this.tickCount % 200 == 0) {
-            Animation[] animations = this.getAnimations();
-            if (animations != null && this.isAlive()) {
-                List<Animation> filterAnimations = Arrays.stream(animations).filter(a -> a != this.noAnimation && a != this.getAnimation()
-                        && a.isStarted() && !a.isSuperposition()).toList();
-                for (Animation animation : filterAnimations) {
-                    EEEABMobs.LOGGER.warn("{} → there is illegal action data: Mob= {} Animation= {}[{}]",
-                            this.level().isClientSide ? "Client" : "Server",
-                            this.getName().getString(), animation,
-                            ArrayUtils.indexOf(this.getAnimations(), animation));
-                }
-            }
-        }
     }
 
     @Override

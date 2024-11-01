@@ -202,7 +202,6 @@
   "other.eeeabsmobs.bosses_3.config": "Enable bosses breaking blocks drop items",
   "other.eeeabsmobs.misc_1.config": "Enable friendly fire among allies",
   "other.eeeabsmobs.misc_2.config": "Enable frenzy potion block destruction effect",
-  "other.eeeabsmobs.debug_1.config": "Enable print illegal logs",
   "other.eeeabsmobs.challenge_mode.config": "Enable challenge mode",
   "other.eeeabsmobs.interval_protect.config": "Enable frame damage protection",
   "other.eeeabsmobs.falling_block_1.config": "Enable falling block spawn",

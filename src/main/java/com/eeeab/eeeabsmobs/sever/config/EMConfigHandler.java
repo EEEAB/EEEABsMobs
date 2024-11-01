@@ -439,12 +439,6 @@ public final class EMConfigHandler {
                         .translation(getTranslationKey("misc_2")).define("Enable frenzy potion destroy block", false);
                 builder.pop();
             }
-            {
-                builder.push("Debug");
-                this.enableAnimationLegalityLogPrint = BUILDER.comment("If 'False' disable print illegal animation logs(For developers only)")
-                        .translation(getTranslationKey("debug_1")).define("Enable print illegal logs", false);
-                builder.pop();
-            }
             builder.pop();
         }
 
@@ -460,8 +454,6 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.BooleanValue enableSameMobsTypeInjury;
         //启用狂暴药水冲刺时破坏方块效果
         public final ForgeConfigSpec.BooleanValue enableFrenzyDestroyBlock;
-        //启用记录错误动作日志
-        public final ForgeConfigSpec.BooleanValue enableAnimationLegalityLogPrint;
     }
 
 
