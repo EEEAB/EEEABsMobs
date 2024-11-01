@@ -104,49 +104,7 @@ public class ModelNamelessGuardian extends EMHierarchicalModel<EntityNamelessGua
         float frame = entity.frame + delta;
         //LookAt
         lookAtAnimation(netHeadYaw, headPitch, 1.0F, this.head);
-
-        if (entity.isNoAnimation()) {
-            if (entity.isActive()) {
-                //抬起斧头姿势
-                setStaticRotationAngle(axe, -2.5F, -10, 20);
-                setStaticRotationPoint(axe, 0, -1F, -5F);
-                setStaticRotationAngle(rightArm, -30, 25, 25);
-                setStaticRotationAngle(rightArmUnder, -95, 0, 0);
-            } else {
-                setStaticRotationAngle(rightArm, -35, 2.5F, 4);
-                setStaticRotationAngle(rightArmUnder, -31.1076F, -18.1723F, -6.2528F);
-                setStaticRotationAngle(head, 40, 0, 0);
-                setStaticRotationPoint(head, 0, -2, 1);
-                setStaticRotationAngle(upper, 5, 0, 0);
-                setStaticRotationAngle(axe, 1, 0, 0);
-                setStaticRotationPoint(axe, 0F, 0, 9.5F);
-            }
-        }
-
-        if (entity.isActive() && entity.isAlive()) {
-            //Idle
-            this.bob(rightArm, 0.1F, 0.5F, false, frame, 1);
-            this.bob(leftArm, 0.1F, 0.5F, false, frame, 1);
-            this.bob(body, 0.1F, 0.2F, false, frame, 1);
-            this.bob(head, 0.1F, 0.4F, false, frame, 1);
-            this.walk(upper, 0.1F, 0.05F, false, 0, 0, frame, 1);
-            this.walk(head, 0.1F, 0.05F, true, 0, 0, frame, 1);
-
-            //Walk
-            if (entity.isNoAnimation()) {
-                if (entity.getDeltaMovement().horizontalDistanceSqr() > 0) {
-                    this.animateWalk(AnimationNamelessGuardian.WALK, limbSwing, limbSwingAmount, 1.5F, 1.5F);
-                } else {
-                    float speed = 0.2F;
-                    float degree = 0.66F;
-                    this.walk(this.root, speed * 2F, degree * 0.12F, false, 0, 0, limbSwing, limbSwingAmount);
-                    this.flap(this.upper, speed, degree * 0.12F, true, 0, 0, limbSwing, limbSwingAmount);
-                    this.swing(this.upper, speed, degree * 0.12F, false, 0, 0, limbSwing, limbSwingAmount);
-                    this.walk(this.leftArm, speed, degree * 0.8F, true, 0.0F, -0.05F, limbSwing, limbSwingAmount);
-                    this.walk(this.rightArm, speed * 0.8F, 0.2F, false, 0.0F, 0, limbSwing, limbSwingAmount);
-                }
-            }
-        }
+        //Animation
         this.animate(entity.dieAnimation, AnimationNamelessGuardian.DIE, ageInTicks);
         this.animate(entity.concussionAnimation, AnimationNamelessGuardian.CONCUSSION, ageInTicks);
         this.animate(entity.activateAnimation, AnimationNamelessGuardian.ACTIVE, ageInTicks);
@@ -172,7 +130,47 @@ public class ModelNamelessGuardian extends EMHierarchicalModel<EntityNamelessGua
         this.animate(entity.shakeGroundAttackAnimation1, AnimationNamelessGuardian2.SHAKE_GROUND_1, ageInTicks);
         this.animate(entity.shakeGroundAttackAnimation2, AnimationNamelessGuardian2.SHAKE_GROUND_2, ageInTicks);
         this.animate(entity.shakeGroundAttackAnimation3, AnimationNamelessGuardian2.SHAKE_GROUND_3, ageInTicks);
-
+        //Pose
+        if (entity.isNoAnimation()) {
+            if (entity.isActive()) {
+                setStaticRotationAngle(axe, -2.5F, -10, 20);
+                setStaticRotationPoint(axe, 0, -1F, -5F);
+                setStaticRotationAngle(rightArm, -30, 25, 25);
+                setStaticRotationAngle(rightArmUnder, -95, 0, 0);
+            } else {
+                setStaticRotationAngle(rightArm, -35, 2.5F, 4);
+                setStaticRotationAngle(rightArmUnder, -31.1076F, -18.1723F, -6.2528F);
+                setStaticRotationAngle(head, 40, 0, 0);
+                setStaticRotationPoint(head, 0, -2, 1);
+                setStaticRotationAngle(upper, 5, 0, 0);
+                setStaticRotationAngle(axe, 1, 0, 0);
+                setStaticRotationPoint(axe, 0F, 0, 9.5F);
+            }
+        }
+        if (entity.isActive() && entity.isAlive()) {
+            //Idle
+            this.bob(rightArm, 0.1F, 0.5F, false, frame, 1);
+            this.bob(leftArm, 0.1F, 0.5F, false, frame, 1);
+            this.bob(body, 0.1F, 0.2F, false, frame, 1);
+            this.bob(head, 0.1F, 0.4F, false, frame, 1);
+            this.walk(upper, 0.1F, 0.05F, false, 0, 0, frame, 1);
+            this.walk(head, 0.1F, 0.05F, true, 0, 0, frame, 1);
+            //Walk
+            if (entity.isNoAnimation()) {
+                if (entity.getDeltaMovement().horizontalDistanceSqr() > 0) {
+                    this.animateWalk(AnimationNamelessGuardian.WALK, limbSwing, limbSwingAmount, 1.5F, 1.5F);
+                } else {
+                    float speed = 0.2F;
+                    float degree = 0.66F;
+                    this.walk(this.root, speed * 2F, degree * 0.12F, false, 0, 0, limbSwing, limbSwingAmount);
+                    this.flap(this.upper, speed, degree * 0.12F, true, 0, 0, limbSwing, limbSwingAmount);
+                    this.swing(this.upper, speed, degree * 0.12F, false, 0, 0, limbSwing, limbSwingAmount);
+                    this.walk(this.leftArm, speed, degree * 0.8F, true, 0.0F, -0.05F, limbSwing, limbSwingAmount);
+                    this.walk(this.rightArm, speed * 0.8F, 0.2F, false, 0.0F, 0, limbSwing, limbSwingAmount);
+                }
+            }
+        }
+        //Animation effect
         int tick = entity.getAnimationTick();
         if (entity.getAnimation() == entity.smashAttackAnimation) {
             if (tick < 20) upper.zRot += (float) (upper.x * 0.01 * Math.cos(2.0F * frame));
