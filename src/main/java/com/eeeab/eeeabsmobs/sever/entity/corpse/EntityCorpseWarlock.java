@@ -445,11 +445,12 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         }
         if (entity != null) {
             if (animation == babbleAnimation) this.playAnimation(this.teleportAnimation);
-            if (this.random.nextFloat() < 0.6F) this.hurtCount++;
             Double maxDistance = EMConfigHandler.COMMON.MOB.CORPSES.CORPSE_WARLOCK.maxDistanceTakeDamage.get();
             if (ModEntityUtils.isProjectileSource(source) && this.distanceTo(entity) >= maxDistance) return false;
         }
-        return super.hurt(source, damage);
+        boolean flag = super.hurt(source, damage);
+        if (flag && entity != null && this.random.nextFloat() < 0.6F) this.hurtCount++;
+        return flag;
     }
 
     @Override
