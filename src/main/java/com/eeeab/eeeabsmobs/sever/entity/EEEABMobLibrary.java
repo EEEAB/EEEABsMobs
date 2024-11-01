@@ -83,9 +83,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
     @Override
     protected int getDeathDuration() {
         Animation death;
-        if ((death = getDeathAnimation()) != this.getNoAnimation()) {
-            return death.getDuration();
-        }
+        if ((death = getDeathAnimation()) != null) return death.getDuration();
         return 20;
     }
 
@@ -124,7 +122,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
     }
 
     public boolean isNoAnimation() {
-        return this.animation == this.getNoAnimation();
+        return this.animation == this.noAnimation;
     }
 
     public void stopAllSuperpositionAnimation() {
