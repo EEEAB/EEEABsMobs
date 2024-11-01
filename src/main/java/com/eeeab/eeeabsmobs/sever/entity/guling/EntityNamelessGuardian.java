@@ -434,7 +434,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             }
         });
         this.goalSelector.addGoal(1, new GuardianShootLaserGoal(this, () -> laserAnimation));
-        this.goalSelector.addGoal(2, new AnimationRepel<>(this, () -> concussionAnimation, 6.5F, 8, 2.5F, 0.2F, true));
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> concussionAnimation, 6.5F, 8, 2.5F, 0.2F, true));
         this.goalSelector.addGoal(2, new GuardianAIGoal(this));
     }
 

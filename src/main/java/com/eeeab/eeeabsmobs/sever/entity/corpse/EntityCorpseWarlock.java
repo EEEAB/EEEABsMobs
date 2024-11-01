@@ -234,7 +234,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> vampireAnimation, false));
         this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> babbleAnimation, false));
         this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> robustAnimation, false));
-        this.goalSelector.addGoal(2, new AnimationRepel<>(this, () -> attackAnimation, 4F, 6, 2F, 2F, true));
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> attackAnimation, 4F, 6, 2F, 2F, true));
         this.goalSelector.addGoal(2, new WarlockTeleportGoal(this));
         this.goalSelector.addGoal(3, new WarlockSummonGoal(this));
         this.goalSelector.addGoal(3, new WarlockTearApartGoal(this));
