@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Predicate;
 
 public class EntityImmortalMagicCircle extends EntityMagicEffects {
-    private final Predicate<LivingEntity> LIVING_ENTITY_SELECTOR = e -> e instanceof EntityAbsImmortal || this.caster == null || this.caster.isAlliedTo(e);
+    private final Predicate<LivingEntity> LIVING_ENTITY_SELECTOR = e -> getMagicCircleType() == MagicCircleType.HARMFUL || (e instanceof EntityAbsImmortal || this.caster == null || this.caster.isAlliedTo(e));
     private static final EntityDataAccessor<Float> DATA_SCALE = SynchedEntityData.defineId(EntityImmortalMagicCircle.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_SPEED = SynchedEntityData.defineId(EntityImmortalMagicCircle.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_YAW = SynchedEntityData.defineId(EntityImmortalMagicCircle.class, EntityDataSerializers.FLOAT);
