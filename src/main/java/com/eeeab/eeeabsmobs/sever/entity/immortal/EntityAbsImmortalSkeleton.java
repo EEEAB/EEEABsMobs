@@ -257,7 +257,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         if (source.getDirectEntity() instanceof AbstractArrow arrow) pierceLevel = arrow.getPierceLevel();
         if (hitFlag && this.checkHoldItemCanBlock() && entity instanceof LivingEntity livingEntity && !source.is(DamageTypeTags.BYPASSES_ARMOR) && !source.is(DamageTypeTags.BYPASSES_SHIELD) && (this.isNoAnimation() || this.getAnimation() == this.blockAnimation)) {
             this.blockEntity = livingEntity;
-            if (livingEntity.getItemInHand(livingEntity.getUsedItemHand()).getItem() instanceof AxeItem || damage >= this.getMaxHealth()) {
+            if (livingEntity.canDisableShield() || damage >= this.getMaxHealth()) {
                 this.playSound(SoundEvents.SHIELD_BREAK);
                 this.blockCoolTick = 100;
             } else if (pierceLevel == 0) {
@@ -434,8 +434,8 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
 
     public enum CareerType implements StringRepresentable {
         NONE(-1, "none", 5F, 4F, 0F, 0.01F, 1.05F, Items.AIR, ItemInit.IMMORTAL_BONE.get()),
-        MAGE(0, "mage", 20F, 0F, 2F, 0.08F, 1.05F, Items.AIR),
-        ARCHER(1, "archer", 10F, 6F, 4F, 0.05F, 1.1F, Items.BOW, Items.CROSSBOW),
+        MAGE(0, "mage", 20F, 0F, 2F, 0.03F, 1.05F, Items.AIR),
+        ARCHER(1, "archer", 10F, 6F, 4F, 0.025F, 1.1F, Items.BOW, Items.CROSSBOW),
         WARRIOR(2, "warrior", 15F, 5F, 6F, 0.02F, 1.1F, Items.STONE_SWORD),
         KNIGHT(3, "knight", 25F, 6F, 8F, 0F, 1.2F, ItemInit.IMMORTAL_AXE.get(), ItemInit.IMMORTAL_SWORD.get(), Items.BOW, Items.CROSSBOW),
         ;
