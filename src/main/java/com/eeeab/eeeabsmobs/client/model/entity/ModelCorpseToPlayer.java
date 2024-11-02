@@ -2,17 +2,9 @@ package com.eeeab.eeeabsmobs.client.model.entity;
 
 import com.eeeab.animate.client.model.EMHierarchicalModel;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationCommon;
-import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpse;
+import com.eeeab.eeeabsmobs.client.model.animation.AnimationCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseToPlayer;
-import net.minecraft.client.animation.AnimationChannel;
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.animation.Keyframe;
-import net.minecraft.client.animation.KeyframeAnimations;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ModelCorpseToPlayer extends EMHierarchicalModel<EntityCorpseToPlayer> {
     private final ModelPart root;
@@ -71,9 +63,9 @@ public class ModelCorpseToPlayer extends EMHierarchicalModel<EntityCorpseToPlaye
             this.walk(leftArm, speed, degree, false, 0, -0.05F, frame, 1);
             this.swing(leftArm, speed, degree, false, 0, 0, frame, 1);
         }
-        this.animate(entity.attackAnimation1, ModelCorpse.AnimationCorpse.ATTACK_1, ageInTicks);
-        this.animate(entity.attackAnimation2, ModelCorpse.AnimationCorpse.ATTACK_2, ageInTicks);
-        this.animate(entity.attackAnimation3, ModelCorpse.AnimationCorpse.ATTACK_3, ageInTicks);
+        this.animate(entity.attackAnimation1, AnimationCorpse.ATTACK_1, ageInTicks);
+        this.animate(entity.attackAnimation2, AnimationCorpse.ATTACK_2, ageInTicks);
+        this.animate(entity.attackAnimation3, AnimationCorpse.ATTACK_3, ageInTicks);
         this.animate(entity.spawnAnimation, AnimationCommon.SPAWN,ageInTicks);
     }
 }
