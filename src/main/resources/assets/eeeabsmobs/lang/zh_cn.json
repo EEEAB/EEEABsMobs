@@ -18,11 +18,12 @@
   "entity.eeeabsmobs.guling_sentinel_heavy": "古陵哨兵-重型",
 
   "_comment": "实验性实体",
+  "entity.eeeabsmobs.explode": "爆炸",
   "entity.eeeabsmobs.shaman_bomb": "巫师炸弹",
   "entity.eeeabsmobs.eye_of_structure": "结构之眼",
   "entity.eeeabsmobs.falling_block": "下落方块",
   "entity.eeeabsmobs.guardian_laser": "守卫者激光",
-  "entity.eeeabsmobs.scorch": "烧焦",
+  "entity.eeeabsmobs.scorch": "焦土",
   "entity.eeeabsmobs.camera_shake": "相机抖动",
   "entity.eeeabsmobs.moving_controller": "移动控制器",
   "entity.eeeabsmobs.tester": "测试者",
@@ -35,6 +36,9 @@
   "entity.eeeabsmobs.grenade": "榴弹",
   "entity.eeeabsmobs.electromagnetic": "电磁脉冲",
   "entity.eeeabsmobs.alien_portal": "异界传送门",
+  "entity.eeeabsmobs.immortal_magic_circle": "不朽符文阵",
+  "entity.eeeabsmobs.immortal_shuriken": "不朽手里剑",
+  "entity.eeeabsmobs.immortal_laser": "不朽激光",
 
   "_comment": "物品",
   "item.eeeabsmobs.logo_item": "EEEAB's Mobs 模组标识",

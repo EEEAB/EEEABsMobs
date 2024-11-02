@@ -18,11 +18,12 @@
   "entity.eeeabsmobs.guling_sentinel_heavy": "Heavy Guling Sentinel",
 
   "_comment": "Entities",
+  "entity.eeeabsmobs.explode": "Explode",
   "entity.eeeabsmobs.shaman_bomb": "Shaman Bomb",
   "entity.eeeabsmobs.eye_of_structure": "Eye Of Structure",
   "entity.eeeabsmobs.falling_block": "Falling Block",
   "entity.eeeabsmobs.guardian_laser": "Guardian Laser",
-  "entity.eeeabsmobs.scorch": "Scorch",
+  "entity.eeeabsmobs.scorch": "Scorched Earth",
   "entity.eeeabsmobs.camera_shake": "Camera Shake",
   "entity.eeeabsmobs.moving_controller": "Moving Controller",
   "entity.eeeabsmobs.tester": "Tester",
@@ -35,6 +36,9 @@
   "entity.eeeabsmobs.grenade": "Grenade",
   "entity.eeeabsmobs.electromagnetic": "Electromagnetic",
   "entity.eeeabsmobs.alien_portal": "Alien Portal",
+  "entity.eeeabsmobs.immortal_magic_circle": "Immortal Rune Circle",
+  "entity.eeeabsmobs.immortal_shuriken": "Immortal Shuriken",
+  "entity.eeeabsmobs.immortal_laser": "Immortal Laser",
 
   "_comment": "Items",
   "item.eeeabsmobs.logo_item": "EEEAB's Mobs MOD Logo",
