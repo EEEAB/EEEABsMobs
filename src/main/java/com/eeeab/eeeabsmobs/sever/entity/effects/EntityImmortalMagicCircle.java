@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.sever.entity.effects;
 
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.util.EMMathUtils;
@@ -19,7 +20,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Predicate;
+
 public class EntityImmortalMagicCircle extends EntityMagicEffects {
+    private final Predicate<LivingEntity> LIVING_ENTITY_SELECTOR = e -> e instanceof EntityAbsImmortal || this.caster == null || this.caster.isAlliedTo(e);
     private static final EntityDataAccessor<Float> DATA_SCALE = SynchedEntityData.defineId(EntityImmortalMagicCircle.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_SPEED = SynchedEntityData.defineId(EntityImmortalMagicCircle.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_YAW = SynchedEntityData.defineId(EntityImmortalMagicCircle.class, EntityDataSerializers.FLOAT);
@@ -89,7 +93,7 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
                 if (!level().isClientSide && tickCount % 5 == 0) {
                     MobEffect[] effects = this.getMagicCircleType().effect;
                     if (effects.length > 0) {
-                        for (LivingEntity inRange : level().getEntitiesOfClass(LivingEntity.class, ModEntityUtils.makeAABBWithSize(getX(), getY(), getZ(), 0, getScale(), 1, getScale()))) {
+                        for (LivingEntity inRange : level().getEntitiesOfClass(LivingEntity.class, ModEntityUtils.makeAABBWithSize(getX(), getY(), getZ(), 0, getScale(), 1, getScale()), LIVING_ENTITY_SELECTOR)) {
                             for (MobEffect effect : effects) {
                                 if (inRange.hasEffect(effect)) {
                                     MobEffectInstance instance = inRange.getEffect(effect);
@@ -155,7 +159,7 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
-        return distance < 2048;
+        return distance < 4096;
     }
 
     public float getScale() {
@@ -200,9 +204,10 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
         entityData.set(DATA_TYPE, type.toString());
     }
 
-    public static void spawn(Level level, Vec3 pos, float scale, float speed, int duration, float yaw, MagicCircleType type) {
+    public static void spawn(Level level, LivingEntity caster, Vec3 pos, float scale, float speed, int duration, float yaw, MagicCircleType type) {
         if (!level.isClientSide) {
             EntityImmortalMagicCircle entity = new EntityImmortalMagicCircle(level);
+            entity.caster = caster;
             entity.setScale(scale);
             entity.setSpeed(speed);
             entity.setDuration(10 + duration);
