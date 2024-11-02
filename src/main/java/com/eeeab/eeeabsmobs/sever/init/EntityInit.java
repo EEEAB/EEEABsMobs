@@ -236,7 +236,7 @@ public class EntityInit {
     public static final RegistryObject<EntityType<EntityImmortalShuriken>> IMMORTAL_SHURIKEN =
             ENTITIES.register("immortal_shuriken",
                     () -> EntityType.Builder.<EntityImmortalShuriken>of(EntityImmortalShuriken::new, MobCategory.MISC)
-                            .sized(0.5F, 0.5F).clientTrackingRange(8).updateInterval(1)
+                            .sized(0.7125F, 0.5F).clientTrackingRange(8).updateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_shuriken").toString()));
 
     //不朽激光
