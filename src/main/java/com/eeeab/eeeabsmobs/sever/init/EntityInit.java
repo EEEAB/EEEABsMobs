@@ -227,10 +227,10 @@ public class EntityInit {
 
     //不朽法阵
     public static final RegistryObject<EntityType<EntityImmortalMagicCircle>> MAGIC_CIRCLE =
-            ENTITIES.register("magic_circle",
+            ENTITIES.register("immortal_magic_circle",
                     () -> EntityType.Builder.<EntityImmortalMagicCircle>of(EntityImmortalMagicCircle::new, MobCategory.MISC)
                             .sized(0.1F, 0.1F).setUpdateInterval(1)
-                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "magic_circle").toString()));
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_magic_circle").toString()));
 
     //不朽手里剑
     public static final RegistryObject<EntityType<EntityImmortalShuriken>> IMMORTAL_SHURIKEN =
