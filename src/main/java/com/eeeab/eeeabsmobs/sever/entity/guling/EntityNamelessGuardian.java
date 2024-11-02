@@ -237,8 +237,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override//强制添加药水效果
     public void forceAddEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        if (this.isActive() && ModEntityUtils.isBeneficial(effectInstance.getEffect()))
-            super.forceAddEffect(effectInstance, entity);
+        if (this.isActive() && ModEntityUtils.isBeneficial(effectInstance.getEffect())) super.forceAddEffect(effectInstance, entity);
     }
 
     @Override//添加效果时额外条件
@@ -271,6 +270,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     @Override
     public boolean removeWhenFarAway(double distance) {
         return false;
+    }
+
+    @Override
+    public boolean canDisableShield() {
+        return true;
     }
 
     @Override
@@ -796,8 +800,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int pLooting, boolean pRecentlyHit) {
-        super.dropCustomDeathLoot(source, pLooting, pRecentlyHit);
+    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
+        super.dropCustomDeathLoot(source, looting, recentlyHit);
         if (source.getEntity() != null || this.getTarget() != null) {
             ItemEntity itementity = this.spawnAtLocation(ItemInit.GUARDIAN_CORE.get());
             if (itementity != null) {
@@ -1196,16 +1200,14 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public boolean guardianHurtTarget(DamageSource damageSource, EntityNamelessGuardian guardian, LivingEntity hitEntity, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier,
                                       boolean shouldHeal, boolean disableShield, boolean ignoreHit) {
         float finalDamage = ((guardian.getAttackDamageAttributeValue() * baseDamageMultiplier) + hitEntity.getMaxHealth() * hitEntityMaxHealth) * damageMultiplier;
-        double suckBloodMultiplier = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.suckBloodMultiplier.get();
-        //治疗值 = 攻击力15% + 生命上限1.5% - 目标护甲值5%
-        float armor = Mth.clamp(hitEntity.getArmorValue() * 0.05F, 0F, 1.5F);
-        float heal = (guardian.getAttackDamageAttributeValue() * 0.15F) + (guardian.getMaxHealth() * 0.015F) - armor;
+        //治疗量 = 攻击力15% + 生命上限1.5% - 目标护甲值5%
+        float healAmount = (guardian.getAttackDamageAttributeValue() * 0.15F) + (guardian.getMaxHealth() * 0.015F) - Mth.clamp(hitEntity.getArmorValue() * 0.05F, 0F, 1.5F);
         boolean flag = hitEntity.hurt(damageSource, finalDamage);
         boolean blocking = hitEntity instanceof Player && hitEntity.isBlocking();
         boolean checkConfig = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.enableForcedSuckBlood.get() || this.isChallengeMode();
         if ((flag || (ignoreHit && this.isPowered() && !blocking && checkConfig)) && shouldHeal) {
-            if (!flag) heal *= 0.5F;//未能造成伤害减少吸血量
-            guardian.heal((float) (heal * suckBloodMultiplier));
+            if (!flag) healAmount *= 0.5F;//未能造成伤害减少吸血量
+            guardian.heal((float) (healAmount * EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.suckBloodMultiplier.get()));
         }
         if (disableShield && blocking) {
             Player player = (Player) hitEntity;
