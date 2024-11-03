@@ -1,16 +1,16 @@
-package com.eeeab.eeeabsmobs.sever.entity.effects;
+package com.eeeab.eeeabsmobs.sever.entity.projectile;
 
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModMobType;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
-import com.eeeab.eeeabsmobs.sever.util.EMMathUtils;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import com.eeeab.eeeabsmobs.sever.util.damage.EMDamageSource;
 import net.minecraft.core.particles.ParticleOptions;
@@ -24,8 +24,10 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -34,9 +36,9 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-public class EntityImmortalShuriken extends EntityMagicEffects {
-    private static final double TRACKING_DISTANCE_THRESHOLD = 3D;
-    private static final double RE_FIND_RANGE = 20D;
+public class EntityImmortalShuriken extends Projectile implements IEntity {
+    private static final double TRACKING_DISTANCE_THRESHOLD = 2.4D;
+    private static final double RE_FIND_RANGE = 30D;
     private static final int MAX_ACTIVE = 600;
     private LivingEntity target;
     private UUID targetUUID;
@@ -47,40 +49,54 @@ public class EntityImmortalShuriken extends EntityMagicEffects {
     private int difficultyLevel;
     private static final EntityDataAccessor<Integer> DATA_DURATION = SynchedEntityData.defineId(EntityImmortalShuriken.class, EntityDataSerializers.INT);
     private final Predicate<LivingEntity> LIVING_ENTITY_SELECTOR = entity -> entity.getMobType() != ModMobType.IMMORTAL && !entity.getType().is(EMTagKey.IMMORTAL_IGNORE_HUNT_TARGETS) && entity.isAttackable()
-            && (entity instanceof Enemy || entity instanceof NeutralMob || (entity instanceof Player player && !player.isCreative() && !player.isSpectator())) && (this.caster == null || !this.caster.isAlliedTo(entity));
+            && (entity instanceof Enemy || entity instanceof NeutralMob || (entity instanceof Player player && !player.isCreative() && !player.isSpectator())) && (getOwner() == null || !getOwner().isAlliedTo(entity));
 
-    public EntityImmortalShuriken(EntityType<?> type, Level level) {
+    public EntityImmortalShuriken(EntityType<EntityImmortalShuriken> type, Level level) {
         super(type, level);
         this.noPhysics = true;
     }
 
     public EntityImmortalShuriken(Level level, LivingEntity caster, LivingEntity target, int duration) {
-        super(EntityInit.IMMORTAL_SHURIKEN.get(), level);
-        this.caster = caster;
+        this(EntityInit.IMMORTAL_SHURIKEN.get(), level);
+        this.setOwner(caster);
         this.target = target;
         this.difficultyLevel = this.level().getDifficulty().getId();
         this.setDuration(duration);
-        if (!level().isClientSide) {
-            setCasterId(caster.getId());
-        }
+    }
+
+    @Override
+    public boolean isAttackable() {
+        return false;
+    }
+
+    @Override//在实体上渲染火焰效果
+    public boolean displayFireAnimation() {
+        return false;
+    }
+
+    @Override
+    public PushReaction getPistonPushReaction() {
+        return PushReaction.IGNORE;
     }
 
     @Override
     public void tick() {
-        super.tick();
-        if (this.level().isClientSide || (caster == null || !caster.isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
+        if (this.level().isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
+            super.tick();
             this.move(MoverType.SELF, this.getDeltaMovement());
-            HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
-            if (hitresult.getType() != HitResult.Type.MISS && this.checkCanShoot()) {
-                this.onHit(hitresult);
-                this.level().broadcastEntityEvent(this, (byte) 7);
-                this.discard();
-            }
-
             if (!this.level().isClientSide) {
+                if (this.checkCanShoot()) {
+                    HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+                    if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
+                        this.onHit(hitresult);
+                        this.level().broadcastEntityEvent(this, (byte) 7);
+                        this.discard();
+                    }
+                }
+
                 if (this.target != null) {
                     this.preX = this.target.getX();
-                    this.preY = this.target.getY(0.3);
+                    this.preY = this.target.getY(0.3333333333333333D);
                     this.preZ = this.target.getZ();
                 } else if (this.targetUUID != null && this.level() instanceof ServerLevel serverLevel) {
                     this.target = (LivingEntity) serverLevel.getEntity(this.targetUUID);
@@ -100,31 +116,21 @@ public class EntityImmortalShuriken extends EntityMagicEffects {
 
             this.checkInsideBlocks();
 
+            ProjectileUtil.rotateTowardsMovement(this, 0.5F);
+
             if (this.tickCount > MAX_ACTIVE) {
                 this.discard();
             } else if (!this.level().isClientSide) {
                 if (this.checkCanShoot()) {
-                    Vec3 direction = this.findTargetPoint();
-                    double distance = direction.length();
-                    if (distance == 0) {
-                        this.setDeltaMovement(Vec3.ZERO);
-                        return;
-                    }
                     float distanced = this.distanceToPre();
-                    double speed = Math.min(distance * 0.4 + (0.2 * EMMathUtils.getTickFactor(distanced, 20, true)), 0.6);
                     if (this.closeFlag || distanced <= TRACKING_DISTANCE_THRESHOLD) {
-                        if (!this.closeFlag)
-                            this.setDeltaMovement(this.getDeltaMovement().subtract(0, 0.03, 0).normalize());
-                        this.setDeltaMovement(this.getDeltaMovement().scale(1.01));
+                        if (!this.closeFlag) this.setDeltaMovement(this.getDeltaMovement().subtract(0, 0.03, 0));
                         this.closeFlag = true;
                         return;
                     }
-                    Vec3 movement = direction.scale(speed);
+                    Vec3 movement = this.findTargetPoint().scale(0.7D);
                     this.setDeltaMovement(movement);
-                } else {
-                    this.setDeltaMovement(this.getDeltaMovement().scale(0.95));
-                }
-                ProjectileUtil.rotateTowardsMovement(this, 0.5F);
+                } else this.setDeltaMovement(this.getDeltaMovement().scale(0.95D));
             } else {
                 Vec3 movement = this.getDeltaMovement();
                 //float partialTicks = Minecraft.getInstance().getFrameTime();
@@ -177,8 +183,8 @@ public class EntityImmortalShuriken extends EntityMagicEffects {
             float baseDamage = 1.5F;
             MobEffectInstance instance = hitEntity.getEffect(EffectInit.ERODE_EFFECT.get());
             if (instance != null) baseDamage += (instance.getAmplifier() + 1) * 0.5F;
-            if (entity.hurt(EMDamageSource.immortalMagicAttack(this, this.caster), baseDamage + hitEntity.getMaxHealth() * 0.025F)) {
-                ModEntityUtils.addEffectStackingAmplifier(this.caster, hitEntity, EffectInit.ERODE_EFFECT.get(), 300, this.difficultyLevel, true, true, true, true, true);
+            if (entity.hurt(EMDamageSource.immortalMagicAttack(this, getOwner()), baseDamage + hitEntity.getMaxHealth() * 0.025F)) {
+                ModEntityUtils.addEffectStackingAmplifier(getOwner(), hitEntity, EffectInit.ERODE_EFFECT.get(), 300, this.difficultyLevel, true, true, true, true, true);
             }
         } else {
             entity.hurt(this.damageSources().magic(), 11.4514F);
@@ -187,7 +193,6 @@ public class EntityImmortalShuriken extends EntityMagicEffects {
 
     @Override
     protected void defineSynchedData() {
-        super.defineSynchedData();
         this.entityData.define(DATA_DURATION, 20);
     }
 
@@ -223,11 +228,12 @@ public class EntityImmortalShuriken extends EntityMagicEffects {
         return this.level().getEntitiesOfClass(LivingEntity.class, ModEntityUtils.makeAABBWithSize(this.getX(), this.getY(), this.getZ(), 0, RE_FIND_RANGE, RE_FIND_RANGE, RE_FIND_RANGE), LIVING_ENTITY_SELECTOR).stream().findFirst().orElse(null);
     }
 
-    private boolean canHitEntity(Entity entity) {
-        if (!entity.canBeHitByProjectile() || (entity == caster) || (entity instanceof EntityAbsImmortal && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get())) {
+    @Override
+    public boolean canHitEntity(Entity entity) {
+        if (!entity.canBeHitByProjectile() || (entity == getOwner()) || (entity instanceof EntityAbsImmortal && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get())) {
             return false;
         } else {
-            return caster == null || !caster.isPassengerOfSameVehicle(entity);
+            return getOwner() == null || !getOwner().isPassengerOfSameVehicle(entity);
         }
     }
 

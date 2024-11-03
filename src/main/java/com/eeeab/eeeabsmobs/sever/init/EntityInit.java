@@ -13,6 +13,7 @@ import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGrenade;
+import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityImmortalShuriken;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityPoisonArrow;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
 import com.eeeab.eeeabsmobs.sever.entity.test.EntityTester;
