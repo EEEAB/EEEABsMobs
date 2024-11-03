@@ -31,6 +31,7 @@ public class GuardianLeapGoal extends AnimationSimpleAI<EntityNamelessGuardian> 
                 entity.getLookControl().setLookAt(target, 30F, 30F);
                 entity.lookAt(target, 30F, 30F);
             } else {
+                entity.getLookControl().setLookAt(target, 15F, 30F);
                 entity.setYRot(entity.yRotO);
                 if (tick == 12) {
                     doLeapEffect();
@@ -72,8 +73,8 @@ public class GuardianLeapGoal extends AnimationSimpleAI<EntityNamelessGuardian> 
 
     private void doLeapEffect() {
         Vec3 position = entity.position();
-        EntityCameraShake.cameraShake(entity.level(), position, 10F, 0.125F, 5, 0);
-        ShockWaveUtils.doRingShockWave(entity.level(), position, 2D, -0.1F, false, 20);
+        EntityCameraShake.cameraShake(entity.level(), position, 12F, 0.125F, 5, 0);
+        ShockWaveUtils.doRingShockWave(entity.level(), position, 2.4D, -0.04F, false, 10);
     }
 
     private static Vec3 findTargetPoint(LivingEntity attacker, LivingEntity target) {
