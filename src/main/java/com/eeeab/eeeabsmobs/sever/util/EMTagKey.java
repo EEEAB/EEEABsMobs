@@ -11,13 +11,14 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
 public class EMTagKey {
     public static final TagKey<Structure> EYE_OF_GULING = registerTagKey(Registries.STRUCTURE, "eye_of_guling");
     public static final TagKey<Structure> EYE_OF_BLOODY_ALTAR = registerTagKey(Registries.STRUCTURE, "eye_of_bloody_altar");
-    public static final TagKey<Biome> GULING_BIOMES = registerTagKey(Registries.BIOME, "guling_biomes");
-    public static final TagKey<Biome> BLOODY_ALTAR_BIOMES = registerTagKey(Registries.BIOME, "bloody_altar_biomes");
+    public static final TagKey<Biome> HAS_GULING = registerTagKey(Registries.BIOME, "has_structure/guling");
+    public static final TagKey<Biome> HAS_BLOODY_ALTAR = registerTagKey(Registries.BIOME, "has_structure/bloody_altar");
     public static final TagKey<DamageType> GENERAL_UNRESISTANT_TO = registerTagKey(Registries.DAMAGE_TYPE, "general_unresistant_to");
     public static final TagKey<DamageType> MAGIC_UNRESISTANT_TO = registerTagKey(Registries.DAMAGE_TYPE, "magic_unresistant_to");
     public static final TagKey<EntityType<?>> TRAP_WHITELIST = registerTagKey(Registries.ENTITY_TYPE, "trap_whitelist");
