@@ -31,8 +31,8 @@ public class RenderGuardianBlade extends EntityRenderer<EntityGuardianBlade> {
     @Override
     public void render(EntityGuardianBlade entity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
         pPoseStack.pushPose();
-        pPoseStack.translate(0F, 1.65F, 0F);
-        pPoseStack.scale(1F, -1.0F, -1.0F);
+        pPoseStack.translate(0F, 1.5F, 0F);
+        pPoseStack.scale(0.65F, -1.0F, -0.65F);
         float animationProgress = Math.min(entity.controlled.getAnimationFraction(pPartialTick) + 0.1F, 1F);
         float f;
         if (animationProgress > 0.5) {
