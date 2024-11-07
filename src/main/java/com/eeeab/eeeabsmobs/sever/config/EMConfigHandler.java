@@ -252,7 +252,7 @@ public final class EMConfigHandler {
             builder.push("The Immortal");
             intervalProtect = BUILDER.translation(getTranslationKey("interval_protect")).define("Frame Damage Protection", true);
             combatConfig = new AttributeConfig();
-            maximumDamageCap = new DamageCapConfig(20);
+            maximumDamageCap = new DamageCapConfig(25);
             adaptConfig = new DamageSourceAdaptConfig(builder, 100, 30, 0.1D, 0.6D, true);
             builder.pop();
         }
