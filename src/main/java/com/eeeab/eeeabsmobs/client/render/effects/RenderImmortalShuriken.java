@@ -4,7 +4,7 @@ import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelImmortalShuriken;
 import com.eeeab.eeeabsmobs.client.model.util.EMModelLayer;
 import com.eeeab.eeeabsmobs.client.render.EMRenderType;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalShuriken;
+import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityImmortalShuriken;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;

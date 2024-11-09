@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.model.effects;
 
 import com.eeeab.animate.client.model.EMHierarchicalModel;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalShuriken;
+import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityImmortalShuriken;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
