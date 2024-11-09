@@ -21,6 +21,8 @@ public class DataGenerators {
         ExistingFileHelper helper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> provider = event.getLookupProvider();
         boolean includeServer = event.includeServer();
+        //手动执行
+        generator.addProvider(false, new EMDatapackBuiltinEntriesProvider(packOutput, provider));
         generator.addProvider(includeServer, new EMItemModelProvider(packOutput, helper));
         generator.addProvider(includeServer, new EMRecipeProvider(packOutput));
         generator.addProvider(includeServer, new EMMobEffectProvider(packOutput, provider, helper));
@@ -32,6 +34,5 @@ public class DataGenerators {
         generator.addProvider(includeServer, blockTagsProvider);
         generator.addProvider(includeServer, new EMItemTagsProvider(packOutput, provider, blockTagsProvider.contentsGetter(), helper));
         generator.addProvider(includeServer, new EMBlockStateProvider(packOutput, helper));
-        //generator.addProvider(includeServer, new EMWorldGenProvider(packOutput, provider));
     }
 }

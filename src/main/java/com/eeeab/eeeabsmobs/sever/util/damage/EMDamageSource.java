@@ -3,7 +3,9 @@ package com.eeeab.eeeabsmobs.sever.util.damage;
 import com.eeeab.eeeabsmobs.sever.util.EMResourceKey;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 
 public class EMDamageSource {
     public static DamageSource shamanBombing(Entity bomb, Entity caster) {
@@ -24,5 +26,16 @@ public class EMDamageSource {
     public static DamageSource immortalMagicAttack(Entity magic, Entity caster) {
         return new DamageSource(magic.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).
                 getHolderOrThrow(EMResourceKey.IMMORTAL_MAGIC), magic, caster);
+    }
+
+    public static DamageSource immortalAttack(Entity immortal, boolean crit, boolean ignoreArmor) {
+        return new DamageSource(immortal.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(
+                ignoreArmor ? EMResourceKey.IGNORE_ARMOR_ATTACK : crit ? EMResourceKey.CRIT_HEAL : DamageTypes.MOB_ATTACK
+        ), immortal) {
+            @Override
+            public @NotNull String getMsgId() {
+                return DamageTypes.MOB_ATTACK.location().getPath();
+            }
+        };
     }
 }
