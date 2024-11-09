@@ -65,9 +65,9 @@
   "effect.eeeabsmobs.vertigo_effect": "眩暈",
 
   "_comment": "ダメージソースメッセージ",
-  "death.attack.shaman_bomb": "%1$s はシャーマンの爆弾によって粉々に吹き飛ばされた",
-  "death.attack.guardian_robust_attack": "%1$s は %2$s によって粉砕された",
-  "death.attack.guardian_laser_attack":"%1$s は %2$s からのレーザーによって焼却された",
+  "death.attack.eeeabsmobs.shaman_bomb": "%1$s はシャーマンの爆弾によって粉々に吹き飛ばされた",
+  "death.attack.eeeabsmobs.guardian_robust_attack": "%1$s は %2$s によって粉砕された",
+  "death.attack.eeeabsmobs.guardian_laser_attack":"%1$s は %2$s からのレーザーによって焼却された",
 
   "_comment": "レコード",
   "item.eeeabsmobs.guardians_music_disc.desc": "Guardians - Evan King",

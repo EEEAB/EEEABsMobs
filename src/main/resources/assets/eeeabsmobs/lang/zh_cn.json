@@ -147,10 +147,10 @@
   "item.minecraft.tipped_arrow.effect.frenzy_potion": "狂乱之箭",
 
   "_comment": "伤害源信息",
-  "death.attack.shaman_bomb": "%1$s 被巫师炸弹炸成碎片",
-  "death.attack.guardian_robust_attack": "%1$s 被 %2$s 砸扁",
-  "death.attack.guardian_laser_attack":"%1$s 被 %2$s 的激光击中",
-  "death.attack.immortal_magic":"%1$s 被 %2$s 使用的不朽魔法杀死了",
+  "death.attack.eeeabsmobs.shaman_bomb": "%1$s 被巫师炸弹炸成碎片",
+  "death.attack.eeeabsmobs.guardian_robust_attack": "%1$s 被 %2$s 砸扁",
+  "death.attack.eeeabsmobs.guardian_laser_attack":"%1$s 被 %2$s 的激光击中",
+  "death.attack.eeeabsmobs.immortal_magic":"%1$s 被 %2$s 使用的不朽魔法杀死了",
 
   "_comment": "音乐描述",
   "item.eeeabsmobs.guardians_music_disc.desc": "Guardians - Evan King",
