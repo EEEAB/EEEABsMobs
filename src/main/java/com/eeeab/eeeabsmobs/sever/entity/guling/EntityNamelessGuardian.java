@@ -600,8 +600,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     private void strongKnockBlock() {
         List<Entity> entities = getNearByEntities(Entity.class, 8, 8, 8, 8);
-        double mx = 0, my = 0;
         for (Entity entity : entities) {
+            double mx = 0, my = 0;
             if (entity instanceof Projectile) {
                 double angle = (getAngleBetweenEntities(this, entity) + 90) * Math.PI / 180;
                 mx = -Math.cos(angle);
@@ -1031,10 +1031,9 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     private void preRobustAttack() {
-        List<Entity> entities = getNearByEntities(Entity.class, 16, 16, 16, 16);
-        for (Entity inRangeEntity : entities) {
+        List<LivingEntity> entities = getNearByEntities(LivingEntity.class, 16, 16, 16, 16);
+        for (LivingEntity inRangeEntity : entities) {
             if (inRangeEntity instanceof Player player && player.getAbilities().invulnerable) continue;
-            if (!(inRangeEntity instanceof LivingEntity)) continue;
             Vec3 diff = inRangeEntity.position().subtract(this.position().add(Math.cos(Math.toRadians(this.yBodyRot + 90)) * 3.2F, 0, Math.sin(Math.toRadians(this.yBodyRot + 90)) * 3.2F));
             diff = diff.normalize().scale(0.08);
             inRangeEntity.setDeltaMovement(inRangeEntity.getDeltaMovement().subtract(diff));
