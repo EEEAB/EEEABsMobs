@@ -30,6 +30,7 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
     private static final EntityDataAccessor<Integer> DATA_DURATION = SynchedEntityData.defineId(EntityImmortalMagicCircle.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<String> DATA_TYPE = SynchedEntityData.defineId(EntityImmortalMagicCircle.class, EntityDataSerializers.STRING);
     public final ControlledAnimation processController = new ControlledAnimation(5);
+    private boolean canFollow;
     public boolean NO = true;
 
     public enum MagicCircleType {
@@ -79,6 +80,10 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
     public void tick() {
         super.tick();
         processController.updatePrevTimer();
+
+        if (!level().isClientSide && canFollow && caster != null && !caster.isRemoved() && distanceTo(caster) < getScale() * 2) {
+            if (this.getY() - 0.25 > caster.getY()) this.setPos(getX(), caster.getY() + 0.25, getZ());
+        }
 
         if (NO && processController.increaseTimerChain().isEnd()) {
             NO = false;
@@ -204,10 +209,11 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
         entityData.set(DATA_TYPE, type.toString());
     }
 
-    public static void spawn(Level level, LivingEntity caster, Vec3 pos, float scale, float speed, int duration, float yaw, MagicCircleType type) {
+    public static void spawn(Level level, LivingEntity caster, Vec3 pos, float scale, float speed, int duration, float yaw, MagicCircleType type, boolean canFollow) {
         if (!level.isClientSide) {
             EntityImmortalMagicCircle entity = new EntityImmortalMagicCircle(level);
             entity.caster = caster;
+            entity.canFollow = canFollow;
             entity.setScale(scale);
             entity.setSpeed(speed);
             entity.setDuration(10 + duration);
