@@ -16,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class EntityImmortalLaser extends EntityAbsBeam {
-    private static final double IMMORTAL_RADIUS = 32;
+    public static final double IMMORTAL_RADIUS = 32;
     private static final float MAX_RADIANS = 0.6108652381980153F;
     private static final float ROTATION_SPEED = MAX_RADIANS / 10F;
     private boolean isRotating = true;
@@ -56,9 +56,10 @@ public class EntityImmortalLaser extends EntityAbsBeam {
                     if (target == this.caster) continue;
                     float baseDamage = 5F;
                     MobEffectInstance instance = target.getEffect(EffectInit.ERODE_EFFECT.get());
-                    if (instance != null) baseDamage += instance.getAmplifier() + 1;
+                    if (instance != null) baseDamage += (instance.getAmplifier() + 1) * 0.5F;
+                    MobEffectInstance erodeEffect = new MobEffectInstance(EffectInit.ERODE_EFFECT.get(), 300, 0, true, true, true);
                     if (target.hurt(this.damageSources().indirectMagic(this, caster), baseDamage + target.getMaxHealth() * 0.01F)) {
-                        ModEntityUtils.addEffectStackingAmplifier(this.caster, target, EffectInit.ERODE_EFFECT.get(), 300, 3, true, true, true, true, true);
+                        target.forceAddEffect(erodeEffect, this);
                     }
                 }
             } else if (this.tickCount > this.getCountDown()) {
