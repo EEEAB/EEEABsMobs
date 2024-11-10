@@ -60,7 +60,12 @@ public class ModEntityUtils {
         return entity instanceof Projectile || source.is(DamageTypeTags.IS_PROJECTILE);
     }
 
-
+    /**
+     * 检查实际伤害实体与直接伤害实体是否一致
+     *
+     * @param source 伤害源
+     * @return 布尔值
+     */
     public static boolean checkDirectEntityConsistency(DamageSource source) {
         return source.getEntity() == source.getDirectEntity();
     }
@@ -111,6 +116,19 @@ public class ModEntityUtils {
      */
     public static boolean canMobDestroy(Entity entity) {
         return ForgeEventFactory.getMobGriefingEvent(entity.level(), entity);
+    }
+
+    /**
+     * 判断一个实体是否背对着另一个实体
+     *
+     * @param referEntity  参照实体
+     * @param targetEntity 目标实体
+     * @param tolerance    容差角度
+     */
+    public static boolean isTargetFacingAway(Entity referEntity, Entity targetEntity, double tolerance) {
+        Vec3 lookVec = targetEntity.getLookAngle();
+        Vec3 toOtherVec = referEntity.position().subtract(targetEntity.position()).normalize();
+        return Math.acos(lookVec.dot(toOtherVec)) > -Math.cos(Math.toRadians(tolerance));
     }
 
     /**
