@@ -249,16 +249,19 @@ public final class EMConfigHandler {
     //不朽
     public static class Immortal {
         public Immortal(final ForgeConfigSpec.Builder builder) {
-            builder.push("The Immortal");
+            builder.push("Immortal");
             intervalProtect = BUILDER.translation(getTranslationKey("interval_protect")).define("Frame Damage Protection", true);
+            maxDistanceTakeDamage = BUILDER.comment("Set the effective distance at which projectiles can deal damage")
+                    .translation(getTranslationKey("effective_range")).defineInRange("Set projectile damage range", 15D, 1D, 32D);
             combatConfig = new AttributeConfig();
             maximumDamageCap = new DamageCapConfig(25);
-            adaptConfig = new DamageSourceAdaptConfig(builder, 100, 30, 0.1D, 0.6D, true);
+            adaptConfig = new DamageSourceAdaptConfig(builder, 100, 30, 0.1D, 0.6D, true, true);
             builder.pop();
         }
 
         //帧伤保护机制
         public final ForgeConfigSpec.BooleanValue intervalProtect;
+        public final ForgeConfigSpec.DoubleValue maxDistanceTakeDamage;
         public final AttributeConfig combatConfig;
         public final DamageCapConfig maximumDamageCap;
         public final DamageSourceAdaptConfig adaptConfig;
@@ -487,17 +490,19 @@ public final class EMConfigHandler {
 
     //通用伤害源适应
     public static class DamageSourceAdaptConfig {
-        public DamageSourceAdaptConfig(final ForgeConfigSpec.Builder builder, int maxDamageSourceAdaptCount, int resetCountdown, double singleAdaptFactor, double maxAdaptFactor, boolean adaptsSameTypeMobs) {
+        public DamageSourceAdaptConfig(final ForgeConfigSpec.Builder builder, int maxDamageSourceAdaptCount, int resetCountdown, double singleAdaptFactor, double maxAdaptFactor, boolean adaptsSameTypeMobs, boolean adaptBypassesDamage) {
             builder.push("Damage Adapt");
-            this.maxDamageSourceAdaptCount = BUILDER.comment("Set this mob maximum adaptive damage source count")
-                    .translation(getTranslationKey("damage_adapt_1")).defineInRange("Maximum adaptive damage source count", maxDamageSourceAdaptCount, 10, 1024);
-            this.resetCountdown = BUILDER.comment("Set the effective time for a single adaptive damage source(second)")
+            this.maxDamageSourceAdaptCount = BUILDER.comment("Set this mob maximum adaptation damage source count")
+                    .translation(getTranslationKey("damage_adapt_1")).defineInRange("Maximum adaptation damage source count", maxDamageSourceAdaptCount, 10, 1024);
+            this.resetCountdown = BUILDER.comment("Set the effective time for a single adaptation damage source(second)")
                     .translation(getTranslationKey("damage_adapt_2")).defineInRange("Effective time", resetCountdown, 10, 1024);
             this.singleAdaptFactor = BUILDER.comment("Set the factor of each reduction of the same damage source")
                     .translation(getTranslationKey("damage_adapt_3")).defineInRange("Single adapt factor", singleAdaptFactor, 0D, 1D);
             this.maxAdaptFactor = BUILDER.comment("Set the max damage reduction factor")
                     .translation(getTranslationKey("damage_adapt_4")).defineInRange("Max adapt factor", maxAdaptFactor, 0D, 1D);
             this.adaptsSameTypeMobs = adaptsSameTypeMobs;
+            this.adaptBypassesDamage = BUILDER.comment("If 'False' disable adaptation to out of world and generic kill damage source")
+                    .translation(getTranslationKey("damage_adapt_5")).define("Adaptation bypasses damage source", adaptBypassesDamage);
             builder.pop();
         }
 
@@ -505,6 +510,7 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.IntValue resetCountdown;
         public final ForgeConfigSpec.DoubleValue singleAdaptFactor;
         public final ForgeConfigSpec.DoubleValue maxAdaptFactor;
+        public final ForgeConfigSpec.BooleanValue adaptBypassesDamage;
         public final boolean adaptsSameTypeMobs;
     }
 

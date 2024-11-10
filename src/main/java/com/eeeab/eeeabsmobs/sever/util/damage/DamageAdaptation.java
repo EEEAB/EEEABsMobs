@@ -60,6 +60,7 @@ public class DamageAdaptation {
         this.resetCountdown = config.resetCountdown.get() * 20;
         this.singleAdaptFactor = config.singleAdaptFactor.get().floatValue();
         this.maxAdaptFactor = config.maxAdaptFactor.get().floatValue();
+        this.adaptBypassesDamage = config.adaptBypassesDamage.get();
         this.adaptsSameTypeMobs = config.adaptsSameTypeMobs;
     }
 
