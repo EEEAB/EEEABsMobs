@@ -1,6 +1,5 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
-import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
@@ -59,7 +58,7 @@ public class EntityImmortalLaser extends EntityAbsBeam {
                     if (instance != null) baseDamage += (instance.getAmplifier() + 1) * 0.5F;
                     MobEffectInstance erodeEffect = new MobEffectInstance(EffectInit.ERODE_EFFECT.get(), 300, 0, true, true, true);
                     if (target.hurt(this.damageSources().indirectMagic(this, caster), baseDamage + target.getMaxHealth() * 0.01F)) {
-                        target.forceAddEffect(erodeEffect, this);
+                        if (instance == null) target.forceAddEffect(erodeEffect, this);
                     }
                 }
             } else if (this.tickCount > this.getCountDown()) {
