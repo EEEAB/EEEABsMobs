@@ -11,7 +11,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class SoundInit {
     public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, EEEABMobs.MOD_ID);
 
-    //Generic
+    //Misc
     public static final RegistryObject<SoundEvent> LASER = create("laser");
     public static final RegistryObject<SoundEvent> GIANT_AXE_HIT = create("giant_axe_hit");
     public static final RegistryObject<SoundEvent> UNDAMAGED = create("undamaged");
@@ -19,34 +19,33 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> BREAK = create("break");
 
     //Immortal Skeleton
-    public static final RegistryObject<SoundEvent> IMMORTAL_SKELETON_ROAR = create("immortal.skeleton.roar");
-    public static final RegistryObject<SoundEvent> IMMORTAL_SKELETON_HURT = create("immortal.skeleton.hurt");
-    public static final RegistryObject<SoundEvent> IMMORTAL_SKELETON_DEATH = create("immortal.skeleton.death");
+    public static final RegistryObject<SoundEvent> IMMORTAL_SKELETON_ROAR = create("immortal_skeleton.roar");
+    public static final RegistryObject<SoundEvent> IMMORTAL_SKELETON_HURT = create("immortal_skeleton.hurt");
+    public static final RegistryObject<SoundEvent> IMMORTAL_SKELETON_DEATH = create("immortal_skeleton.death");
 
     //Immortal Shaman
-    //public static final RegistryObject<SoundEvent> IMMORTAL_SHAMAN_DEFENSE = create("immortal.shaman_defense");
-    public static final RegistryObject<SoundEvent> IMMORTAL_SHAMAN_PREPARE_SHOOT = create("immortal.shaman.prepare_shoot");
-    public static final RegistryObject<SoundEvent> IMMORTAL_SHAMAN_PREPARE_SPELL_CASTING = create("immortal.shaman.prepare_spell_casting");
-    public static final RegistryObject<SoundEvent> IMMORTAL_SHAMAN_HURT = create("immortal.shaman.hurt");
-    public static final RegistryObject<SoundEvent> IMMORTAL_SHAMAN_DEATH = create("immortal.shaman.death");
+    public static final RegistryObject<SoundEvent> IMMORTAL_SHAMAN_PREPARE_SHOOT = create("immortal_shaman.prepare_shoot");
+    public static final RegistryObject<SoundEvent> IMMORTAL_SHAMAN_PREPARE_SPELL_CASTING = create("immortal_shaman.prepare_spell_casting");
+    public static final RegistryObject<SoundEvent> IMMORTAL_SHAMAN_HURT = create("immortal_shaman.hurt");
+    public static final RegistryObject<SoundEvent> IMMORTAL_SHAMAN_DEATH = create("immortal_shaman.death");
 
     //Immortal Golem
-    public static final RegistryObject<SoundEvent> IMMORTAL_GOLEM_HURT = create("immortal.golem.hurt");
-    public static final RegistryObject<SoundEvent> IMMORTAL_GOLEM_DEATH = create("immortal.golem.death");
+    public static final RegistryObject<SoundEvent> IMMORTAL_GOLEM_HURT = create("immortal_golem.hurt");
+    public static final RegistryObject<SoundEvent> IMMORTAL_GOLEM_DEATH = create("immortal_golem.death");
 
     //Immortal Executioner
-    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_HURT = create("immortal.executioner.hurt");
-    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_DEATH = create("immortal.executioner.death");
-    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_DASH = create("immortal.executioner.dash");
-    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_BLOCK = create("immortal.executioner.block");
-    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_SCRATCH = create("immortal.executioner.scratch");
-    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_BURN = create("immortal.executioner.burn");
-    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_DETONATION = create("immortal.executioner.detonation");
+    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_HURT = create("immortal_executioner.hurt");
+    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_DEATH = create("immortal_executioner.death");
+    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_DASH = create("immortal_executioner.dash");
+    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_BLOCK = create("immortal_executioner.block");
+    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_SCRATCH = create("immortal_executioner.scratch");
+    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_BURN = create("immortal_executioner.burn");
+    public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_DETONATION = create("immortal_executioner.detonation");
 
     //Guling Sentinel
-    public static final RegistryObject<SoundEvent> GS_HURT = create("guling.sentinel.hurt");
-    public static final RegistryObject<SoundEvent> GS_DEATH = create("guling.sentinel.death");
-    public static final RegistryObject<SoundEvent> GS_ELECTROMAGNETIC = create("guling.sentinel.electromagnetic");
+    public static final RegistryObject<SoundEvent> GS_HURT = create("guling_sentinel.hurt");
+    public static final RegistryObject<SoundEvent> GS_DEATH = create("guling_sentinel.death");
+    public static final RegistryObject<SoundEvent> GS_ELECTROMAGNETIC = create("guling_sentinel.electromagnetic");
 
     //Guling Sentinel-Heavy
     public static final RegistryObject<SoundEvent> GSH_STEP = create("guling_sentinel_heavy.step");
@@ -60,16 +59,16 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> GSH_DEATH = create("guling_sentinel_heavy.death");
 
     //Nameless Guardian
-    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_STEP = create("nameless.guardian.step");
-    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_IDLE = create("nameless.guardian.idle");
-    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_CREAK = create("nameless.guardian.creak");
-    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_ACCUMULATING = create("nameless.guardian.accumulating");
-    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_ACCUMULATING_END = create("nameless.guardian.accumulating_end");
-    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_WHOOSH = create("nameless.guardian.whoosh");
-    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_PRE_POUNCE = create("nameless.guardian.pre_pounce");
-    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_MADNESS = create("nameless.guardian.madness");
-    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_HURT = create("nameless.guardian.hurt");
-    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_DEATH = create("nameless.guardian.death");
+    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_STEP = create("nameless_guardian.step");
+    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_IDLE = create("nameless_guardian.idle");
+    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_CREAK = create("nameless_guardian.creak");
+    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_ACCUMULATING = create("nameless_guardian.accumulating");
+    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_ACCUMULATING_END = create("nameless_guardian.accumulating_end");
+    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_WHOOSH = create("nameless_guardian.whoosh");
+    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_PRE_POUNCE = create("nameless_guardian.pre_pounce");
+    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_MADNESS = create("nameless_guardian.madness");
+    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_HURT = create("nameless_guardian.hurt");
+    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_DEATH = create("nameless_guardian.death");
 
     //Corpse
     public static final RegistryObject<SoundEvent> CORPSE_HURT = create("corpse.hurt");
