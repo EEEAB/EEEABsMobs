@@ -17,10 +17,8 @@ public enum EMAnimationHandler {
 
     public <T extends Entity & EMAnimatedEntity> void sendEMAnimationMessage(T entity, @NotNull(value = "animation cannot be null", exception = IllegalArgumentException.class) Animation animation) {
         if (!entity.level().isClientSide) {
-            entity.getAnimation().stop();
             entity.setAnimation(animation);
             entity.setAnimationTick(0);
-            animation.start(entity.tickCount);
             EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new AnimationMessage(entity.getId(), ArrayUtils.indexOf(entity.getAnimations(), animation)));
         }
     }
