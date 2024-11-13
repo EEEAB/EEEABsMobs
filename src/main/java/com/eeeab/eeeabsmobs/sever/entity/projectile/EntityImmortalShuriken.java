@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.projectile;
 
+import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
@@ -11,6 +12,7 @@ import com.eeeab.eeeabsmobs.sever.entity.util.ModMobType;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
+import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import com.eeeab.eeeabsmobs.sever.util.damage.EMDamageSource;
 import net.minecraft.core.particles.ParticleOptions;
@@ -19,6 +21,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
@@ -62,6 +65,7 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
         this.target = target;
         this.difficultyLevel = this.level().getDifficulty().getId();
         this.setDuration(duration);
+        EEEABMobs.PROXY.playImmortalShurikenSound(this);
     }
 
     @Override
@@ -168,9 +172,13 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
     public void handleEntityEvent(byte id) {
         if (id == 7) {
             Vec3 movement = this.getDeltaMovement();
+            double x = this.getX() + movement.x;
+            double y = this.getY(0.3);
+            double z = this.getZ() + movement.z;
+            this.level().playLocalSound(x, y, z, SoundInit.IMMORTAL_SHURIKEN_EXPLODE.get(), SoundSource.NEUTRAL, 0.8F, (this.random.nextFloat() - this.random.nextFloat()) * 0.4F + 0.8F, false);
             ParticleDust.DustData particle1 = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.18F, 0.44F, 0.6F, 15F, 20, ParticleDust.EnumDustBehavior.SHRINK, 0.9F, true);
             ParticleOrb.OrbData particle2 = new ParticleOrb.OrbData(0.08F, 0.12F, 0.17F, 2F, 15);
-            ModParticleUtils.roundParticleOutburst(this.level(), 8, new ParticleOptions[]{particle1, particle2}, this.getX() + movement.x, this.getY(0.3), this.getZ() + movement.z, 0.25F);
+            ModParticleUtils.roundParticleOutburst(this.level(), 8, new ParticleOptions[]{particle1, particle2}, x, y, z, 0.25F);
         }
         super.handleEntityEvent(id);
     }
