@@ -3,9 +3,11 @@ package com.eeeab.eeeabsmobs.client;
 import com.eeeab.eeeabsmobs.client.model.util.EMItemModels;
 import com.eeeab.eeeabsmobs.client.render.util.EMArmorStackRenderProperties;
 import com.eeeab.eeeabsmobs.client.render.util.EMItemStackRenderProperties;
+import com.eeeab.eeeabsmobs.client.sound.ImmortalLaserSound;
 import com.eeeab.eeeabsmobs.client.sound.ImmortalShurikenSound;
 import com.eeeab.eeeabsmobs.client.sound.ability.GuardianLaserSoundInstance;
 import com.eeeab.eeeabsmobs.sever.ServerProxy;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalLaser;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityImmortalShuriken;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerClientEvent;
 import net.minecraft.client.Minecraft;
@@ -62,5 +64,11 @@ public class ClientProxy extends ServerProxy {
     @Override
     public void playImmortalShurikenSound(EntityImmortalShuriken shuriken) {
         Minecraft.getInstance().getSoundManager().play(new ImmortalShurikenSound(shuriken));
+    }
+
+    @Override
+    public void playImmortalLaserSound(EntityImmortalLaser laser) {
+        Minecraft.getInstance().getSoundManager().play(new ImmortalLaserSound(laser, true));
+        Minecraft.getInstance().getSoundManager().play(new ImmortalLaserSound(laser, false));
     }
 }

@@ -6,6 +6,7 @@ import com.eeeab.eeeabsmobs.EEEABMobs;
 
 import com.eeeab.eeeabsmobs.sever.advancements.EMCriteriaTriggers;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalLaser;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityImmortalShuriken;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.init.AttributeInit;
@@ -101,7 +102,9 @@ public class ServerProxy {
     public void endLaserSound(Player player) {
     }
 
-    public void playImmortalShurikenSound(EntityImmortalShuriken shuriken){
+    public void playImmortalShurikenSound(EntityImmortalShuriken shuriken) {
     }
 
+    public void playImmortalLaserSound(EntityImmortalLaser laser) {
+    }
 }

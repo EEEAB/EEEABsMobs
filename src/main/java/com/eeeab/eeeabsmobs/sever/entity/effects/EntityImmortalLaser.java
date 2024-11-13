@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
+import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
@@ -32,6 +33,7 @@ public class EntityImmortalLaser extends EntityAbsBeam {
         this.setDuration(duration);
         this.setPos(x, y, z);
         this.calculateEndPos(IMMORTAL_RADIUS);
+        EEEABMobs.PROXY.playImmortalLaserSound(this);
         if (!level().isClientSide) {
             setCasterId(caster.getId());
         }
