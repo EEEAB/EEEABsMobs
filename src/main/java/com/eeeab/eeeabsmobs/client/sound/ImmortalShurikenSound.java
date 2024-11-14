@@ -13,8 +13,8 @@ public class ImmortalShurikenSound extends AbstractTickableSoundInstance {
         super(SoundInit.IMMORTAL_SHURIKEN_SPIN.get(), SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
         this.shuriken = shuriken;
         this.looping = true;
-        this.volume = 0.2F;
-        this.pitch = (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1F;
+        this.volume = 0.12F;
+        this.pitch = (this.random.nextFloat() - this.random.nextFloat()) * 0.5F + 1F;
     }
 
     @Override
@@ -22,11 +22,13 @@ public class ImmortalShurikenSound extends AbstractTickableSoundInstance {
         if (!shuriken.isAlive()) {
             stop();
         }
-
-        if (shuriken.getDeltaMovement().horizontalDistanceSqr() > 2.5000003E-7D) {
+        if (shuriken.tickCount > shuriken.getDuration() && shuriken.getDeltaMovement().horizontalDistanceSqr() > 2.5000003E-7D) {
+            volume = 0.12F;
             x = shuriken.getX();
             y = shuriken.getY();
             z = shuriken.getZ();
+        } else {
+            volume = 0F;
         }
     }
 }
