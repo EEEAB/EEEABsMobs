@@ -44,7 +44,6 @@ public class GuardianShootLaserGoal extends AnimationSimpleAI<EntityNamelessGuar
             }
         } else if (tick >= 22 && tick < 100) {
             if (tick == 22) this.entity.playSound(SoundInit.LASER.get(), 2F, 1.0F);
-            this.entity.setYRot(this.entity.yBodyRot);
             float speed = 0F;
             try {
                 if (this.entity.getTarget() != null) {
