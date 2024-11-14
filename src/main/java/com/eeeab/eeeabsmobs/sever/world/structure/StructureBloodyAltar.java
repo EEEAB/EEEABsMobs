@@ -60,7 +60,7 @@ public class StructureBloodyAltar extends Structure {
         StructureTemplate structuretemplate = context.structureTemplateManager().getOrCreate(BLOODY_ALTAR);
         BlockPos blockpos = new BlockPos(structuretemplate.getSize().getX() / 2, 0, structuretemplate.getSize().getZ() / 2);
         BlockPos blockPos1 = context.chunkPos().getWorldPosition();
-        BlockPos blockPos2 = new BlockPos(blockPos1.getX(), 31, blockPos1.getZ());
+        BlockPos blockPos2 = new BlockPos(blockPos1.getX(), 33, blockPos1.getZ());
         return Optional.of(new Structure.GenerationStub(blockpos, (builder) -> {
             generatePieces(context.structureTemplateManager(), blockPos2, Rotation.getRandom(context.random()), builder, context.random());
         }));
