@@ -117,11 +117,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
                     if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
                         double duration = 2;
                         if (Difficulty.HARD.equals(this.entity.level().getDifficulty())) duration = 4;
-                        if (hitEntity instanceof Player player && !player.isCreative() && !player.isBlocking()) {
-                            player.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), (int) (duration * 20), 0, false, false, true));
-                        } else if (!(hitEntity instanceof Player) && !hitEntity.isBlocking()) {
-                            hitEntity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), (int) (duration * 20), 0, false, false, true));
-                        }
+                        entity.stun(null, hitEntity, (int) (duration * 20), entity.isChallengeMode());
                         entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1.5F, 1.2F, true, true, true);
                     }
                 }

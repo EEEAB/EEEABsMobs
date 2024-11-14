@@ -120,11 +120,7 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
                 for (LivingEntity hitEntity : entities) {
                     double duration = 1.5;
                     if (Difficulty.HARD.equals(entity.level().getDifficulty())) duration = 2.5;
-                    if (hitEntity instanceof Player player && !player.isCreative() && !player.isBlocking()) {
-                        player.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), (int) (duration * 20), 0, false, false, true));
-                    } else if (!(hitEntity instanceof Player) && !hitEntity.isBlocking()) {
-                        hitEntity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), (int) (duration * 20), 0, false, false, true));
-                    }
+                    entity.stun(null, hitEntity, (int) (duration * 20), entity.isChallengeMode());
                     entity.guardianHurtTarget(entity, hitEntity, 0.05F, 1.0F, baseDamageMultiplier, true, true, true);
                     entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                     double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));

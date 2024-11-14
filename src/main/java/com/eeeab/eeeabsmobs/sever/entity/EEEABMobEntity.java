@@ -3,6 +3,7 @@ package com.eeeab.eeeabsmobs.sever.entity;
 import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import com.eeeab.eeeabsmobs.sever.util.damage.DamageAdaptation;
 import net.minecraft.core.particles.ParticleTypes;
@@ -199,7 +200,7 @@ public abstract class EEEABMobEntity extends PathfinderMob {
         }
     }
 
-    protected void dying(){
+    protected void dying() {
     }
 
     protected int getDeathDuration() {
@@ -418,6 +419,19 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     public Vec3 circlePosition(Vec3 targetVec3, float radius, float speed, boolean direction, int circleFrame, float offset) {
         double theta = (direction ? 1 : -1) * circleFrame * 0.5 * speed / radius + offset;
         return targetVec3.add(radius * Math.cos(theta), 0, radius * Math.sin(theta));
+    }
+
+    /**
+     * 使目标短暂失去行动力
+     *
+     * @param source   效果源自实体
+     * @param target   目标实体
+     * @param duration 持续时间(tick)
+     * @param force    是否强制添加
+     */
+    public void stun(@Nullable LivingEntity source, LivingEntity target, int duration, boolean force) {
+        if (target.isBlocking() || target instanceof Player player && (player.isSpectator() || player.isCreative())) return;
+        ModEntityUtils.addEffectStackingAmplifier(source, target, EffectInit.VERTIGO_EFFECT.get(), duration, 1, false, false, true, true, force);
     }
 
 

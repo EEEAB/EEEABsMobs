@@ -48,11 +48,7 @@ public class GuardianRobustAttackGoal extends AnimationSimpleAI<EntityNamelessGu
                 if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
                     double duration = 3;
                     if (Difficulty.HARD.equals(this.entity.level().getDifficulty())) duration = 5;
-                    if (hitEntity instanceof Player player && !player.isCreative() && !player.isBlocking()) {
-                        player.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), (int) (duration * 20), 0, false, false, true));
-                    } else if (!(hitEntity instanceof Player) && !hitEntity.isBlocking()) {
-                        hitEntity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), (int) (duration * 20), 0, false, false, true));
-                    }
+                    entity.stun(null, hitEntity, (int) (duration * 20), entity.isChallengeMode());
                     entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.03F, 1.85F, 1.4F, true, true, true);
                 }
             }
