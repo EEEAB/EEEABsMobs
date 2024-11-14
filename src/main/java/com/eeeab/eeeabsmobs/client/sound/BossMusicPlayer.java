@@ -16,7 +16,7 @@ public class BossMusicPlayer {
         if (music != null && boss.isAlive()) {
             Player player = Minecraft.getInstance().player;
             if (bossMusic != null) {
-                float volume = Minecraft.getInstance().options.getSoundSourceVolume(SoundSource.MUSIC);
+                float volume = Minecraft.getInstance().options.getSoundSourceVolume(SoundSource.RECORDS);
                 if (volume <= 0) {
                     bossMusic = null;
                 } else if (bossMusic.getBoss() == boss && !boss.canPlayerHearMusic(player)) {

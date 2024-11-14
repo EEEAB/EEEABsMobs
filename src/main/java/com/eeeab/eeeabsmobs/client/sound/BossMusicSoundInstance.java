@@ -15,7 +15,7 @@ public class BossMusicSoundInstance extends AbstractTickableSoundInstance {
     private final SoundEvent sound;
 
     protected BossMusicSoundInstance(SoundEvent sound, EEEABMobEntity boss) {
-        super(sound, SoundSource.MUSIC, SoundInstance.createUnseededRandom());
+        super(sound, SoundSource.RECORDS, SoundInstance.createUnseededRandom());
         this.boss = boss;
         this.sound = sound;
         this.attenuation = Attenuation.NONE;
