@@ -46,7 +46,7 @@ public class Animation extends AnimationState {
     @Override
     public void updateTime(float ageInTicks, float speed) {
         super.updateTime(ageInTicks, speed);
-        if (/*this.isSuperposition() && */this.isStarted()) {
+        if (this.isSuperposition() && this.isStarted()) {
             int accumulateTick = Mth.floor(this.getAccumulatedTime() / 1000F * 20F);
             if (accumulateTick >= this.duration) {
                 this.stop();
