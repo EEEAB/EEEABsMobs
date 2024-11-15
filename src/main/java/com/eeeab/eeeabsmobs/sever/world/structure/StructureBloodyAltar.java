@@ -19,6 +19,7 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
@@ -81,14 +82,28 @@ public class StructureBloodyAltar extends Structure {
         BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
         int i = level.getMinBuildHeight();//获取当前维度最低Y轴
         BoundingBox boundingbox = pieces.calculateBoundingBox();
-        int j = boundingbox.minY();//获取当前结构最低Y轴
+        int minY = boundingbox.minY();//获取当前结构最低Y轴
+        int maxY = boundingbox.maxY();//获取当前结构最高Y轴
+
+        //我讨厌玄武岩
+        for (int x = boundingbox.minX(); x <= boundingbox.maxX(); ++x) {
+            for (int z = boundingbox.minZ(); z <= boundingbox.maxZ(); ++z) {
+                for (int y = minY; y <= maxY; ++y) {
+                    blockpos$mutableblockpos.set(x, y, z);
+                    BlockState blockState = level.getBlockState(blockpos$mutableblockpos);
+                    if (blockState.getBlock() == Blocks.BASALT) {
+                        level.setBlock(blockpos$mutableblockpos, Blocks.AIR.defaultBlockState(), 2);
+                    }
+                }
+            }
+        }
 
         //填充结构地下空气方块(包含流体)
         for(int k = box.minX(); k <= box.maxX(); ++k) {
             for(int l = box.minZ(); l <= box.maxZ(); ++l) {
-                blockpos$mutableblockpos.set(k, j, l);
+                blockpos$mutableblockpos.set(k, minY, l);
                 if (!level.isEmptyBlock(blockpos$mutableblockpos) && boundingbox.isInside(blockpos$mutableblockpos) && pieces.isInsidePiece(blockpos$mutableblockpos)) {
-                    for(int i1 = j - 1; i1 > i; --i1) {
+                    for(int i1 = minY - 1; i1 > i; --i1) {
                         blockpos$mutableblockpos.setY(i1);
                         if (!level.isEmptyBlock(blockpos$mutableblockpos) && !level.getBlockState(blockpos$mutableblockpos).liquid()) {
                             break;
@@ -98,7 +113,6 @@ public class StructureBloodyAltar extends Structure {
                 }
             }
         }
-
     }
 
     public static class Piece extends TemplateStructurePiece {
