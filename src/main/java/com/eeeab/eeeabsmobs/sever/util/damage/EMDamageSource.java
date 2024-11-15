@@ -30,12 +30,6 @@ public class EMDamageSource {
 
     public static DamageSource immortalAttack(Entity immortal, boolean crit, boolean ignoreArmor) {
         return new DamageSource(immortal.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(
-                ignoreArmor ? EMResourceKey.IGNORE_ARMOR_ATTACK : crit ? EMResourceKey.CRIT_HEAL : DamageTypes.MOB_ATTACK
-        ), immortal) {
-            @Override
-            public @NotNull String getMsgId() {
-                return DamageTypes.MOB_ATTACK.location().getPath();
-            }
-        };
+                ignoreArmor ? EMResourceKey.IGNORE_ARMOR_ATTACK : crit ? EMResourceKey.CRIT_HEAL : DamageTypes.MOB_ATTACK), immortal);
     }
 }
