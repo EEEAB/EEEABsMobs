@@ -41,8 +41,7 @@ public class EffectErode extends EMEffect {
 
     private void damageArmor(EquipmentSlot slot, LivingEntity entity, int amplified) {
         ItemStack stack = entity.getItemBySlot(slot);
-        //避免如鞘翅等物品可以被摧毁
-        if (stack.is(EMTagKey.EROSION_IMMUNE_ITEMS) && stack.getDamageValue() + amplified >= stack.getMaxDamage()) return;
+        if (stack.is(EMTagKey.EROSION_IMMUNE_ITEMS)) return;
         stack.hurtAndBreak(amplified, entity, e -> e.broadcastBreakEvent(slot));
     }
 
