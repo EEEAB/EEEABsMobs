@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.potion;
 
 import com.eeeab.eeeabsmobs.sever.init.AttributeInit;
+import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,7 +22,7 @@ public class EffectErode extends EMEffect {
 
     @Override
     protected boolean canApplyEffect(int remainingTicks, int level) {
-        return remainingTicks % 10 == 0;
+        return remainingTicks % 15 == 0;
     }
 
     @Override
@@ -32,15 +33,16 @@ public class EffectErode extends EMEffect {
         if (i == 0) {
             for (EquipmentSlot slot : EquipmentSlot.values()) {
                 if (slot.getType() == EquipmentSlot.Type.ARMOR) {
-                    DamageArmor(slot, entity, amplified);
+                    damageArmor(slot, entity, amplified);
                 }
             }
         }
     }
 
-    private void DamageArmor(EquipmentSlot slot, LivingEntity entity, int amplified) {
+    private void damageArmor(EquipmentSlot slot, LivingEntity entity, int amplified) {
         ItemStack stack = entity.getItemBySlot(slot);
-        if (!stack.isDamaged()) return;
+        //避免如鞘翅等物品可以被摧毁
+        if (stack.is(EMTagKey.EROSION_IMMUNE_ITEMS) && stack.getDamageValue() + amplified >= stack.getMaxDamage()) return;
         stack.hurtAndBreak(amplified, entity, e -> e.broadcastBreakEvent(slot));
     }
 
