@@ -11,16 +11,17 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
 public class EMTagKey {
+    public static final TagKey<Item> EROSION_IMMUNE_ITEMS = registerTagKey(Registries.ITEM, "erosion_immune_items");
     public static final TagKey<Structure> EYE_OF_GULING = registerTagKey(Registries.STRUCTURE, "eye_of_guling");
     public static final TagKey<Structure> EYE_OF_BLOODY_ALTAR = registerTagKey(Registries.STRUCTURE, "eye_of_bloody_altar");
     public static final TagKey<Biome> HAS_GULING = registerTagKey(Registries.BIOME, "has_structure/guling");
     public static final TagKey<Biome> HAS_BLOODY_ALTAR = registerTagKey(Registries.BIOME, "has_structure/bloody_altar");
     public static final TagKey<DamageType> GENERAL_UNRESISTANT_TO = registerTagKey(Registries.DAMAGE_TYPE, "general_unresistant_to");
     public static final TagKey<DamageType> MAGIC_UNRESISTANT_TO = registerTagKey(Registries.DAMAGE_TYPE, "magic_unresistant_to");
+    public static final TagKey<DamageType> CAN_CRIT_HEAL = registerTagKey(Registries.DAMAGE_TYPE, "can_crit_heal");
     public static final TagKey<EntityType<?>> TRAP_WHITELIST = registerTagKey(Registries.ENTITY_TYPE, "trap_whitelist");
     public static final TagKey<EntityType<?>> RESISTS_FORCED_CHANGE_TARGET = registerTagKey(Registries.ENTITY_TYPE, "resists_forced_change_target");
     public static final TagKey<EntityType<?>> IMMORTAL_ARMY = registerTagKey(Registries.ENTITY_TYPE, "immortal_army");
