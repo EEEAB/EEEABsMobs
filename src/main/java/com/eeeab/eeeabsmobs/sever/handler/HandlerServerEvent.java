@@ -13,6 +13,7 @@ import com.eeeab.eeeabsmobs.sever.entity.IBoss;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityAbsCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalExecutioner;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
@@ -46,6 +47,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -312,9 +314,18 @@ public final class HandlerServerEvent {
     //实体被击退
     @SubscribeEvent
     public void onLivingEntityKnockBack(LivingKnockBackEvent event) {
-        LivingEntity living = event.getEntity();
-        if (event.isCancelable() && living instanceof IBoss) {
+        LivingEntity entity = event.getEntity();
+        if (event.isCancelable() && entity instanceof IBoss) {
             event.setStrength(0F);
+            event.setCanceled(true);
+        }
+    }
+
+    //挂载实体时
+    @SubscribeEvent
+    public void onEntityMountEntity(EntityMountEvent event) {
+        Entity entity = event.getEntityMounting();
+        if (event.isCancelable() && entity instanceof IBoss) {
             event.setCanceled(true);
         }
     }
@@ -348,6 +359,9 @@ public final class HandlerServerEvent {
             double chance = attribute.getValue() - 1D;
             if (chance > 0 && hurtEntity.getRandom().nextFloat() <= chance) {
                 float damage = event.getAmount();
+                if (source.is(EMTagKey.CAN_CRIT_HEAL) && attacker instanceof LivingEntity mob) {
+                    mob.heal(Math.min(damage * 0.26F, mob.getMaxHealth() * 0.1F));
+                }
                 damage *= 1.5F;
                 event.setAmount(damage);
                 hurtEntity.level().playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.PLAYER_ATTACK_CRIT, hurtEntity.getSoundSource(), 1.0F, 1.0F);
@@ -363,6 +377,7 @@ public final class HandlerServerEvent {
         }
     }
 
+    //实体呼吸事件
     @SubscribeEvent
     public void onLivingEntityBreathe(LivingBreatheEvent event) {
         LivingEntity entity = event.getEntity();
@@ -396,8 +411,14 @@ public final class HandlerServerEvent {
     public void onProjectileImpact(ProjectileImpactEvent event) {
         Projectile projectile = event.getProjectile();
         if (event.getRayTraceResult() instanceof EntityHitResult hitResult) {
+            if (hitResult.getEntity() instanceof EntityImmortal immortal && immortal.inBlocking()) {
+                event.setImpactResult(ProjectileImpactEvent.ImpactResult.STOP_AT_CURRENT);
+                return;
+            }
+
             if (projectile instanceof EntityBloodBall bloodBall && !bloodBall.isHeal() && hitResult.getEntity() instanceof EntityCorpseWarlock) {
                 event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
+                return;
             }
             if (projectile instanceof AbstractArrow arrow) {
                 if (arrow.getPierceLevel() == 0 && !arrow.fireImmune() && !arrow.isOnFire() && hitResult.getEntity() instanceof EntityImmortalExecutioner) {
