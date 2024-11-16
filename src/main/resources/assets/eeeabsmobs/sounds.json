@@ -1,8 +1,57 @@
 {
-  "laser": {
-    "subtitle": "subtitles.laser",
+  "guardian_laser": {
+    "subtitle": "subtitles.guardian_laser",
     "sounds": [
-      "eeeabsmobs:effect/laser"
+      "eeeabsmobs:effect/guardian_laser"
+    ]
+  },
+  "immortal_laser": {
+    "subtitle": "subtitles.immortal_laser",
+    "sounds": [
+      "eeeabsmobs:effect/immortal_laser"
+    ]
+  },
+  "giant_axe_hit": {
+    "subtitle": "subtitles.giant_axe_hit",
+    "sounds": [
+      "eeeabsmobs:effect/fall_of_anvil"
+    ]
+  },
+  "crimson_ray": {
+    "subtitle": "subtitles.crimson_ray",
+    "sounds": [
+      "eeeabsmobs:effect/crimson_ray"
+    ]
+  },
+  "break": {
+    "subtitle": "subtitles.break",
+    "sounds": [
+      "eeeabsmobs:effect/break"
+    ]
+  },
+  "undamaged": {
+    "subtitle": "subtitles.undamaged",
+    "sounds": [
+      "eeeabsmobs:effect/fall_of_anvil"
+    ]
+  },
+  "magic_matrix.open": {
+    "subtitle": "subtitles.magic_matrix.open",
+    "sounds": [
+      "eeeabsmobs:effect/magic_matrix1",
+      "eeeabsmobs:effect/magic_matrix2"
+    ]
+  },
+  "immortal_shuriken.spin": {
+    "subtitle": "subtitles.immortal_shuriken.rotating",
+    "sounds": [
+      "eeeabsmobs:effect/immortal_shuriken1"
+    ]
+  },
+  "immortal_shuriken.explode": {
+    "subtitle": "subtitles.immortal_shuriken.explode",
+    "sounds": [
+      "eeeabsmobs:effect/immortal_shuriken2"
     ]
   },
   "immortal_skeleton.roar": {
@@ -114,6 +163,115 @@
       "eeeabsmobs:entity/immortal_executioner/scratch1",
       "eeeabsmobs:entity/immortal_executioner/scratch2",
       "eeeabsmobs:entity/immortal_executioner/scratch3"
+    ]
+  },
+  "immortal.accumulating": {
+    "subtitle": "subtitles.immortal.accumulating",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/accumulating"
+    ]
+  },
+  "immortal.accumulating_end": {
+    "subtitle": "subtitles.immortal.accumulating_end",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/accumulating_end"
+    ]
+  },
+  "immortal.attack": {
+    "subtitle": "subtitles.immortal.attack",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/attack1"
+    ]
+  },
+  "immortal.attack2": {
+    "subtitle": "subtitles.immortal.attack",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/attack2",
+      "eeeabsmobs:entity/immortal/attack3"
+    ]
+  },
+  "immortal.attract": {
+    "subtitle": "subtitles.immortal.attract",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/attract"
+    ]
+  },
+  "immortal.blocking": {
+    "subtitle": "subtitles.immortal.blocking",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/block"
+    ]
+  },
+  "immortal.blocking_counter": {
+    "subtitle": "subtitles.immortal.blocking_counter",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/block_counter"
+    ]
+  },
+  "immortal.death": {
+    "subtitle": "subtitles.immortal.death",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/death"
+    ]
+  },
+  "immortal.hurt": {
+    "subtitle": "subtitles.immortal.hurt",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/hurt"
+    ]
+  },
+  "immortal.idle": {
+    "subtitle": "subtitles.immortal.idle",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/idle1",
+      "eeeabsmobs:entity/immortal/idle2"
+    ]
+  },
+  "immortal.punch_hit": {
+    "subtitle": "subtitles.immortal.punch_hit",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/punch_hit1",
+      "eeeabsmobs:entity/immortal/punch_hit2",
+      "eeeabsmobs:entity/immortal/punch_hit3"
+    ]
+  },
+  "immortal.punch_hard_hit": {
+    "subtitle": "subtitles.immortal.punch_hard_hit",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/punch_hard_hit"
+    ]
+  },
+  "immortal.shoryuken": {
+    "subtitle": "subtitles.immortal.shoryuken",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/shoryuken"
+    ]
+  },
+  "immortal.subsonic": {
+    "subtitle": "subtitles.immortal.subsonic",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/subsonic"
+    ]
+  },
+  "immortal.stone_crack": {
+    "subtitle": "subtitles.immortal.stone_crack",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/stone_crack1",
+      "eeeabsmobs:entity/immortal/stone_crack2"
+    ]
+  },
+  "immortal.shake_ground": {
+    "subtitle": "subtitles.immortal.shake_ground",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/stone_crack1",
+      "eeeabsmobs:entity/immortal/stone_crack2"
+    ]
+  },
+  "immortal.teleport": {
+    "subtitle": "subtitles.immortal.teleport",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/teleport1",
+      "eeeabsmobs:entity/immortal/teleport2"
     ]
   },
   "guling_sentinel.hurt": {
@@ -300,32 +458,8 @@
       "eeeabsmobs:entity/corpse_warlock/tear2"
     ]
   },
-  "giant_axe_hit": {
-    "subtitle": "subtitles.giant_axe_hit",
-    "sounds": [
-      "eeeabsmobs:effect/fall_of_anvil"
-    ]
-  },
-  "crimson_ray": {
-    "subtitle": "subtitles.crimson_ray",
-    "sounds": [
-      "eeeabsmobs:effect/crimson_ray"
-    ]
-  },
-  "break": {
-    "subtitle": "subtitles.break",
-    "sounds": [
-      "eeeabsmobs:effect/break"
-    ]
-  },
-  "undamaged": {
-    "subtitle": "subtitles.undamaged",
-    "sounds": [
-      "eeeabsmobs:effect/fall_of_anvil"
-    ]
-  },
   "music.nameless_guardian_theme_1": {
-    "category": "music",
+    "category": "record",
     "sounds": [
       {
         "name": "eeeabsmobs:music/guardians/guardians_prelude",
@@ -336,7 +470,7 @@
     "subtitle": "subtitles.nameless_guardian_theme_prelude"
   },
   "music.nameless_guardian_theme_2": {
-    "category": "music",
+    "category": "record",
     "sounds": [
       {
         "name": "eeeabsmobs:music/guardians/guardians_climax",
@@ -347,7 +481,7 @@
     "subtitle": "subtitles.nameless_guardian_theme_climax"
   },
   "music.guardians": {
-    "category": "music",
+    "category": "record",
     "sounds": [
       {
         "name": "eeeabsmobs:music/guardians/guardians",
@@ -358,12 +492,34 @@
     "subtitle": "subtitles.music.guardians"
   },
   "music.the_army_of_minotaur": {
-    "category": "music",
+    "category": "record",
     "sounds": [
       {
         "name": "eeeabsmobs:music/the_army_of_minotaur",
         "stream": true,
         "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.music.the_army_of_minotaur"
+  },
+  "music.guardians.mono": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "eeeabsmobs:music/guardians/guardians_mono",
+        "stream": true,
+        "volume": 1.0
+      }
+    ],
+    "subtitle": "subtitles.music.guardians"
+  },
+  "music.the_army_of_minotaur.mono": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "eeeabsmobs:music/the_army_of_minotaur_mono",
+        "stream": true,
+        "volume": 1.0
       }
     ],
     "subtitle": "subtitles.music.the_army_of_minotaur"

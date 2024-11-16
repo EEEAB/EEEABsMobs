@@ -12,11 +12,15 @@ public class SoundInit {
     public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, EEEABMobs.MOD_ID);
 
     //Misc
-    public static final RegistryObject<SoundEvent> LASER = create("laser");
+    public static final RegistryObject<SoundEvent> LASER = create("guardian_laser");
+    public static final RegistryObject<SoundEvent> LASER2 = create("immortal_laser");
     public static final RegistryObject<SoundEvent> GIANT_AXE_HIT = create("giant_axe_hit");
     public static final RegistryObject<SoundEvent> UNDAMAGED = create("undamaged");
     public static final RegistryObject<SoundEvent> CRIMSON_RAY = create("crimson_ray");
     public static final RegistryObject<SoundEvent> BREAK = create("break");
+    public static final RegistryObject<SoundEvent> MAGIC_MATRIX_OPEN = create("magic_matrix.open");
+    public static final RegistryObject<SoundEvent> IMMORTAL_SHURIKEN_SPIN = create("immortal_shuriken.spin");
+    public static final RegistryObject<SoundEvent> IMMORTAL_SHURIKEN_EXPLODE = create("immortal_shuriken.explode");
 
     //Immortal Skeleton
     public static final RegistryObject<SoundEvent> IMMORTAL_SKELETON_ROAR = create("immortal_skeleton.roar");
@@ -41,6 +45,25 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_SCRATCH = create("immortal_executioner.scratch");
     public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_BURN = create("immortal_executioner.burn");
     public static final RegistryObject<SoundEvent> IMMORTAL_EXECUTIONER_DETONATION = create("immortal_executioner.detonation");
+
+    //Immortal
+    public static final RegistryObject<SoundEvent> IMMORTAL_ACCUMULATING = create("immortal.accumulating");
+    public static final RegistryObject<SoundEvent> IMMORTAL_ACCUMULATING_END = create("immortal.accumulating_end");
+    public static final RegistryObject<SoundEvent> IMMORTAL_ATTACK = create("immortal.attack");
+    public static final RegistryObject<SoundEvent> IMMORTAL_ATTACK2 = create("immortal.attack2");
+    public static final RegistryObject<SoundEvent> IMMORTAL_ATTRACT = create("immortal.attract");
+    public static final RegistryObject<SoundEvent> IMMORTAL_BLOCKING = create("immortal.blocking");
+    public static final RegistryObject<SoundEvent> IMMORTAL_BLOCKING_COUNTER = create("immortal.blocking_counter");
+    public static final RegistryObject<SoundEvent> IMMORTAL_DEATH = create("immortal.death");
+    public static final RegistryObject<SoundEvent> IMMORTAL_PUNCH_HIT = create("immortal.punch_hit");
+    public static final RegistryObject<SoundEvent> IMMORTAL_PUNCH_HARD_HIT = create("immortal.punch_hard_hit");
+    public static final RegistryObject<SoundEvent> IMMORTAL_HURT = create("immortal.hurt");
+    public static final RegistryObject<SoundEvent> IMMORTAL_IDLE = create("immortal.idle");
+    public static final RegistryObject<SoundEvent> IMMORTAL_SHORYUKEN = create("immortal.shoryuken");
+    public static final RegistryObject<SoundEvent> IMMORTAL_STONE_CRACK = create("immortal.stone_crack");
+    public static final RegistryObject<SoundEvent> IMMORTAL_SHAKE_GROUND = create("immortal.shake_ground");
+    public static final RegistryObject<SoundEvent> IMMORTAL_SUBSONIC = create("immortal.subsonic");
+    public static final RegistryObject<SoundEvent> IMMORTAL_TELEPORT = create("immortal.teleport");
 
     //Guling Sentinel
     public static final RegistryObject<SoundEvent> GS_HURT = create("guling_sentinel.hurt");
@@ -84,6 +107,9 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> GUARDIANS_CLIMAX = create("music.nameless_guardian_theme_2");
     public static final RegistryObject<SoundEvent> GUARDIANS_PRELUDE = create("music.nameless_guardian_theme_1");
     public static final RegistryObject<SoundEvent> THE_ARMY_OF_MINOTAUR = create("music.the_army_of_minotaur");
+    //Record
+    public static final RegistryObject<SoundEvent> MONO_GUARDIANS = create("music.guardians.mono");
+    public static final RegistryObject<SoundEvent> MONO_THE_ARMY_OF_MINOTAUR = create("music.the_army_of_minotaur.mono");
 
     public static void register(IEventBus bus) {
         SOUNDS.register(bus);
