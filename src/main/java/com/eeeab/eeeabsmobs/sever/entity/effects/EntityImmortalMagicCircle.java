@@ -5,7 +5,9 @@ import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
+import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMMathUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -220,6 +222,7 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
             entity.setMagicCircleType(type);
             entity.setPos(pos);
             entity.setYaw(yaw);
+            level.playSound(null, BlockPos.containing(pos.x, pos.y, pos.z), SoundInit.MAGIC_MATRIX_OPEN.get(), caster.getSoundSource(), 1F, caster.getVoicePitch());
             level.addFreshEntity(entity);
         }
     }
