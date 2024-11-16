@@ -151,6 +151,8 @@
   "death.attack.eeeabsmobs.guardian_robust_attack": "%1$s 被 %2$s 砸扁",
   "death.attack.eeeabsmobs.guardian_laser_attack":"%1$s 被 %2$s 的激光击中",
   "death.attack.eeeabsmobs.immortal_magic":"%1$s 被 %2$s 使用的不朽魔法杀死了",
+  "death.attack.eeeabsmobs.ignore_armor_attack":"%1$s 死于穿透伤",
+  "death.attack.eeeabsmobs.crit_heal":"%1$s 被暴击治疗过量致死",
 
   "_comment": "音乐描述",
   "item.eeeabsmobs.guardians_music_disc.desc": "Guardians - Evan King",

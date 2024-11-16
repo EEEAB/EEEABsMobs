@@ -151,6 +151,8 @@
   "death.attack.eeeabsmobs.guardian_robust_attack": "%1$s was smashed flat by %2$s",
   "death.attack.eeeabsmobs.guardian_laser_attack":"%1$s was shot by a laser from %2$s",
   "death.attack.eeeabsmobs.immortal_magic":"%1$s was killed by %2$s using immortal magic",
+  "death.attack.eeeabsmobs.ignore_armor_attack":"%1$s died from a penetrating injury",
+  "death.attack.eeeabsmobs.crit_heal":"%1$s was over-healed by a critical strike",
 
   "_comment": "Music Desc",
   "item.eeeabsmobs.guardians_music_disc.desc": "Guardians - Evan King",
