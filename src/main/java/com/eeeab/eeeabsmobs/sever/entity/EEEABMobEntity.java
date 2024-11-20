@@ -138,11 +138,6 @@ public abstract class EEEABMobEntity extends PathfinderMob {
         }
     }
 
-    @Override
-    public void aiStep() {
-        super.aiStep();
-        if (!this.level().isClientSide && this.intervalProtect()) this.intervalProtector.tick(this);
-    }
 
     @Override
     protected void customServerAiStep() {
@@ -169,8 +164,7 @@ public abstract class EEEABMobEntity extends PathfinderMob {
             } else if (!this.lastDamageSource.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
                 newDamage = Math.min(oldDamage, damageCap);
             }
-            if (this.intervalProtect())
-                newDamage = this.intervalProtector.damageAfterAdaptingOnce(this, this.lastDamageSource, newDamage);
+            if (this.intervalProtect()) newDamage = this.intervalProtector.damageAfterAdaptingOnce(this, this.lastDamageSource, newDamage);
             health = this.getHealth() - newDamage;
         }
         return health;

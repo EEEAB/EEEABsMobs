@@ -11,15 +11,15 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 伤害适应
  *
  * @author EEEAB
- * @version 1.5
+ * @version 1.6
  */
 public class DamageAdaptation {
     /**
@@ -43,9 +43,8 @@ public class DamageAdaptation {
      */
     private final boolean adaptsSameTypeMobs;
     private static final RandomSource random = RandomSource.create();
-    private final Map<String, DamageInfo> ADAPT_MAP = new HashMap<>();
+    private final Map<String, DamageInfo> adaptMap = new ConcurrentHashMap<>();
     private boolean adaptBypassesDamage;
-    private boolean hurting;
 
     public DamageAdaptation(int adaptDamageTypesCount, int resetCountdown, float singleAdaptFactor, float maxAdaptFactor, boolean adaptsSameTypeMobs) {
         this.adaptDamageTypesCount = adaptDamageTypesCount;
@@ -69,59 +68,48 @@ public class DamageAdaptation {
         return this;
     }
 
-    public void tick(LivingEntity entity) {
-        if (!this.hurting && entity.tickCount % resetCountdown == 0) {
-            this.updateCache(entity);
-        }
-    }
-
     public float damageAfterAdaptingOnce(LivingEntity entity, @Nullable DamageSource source, float amount) {
         try {
-            this.hurting = true;
             String key = getKey(source, adaptsSameTypeMobs, adaptBypassesDamage);
-            if (key == null) {
-                return amount;
-            }
-            DamageInfo info = ADAPT_MAP.getOrDefault(key, null);
+            if (key == null) return amount;
+
+            DamageInfo info = adaptMap.getOrDefault(key, null);
             long tickStamp = entity.tickCount;
             if (info != null) {
                 //判断适应伤害是否失效
                 if (tickStamp > info.getTimestamp() + resetCountdown) {
-                    ADAPT_MAP.remove(key);
+                    adaptMap.remove(key);
                 } else {
                     float newAdaptFactor = Math.min(info.getAdaptFactor() + singleAdaptFactor, maxAdaptFactor);
                     float adaptedAmount = amount * (1F - newAdaptFactor);
                     //累计适应因子 更新刻度戳
                     info.setAdaptFactor(newAdaptFactor);
                     info.setTimestamp(tickStamp);
-                    ADAPT_MAP.put(key, info);
+                    adaptMap.put(key, info);
                     return Math.max(adaptedAmount, 0);
                 }
             }
             //当适应类型个数超出上限时 先尝试删除失效的适应伤害 再随机移除一种适应伤害
-            if (ADAPT_MAP.size() >= adaptDamageTypesCount) {
+            if (adaptMap.size() >= adaptDamageTypesCount) {
                 updateCache(entity);
-                if (ADAPT_MAP.size() >= adaptDamageTypesCount) {
-                    List<String> keys = ADAPT_MAP.keySet().stream().toList();
-                    ADAPT_MAP.remove(keys.get(random.nextInt(keys.size())));
+                if (adaptMap.size() >= adaptDamageTypesCount) {
+                    List<String> keys = adaptMap.keySet().stream().toList();
+                    adaptMap.remove(keys.get(random.nextInt(keys.size())));
                 }
             }
-            ADAPT_MAP.put(key, new DamageInfo(tickStamp, 0));
-            return amount;
+            adaptMap.put(key, new DamageInfo(tickStamp, 0));
         } catch (Exception e) {
             EEEABMobs.LOGGER.error("An unexpected exception occurred when calculating damage: {}", e.getMessage());
-            return amount;
-        } finally {
-            this.hurting = false;
         }
+        return amount;
     }
 
     public void updateCache(LivingEntity entity) {
-        ADAPT_MAP.entrySet().removeIf(entry -> entity.tickCount > entry.getValue().getTimestamp() + resetCountdown);
+        adaptMap.entrySet().removeIf(entry -> entity.tickCount > entry.getValue().getTimestamp() + resetCountdown);
     }
 
     public void clearCache() {
-        ADAPT_MAP.clear();
+        adaptMap.clear();
     }
 
     private static @Nullable String getKey(@Nullable DamageSource source, boolean adaptsSameTypeMobs, boolean adaptBypassesDamage) {
