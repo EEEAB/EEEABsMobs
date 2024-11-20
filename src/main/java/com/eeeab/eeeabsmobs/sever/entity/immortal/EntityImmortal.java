@@ -502,9 +502,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
             this.pushEntitiesAway(1.9F, getBbHeight(), 1.9F, 1.9F);
         }
 
-        //攻击AI
-        if (this.isActive()) this.immortalAI();
-        else this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
+        if (!this.isActive()) this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
 
         //动画效果
         if (animation == this.spawnAnimation) {
@@ -588,7 +586,9 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
         EMAnimationHandler.INSTANCE.updateAnimations(this);
     }
 
-    private void immortalAI() {
+    @Override
+    protected void customServerAiStep() {
+        super.customServerAiStep();
         if (!this.level().isClientSide) {
             LivingEntity target = this.getTarget();
 
@@ -687,7 +687,6 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
                     ModEntityUtils.advancedBreakBlocks(this.level(), this, 50F, 2, 5, 2, 0, 0, this.checkCanDropItems(), true);
                 }
             }
-            this.damageAdaptation.tick(this);
 
             if (!this.isNoAi() && this.tickCount % 30 == 0 && this.getTarget() != null) {
                 this.targets = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(16, 5, 16), e -> this.getTarget() == e || TARGET_CONDITIONS.test(e));
