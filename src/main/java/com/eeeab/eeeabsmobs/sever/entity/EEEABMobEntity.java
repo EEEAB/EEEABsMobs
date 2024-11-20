@@ -50,7 +50,6 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     public int killDataRecentlyHit;
     public LivingEntity blockEntity = null;
     private static final byte MAKE_POOF_ID = 60;
-    private static final byte RESET_BOSS_MUSIC_ID = 76;
     private static final byte PLAY_BOSS_MUSIC_ID = 77;
     private static final byte STOP_BOSS_MUSIC_ID = 78;
     private static final UUID HEALTH_UUID = UUID.fromString("cca33d36-6842-43d8-b615-0cad4460a18a");
@@ -127,12 +126,10 @@ public abstract class EEEABMobEntity extends PathfinderMob {
         if (!level().isClientSide) {
             //if (tickCount % 20 == 0) this.setFoundTarget(getTarget() != null);
             if (getBossMusic() != null) {
-                if (canHandOffMusic()) {
-                    this.level().broadcastEntityEvent(this, RESET_BOSS_MUSIC_ID);
-                } else if (canPlayMusic()) {
-                    this.level().broadcastEntityEvent(this, PLAY_BOSS_MUSIC_ID);
-                } else {
+                if (!canPlayMusic()) {
                     this.level().broadcastEntityEvent(this, STOP_BOSS_MUSIC_ID);
+                } else if (!canHandOffMusic()) {
+                    this.level().broadcastEntityEvent(this, PLAY_BOSS_MUSIC_ID);
                 }
             }
         }
@@ -276,10 +273,8 @@ public abstract class EEEABMobEntity extends PathfinderMob {
 
     @Override
     public void handleEntityEvent(byte id) {
-        if (id == RESET_BOSS_MUSIC_ID) {
-            BossMusicPlayer.resetBossMusic(this);
-        } else if (id == PLAY_BOSS_MUSIC_ID) {
-            BossMusicPlayer.playBossMusic(this);
+        if (id == PLAY_BOSS_MUSIC_ID) {
+            BossMusicPlayer.playBossMusic(this, getBossMusic());
         } else if (id == STOP_BOSS_MUSIC_ID) {
             BossMusicPlayer.stopBossMusic(this);
         } else if (id == MAKE_POOF_ID) {

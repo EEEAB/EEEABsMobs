@@ -10,9 +10,8 @@ import net.minecraft.world.entity.player.Player;
 public class BossMusicPlayer {
     public static BossMusicSoundInstance bossMusic;
 
-    public static void playBossMusic(EEEABMobEntity boss) {
+    public static void playBossMusic(EEEABMobEntity boss, SoundEvent music) {
         if (!EMConfigHandler.COMMON.OTHER.enablePlayBossMusic.get()) return;
-        SoundEvent music = boss.getBossMusic();
         if (music != null && boss.isAlive()) {
             Player player = Minecraft.getInstance().player;
             if (bossMusic != null) {
@@ -26,7 +25,7 @@ public class BossMusicPlayer {
                 }
             } else {
                 if (boss.canPlayerHearMusic(player)) {
-                    bossMusic = new BossMusicSoundInstance(boss.getBossMusic(), boss);
+                    bossMusic = new BossMusicSoundInstance(music, boss);
                 }
             }
             if (bossMusic != null && !Minecraft.getInstance().getSoundManager().isActive(bossMusic)) {
@@ -37,19 +36,16 @@ public class BossMusicPlayer {
 
     public static void stopBossMusic(EEEABMobEntity boss) {
         if (!EMConfigHandler.COMMON.OTHER.enablePlayBossMusic.get()) return;
-
         if (bossMusic != null && bossMusic.getBoss() == boss) {
             bossMusic.setBoss(null);
+            Minecraft.getInstance().getSoundManager().stop(bossMusic);
+            bossMusic = null;
         }
     }
 
-    public static void resetBossMusic(EEEABMobEntity boss) {
+    public static void resetBossMusic(EEEABMobEntity boss, SoundEvent music) {
         if (!EMConfigHandler.COMMON.OTHER.enablePlayBossMusic.get()) return;
-
-        if (bossMusic != null) {
-            bossMusic.setBoss(null);
-        }
-        playBossMusic(boss);
+        stopBossMusic(boss);
+        playBossMusic(boss, music);
     }
-
 }

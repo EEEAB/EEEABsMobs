@@ -10,6 +10,7 @@ import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
+import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.advancements.EMCriteriaTriggers;
@@ -19,7 +20,7 @@ import com.eeeab.eeeabsmobs.sever.entity.IBoss;
 import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
 import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.*;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate.*;
 import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
@@ -180,6 +181,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     private final static int ROBUST_ATTACK_TICK = 650;
     private final static int WEAK_STATE_TICK = 160;
     private final static int HARD_MODE_STATE_TICK = 80;
+    private static final byte PLAY_PRELUDE_MUSIC_ID = 75;
+    private static final byte PLAY_CLIMAX_MUSIC_ID = 76;
     private final EntityNamelessGuardianPart core;
     private final EntityNamelessGuardianPart[] subEntities;
     private final DynamicGameEventListener<EntityNamelessGuardian.Listener> dynamicListener;
@@ -338,7 +341,10 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     @Override
     protected void onAnimationStart(Animation animation) {
         if (!this.level().isClientSide) {
-            if (animation == this.weakAnimation1) {
+            if (animation == this.roarAnimation) {
+                if (!this.isChallengeMode()) this.level().broadcastEntityEvent(this, PLAY_CLIMAX_MUSIC_ID);
+            } else if (animation == this.weakAnimation1) {
+                if (!this.isChallengeMode()) this.level().broadcastEntityEvent(this, PLAY_PRELUDE_MUSIC_ID);
                 this.setExecuteWeak(true);
                 this.setPowered(false);
                 int duration = Difficulty.HARD.equals(this.level().getDifficulty()) ? HARD_MODE_STATE_TICK : WEAK_STATE_TICK;
@@ -633,6 +639,10 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             ModParticleUtils.annularParticleOutburst(level(), 15, new ParticleOptions[]{dustData}, getX(), this.getY(), getZ(), 0.8F, 0.1);
         } else if (id == 8) {
             ModParticleUtils.roundParticleOutburst(level(), 200, new ParticleOptions[]{ParticleTypes.LARGE_SMOKE, ParticleTypes.SMOKE, ParticleTypes.EXPLOSION}, getX(), this.getY(0.5), getZ(), 1);
+        } else if (id == PLAY_PRELUDE_MUSIC_ID) {
+            BossMusicPlayer.resetBossMusic(this, SoundInit.GUARDIANS_PRELUDE.get());
+        } else if (id == PLAY_CLIMAX_MUSIC_ID) {
+            BossMusicPlayer.resetBossMusic(this, SoundInit.GUARDIANS_CLIMAX.get());
         }
         super.handleEntityEvent(id);
     }
@@ -1436,7 +1446,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     protected boolean canHandOffMusic() {
-        return (this.getAnimation() == this.roarAnimation && this.getAnimationTick() == 34) || (this.getAnimation() == this.weakAnimation1 && this.getAnimationTick() == 1);
+        return this.getAnimation() == this.roarAnimation || this.getAnimation() == this.weakAnimation1;
     }
 
     @Override
