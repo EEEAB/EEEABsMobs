@@ -255,7 +255,7 @@ public final class EMConfigHandler {
                     .translation(getTranslationKey("effective_range")).defineInRange("Set projectile damage range", 15D, 1D, 32D);
             combatConfig = new AttributeConfig();
             maximumDamageCap = new DamageCapConfig(25);
-            adaptConfig = new DamageSourceAdaptConfig(builder, 100, 30, 0.1D, 0.6D, true, true);
+            adaptConfig = new DamageSourceAdaptConfig(builder, 100, 30, 0.1D, 0.7D, true, true);
             builder.pop();
         }
 
