@@ -63,7 +63,6 @@ import net.minecraft.world.*;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -205,8 +204,6 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     private static final UniformInt LASER_TIME = TimeUtil.rangeOfSeconds(25, 35);
     private static final Predicate<LivingEntity> TARGET_CONDITIONS = entity -> entity.isAlive() && entity.getMobType() != ModMobType.IMMORTAL && !entity.getType().is(EMTagKey.IMMORTAL_IGNORE_HUNT_TARGETS)
             && entity.isAttackable() && (entity instanceof Enemy || entity instanceof NeutralMob || (entity instanceof Player player && !player.isCreative() && !player.isSpectator()));
-    private final TargetingConditions playerTargeting = TargetingConditions.forNonCombat().range(32D).ignoreInvisibilityTesting().selector((entity) ->
-            entity instanceof Player player && !player.isSpectator() && !player.isCreative());
     private static final float[][] BLOCK_OFFSETS = {{-0.75F, -0.75F}, {-0.75F, 0.75F}, {0.75F, 0.75F}, {0.75F, -0.75F}};
     private static final ParticleComponent[] ATTRACT_COMPONENT = {
             new PropertyControl(EnumParticleProperty.RED, AnimData.startAndEnd(0.3F, 0.56F), false),
@@ -443,15 +440,15 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this, EntityAbsImmortal.class));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, false));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, TARGET_CONDITIONS));
-        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.75D) {
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.7D) {
             @Override
             public boolean canUse() {
                 return EntityImmortal.this.isActive() && super.canUse();
             }
         });
-        this.goalSelector.addGoal(9, new EMLookAtGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(10, new EMLookAtGoal(this, Mob.class, 6.0F));
-        this.goalSelector.addGoal(11, new RandomLookAroundGoal(this) {
+        this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new EMLookAtGoal(this, Mob.class, 6.0F));
+        this.goalSelector.addGoal(10, new RandomLookAroundGoal(this) {
             @Override
             public boolean canUse() {
                 return super.canUse() && EntityImmortal.this.isActive();
@@ -572,12 +569,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
             if (tick == 8) this.doImmortalMagicMatrixEffect(MagicCircleType.HARMFUL, 12, 2F, 0.5F, 15F);
         } else if (animation == this.unleashEnergyAnimation) {
             if (tick == 1) if (!this.isSilent()) this.level().playLocalSound(this.blockPosition(), SoundInit.IMMORTAL_ACCUMULATING.get(), this.getSoundSource(), 1.5F, 1F, false);
-            if (tick == 10) {
-                MobEffectInstance mobEffectInstance = new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 90, 0, false, false);
-                for (Player player : this.level().getNearbyPlayers(playerTargeting, this, this.getBoundingBox().inflate(32D, 5D, 32D))) {
-                    player.addEffect(mobEffectInstance, this);
-                }
-            } else if (tick >= 30 && tick < 80) {
+            if (tick >= 30 && tick < 80) {
                 if (tick > 35) this.strongKnockBlock();
                 this.doUnleashEnergyEffect();
             } else if (tick == 80) if (!this.isSilent()) this.level().playLocalSound(this.blockPosition(), SoundInit.IMMORTAL_ACCUMULATING_END.get(), this.getSoundSource(), 1.5F, 1F, false);
@@ -689,7 +681,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
             }
 
             if (!this.isNoAi() && this.tickCount % 30 == 0 && this.getTarget() != null) {
-                this.targets = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(16, 5, 16), e -> this.getTarget() == e || TARGET_CONDITIONS.test(e));
+                this.targets = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(32, 6, 32), e -> this.getTarget() == e || TARGET_CONDITIONS.test(e));
             }
         }
         int tick = this.getAnimationTick();
@@ -736,7 +728,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
                 /*
                     防守【格挡】/【反击】机制:
                     当伤害源来自正面且并非绕过无敌、伤害值>1、在无动作或可打断动作状态下可触发【格挡】
-                    在【格挡】期间受到伤害减少50%与具有更少的攻击间隔，此时再次受到伤害时会延续格挡时间；反之则会再没有受到任何伤害的2.5秒后停止格挡
+                    在【格挡】期间受到伤害减少90%与具有更少的攻击间隔，此时再次受到伤害时会延续格挡时间；反之则会再没有受到任何伤害的2.5秒后停止格挡
                     当格挡次数达到3次或伤害超过阈值时，触发【反击】
                     格挡冷却时间 = 100tick + 每1点伤害 × 3.3333tick
                  */
@@ -756,7 +748,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
                     this.playSound(SoundInit.IMMORTAL_BLOCKING.get(), 0.9F, this.getVoicePitch() + pitch - 0.2F);
                     this.level().broadcastEntityEvent(this, (byte) 5);
                     this.invulnerableTime /= 2;
-                    super.hurt(source, damage * 0.25F);
+                    super.hurt(source, damage * 0.1F);
                     return false;
                 }
             }
