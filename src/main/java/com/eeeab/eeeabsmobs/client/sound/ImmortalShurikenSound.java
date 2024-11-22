@@ -13,7 +13,7 @@ public class ImmortalShurikenSound extends AbstractTickableSoundInstance {
         super(SoundInit.IMMORTAL_SHURIKEN_SPIN.get(), SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
         this.shuriken = shuriken;
         this.looping = true;
-        this.volume = 0.12F;
+        this.volume = 0.15F;
         this.pitch = (this.random.nextFloat() - this.random.nextFloat()) * 0.5F + 1F;
     }
 
