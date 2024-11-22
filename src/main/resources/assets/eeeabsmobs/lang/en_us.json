@@ -193,6 +193,7 @@
   "other.eeeabsmobs.damage_adapt_2.config": "Set duration of single adaptation damage effect",
   "other.eeeabsmobs.damage_adapt_3.config": "Set adaptation value per damage instance",
   "other.eeeabsmobs.damage_adapt_4.config": "Set maximum adaptation value for the same damage source",
+  "other.eeeabsmobs.damage_adapt_5.config": "Enable adaptation bypasses damage source",
   "other.eeeabsmobs.effective_range.config": "Set projectile damage range",
   "other.eeeabsmobs.attack_radius.config": "Set attack radius",
   "other.eeeabsmobs.summoning_soul_necklace.config": "Set maximum cumulative damage taken",

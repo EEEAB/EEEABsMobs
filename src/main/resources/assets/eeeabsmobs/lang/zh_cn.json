@@ -193,6 +193,7 @@
   "other.eeeabsmobs.damage_adapt_2.config": "设置单个适应伤害的有效时间",
   "other.eeeabsmobs.damage_adapt_3.config": "设置每受到一次伤害的适应值",
   "other.eeeabsmobs.damage_adapt_4.config": "设置同一种伤害源的最大适应值",
+  "other.eeeabsmobs.damage_adapt_5.config": "启用适应虚空与指令伤害",
   "other.eeeabsmobs.effective_range.config": "设置弹射物能造成伤害的有效距离",
   "other.eeeabsmobs.attack_radius.config": "设置攻击半径",
   "other.eeeabsmobs.summoning_soul_necklace.config": "设置最大累计伤害",
