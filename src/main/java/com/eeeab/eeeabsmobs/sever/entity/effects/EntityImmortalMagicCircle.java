@@ -93,11 +93,9 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
 
         if (!NO) {
             if (tickCount > getDuration()) {
-                if (processController.decreaseTimerChain().isStop()) {
-                    discard();
-                }
+                if (processController.decreaseTimerChain().isStop()) discard();
             } else {
-                if (!level().isClientSide && tickCount % 5 == 0) {
+                if (!level().isClientSide) {
                     MobEffect[] effects = this.getMagicCircleType().effect;
                     if (effects.length > 0) {
                         for (LivingEntity inRange : level().getEntitiesOfClass(LivingEntity.class, ModEntityUtils.makeAABBWithSize(getX(), getY(), getZ(), 0, getScale(), 1, getScale()), LIVING_ENTITY_SELECTOR)) {
