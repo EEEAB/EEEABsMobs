@@ -108,6 +108,7 @@ public class ImmortalPounceGoal extends AnimationAI<EntityImmortal> {
                             continue;
                         }
                         entity.doHurtTarget(entityHit, false, false, true, false, 0.025F, 1.0F, 0.9F);
+                        entity.disableShield(entityHit, 50);
                         entity.knockBack(entityHit, 0.2, 0.5, false, false);
                     }
                 } else if (tick == 11) entity.shakeGround(0.2F, MAX_DISTANCE / 2, 0.25F, 2, 4);
@@ -146,7 +147,7 @@ public class ImmortalPounceGoal extends AnimationAI<EntityImmortal> {
             float entityHitDistance = (float) Math.sqrt((entityHit.getZ() - entity.getZ()) * (entityHit.getZ() - entity.getZ()) + (entityHit.getX() - entity.getX()) * (entityHit.getX() - entity.getX())) - entityHit.getBbWidth() / 2f;
             if (entityHitDistance < 0.75 || (entityHitDistance <= hitDistance && ((entityRelativeAngle >= -attackArc / 2 && entityRelativeAngle <= attackArc / 2) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F)))) {
                 if (stun) entity.stun(null, entityHit, 40, false);
-                entity.doHurtTarget(entityHit, false, heal && entityHit.hasEffect(EffectInit.ERODE_EFFECT.get()), heal, false, 0.03F, 1.0F, damageMultiplier);
+                entity.doHurtTarget(entityHit, true, heal && entityHit.hasEffect(EffectInit.ERODE_EFFECT.get()), heal, false, 0.03F, 1.0F, damageMultiplier);
                 if (!hitFlag) {
                     hitFlag = true;
                     entity.playSound(SoundInit.IMMORTAL_PUNCH_HIT.get(), 1F, 1.1F);
