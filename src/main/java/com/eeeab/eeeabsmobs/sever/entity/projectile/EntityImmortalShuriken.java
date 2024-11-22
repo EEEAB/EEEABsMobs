@@ -191,10 +191,8 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
             float baseDamage = 1.5F;
             MobEffectInstance instance = hitEntity.getEffect(EffectInit.ERODE_EFFECT.get());
             if (instance != null) baseDamage += (instance.getAmplifier() + 1) * 0.5F;
-            MobEffectInstance erodeEffect = new MobEffectInstance(EffectInit.ERODE_EFFECT.get(), 300, 0, true, true, true);
-            if (hitEntity.hurt(EMDamageSource.immortalMagicAttack(this, getOwner()), baseDamage + hitEntity.getMaxHealth() * 0.025F)) {
-                if (instance == null) hitEntity.forceAddEffect(erodeEffect, this);
-            }
+            hitEntity.hurt(EMDamageSource.immortalMagicAttack(this, getOwner()), baseDamage + hitEntity.getMaxHealth() * 0.025F);
+            ModEntityUtils.addEffectStackingAmplifier(this, hitEntity, EffectInit.ERODE_EFFECT.get(), 300, 5, true, true, true, true, true);
         } else {
             entity.hurt(this.damageSources().magic(), 11.4514F);
         }
