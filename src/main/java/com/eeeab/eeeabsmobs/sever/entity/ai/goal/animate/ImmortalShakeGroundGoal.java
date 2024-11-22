@@ -42,7 +42,7 @@ public class ImmortalShakeGroundGoal extends AnimationAI<EntityImmortal> {
                 entity.lookAt(target, 30F, 30F);
                 entity.getLookControl().setLookAt(target, 30F, 30F);
             } else entity.setYRot(entity.yRotO);
-            if (tick == 15) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.2F, entity.getVoicePitch() + 0.05F);
+            if (tick == 15) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.6F, entity.getVoicePitch() + 0.05F);
             else if (tick == 19) entity.playSound(SoundInit.IMMORTAL_SHAKE_GROUND.get(), 1F, 1F);
             else if (tick == 21) {
                 double radians = Math.toRadians(entity.getYRot() + 90);
@@ -61,7 +61,7 @@ public class ImmortalShakeGroundGoal extends AnimationAI<EntityImmortal> {
                 entity.lookAt(target, 30F, 30F);
                 entity.getLookControl().setLookAt(target, 30F, 30F);
             } else entity.setYRot(entity.yRotO);
-            if (tick == 12) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.3F, entity.getVoicePitch() + 0.1F);
+            if (tick == 12) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.7F, entity.getVoicePitch() + 0.1F);
             else if (tick == 16) entity.playSound(SoundInit.IMMORTAL_SHAKE_GROUND.get(), 1.2F, 1F);
             else if (tick == 17) {
                 double radians = Math.toRadians(entity.getYRot() + 90);
@@ -71,7 +71,7 @@ public class ImmortalShakeGroundGoal extends AnimationAI<EntityImmortal> {
                     entity.knockBack(entityHit, 0.5, 0.05, true, false);
                 }
             } else if (tick == 18) entity.shakeGround(0.45F, SHAKE_GROUND_RANGE, 0.2F, 5, 5);
-            else if (tick == 42) entity.playSound(SoundInit.IMMORTAL_ATTACK2.get(), 1.2F, 1.2F);
+            else if (tick == 42) entity.playSound(SoundInit.IMMORTAL_ATTACK2.get(), 1.5F, 1.2F);
             else if (tick > 45 && tick < 56) {
                 if (tick == 46) entity.shakeGround(0F, SHAKE_GROUND_RANGE, 0.2F, 8, 2);
                 int i = tick - 45;
@@ -93,7 +93,7 @@ public class ImmortalShakeGroundGoal extends AnimationAI<EntityImmortal> {
                 entity.getLookControl().setLookAt(target, 30F, 30F);
             } else entity.setYRot(entity.yRotO);
             if (tick > 10 && tick < 20) {
-                if (tick == 16) entity.playSound(SoundInit.IMMORTAL_ATTACK2.get(), 1.2F, 1.4F);
+                if (tick == 16) entity.playSound(SoundInit.IMMORTAL_ATTACK2.get(), 1.5F, 1.4F);
                 pursuit(target, EMMathUtils.getTickFactor(tick - 10, 5, true), 3F, 6F, 2F);
             } else if (tick >= 20 && tick < 32) {
                 entity.anchorToGround();
@@ -126,7 +126,7 @@ public class ImmortalShakeGroundGoal extends AnimationAI<EntityImmortal> {
                 entity.setYRot(entity.yRotO);
                 pursuit(target, EMMathUtils.getTickFactor(tick - 40, 5, true), 3.725F, 7.5F, 7F);
             }
-            if (tick == 15) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.3F, entity.getVoicePitch() - 0.05F);
+            if (tick == 15) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.7F, entity.getVoicePitch() - 0.05F);
             else if (tick == 16) entity.playSound(SoundInit.IMMORTAL_SHORYUKEN.get(), 0.5F, 0.8F);
             else if (tick == 20) {
                 float attackDistance = 5F;
@@ -142,7 +142,7 @@ public class ImmortalShakeGroundGoal extends AnimationAI<EntityImmortal> {
                 }
                 if (hitFlag) entity.playSound(SoundInit.IMMORTAL_PUNCH_HIT.get(), 1F, 1.1F);
             }
-            if (tick == 42) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.3F, entity.getVoicePitch() + 0.1F);
+            if (tick == 42) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.7F, entity.getVoicePitch() + 0.1F);
             else if (tick == 44) entity.playSound(SoundInit.IMMORTAL_SHORYUKEN.get(), 0.6F, 0.9F);
             else if (tick == 46) entity.playSound(SoundInit.IMMORTAL_SHAKE_GROUND.get(), 1.2F, 1.2F);
             else if (tick == 47) {

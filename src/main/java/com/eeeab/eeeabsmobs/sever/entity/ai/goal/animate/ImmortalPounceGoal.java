@@ -97,7 +97,7 @@ public class ImmortalPounceGoal extends AnimationAI<EntityImmortal> {
         } else if (animation == entity.pounceSmashAnimation) {
             entity.anchorToGround();
             if (tick < 10) lookAtTarget();
-            if (tick == 5) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.2F, entity.getVoicePitch());
+            if (tick == 5) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.6F, entity.getVoicePitch());
             else if (tick == 9) entity.playSound(SoundInit.IMMORTAL_SHAKE_GROUND.get());
             else {
                 entity.setYRot(entity.yRotO);
@@ -124,7 +124,7 @@ public class ImmortalPounceGoal extends AnimationAI<EntityImmortal> {
                     double radians = Math.toRadians(entity.getYRot() + 90);
                     entity.setDeltaMovement(Math.cos(radians) * moveSpeed * speedMultiplier, entity.getDeltaMovement().y, Math.sin(radians) * moveSpeed * speedMultiplier);
                 }
-                if (tick == 6) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.2F, entity.getVoicePitch() + 0.2F);
+                if (tick == 6) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.6F, entity.getVoicePitch() + 0.2F);
                 if (tick == 10) {
                     doHurtTarget(5F, 6F, 4.5F, 0F, 1F, true, true, false, 1F);
                     entity.shakeGround(0F, MAX_DISTANCE / 2, 0.25F, 2, 4);

@@ -44,7 +44,7 @@ public class ImmortalComboGoal extends AnimationGroupAI<EntityImmortal> {
                 } else entity.setYRot(entity.yRotO);
             }
             boolean left = animation == entity.punchLeftAnimation;
-            if (tick == 10) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.1F, entity.getVoicePitch());
+            if (tick == 10) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.5F, entity.getVoicePitch());
             if (tick == 11) entity.pursuit(5F, 0, 0.35);
             else if (tick == 14 || tick == 15 || tick == 16) {
                 doHurtTargetAndTryBreakBlock(PUNCH_ATTACK_RANGE, PUNCH_ATTACK_RANGE, left ? 40F : 120F, left ? 120F : 40F, 0.4F, tick > 14, false, tick == 14, false, 0.02F, 0.89F, 1.0F);
@@ -75,7 +75,7 @@ public class ImmortalComboGoal extends AnimationGroupAI<EntityImmortal> {
                     entity.getLookControl().setLookAt(target, 30F, 30F);
                 }
             } else entity.setYRot(entity.yRotO);
-            if (tick == 19) entity.playSound(SoundInit.IMMORTAL_ATTACK2.get(), 1.2F, 1.4F);
+            if (tick == 19) entity.playSound(SoundInit.IMMORTAL_ATTACK2.get(), 1.5F, 1.4F);
             if (tick >= 21 && tick < 24) {
                 boolean left = animation == entity.hardPunchLeftAnimation;
                 if (tick == 21) entity.pursuit(6F, 0, 0.5);
@@ -98,7 +98,7 @@ public class ImmortalComboGoal extends AnimationGroupAI<EntityImmortal> {
                     if (!disableShied) entity.disableShield(entityHit, 40);
                     if (!hitFlag) {
                         hitFlag = true;
-                        if (hit) entity.playSound(disableShied ? SoundInit.IMMORTAL_PUNCH_HARD_HIT.get() : SoundInit.IMMORTAL_PUNCH_HIT.get(), 0.9F, disableShied ? 1F : 1.1F);
+                        if (hit) entity.playSound(disableShied ? SoundInit.IMMORTAL_PUNCH_HARD_HIT.get() : SoundInit.IMMORTAL_PUNCH_HIT.get(), 1F, disableShied ? 1F : 1.1F);
                         entity.shakeGround(0F, 20F, 0.3F, 1, 5);
                         entity.level().broadcastEntityEvent(entity, (byte) (disableShied ? 7 : 6));
                     }

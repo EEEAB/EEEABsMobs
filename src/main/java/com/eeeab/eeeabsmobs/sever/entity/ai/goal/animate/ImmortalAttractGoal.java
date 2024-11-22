@@ -26,7 +26,7 @@ public class ImmortalAttractGoal extends AnimationAI<EntityImmortal> {
         if (tick < 40) {
             this.slowlyLookAtTarget();
             if (tick == 29) EntityImmortalMagicCircle.spawn(entity.level(), entity, entity.position().add(0, 0.25, 0), 2.5F, 0F, 10 + this.entity.getRandom().nextInt(11), entity.yHeadRot, EntityImmortalMagicCircle.MagicCircleType.POWER, true);
-            else if (tick == 36) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.2F, entity.getVoicePitch());
+            else if (tick == 36) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.6F, entity.getVoicePitch());
             else if (tick == 39) {
                 entity.pursuit(6F, 0, 0.35);
                 entity.level().broadcastEntityEvent(entity, (byte) 9);

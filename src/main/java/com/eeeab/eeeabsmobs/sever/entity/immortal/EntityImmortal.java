@@ -539,7 +539,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
             if (tick == 10) this.doShakeGroundEffect(15, 3.7F, 0F, 0.58F, 0.92F, false, true);
         } else if (animation == this.pounceHoldAnimation) {
             if (tick == 1) {
-                if (!this.isSilent()) this.level().playLocalSound(this.blockPosition(), SoundInit.IMMORTAL_SUBSONIC.get(), this.getSoundSource(), 0.25F, 1.5F, false);
+                if (!this.isSilent()) this.level().playLocalSound(this.blockPosition(), SoundInit.IMMORTAL_SUBSONIC.get(), this.getSoundSource(), 0.4F, 1.5F, false);
                 this.doHitEffect(10, this.random.nextInt(10), 60, 0, 0.55F, true);
                 ParticleDust.DustData particle = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.28f, 0.26f, 0.24f, 50f, 16, ParticleDust.EnumDustBehavior.SHRINK, 1f);
                 ModParticleUtils.roundParticleOutburst(this.level(), 10, new ParticleOptions[]{particle}, this.getX(), this.getY(0.25), this.getZ(), 1F);
@@ -1411,7 +1411,8 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return SoundInit.IMMORTAL_HURT.get();
+        this.playSound(SoundInit.IMMORTAL_HURT.get(), 1.5F, this.getVoicePitch());
+        return null;
     }
 
     @Nullable
