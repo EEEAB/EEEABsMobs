@@ -14,7 +14,7 @@ public class ImmortalLaserSound extends AbstractTickableSoundInstance {
         super(SoundInit.LASER2.get(), SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
         this.laser = laser;
         this.end = end;
-        this.volume = 1F;
+        this.volume = 1.2F;
     }
 
     @Override
