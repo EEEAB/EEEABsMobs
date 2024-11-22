@@ -236,7 +236,7 @@ public final class HandlerServerEvent {
     public void onLivingJump(LivingEvent.LivingJumpEvent event) {
         if (event.getEntity() != null) {
             LivingEntity entity = event.getEntity();
-            if (entity.hasEffect(EffectInit.VERTIGO_EFFECT.get()) && entity.onGround()) {
+            if (entity.hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
                 entity.setDeltaMovement(entity.getDeltaMovement().multiply(1, 0, 1));
             }
         }
