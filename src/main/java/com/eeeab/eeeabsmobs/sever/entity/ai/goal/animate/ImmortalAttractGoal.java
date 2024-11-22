@@ -44,6 +44,7 @@ public class ImmortalAttractGoal extends AnimationAI<EntityImmortal> {
                         if (tick == 40) {
                             int preInvulnerableTime = entityHit.invulnerableTime;
                             entityHit.invulnerableTime = 0;
+                            entity.stun(null, entityHit, 40, false);
                             if (!entity.doHurtTarget(entityHit, true, entityHit.hasEffect(EffectInit.ERODE_EFFECT.get()), false, false, 0.035F, 1.0F, 1.2F)) entityHit.invulnerableTime = preInvulnerableTime;
                             if (!hitFlag) {
                                 hitFlag = true;
@@ -52,7 +53,7 @@ public class ImmortalAttractGoal extends AnimationAI<EntityImmortal> {
                             }
                         }
                     }
-                    entity.knockBack(entityHit, 0.75, 0.2, true, tick > 40);
+                    entity.knockBack(entityHit, 1, 0.2, true, tick > 40);
                 }
                 int offset = (int) (attackDistance / 2);
                 if (tick == 41 && ModEntityUtils.canMobDestroy(entity) && ModEntityUtils.advancedBreakBlocks(entity.level(), entity, 50, offset, (int) attackDistance, offset, 0, offset, entity.checkCanDropItems(), true)) {
