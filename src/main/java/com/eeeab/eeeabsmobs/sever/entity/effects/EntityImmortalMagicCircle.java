@@ -2,7 +2,6 @@ package com.eeeab.eeeabsmobs.sever.entity.effects;
 
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
@@ -22,10 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Predicate;
-
 public class EntityImmortalMagicCircle extends EntityMagicEffects {
-    private final Predicate<LivingEntity> LIVING_ENTITY_SELECTOR = e -> getMagicCircleType() == MagicCircleType.HARMFUL || (e instanceof EntityAbsImmortal || this.caster == null || this.caster.isAlliedTo(e));
     private static final EntityDataAccessor<Float> DATA_SCALE = SynchedEntityData.defineId(EntityImmortalMagicCircle.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_SPEED = SynchedEntityData.defineId(EntityImmortalMagicCircle.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_YAW = SynchedEntityData.defineId(EntityImmortalMagicCircle.class, EntityDataSerializers.FLOAT);
@@ -98,7 +94,7 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
                 if (!level().isClientSide) {
                     MobEffect[] effects = this.getMagicCircleType().effect;
                     if (effects.length > 0) {
-                        for (LivingEntity inRange : level().getEntitiesOfClass(LivingEntity.class, ModEntityUtils.makeAABBWithSize(getX(), getY(), getZ(), 0, getScale(), 1, getScale()), LIVING_ENTITY_SELECTOR)) {
+                        for (LivingEntity inRange : level().getEntitiesOfClass(LivingEntity.class, ModEntityUtils.makeAABBWithSize(getX(), getY(), getZ(), 0, getScale(), 1, getScale()), LivingEntity::isAlive)) {
                             for (MobEffect effect : effects) {
                                 if (inRange.hasEffect(effect)) {
                                     MobEffectInstance instance = inRange.getEffect(effect);
