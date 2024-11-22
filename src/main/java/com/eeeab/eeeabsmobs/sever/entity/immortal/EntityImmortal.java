@@ -250,7 +250,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
 
     @Override//添加药水效果
     public boolean addEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        if (ModEntityUtils.isBeneficial(effectInstance.getEffect())) {
+        if (!ModEntityUtils.isBeneficial(effectInstance.getEffect())) {
             reflectPotionEffect(effectInstance, entity);
             return false;
         }
@@ -259,7 +259,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
 
     @Override//强制添加药水效果
     public void forceAddEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        if (ModEntityUtils.isBeneficial(effectInstance.getEffect())) {
+        if (!ModEntityUtils.isBeneficial(effectInstance.getEffect())) {
             reflectPotionEffect(effectInstance, entity);
             return;
         }
