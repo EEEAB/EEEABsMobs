@@ -61,6 +61,6 @@ public class ImmortalMagicGoal extends AnimationAI<EntityImmortal> {
 
     private List<LivingEntity> findTargets() {
         double findRange = entity.getAttributeValue(Attributes.FOLLOW_RANGE);
-        return entity.level().getEntitiesOfClass(LivingEntity.class, ModEntityUtils.makeAABBWithSize(entity.getX(), entity.getY(), entity.getZ(), 0, findRange, findRange, findRange), LIVING_ENTITY_SELECTOR);
+        return entity.level().getEntitiesOfClass(LivingEntity.class, ModEntityUtils.makeAABBWithSize(entity.getX(), entity.getY(), entity.getZ(), 0, findRange, findRange / 2, findRange), LIVING_ENTITY_SELECTOR);
     }
 }
