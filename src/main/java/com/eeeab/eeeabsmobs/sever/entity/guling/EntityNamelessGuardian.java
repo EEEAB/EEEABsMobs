@@ -1451,7 +1451,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     public SoundEvent getBossMusic() {
-        return !this.isPowered() ? SoundInit.GUARDIANS_PRELUDE.get() : this.isChallengeMode() ? SoundInit.GUARDIANS.get() : SoundInit.GUARDIANS_CLIMAX.get();
+        return this.isChallengeMode() ? SoundInit.GUARDIANS.get() : !this.isPowered() ? SoundInit.GUARDIANS_PRELUDE.get() : SoundInit.GUARDIANS_CLIMAX.get();
     }
 
     @Override
