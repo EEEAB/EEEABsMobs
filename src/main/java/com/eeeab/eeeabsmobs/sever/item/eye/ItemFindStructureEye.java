@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.item.eye;
 
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityEyeOfStructure;
 import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -46,7 +47,8 @@ public abstract class ItemFindStructureEye extends Item {
         if (level instanceof ServerLevel serverlevel) {
             BlockPos blockpos = serverlevel.findNearestMapStructure(FIND_STRUCTURE, player.blockPosition(), FIND_MAX_HEIGHT, false);
             if (blockpos != null) {
-                EntityEyeOfStructure eye = new EntityEyeOfStructure(level, player.getX(), player.getY(0.5D), player.getZ());
+                boolean canConsumeItem = EMConfigHandler.COMMON.ITEM.consumeEyeItemOnRelease.get();
+                EntityEyeOfStructure eye = new EntityEyeOfStructure(level, player.getX(), player.getY(0.5D), player.getZ(), canConsumeItem);
                 eye.setItem(eyeItem);
                 eye.signalTo(blockpos);
                 eye.setR(r);
@@ -60,8 +62,10 @@ public abstract class ItemFindStructureEye extends Item {
 
                 level.playSound((Player) null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDER_EYE_LAUNCH, SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
                 level.levelEvent((Player) null, 1003, player.blockPosition(), 0);
-                if (!player.getAbilities().instabuild) {
-                    eyeItem.shrink(1);
+                if (canConsumeItem) {
+                    if (!player.getAbilities().instabuild) eyeItem.shrink(1);
+                } else {
+                    player.getCooldowns().addCooldown(this, (int) (EMConfigHandler.COMMON.ITEM.eyeItemCoolingTime.get() * 20));
                 }
 
                 player.awardStat(Stats.ITEM_USED.get(this));
@@ -75,6 +79,9 @@ public abstract class ItemFindStructureEye extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
+        if (!EMConfigHandler.COMMON.ITEM.consumeEyeItemOnRelease.get()) {
+            tooltip.add(EMTUtils.itemCoolTime(EMConfigHandler.COMMON.ITEM.eyeItemCoolingTime.get()));
+        }
         tooltip.add(EMTUtils.simpleText(EMTUtils.STRUCTURE_PREFIX, FIND_STRUCTURE.location().getPath(), EMTUtils.STYLE_GRAY));
     }
 }

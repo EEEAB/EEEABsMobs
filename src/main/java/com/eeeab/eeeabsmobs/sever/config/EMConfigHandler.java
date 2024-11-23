@@ -87,6 +87,16 @@ public final class EMConfigHandler {
                 NETHERWORLD_KATANA_TOOL = new ToolConfig(14D, 1.4D);
                 builder.pop();
             }
+            {
+                builder.push("Eye Of Structure");
+                consumeEyeItemOnRelease = BUILDER.comment("If 'True' eye of structure will be consume item on release")
+                        .translation(getTranslationKey("eye_of_structure"))
+                            .define("Consume Item On Release", false);
+                eyeItemCoolingTime = BUILDER.comment(CDComment)
+                        .translation(getTranslationKey(CDKey))
+                        .defineInRange(CDPath, 4D, 1D, 10D);
+                builder.pop();
+            }
             builder.pop();
         }
 
@@ -99,6 +109,8 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.DoubleValue itemHowitzerGrenadeExplosionRadius;
         public final ForgeConfigSpec.DoubleValue SSNCumulativeMaximumDamage;
         public final ForgeConfigSpec.IntValue SSNCoolingTime;
+        public final ForgeConfigSpec.BooleanValue consumeEyeItemOnRelease;
+        public final ForgeConfigSpec.DoubleValue eyeItemCoolingTime;
     }
 
     public static class Entity {
