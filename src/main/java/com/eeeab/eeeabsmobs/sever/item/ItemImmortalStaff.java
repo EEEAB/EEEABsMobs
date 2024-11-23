@@ -60,6 +60,6 @@ public class ItemImmortalStaff extends Item {
         super.appendHoverText(stack, level, tooltip, flagIn);
         EMConfigHandler.Item item = EMConfigHandler.COMMON.ITEM;
         tooltip.add(EMTUtils.itemCoolTime(item.itemImmortalStaffCoolingTime.get()));
-        tooltip.add(EMTUtils.simpleWeaponText(this.getDescriptionId(), EMTUtils.STYLE_GRAY));
+        tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), EMTUtils.STYLE_GRAY));
     }
 }

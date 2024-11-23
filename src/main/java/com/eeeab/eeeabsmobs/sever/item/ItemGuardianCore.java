@@ -23,7 +23,6 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 import java.util.Optional;
 
-//TODO 待优化:部分参数由配置文件控制
 public class ItemGuardianCore extends Item {
 
     public ItemGuardianCore() {
@@ -110,7 +109,7 @@ public class ItemGuardianCore extends Item {
             tooltip.add(EMTUtils.UNABLE_BREAKS);
             tooltip.add(EMTUtils.simpleShiftDownText(null, EMTUtils.STYLE_GREEN));
         } else {
-            tooltip.add(EMTUtils.simpleWeaponText(this.getDescriptionId(), EMTUtils.STYLE_GREEN, EMConfigHandler.COMMON.ENTITY.guardianLaserShootRadius.get()));
+            tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), EMTUtils.STYLE_GREEN, EMConfigHandler.COMMON.ENTITY.guardianLaserShootRadius.get()));
             tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, EMTUtils.STYLE_GRAY, this.getDescriptionId()));
         }
     }

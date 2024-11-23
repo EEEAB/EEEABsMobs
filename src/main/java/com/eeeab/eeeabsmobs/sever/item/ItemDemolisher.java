@@ -102,6 +102,6 @@ public class ItemDemolisher extends ProjectileWeaponItem {
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
         tooltip.add(EMTUtils.itemCoolTime(EMConfigHandler.COMMON.ITEM.itemHowitzerCoolingTime.get()));
-        tooltip.add(EMTUtils.simpleWeaponText(this.getDescriptionId(), EMTUtils.STYLE_GRAY, EMConfigHandler.COMMON.ITEM.itemHowitzerGrenadeDamage.get()));
+        tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), EMTUtils.STYLE_GRAY, EMConfigHandler.COMMON.ITEM.itemHowitzerGrenadeDamage.get()));
     }
 }

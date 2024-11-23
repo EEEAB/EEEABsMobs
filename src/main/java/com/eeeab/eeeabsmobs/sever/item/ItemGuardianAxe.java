@@ -109,7 +109,7 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
             tooltip.add(EMTUtils.simpleShiftDownText(null, EMTUtils.STYLE_GREEN));
         } else {
             tooltip.add(EMTUtils.itemCoolTime(5));
-            tooltip.add(EMTUtils.simpleWeaponText(this.getDescriptionId(), EMTUtils.STYLE_GRAY));
+            tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), EMTUtils.STYLE_GRAY));
         }
     }
 

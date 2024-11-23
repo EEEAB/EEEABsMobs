@@ -15,7 +15,7 @@ import java.util.List;
  * 翻译字段工具类
  *
  * @author EEEAB
- * @version 1.3
+ * @version 1.4
  */
 public class EMTUtils {
 
@@ -23,6 +23,8 @@ public class EMTUtils {
     }
 
     //text style
+    public static final Style STYLE_BLUE = Style.EMPTY.withColor(TextColor.fromLegacyFormat(ChatFormatting.BLUE));
+
     public static final Style STYLE_GRAY = Style.EMPTY.withColor(TextColor.fromLegacyFormat(ChatFormatting.GRAY));
 
     public static final Style STYLE_GREEN = Style.EMPTY.withColor(TextColor.fromLegacyFormat(ChatFormatting.GREEN));
@@ -38,18 +40,14 @@ public class EMTUtils {
 
     public static final String MOD_ID = EEEABMobs.MOD_ID + ".";
 
-    public static final Component UNABLE_BREAKS = simpleText(OTHER_PREFIX, "unable_breaks", EMTUtils.STYLE_GRAY);//无法破坏
+    public static final Component UNABLE_BREAKS = simpleText(OTHER_PREFIX, "unable_breaks", STYLE_BLUE);//无法破坏
 
     //item
     public static final String ITEM_PREFIX = "item.";
 
-    public static final String TOOLTIP_PREFIX = "tooltip.";
+    public static final String ITEM_ARMOR_PREFIX = ITEM_PREFIX + "armor.";
 
-    public static final String ARMOR_PREFIX = TOOLTIP_PREFIX + "armor.";
-
-    public static final String WEAPON_PREFIX = TOOLTIP_PREFIX + "weapon.";
-
-    public static final String TOOLTIP_OTHER_PREFIX = TOOLTIP_PREFIX + OTHER_PREFIX;
+    public static final String ITEM_OTHER_PREFIX = ITEM_PREFIX + OTHER_PREFIX;
 
     //keyboard Operation
     public static final String KEY_PREFIX = "keyboard.";
@@ -82,7 +80,7 @@ public class EMTUtils {
     }
 
     public static Component itemCoolTime(double args) {
-        return simpleText(TOOLTIP_OTHER_PREFIX, args == 0 ? "no_cd" : "cd", STYLE_GREEN, args);
+        return simpleText(ITEM_OTHER_PREFIX, args == 0 ? "no_cd" : "cd", STYLE_GREEN, args);
     }
 
     public static Component simpleItemText(String key, Style style, @Nullable Object... args) {
@@ -90,15 +88,11 @@ public class EMTUtils {
     }
 
     public static Component simpleArmorText(String key, Style style, @Nullable Object... args) {
-        return simpleText(ARMOR_PREFIX, key, style, args);
-    }
-
-    public static Component simpleWeaponText(String key, Style style, @Nullable Object... args) {
-        return simpleText(WEAPON_PREFIX, key, style, args);
+        return simpleText(ITEM_ARMOR_PREFIX, key, style, args);
     }
 
     public static Component simpleOtherText(String key, Style style, @Nullable Object... args) {
-        return simpleText(TOOLTIP_OTHER_PREFIX, key, style, args);
+        return simpleText(ITEM_OTHER_PREFIX, key, style, args);
     }
 
     public static Component simpleShiftDownText(String key, Style style, @Nullable Object... args) {
