@@ -10,6 +10,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
@@ -34,6 +35,12 @@ public class ItemNetherworldKatana extends SwordItem implements ConfigurableItem
     @Override
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         consumer.accept((IClientItemExtensions) EEEABMobs.PROXY.getISTERProperties());
+    }
+
+    @Override
+    public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
+        stack.getOrCreateTag();
+        super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
     }
 
     @Override

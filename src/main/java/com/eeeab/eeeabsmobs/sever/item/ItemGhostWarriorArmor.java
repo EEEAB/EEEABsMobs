@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
@@ -26,6 +27,12 @@ public class ItemGhostWarriorArmor extends ArmorItem {
     @Override
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         consumer.accept((IClientItemExtensions) EEEABMobs.PROXY.getASTEProperties());
+    }
+
+    @Override
+    public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
+        stack.getOrCreateTag();
+        super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
     }
 
     @Override
