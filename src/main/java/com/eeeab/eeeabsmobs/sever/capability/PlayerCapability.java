@@ -80,7 +80,7 @@ public class PlayerCapability {
             if (!player.getCooldowns().isOnCooldown(item)) {
                 this.SSNCumulativeDamage += damage;
                 if (this.SSNCumulativeDamage >= EMConfigHandler.COMMON.ITEM.SSNCumulativeMaximumDamage.get().floatValue()) {
-                    player.getCooldowns().addCooldown(item, EMConfigHandler.COMMON.ITEM.SSNCoolingTime.get() * 20);
+                    player.getCooldowns().addCooldown(item, (int) (EMConfigHandler.COMMON.ITEM.SSNCoolingTime.get() * 20));
                     if (!player.level().isClientSide) {
                         Vec3 vec3 = player.position();
                         EntityCorpseToPlayer entity = EntityInit.CORPSE_TO_PLAYER.get().create(player.level());

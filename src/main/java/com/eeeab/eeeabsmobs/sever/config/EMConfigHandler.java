@@ -51,7 +51,7 @@ public final class EMConfigHandler {
                         .defineInRange("Set maximum cumulative damage taken", 50, 1, Float.MAX_VALUE);
                 SSNCoolingTime = BUILDER.comment(CDComment)
                         .translation(getTranslationKey(CDKey))
-                        .defineInRange(CDPath, 20, 1, Integer.MAX_VALUE);
+                        .defineInRange(CDPath, 20D, 1D, 60D);
                 builder.pop();
             }
             {
@@ -108,7 +108,7 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.DoubleValue itemHowitzerGrenadeDamage;
         public final ForgeConfigSpec.DoubleValue itemHowitzerGrenadeExplosionRadius;
         public final ForgeConfigSpec.DoubleValue SSNCumulativeMaximumDamage;
-        public final ForgeConfigSpec.IntValue SSNCoolingTime;
+        public final ForgeConfigSpec.DoubleValue SSNCoolingTime;
         public final ForgeConfigSpec.BooleanValue consumeEyeItemOnRelease;
         public final ForgeConfigSpec.DoubleValue eyeItemCoolingTime;
     }
