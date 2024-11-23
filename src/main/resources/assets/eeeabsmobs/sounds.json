@@ -452,7 +452,7 @@
     ]
   },
   "corpse_warlock_tear": {
-    "subtitle": "subtitles.corpse_warlock_tear",
+    "subtitle": "subtitles.corpse_warlock.tear",
     "sounds": [
       "eeeabsmobs:entity/corpse_warlock/tear1",
       "eeeabsmobs:entity/corpse_warlock/tear2"
