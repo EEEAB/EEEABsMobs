@@ -235,7 +235,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
 
     @Override
     public float getStepHeight() {
-        return 4.5F;
+        return 2.5F;
     }
 
     @Override//可以站立的流体

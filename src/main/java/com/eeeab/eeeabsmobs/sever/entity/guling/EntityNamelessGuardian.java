@@ -220,7 +220,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     public float getStepHeight() {
-        return 3F;
+        return 2.5F;
     }
 
     @Override//可以站立的流体
