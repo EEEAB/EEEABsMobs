@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.item;
 
+import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
@@ -32,10 +33,12 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
     private Multimap<Attribute, AttributeModifier> defaultModifiers;
@@ -44,6 +47,11 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
     public ItemGuardianAxe(Tier tier, Properties properties) {
         super(tier, (float) (-3D + EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamageValue), (float) (-4D + EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackSpeedValue), properties);
         this.defaultModifiers = this.creatAttributesFromConfig();
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept((IClientItemExtensions) EEEABMobs.PROXY.getISTERProperties());
     }
 
     @Override

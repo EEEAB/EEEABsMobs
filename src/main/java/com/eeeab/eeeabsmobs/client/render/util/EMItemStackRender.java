@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.client.render.util;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
+import com.eeeab.eeeabsmobs.client.model.item.ModelGuardianBattleaxe;
 import com.eeeab.eeeabsmobs.client.model.item.ModelTheNetherworldKatana;
 import com.eeeab.eeeabsmobs.client.model.util.EMModelLayer;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
@@ -21,11 +22,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class EMItemStackRender extends BlockEntityWithoutLevelRenderer {
     private static boolean init;
     private static ModelTheNetherworldKatana THE_NETHERWORLD_KATANA;
+    private static ModelGuardianBattleaxe THE_GUARDIAN_BATTLEAXE;
     private static final ResourceLocation THE_NETHERWORLD_KATANA_TEX = new ResourceLocation(EEEABMobs.MOD_ID, "textures/item/netherworld_katana.png");
+    private static final ResourceLocation THE_GUARDIAN_BATTLEAXE_TEX = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/guling/nameless_guardian/nameless_guardian.png");
 
     public static void init() {
         init = true;
         THE_NETHERWORLD_KATANA = new ModelTheNetherworldKatana(Minecraft.getInstance().getEntityModels().bakeLayer(EMModelLayer.THE_NETHERWORLD_KATANA));
+        THE_GUARDIAN_BATTLEAXE = new ModelGuardianBattleaxe(Minecraft.getInstance().getEntityModels().bakeLayer(EMModelLayer.THE_GUARDIAN_BATTLEAXE));
     }
 
     public EMItemStackRender() {
@@ -38,13 +42,19 @@ public class EMItemStackRender extends BlockEntityWithoutLevelRenderer {
         if (!init) {
             init();
         }
-        VertexConsumer vertexConsumer;
         if (itemStackIn.getItem() == ItemInit.THE_NETHERWORLD_KATANA.get()) {
             matrixStackIn.pushPose();
             matrixStackIn.translate(0.5F, 0.5F, 0.5F);
             matrixStackIn.scale(0.5F, -0.5F, -0.5F);
-            vertexConsumer = ItemRenderer.getArmorFoilBuffer(bufferIn, RenderType.armorCutoutNoCull(THE_NETHERWORLD_KATANA_TEX), false, itemStackIn.hasFoil());
+            VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(bufferIn, RenderType.armorCutoutNoCull(THE_NETHERWORLD_KATANA_TEX), false, itemStackIn.hasFoil());
             THE_NETHERWORLD_KATANA.renderToBuffer(matrixStackIn, vertexConsumer, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1);
+            matrixStackIn.popPose();
+        } else if (itemStackIn.getItem() == ItemInit.GUARDIAN_AXE.get()) {
+            matrixStackIn.pushPose();
+            matrixStackIn.translate(0.5F, 0.5F, 0.5F);
+            matrixStackIn.scale(0.5F, -0.5F, -0.5F);
+            VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(bufferIn, RenderType.armorCutoutNoCull(THE_GUARDIAN_BATTLEAXE_TEX), false, itemStackIn.hasFoil());
+            THE_GUARDIAN_BATTLEAXE.renderToBuffer(matrixStackIn, vertexConsumer, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1);
             matrixStackIn.popPose();
         }
     }
