@@ -96,10 +96,10 @@ public class ServerProxy {
         return null;
     }
 
-    public void playLaserSound(Player player) {
+    public void playGuardianLaserSound(Player player) {
     }
 
-    public void endLaserSound(Player player) {
+    public void stopGuardianLaserSound(Player player) {
     }
 
     public void playImmortalShurikenSound(EntityImmortalShuriken shuriken) {

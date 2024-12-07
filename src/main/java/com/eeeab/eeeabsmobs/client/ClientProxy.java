@@ -49,7 +49,7 @@ public class ClientProxy extends ServerProxy {
     }
 
     @Override
-    public void playLaserSound(Player player) {
+    public void playGuardianLaserSound(Player player) {
         GuardianLaserSoundInstance sound = GuardianLaserSoundInstance.getInstance(player);
         if (!Minecraft.getInstance().getSoundManager().isActive(sound) && sound.canPlaySound()) {
             Minecraft.getInstance().getSoundManager().queueTickingSound(sound);
@@ -57,7 +57,7 @@ public class ClientProxy extends ServerProxy {
     }
 
     @Override
-    public void endLaserSound(Player player) {
+    public void stopGuardianLaserSound(Player player) {
         GuardianLaserSoundInstance.clearById(player.getId());
     }
 
