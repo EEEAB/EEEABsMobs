@@ -79,7 +79,7 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
                     }
                     ModParticleUtils.roundParticleOutburst(level, 40, new ParticleOptions[]{ParticleInit.GUARDIAN_SPARK.get(), ParticleTypes.SOUL_FIRE_FLAME}, x, y, z, 0.25F);
                 }
-                AbilityHandler.INSTANCE.sendPlayerAbilityMessage(player, AbilityHandler.GUARDIAN_AXE_ABILITY_TYPE);
+                if (!level.isClientSide) AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.GUARDIAN_AXE_ABILITY_TYPE);
                 player.getCooldowns().addCooldown(this, 100);
                 return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide);
             }

@@ -5,6 +5,7 @@ import com.eeeab.eeeabsmobs.sever.ability.AbilityPeriod;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityType;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGrenade;
+import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -35,5 +36,6 @@ public class HowitzerAbility extends Ability<Player> {
             grenade.setPos(vec3.x + width * 0.6F * Math.cos(yBodyRadians), user.getY(0.6D), vec3.z + width * 0.6F * Math.sin(yBodyRadians));
             level.addFreshEntity(grenade);
         }
+        user.playSound(SoundInit.GSH_SPARK.get());
     }
 }

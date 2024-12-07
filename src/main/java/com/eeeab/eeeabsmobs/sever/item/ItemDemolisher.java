@@ -3,7 +3,6 @@ package com.eeeab.eeeabsmobs.sever.item;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.network.chat.Component;
@@ -55,8 +54,7 @@ public class ItemDemolisher extends ProjectileWeaponItem {
                     return;
                 }
                 player.getCooldowns().addCooldown(this, (int) (EMConfigHandler.COMMON.ITEM.itemHowitzerCoolingTime.get() * 20));
-                AbilityHandler.INSTANCE.sendPlayerAbilityMessage(player, AbilityHandler.HOWITZER_ABILITY_TYPE);
-                player.playSound(SoundInit.GSH_SPARK.get());
+                if (!level.isClientSide) AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.HOWITZER_ABILITY_TYPE);
                 //判断是否需要消耗弹药
                 if (instabuild) {
                     projectile.shrink(1);

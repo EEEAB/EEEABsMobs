@@ -29,7 +29,7 @@ public class ItemImmortalStaff extends Item {
                 return;
             } else if (capability != null) {
                 player.getCooldowns().addCooldown(this, (int) (EMConfigHandler.COMMON.ITEM.itemImmortalStaffCoolingTime.get() * 20));
-                AbilityHandler.INSTANCE.sendPlayerAbilityMessage(player, AbilityHandler.IMMORTAL_STAFF_ABILITY_TYPE);
+                if (!level.isClientSide) AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.IMMORTAL_STAFF_ABILITY_TYPE);
             }
             player.swing(hand, true);
         }
