@@ -48,7 +48,7 @@ public final class EMConfigHandler {
                 builder.push("Summoning Soul Necklace");
                 SSNCumulativeMaximumDamage = BUILDER.comment("Set maximum amount of damage a player can take while holding this item")
                         .translation(getTranslationKey("summoning_soul_necklace"))
-                        .defineInRange("Set maximum cumulative damage taken", 50, 1, Float.MAX_VALUE);
+                        .defineInRange("Set maximum cumulative damage taken", 50D, 1D, Float.MAX_VALUE);
                 SSNCoolingTime = BUILDER.comment(CDComment)
                         .translation(getTranslationKey(CDKey))
                         .defineInRange(CDPath, 20D, 1D, 60D);
@@ -76,7 +76,7 @@ public final class EMConfigHandler {
                 builder.push("Immortal Staff");
                 itemImmortalStaffCoolingTime = BUILDER.comment(CDComment)
                         .translation(getTranslationKey(CDKey))
-                        .defineInRange(CDPath, 1.5, 0.5, 60);
+                        .defineInRange(CDPath, 1.5D, 0.5D, 60D);
                 builder.pop();
             }
             {
@@ -91,7 +91,7 @@ public final class EMConfigHandler {
                 builder.push("Eye Of Structure");
                 consumeEyeItemOnRelease = BUILDER.comment("If 'True' eye of structure will be consume item on release")
                         .translation(getTranslationKey("eye_of_structure"))
-                            .define("Consume Item On Release", false);
+                        .define("Consume Item On Release", false);
                 eyeItemCoolingTime = BUILDER.comment(CDComment)
                         .translation(getTranslationKey(CDKey))
                         .defineInRange(CDPath, 4D, 1D, 10D);
@@ -119,11 +119,17 @@ public final class EMConfigHandler {
             {
                 builder.push("Guardian Laser");
                 this.enableGenerateScorchEntity = BUILDER.comment("If 'False' disable scorch generate on the ground")
-                        .translation(getTranslationKey("guardian_laser"))
+                        .translation(getTranslationKey("guardian_laser_1"))
                         .define("Enable scorch generate", true);
-                this.guardianLaserShootRadius = BUILDER.comment("Set the maximum shooting distance when the user is a player")
+                this.guardianLaserShootRadius = BUILDER.comment("Set the maximum shooting distance for players")
                         .translation(getTranslationKey("attack_radius"))
                         .defineInRange("Set attack radius", 16D, 1D, 64D);
+                this.guardianLaserCanDestroyBlock = BUILDER.comment("If 'False' disable block destruction by players")
+                        .translation(getTranslationKey("guardian_laser_2"))
+                        .define("Enable destroy block", true);
+                this.guardianLaserCanDestroyMaxBlockHardness = BUILDER.comment("Set max block hardness for laser destruction")
+                        .translation(getTranslationKey("guardian_laser_3"))
+                        .defineInRange("Set laser max hardness", 1D, 1D, Float.MAX_VALUE);
                 builder.pop();
             }
             {
@@ -147,6 +153,10 @@ public final class EMConfigHandler {
 
         //当守卫者激光使用者是玩家时的最大射击距离
         public final ForgeConfigSpec.DoubleValue guardianLaserShootRadius;
+        //当守卫者激光使用者是玩家是是否可以破坏方块
+        public final ForgeConfigSpec.BooleanValue guardianLaserCanDestroyBlock;
+        //守卫者激光能破坏指定硬度内的方块
+        public final ForgeConfigSpec.DoubleValue guardianLaserCanDestroyMaxBlockHardness;
         //生成烧焦的地面实体
         public final ForgeConfigSpec.BooleanValue enableGenerateScorchEntity;
         //启用生成掉落方块

@@ -213,6 +213,6 @@
   "other.eeeabsmobs.falling_block_3.config": "Настроить вертикальный диапазон обнаружения для падающих блоков",
   "other.eeeabsmobs.tester_1.config": "Настроить предел здоровья",
   "other.eeeabsmobs.tester_2.config": "Включить иммунитет к урону от окружения или статусов",
-  "other.eeeabsmobs.guardian_laser.config": "Включить эффект обжига от лазера на земле",
+  "other.eeeabsmobs.guardian_laser_1.config": "Включить эффект обжига от лазера на земле",
   "other.eeeabsmobs.corpse.config": "Включить превращение зомби/жителей в трупы после смерти"
 }

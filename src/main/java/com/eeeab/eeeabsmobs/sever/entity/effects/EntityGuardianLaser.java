@@ -5,8 +5,10 @@ import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.util.damage.EMDamageSource;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -83,6 +85,19 @@ public class EntityGuardianLaser extends EntityAbsBeam {
             this.calculateEndPos(isPlayer() ? EMConfigHandler.COMMON.ENTITY.guardianLaserShootRadius.get() : GUARDIAN_RADIUS);
             List<LivingEntity> hit = raytraceEntities(level(), new Vec3(getX(), getY(), getZ()), new Vec3(endPosX, endPosY, endPosZ)).getEntities();
             if (this.blockSide != null) {
+                if (!this.level().isClientSide && this.tickCount % 5 == 0) {
+                    BlockPos minPos = new BlockPos(Mth.floor(this.collidePosX - 0.5), Mth.floor(this.collidePosY - 0.5), Mth.floor(this.collidePosZ - 0.5));
+                    BlockPos maxPos = new BlockPos(Mth.floor(this.collidePosX + 0.5), Mth.floor(this.collidePosY + 0.5), Mth.floor(this.collidePosZ + 0.5));
+                    BlockPos.betweenClosedStream(minPos, maxPos).forEach(pos -> {
+                        if ((ModEntityUtils.canDestroyBlock(this.level(), pos, this, EMConfigHandler.COMMON.ENTITY.guardianLaserCanDestroyMaxBlockHardness.get().floatValue()))) {
+                            if (ModEntityUtils.canMobDestroy(this) && caster instanceof EntityNamelessGuardian guardian) {
+                                this.level().destroyBlock(pos, guardian.checkCanDropItems());
+                            } else if (isPlayer() && this.caster instanceof Player && EMConfigHandler.COMMON.ENTITY.guardianLaserCanDestroyBlock.get()) {
+                                this.level().destroyBlock(pos, true);
+                            }
+                        }
+                    });
+                }
                 this.spawnExplosionParticles();
                 if (!this.level().isClientSide && !isPlayer() && EMConfigHandler.COMMON.ENTITY.enableGenerateScorchEntity.get()) {
                     EntityScorch scorch = new EntityScorch(this.level(), this.prevCollidePosX, this.prevCollidePosY, this.prevCollidePosZ);

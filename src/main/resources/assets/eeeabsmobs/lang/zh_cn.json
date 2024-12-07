@@ -286,7 +286,9 @@
   "other.eeeabsmobs.falling_block_3.config": "设置生成下落方块纵向探测范围",
   "other.eeeabsmobs.tester_1.config": "设置生命上限",
   "other.eeeabsmobs.tester_2.config": "启用免疫由环境或者状态因素造成的伤害",
-  "other.eeeabsmobs.guardian_laser.config": "启用激光射向地面的烧焦效果",
+  "other.eeeabsmobs.guardian_laser_1.config": "启用激光射向地面的烧焦效果",
+  "other.eeeabsmobs.guardian_laser_2.config": "启用激光是否可以破坏方块",
+  "other.eeeabsmobs.guardian_laser_3.config": "设置激光可破坏方块的最大硬度",
   "other.eeeabsmobs.corpse.config": "启用杀死僵尸/村民后转化为死尸",
   "other.eeeabsmobs.eye_of_structure.config": "启用释放时消耗物品"
 }
