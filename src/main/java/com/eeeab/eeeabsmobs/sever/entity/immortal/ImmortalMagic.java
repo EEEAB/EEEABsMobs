@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
+import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalLaser;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityImmortalShuriken;
 import net.minecraft.util.Mth;
@@ -20,6 +21,7 @@ public class ImmortalMagic {
             Vec3 vec3 = looking.yRot(angle);
             float f0 = (float) Mth.atan2(vec3.z, vec3.x);
             EntityImmortalLaser laser = new EntityImmortalLaser(caster.level(), caster, spawnPos.x, spawnPos.y, spawnPos.z, f0, duration);
+            if (i == 0) EEEABMobs.PROXY.playImmortalLaserSound(laser);
             caster.level().addFreshEntity(laser);
         }
     }
@@ -59,10 +61,10 @@ public class ImmortalMagic {
     }
 
     public static void spawnShuriken(LivingEntity caster, LivingEntity target, double posX, double posY, double posZ, double motionX, double motionY, double motionZ, float velocity, int duration) {
-        EntityImmortalShuriken fireball = new EntityImmortalShuriken(caster.level(), caster, target, duration);
-        fireball.setPos(posX, posY, posZ);
-        fireball.shoot(motionX, motionY, motionZ, velocity, 3F);
-        caster.level().addFreshEntity(fireball);
+        EntityImmortalShuriken shuriken = new EntityImmortalShuriken(caster.level(), caster, target, duration);
+        shuriken.setPos(posX, posY, posZ);
+        shuriken.shoot(motionX, motionY, motionZ, velocity, 3F);
+        caster.level().addFreshEntity(shuriken);
     }
 
     public static void assignTargets(int count, List<LivingEntity> entities, LivingEntity[] targets) {

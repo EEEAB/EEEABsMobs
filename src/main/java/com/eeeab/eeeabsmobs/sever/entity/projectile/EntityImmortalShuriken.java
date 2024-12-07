@@ -65,7 +65,6 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
         this.target = target;
         this.difficultyLevel = this.level().getDifficulty().getId();
         this.setDuration(duration);
-        EEEABMobs.PROXY.playImmortalShurikenSound(this);
     }
 
     @Override
@@ -96,6 +95,8 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
                         this.level().broadcastEntityEvent(this, (byte) 7);
                         this.discard();
                     }
+                } else if (this.tickCount == this.getDuration()) {
+                    EEEABMobs.PROXY.playImmortalShurikenSound(this);
                 }
 
                 if (this.target != null) {

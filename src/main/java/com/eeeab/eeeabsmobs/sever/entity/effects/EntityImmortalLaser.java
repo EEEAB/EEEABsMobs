@@ -34,7 +34,6 @@ public class EntityImmortalLaser extends EntityAbsBeam {
         this.setDuration(duration);
         this.setPos(x, y, z);
         this.calculateEndPos(IMMORTAL_RADIUS);
-        EEEABMobs.PROXY.playImmortalLaserSound(this);
         if (!level().isClientSide) {
             setCasterId(caster.getId());
         }
