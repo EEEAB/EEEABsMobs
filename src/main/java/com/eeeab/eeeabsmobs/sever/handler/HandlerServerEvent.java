@@ -13,7 +13,6 @@ import com.eeeab.eeeabsmobs.sever.entity.IBoss;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityAbsCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalExecutioner;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
@@ -411,11 +410,6 @@ public final class HandlerServerEvent {
     public void onProjectileImpact(ProjectileImpactEvent event) {
         Projectile projectile = event.getProjectile();
         if (event.getRayTraceResult() instanceof EntityHitResult hitResult) {
-            if (hitResult.getEntity() instanceof EntityImmortal immortal && immortal.inBlocking()) {
-                event.setImpactResult(ProjectileImpactEvent.ImpactResult.STOP_AT_CURRENT);
-                return;
-            }
-
             if (projectile instanceof EntityBloodBall bloodBall && !bloodBall.isHeal() && hitResult.getEntity() instanceof EntityCorpseWarlock) {
                 event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
                 return;
