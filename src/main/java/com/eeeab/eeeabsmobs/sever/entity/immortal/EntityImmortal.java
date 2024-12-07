@@ -689,6 +689,16 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
         this.glowControllerAnimation.incrementOrDecreaseTimer(this.isActive() && !this.isDeadOrDying() && (animation != this.spawnAnimation || tick > 25));
         this.coreControllerAnimation.incrementOrDecreaseTimer(!this.isNoAnimation() && (animation != this.spawnAnimation && animation != this.unleashEnergyAnimation) && !this.inBlocking());
         this.alphaControllerAnimation.incrementOrDecreaseTimer(animation == this.teleportAnimation && tick >= 10 && tick <= 20, 2);
+        if (animation == this.teleportAnimation) {
+            LivingEntity target = this.getTarget();
+            if (tick == 15) {
+                for (int i = 0; i < 32; i++) {
+                    if (this.teleportByType(target == null ? TeleportType.RANDOM : this.getTeleportType(), target)) {
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -970,26 +980,15 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     }
 
     private boolean teleport(double x, double y, double z) {
-        BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(x, y, z);
-        while (blockpos$mutableblockpos.getY() > this.level().getMinBuildHeight() && !this.level().getBlockState(blockpos$mutableblockpos).blocksMotion()) {
-            blockpos$mutableblockpos.move(Direction.DOWN);
-        }
-        BlockState blockstate = this.level().getBlockState(blockpos$mutableblockpos);
-        if (blockstate.blocksMotion()) {
-            net.minecraftforge.event.ForgeEventFactory.onEntityTeleportCommand(this, x, y, z);
-            Vec3 vec3 = this.position();
-            boolean flag2 = this.randomTeleport(x, y, z, false);
-            if (flag2) {
-                this.level().gameEvent(GameEvent.TELEPORT, vec3, GameEvent.Context.of(this));
-                if (!this.isSilent()) {
-                    this.level().playSound(null, this.xo, this.yo, this.zo, SoundInit.IMMORTAL_TELEPORT.get(), this.getSoundSource(), 1.5F, 1.0F);
-                    this.playSound(SoundInit.IMMORTAL_TELEPORT.get(), 1.0F, 1.0F);
-                }
+        boolean flag = this.randomTeleport(x, y, z, false);
+        if (flag) {
+            this.level().gameEvent(GameEvent.TELEPORT, this.position(), GameEvent.Context.of(this));
+            if (!this.isSilent()) {
+                this.level().playSound(null, this.xo, this.yo, this.zo, SoundInit.IMMORTAL_TELEPORT.get(), this.getSoundSource(), 1.5F, 1.0F);
+                this.playSound(SoundInit.IMMORTAL_TELEPORT.get(), 1.0F, 1.0F);
             }
-            return flag2;
-        } else {
-            return false;
         }
+        return flag;
     }
 
     private int getCoolingTimerUtil(int baseCD, float coolDownReductionPerTarget) {
@@ -1498,17 +1497,8 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
         @Override
         public void tick() {
             Animation animation = this.entity.getAnimation();
-            int tick = this.entity.getAnimationTick();
             if (animation == this.entity.teleportAnimation) {
                 this.lookAtTarget();
-                if (tick == 15) {
-                    LivingEntity target = this.entity.getTarget();
-                    for (int i = 0; i < 32; i++) {
-                        if (entity.teleportByType(target == null ? TeleportType.RANDOM : entity.getTeleportType(), target)) {
-                            break;
-                        }
-                    }
-                }
             } else if (animation == this.entity.spawnAnimation) {
                 //TODO 待补充
             } else if (animation == this.entity.switchStageAnimation) {
