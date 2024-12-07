@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.client.particle.base;
 
 import com.eeeab.eeeabsmobs.client.render.EMRenderType;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
-import com.eeeab.eeeabsmobs.sever.util.QuaternionUtils;
+import com.eeeab.eeeabsmobs.sever.util.EMMathUtils;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -105,8 +105,8 @@ public class ParticleRing extends TextureSheetParticle {
                 quaternion.mul(Axis.ZP.rotation(f3));
             }
         } else {
-            Quaternionf quatX = QuaternionUtils.rotationXYZ(xRot, 0, 0, false);
-            Quaternionf quatY = QuaternionUtils.rotationXYZ(0, yRot, 0, false);
+            Quaternionf quatX = EMMathUtils.rotationXYZ(xRot, 0, 0, false);
+            Quaternionf quatY = EMMathUtils.rotationXYZ(0, yRot, 0, false);
             quaternion.mul(quatY);
             quaternion.mul(quatX);
         }

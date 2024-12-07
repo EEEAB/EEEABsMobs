@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.util;
 
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.util.QuaternionUtils;
+import com.eeeab.eeeabsmobs.sever.util.EMMathUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -61,10 +61,10 @@ public class ShockWaveUtils {
                 if (!level.isClientSide) {
                     Vec3 rotAxis = new Vec3(0D, -1D, 0D).cross(centerToBlock).normalize();
                     Vector3f axis = new Vector3f((float) rotAxis.x, (float) rotAxis.y, (float) rotAxis.z);
-                    Quaternionf rotator = QuaternionUtils.rotation(axis, (float) (distance / radius) * 15F + level.random.nextFloat() * 10F - 5F, true);
-                    rotator.mul(QuaternionUtils.XP.rotationDegrees(level.random.nextFloat() * 12F - 6F));
-                    rotator.mul(QuaternionUtils.YP.rotationDegrees(level.random.nextFloat() * 40F - 20F));
-                    rotator.mul(QuaternionUtils.ZP.rotationDegrees(level.random.nextFloat() * 12F - 6F));
+                    Quaternionf rotator = EMMathUtils.rotation(axis, (float) (distance / radius) * 15F + level.random.nextFloat() * 10F - 5F, true);
+                    rotator.mul(EMMathUtils.XP.rotationDegrees(level.random.nextFloat() * 12F - 6F));
+                    rotator.mul(EMMathUtils.YP.rotationDegrees(level.random.nextFloat() * 40F - 20F));
+                    rotator.mul(EMMathUtils.ZP.rotationDegrees(level.random.nextFloat() * 12F - 6F));
                     float bouncing = (float) (baseBouncing + distance * bounceExponent);
                     int liftTime = defaultLifeTime;
                     if (!customLife) {
