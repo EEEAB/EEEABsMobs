@@ -94,6 +94,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
@@ -338,6 +340,12 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     public void kill() {
         if (EMStackTraceUtils.isNotMinecraftOrMyModInvoking()) return;
         super.kill();
+    }
+
+    @Override
+    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap) {
+        if (EMStackTraceUtils.isNotMinecraftOrMyModInvoking()) return LazyOptional.empty();
+        return super.getCapability(cap);
     }
 
     @Override
