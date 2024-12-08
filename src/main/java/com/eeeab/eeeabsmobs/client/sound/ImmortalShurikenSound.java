@@ -11,6 +11,7 @@ public class ImmortalShurikenSound extends AbstractTickableSoundInstance {
 
     public ImmortalShurikenSound(EntityImmortalShuriken shuriken) {
         super(SoundInit.IMMORTAL_SHURIKEN_SPIN.get(), SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
+        this.attenuation = Attenuation.NONE;
         this.shuriken = shuriken;
         this.looping = true;
         this.volume = 0.15F;
