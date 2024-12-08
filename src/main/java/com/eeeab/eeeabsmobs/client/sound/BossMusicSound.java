@@ -10,11 +10,11 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class BossMusicSoundInstance extends AbstractTickableSoundInstance {
+public class BossMusicSound extends AbstractTickableSoundInstance {
     private EEEABMobEntity boss;
     private final SoundEvent sound;
 
-    protected BossMusicSoundInstance(SoundEvent sound, EEEABMobEntity boss) {
+    protected BossMusicSound(SoundEvent sound, EEEABMobEntity boss) {
         super(sound, SoundSource.RECORDS, SoundInstance.createUnseededRandom());
         this.boss = boss;
         this.sound = sound;

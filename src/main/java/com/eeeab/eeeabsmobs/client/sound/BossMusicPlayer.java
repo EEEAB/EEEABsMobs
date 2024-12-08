@@ -8,7 +8,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 
 public class BossMusicPlayer {
-    public static BossMusicSoundInstance bossMusic;
+    public static BossMusicSound bossMusic;
 
     public static void playBossMusic(EEEABMobEntity boss, SoundEvent music) {
         if (!EMConfigHandler.COMMON.OTHER.enablePlayBossMusic.get()) return;
@@ -25,7 +25,7 @@ public class BossMusicPlayer {
                 }
             } else {
                 if (boss.canPlayerHearMusic(player)) {
-                    bossMusic = new BossMusicSoundInstance(music, boss);
+                    bossMusic = new BossMusicSound(music, boss);
                 }
             }
             if (bossMusic != null && !Minecraft.getInstance().getSoundManager().isActive(bossMusic)) {
