@@ -41,7 +41,7 @@ public final class EMConfigHandler {
     public static class Item {
         public Item(final ForgeConfigSpec.Builder builder) {
             builder.push("Items");
-            String CDComment = "Set item cool down time after player on use (seconds)";
+            String CDComment = "Set item cool down time after player on use (in seconds)";
             String CDPath = "Set item cool down time";
             String CDKey = "item_cd";
             {
@@ -81,7 +81,7 @@ public final class EMConfigHandler {
             }
             {
                 builder.push("Ghost Warrior Series");
-                enableGhostWarriorSeriesItemDurability = BUILDER.comment("If 'True' armor or weapon will be depleted")
+                enableGhostWarriorSeriesItemDurability = BUILDER.comment("If set to 'True' armor or weapon will be depleted")
                         .translation(getTranslationKey("series_depleted"))
                         .define("Enable armor or weapon can be depleted", false);
                 NETHERWORLD_KATANA_TOOL = new ToolConfig(14D, 1.4D);
@@ -89,7 +89,7 @@ public final class EMConfigHandler {
             }
             {
                 builder.push("Eye Of Structure");
-                consumeEyeItemOnRelease = BUILDER.comment("If 'True' eye of structure will be consume item on release")
+                consumeEyeItemOnRelease = BUILDER.comment("If set to 'True' eye of structure will be consume item on release")
                         .translation(getTranslationKey("eye_of_structure"))
                         .define("Consume Item On Release", false);
                 eyeItemCoolingTime = BUILDER.comment(CDComment)
@@ -118,13 +118,13 @@ public final class EMConfigHandler {
             builder.push("Entities");
             {
                 builder.push("Guardian Laser");
-                this.enableGenerateScorchEntity = BUILDER.comment("If 'False' disable scorch generate on the ground")
+                this.enableGenerateScorchEntity = BUILDER.comment("If set to 'False' disable scorch generate on the ground")
                         .translation(getTranslationKey("guardian_laser_1"))
                         .define("Enable scorch generate", true);
                 this.guardianLaserShootRadius = BUILDER.comment("Set the maximum shooting distance for players")
                         .translation(getTranslationKey("attack_radius"))
                         .defineInRange("Set attack radius", 16D, 1D, 64D);
-                this.guardianLaserCanDestroyBlock = BUILDER.comment("If 'False' disable block destruction by players")
+                this.guardianLaserCanDestroyBlock = BUILDER.comment("If set to 'False' disable block destruction by players")
                         .translation(getTranslationKey("guardian_laser_2"))
                         .define("Enable destroy block", true);
                 this.guardianLaserCanDestroyMaxBlockHardness = BUILDER.comment("Set max block hardness for laser destruction")
@@ -134,9 +134,9 @@ public final class EMConfigHandler {
             }
             {
                 builder.push("Falling Block");
-                this.enableSpawnFallingBlock = BUILDER.comment("If 'False' disable falling block spawn")
+                this.enableSpawnFallingBlock = BUILDER.comment("If set to 'False' disable falling block spawn")
                         .translation(getTranslationKey("falling_block_1")).define("Enable falling block spawn", true);
-                this.enableRenderFallingBlock = BUILDER.comment("If 'False' disable falling block rendering")
+                this.enableRenderFallingBlock = BUILDER.comment("If set to 'False' disable falling block rendering")
                         .translation(getTranslationKey("falling_block_2")).define("Enable falling block render", true);
                 this.fallingBlockBelowCheckRange = BUILDER.comment("Set the maximum range for downward block detection to determine the Y-axis position where the entity spawns")
                         .translation(getTranslationKey("falling_block_3")).defineInRange("Set below check range", 3, 1, 10);
@@ -306,7 +306,7 @@ public final class EMConfigHandler {
         public Corpse(final ForgeConfigSpec.Builder builder) {
             builder.push("Corpse & Corpse Villager");
             combatConfig = new AttributeConfig();
-            enableConvertToCorpse = BUILDER.comment("If 'False', When zombies or villagers are killed by corpses, they will not converted into corpses themselves")
+            enableConvertToCorpse = BUILDER.comment("If set to 'False', When zombies or villagers are killed by corpses, they will not converted into corpses themselves")
                     .translation(getTranslationKey("corpse")).define("Converted to corpse", true);
             builder.pop();
         }
@@ -349,7 +349,7 @@ public final class EMConfigHandler {
     public static class GulingSentinel {
         public GulingSentinel(final ForgeConfigSpec.Builder builder) {
             builder.push("Guling Sentinel");
-            enableNonCombatHeal = BUILDER.comment("If 'False' disable out-of-combat heal")
+            enableNonCombatHeal = BUILDER.comment("If set to 'False' disable out-of-combat heal")
                     .translation(getTranslationKey("out_of_combat")).define("Enable out-of-combat healing", true);
             combatConfig = new AttributeConfig();
             builder.pop();
@@ -364,7 +364,7 @@ public final class EMConfigHandler {
     public static class GulingSentinelHeavy {
         public GulingSentinelHeavy(final ForgeConfigSpec.Builder builder) {
             builder.push("Guling Sentinel-Heavy");
-            enableNonCombatHeal = BUILDER.comment("If 'False' disable out-of-combat heal")
+            enableNonCombatHeal = BUILDER.comment("If set to 'False' disable out-of-combat heal")
                     .translation(getTranslationKey("out_of_combat")).define("Enable out-of-combat healing", true);
             combatConfig = new AttributeConfig();
             builder.pop();
@@ -383,9 +383,9 @@ public final class EMConfigHandler {
                     .translation(getTranslationKey("suck_blood")).defineInRange("Suck blood multiplier", 1D, 0D, 1024D);
             extraInvulnerableTick = BUILDER.comment("Set extra invulnerable tick(This setting does not take effect in Challenge Mode)")
                     .translation(getTranslationKey("invulnerable_tick")).defineInRange("Extra invulnerable tick", 20, 0, 1200);
-            enableNonCombatHeal = BUILDER.comment("If 'False' disable out-of-combat heal")
+            enableNonCombatHeal = BUILDER.comment("If set to 'False' disable out-of-combat heal")
                     .translation(getTranslationKey("out_of_combat")).define("Enable out-of-combat healing", true);
-            enableForcedSuckBlood = BUILDER.comment("If 'False' disable forced suck blood on power status(This setting does not take effect in Challenge Mode)")
+            enableForcedSuckBlood = BUILDER.comment("If set to 'False' disable forced suck blood on power status(This setting does not take effect in Challenge Mode)")
                     .translation(getTranslationKey("forced_suck_blood")).define("Enable forced suck blood", true);
             challengeMode = BUILDER.comment("Be careful! It's going to get tricky!")
                     .translation(getTranslationKey("challenge_mode")).define("Challenge Mode", false);
@@ -442,25 +442,25 @@ public final class EMConfigHandler {
             builder.push("Others");
             {
                 builder.push("Camera");
-                this.enableCameraShake = BUILDER.comment("If 'False' disable camera shake")
+                this.enableCameraShake = BUILDER.comment("If set to 'False' disable camera shake")
                         .translation(getTranslationKey("camera_1")).define("Enable camera shake", true);
                 builder.pop();
             }
             {
                 builder.push("Bosses");
-                this.enableShowBloodBars = BUILDER.comment("If 'False' disable bosses blood bars")
+                this.enableShowBloodBars = BUILDER.comment("If set to 'False' disable bosses blood bars")
                         .translation(getTranslationKey("bosses_1")).define("Enable bosses blood bars", true);
-                this.enablePlayBossMusic = BUILDER.comment("If 'False' disable play boss music")
+                this.enablePlayBossMusic = BUILDER.comment("If set to 'False' disable play boss music")
                         .translation(getTranslationKey("bosses_2")).define("Enable play bosses musics", true);
-                this.enableBossCanBreakingBlockDropItem = BUILDER.comment("If 'False' disable bosses breaking blocks drop items")
+                this.enableBossCanBreakingBlockDropItem = BUILDER.comment("If set to 'False' disable bosses breaking blocks drop items")
                         .translation(getTranslationKey("bosses_3")).define("Enable bosses breaking blocks drop items", false);
                 builder.pop();
             }
             {
                 builder.push("Misc");
-                this.enableSameMobsTypeInjury = BUILDER.comment("If 'False' able inflict damage between mobs of the same team")
+                this.enableSameMobsTypeInjury = BUILDER.comment("If set to 'False' able inflict damage between mobs of the same team")
                         .translation(getTranslationKey("misc_1")).define("Friendly fire among allies", true);
-                this.enableFrenzyDestroyBlock = BUILDER.comment("If 'False' disable frenzy potion destroy block")
+                this.enableFrenzyDestroyBlock = BUILDER.comment("If set to 'False' disable frenzy potion destroy block")
                         .translation(getTranslationKey("misc_2")).define("Enable frenzy potion destroy block", false);
                 builder.pop();
             }
@@ -514,16 +514,16 @@ public final class EMConfigHandler {
     public static class DamageSourceAdaptConfig {
         public DamageSourceAdaptConfig(final ForgeConfigSpec.Builder builder, int maxDamageSourceAdaptCount, int resetCountdown, double singleAdaptFactor, double maxAdaptFactor, boolean adaptsSameTypeMobs, boolean adaptBypassesDamage) {
             builder.push("Damage Adapt");
-            this.maxDamageSourceAdaptCount = BUILDER.comment("Set this mob maximum adaptation damage source count")
-                    .translation(getTranslationKey("damage_adapt_1")).defineInRange("Maximum adaptation damage source count", maxDamageSourceAdaptCount, 10, 1024);
-            this.resetCountdown = BUILDER.comment("Set the effective time for a single adaptation damage source(second)")
-                    .translation(getTranslationKey("damage_adapt_2")).defineInRange("Effective time", resetCountdown, 10, 1024);
-            this.singleAdaptFactor = BUILDER.comment("Set the factor of each reduction of the same damage source")
-                    .translation(getTranslationKey("damage_adapt_3")).defineInRange("Single adapt factor", singleAdaptFactor, 0D, 1D);
-            this.maxAdaptFactor = BUILDER.comment("Set the max damage reduction factor")
-                    .translation(getTranslationKey("damage_adapt_4")).defineInRange("Max adapt factor", maxAdaptFactor, 0D, 1D);
+            this.maxDamageSourceAdaptCount = BUILDER.comment("Set max adaptable damage sources for this mob")
+                    .translation(getTranslationKey("damage_adapt_1")).defineInRange("Max supported damage types amount", maxDamageSourceAdaptCount, 10, 1024);
+            this.resetCountdown = BUILDER.comment("Set the effective duration for a single adaptation damage source (in seconds)")
+                    .translation(getTranslationKey("damage_adapt_2")).defineInRange("Adaptation duration", resetCountdown, 10, 1024);
+            this.singleAdaptFactor = BUILDER.comment("Set the reduction factor for each instance of the same damage source")
+                    .translation(getTranslationKey("damage_adapt_3")).defineInRange("Single hurt post adaptation value", singleAdaptFactor, 0D, 1D);
+            this.maxAdaptFactor = BUILDER.comment("Set the maximum damage reduction factor")
+                    .translation(getTranslationKey("damage_adapt_4")).defineInRange("Same damage max adaptation factor", maxAdaptFactor, 0D, 1D);
             this.adaptsSameTypeMobs = adaptsSameTypeMobs;
-            this.adaptBypassesDamage = BUILDER.comment("If 'False' disable adaptation to out of world and generic kill damage source")
+            this.adaptBypassesDamage = BUILDER.comment("If set to 'False' disable adaptation to out of world and generic kill damage source")
                     .translation(getTranslationKey("damage_adapt_5")).define("Adaptation bypasses damage source", adaptBypassesDamage);
             builder.pop();
         }
