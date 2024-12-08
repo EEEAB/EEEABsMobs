@@ -116,7 +116,7 @@ public class DamageAdaptation {
         if (source == null) {
             return "unknown_source";
         } else if (source.getEntity() == null && !source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
-            return spliceCharacters(source.getMsgId(), "unknown_entity");
+            return spliceCharacters(source.type().msgId(), "unknown_entity");
         } else if (source.getEntity() != null) {
             Entity entity = source.getEntity();
             String id = adaptsSameTypeMobs ? entity.getType().getDescriptionId() : entity.getStringUUID();
@@ -127,7 +127,7 @@ public class DamageAdaptation {
             }
             return key;
         } else {
-            return adaptBypassesDamage ? spliceCharacters(source.getMsgId(), "bypasses_source") : null;
+            return adaptBypassesDamage ? spliceCharacters(source.type().msgId(), "bypasses_source") : null;
         }
     }
 
