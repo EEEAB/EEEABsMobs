@@ -1,11 +1,15 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner;
 
+import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ReFindOwnerGoal<T extends Mob & VenerableEntity<T>> extends Goal {
     private final RandomSource random = RandomSource.create();
@@ -31,11 +35,31 @@ public class ReFindOwnerGoal<T extends Mob & VenerableEntity<T>> extends Goal {
 
     @Override
     public void start() {
+        UUID uuid = target.getOwnerUUID();
+        if (uuid == null) return;
+        if (target.level() instanceof ServerLevel serverLevel) {
+            Entity entity = serverLevel.getEntity(uuid);
+            if (entity != null && entity.isAlive()) {
+                try {
+                    target.setOwner((T) entity);
+                    return;
+                } catch (ClassCastException ignored) {
+                    EEEABMobs.LOGGER.error("An exception occurred while trying to cast class: {}", entity.getName().getString());
+                }
+            }
+        }
+
+        /* 当前维度中Owner不存在时则执行下面逻辑 */
+
         List<? extends Mob> entities = target.getNearByEntitiesByClass(ownerClass, target.level(), target, findRadius, 10F, findRadius, findRadius);
         for (Mob entity : entities) {
-            if (target.getOwnerUUID() != null && target.getOwnerUUID().equals(entity.getUUID())) {
-                this.target.setOwner((T) entity);
-                return;
+            if (uuid.equals(entity.getUUID())) {
+                try {
+                    this.target.setOwner((T) entity);
+                    return;
+                } catch (ClassCastException ignored) {
+                    EEEABMobs.LOGGER.error("An exception occurred while trying to cast class: {}", entity.getName().getString());
+                }
             }
         }
         /*
