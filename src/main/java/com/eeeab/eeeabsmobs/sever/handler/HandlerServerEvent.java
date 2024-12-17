@@ -359,7 +359,8 @@ public final class HandlerServerEvent {
             if (chance > 0 && hurtEntity.getRandom().nextFloat() <= chance) {
                 float damage = event.getAmount();
                 if (source.is(EMTagKey.CAN_CRIT_HEAL) && attacker instanceof LivingEntity mob) {
-                    mob.heal(Math.min(damage * 0.26F, mob.getMaxHealth() * 0.1F));
+                    float maxHealth = mob.getMaxHealth();
+                    mob.heal(Math.min(damage * 0.3F + maxHealth * 0.01F, maxHealth * 0.1F));
                 }
                 damage *= 1.5F;
                 event.setAmount(damage);
