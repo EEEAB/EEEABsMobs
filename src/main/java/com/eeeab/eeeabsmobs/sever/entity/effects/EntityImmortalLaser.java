@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
-import com.eeeab.eeeabsmobs.EEEABMobs;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
@@ -54,11 +54,14 @@ public class EntityImmortalLaser extends EntityAbsBeam {
             List<LivingEntity> entities = raytraceEntities(level(), new Vec3(getX(), getY(), getZ()), new Vec3(endPosX, endPosY, endPosZ)).getEntities();
             if (!this.level().isClientSide) {
                 for (LivingEntity target : entities) {
-                    if (target == this.caster) continue;
-                    float baseDamage = 5F;
-                    MobEffectInstance instance = target.getEffect(EffectInit.ERODE_EFFECT.get());
-                    if (instance != null) baseDamage += (instance.getAmplifier() + 1) * 0.5F;
-                    target.hurt(this.damageSources().indirectMagic(this, caster), baseDamage + target.getMaxHealth() * 0.01F);
+                    if (this.caster instanceof EntityImmortal immortal) {
+                        float damageMultiplier = 0F;
+                        MobEffectInstance instance = target.getEffect(EffectInit.ERODE_EFFECT.get());
+                        if (instance != null) damageMultiplier += (instance.getAmplifier() + 1) * 0.08F;
+                        immortal.doHurtTarget(target, false, false, false, true, 0.03F, 0.375F, 1F + damageMultiplier);
+                    } else if (this.caster != null) {
+                        target.hurt(this.damageSources().indirectMagic(this, caster), 5F + target.getMaxHealth() * 0.01F);
+                    }
                     ModEntityUtils.addEffectStackingAmplifier(this, target, EffectInit.ERODE_EFFECT.get(), 300, 5, true, true, true, true, true);
                 }
             } else if (this.tickCount > this.getCountDown()) {

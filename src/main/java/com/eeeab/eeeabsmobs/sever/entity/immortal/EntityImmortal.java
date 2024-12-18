@@ -40,7 +40,6 @@ import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import com.eeeab.eeeabsmobs.sever.util.damage.DamageAdaptation;
 import com.eeeab.eeeabsmobs.sever.util.damage.EMDamageSource;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
@@ -613,7 +612,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
                     this.canInterruptsAnimation = false;
                     this.playAnimation(this.trackingShurikenAnimation);
                     this.timeUntilShuriken = this.getCoolingTimerUtil(SHURIKEN_TIME.sample(this.random), 8F);
-                } else if (this.timeUntilPounce <= 0 && (this.isNoAnimation() || this.canInterruptsAnimation) && targetRelativeHeight < 6 && (this.targetDistance > 12 || !targetComingCloser && this.targetDistance >= 10) && this.targetDistance < ImmortalPounceGoal.MAX_DISTANCE && hasTargetLineOfSight) {
+                } else if (this.timeUntilPounce <= 0 && (this.isNoAnimation() || this.canInterruptsAnimation) && targetRelativeHeight < 6 && (this.targetDistance > 12 || !targetComingCloser && this.targetDistance >= 10) && this.targetDistance < ImmortalPounceGoal.MAX_DISTANCE && hasTargetLineOfSight && this.random.nextFloat() < 0.5F) {
                     this.canInterruptsAnimation = false;
                     this.playAnimation(this.pouncePreAnimation);
                     this.timeUntilPounce = this.getCoolingTimerUtil(POUNCE_TIME.sample(this.random), 5F);
@@ -863,11 +862,14 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     }
 
     public boolean doHurtTarget(LivingEntity target, boolean disableShield, boolean addEffect, boolean critHeal, boolean ignoreArmor, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier) {
+        return doHurtTarget(EMDamageSource.immortalAttack(this, critHeal && target.getAttributeValue(AttributeInit.CRIT_CHANCE.get()) > 1D, ignoreArmor), target, disableShield, addEffect, ignoreArmor, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier);
+    }
+
+    public boolean doHurtTarget(DamageSource source, LivingEntity target, boolean disableShield, boolean addEffect, boolean ignoreArmor, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier) {
         double baseATK = this.getAttributeValue(Attributes.ATTACK_DAMAGE);
         //当目标数量＞1时，根据目标数量增加攻击伤害，每个目标增加0.4基础攻击伤害
         baseATK += Mth.clamp((targets.size() - 1) * 0.4F, 0F, 2F);
-        double damage = ((baseATK * baseDamageMultiplier) + target.getMaxHealth() * hitEntityMaxHealth) * damageMultiplier;
-        boolean flag = target.hurt(EMDamageSource.immortalAttack(this, critHeal && target.getAttributeValue(AttributeInit.CRIT_CHANCE.get()) > 1D, ignoreArmor), (float) (damage));
+        boolean flag = target.hurt(source, (float) ((baseATK * baseDamageMultiplier) + target.getMaxHealth() * hitEntityMaxHealth) * damageMultiplier);
         if (flag && addEffect) {
             ModEntityUtils.addEffectStackingAmplifier(this, target, EffectInit.ERODE_EFFECT.get(), 300, 5, true, true, true, true, false);
         } else if (disableShield) {

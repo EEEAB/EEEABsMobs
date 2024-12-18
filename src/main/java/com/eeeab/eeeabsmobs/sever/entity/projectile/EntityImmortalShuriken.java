@@ -7,6 +7,7 @@ import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModMobType;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
@@ -189,10 +190,14 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
         super.onHitEntity(result);
         Entity entity = result.getEntity();
         if (entity instanceof LivingEntity hitEntity) {
-            float baseDamage = 1.5F;
-            MobEffectInstance instance = hitEntity.getEffect(EffectInit.ERODE_EFFECT.get());
-            if (instance != null) baseDamage += (instance.getAmplifier() + 1) * 0.5F;
-            hitEntity.hurt(EMDamageSource.immortalMagicAttack(this, getOwner()), baseDamage + hitEntity.getMaxHealth() * 0.025F);
+            if (this.getOwner() instanceof EntityImmortal immortal) {
+                float damageMultiplier = 0F;
+                MobEffectInstance instance = hitEntity.getEffect(EffectInit.ERODE_EFFECT.get());
+                if (instance != null) damageMultiplier += (instance.getAmplifier() + 1) * 0.08F;
+                immortal.doHurtTarget(EMDamageSource.immortalMagicAttack(this, immortal), hitEntity, false, false, false, 0.025F, 0.3F, 1F + damageMultiplier);
+            } else {
+                hitEntity.hurt(EMDamageSource.immortalMagicAttack(this, getOwner()), 2F + hitEntity.getMaxHealth() * 0.025F);
+            }
             ModEntityUtils.addEffectStackingAmplifier(this, hitEntity, EffectInit.ERODE_EFFECT.get(), 300, 5, true, true, true, true, true);
         } else {
             entity.hurt(this.damageSources().magic(), 11.4514F);
