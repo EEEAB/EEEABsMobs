@@ -9,6 +9,7 @@ import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityGulingSentinelHeavy;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -35,8 +36,11 @@ public class RenderGulingSentinelHeavy extends MobRenderer<EntityGulingSentinelH
         });
         this.addLayer(new LayerGlow<>(this, HOT_LAYER, 1F) {
             @Override
-            protected float getBrightness(EntityGulingSentinelHeavy entity) {
-                return entity.hotControlled.getAnimationFraction();
+            public void render(PoseStack stack, MultiBufferSource bufferSource, int packedLightIn, EntityGulingSentinelHeavy entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+                if (predicate.glow(entity)) {
+                    float brightness = entity.hotControlled.getAnimationFraction(partialTicks);
+                    this.renderLayer(stack, bufferSource.getBuffer(RenderType.entityTranslucentEmissive(this.location)), packedLightIn, 1F, 1F, 1F, brightness);
+                }
             }
         });
     }
