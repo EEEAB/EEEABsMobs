@@ -568,7 +568,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             EntityGrenade grenade = new EntityGrenade(this.level(), this);
             grenade.shoot(d1, d2 + d4, d3, velocity, 3F);
             Vec3 vec3 = this.position().add(this.getLookAngle());
-            grenade.setPos(vec3.x + this.getBbWidth() * 0.8F * Math.cos(yBodyRadians), this.getY(0.45D), vec3.z + this.getBbWidth() * 0.8F * Math.sin(yBodyRadians));
+            grenade.setPos(vec3.x + this.getBbWidth() * 0.82F * Math.cos(yBodyRadians), this.getY(0.48D), vec3.z + this.getBbWidth() * 0.82F * Math.sin(yBodyRadians));
             this.level().addFreshEntity(grenade);
         }
     }
