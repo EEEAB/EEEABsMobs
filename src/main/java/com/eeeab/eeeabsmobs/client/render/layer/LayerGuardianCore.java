@@ -17,7 +17,7 @@ public class LayerGuardianCore extends LayerGlow<EntityNamelessGuardian, ModelNa
     }
 
     @Override
-    protected float getBrightness(EntityNamelessGuardian entity) {
+    protected float getBrightness(EntityNamelessGuardian entity, float partialTicks) {
         float timer = entity.coreControlled.getPrevTimer();
         return timer * 0.08F;
     }

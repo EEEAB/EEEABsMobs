@@ -21,14 +21,15 @@ public class RenderCorpseWarlock extends MobRenderer<EntityCorpseWarlock, ModelC
     public RenderCorpseWarlock(EntityRendererProvider.Context context) {
         super(context, new ModelCorpseWarlock(context.bakeLayer(EMModelLayer.CORPSE_SLAVERY)), 0.3F);
         this.addLayer(new LayerOuter<>(this, NECKLACE_LAYER, true, e -> !e.isInvisible()));
-        this.addLayer(new LayerGlow<>(this, GLOW_LAYER, 1F, e -> !e.isInvisible() && !e.glowControllerAnimation.isStop()) {
+        this.addLayer(new LayerGlow<>(this, GLOW_LAYER, 1F, e -> !e.isInvisible() && !e.glowControllerAnimation.isStop(), true) {
+            @Override
+            protected RenderType getRenderType(EntityCorpseWarlock entity) {
+                return RenderType.entityTranslucentEmissive(this.location);
+            }
 
             @Override
-            public void render(PoseStack stack, MultiBufferSource bufferSource, int packedLightIn, EntityCorpseWarlock entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-                if (predicate.glow(entity)) {
-                    float brightness = entity.glowControllerAnimation.getAnimationFraction(partialTicks);
-                    this.renderLayer(entity, stack, bufferSource.getBuffer(RenderType.entityTranslucentEmissive(this.location)), packedLightIn, brightness, brightness, brightness, brightness);
-                }
+            protected float getBrightness(EntityCorpseWarlock entity, float partialTicks) {
+                return entity.glowControllerAnimation.getAnimationFraction(partialTicks);
             }
         });
 

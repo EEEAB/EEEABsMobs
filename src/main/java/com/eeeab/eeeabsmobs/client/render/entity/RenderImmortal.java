@@ -1,17 +1,18 @@
 package com.eeeab.eeeabsmobs.client.render.entity;
 
-import com.eeeab.eeeabsmobs.client.render.EMRenderType;
-import com.eeeab.eeeabsmobs.client.render.layer.LayerImmortalGlow;
-import com.eeeab.eeeabsmobs.client.render.layer.LayerOuter;
 import com.eeeab.animate.client.util.ModelPartUtils;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelImmortal;
 import com.eeeab.eeeabsmobs.client.model.util.EMModelLayer;
+import com.eeeab.eeeabsmobs.client.render.EMRenderType;
+import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
+import com.eeeab.eeeabsmobs.client.render.layer.LayerOuter;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
@@ -31,7 +32,18 @@ public class RenderImmortal extends MobRenderer<EntityImmortal, ModelImmortal> {
 
     public RenderImmortal(EntityRendererProvider.Context context) {
         super(context, new ModelImmortal(context.bakeLayer(EMModelLayer.IMMORTAL)), 2F);
-        this.addLayer(new LayerImmortalGlow(this, GLOW_LAYER));
+         this.addLayer(new LayerGlow<>(this, GLOW_LAYER, 1F) {
+
+            @Override
+            protected float getBrightness(EntityImmortal entity, float partialTicks){
+                return entity.glowControllerAnimation.getAnimationFraction(partialTicks);
+            }
+
+            @Override
+            protected RenderType getRenderType(EntityImmortal entity) {
+                return RenderType.entityTranslucentEmissive(this.location);
+            }
+        });
         this.addLayer(new LayerOuter<>(this, CORE_LAYER, true, e -> !e.isInvisible()) {
             @Override
             protected void renderLayer(PoseStack stack, VertexConsumer vertexConsumer, int packedLightIn, float partialTicks, EntityImmortal entity, boolean overlayTexture) {
