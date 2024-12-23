@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.client.model.entity;
 
 import com.eeeab.animate.client.model.EMHierarchicalModel;
 import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.animate.server.animation.EMAnimatedEntity;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationImmortal;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationImmortal2;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
@@ -210,7 +211,7 @@ public class ModelImmortal extends EMHierarchicalModel<EntityImmortal> {
         float delta = ageInTicks - entity.tickCount;
         float frame = entity.frame + delta;
         Animation animation = entity.getAnimation();
-        if (animation == entity.getNoAnimation() && !entity.isActive()) {
+        if (animation == EMAnimatedEntity.NO_ANIMATION && !entity.isActive()) {
             core.xScale = 0F;
             core.yScale = 0F;
             core.zScale = 0F;

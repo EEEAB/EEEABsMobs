@@ -228,7 +228,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
             if (!this.level().isClientSide) {
                 if (this.getAnimationTick() == 1) this.playSound(SoundInit.IMMORTAL_SHAMAN_PREPARE_SPELL_CASTING.get());
                 if (this.isWeakness()) {
-                    this.playAnimation(this.getNoAnimation());//在治疗过程中被中断,直接结束
+                    this.playAnimation(NO_ANIMATION);//在治疗过程中被中断,直接结束
                     this.level().broadcastEntityEvent(this, (byte) 13);
                 } else if (getAnimationTick() > 5 && getAnimationTick() < 40 && this.tickCount % 5 == 0) {
                     this.level().broadcastEntityEvent(this, (byte) 14);

@@ -228,7 +228,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
                 attacking = false;
             }
         }
-        if (getAnimation() != this.getNoAnimation()) {
+        if (getAnimation() != NO_ANIMATION) {
             getNavigation().stop();
         }
     }

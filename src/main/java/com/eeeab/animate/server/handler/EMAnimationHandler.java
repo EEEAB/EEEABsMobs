@@ -36,9 +36,9 @@ public enum EMAnimationHandler {
     public <T extends Entity & EMAnimatedEntity> void updateAnimations(T entity) {
         Animation animation = entity.getAnimation();
         if (animation == null) {
-            entity.setAnimation(entity.getNoAnimation());
+            entity.setAnimation(EMAnimatedEntity.NO_ANIMATION);
         } else {
-            if (animation != entity.getNoAnimation()) {
+            if (animation != EMAnimatedEntity.NO_ANIMATION) {
                 if (entity.getAnimationTick() == 0) {
                     AnimationEvent<T> event = new AnimationEvent.Start<>(entity, animation);
                     if (!MinecraftForge.EVENT_BUS.post(event)) {
@@ -51,7 +51,7 @@ public enum EMAnimationHandler {
                 }
                 if (entity.getAnimationTick() == animation.getDuration()) {
                     animation.stop();
-                    entity.setAnimation(entity.getNoAnimation());
+                    entity.setAnimation(EMAnimatedEntity.NO_ANIMATION);
                     entity.setAnimationTick(0);
                 }
             }

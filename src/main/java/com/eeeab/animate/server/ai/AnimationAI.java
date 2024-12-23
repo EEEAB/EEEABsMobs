@@ -44,7 +44,7 @@ public abstract class AnimationAI<T extends EEEABMobLibrary & EMAnimatedEntity> 
     @Override
     public void stop() {
         if (this.test(this.entity.getAnimation())) {
-            EMAnimationHandler.INSTANCE.sendEMAnimationMessage(this.entity, this.entity.getNoAnimation());
+            EMAnimationHandler.INSTANCE.sendEMAnimationMessage(this.entity, EMAnimatedEntity.NO_ANIMATION);
         }
     }
 

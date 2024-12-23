@@ -1228,7 +1228,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     public void playAnimation(Animation animation) {
-        if (animation != this.getNoAnimation() && this.attackTick <= 0 && !this.isPowered()) {
+        if (animation != NO_ANIMATION && this.attackTick <= 0 && !this.isPowered()) {
             this.attackTick = 10;
         }
         super.playAnimation(animation);

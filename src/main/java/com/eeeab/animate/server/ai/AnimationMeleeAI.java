@@ -85,7 +85,7 @@ public class AnimationMeleeAI<T extends EEEABMobLibrary & EMAnimatedEntity> exte
 
     //随机获得动画
     private Animation getAnimationByRandom() {
-        if (animations == null || animations.length == 0) return this.attacker.getNoAnimation();
+        if (animations == null || animations.length == 0) return EMAnimatedEntity.NO_ANIMATION;
         return animations[this.attacker.getRandom().nextInt(animations.length)].get();
     }
 }
