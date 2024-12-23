@@ -9,15 +9,13 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import org.apache.commons.lang3.ArrayUtils;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * <b>EEEABMobLibrary</b><br/>
  */
 public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimatedEntity, IEntityAdditionalSpawnData {
     private int animationTick;
-    private final Animation noAnimation = Animation.create(0);
-    private Animation animation = noAnimation;
+    private Animation animation = NO_ANIMATION;
     public boolean canplayHurtAnimation = true;//可以播放受伤动画
     public boolean hurtInterruptsAnimation = false;//伤害中断其他动画
 
@@ -80,7 +78,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
 
     @Override
     public void setAnimation(Animation animation) {
-        if (animation != this.getNoAnimation()) {
+        if (animation != NO_ANIMATION) {
             onAnimationStart(animation);
         } else {
             onAnimationFinish(this.animation);
@@ -88,13 +86,8 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
         this.animation = animation;
     }
 
-    @Override
-    public @NotNull Animation getNoAnimation() {
-        return this.noAnimation;
-    }
-
     public boolean isNoAnimation() {
-        return this.animation == this.noAnimation;
+        return this.animation == NO_ANIMATION;
     }
 
     public void stopAllSuperpositionAnimation() {
@@ -122,7 +115,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
         yBodyRotO = yBodyRot = yHeadRotO = yHeadRot;
         int animOrdinal = additionalData.readInt();
         int animTick = additionalData.readInt();
-        this.setAnimation(animOrdinal == -1 ? this.noAnimation : this.getAnimations()[animOrdinal]);
+        this.setAnimation(animOrdinal == -1 ? NO_ANIMATION : this.getAnimations()[animOrdinal]);
         this.setAnimationTick(animTick);
     }
 }
