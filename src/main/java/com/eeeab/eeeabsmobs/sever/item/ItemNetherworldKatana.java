@@ -7,10 +7,10 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
@@ -38,12 +38,6 @@ public class ItemNetherworldKatana extends SwordItem implements ConfigurableItem
     }
 
     @Override
-    public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
-        stack.getOrCreateTag();
-        super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
-    }
-
-    @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot equipmentSlot) {
         return equipmentSlot == EquipmentSlot.MAINHAND ? this.defaultModifiers : super.getDefaultAttributeModifiers(equipmentSlot);
     }
@@ -63,8 +57,9 @@ public class ItemNetherworldKatana extends SwordItem implements ConfigurableItem
     }
 
     @Override
-    public boolean canBeDepleted() {
-        return EMConfigHandler.COMMON.ITEM.enableGhostWarriorSeriesItemDurability.get() && super.canBeDepleted();
+    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
+        if (!EMConfigHandler.COMMON.ITEM.enableGhostWarriorSeriesItemDurability.get()) amount = 0;
+        return super.damageItem(stack, amount, entity, onBroken);
     }
 
     @Override
