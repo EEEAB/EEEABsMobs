@@ -1,25 +1,19 @@
 package com.eeeab.eeeabsmobs.sever.item;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
-import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -59,26 +53,11 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
         ItemStack itemStack = player.getItemInHand(hand);
         BlockHitResult result = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
         if (Objects.equals(hand, InteractionHand.MAIN_HAND) && HitResult.Type.BLOCK == result.getType() && Direction.UP == result.getDirection()) {
-            BlockPos blockPos = result.getBlockPos();
             player.swing(hand, true);
             AbilityCapability.IAbilityCapability capability = AbilityHandler.INSTANCE.getAbilityCapability(player);
             if (capability != null) {
                 player.playSound(SoundEvents.GENERIC_EXPLODE, 1.5F, 1F + player.getRandom().nextFloat() * 0.1F);
                 EntityCameraShake.cameraShake(level, player.position(), 8, 0.125F, 0, 20);
-                if (level.isClientSide) {
-                    double x, y, z;
-                    if (player.position().distanceTo(blockPos.getCenter()) > 5) {
-                        float f0 = (float) Math.toRadians(player.getYRot() + 90);
-                        x = player.getX() + Mth.cos(f0) * 3.0D;
-                        y = player.getY() + 0.1D;
-                        z = player.getZ() + Mth.sin(f0) * 3.0D;
-                    } else {
-                        x = blockPos.getX();
-                        y = blockPos.getY();
-                        z = blockPos.getZ();
-                    }
-                    ModParticleUtils.roundParticleOutburst(level, 40, new ParticleOptions[]{ParticleInit.GUARDIAN_SPARK.get(), ParticleTypes.SOUL_FIRE_FLAME}, x, y, z, 0.25F);
-                }
                 if (!level.isClientSide) AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.GUARDIAN_AXE_ABILITY_TYPE);
                 player.getCooldowns().addCooldown(this, 100);
                 return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide);
@@ -110,6 +89,7 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
         return super.hurtEnemy(itemStack, hitEntity, livingEntity);
     }
 
+    @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
         if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340)) {
