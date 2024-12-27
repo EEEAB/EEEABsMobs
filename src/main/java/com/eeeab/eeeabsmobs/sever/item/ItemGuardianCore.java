@@ -8,6 +8,7 @@ import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -107,10 +108,10 @@ public class ItemGuardianCore extends Item {
         super.appendHoverText(stack, level, tooltip, flagIn);
         if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340)) {
             tooltip.add(EMTUtils.UNABLE_BREAKS);
-            tooltip.add(EMTUtils.simpleShiftDownText(null, EMTUtils.STYLE_GREEN));
+            tooltip.add(EMTUtils.HOLD_SHIFT_KEY);
         } else {
-            tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), EMTUtils.STYLE_GREEN, EMConfigHandler.COMMON.ENTITY.guardianLaserShootRadius.get()));
-            tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, EMTUtils.STYLE_GRAY, this.getDescriptionId()));
+            tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), EMConfigHandler.COMMON.ENTITY.guardianLaserShootRadius.get()));
+            tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, ChatFormatting.GRAY, this.getDescriptionId()));
         }
     }
 }

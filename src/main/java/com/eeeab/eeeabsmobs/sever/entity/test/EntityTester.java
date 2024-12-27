@@ -9,7 +9,7 @@ import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
-import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -155,7 +155,7 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
         if (player.isShiftKeyDown()) {
             this.setDamage(0.0);
             this.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP);
-            player.displayClientMessage(Component.literal("reset success").setStyle(EMTUtils.STYLE_GREEN), true);
+            player.displayClientMessage(Component.literal("reset success").withStyle(ChatFormatting.GREEN), true);
             return InteractionResult.SUCCESS;
         }
         if (this.isNoAnimation()) {

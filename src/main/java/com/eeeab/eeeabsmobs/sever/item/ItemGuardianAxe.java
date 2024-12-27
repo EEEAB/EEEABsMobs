@@ -94,10 +94,10 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
         super.appendHoverText(stack, level, tooltip, flagIn);
         if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340)) {
             tooltip.add(EMTUtils.UNABLE_BREAKS);
-            tooltip.add(EMTUtils.simpleShiftDownText(null, EMTUtils.STYLE_GREEN));
+            tooltip.add(EMTUtils.HOLD_SHIFT_KEY);
         } else {
             tooltip.add(EMTUtils.itemCoolTime(5));
-            tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), EMTUtils.STYLE_GRAY));
+            tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId()));
         }
     }
 

@@ -54,7 +54,7 @@ public class ItemAnimationController extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), EMTUtils.STYLE_GRAY));
+        tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId()));
     }
 
     @Override

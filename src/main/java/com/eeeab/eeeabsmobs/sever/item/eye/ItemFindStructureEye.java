@@ -3,6 +3,7 @@ package com.eeeab.eeeabsmobs.sever.item.eye;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityEyeOfStructure;
 import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -82,6 +83,6 @@ public abstract class ItemFindStructureEye extends Item {
         if (!EMConfigHandler.COMMON.ITEM.consumeEyeItemOnRelease.get()) {
             tooltip.add(EMTUtils.itemCoolTime(EMConfigHandler.COMMON.ITEM.eyeItemCoolingTime.get()));
         }
-        tooltip.add(EMTUtils.simpleText(EMTUtils.STRUCTURE_PREFIX, FIND_STRUCTURE.location().getPath(), EMTUtils.STYLE_GRAY));
+        tooltip.add(EMTUtils.simpleText(EMTUtils.ITEM_STRUCTURE_PREFIX, FIND_STRUCTURE.location().getPath(), ChatFormatting.GRAY));
     }
 }
