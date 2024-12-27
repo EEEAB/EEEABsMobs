@@ -62,7 +62,7 @@ public class ItemInit {
     public static final RegistryObject<Item> SOUL_SUMMONING_NECKLACE = ITEMS.register("soul_summoning_necklace", () -> new ItemSoulSummoningNecklace(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
     public static final RegistryObject<ItemNetherworldKatana> THE_NETHERWORLD_KATANA = ITEMS.register("netherworld_katana", () -> new ItemNetherworldKatana(EMToolsTier.NETHERWORLD_KATANA_TIER, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
     public static final RegistryObject<Item> ANCIENT_DRIVE_CRYSTAL = ITEMS.register("ancient_drive_crystal", () -> new Item(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
-    public static final RegistryObject<Item> DEMOLISHER = ITEMS.register("demolisher", () -> new ItemDemolisher(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
+    public static final RegistryObject<ItemDemolisher> DEMOLISHER = ITEMS.register("demolisher", () -> new ItemDemolisher(EMToolsTier.DEMOLISHER_TIER, new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
 
     public static RegistryObject<Item> registerEgg(String name, RegistryObject<? extends EntityType<? extends Mob>> EggObject, int backgroundColor, int highlightColor) {
         return ITEMS.register(name, () -> new ForgeSpawnEggItem(EggObject, backgroundColor, highlightColor, new Item.Properties()));
@@ -83,6 +83,7 @@ public class ItemInit {
     public static void initializeAttributes() {
         GUARDIAN_AXE.get().refreshAttributesFromConfig();
         THE_NETHERWORLD_KATANA.get().refreshAttributesFromConfig();
+        DEMOLISHER.get().refreshAttributesFromConfig();
     }
 
 }

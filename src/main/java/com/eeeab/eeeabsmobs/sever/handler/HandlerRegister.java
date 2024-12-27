@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.sever.handler;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelImmortalShuriken;
+import com.eeeab.eeeabsmobs.client.model.item.ModelDemolisher;
 import com.eeeab.eeeabsmobs.client.model.item.ModelGuardianBattleaxe;
 import com.eeeab.eeeabsmobs.client.model.util.EMItemModels;
 import com.eeeab.eeeabsmobs.client.model.armor.ModelGhostWarriorArmor;
@@ -65,6 +66,7 @@ public class HandlerRegister {
         event.registerLayerDefinition(EMModelLayer.SOUL_SUMMONING_NECKLACE, ModelSoulSummoningNecklace::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.THE_NETHERWORLD_KATANA, ModelTheNetherworldKatana::createBodyLayer);
         event.registerLayerDefinition(EMModelLayer.THE_GUARDIAN_BATTLEAXE, ModelGuardianBattleaxe::createBodyLayer);
+        event.registerLayerDefinition(EMModelLayer.DEMOLISHER, ModelDemolisher::createBodyLayer);
     }
 
     @SubscribeEvent

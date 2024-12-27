@@ -65,6 +65,7 @@ public final class EMConfigHandler {
                 itemHowitzerGrenadeExplosionRadius = BUILDER.comment("Set Grenade explosion radius(the bigger the blast radius, the higher the damage)")
                         .translation(getTranslationKey("howitzer_2"))
                         .defineInRange("Set explosion radius", 2.5D, 1D, 10D);
+                DEMOLISHER_TOOL = new ToolConfig(8D, 1.6D);
                 builder.pop();
             }
             {
@@ -104,6 +105,7 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.DoubleValue itemImmortalStaffCoolingTime;
         public final ToolConfig GUARDIAN_AXE_TOOL;
         public final ToolConfig NETHERWORLD_KATANA_TOOL;
+        public final ToolConfig DEMOLISHER_TOOL;
         public final ForgeConfigSpec.DoubleValue itemHowitzerCoolingTime;
         public final ForgeConfigSpec.DoubleValue itemHowitzerGrenadeDamage;
         public final ForgeConfigSpec.DoubleValue itemHowitzerGrenadeExplosionRadius;

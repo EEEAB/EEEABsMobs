@@ -1,6 +1,37 @@
 {
-	"parent": "item/handheld",
-	"textures": {
-		"layer0": "eeeabsmobs:item/demolisher_icon"
-	}
+  "parent": "minecraft:builtin/entity",
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [90, 0, 0],
+      "translation": [0.5, -2.5, 0]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [-90, 0, -180],
+      "translation": [0.5, -2.5, 0]
+    },
+    "firstperson_righthand": {
+      "rotation": [90, 100, 0],
+      "translation": [7, 0, -6]
+    },
+    "firstperson_lefthand": {
+      "rotation": [-90, -100, -180],
+      "translation": [7, 0, -6]
+    },
+    "ground": {
+      "rotation": [0, 0, 90],
+      "translation": [5, 0.5, 0]
+    },
+    "gui": {
+      "rotation": [0, 30, 135],
+      "translation": [4, 4, 0]
+    },
+    "head": {
+      "rotation": [0, -90, 180],
+      "translation": [0, 30, 0]
+    },
+    "fixed": {
+      "rotation": [0, -175, 130],
+      "translation": [-6.5, 6, 0]
+    }
+  }
 }

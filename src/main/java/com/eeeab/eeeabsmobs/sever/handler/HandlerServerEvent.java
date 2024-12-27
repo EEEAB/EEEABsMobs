@@ -19,6 +19,7 @@ import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
 import com.eeeab.eeeabsmobs.sever.init.AttributeInit;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.eeeab.eeeabsmobs.sever.item.ItemDemolisher;
 import com.eeeab.eeeabsmobs.sever.message.MessageFrenzyEffect;
 import com.eeeab.eeeabsmobs.sever.message.MessageVertigoEffect;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
@@ -244,7 +245,14 @@ public final class HandlerServerEvent {
     //玩家攻击实体时
     @SubscribeEvent
     public void onPlayerAttack(AttackEntityEvent event) {
-        if (event.isCancelable() && event.getEntity().hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
+        boolean cancelable = event.isCancelable();
+        if (cancelable && event.getEntity().hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
+            event.setCanceled(true);
+            return;
+        }
+
+        ItemStack itemStack = event.getEntity().getMainHandItem();
+        if (cancelable && itemStack.getItem() instanceof ItemDemolisher && ItemDemolisher.getWeaponState(itemStack) == 1) {
             event.setCanceled(true);
         }
     }
