@@ -41,30 +41,23 @@ public final class EMConfigHandler {
     public static class Item {
         public Item(final ForgeConfigSpec.Builder builder) {
             builder.push("Items");
-            String CDComment = "Set item cool down time after player on use (in seconds)";
-            String CDPath = "Set item cool down time";
-            String CDKey = "item_cd";
             {
                 builder.push("Summoning Soul Necklace");
                 SSNCumulativeMaximumDamage = BUILDER.comment("Set maximum amount of damage a player can take while holding this item")
                         .translation(getTranslationKey("summoning_soul_necklace"))
                         .defineInRange("Set maximum cumulative damage taken", 50D, 1D, Float.MAX_VALUE);
-                SSNCoolingTime = BUILDER.comment(CDComment)
-                        .translation(getTranslationKey(CDKey))
-                        .defineInRange(CDPath, 20D, 1D, 60D);
+                SSNCoolingTime = itemCD(20D);
                 builder.pop();
             }
             {
                 builder.push("Howitzer");
-                itemHowitzerCoolingTime = BUILDER.comment(CDComment)
-                        .translation(getTranslationKey(CDKey))
-                        .defineInRange(CDPath, 2D, 0.5D, 60D);
                 itemHowitzerGrenadeDamage = BUILDER.comment("Set Grenade maximum explosion damage(damage to the center of the explosion)")
                         .translation(getTranslationKey("howitzer_1"))
                         .defineInRange("Set explosion damage cap", 10D, 1D, 128D);
                 itemHowitzerGrenadeExplosionRadius = BUILDER.comment("Set Grenade explosion radius(the bigger the blast radius, the higher the damage)")
                         .translation(getTranslationKey("howitzer_2"))
                         .defineInRange("Set explosion radius", 2.5D, 1D, 10D);
+                itemHowitzerCoolingTime = itemCD(2D);
                 DEMOLISHER_TOOL = new ToolConfig(8D, 1.6D);
                 builder.pop();
             }
@@ -75,9 +68,7 @@ public final class EMConfigHandler {
             }
             {
                 builder.push("Immortal Staff");
-                itemImmortalStaffCoolingTime = BUILDER.comment(CDComment)
-                        .translation(getTranslationKey(CDKey))
-                        .defineInRange(CDPath, 1.5D, 0.5D, 60D);
+                itemImmortalStaffCoolingTime = itemCD(1.5D);
                 builder.pop();
             }
             {
@@ -93,9 +84,7 @@ public final class EMConfigHandler {
                 consumeEyeItemOnRelease = BUILDER.comment("If set to 'True' eye of structure will be consume item on release")
                         .translation(getTranslationKey("eye_of_structure"))
                         .define("Consume Item On Release", false);
-                eyeItemCoolingTime = BUILDER.comment(CDComment)
-                        .translation(getTranslationKey(CDKey))
-                        .defineInRange(CDPath, 4D, 1D, 10D);
+                eyeItemCoolingTime = itemCD(4D);
                 builder.pop();
             }
             builder.pop();
@@ -113,6 +102,15 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.DoubleValue SSNCoolingTime;
         public final ForgeConfigSpec.BooleanValue consumeEyeItemOnRelease;
         public final ForgeConfigSpec.DoubleValue eyeItemCoolingTime;
+
+        private static ForgeConfigSpec.DoubleValue itemCD(double defaultCD) {
+            String CDComment = "Set item cool down time after player on use (in seconds)";
+            String CDPath = "Set item cool down time";
+            String CDKey = "item_cd";
+            return BUILDER.comment(CDComment)
+                    .translation(getTranslationKey(CDKey))
+                    .defineInRange(CDPath, defaultCD, 0D, 60D);
+        }
     }
 
     public static class Entity {
