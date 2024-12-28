@@ -50,7 +50,7 @@
   "_comment": "チップ",
   "item.eeeabsmobs.remove_mob.tip_1": "左クリックして EEEAB のMob モブ/エンティティを削除する",
   "item.eeeabsmobs.remove_mob.tip_2": "右クリックして、16*16*16 の範囲の EEEAB Mob からモブ/エンティティを削除する",
-  "item.eeeabsmobs.guardian_axe.tip": "地面を右クリックしてスキルを唱えると、スキルダメージは武器+ユーザーの攻撃ダメージに基づいており、このダメージは魔法ダメージと見なされ、アーマーを無視します.ダメージは武器のダメージの2倍に制限され、ダメージは距離とともに減少します",
+  "item.eeeabsmobs.guardian_axe.tip_2": "地面を右クリックしてスキルを唱えると、スキルダメージは武器+ユーザーの攻撃ダメージに基づいており、このダメージは魔法ダメージと見なされ、アーマーを無視します.ダメージは武器のダメージの2倍に制限され、ダメージは距離とともに減少します",
   "item.eeeabsmobs.immortal_sword.tip": "攻撃した者に浸食の効果を与える",
   "item.eeeabsmobs.immortal_staff.tip": "右クリックを 1 秒間押し続けるとシャーマンボムを発射する",
   "item.structure.eeeabsmobs.eye_of_guling.tip": "右クリックで古代の墓の構造を見つけられる",

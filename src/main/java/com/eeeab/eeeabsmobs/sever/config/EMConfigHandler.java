@@ -63,6 +63,10 @@ public final class EMConfigHandler {
             }
             {
                 builder.push("Guardian Battleaxe");
+                itemGuardianAxeSweepingLevel = BUILDER.comment("The increase in damage should refer to the Sweeping Edge enchantment")
+                        .translation(getTranslationKey("guardian_axe"))
+                        .defineInRange("Set sweep attack level", 1, 0, 4);
+                itemGuardianAxeCoolingTime = itemCD(5D);
                 GUARDIAN_AXE_TOOL = new ToolConfig(15D, 0.9D);
                 builder.pop();
             }
@@ -90,18 +94,20 @@ public final class EMConfigHandler {
             builder.pop();
         }
 
-        public final ForgeConfigSpec.BooleanValue enableGhostWarriorSeriesItemDurability;
-        public final ForgeConfigSpec.DoubleValue itemImmortalStaffCoolingTime;
         public final ToolConfig GUARDIAN_AXE_TOOL;
         public final ToolConfig NETHERWORLD_KATANA_TOOL;
         public final ToolConfig DEMOLISHER_TOOL;
+        public final ForgeConfigSpec.DoubleValue eyeItemCoolingTime;
+        public final ForgeConfigSpec.BooleanValue consumeEyeItemOnRelease;
+        public final ForgeConfigSpec.DoubleValue SSNCoolingTime;
+        public final ForgeConfigSpec.DoubleValue SSNCumulativeMaximumDamage;
         public final ForgeConfigSpec.DoubleValue itemHowitzerCoolingTime;
         public final ForgeConfigSpec.DoubleValue itemHowitzerGrenadeDamage;
         public final ForgeConfigSpec.DoubleValue itemHowitzerGrenadeExplosionRadius;
-        public final ForgeConfigSpec.DoubleValue SSNCumulativeMaximumDamage;
-        public final ForgeConfigSpec.DoubleValue SSNCoolingTime;
-        public final ForgeConfigSpec.BooleanValue consumeEyeItemOnRelease;
-        public final ForgeConfigSpec.DoubleValue eyeItemCoolingTime;
+        public final ForgeConfigSpec.IntValue itemGuardianAxeSweepingLevel;
+        public final ForgeConfigSpec.DoubleValue itemGuardianAxeCoolingTime;
+        public final ForgeConfigSpec.DoubleValue itemImmortalStaffCoolingTime;
+        public final ForgeConfigSpec.BooleanValue enableGhostWarriorSeriesItemDurability;
 
         private static ForgeConfigSpec.DoubleValue itemCD(double defaultCD) {
             String CDComment = "Set item cool down time after player on use (in seconds)";

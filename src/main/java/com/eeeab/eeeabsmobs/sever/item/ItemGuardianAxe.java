@@ -10,6 +10,7 @@ import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -23,11 +24,15 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.SweepingEdgeEnchantment;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.minecraftforge.common.ToolAction;
 
 import java.util.List;
 import java.util.Objects;
@@ -59,7 +64,7 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
                 player.playSound(SoundEvents.GENERIC_EXPLODE, 1.5F, 1F + player.getRandom().nextFloat() * 0.1F);
                 EntityCameraShake.cameraShake(level, player.position(), 8, 0.125F, 0, 20);
                 if (!level.isClientSide) AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.GUARDIAN_AXE_ABILITY_TYPE);
-                player.getCooldowns().addCooldown(this, 100);
+                player.getCooldowns().addCooldown(this, (int) (EMConfigHandler.COMMON.ITEM.itemGuardianAxeCoolingTime.get() * 20));
                 return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide);
             }
         }
@@ -96,9 +101,23 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
             tooltip.add(EMTUtils.UNABLE_BREAKS);
             tooltip.add(EMTUtils.HOLD_SHIFT_KEY);
         } else {
-            tooltip.add(EMTUtils.itemCoolTime(5));
-            tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId()));
+            tooltip.add(EMTUtils.itemCoolTime(EMConfigHandler.COMMON.ITEM.itemGuardianAxeCoolingTime.get()));
+            int i = (int) (SweepingEdgeEnchantment.getSweepingDamageRatio(EMConfigHandler.COMMON.ITEM.itemGuardianAxeSweepingLevel.get()) * 100);
+            tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, ChatFormatting.GRAY, this.getDescriptionId(), Component.literal(i > 0 ? i + "%" : "1.0").withStyle(ChatFormatting.YELLOW)));
         }
+    }
+
+    @Override
+    public int getEnchantmentLevel(ItemStack stack, Enchantment enchantment) {
+        if (Enchantments.SWEEPING_EDGE.equals(enchantment)) {
+            return EMConfigHandler.COMMON.ITEM.itemGuardianAxeSweepingLevel.get();
+        }
+        return super.getEnchantmentLevel(stack, enchantment);
+    }
+
+    @Override
+    public boolean canPerformAction(ItemStack stack, ToolAction toolAction) {
+        return net.minecraftforge.common.ToolActions.SWORD_SWEEP == toolAction || super.canPerformAction(stack, toolAction);
     }
 
     @Override
