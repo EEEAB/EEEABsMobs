@@ -9,9 +9,7 @@ import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -114,20 +112,18 @@ public class ItemDemolisher extends SwordItem implements ConfigurableItem {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
+        tooltip.add(EMTUtils.UNABLE_BREAKS);
         boolean flag = getWeaponState(stack) == 1;
-        if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340)) {
-            tooltip.add(EMTUtils.UNABLE_BREAKS);
-            tooltip.add(EMTUtils.simpleText(EMTUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, EMTUtils.TIP_SUFFIX, flag ? RANGED_MODE : MELEE_MODE));
-            tooltip.add(EMTUtils.HOLD_SHIFT_KEY);
+        Component component = EMTUtils.simpleText(EMTUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, EMTUtils.TIP_SUFFIX, flag ? RANGED_MODE : MELEE_MODE);
+        if (flag) {
+            tooltip.add(EMTUtils.itemCoolTime(EMConfigHandler.COMMON.ITEM.itemHowitzerCoolingTime.get()));
+            tooltip.add(component);
+            tooltip.add(EMTUtils.simpleText(EMTUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, EMTUtils.TIP_SUFFIX + "_1", EMConfigHandler.COMMON.ITEM.itemHowitzerGrenadeDamage.get()));
         } else {
-            if (flag) {
-                tooltip.add(EMTUtils.itemCoolTime(EMConfigHandler.COMMON.ITEM.itemHowitzerCoolingTime.get()));
-                tooltip.add(EMTUtils.simpleText(EMTUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, EMTUtils.TIP_SUFFIX + "_1", EMConfigHandler.COMMON.ITEM.itemHowitzerGrenadeDamage.get()));
-            } else {
-                tooltip.add(EMTUtils.simpleText(EMTUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, EMTUtils.TIP_SUFFIX + "_2"));
-            }
-            tooltip.add(EMTUtils.simpleText(EMTUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, EMTUtils.TIP_SUFFIX + "_3"));
+            tooltip.add(component);
+            tooltip.add(EMTUtils.simpleText(EMTUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, EMTUtils.TIP_SUFFIX + "_2"));
         }
+        tooltip.add(EMTUtils.simpleText(EMTUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, EMTUtils.TIP_SUFFIX + "_3"));
     }
 
     @Override
