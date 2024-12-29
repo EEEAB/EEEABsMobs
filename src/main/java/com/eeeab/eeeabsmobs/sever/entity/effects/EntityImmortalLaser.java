@@ -18,6 +18,7 @@ import java.util.List;
 
 public class EntityImmortalLaser extends EntityAbsBeam {
     public static final double IMMORTAL_RADIUS = 32;
+    public static final double RENDER_DISTANCE = (IMMORTAL_RADIUS * IMMORTAL_RADIUS) * 2;
     private static final float MAX_RADIANS = 0.6108652381980153F;
     private static final float ROTATION_SPEED = MAX_RADIANS / 10F;
     private boolean isRotating = true;
@@ -93,10 +94,6 @@ public class EntityImmortalLaser extends EntityAbsBeam {
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
-        if (this.caster == null) return distance < 2048;
-        double d0 = this.caster.getBoundingBox().getSize();
-        if (Double.isNaN(d0)) d0 = 1.0D;
-        d0 *= 64.0D;
-        return distance < d0 * d0;
+        return distance < RENDER_DISTANCE;
     }
 }
