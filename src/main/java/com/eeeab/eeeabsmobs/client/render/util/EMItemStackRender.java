@@ -25,7 +25,7 @@ public class EMItemStackRender extends BlockEntityWithoutLevelRenderer {
     private static ModelTheNetherworldKatana THE_NETHERWORLD_KATANA;
     private static ModelGuardianBattleaxe THE_GUARDIAN_BATTLEAXE;
     private static ModelDemolisher THE_DEMOLISHER;
-    private static final ResourceLocation THE_NETHERWORLD_KATANA_TEX = new ResourceLocation(EEEABMobs.MOD_ID, "textures/item/netherworld_katana.png");
+    private static final ResourceLocation THE_NETHERWORLD_KATANA_TEX = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_boss/immortal_netherworld_katana.png");
     private static final ResourceLocation THE_GUARDIAN_BATTLEAXE_TEX = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/guling/nameless_guardian/nameless_guardian.png");
     private static final ResourceLocation DEMOLISHER_TEX = new ResourceLocation(EEEABMobs.MOD_ID, "textures/item/demolisher.png");
 
