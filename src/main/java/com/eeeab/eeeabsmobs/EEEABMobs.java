@@ -11,6 +11,7 @@ import com.eeeab.eeeabsmobs.sever.util.EMBrewingRecipe;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -59,6 +60,7 @@ public class EEEABMobs {
         PROXY.registerMessage();
         event.enqueueWork(() -> {
             CuriosRegistry.register();
+            ComposterBlock.COMPOSTABLES.put(BlockInit.SOUL_LIGHT.get().asItem(), 1.0F);
             BrewingRecipeRegistry.addRecipe(new EMBrewingRecipe(Potions.STRONG_STRENGTH, ItemInit.HEART_OF_PAGAN.get(), PotionInit.FRENZY_POTION.get()));
         });
     }

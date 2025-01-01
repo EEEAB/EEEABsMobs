@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "tag": "minecraft:soul_fire_base_blocks"
+    },
+    {
+      "item": "minecraft:shroomlight"
+    }
+  ],
+  "result": {
+    "item": "eeeabsmobs:soul_light"
+  }
+}
