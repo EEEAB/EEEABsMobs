@@ -106,7 +106,7 @@
   "item.other.eeeabsmobs.animation_controller.tip": "Entity %1$s has been selected",
   "item.eeeabsmobs.guardian_core.tip_1": "Hold the right-click to release a laser, dealing 5 base damage plus 1% of the target's maximum health. \nIt continuously consumes the item's durability while in use, and when not in use, the durability automatically recovers while in the inventory",
   "item.eeeabsmobs.guardian_core.tip_2": "It seems to have other uses besides being a weapon...",
-  "item.eeeabsmobs.guardian_core.tip": "Attack range %1$s",
+  "item.eeeabsmobs.guardian_core.tip": "Attack range: §l[ %1$s §l]",
   "item.eeeabsmobs.demolisher.tip": "Current mode: §l[ %1$s §l]",
   "item.eeeabsmobs.demolisher.tip_1": "Melee attacks don't deal damage in this mode. Right-click to fire a grenade and consume a player's backpack 'stone' type item, dealing a maximum %1$s explosion damage",
   "item.eeeabsmobs.demolisher.tip_2": "Unable to fire grenades in this mode",

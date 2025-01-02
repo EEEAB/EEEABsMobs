@@ -106,7 +106,7 @@
   "item.other.eeeabsmobs.animation_controller.tip": "Существо %1$s выбрано",
   "item.eeeabsmobs.guardian_core.tip_1": "Удерживайте ПКМ для выпуска лазера, наносящего 5 ед. базового урона + 1% от макс. здоровья цели и расходующего прочность. В инвентаре восстанавливает прочность вне использования",
   "item.eeeabsmobs.guardian_core.tip_2": "Может иметь другое применение...",
-  "item.eeeabsmobs.guardian_core.tip": "Дальность лазера %1$s",
+  "item.eeeabsmobs.guardian_core.tip": "Дальность лазера: §l[ %1$s §l]",
   "item.eeeabsmobs.demolisher.tip": "Current mode：§l[ %1$s §l]",
   "item.eeeabsmobs.demolisher.tip_1": "Melee attacks don't deal damage in this mode. ПКМ для стрельбы гранатой, расходуя камни из инвентаря, наносит до %1$s урона от взрыва",
   "item.eeeabsmobs.demolisher.tip_2": "Unable to fire grenades in this mode",

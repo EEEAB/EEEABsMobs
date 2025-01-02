@@ -105,7 +105,7 @@ public class ItemGuardianCore extends Item {
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
         tooltip.add(EMTUtils.UNABLE_BREAKS);
-        tooltip.add(EMTUtils.simpleText(EMTUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GREEN, EMConfigHandler.COMMON.ENTITY.guardianLaserShootRadius.get()));
+        tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), Component.literal(EMConfigHandler.COMMON.ENTITY.guardianLaserShootRadius.get() + "").withStyle(ChatFormatting.YELLOW)));
         tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, ChatFormatting.GRAY, this.getDescriptionId()));
     }
 }

@@ -106,7 +106,7 @@
   "item.other.eeeabsmobs.animation_controller.tip": "实体 %1$s 已被选中",
   "item.eeeabsmobs.guardian_core.tip_1": "按住右键释放激光，造成5点基础伤害+目标最大生命值的1%伤害。\n使用期间持续消耗物品耐久值，未使用时在背包中自动恢复耐久",
   "item.eeeabsmobs.guardian_core.tip_2": "除了作为武器，它似乎有着其他用途...",
-  "item.eeeabsmobs.guardian_core.tip": "激光射程 %1$s",
+  "item.eeeabsmobs.guardian_core.tip": "激光射程：§l[ %1$s §l]",
   "item.eeeabsmobs.demolisher.tip": "当前模式：§l[ %1$s §l]",
   "item.eeeabsmobs.demolisher.tip_1": "该模式下无法使用近战。右键发射榴弹并消耗玩家背包'石头'类物品，造成最大 %1$s 爆炸伤害",
   "item.eeeabsmobs.demolisher.tip_2": "该模式下无法发射榴弹",
