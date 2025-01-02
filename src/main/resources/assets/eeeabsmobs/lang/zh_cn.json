@@ -286,6 +286,7 @@
   "other.eeeabsmobs.bosses_3.config": "启用boss破坏方块掉落物品",
   "other.eeeabsmobs.misc_1.config": "启用同阵营生物友伤保护",
   "other.eeeabsmobs.misc_2.config": "启用狂乱药水破坏方块效果",
+  "other.eeeabsmobs.misc_3.config": "启用物品提示框中显示冷却时间",
   "other.eeeabsmobs.challenge_mode.config": "启用挑战模式",
   "other.eeeabsmobs.interval_protect.config": "启用帧伤保护",
   "other.eeeabsmobs.falling_block_1.config": "启用下落方块生成",

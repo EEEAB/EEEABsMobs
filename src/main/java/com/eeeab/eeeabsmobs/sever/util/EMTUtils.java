@@ -16,6 +16,7 @@ import java.util.List;
  * @version 1.5
  */
 public class EMTUtils {
+    public static boolean SHOW_ITEM_CD;
 
     private EMTUtils() {
     }

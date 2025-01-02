@@ -211,6 +211,7 @@
   "other.eeeabsmobs.bosses_3.config": "Включить выпадение блоков, разрушенных боссом",
   "other.eeeabsmobs.misc_1.config": "Включить защиту союзников от урона",
   "other.eeeabsmobs.misc_2.config": "Включить разрушение блоков от зелья ярости",
+  "other.eeeabsmobs.misc_3.config": "Enable show item cd",
   "other.eeeabsmobs.challenge_mode.config": "Включить режим испытаний",
   "other.eeeabsmobs.interval_protect.config": "Включить защиту от урона по кадрам",
   "other.eeeabsmobs.falling_block_1.config": "Включить генерацию падающих блоков",

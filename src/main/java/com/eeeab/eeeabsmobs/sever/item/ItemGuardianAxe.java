@@ -96,7 +96,7 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
         tooltip.add(EMTUtils.UNABLE_BREAKS);
-        tooltip.add(EMTUtils.itemCoolTime(EMConfigHandler.COMMON.ITEM.itemGuardianAxeCoolingTime.get()));
+        if (EMTUtils.SHOW_ITEM_CD) tooltip.add(EMTUtils.itemCoolTime(EMConfigHandler.COMMON.ITEM.itemGuardianAxeCoolingTime.get()));
         int i = (int) (SweepingEdgeEnchantment.getSweepingDamageRatio(EMConfigHandler.COMMON.ITEM.itemGuardianAxeSweepingLevel.get()) * 100);
         tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, ChatFormatting.GRAY, this.getDescriptionId(), Component.literal(i > 0 ? i + "%" : "1.0").withStyle(ChatFormatting.YELLOW)));
     }

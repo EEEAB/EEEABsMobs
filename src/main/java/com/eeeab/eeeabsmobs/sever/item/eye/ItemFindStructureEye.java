@@ -80,7 +80,7 @@ public abstract class ItemFindStructureEye extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        if (!EMConfigHandler.COMMON.ITEM.consumeEyeItemOnRelease.get()) {
+        if (EMTUtils.SHOW_ITEM_CD && !EMConfigHandler.COMMON.ITEM.consumeEyeItemOnRelease.get()) {
             tooltip.add(EMTUtils.itemCoolTime(EMConfigHandler.COMMON.ITEM.eyeItemCoolingTime.get()));
         }
         tooltip.add(EMTUtils.simpleText(EMTUtils.ITEM_STRUCTURE_PREFIX, FIND_STRUCTURE.location().getPath(), ChatFormatting.GRAY));

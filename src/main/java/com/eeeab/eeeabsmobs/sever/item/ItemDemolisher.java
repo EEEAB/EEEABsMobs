@@ -116,7 +116,7 @@ public class ItemDemolisher extends SwordItem implements ConfigurableItem {
         boolean flag = getWeaponState(stack) == 1;
         Component component = EMTUtils.simpleText(EMTUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, EMTUtils.TIP_SUFFIX, flag ? RANGED_MODE : MELEE_MODE);
         if (flag) {
-            tooltip.add(EMTUtils.itemCoolTime(EMConfigHandler.COMMON.ITEM.itemHowitzerCoolingTime.get()));
+            if (EMTUtils.SHOW_ITEM_CD) tooltip.add(EMTUtils.itemCoolTime(EMConfigHandler.COMMON.ITEM.itemHowitzerCoolingTime.get()));
             tooltip.add(component);
             tooltip.add(EMTUtils.simpleText(EMTUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, EMTUtils.TIP_SUFFIX + "_1", EMConfigHandler.COMMON.ITEM.itemHowitzerGrenadeDamage.get()));
         } else {

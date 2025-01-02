@@ -19,7 +19,7 @@ public class ItemSoulSummoningNecklace extends Item implements ICuriosItem {
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
         EMConfigHandler.Item item = EMConfigHandler.COMMON.ITEM;
-        tooltip.add(EMTUtils.itemCoolTime(item.SSNCoolingTime.get()));
+        if (EMTUtils.SHOW_ITEM_CD) tooltip.add(EMTUtils.itemCoolTime(item.SSNCoolingTime.get()));
         tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), item.SSNCumulativeMaximumDamage.get()));
     }
 }

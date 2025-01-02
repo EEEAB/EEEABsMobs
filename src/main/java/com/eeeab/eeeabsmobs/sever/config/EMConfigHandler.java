@@ -465,9 +465,11 @@ public final class EMConfigHandler {
             {
                 builder.push("Misc");
                 this.enableSameMobsTypeInjury = BUILDER.comment("If set to 'False' able inflict damage between mobs of the same team")
-                        .translation(getTranslationKey("misc_1")).define("Friendly fire among allies", true);
+                        .translation(getTranslationKey("misc_1")).define("Enable allied damage protection", true);
                 this.enableFrenzyDestroyBlock = BUILDER.comment("If set to 'False' disable frenzy potion destroy block")
                         .translation(getTranslationKey("misc_2")).define("Enable frenzy potion destroy block", false);
+                this.enableShowItemCD = BUILDER.comment("If set to 'False' disable showing cooldown time in tooltip")
+                        .translation(getTranslationKey("misc_3")).define("Enable show item cd", false);
                 builder.pop();
             }
             builder.pop();
@@ -485,6 +487,8 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.BooleanValue enableSameMobsTypeInjury;
         //启用狂暴药水冲刺时破坏方块效果
         public final ForgeConfigSpec.BooleanValue enableFrenzyDestroyBlock;
+        //启用显示物品冷却时间
+        public final ForgeConfigSpec.BooleanValue enableShowItemCD;
     }
 
 

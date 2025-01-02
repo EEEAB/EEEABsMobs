@@ -15,6 +15,7 @@ import com.eeeab.eeeabsmobs.sever.message.MessageFrenzyEffect;
 import com.eeeab.eeeabsmobs.sever.message.MessagePlayerUseAbility;
 import com.eeeab.eeeabsmobs.sever.message.MessageUseAbility;
 import com.eeeab.eeeabsmobs.sever.message.MessageVertigoEffect;
+import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import com.eeeab.eeeabsmobs.sever.world.portal.VoidCrackTeleporter;
 import com.eeeab.animate.server.message.AnimationMessage;
 import net.minecraft.resources.ResourceLocation;
@@ -76,6 +77,7 @@ public class ServerProxy {
             EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamageValue = EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamage.get().floatValue();
             EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackSpeedValue = EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackSpeed.get().floatValue();
             EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackDamageValue = EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackDamage.get().floatValue();
+            EMTUtils.SHOW_ITEM_CD = EMConfigHandler.COMMON.OTHER.enableShowItemCD.get();
         }
     }
 

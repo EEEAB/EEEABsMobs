@@ -59,7 +59,7 @@ public class ItemImmortalStaff extends Item {
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
         EMConfigHandler.Item item = EMConfigHandler.COMMON.ITEM;
-        tooltip.add(EMTUtils.itemCoolTime(item.itemImmortalStaffCoolingTime.get()));
+        if (EMTUtils.SHOW_ITEM_CD) tooltip.add(EMTUtils.itemCoolTime(item.itemImmortalStaffCoolingTime.get()));
         tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId()));
     }
 }
