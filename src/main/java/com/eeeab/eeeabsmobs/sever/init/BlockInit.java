@@ -66,7 +66,6 @@ public class BlockInit {
     public static final RegistryObject<Block> EROSION_DEEPSLATE_BRICKS = registryBlock("erosion_deepslate_bricks", () -> new Block(BlockBehaviour.Properties
                     .copy(Blocks.REINFORCED_DEEPSLATE)
                     .strength(-1.0F, 3600000.0F)
-                    .lightLevel(state -> 3)
                     .noLootTable()),
             false);
 
