@@ -135,7 +135,7 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
         if (phase < 3) {
             this.setPhase(phase + 1);
         }
-        this.playSound(SoundInit.BREAK.get(), 1.5F, (this.random.nextFloat() - this.random.nextFloat()) * 0.5F + 1.5F);
+        this.playSound(SoundInit.CRIMSON_CRACK_BREAK.get(), 1.5F, (this.random.nextFloat() - this.random.nextFloat()) * 0.5F + 1.5F);
     }
 
     public int getPhase() {

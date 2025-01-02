@@ -14,10 +14,11 @@ public class SoundInit {
     //Misc
     public static final RegistryObject<SoundEvent> LASER = create("guardian_laser");
     public static final RegistryObject<SoundEvent> LASER2 = create("immortal_laser");
+    public static final RegistryObject<SoundEvent> CRIMSON_RAY = create("crimson_ray");
     public static final RegistryObject<SoundEvent> GIANT_AXE_HIT = create("giant_axe_hit");
     public static final RegistryObject<SoundEvent> UNDAMAGED = create("undamaged");
-    public static final RegistryObject<SoundEvent> CRIMSON_RAY = create("crimson_ray");
-    public static final RegistryObject<SoundEvent> BREAK = create("break");
+    public static final RegistryObject<SoundEvent> CRIMSON_CRACK_BREAK = create("crimson_crack.break");
+    public static final RegistryObject<SoundEvent> LAUNCH_GRENADE = create("grenade.launch");
     public static final RegistryObject<SoundEvent> MAGIC_MATRIX_OPEN = create("magic_matrix.open");
     public static final RegistryObject<SoundEvent> IMMORTAL_SHURIKEN_SPIN = create("immortal_shuriken.spin");
     public static final RegistryObject<SoundEvent> IMMORTAL_SHURIKEN_EXPLODE = create("immortal_shuriken.explode");
@@ -75,7 +76,6 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> GSH_IDLE = create("guling_sentinel_heavy.idle");
     public static final RegistryObject<SoundEvent> GSH_FRICTION = create("guling_sentinel_heavy.friction");
     public static final RegistryObject<SoundEvent> GSH_ELECTROMAGNETIC = create("guling_sentinel_heavy.electromagnetic");
-    public static final RegistryObject<SoundEvent> GSH_SPARK = create("guling_sentinel_heavy.spark");
     public static final RegistryObject<SoundEvent> GSH_PRE_ATTACK = create("guling_sentinel_heavy.pre_attack");
     public static final RegistryObject<SoundEvent> GSH_ATTACK = create("guling_sentinel_heavy.attack");
     public static final RegistryObject<SoundEvent> GSH_HURT = create("guling_sentinel_heavy.hurt");

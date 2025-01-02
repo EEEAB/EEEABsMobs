@@ -562,7 +562,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         double d2 = target.getY(-0.5F) - this.getY();
         double d3 = target.getZ() - this.getZ();
         double d4 = Math.sqrt(d1 * d1 + d3 * d3) * (double) 0.12F;
-        this.playSound(SoundInit.GSH_SPARK.get());
+        this.playSound(SoundInit.LAUNCH_GRENADE.get());
         for (int i = 1; i <= 2; i++) {
             double yBodyRadians = Math.toRadians(this.yBodyRot + (180 * (i - 1)));
             EntityGrenade grenade = new EntityGrenade(this.level(), this);

@@ -23,8 +23,8 @@
       "eeeabsmobs:effect/crimson_ray"
     ]
   },
-  "break": {
-    "subtitle": "subtitles.break",
+  "crimson_crack.break": {
+    "subtitle": "subtitles.crimson_crack.break",
     "sounds": [
       "eeeabsmobs:effect/break"
     ]
@@ -40,6 +40,14 @@
     "sounds": [
       "eeeabsmobs:effect/magic_matrix1",
       "eeeabsmobs:effect/magic_matrix2"
+    ]
+  },
+  "grenade.launch": {
+    "subtitle": "subtitles.grenade.launch",
+    "sounds": [
+      "eeeabsmobs:entity/guling_sentinel_heavy/spark1",
+      "eeeabsmobs:entity/guling_sentinel_heavy/spark2",
+      "eeeabsmobs:entity/guling_sentinel_heavy/spark3"
     ]
   },
   "immortal_shuriken.spin": {
@@ -308,14 +316,6 @@
       "eeeabsmobs:entity/guling_sentinel_heavy/idle1",
       "eeeabsmobs:entity/guling_sentinel_heavy/idle2",
       "eeeabsmobs:entity/guling_sentinel_heavy/idle3"
-    ]
-  },
-  "guling_sentinel_heavy.spark": {
-    "subtitle": "subtitles.guling_sentinel_heavy.spark",
-    "sounds": [
-      "eeeabsmobs:entity/guling_sentinel_heavy/spark1",
-      "eeeabsmobs:entity/guling_sentinel_heavy/spark2",
-      "eeeabsmobs:entity/guling_sentinel_heavy/spark3"
     ]
   },
   "guling_sentinel_heavy.pre_attack": {
