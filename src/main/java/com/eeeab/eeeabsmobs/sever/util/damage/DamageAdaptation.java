@@ -3,7 +3,6 @@ package com.eeeab.eeeabsmobs.sever.util.damage;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -11,7 +10,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 伤害适应
  *
  * @author EEEAB
- * @version 1.6
+ * @version 1.7
  */
 public class DamageAdaptation {
     /**
@@ -42,7 +40,6 @@ public class DamageAdaptation {
      * 是否适应相同类型生物
      */
     private final boolean adaptsSameTypeMobs;
-    private static final RandomSource random = RandomSource.create();
     private final Map<String, DamageInfo> adaptMap = new ConcurrentHashMap<>();
     private boolean adaptBypassesDamage;
 
@@ -88,20 +85,30 @@ public class DamageAdaptation {
                     adaptMap.put(key, info);
                     return Math.max(adaptedAmount, 0);
                 }
-            }
-            //当适应类型个数超出上限时 先尝试删除失效的适应伤害 再随机移除一种适应伤害
-            if (adaptMap.size() >= adaptDamageTypesCount) {
+            } else if (adaptMap.size() >= adaptDamageTypesCount) {
                 updateCache(entity);
-                if (adaptMap.size() >= adaptDamageTypesCount) {
-                    List<String> keys = adaptMap.keySet().stream().toList();
-                    adaptMap.remove(keys.get(random.nextInt(keys.size())));
-                }
+                return amount;
             }
             adaptMap.put(key, new DamageInfo(tickStamp, 0));
         } catch (Exception e) {
             EEEABMobs.LOGGER.error("An unexpected exception occurred when calculating damage: {}", e.getMessage());
         }
         return amount;
+    }
+
+
+    public float getAdaptFactorTotalBySource(LivingEntity entity, @Nullable DamageSource source) {
+        String key = getKey(source, adaptsSameTypeMobs, adaptBypassesDamage);
+        if (key == null) return -1F;
+        DamageInfo damageInfo = adaptMap.get(key);
+        if (damageInfo != null) {
+            return entity.tickCount > damageInfo.getTimestamp() + resetCountdown ? -1F : damageInfo.getAdaptFactor();
+        }
+        return -1F;
+    }
+
+    public boolean isFullyAdapted(LivingEntity entity, @Nullable DamageSource source) {
+        return getAdaptFactorTotalBySource(entity, source) >= maxAdaptFactor;
     }
 
     public void updateCache(LivingEntity entity) {
