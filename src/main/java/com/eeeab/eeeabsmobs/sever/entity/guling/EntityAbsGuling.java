@@ -47,6 +47,15 @@ public abstract class EntityAbsGuling extends EEEABMobLibrary implements Enemy {
         return groupData;
     }
 
+    protected int getCoolingTimerUtil(int maxCooling, int minCooling, float healthPercentage) {
+        float maximumCoolingPercentage = 1 - healthPercentage;
+        float ratio = 1 - (this.getHealthPercentage() / 100);
+        if (ratio > maximumCoolingPercentage) {
+            ratio = maximumCoolingPercentage;
+        }
+        return (int) (maxCooling - (ratio / maximumCoolingPercentage) * (maxCooling - minCooling));
+    }
+
     protected void doWalkEffect(int amount) {
         if (this.level().isClientSide) {
             for (int l = 0; l < amount; l++) {
