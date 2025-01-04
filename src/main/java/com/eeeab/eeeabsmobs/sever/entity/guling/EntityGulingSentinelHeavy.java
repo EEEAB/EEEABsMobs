@@ -96,9 +96,9 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     public final ControlledAnimation glowControlled = new ControlledAnimation(10);
     public final ControlledAnimation hotControlled = new ControlledAnimation(20);
     public final ControlledAnimation electromagneticConControlled = new ControlledAnimation(20);
+    private static final int SMASH_ATTACK_TICK = 370;
+    private static final int ELECTROMAGNETIC_TICK = 350;
     private static final int RANGE_ATTACK_TICK = 400;
-    private static final int SMASH_ATTACK_TICK = 300;
-    private static final int ELECTROMAGNETIC_TICK = 450;
     @OnlyIn(Dist.CLIENT)
     public Vec3[] hand;//0:left 1:right
 
@@ -190,11 +190,11 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     protected void onAnimationFinish(Animation animation) {
         if (!this.level().isClientSide) {
             if (animation == this.smashAttackAnimation) {
-                this.smashAttackTick = SMASH_ATTACK_TICK;
+                this.smashAttackTick = getCoolingTimerUtil(SMASH_ATTACK_TICK, SMASH_ATTACK_TICK - 50, 0.5F);
             } else if (animation == this.rangeAttackAnimation) {
-                this.rangeAttackTick = RANGE_ATTACK_TICK;
+                this.rangeAttackTick = getCoolingTimerUtil(RANGE_ATTACK_TICK, RANGE_ATTACK_TICK - 50, 0.5F);
             } else if (animation == this.electromagneticAnimation) {
-                this.electromagneticTick = ELECTROMAGNETIC_TICK;
+                this.electromagneticTick = getCoolingTimerUtil(ELECTROMAGNETIC_TICK, ELECTROMAGNETIC_TICK - 50, 0.5F);
             }
         }
     }
