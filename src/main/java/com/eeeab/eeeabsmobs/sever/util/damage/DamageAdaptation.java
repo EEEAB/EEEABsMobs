@@ -66,6 +66,8 @@ public class DamageAdaptation {
     }
 
     public float damageAfterAdaptingOnce(LivingEntity entity, @Nullable DamageSource source, float amount) {
+        //检查是否适应伤害
+        if (maxAdaptFactor <= 0F || singleAdaptFactor <= 0F) return amount;
         try {
             String key = getKey(source, adaptsSameTypeMobs, adaptBypassesDamage);
             if (key == null) return amount;
@@ -108,7 +110,7 @@ public class DamageAdaptation {
     }
 
     public boolean isFullyAdapted(LivingEntity entity, @Nullable DamageSource source) {
-        return getAdaptFactorTotalBySource(entity, source) >= maxAdaptFactor;
+        return maxAdaptFactor > 0 && getAdaptFactorTotalBySource(entity, source) >= maxAdaptFactor;
     }
 
     public void updateCache(LivingEntity entity) {
