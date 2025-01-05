@@ -8,6 +8,7 @@ import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -55,15 +56,17 @@ public class EntityImmortalLaser extends EntityAbsBeam {
             List<LivingEntity> entities = raytraceEntities(level(), new Vec3(getX(), getY(), getZ()), new Vec3(endPosX, endPosY, endPosZ)).getEntities();
             if (!this.level().isClientSide) {
                 for (LivingEntity target : entities) {
+                    boolean hurtFlag = false;
+                    DamageSource indirectMagic = this.damageSources().indirectMagic(this, caster);
                     if (this.caster instanceof EntityImmortal immortal) {
                         float damageMultiplier = 0F;
                         MobEffectInstance instance = target.getEffect(EffectInit.ERODE_EFFECT.get());
                         if (instance != null) damageMultiplier += (instance.getAmplifier() + 1) * 0.08F;
-                        immortal.doHurtTarget(target, false, false, false, true, 0.03F, 0.375F, 1F + damageMultiplier);
+                        hurtFlag = immortal.doHurtTarget(indirectMagic, target, false, false, false, 0.03F, 0.375F, 1F + damageMultiplier);
                     } else if (this.caster != null) {
-                        target.hurt(this.damageSources().indirectMagic(this, caster), 5F + target.getMaxHealth() * 0.01F);
+                        hurtFlag = target.hurt(indirectMagic, 5F + target.getMaxHealth() * 0.01F);
                     }
-                    ModEntityUtils.addEffectStackingAmplifier(this, target, EffectInit.ERODE_EFFECT.get(), 300, 5, true, true, true, true, true);
+                    if (hurtFlag) ModEntityUtils.addEffectStackingAmplifier(this, target, EffectInit.ERODE_EFFECT.get(), 300, 5, true, true, true, true, true);
                 }
             } else if (this.tickCount > this.getCountDown()) {
                 this.spawnExplosionParticles();
