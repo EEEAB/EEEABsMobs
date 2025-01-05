@@ -104,9 +104,6 @@ public class ServerProxy {
     public void stopGuardianLaserSound(Player player) {
     }
 
-    public void playImmortalShurikenSound(EntityImmortalShuriken shuriken) {
-    }
-
     public void playImmortalLaserSound(EntityImmortalLaser laser) {
     }
 }

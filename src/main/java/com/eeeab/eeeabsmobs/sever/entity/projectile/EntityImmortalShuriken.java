@@ -1,6 +1,5 @@
 package com.eeeab.eeeabsmobs.sever.entity.projectile;
 
-import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
@@ -96,8 +95,6 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
                         this.level().broadcastEntityEvent(this, (byte) 7);
                         this.discard();
                     }
-                } else if (this.tickCount == this.getDuration()) {
-                    EEEABMobs.PROXY.playImmortalShurikenSound(this);
                 }
 
                 if (this.target != null) {
@@ -118,6 +115,10 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
                         this.target = entity;
                     }
                 }
+            }
+
+            if (this.checkCanShoot() && this.getDeltaMovement().horizontalDistanceSqr() > 2.5000003E-7D && this.tickCount % 5 == 0) {
+                this.playSound(SoundInit.IMMORTAL_SHURIKEN_SPIN.get(), 0.15F, (this.random.nextFloat() - this.random.nextFloat()) * 0.5F + 1F);
             }
 
             this.checkInsideBlocks();
@@ -177,7 +178,7 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
             double x = this.getX() + movement.x;
             double y = this.getY(0.3);
             double z = this.getZ() + movement.z;
-            this.level().playLocalSound(x, y, z, SoundInit.IMMORTAL_SHURIKEN_EXPLODE.get(), SoundSource.NEUTRAL, 0.8F, (this.random.nextFloat() - this.random.nextFloat()) * 0.4F + 0.8F, false);
+            this.level().playLocalSound(x, y, z, SoundInit.IMMORTAL_SHURIKEN_EXPLODE.get(), SoundSource.NEUTRAL, 1F, (this.random.nextFloat() - this.random.nextFloat()) * 0.4F + 0.8F, false);
             ParticleDust.DustData particle1 = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.18F, 0.44F, 0.6F, 15F, 20, ParticleDust.EnumDustBehavior.SHRINK, 0.9F, true);
             ParticleOrb.OrbData particle2 = new ParticleOrb.OrbData(0.08F, 0.12F, 0.17F, 2F, 15);
             ModParticleUtils.roundParticleOutburst(this.level(), 8, new ParticleOptions[]{particle1, particle2}, x, y, z, 0.25F);
