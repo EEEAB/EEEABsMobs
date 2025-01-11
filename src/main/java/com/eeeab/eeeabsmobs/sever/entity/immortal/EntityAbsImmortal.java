@@ -150,11 +150,12 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy
         }
     }
 
+    @Override
     public boolean isAlliedTo(Entity entity) {
         if (super.isAlliedTo(entity)) {
             return true;
         } else if (entity instanceof LivingEntity && ((LivingEntity) entity).getMobType() == ModMobType.IMMORTAL) {
-            return this.getTeam() == null && entity.getTeam() == null;
+            return EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() && this.getTeam() == null && entity.getTeam() == null;
         } else {
             return false;
         }

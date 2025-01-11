@@ -9,9 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -38,6 +36,17 @@ public abstract class EntityAbsGuling extends EEEABMobLibrary implements Enemy {
             double d1 = this.random.nextGaussian() * 0.02D;
             double d2 = this.random.nextGaussian() * 0.02D;
             this.level().addParticle(ParticleTypes.LARGE_SMOKE, this.getRandomX(1.5D), this.getRandomY(), this.getRandomZ(1.5D), d0, d1, d2);
+        }
+    }
+
+    @Override
+    public boolean isAlliedTo(Entity entity) {
+        if (super.isAlliedTo(entity)) {
+            return true;
+        } else if (entity instanceof EntityAbsGuling) {
+            return EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() && this.getTeam() == null && entity.getTeam() == null;
+        } else {
+            return false;
         }
     }
 

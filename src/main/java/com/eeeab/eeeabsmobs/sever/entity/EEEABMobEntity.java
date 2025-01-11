@@ -419,10 +419,9 @@ public abstract class EEEABMobEntity extends PathfinderMob {
      * @param force    是否强制添加
      */
     public void stun(@Nullable LivingEntity source, LivingEntity target, int duration, boolean force) {
-        if (target.isBlocking() || target instanceof Player player && (player.isSpectator() || player.isCreative())) return;
+        if (target.isBlocking() || this.isAlliedTo(target) || target instanceof Player player && (player.isSpectator() || player.isCreative())) return;
         ModEntityUtils.addEffectStackingAmplifier(source, target, EffectInit.VERTIGO_EFFECT.get(), duration, 1, false, false, true, true, force);
     }
-
 
     @Override
     public void startSeenByPlayer(ServerPlayer player) {
