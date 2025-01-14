@@ -5,6 +5,7 @@ import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -127,6 +128,8 @@ public class DamageAdaptation {
         } else if (source.getEntity() == null && !source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
             return spliceCharacters(source.type().msgId(), "unknown_entity");
         } else if (source.getEntity() != null) {
+            //避免荆棘伤害导致适应玩家持有武器问题
+            if (source.is(DamageTypes.THORNS)) return null;
             Entity entity = source.getEntity();
             String id = adaptsSameTypeMobs ? entity.getType().getDescriptionId() : entity.getStringUUID();
             String key = id;
