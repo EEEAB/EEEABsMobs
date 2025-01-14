@@ -61,7 +61,6 @@ public class ClientProxy extends ServerProxy {
 
     @Override
     public void playImmortalLaserSound(EntityImmortalLaser laser) {
-        Minecraft.getInstance().getSoundManager().play(new ImmortalLaserSound(laser, true));
-        Minecraft.getInstance().getSoundManager().play(new ImmortalLaserSound(laser, false));
+        Minecraft.getInstance().getSoundManager().play(new ImmortalLaserSound(laser));
     }
 }

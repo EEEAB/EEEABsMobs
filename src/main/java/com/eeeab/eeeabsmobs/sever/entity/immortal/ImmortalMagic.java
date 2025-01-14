@@ -1,6 +1,5 @@
 package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
-import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalLaser;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityImmortalShuriken;
 import net.minecraft.util.Mth;
@@ -20,8 +19,7 @@ public class ImmortalMagic {
             float angle = -totalOffset / 2.0F + (i + 1) * angleStep;
             Vec3 vec3 = looking.yRot(angle);
             float f0 = (float) Mth.atan2(vec3.z, vec3.x);
-            EntityImmortalLaser laser = new EntityImmortalLaser(caster.level(), caster, spawnPos.x, spawnPos.y, spawnPos.z, f0, duration);
-            if (i == 0) EEEABMobs.PROXY.playImmortalLaserSound(laser);
+            EntityImmortalLaser laser = new EntityImmortalLaser(caster.level(), caster, spawnPos.x, spawnPos.y, spawnPos.z, f0, duration, i == 0);
             caster.level().addFreshEntity(laser);
         }
     }

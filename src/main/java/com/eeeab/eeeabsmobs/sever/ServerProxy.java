@@ -1,13 +1,12 @@
 package com.eeeab.eeeabsmobs.sever;
 
+import com.eeeab.animate.server.message.AnimationMessage;
 import com.eeeab.animate.server.message.PlayAnimationMessage;
 import com.eeeab.animate.server.message.StopAnimationMessage;
 import com.eeeab.eeeabsmobs.EEEABMobs;
-
 import com.eeeab.eeeabsmobs.sever.advancements.EMCriteriaTriggers;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalLaser;
-import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityImmortalShuriken;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.init.AttributeInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
@@ -17,7 +16,6 @@ import com.eeeab.eeeabsmobs.sever.message.MessageUseAbility;
 import com.eeeab.eeeabsmobs.sever.message.MessageVertigoEffect;
 import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import com.eeeab.eeeabsmobs.sever.world.portal.VoidCrackTeleporter;
-import com.eeeab.animate.server.message.AnimationMessage;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;

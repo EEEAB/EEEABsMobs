@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
+import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
@@ -7,6 +8,9 @@ import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -22,13 +26,14 @@ public class EntityImmortalLaser extends EntityAbsBeam {
     public static final double RENDER_DISTANCE = (IMMORTAL_RADIUS * IMMORTAL_RADIUS) * 2;
     private static final float MAX_RADIANS = 0.6108652381980153F;
     private static final float ROTATION_SPEED = MAX_RADIANS / 10F;
+    private static final EntityDataAccessor<Boolean> DATA_PLAY_SOUND = SynchedEntityData.defineId(EntityImmortalLaser.class, EntityDataSerializers.BOOLEAN);
     private boolean isRotating = true;
 
     public EntityImmortalLaser(EntityType<? extends EntityImmortalLaser> type, Level level) {
         super(type, level, 1);
     }
 
-    public EntityImmortalLaser(Level world, LivingEntity caster, double x, double y, double z, float yaw, int duration) {
+    public EntityImmortalLaser(Level world, LivingEntity caster, double x, double y, double z, float yaw, int duration, boolean canPlaySound) {
         this(EntityInit.IMMORTAL_LASER.get(), world);
         this.caster = caster;
         this.setYaw(yaw);
@@ -36,6 +41,7 @@ public class EntityImmortalLaser extends EntityAbsBeam {
         this.setDuration(duration);
         this.setPos(x, y, z);
         this.calculateEndPos(IMMORTAL_RADIUS);
+        this.getEntityData().set(DATA_PLAY_SOUND, canPlaySound);
         if (!level().isClientSide) {
             setCasterId(caster.getId());
         }
@@ -43,6 +49,9 @@ public class EntityImmortalLaser extends EntityAbsBeam {
 
     @Override
     protected void beamTick() {
+        if (this.level().isClientSide && this.tickCount == 1) {
+            if (this.entityData.get(DATA_PLAY_SOUND)) EEEABMobs.PROXY.playImmortalLaserSound(this);
+        }
         if (this.tickCount >= this.getCountDown()) {
             this.calculateEndPos(IMMORTAL_RADIUS);
             if (this.isRotating) {
@@ -88,6 +97,12 @@ public class EntityImmortalLaser extends EntityAbsBeam {
                 level().addParticle(ParticleTypes.LARGE_SMOKE, prevCollidePosX + normal.getX(), prevCollidePosY + normal.getY() * 0.5, prevCollidePosZ + normal.getZ(), motionX, motionY, motionZ);
             }
         }
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_PLAY_SOUND, false);
     }
 
     @Override
