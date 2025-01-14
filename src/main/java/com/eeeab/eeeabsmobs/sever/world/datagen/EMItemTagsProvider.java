@@ -25,7 +25,6 @@ public class EMItemTagsProvider extends ItemTagsProvider {
         tag(ItemTags.MUSIC_DISCS)
                 .add(ItemInit.GUARDIANS_MUSIC_DISC.get())
                 .add(ItemInit.THE_ARMY_OF_MINOTAUR_MUSIC_DISC.get());
-        tag(EMTagKey.EROSION_IMMUNE_ITEMS).add(Items.ELYTRA);
         tag(EMTagKey.DEMOLISHER_SUPPORTED_PROJECTILES)
                 .addTag(Tags.Items.STONE)
                 .add(Items.COBBLESTONE)
