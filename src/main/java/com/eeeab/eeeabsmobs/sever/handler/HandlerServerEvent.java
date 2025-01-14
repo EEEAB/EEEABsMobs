@@ -28,6 +28,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -382,6 +383,17 @@ public final class HandlerServerEvent {
             if (playerCapability != null) {
                 playerCapability.hurt(player, source, event.getAmount());
             }
+        }
+    }
+
+    //实体治疗时
+    @SubscribeEvent
+    public void onLivingEntityHeal(LivingHealEvent event) {
+        LivingEntity entity = event.getEntity();
+        MobEffectInstance instance = entity.getEffect(EffectInit.ERODE_EFFECT.get());
+        if (instance != null) {
+            float newAmount = Mth.clamp(1F - (instance.getAmplifier() + 1) * 0.1F, 0F, 1F);
+            event.setAmount(event.getAmount() * newAmount);
         }
     }
 

@@ -139,7 +139,7 @@
 
   "_comment": "Описание JEI",
   "jei.eeeabsmobs.eye_of_structure.tip": "Подобно Оку Эндера, указывает путь к соответствующей структуре.",
-  "effect.eeeabsmobs.erode_effect.description": "Вероятность критического удар повышается с уровнем. Постепенно снижает прочность надетой брони, чем выше уровень, тем больше снижение.",
+  "effect.eeeabsmobs.erode_effect.description": "The critical hit chance received increases with level, and each level additionally reduces the healing amount by 10%.",
   "effect.eeeabsmobs.armor_lower_effect.description": "Каждый уровень дополнительно снижает защиту и прочность брони на 20%.",
   "effect.eeeabsmobs.vertigo_effect.description": "Во время головокружения невозможно использовать предметы и блоки, атаковать, разрушать блоки, двигаться или изменять направление обзора.",
   "effect.eeeabsmobs.frenzy_effect.description": "Повышает основные атрибуты и снижает получаемый урон. Удерживая клавишу бега, можно совершить рывок, разрушая окружающие блоки и оглушая существ. В воде рывок предотвращает удушье.\nПобочный эффект: после окончания действия эффекта накладывается слабость.",

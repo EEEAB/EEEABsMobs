@@ -5,7 +5,6 @@ import net.minecraft.world.entity.ai.attributes.*;
 
 //护甲无效化
 public class EffectArmorLower extends EMEffect {
-
     public EffectArmorLower() {
         super(MobEffectCategory.HARMFUL, 7004023, false);
         this.addAttributeModifier(Attributes.ARMOR, "0eacf76e-1e90-42e6-9479-2a5af12dd6cf", -0.2D, AttributeModifier.Operation.MULTIPLY_TOTAL);
