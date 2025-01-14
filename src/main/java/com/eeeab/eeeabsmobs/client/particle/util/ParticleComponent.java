@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -36,7 +37,7 @@ public abstract class ParticleComponent {
     }
 
     /**
-     * 通用粒子效果组件
+     * 通用组件
      */
     public static class PropertyControl extends ParticleComponent {
         public enum EnumParticleProperty {
@@ -148,7 +149,7 @@ public abstract class ParticleComponent {
     }
 
     /**
-     * 静止粒子效果组件
+     * 固定坐标组件
      */
     public static class PinLocation extends ParticleComponent {
         private final Vec3[] location;
@@ -156,7 +157,7 @@ public abstract class ParticleComponent {
         /**
          * PinLocation
          *
-         * @param location 静止坐标
+         * @param location 固定坐标
          */
         public PinLocation(Vec3[] location) {
             this.location = location;
@@ -178,7 +179,43 @@ public abstract class ParticleComponent {
     }
 
     /**
-     * 吸引粒子效果组件
+     * 跟踪实体坐标组件
+     * 
+     * @author EEEAB
+     */
+    public static class PinLocationWithEntity extends ParticleComponent {
+        private final Entity entity;
+        private final Vec3 offset;
+
+        /**
+         * PinLocationWithEntity
+         *
+         * @param entity 实体
+         * @param offset 坐标偏移量
+         */
+        public PinLocationWithEntity(Entity entity, Vec3 offset) {
+            this.entity = entity;
+            this.offset = offset;
+        }
+
+        @Override
+        public void init(AdvancedParticleBase particle) {
+            if (entity != null && offset != null) {
+                particle.setPos(entity.getX() + offset.x, entity.getY() + offset.y, entity.getZ() + offset.z);
+            }
+        }
+
+        @Override
+        public void preUpdate(AdvancedParticleBase particle) {
+            if (entity != null && offset != null) {
+                particle.setPos(entity.getX() + offset.x, entity.getY() + offset.y, entity.getZ() + offset.z);
+            }
+        }
+    }
+
+
+    /**
+     * 吸引组件
      */
     public static class Attractor extends ParticleComponent {
         public enum EnumAttractorBehavior {
@@ -239,7 +276,7 @@ public abstract class ParticleComponent {
     }
 
     /**
-     * 特定轨迹粒子效果组件
+     * 特定轨迹组件
      */
     public static class Orbit extends ParticleComponent {
         private final Vec3[] location;
@@ -313,7 +350,7 @@ public abstract class ParticleComponent {
     }
 
     /**
-     * 面向相机粒子效果组件(不适用ParticleRotation.FaceCamera)
+     * 面向相机组件(不适用ParticleRotation.FaceCamera)
      */
     public static class FaceMotion extends ParticleComponent {
         public FaceMotion() {
@@ -380,6 +417,4 @@ public abstract class ParticleComponent {
             }
         }
     }
-
-
 }
