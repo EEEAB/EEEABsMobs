@@ -42,8 +42,7 @@ public class ImmortalPounceGoal extends AnimationAI<EntityImmortal> {
 
     @Override
     protected boolean test(Animation animation) {
-        return animation == entity.pouncePreAnimation || animation == entity.pounceHoldAnimation || animation == entity.pounceEndAnimation
-                || animation == entity.pounceSmashAnimation || animation == entity.pouncePickAnimation;
+        return animation == entity.pouncePreAnimation || animation == entity.pounceHoldAnimation || animation == entity.pounceEndAnimation || animation == entity.pounceSmashAnimation || animation == entity.pouncePickAnimation;
     }
 
     @Override
@@ -52,15 +51,13 @@ public class ImmortalPounceGoal extends AnimationAI<EntityImmortal> {
         int tick = entity.getAnimationTick();
         if (animation == entity.pouncePreAnimation) {
             if (tick < 10) {
-                if (targetCache != null && targetCache.isAlive()) {
+                if (targetCache != null && !targetCache.isRemoved()) {
                     entity.lookAt(targetCache, 90F, 30F);
-                    entity.getLookControl().setLookAt(targetCache, 90F, 30F);
+                    entity.getLookControl().setLookAt(targetCache, 200F, 30F);
                     Vec3 vec3 = entity.position();
                     pounceVec = new Vec3(targetCache.getX() - vec3.x, 0.0, targetCache.getZ() - vec3.z).normalize();
                     distanceFactor = getDistanceFactor(targetCache, MAX_DISTANCE, false);
-                    if (tick == 5) {
-                        EntityImmortalMagicCircle.spawn(entity.level(), entity, entity.position().add(0, 0.25, 0), 3F, -1F, (int) (20 + (90 * distanceFactor)), entity.getYRot(), EntityImmortalMagicCircle.MagicCircleType.SPEED, false);
-                    }
+                    if (tick == 5) EntityImmortalMagicCircle.spawn(entity.level(), entity, entity.position().add(0, 0.25, 0), 3F, -1F, (int) (20 + (90 * distanceFactor)), entity.getYRot(), EntityImmortalMagicCircle.MagicCircleType.SPEED, false);
                 } else if (entity.getTarget() != null) targetCache = entity.getTarget();
             } else {
                 if (pounceVec.length() == 0) entity.playAnimation(entity.pounceEndAnimation);
@@ -85,28 +82,24 @@ public class ImmortalPounceGoal extends AnimationAI<EntityImmortal> {
                         speedMultiplier *= 0.5F;
                         distanceFactor = Math.min(getDistanceFactor(targetCache, MAX_DISTANCE / 2, true), 0.8F);
                         double heightDifference = Math.abs(entity.getY() - targetCache.getY());
-                        if (heightDifference >= 6 || entity.getRandom().nextFloat() < 0.4F) {
-                            entity.playAnimation(entity.pouncePickAnimation);
-                        } else {
-                            entity.playAnimation(entity.pounceSmashAnimation);
-                        }
+                        if (heightDifference >= 6 || entity.getRandom().nextFloat() < 0.4F) entity.playAnimation(entity.pouncePickAnimation);
+                        else entity.playAnimation(entity.pounceSmashAnimation);
                     } else if (speedMultiplier < 0.45F) this.entity.playAnimation(entity.pounceEndAnimation);
                     entity.setDeltaMovement(pounceVec.x * moveSpeed * speedMultiplier, entity.getDeltaMovement().y, pounceVec.z * moveSpeed * speedMultiplier);
                 } else this.entity.playAnimation(entity.pounceEndAnimation);
             }
         } else if (animation == entity.pounceSmashAnimation) {
-            entity.anchorToGround();
-            if (tick < 10) lookAtTarget();
-            if (tick == 5) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.6F, entity.getVoicePitch());
-            else if (tick == 9) entity.playSound(SoundInit.IMMORTAL_SHAKE_GROUND.get());
-            else {
+            if (tick < 9) {
+                lookAtTarget();
+                if (tick == 5) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.6F, entity.getVoicePitch());
+            } else {
+                entity.anchorToGround();
                 entity.setYRot(entity.yRotO);
-                if (tick == 10) {
-                    double radians = Math.toRadians(entity.getYRot() + 90);
-                    for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), entity.position().add(3F * Math.cos(radians), -1, 3F * Math.sin(radians)), 3.5D, 0F, false, 20)) {
-                        if (entityHit == entity) {
-                            continue;
-                        }
+                if (tick == 9) entity.playSound(SoundInit.IMMORTAL_SHAKE_GROUND.get());
+                else if (tick == 10) {
+                    Vec3 pos = entity.getPosOffset(false, 3F, 0.5F, -1F);
+                    for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), pos, 3.5D, 0F, false, 20)) {
+                        if (entityHit == entity) continue;
                         entity.doHurtTarget(entityHit, false, false, true, false, 0.025F, 1.0F, 0.9F);
                         entity.disableShield(entityHit, 50);
                         entity.knockBack(entityHit, 0.2, 0.5, false, false);
@@ -126,7 +119,7 @@ public class ImmortalPounceGoal extends AnimationAI<EntityImmortal> {
                     entity.setDeltaMovement(Math.cos(radians) * moveSpeed * speedMultiplier, entity.getDeltaMovement().y, Math.sin(radians) * moveSpeed * speedMultiplier);
                 }
                 if (tick == 6) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.6F, entity.getVoicePitch() + 0.2F);
-                if (tick == 10) {
+                else if (tick == 10) {
                     doHurtTarget(5F, 6F, 4.5F, 0F, 1F, true, true, false, 1F);
                     entity.shakeGround(0F, MAX_DISTANCE / 2, 0.25F, 2, 4);
                 }

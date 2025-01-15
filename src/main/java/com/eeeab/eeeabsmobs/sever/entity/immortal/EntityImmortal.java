@@ -6,6 +6,7 @@ import com.eeeab.animate.server.ai.animation.AnimationDie;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
+import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleData;
@@ -119,17 +120,18 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     public final Animation hardPunchLeftAnimation = Animation.create(45);
     public final Animation pouncePreAnimation = Animation.create(15);
     public final Animation pounceHoldAnimation = Animation.create(42);
-    public final Animation pounceEndAnimation = Animation.create(20);
+    public final Animation pounceEndAnimation = Animation.create(15);
     public final Animation pounceSmashAnimation = Animation.create(50);
     public final Animation pouncePickAnimation = Animation.create(40);
-    public final Animation attractAnimation = Animation.coexist(70);
+    public final Animation attractAnimation = Animation.create(70);
     public final Animation shoryukenAnimation = Animation.create(80);
     public final Animation trackingShurikenAnimation = Animation.coexist(25);
     public final Animation unleashEnergyAnimation = Animation.create(100);
     public final Animation armBlockAnimation = Animation.create(15);
     public final Animation armBlockHoldAnimation = Animation.create(50);
-    public final Animation armBlockEndAnimation = Animation.create(15);
+    public final Animation armBlockEndAnimation = Animation.create(10);
     public final Animation armBlockCounterattackAnimation = Animation.coexist(20);
+    public final Animation hurt1Animation = Animation.create(60);
     private final Animation[] animations = new Animation[]{
             dieAnimation,
             spawnAnimation,
@@ -155,6 +157,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
             shoryukenAnimation,
             trackingShurikenAnimation,
             unleashEnergyAnimation,
+            hurt1Animation,
     };
     private static final EntityDataAccessor<Byte> DATA_STAGE = SynchedEntityData.defineId(EntityImmortal.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Byte> DATA_TELEPORT_TYPE = SynchedEntityData.defineId(EntityImmortal.class, EntityDataSerializers.BYTE);
@@ -163,7 +166,6 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     private static final UUID HEALTH_UUID = UUID.fromString("E2F534E6-4A55-4B72-A9D2-3157D084A281");
     private static final UUID ARMOR_UUID = UUID.fromString("FA2FB8E8-FFE8-4D77-B23B-E0110D4A175F");
     private static final UUID ATTACK_UUID = UUID.fromString("F8DBD65D-3C4A-4851-83D3-4CB22964A196");
-    //每20Tick重置一次 用于判断短时间造成伤害次数
     private int hurtCount;
     private int timeUntilAttract;
     private int timeUntilBlock;
@@ -174,8 +176,8 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     private int timeUntilShuriken;
     private int timeUntilTeleport;
     private int timeUntilLaser;
+    private int battleTimestamp;
     private int destroyBlocksTick;
-    //目标近身时进行计数
     private int closeProximityTickCount;
     private int universalCDTime;
     private int immortalInvulnerableTime;
@@ -185,6 +187,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     public final ControlledAnimation coreControllerAnimation = new ControlledAnimation(10);
     public final ControlledAnimation glowControllerAnimation = new ControlledAnimation(20);
     public final ControlledAnimation alphaControllerAnimation = new ControlledAnimation(10);
+    public final ControlledAnimation hurtControllerAnimation = new ControlledAnimation(10);
     @OnlyIn(Dist.CLIENT)
     public Vec3[] hand;//0:left 1:right
     //用于控制某些关键帧时段可以插入其他动画
@@ -200,7 +203,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     private static final UniformInt POUNCE_TIME = TimeUtil.rangeOfSeconds(12, 18);
     private static final UniformInt ATTRACT_TIME = TimeUtil.rangeOfSeconds(15, 20);
     private static final UniformInt SHURIKEN_TIME = TimeUtil.rangeOfSeconds(15, 25);
-    private static final UniformInt LASER_TIME = TimeUtil.rangeOfSeconds(25, 35);
+    private static final UniformInt LASER_TIME = TimeUtil.rangeOfSeconds(20, 30);
     private static final Predicate<LivingEntity> TARGET_CONDITIONS = entity -> entity.isAlive() && entity.getMobType() != ModMobType.IMMORTAL && !entity.getType().is(EMTagKey.IMMORTAL_IGNORE_HUNT_TARGETS)
             && entity.isAttackable() && (entity instanceof Enemy || entity instanceof NeutralMob || (entity instanceof Player player && !player.isCreative() && !player.isSpectator()));
     private static final float[][] BLOCK_OFFSETS = {{-0.75F, -0.75F}, {-0.75F, 0.75F}, {0.75F, 0.75F}, {0.75F, -0.75F}};
@@ -220,7 +223,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
         this.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, 0.0F);
         this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 0.0F);
         this.setPathfindingMalus(BlockPathTypes.UNPASSABLE_RAIL, 0.0F);
-        this.smashDerivedSkillProb = new TickBasedProbabilityBooster(0.1F, 0.1F, 0.5F);
+        this.smashDerivedSkillProb = new TickBasedProbabilityBooster(0.1F, 0.1F, 0.9F);
         this.damageAdaptation = new DamageAdaptation(EMConfigHandler.COMMON.MOB.IMMORTAL.THE_IMMORTAL.adaptConfig);
         if (this.level().isClientSide) {
             this.hand = new Vec3[]{new Vec3(0, 0, 0), new Vec3(0, 0, 0)};
@@ -375,6 +378,10 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
 
     @Override
     public void handleDamageEvent(DamageSource damageSource) {
+        this.damageAdaptation.damageAfterAdaptingOnce(this, damageSource, 0F);
+        if (this.damageAdaptation.isFullyAdapted(this, damageSource)) {
+            this.hurtControllerAnimation.setTimer(10);
+        }
         super.handleDamageEvent(damageSource);
     }
 
@@ -430,6 +437,8 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
                 if (this.getTarget() != null && this.targetDistance >= 8) this.universalCDTime = 20;
             } else if (animation == this.trackingShurikenAnimation) {
                 if (this.getTarget() instanceof Player && this.targets.size() < 2) this.universalCDTime = 20 + this.random.nextInt(10);
+            } else if (animation == this.hurt1Animation) {
+                this.blockEntity = null;
             }
         }
     }
@@ -458,8 +467,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
 
     @Override
     protected void registerCustomGoals() {
-        this.goalSelector.addGoal(1, new AnimationDie<>(this));
-        this.goalSelector.addGoal(1, new ImmortalGroupAI(this,
+        this.goalSelector.addGoal(0, new ImmortalGroupAI(this,
                 () -> switchStageAnimation,
                 () -> teleportAnimation,
                 () -> spawnAnimation
@@ -470,6 +478,8 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
         this.goalSelector.addGoal(1, new ImmortalMagicGoal(this));
         this.goalSelector.addGoal(1, new ImmortalPounceGoal(this));
         this.goalSelector.addGoal(1, new ImmortalShakeGroundGoal(this));
+        this.goalSelector.addGoal(2, new ImmortalStunGoal(this));
+        this.goalSelector.addGoal(2, new AnimationDie<>(this));
         this.goalSelector.addGoal(2, new AnimationMeleePlusAI<>(this, 1.05D, 0) {
             @Override
             public void tick() {
@@ -490,6 +500,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
         this.alphaControllerAnimation.updatePrevTimer();
         this.glowControllerAnimation.updatePrevTimer();
         this.coreControllerAnimation.updatePrevTimer();
+        this.hurtControllerAnimation.updatePrevTimer();
 
         int tick = this.getAnimationTick();
         Animation animation = this.getAnimation();
@@ -520,10 +531,10 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
             if (tick == 12) this.doImmortalMagicMatrixEffect(MagicCircleType.POWER, 7, 1.5F, 0.5F, 9F);
         } else if (animation == this.smashGround1Animation) {
             this.doSwipeEffect(tick == 17, tick > 17 && tick <= 21, null);
-            if (tick == 19) this.doShakeGroundEffect(12, 2.5F, 0F, 0.58F, 0.93F, false, true);
+            if (tick == 20) this.doShakeGroundEffect(12, 2.5F, 0F, 0.58F, 0.94F, false, true);
         } else if (animation == this.smashGround2Animation) {
             this.doSwipeEffect(tick == 13, tick > 13 && tick <= 17, null);
-            if (tick == 16) this.doShakeGroundEffect(12, 2.5F, 0F, 0.55F, 0.94F, false, true);
+            if (tick == 16) this.doShakeGroundEffect(14, 2.5F, 0F, 0.55F, 0.95F, false, true);
         } else if (animation == this.smashGround3Animation) {
             this.doSwipeEffect(tick == 10, tick > 10 && tick <= 20, null);
             if (tick == 19) {
@@ -563,7 +574,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
         } else if (animation == this.shoryukenAnimation) {
             this.doSwipeEffect(tick == 14, tick > 14 && tick < 20, false);
             this.doSwipeEffect(tick == 44, tick > 44 && tick <= 48, true);
-            if (tick == 47) this.doShakeGroundEffect(15, 4.75F, 0F, 0.58F, 0.92F, false, true);
+            if (tick == 47) this.doShakeGroundEffect(12, 4.75F, 0F, 0.58F, 0.92F, false, true);
         } else if (animation == this.trackingShurikenAnimation) {
             if (tick == 8) this.doImmortalMagicMatrixEffect(MagicCircleType.HARMFUL, 12, 2F, 0.5F, 15F);
         } else if (animation == this.unleashEnergyAnimation) {
@@ -572,6 +583,8 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
                 if (tick > 35) this.strongKnockBlock();
                 this.doUnleashEnergyEffect();
             } else if (tick == 80) if (!this.isSilent()) this.level().playLocalSound(this.blockPosition(), SoundInit.IMMORTAL_ACCUMULATING_END.get(), this.getSoundSource(), 1.5F, 1F, false);
+        } else if (animation == this.hurt1Animation) {
+            if (tick == 15) this.doShakeGroundEffect(10, 1F, this.getBbWidth() * 0.6F, 0.55F, 0.91F, true, true);
         }
         this.yRotO = this.getYRot();
         EMAnimationHandler.INSTANCE.updateAnimations(this);
@@ -591,56 +604,62 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
 
             boolean canAttack = !this.isNoAi() && target != null && !this.isSwitching() && this.universalCDTime <= 0;
 
-            if (canAttack) {
+            if (canAttack && ImmortalStage.STAGE1 == this.getStage()) {
                 this.targetDistance = this.distanceTo(target) - target.getBbWidth() / 2;
                 boolean hasTargetLineOfSight = this.getSensing().hasLineOfSight(target);
                 boolean targetFacingAway = ModEntityUtils.isTargetFacingAway(this, target, 180);
                 boolean targetComingCloser = ModEntityUtils.checkTargetComingCloser(this, target);
                 double targetRelativeHeight = Math.abs(this.getY() - target.getY());
                 float targetRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this, target);
+                if (this.battleTimestamp == 0) this.battleTimestamp = this.tickCount;
 
-                if (this.timeUntilTeleport <= 0 && (this.isNoAnimation() || this.canInterruptsAnimation) && (this.hurtCount > 30 || this.closeProximityTickCount >= 400 && this.random.nextInt(10) == 0)) {
+                if (this.timeUntilTeleport <= 0 && (this.isNoAnimation() || this.canInterruptsAnimation) && (this.hurtCount > 30 || this.closeProximityTickCount >= 400 && this.random.nextFloat() < 0.3F)) {
                     this.hurtCount = 0;
                     this.closeProximityTickCount = 0;
                     this.canInterruptsAnimation = false;
-                    this.setTeleportType(targetFacingAway ? TeleportType.FRONT : TeleportType.BEHIND);
+                    this.setTeleportType(targetFacingAway ? TeleportType.FRONT : this.timeUntilPounce <= 0 || this.random.nextFloat() < 0.4F ? TeleportType.SNEAK : TeleportType.BEHIND);
                     this.playAnimation(this.teleportAnimation);
                     this.timeUntilTeleport = this.getCoolingTimerUtil(TIME_UNTIL_TELEPORT, 5F);
-                } else if (this.timeUntilLaser <= 0 && this.getHealthPercentage() < 60 && this.isNoAnimation() && this.targetDistance >= 12 && this.targetDistance < EntityImmortalLaser.IMMORTAL_RADIUS && this.random.nextFloat() < 0.5F) {
+                } else if (this.timeUntilLaser <= 0 && (this.getCumulativeBattleTick() > 2400 || this.getHealthPercentage() < 60) && this.isNoAnimation() && targetRelativeHeight < 10 && this.targetDistance >= 12 && this.targetDistance < EntityImmortalLaser.IMMORTAL_RADIUS) {
                     this.playAnimation(this.unleashEnergyAnimation);
-                } else if (this.timeUntilShuriken <= 0 && this.getHealthPercentage() < 70 && (this.isNoAnimation() || this.canInterruptsAnimation) && (this.targetDistance < 24 && (this.targetDistance > 5 || this.targets.size() >= 6))) {
+                } else if (this.timeUntilShuriken <= 0 && (this.getCumulativeBattleTick() > 1800 || this.getHealthPercentage() < 70) && (this.isNoAnimation() || this.canInterruptsAnimation) && (this.targetDistance < 32 && (this.targetDistance > 5 || this.targets.size() >= 3))) {
                     this.canInterruptsAnimation = false;
                     this.playAnimation(this.trackingShurikenAnimation);
                     this.timeUntilShuriken = this.getCoolingTimerUtil(SHURIKEN_TIME.sample(this.random), 8F);
-                } else if (this.timeUntilPounce <= 0 && (this.isNoAnimation() || this.canInterruptsAnimation) && targetRelativeHeight < 6 && (this.targetDistance > 12 || !targetComingCloser && this.targetDistance >= 10) && this.targetDistance < ImmortalPounceGoal.MAX_DISTANCE && hasTargetLineOfSight && this.random.nextFloat() < 0.5F) {
+                } else if (this.timeUntilPounce <= 0 && (this.isNoAnimation() || this.canInterruptsAnimation) && hasTargetLineOfSight && targetRelativeHeight < 6 && this.targetDistance > 12 && this.targetDistance < ImmortalPounceGoal.MAX_DISTANCE && this.random.nextFloat() < 0.5F) {
                     this.canInterruptsAnimation = false;
                     this.playAnimation(this.pouncePreAnimation);
                     this.timeUntilPounce = this.getCoolingTimerUtil(POUNCE_TIME.sample(this.random), 5F);
-                } else if (this.timeUntilShoryuken <= 0 && (this.isNoAnimation() || this.canInterruptsAnimation) && (!this.LRFlag || this.random.nextInt(10) == 0) && targetRelativeHeight < 5 && this.targetDistance > 4.5 && this.targetDistance < 9 && (targetRelativeAngle <= 30F && targetRelativeAngle >= -30F) && hasTargetLineOfSight) {
+                } else if (this.timeUntilShoryuken <= 0 && (this.isNoAnimation() || this.canInterruptsAnimation) && hasTargetLineOfSight && (!this.LRFlag || this.random.nextInt(10) == 0) && targetRelativeHeight < 5 && this.targetDistance > 4.5 && this.targetDistance < 9 && (targetRelativeAngle <= 30F && targetRelativeAngle >= -30F)) {
                     this.canInterruptsAnimation = false;
                     this.playAnimation(this.shoryukenAnimation);
+                    this.smashDerivedSkillProb.onTick();
                     this.timeUntilShoryuken = this.getCoolingTimerUtil(POUNCE_TIME.sample(this.random), 3F);
-                } else if (this.timeUntilSmash <= 0 && this.getHealthPercentage() < 80 && (this.isNoAnimation() || (this.canInterruptsAnimation && this.getHealthPercentage() <= 50)) && this.onGround() && targetRelativeHeight < 6 && (this.targetDistance < 6.5 || targetComingCloser && this.targetDistance < 7.5) && this.random.nextFloat() < this.smashDerivedSkillProb.onTick().getProbability()) {
+                } else if (this.timeUntilSmash <= 0 && (this.getCumulativeBattleTick() > 1600 || this.getHealthPercentage() < 80) && (this.isNoAnimation() || (this.canInterruptsAnimation && this.getHealthPercentage() <= 50)) && this.onGround() && targetRelativeHeight < 6 && (this.targetDistance < 6.5 || targetComingCloser && this.targetDistance < 7.5) && this.random.nextFloat() < this.smashDerivedSkillProb.getProbability()) {
                     this.canInterruptsAnimation = false;
                     this.smashDerivedSkillProb.resetProbability();
                     this.playAnimation(this.smashGround2Animation);
                     this.timeUntilSmash = this.getCoolingTimerUtil((int) (SMASH_TIME.sample(this.random) * 1.5), 5F);
-                } else if (this.timeUntilAttract <= 0 && this.getHealthPercentage() < 85 && (this.isNoAnimation() || this.canInterruptsAnimation) && (!this.LRFlag || this.random.nextInt(10) == 0) && targetRelativeHeight < 6 && this.targetDistance >= 4.5 && this.targetDistance < 8 && (targetFacingAway || this.random.nextFloat() < 0.15F)) {
+                } else if (this.timeUntilAttract <= 0 && (this.getCumulativeBattleTick() > 1600 || this.getHealthPercentage() < 85) && (this.isNoAnimation() || this.canInterruptsAnimation) && (!this.LRFlag || this.random.nextInt(10) == 0) && targetRelativeHeight < 6 && this.targetDistance >= 4.5 && this.targetDistance < 8 && (targetFacingAway || this.random.nextFloat() < 0.15F)) {
                     this.canInterruptsAnimation = false;
                     this.playAnimation(this.attractAnimation);
                     this.timeUntilAttract = this.getCoolingTimerUtil(ATTRACT_TIME.sample(this.random), 5F);
-                } else if (this.timeUntilSmash <= 0 && this.canInterruptsAnimation && this.getHealthPercentage() < 90 && targetRelativeHeight <= 5 && this.targetDistance < 5.5 && this.random.nextFloat() < 0.5F) {
+                } else if (this.timeUntilSmash <= 0 && this.canInterruptsAnimation && (this.getCumulativeBattleTick() > 1200 || this.getHealthPercentage() < 90) && targetRelativeHeight <= 5 && this.targetDistance < 5.5 && this.random.nextFloat() < 1F - this.smashDerivedSkillProb.getProbability()) {
                     this.canInterruptsAnimation = false;
                     this.playAnimation(this.smashGround1Animation);
+                    this.smashDerivedSkillProb.onTick();
                     this.timeUntilSmash = this.getCoolingTimerUtil(SMASH_TIME.sample(this.random), 5F);
                 } else if (this.attackTick <= 0 && this.isNoAnimation() && this.targetDistance <= 5 && this.random.nextFloat() < 0.65F) {
                     this.playAnimation(this.getBaseAttackByStage());
                     this.attackTick = TIME_UNTIL_ATTACK;
                 }
 
-                if (this.targetDistance <= 5) this.closeProximityTickCount++;
-                else if (tickCount % 2 == 0 && this.closeProximityTickCount > 0) this.closeProximityTickCount--;
+                if (this.targetDistance <= 5) {
+                    this.closeProximityTickCount++;
+                    if (this.getCumulativeBattleTick() > 3600 || this.getHealthPercentage() < 50) this.closeProximityTickCount++;
+                } else if (tickCount % 2 == 0 && this.closeProximityTickCount > 0) this.closeProximityTickCount--;
             }
+            if (target == null && this.tickCount % 100 == 0 && this.battleTimestamp > 0) this.battleTimestamp = (int) (this.battleTimestamp * 0.5);
         }
     }
 
@@ -685,15 +704,25 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
         }
         int tick = this.getAnimationTick();
         Animation animation = this.getAnimation();
+        this.hurtControllerAnimation.decreaseTimer();
         this.glowControllerAnimation.incrementOrDecreaseTimer(this.isActive() && !this.isDeadOrDying() && (animation != this.spawnAnimation || tick > 25));
         this.coreControllerAnimation.incrementOrDecreaseTimer(!this.isNoAnimation() && (animation != this.spawnAnimation && animation != this.unleashEnergyAnimation) && !this.inBlocking());
         this.alphaControllerAnimation.incrementOrDecreaseTimer(animation == this.teleportAnimation && tick >= 10 && tick <= 20, 2);
         if (animation == this.teleportAnimation) {
             LivingEntity target = this.getTarget();
             if (tick == 15) {
-                for (int i = 0; i < 32; i++) {
-                    if (this.teleportByType(target == null ? TeleportType.RANDOM : this.getTeleportType(), target)) {
+                boolean teleportFlag = target != null;
+                for (int i = 0; i < 16; i++) {
+                    if (this.teleportByType(this.getTeleportType(), target)) {
+                        teleportFlag = false;
                         break;
+                    }
+                }
+                if (teleportFlag) {
+                    for (int i = 0; i < 16; i++) {
+                        if (this.teleportByType(TeleportType.SNEAK, target)) {
+                            break;
+                        }
                     }
                 }
             }
@@ -762,14 +791,12 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
             }
             damage *= 1F - Mth.clamp((this.targets.size() - 1) * 4F, 0F, 20F) / 100F;
             if (entity != null || source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
-                return super.hurt(source, damage);
+                boolean flag = super.hurt(source, damage);
+                if (flag) this.stunCheck(source, damage);
+                return flag;
             } else if (this.destroyBlocksTick <= 0) this.destroyBlocksTick = 20;
         } else if (this.inBlocking()) this.hurtTime = 0;
         return false;
-    }
-
-    @Override
-    protected void blockedByShield(LivingEntity defender) {
     }
 
     @Override
@@ -786,6 +813,9 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
             this.doAttractHitEffect();
         } else if (id == 10) { //Attract hit
             this.doHitEffect(5, 0, 20F, 4.8F, 0.4F, true);
+        } else if (id == 11) { //Attract lose
+            Vec3 pos = this.getPosOffset(true, 1.5F, this.getBbWidth() * 0.6F, this.getBbHeight() * 0.25F);
+            ModParticleUtils.roundParticleOutburst(this.level(), 50, new ParticleOptions[]{new ParticleOrb.OrbData(0.46F, 0.75F, 0.88F, 3, 30)}, pos.x, pos.y, pos.z, 0.8F);
         }
         super.handleEntityEvent(id);
     }
@@ -848,6 +878,29 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
         float maxHealth = this.getMaxHealth();
         this.heal(Math.min(entity.getMaxHealth() * 0.05F + maxHealth * 0.01F, maxHealth * 0.05F));
         return super.killedEntity(level, entity);
+    }
+
+    /**
+     * 是否触发硬直检查
+     *
+     * @param source 伤害源
+     * @param damage 伤害量
+     */
+    private void stunCheck(DamageSource source, float damage) {
+        if (this.getAnimation() == this.attractAnimation && this.getAnimationTick() < 50 && damage >= 5F && source.is(DamageTypeTags.IS_EXPLOSION) && !this.damageAdaptation.isFullyAdapted(this, source)) {
+            Entity entity = source.getEntity();
+            if (entity instanceof LivingEntity livingEntity) this.blockEntity = livingEntity;
+            if (!this.level().isClientSide) this.level().broadcastEntityEvent(this, (byte) 11);
+            this.canInterruptsAnimation = false;
+            this.playAnimation(this.hurt1Animation);
+        }
+    }
+
+    public int getCumulativeBattleTick() {
+        if (this.battleTimestamp > 0 && this.battleTimestamp < this.tickCount) {
+            return this.tickCount - this.battleTimestamp;
+        }
+        return 0;
     }
 
     public boolean checkComboRange(double range, double checkRange) {
@@ -929,8 +982,8 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     }
 
     public boolean inBlocking() {
-        Animation ba = this.getAnimation();
-        return (ba == this.armBlockEndAnimation && this.getAnimationTick() < 10) || ba == this.armBlockHoldAnimation || ba == this.armBlockAnimation;
+        Animation a = this.getAnimation();
+        return a == this.armBlockEndAnimation || a == this.armBlockHoldAnimation || a == this.armBlockAnimation;
     }
 
     private Animation getBaseAttackByStage() {
@@ -962,20 +1015,24 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
 
     public boolean teleportByType(TeleportType type, LivingEntity target) {
         if (this.level().isClientSide || !this.isAlive()) return false;
-        double x = this.getX(), y = this.getY(), z = this.getZ();
-        switch (type) {
-            case RANDOM -> {
-                x = this.getX() + (this.random.nextDouble() - 0.5D) * 32D;
-                y = this.getY() + (double) (this.random.nextInt(32) - 16);
-                z = this.getZ() + (this.random.nextDouble() - 0.5D) * 32D;
-            }
-            case FRONT, BEHIND -> {
-                double radian = Math.toRadians(target.getYRot() + (type == TeleportType.FRONT ? 90 : -90));
-                int distance = 16;
-                x = this.getX() + (this.random.nextInt(distance) + distance) * Math.cos(radian);
-                y = this.getY() + (double) (this.random.nextInt(32) - 16);
-                z = this.getZ() + (this.random.nextInt(distance) + distance) * Math.sin(radian);
-            }
+        if (target == null) type = TeleportType.RANDOM;
+        double x, y, z;
+        if (TeleportType.SNEAK == type) {
+            float width = this.getBbWidth() + target.getBbWidth();
+            double radians = Math.toRadians(target.getYRot() + 270);
+            x = target.getX() + width * Math.cos(radians);
+            y = target.getY();
+            z = target.getZ() + width * Math.sin(radians);
+        } else if (TeleportType.FRONT == type || TeleportType.BEHIND == type) {
+            double radian = Math.toRadians(target.getYRot() + (type == TeleportType.FRONT ? 90 : -90));
+            int distance = 16;
+            x = this.getX() + (this.random.nextInt(distance) + distance) * Math.cos(radian);
+            y = this.getY() + (double) (this.random.nextInt(32) - 16);
+            z = this.getZ() + (this.random.nextInt(distance) + distance) * Math.sin(radian);
+        } else {
+            x = this.getX() + (this.random.nextDouble() - 0.5D) * 32D;
+            y = this.getY() + (double) (this.random.nextInt(32) - 16);
+            z = this.getZ() + (this.random.nextDouble() - 0.5D) * 32D;
         }
         return this.teleport(x, y, z);
     }
@@ -1070,17 +1127,17 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
         }
     }
 
-    private void doHitEffect(int duration, float xRot, float baseScale, float xOffset, float yOffset, boolean thump) {
+    private void doHitEffect(int duration, float xRot, float scale, float xOffset, float yOffset, boolean thump) {
         if (this.level().isClientSide) {
             Vec3 pos = this.getPosOffset(false, xOffset, 0F, this.getBbHeight() * yOffset);
             float alpha = 0.4F + 0.2F * this.random.nextFloat();
-            float scale = baseScale + this.random.nextInt(5);
+            float randomScale = scale + this.random.nextInt(5);
             float colorOffset = 0.1F * this.random.nextFloat();
             ParticleType<AdvancedParticleData> ringParticle = thump ? ParticleInit.THUMP_RING.get() : ParticleInit.CRIT_RING.get();
-            AdvancedParticleBase.spawnParticle(this.level(), ringParticle, pos.x, pos.y, pos.z, 0, 0, 0, false, (float) Math.toRadians(-this.yBodyRot), (float) Math.toRadians(xRot), 0, 0, scale, 0.75F + colorOffset, 0.75F + colorOffset, 0.75F + colorOffset, alpha, 1, duration,
+            AdvancedParticleBase.spawnParticle(this.level(), ringParticle, pos.x, pos.y, pos.z, 0, 0, 0, false, (float) Math.toRadians(-this.yBodyRot), (float) Math.toRadians(xRot), 0, 0, randomScale, 0.75F + colorOffset, 0.75F + colorOffset, 0.75F + colorOffset, alpha, 1, duration,
                     true, true, false, new ParticleComponent[]{
                             new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(alpha * 2F, 0F), false),
-                            new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(scale * 0.1F, scale * 1.5F), false)
+                            new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(randomScale * 0.1F, randomScale * 1.5F), false)
                     });
         }
     }
@@ -1169,7 +1226,8 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
                 if (!((entityRelativeAngle >= -attackArc / 2 && entityRelativeAngle <= attackArc / 2) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
                     continue;
                 }
-                Vec3 diff = inRangeEntity.position().subtract(this.position().add(Math.cos(Math.toRadians(this.yBodyRot + 90)), 0, Math.sin(Math.toRadians(this.yBodyRot + 90))));
+                double radians = Math.toRadians(this.yBodyRot + 90);
+                Vec3 diff = inRangeEntity.position().subtract(this.position().add(Math.cos(radians) * 1.5F, 0, Math.sin(radians * 1.5F)));
                 diff = diff.normalize().scale(0.05F + EMMathUtils.getTickFactor(tick, 40, true) * 0.1F);
                 inRangeEntity.setDeltaMovement(inRangeEntity.getDeltaMovement().subtract(diff));
                 if (inRangeEntity.getY() > this.getY() + 10) {
@@ -1411,7 +1469,11 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        this.playSound(SoundInit.IMMORTAL_HURT.get(), 1.5F, this.getVoicePitch());
+        if (this.damageAdaptation.isFullyAdapted(this, damageSource)) {
+            this.playSound(SoundInit.IMMORTAL_ADAPT.get(), 1F, this.getVoicePitch() + 0.1F);
+        } else {
+            this.playSound(SoundInit.IMMORTAL_HURT.get(), 1.5F, this.getVoicePitch());
+        }
         return null;
     }
 
@@ -1439,7 +1501,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     }
 
     public void anchorToGround() {
-        this.setDeltaMovement(0, this.getDeltaMovement().y > 0 ? -0.005D : this.getDeltaMovement().y, 0);
+        this.setDeltaMovement(0, !this.onGround() && this.getDeltaMovement().y > 0 ? -0.005D : this.getDeltaMovement().y, 0);
     }
 
     @Override
@@ -1499,22 +1561,15 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
         public void tick() {
             Animation animation = this.entity.getAnimation();
             if (animation == this.entity.teleportAnimation) {
-                this.lookAtTarget();
+                LivingEntity target = this.entity.getTarget();
+                if (target != null) {
+                    this.entity.lookAt(target, 90F, 30F);
+                    this.entity.getLookControl().setLookAt(target, 90F, 30F);
+                }
             } else if (animation == this.entity.spawnAnimation) {
                 //TODO 待补充
             } else if (animation == this.entity.switchStageAnimation) {
                 //TODO 待补充
-            }
-        }
-
-        private void lookAtTarget() {
-            LivingEntity target = this.entity.getLastAttacker();
-            if (this.entity.getTarget() != null) {
-                target = this.entity.getTarget();
-            }
-            if (target != null && target.isAlive()) {
-                this.entity.lookAt(target, 30F, 30F);
-                this.entity.getLookControl().setLookAt(target, 30F, 30F);
             }
         }
     }
@@ -1522,7 +1577,8 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     public enum TeleportType {
         RANDOM(0),
         FRONT(1),
-        BEHIND(2);
+        BEHIND(2),
+        SNEAK(3);
 
         TeleportType(int id) {
             this.id = (byte) id;

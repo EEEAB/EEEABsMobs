@@ -24,13 +24,14 @@ public class ImmortalAttractGoal extends AnimationAI<EntityImmortal> {
     public void tick() {
         int tick = entity.getAnimationTick();
         if (tick < 40) {
+            if (tick < 38) entity.anchorToGround();
             this.slowlyLookAtTarget();
             if (tick == 29) EntityImmortalMagicCircle.spawn(entity.level(), entity, entity.position().add(0, 0.25, 0), 2.5F, 0F, 10 + this.entity.getRandom().nextInt(11), entity.yHeadRot, EntityImmortalMagicCircle.MagicCircleType.POWER, true);
             else if (tick == 36) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.6F, entity.getVoicePitch());
             else if (tick == 39) {
-                entity.pursuit(6F, 0, 0.35);
+                entity.pursuit(8F, 0, 0.5);
                 entity.level().broadcastEntityEvent(entity, (byte) 9);
-            } else if (tick < 38) entity.setDeltaMovement(0, entity.getDeltaMovement().y > 0 ? -0.005D : entity.getDeltaMovement().y, 0);
+            }
         } else {
             if (tick == 40 || tick == 41 || tick == 42) {
                 if (tick == 40) entity.shakeGround(0F, 20F, 0.25F, 2, 3);

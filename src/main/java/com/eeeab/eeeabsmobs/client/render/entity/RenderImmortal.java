@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -32,10 +33,10 @@ public class RenderImmortal extends MobRenderer<EntityImmortal, ModelImmortal> {
 
     public RenderImmortal(EntityRendererProvider.Context context) {
         super(context, new ModelImmortal(context.bakeLayer(EMModelLayer.IMMORTAL)), 2F);
-         this.addLayer(new LayerGlow<>(this, GLOW_LAYER, 1F) {
+        this.addLayer(new LayerGlow<>(this, GLOW_LAYER, 1F, e -> e.isGlow() && !e.isInvisible()) {
 
             @Override
-            protected float getBrightness(EntityImmortal entity, float partialTicks){
+            protected float getBrightness(EntityImmortal entity, float partialTicks) {
                 return entity.glowControllerAnimation.getAnimationFraction(partialTicks);
             }
 
@@ -47,7 +48,7 @@ public class RenderImmortal extends MobRenderer<EntityImmortal, ModelImmortal> {
         this.addLayer(new LayerOuter<>(this, CORE_LAYER, true, e -> !e.isInvisible()) {
             @Override
             protected void renderLayer(PoseStack stack, VertexConsumer vertexConsumer, int packedLightIn, float partialTicks, EntityImmortal entity, boolean overlayTexture) {
-                overlayTexture = entity.getAnimation() != entity.unleashEnergyAnimation;
+                overlayTexture = entity.getAnimation() != entity.unleashEnergyAnimation && entity.hurtControllerAnimation.isStop();
                 super.renderLayer(stack, vertexConsumer, packedLightIn, partialTicks, entity, overlayTexture);
             }
 
@@ -78,45 +79,16 @@ public class RenderImmortal extends MobRenderer<EntityImmortal, ModelImmortal> {
     @Override
     public void render(EntityImmortal entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
         if (!entity.alphaControllerAnimation.isStop()) {
-            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre<>(entity, this, partialTicks, matrixStack, buffer, packedLight)))
-                return;
-            matrixStack.pushPose();
             float alpha = 1F - entity.alphaControllerAnimation.getAnimationFraction(partialTicks);
             this.shadowRadius *= alpha;
             this.shadowStrength *= alpha;
-            this.model.attackTime = this.getAttackAnim(entity, partialTicks);
-            this.model.riding = entity.isPassenger() && (entity.getVehicle() != null && entity.getVehicle().shouldRiderSit());
-            this.model.young = entity.isBaby();
-            float f = Mth.rotLerp(partialTicks, entity.yBodyRotO, entity.yBodyRot);
-            float f1 = Mth.rotLerp(partialTicks, entity.yHeadRotO, entity.yHeadRot);
-            float f2 = f1 - f;
-
-            float f6 = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
-            if (isEntityUpsideDown(entity)) {
-                f6 *= -1.0F;
-                f2 *= -1.0F;
-            }
-
-            float f7 = this.getBob(entity, partialTicks);
-            this.setupRotations(entity, matrixStack, f7, f, partialTicks);
-            matrixStack.scale(-1.0F, -1.0F, 1.0F);
-            this.scale(entity, matrixStack, partialTicks);
-            matrixStack.translate(0.0F, -1.501F, 0.0F);
-
-            this.model.prepareMobModel(entity, 0.0F, 0.0F, partialTicks);
-            this.model.setupAnim(entity, 0.0F, 0.0F, f7, f2, f6);
-
-            VertexConsumer vertexconsumer = buffer.getBuffer(EMRenderType.getGlowingCutOutEffect(getTextureLocation(entity), true));
-            int i = getOverlayCoords(entity, this.getWhiteOverlayProgress(entity, partialTicks));
-            this.model.renderToBuffer(matrixStack, vertexconsumer, packedLight, i, alpha, alpha, alpha, alpha);
-
-            if (!entity.isSpectator()) {
-                for (RenderLayer<EntityImmortal, ModelImmortal> renderlayer : this.layers) {
-                    renderlayer.render(matrixStack, buffer, packedLight, entity, 0.0F, 0.0F, partialTicks, f7, f2, f6);
-                }
-            }
-            matrixStack.popPose();
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<>(entity, this, partialTicks, matrixStack, buffer, packedLight));
+            int packedOverlay = getOverlayCoords(entity, this.getWhiteOverlayProgress(entity, partialTicks));
+            render(EMRenderType.getGlowingCutOutEffect(getTextureLocation(entity), true), entity, partialTicks, alpha, matrixStack, buffer, packedLight, packedOverlay);
+        } else if (!entity.hurtControllerAnimation.isStop()) {
+            this.shadowStrength = 1F;
+            this.shadowRadius = 2F;
+            float alpha = 1F - entity.hurtControllerAnimation.getAnimationFraction(partialTicks) * 0.85F;
+            render(EMRenderType.entityTranslucent(getTextureLocation(entity)), entity, partialTicks, alpha, matrixStack, buffer, packedLight, OverlayTexture.NO_OVERLAY);
         } else {
             this.shadowStrength = 1F;
             this.shadowRadius = 2F;
@@ -132,11 +104,55 @@ public class RenderImmortal extends MobRenderer<EntityImmortal, ModelImmortal> {
         }
     }
 
+    private void render(RenderType renderType, EntityImmortal entity, float partialTicks, float alpha, PoseStack matrixStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
+        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre<>(entity, this, partialTicks, matrixStack, buffer, packedLight))) return;
+        matrixStack.pushPose();
+        this.model.attackTime = this.getAttackAnim(entity, partialTicks);
+        boolean shouldSit = entity.isPassenger() && (entity.getVehicle() != null && entity.getVehicle().shouldRiderSit());
+        this.model.riding = shouldSit;
+        this.model.young = entity.isBaby();
+        float f = Mth.rotLerp(partialTicks, entity.yBodyRotO, entity.yBodyRot);
+        float f1 = Mth.rotLerp(partialTicks, entity.yHeadRotO, entity.yHeadRot);
+        float f2 = f1 - f;
+        float f6 = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
+        float f7 = this.getBob(entity, partialTicks);
+        this.setupRotations(entity, matrixStack, f7, f, partialTicks);
+        matrixStack.scale(-1.0F, -1.0F, 1.0F);
+        this.scale(entity, matrixStack, partialTicks);
+        matrixStack.translate(0.0F, -1.501F, 0.0F);
+
+        float f8 = 0.0F;
+        float f5 = 0.0F;
+        if (!shouldSit && entity.isAlive()) {
+            f8 = entity.walkAnimation.speed(partialTicks);
+            f5 = entity.walkAnimation.position(partialTicks);
+            if (entity.isBaby()) {
+                f5 *= 3.0F;
+            }
+            if (f8 > 1.0F) {
+                f8 = 1.0F;
+            }
+        }
+        this.model.prepareMobModel(entity, f5, f8, partialTicks);
+        this.model.setupAnim(entity, f5, f8, f7, f2, f6);
+
+        VertexConsumer vertexconsumer = buffer.getBuffer(renderType);
+        this.model.renderToBuffer(matrixStack, vertexconsumer, packedLight, packedOverlay, alpha, alpha, alpha, alpha);
+        for (RenderLayer<EntityImmortal, ModelImmortal> renderlayer : this.layers) {
+            renderlayer.render(matrixStack, buffer, packedLight, entity, f5, f8, partialTicks, f7, f2, f6);
+        }
+        matrixStack.popPose();
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<>(entity, this, partialTicks, matrixStack, buffer, packedLight));
+    }
+
     @Override
     public Vec3 getRenderOffset(EntityImmortal entity, float partialTicks) {
+        RandomSource random = entity.getRandom();
         if (entity.getAnimation() == entity.teleportAnimation && entity.getAnimationTick() > 10) {
             double d0 = 0.05D;
-            RandomSource random = entity.getRandom();
+            return new Vec3(random.nextGaussian() * d0, 0.0D, random.nextGaussian() * d0);
+        } else if (!entity.hurtControllerAnimation.isStop()) {
+            double d0 = entity.hurtControllerAnimation.getAnimationFraction(partialTicks) * 0.1D;
             return new Vec3(random.nextGaussian() * d0, 0.0D, random.nextGaussian() * d0);
         }
         return super.getRenderOffset(entity, partialTicks);
