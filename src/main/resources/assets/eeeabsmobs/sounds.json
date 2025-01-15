@@ -282,6 +282,12 @@
       "eeeabsmobs:entity/immortal/teleport2"
     ]
   },
+  "immortal.adapt": {
+    "subtitle": "subtitles.immortal.adapt",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/adapt"
+    ]
+  },
   "guling_sentinel.hurt": {
     "subtitle": "subtitles.guling_sentinel.hurt",
     "sounds": [

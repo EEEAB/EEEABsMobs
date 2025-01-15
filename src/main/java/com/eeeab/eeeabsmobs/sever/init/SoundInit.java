@@ -50,6 +50,7 @@ public class SoundInit {
     //Immortal
     public static final RegistryObject<SoundEvent> IMMORTAL_ACCUMULATING = create("immortal.accumulating");
     public static final RegistryObject<SoundEvent> IMMORTAL_ACCUMULATING_END = create("immortal.accumulating_end");
+    public static final RegistryObject<SoundEvent> IMMORTAL_ADAPT = create("immortal.adapt");
     public static final RegistryObject<SoundEvent> IMMORTAL_ATTACK = create("immortal.attack");
     public static final RegistryObject<SoundEvent> IMMORTAL_ATTACK2 = create("immortal.attack2");
     public static final RegistryObject<SoundEvent> IMMORTAL_ATTRACT = create("immortal.attract");
