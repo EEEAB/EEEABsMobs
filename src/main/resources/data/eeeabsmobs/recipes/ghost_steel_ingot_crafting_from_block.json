@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "ghost_steel_ingot",
+  "ingredients": [
+    {
+      "item": "eeeabsmobs:ghost_steel_block"
+    }
+  ],
+  "result": {
+    "item": "eeeabsmobs:ghost_steel_ingot",
+    "count": 9
+  }
+}
