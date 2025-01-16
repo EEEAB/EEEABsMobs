@@ -42,20 +42,19 @@ public class PlayerCapability {
         //唤魂项链累计伤害
         private float SSNCumulativeDamage;
         //唤魂项链内置CD
-        private int SSNInvulnerableTime;
+        private int SSNCoolingTime;
 
         @Override
         public void tick(Player player) {
-            if (this.SSNInvulnerableTime > 0) {
-                this.SSNInvulnerableTime--;
+            if (this.SSNCoolingTime > 0) {
+                this.SSNCoolingTime--;
             }
         }
 
         @Override
         public void hurt(Player player, DamageSource source, float damage) {
             Entity entity = source.getEntity();
-            if (entity != null && SSNInvulnerableTime <= 0) {
-                this.SSNInvulnerableTime = 10;
+            if (this.SSNCoolingTime <= 0 && entity != null) {
                 Item item = ItemInit.SOUL_SUMMONING_NECKLACE.get();
                 if (ICuriosApi.isLoaded()) {
                     if (ICuriosApi.INSTANCE.isPresentInventory(player, item)) {
@@ -94,6 +93,7 @@ public class PlayerCapability {
                             player.level().addFreshEntity(entity);
                         }
                     }
+                    this.SSNCoolingTime = 10;
                     this.SSNCumulativeDamage = 0;
                 }
             }
@@ -122,7 +122,7 @@ public class PlayerCapability {
 
     //能力提供器
     public static class PlayerCapabilityProvider implements ICapabilityProvider, ICapabilitySerializable<CompoundTag> {
-        private final LazyOptional<PlayerCapability.PlayerCapabilityImpl> instance = LazyOptional.of(PlayerCapability.PlayerCapabilityImpl::new);
+        private final LazyOptional<PlayerCapabilityImpl> instance = LazyOptional.of(PlayerCapabilityImpl::new);
 
         @Override
         public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {

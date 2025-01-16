@@ -156,28 +156,26 @@ public class FrenzyCapability {
         @Override
         public void onEnd(LivingEntity entity) {
             if (entity != null && this.isFrenzy) {
+                this.count = 0;
+                this.isFrenzy = false;
                 if (!entity.level().isClientSide) {
-                    //副作用：每一级增加2.5秒的持续时间
-                    int durationTick = 50 * (this.level + 1);
+                    //副作用：每一级增加6秒的持续时间
+                    int durationTick = 120 * (this.level + 1);
                     if (entity instanceof Player player) {
-                        //当玩家持有唤魂项链时 副作用持续时间减少一半
+                        //当玩家持有唤魂项链时 将不会有副作用
                         Item item = ItemInit.SOUL_SUMMONING_NECKLACE.get();
                         if (ICuriosApi.isLoaded()) {
                             if (ICuriosApi.INSTANCE.isPresentInventory(player, item)) {
-                                player.getCooldowns().addCooldown(item, 20);
-                                durationTick /= 2;
+                                return;
                             }
                         } else if (player.getInventory().items.stream().anyMatch(i -> i.is(item))) {
-                            player.getCooldowns().addCooldown(item, 20);
-                            durationTick /= 2;
+                            return;
                         }
                     }
                     entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, durationTick, 1, false, true, true));
                     entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, durationTick, this.level, false, true, true));
                     entity.addEffect(new MobEffectInstance(EffectInit.ARMOR_LOWER_EFFECT.get(), durationTick, this.level, false, true, true));
                 }
-                this.count = 0;
-                this.isFrenzy = false;
             }
         }
 

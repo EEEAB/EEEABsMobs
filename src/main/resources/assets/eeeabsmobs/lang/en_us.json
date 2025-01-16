@@ -113,7 +113,7 @@
   "item.eeeabsmobs.demolisher.tip_3": "Hold down shift + right-click to toggle between Melee and Ranged modes",
   "item.other.eeeabsmobs.demolisher.tip": "Needs more stones...",
   "item.eeeabsmobs.heart_of_pagan.tip": "Used to make frenzy potions",
-  "item.eeeabsmobs.soul_summoning_necklace.tip": "Take damage accumulates to %1$s summon Corpse",
+  "item.eeeabsmobs.soul_summoning_necklace.tip": "Take damage accumulates to %1$s summon Corpse. Can counteract the side effects brought on by the Frenzy effect",
   "item.eeeabsmobs.immortal_sword.tip": "Gives the attacker the erosion status",
   "item.eeeabsmobs.immortal_staff.tip": "Right-click to launch a shaman bomb, with a 25% base chance to fire a special projectile (this base probability is affected by luck or bad luck)",
   "item.eeeabsmobs.guardian_axe.tip_1": "Sweep damage: §l[ %1$s §l]",

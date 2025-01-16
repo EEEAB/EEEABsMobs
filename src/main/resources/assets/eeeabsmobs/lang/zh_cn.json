@@ -113,7 +113,7 @@
   "item.eeeabsmobs.demolisher.tip_3": "按住Shift+右键在近战与远程模式之间切换",
   "item.other.eeeabsmobs.demolisher.tip": "需要更多的石头...",
   "item.eeeabsmobs.heart_of_pagan.tip": "用于炼制狂乱药水",
-  "item.eeeabsmobs.soul_summoning_necklace.tip": "承受伤害累计达到 %1$s 召唤死尸",
+  "item.eeeabsmobs.soul_summoning_necklace.tip": "承受伤害累计达到 %1$s 召唤死尸。可抵消狂乱效果带来的副作用",
   "item.eeeabsmobs.immortal_sword.tip": "赋予被攻击者侵蚀状态",
   "item.eeeabsmobs.immortal_staff.tip": "右键发射巫师炸弹，有25%基准发射特殊弹丸（基础概率受幸运或霉运影响）",
   "item.eeeabsmobs.guardian_axe.tip_1": "横扫伤害：§l[ %1$s §l]",

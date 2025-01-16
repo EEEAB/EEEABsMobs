@@ -113,7 +113,7 @@
   "item.eeeabsmobs.demolisher.tip_3": "Hold down shift + right-click to toggle between Melee and Ranged modes",
   "item.other.eeeabsmobs.demolisher.tip": "Нужно больше камней...",
   "item.eeeabsmobs.heart_of_pagan.tip": "Используется для приготовления зелья ярости",
-  "item.eeeabsmobs.soul_summoning_necklace.tip": "При накоплении урона в %1$s призывает труп",
+  "item.eeeabsmobs.soul_summoning_necklace.tip": "При накоплении урона в %1$s призывает труп. Can counteract the side effects brought on by the Frenzy effect",
   "item.eeeabsmobs.immortal_sword.tip": "Накладывает эффект эрозии на врага",
   "item.eeeabsmobs.immortal_staff.tip": "ПКМ для запуска бомбы, с 25% шансом запускает особый снаряд (шанс зависит от удачи или невезения)",
   "item.eeeabsmobs.guardian_axe.tip_1": "Sweep damage: §l[ %1$s §l]",
