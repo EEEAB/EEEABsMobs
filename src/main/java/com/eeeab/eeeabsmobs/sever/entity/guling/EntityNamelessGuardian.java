@@ -643,8 +643,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             BossMusicPlayer.resetBossMusic(this, SoundInit.GUARDIANS_PRELUDE.get());
         } else if (id == PLAY_CLIMAX_MUSIC_ID) {
             BossMusicPlayer.resetBossMusic(this, SoundInit.GUARDIANS_CLIMAX.get());
-        }
-        super.handleEntityEvent(id);
+        } else super.handleEntityEvent(id);
     }
 
     @Override

@@ -471,8 +471,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             this.doAroundSelfEffect(ParticleTypes.ANGRY_VILLAGER);
         } else if (id == 14) {
             this.doAroundSelfEffect(ParticleInit.WARLOCK_HEAL.get());
-        }
-        super.handleEntityEvent(id);
+        } else super.handleEntityEvent(id);
     }
 
     @Override

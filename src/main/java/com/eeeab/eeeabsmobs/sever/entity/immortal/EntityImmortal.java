@@ -377,15 +377,6 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     }
 
     @Override
-    public void handleDamageEvent(DamageSource damageSource) {
-        this.damageAdaptation.damageAfterAdaptingOnce(this, damageSource, 0F);
-        if (this.damageAdaptation.isFullyAdapted(this, damageSource)) {
-            this.hurtControllerAnimation.setTimer(10);
-        }
-        super.handleDamageEvent(damageSource);
-    }
-
-    @Override
     protected EMConfigHandler.AttributeConfig getAttributeConfig() {
         return EMConfigHandler.COMMON.MOB.IMMORTAL.THE_IMMORTAL.combatConfig;
     }
@@ -738,6 +729,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
             if (this.isSwitching() || this.immortalInvulnerableTime > 0) {
                 return;
             } else this.immortalInvulnerableTime = 2;
+            if (this.damageAdaptation.isFullyAdapted(this, this.lastDamageSource)) this.level().broadcastEntityEvent(this, (byte) 4);
         }
         super.setHealth(health);
         //if (this.getHealth() <= 0 && this.getStage() == ImmortalStage.STAGE1) this.nextBossStage();
@@ -801,7 +793,9 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
 
     @Override
     public void handleEntityEvent(byte id) {
-        if (id == 5) { //Block collision
+        if (id == 4) {
+            this.hurtControllerAnimation.setTimer(10);
+        } else if (id == 5) { //Block collision
             this.doCollisionEffect(6, 15F, 0.3F);
         } else if (id == 6) { //Punch hit
             this.doHitEffect(5, 0, 15F, 4.9F, 0.45F, false);
@@ -816,8 +810,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
         } else if (id == 11) { //Attract lose
             Vec3 pos = this.getPosOffset(true, 1.5F, this.getBbWidth() * 0.6F, this.getBbHeight() * 0.25F);
             ModParticleUtils.roundParticleOutburst(this.level(), 50, new ParticleOptions[]{new ParticleOrb.OrbData(0.46F, 0.75F, 0.88F, 3, 30)}, pos.x, pos.y, pos.z, 0.8F);
-        }
-        super.handleEntityEvent(id);
+        } else super.handleEntityEvent(id);
     }
 
     @Override

@@ -282,8 +282,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
                     ), false),
                     new ParticleComponent.PinLocationWithEntity(this, new Vec3(0, this.getBbHeight() * 0.75, 0))
             });
-        }
-        super.handleEntityEvent(id);
+        } else super.handleEntityEvent(id);
     }
 
     @Override

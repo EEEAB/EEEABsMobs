@@ -300,8 +300,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
             this.addParticlesAroundSelf(ParticleTypes.ANGRY_VILLAGER);
         } else if (id == 14) {
             this.addParticlesAroundSelf(ParticleTypes.HAPPY_VILLAGER);
-        }
-        super.handleEntityEvent(id);
+        } else super.handleEntityEvent(id);
     }
 
     @Override
