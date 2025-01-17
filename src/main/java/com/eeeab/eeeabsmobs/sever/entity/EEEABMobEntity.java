@@ -157,7 +157,7 @@ public abstract class EEEABMobEntity extends PathfinderMob {
             float damageCap = config.damageCap.get().floatValue();
             if (this.lastDamageSource == null) {
                 newDamage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(Math.min(oldDamage, damageCap), this.getArmorValue(), (float) this.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1F);
-            } else if (this.lastDamageSource != DamageSource.OUT_OF_WORLD || this.lastDamageSource != DamageSource.GENERIC) {
+            } else if (!(this.lastDamageSource == DamageSource.OUT_OF_WORLD || this.lastDamageSource == DamageSource.GENERIC)) {
                 newDamage = Math.min(oldDamage, damageCap);
             }
             if (this.intervalProtect()) newDamage = this.intervalProtector.damageAfterAdaptingOnce(this, this.lastDamageSource, newDamage);
