@@ -2,28 +2,21 @@ package com.eeeab.eeeabsmobs.sever.item;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.ForgeMod;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class ItemNetherworldKatana extends SwordItem implements ConfigurableItem {
+public class ItemNetherworldKatana extends SwordItem implements ConfigurableItem, IUnbreakableItem {
     private Multimap<Attribute, AttributeModifier> defaultModifiers;
     private static final UUID NETHERWORLD_KATANA_BASE_ENTITY_REACH_UUID = UUID.fromString("7293EB63-DAD9-4B73-A591-C0EFA6F10647");
 
@@ -57,14 +50,7 @@ public class ItemNetherworldKatana extends SwordItem implements ConfigurableItem
     }
 
     @Override
-    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
-        if (!EMConfigHandler.COMMON.ITEM.enableGhostWarriorSeriesItemDurability.get()) amount = 0;
-        return super.damageItem(stack, amount, entity, onBroken);
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, level, tooltip, flagIn);
-        if (!EMConfigHandler.COMMON.ITEM.enableGhostWarriorSeriesItemDurability.get()) tooltip.add(EMTUtils.UNABLE_BREAKS);
+    public boolean canBreakItem() {
+        return EMConfigHandler.COMMON.ITEM.enableGhostWarriorSeriesItemDurability.get();
     }
 }

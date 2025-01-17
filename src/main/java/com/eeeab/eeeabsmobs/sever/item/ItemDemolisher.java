@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class ItemDemolisher extends SwordItem implements ConfigurableItem {
+public class ItemDemolisher extends SwordItem implements ConfigurableItem, IUnbreakableItem {
     private static final Predicate<ItemStack> SUPPORTED_PROJECTILES_PREDICATE = stack -> stack.is(EMTagKey.DEMOLISHER_SUPPORTED_PROJECTILES);
     private static final Component MELEE_MODE = EMTUtils.simpleText(EMTUtils.OTHER_PREFIX, "melee_mode", ChatFormatting.YELLOW);
     private static final Component RANGED_MODE = EMTUtils.simpleText(EMTUtils.OTHER_PREFIX, "ranged_mode", ChatFormatting.YELLOW);
@@ -112,7 +112,6 @@ public class ItemDemolisher extends SwordItem implements ConfigurableItem {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.add(EMTUtils.UNABLE_BREAKS);
         boolean flag = getWeaponState(stack) == 1;
         Component component = EMTUtils.simpleText(EMTUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, EMTUtils.TIP_SUFFIX, flag ? RANGED_MODE : MELEE_MODE);
         if (flag) {
@@ -147,6 +146,11 @@ public class ItemDemolisher extends SwordItem implements ConfigurableItem {
     @Override
     public void refreshAttributesFromConfig() {
         this.defaultModifiers = creatAttributesFromConfig();
+    }
+
+    @Override
+    public boolean canBreakItem() {
+        return false;
     }
 
     /**

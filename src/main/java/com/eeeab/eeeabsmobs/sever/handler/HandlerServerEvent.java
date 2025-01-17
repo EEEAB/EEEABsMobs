@@ -19,10 +19,12 @@ import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
 import com.eeeab.eeeabsmobs.sever.init.AttributeInit;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.eeeab.eeeabsmobs.sever.item.IUnbreakableItem;
 import com.eeeab.eeeabsmobs.sever.item.ItemDemolisher;
 import com.eeeab.eeeabsmobs.sever.message.MessageFrenzyEffect;
 import com.eeeab.eeeabsmobs.sever.message.MessageVertigoEffect;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -46,6 +48,7 @@ import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
@@ -70,6 +73,24 @@ public final class HandlerServerEvent {
         if (event.getObject() instanceof Player) {
             event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "ability_processor"), new AbilityCapability.AbilityCapabilityProvider());
             event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "player_processor"), new PlayerCapability.PlayerCapabilityProvider());
+        }
+    }
+
+    @SubscribeEvent
+    public void onItemAttributeModifier(ItemAttributeModifierEvent event) {
+        if (event.getItemStack().getItem() instanceof IUnbreakableItem unbreakableItem) {
+            ItemStack itemStack = event.getItemStack();
+            CompoundTag tag = itemStack.getOrCreateTag();
+            boolean flag = tag.contains("Unbreakable");
+            if (!unbreakableItem.canBreakItem()) {
+                if (!flag) {
+                    tag.putBoolean("Unbreakable", true);
+                    tag.putBoolean("CodeAddFlag", true);
+                }
+            } else if (flag && tag.contains("CodeAddFlag")) {
+                tag.remove("Unbreakable");
+                tag.remove("CodeAddFlag");
+            }
         }
     }
 

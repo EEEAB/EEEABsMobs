@@ -43,7 +43,7 @@ public class EMTUtils {
     public static final String KEY_PREFIX = "hotkeys.";
 
     //无法破坏
-    public static final Component UNABLE_BREAKS = simpleText(ITEM_OTHER_PREFIX, "unable_breaks", ChatFormatting.BLUE);
+    public static final Component UNABLE_BREAKS = Component.translatable("item.unbreakable").withStyle(ChatFormatting.BLUE);
 
     //按住Shift
     public static final Component HOLD_SHIFT_KEY = simpleText(ITEM_PREFIX + KEY_PREFIX, "shift_down", ChatFormatting.GREEN);

@@ -37,7 +37,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
+public class ItemGuardianAxe extends AxeItem implements ConfigurableItem, IUnbreakableItem {
     private Multimap<Attribute, AttributeModifier> defaultModifiers;
     private static final UUID GUARDIAN_BASE_KNOCKBACK_RESISTANCE_UUID = UUID.fromString("BFF48EEA-FF5B-45B6-88FC-3C8FBBAF78FA");
 
@@ -80,11 +80,6 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
     }
 
     @Override
-    public boolean canBeDepleted() {
-        return false;
-    }
-
-    @Override
     public boolean hurtEnemy(ItemStack itemStack, LivingEntity hitEntity, LivingEntity livingEntity) {
         if (!hitEntity.level().isClientSide) {
             hitEntity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1F, 0.2F);
@@ -95,7 +90,6 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.add(EMTUtils.UNABLE_BREAKS);
         if (EMTUtils.SHOW_ITEM_CD) tooltip.add(EMTUtils.itemCoolTime(EMConfigHandler.COMMON.ITEM.itemGuardianAxeCoolingTime.get()));
         int i = (int) (SweepingEdgeEnchantment.getSweepingDamageRatio(EMConfigHandler.COMMON.ITEM.itemGuardianAxeSweepingLevel.get()) * 100);
         tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, ChatFormatting.GRAY, this.getDescriptionId(), Component.literal(i > 0 ? i + "%" : "1.0").withStyle(ChatFormatting.YELLOW)));
@@ -131,5 +125,10 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem {
     @Override
     public void refreshAttributesFromConfig() {
         this.defaultModifiers = this.creatAttributesFromConfig();
+    }
+
+    @Override
+    public boolean canBreakItem() {
+        return false;
     }
 }
