@@ -3,20 +3,19 @@ package com.eeeab.eeeabsmobs.sever.item;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.item.util.EMArmorMaterial;
-import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import com.eeeab.eeeabsmobs.sever.util.EMTabGroup;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.*;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
-import java.util.List;
 import java.util.function.Consumer;
 
-public class ItemGhostWarriorArmor extends ArmorItem {
+public class ItemGhostWarriorArmor extends ArmorItem implements IUnbreakableItem {
     public static final ResourceLocation LOCATION = new ResourceLocation(EEEABMobs.MOD_ID, "textures/armor/ghost_warrior_armor.png");
     public static final ResourceLocation LEGS_LOCATION = new ResourceLocation(EEEABMobs.MOD_ID, "textures/armor/ghost_warrior_armor_legs.png");
 
@@ -38,17 +37,7 @@ public class ItemGhostWarriorArmor extends ArmorItem {
     }
 
     @Override
-    public boolean canBeDepleted() {
-        return EMConfigHandler.COMMON.ITEM.enableGhostWarriorArmorItemDurability.get() && super.canBeDepleted();
-    }
-
-
-    @Override
-    public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, level, tooltip, flagIn);
-        if (!EMConfigHandler.COMMON.ITEM.enableGhostWarriorArmorItemDurability.get()) tooltip.add(EMTUtils.UNABLE_BREAKS);
-        //List<Component> componentList = EMTUtils.complexText(EMTUtils.ARMOR_PREFIX, false, EMTUtils.STYLE_GREEN,
-        //        "full_suit_of_armor", "ghost_warrior_full_suit_of_armor");
-        //tooltip.addAll(componentList);
+    public boolean canBreakItem() {
+        return EMConfigHandler.COMMON.ITEM.enableGhostWarriorSeriesItemDurability.get();
     }
 }

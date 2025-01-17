@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.client.render.effects;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
+import com.eeeab.eeeabsmobs.client.render.FlatTextureRenderer;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -9,7 +10,6 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -20,7 +20,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class RenderShamanBomb extends EntityRenderer<EntityShamanBomb> {
+public class RenderShamanBomb extends FlatTextureRenderer<EntityShamanBomb> {
     private static final float SCALE = 2.0F;
     private static final ResourceLocation N_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/projectile/shaman_bomb.png");
     private static final ResourceLocation D_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/projectile/shaman_bomb_dangerous.png");
@@ -42,6 +42,11 @@ public class RenderShamanBomb extends EntityRenderer<EntityShamanBomb> {
     }
 
     @Override
+    public ResourceLocation getTextureLocation(EntityShamanBomb entity) {
+        return entity.isDangerous() ? D_TEXTURE : N_TEXTURE;
+    }
+
+    @Override
     public void render(EntityShamanBomb entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
         matrixStack.pushPose();
         float fraction = entity.scaleControlled.getAnimationFraction(partialTicks);
@@ -50,34 +55,21 @@ public class RenderShamanBomb extends EntityRenderer<EntityShamanBomb> {
         matrixStack.translate(0F, 0.5F - 0.5F * fraction, 0F);
         matrixStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
         matrixStack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
-        drawCircle(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
-
-    }
-
-    private void drawCircle(EntityShamanBomb entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
-        PoseStack.Pose posestack$pose = matrixStack.last();
-        Matrix4f matrix4f = posestack$pose.pose();
-        Matrix3f matrix3f = posestack$pose.normal();
-        VertexConsumer vertexconsumer;
-        if (!entity.isDangerous()) {
-            vertexconsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(N_TEXTURE));
-        } else {
-            vertexconsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(D_TEXTURE));
-        }
-        vertex(vertexconsumer, matrix4f, matrix3f, packedLight, 0.0F, 0, 0, 1);
-        vertex(vertexconsumer, matrix4f, matrix3f, packedLight, 1.0F, 0, 1, 1);
-        vertex(vertexconsumer, matrix4f, matrix3f, packedLight, 1.0F, 1, 1, 0);
-        vertex(vertexconsumer, matrix4f, matrix3f, packedLight, 0.0F, 1, 0, 0);
+        VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(this.getTextureLocation(entity)));
+        renderFlatQuad(matrixStack, vertexconsumer, packedLight, 1F, 0F, 0F, 1F, 1F, 1F, Quad.XY);
         matrixStack.popPose();
-        super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
-    }
-
-    private static void vertex(VertexConsumer consumer, Matrix4f matrix4f, Matrix3f matrix3f, int lightMapUV, float x, int y, int u, int v) {
-        consumer.vertex(matrix4f, x - 0.5F, (float) y - 0.25F, 0.0F).color(255, 255, 255, 255).uv((float) u, (float) v).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMapUV).normal(matrix3f, 0.0F, 1.0F, 0.0F).endVertex();
     }
 
     @Override
-    public ResourceLocation getTextureLocation(EntityShamanBomb entity) {
-        return entity.isDangerous() ? D_TEXTURE : N_TEXTURE;
+    protected void drawVertex(Matrix4f matrix, Matrix3f normals, VertexConsumer vertexBuilder, float offsetX, float offsetY, float offsetZ, float textureX, float textureY, float alpha, int packedLightIn) {
+        offsetX = offsetX < 0 ? 0 : offsetX;
+        offsetY = offsetY < 0 ? 0 : offsetY;
+        vertexBuilder.vertex(matrix, offsetX - 0.5F, offsetY - 0.25F, offsetZ)
+                .color(1F, 1F, 1F, alpha)
+                .uv(textureX, textureY)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(packedLightIn)
+                .normal(normals, 0F, 1F, 0F)
+                .endVertex();
     }
 }

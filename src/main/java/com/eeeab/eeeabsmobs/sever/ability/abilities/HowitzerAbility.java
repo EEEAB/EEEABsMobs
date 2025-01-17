@@ -5,6 +5,7 @@ import com.eeeab.eeeabsmobs.sever.ability.AbilityPeriod;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityType;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGrenade;
+import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -29,11 +30,12 @@ public class HowitzerAbility extends Ability<Player> {
             EntityGrenade grenade = new EntityGrenade(level, user);
             grenade.setMaxDamage(EMConfigHandler.COMMON.ITEM.itemHowitzerGrenadeDamage.get().floatValue());
             grenade.setRadius(EMConfigHandler.COMMON.ITEM.itemHowitzerGrenadeExplosionRadius.get().floatValue());
-            Vec3 lookAngle = user.getLookAngle();
-            Vec3 vec3 = user.position().add(lookAngle);
-            grenade.shoot(lookAngle.x, lookAngle.y, lookAngle.z, 0.7F, 1F);
-            grenade.setPos(vec3.x + width * 0.6F * Math.cos(yBodyRadians), user.getY(0.6D), vec3.z + width * 0.6F * Math.sin(yBodyRadians));
+            Vec3 lookPos = user.getLookAngle();
+            Vec3 playerPos = user.position();
+            grenade.shoot(lookPos.x, lookPos.y, lookPos.z, 0.7F, 1F);
+            grenade.setPos(playerPos.x + width * 0.7F * Math.cos(yBodyRadians), user.getY(0.6D), playerPos.z + width * 0.7F * Math.sin(yBodyRadians));
             level.addFreshEntity(grenade);
         }
+        user.playSound(SoundInit.LAUNCH_GRENADE.get());
     }
 }

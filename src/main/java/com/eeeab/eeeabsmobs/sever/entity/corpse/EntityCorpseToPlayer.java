@@ -5,11 +5,13 @@ import com.eeeab.animate.server.ai.animation.AnimationActivate;
 import com.eeeab.animate.server.ai.animation.AnimationMelee;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.*;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player.OwnerProtectToPlayerGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player.OwnerResetToPlayerGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player.PlayerHatredRedirectionGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player.ReFindPlayerGoal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModMobType;
+import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -17,7 +19,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
@@ -90,6 +95,11 @@ public class EntityCorpseToPlayer extends EEEABMobLibrary implements IEntity, Gl
         return false;
     }
 
+    @Override
+    protected EMConfigHandler.AttributeConfig getAttributeConfig() {
+        return EMConfigHandler.COMMON.MOB.MINION.CORPSE_MINION.combatConfig;
+    }
+
     public void setInitSpawn() {
         this.playAnimation(spawnAnimation);
         this.active = false;
@@ -113,8 +123,8 @@ public class EntityCorpseToPlayer extends EEEABMobLibrary implements IEntity, Gl
         this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> attackAnimation3, 9, 2F, 1.5F, 1.5F));
         this.goalSelector.addGoal(2, new AnimationMeleeAI<>(this, 1.2D, 5, () -> attackAnimation1, () -> attackAnimation2, () -> attackAnimation3));
         this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(2, new OwnerResetToPlayerGoal<>(this, 12F));
-        this.goalSelector.addGoal(3, new OwnerProtectToPlayerGoal<>(this, 12F));
+        this.goalSelector.addGoal(2, new ReFindPlayerGoal<>(this));
+        this.goalSelector.addGoal(3, new PlayerHatredRedirectionGoal<>(this, 12F));
     }
 
     @Override
@@ -160,6 +170,21 @@ public class EntityCorpseToPlayer extends EEEABMobLibrary implements IEntity, Gl
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_ACTIVE, true);
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        if (!this.level.isClientSide && this.getOwner() != null && source.getEntity() != null) {
+            float healAmount = EMConfigHandler.COMMON.MOB.MINION.CORPSE_MINION.minionDeathHealAmount.get().floatValue();
+            this.getOwner().heal(healAmount);
+            if (healAmount > 0 && this.level instanceof ServerLevel serverLevel) {
+                this.level.playSound(null, this.getOwner().blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1F, 0.9F + this.random.nextFloat() * 0.2F);
+                for (int i = 0; i < 5; i++) {
+                    serverLevel.sendParticles(ParticleInit.WARLOCK_HEAL.get(), this.getOwner().getRandomX(1.5), this.getOwner().getY(0.5D), this.getOwner().getRandomZ(1.5), 1, this.random.nextGaussian() * 0.1D, this.random.nextGaussian() * 0.1D, this.random.nextGaussian() * 0.1D, 0.5D);
+                }
+            }
+        }
+        super.die(source);
     }
 
     @Override

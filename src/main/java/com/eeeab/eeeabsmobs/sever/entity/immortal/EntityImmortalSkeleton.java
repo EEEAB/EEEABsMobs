@@ -21,7 +21,7 @@ public class EntityImmortalSkeleton extends EntityAbsImmortalSkeleton implements
 
     @Override
     protected int getCareerId(RandomSource random) {
-        return random.nextIntBetweenInclusive(-1, 2);
+        return random.nextIntBetweenInclusive(0, 3);
     }
 
     @Override

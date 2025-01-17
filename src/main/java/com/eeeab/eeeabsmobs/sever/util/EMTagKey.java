@@ -14,11 +14,12 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 public class EMTagKey {
     public static final TagKey<Structure> EYE_OF_GULING = registerTagKey(Registry.STRUCTURE_REGISTRY, "eye_of_guling");
     public static final TagKey<Structure> EYE_OF_BLOODY_ALTAR = registerTagKey(Registry.STRUCTURE_REGISTRY, "eye_of_bloody_altar");
-    public static final TagKey<Biome> GULING_BIOMES = registerTagKey(Registry.BIOME_REGISTRY, "guling_biomes");
-    public static final TagKey<Biome> BLOODY_ALTAR_BIOMES = registerTagKey(Registry.BIOME_REGISTRY, "bloody_altar_biomes");
+    public static final TagKey<Biome> HAS_GULING = registerTagKey(Registry.BIOME_REGISTRY, "has_structure/guling");
+    public static final TagKey<Biome> HAS_BLOODY_ALTAR = registerTagKey(Registry.BIOME_REGISTRY, "has_structure/bloody_altar");
     public static final TagKey<EntityType<?>> TRAP_WHITELIST = registerTagKey(Registry.ENTITY_TYPE_REGISTRY, "trap_whitelist");
     public static final TagKey<EntityType<?>> RESISTS_FORCED_CHANGE_TARGET = registerTagKey(Registry.ENTITY_TYPE_REGISTRY, "resists_forced_change_target");
     public static final TagKey<EntityType<?>> IMMORTAL_ARMY = registerTagKey(Registry.ENTITY_TYPE_REGISTRY, "immortal_army");
+    public static final TagKey<EntityType<?>> IMMORTAL_IGNORE_HUNT_TARGETS = registerTagKey(Registry.ENTITY_TYPE_REGISTRY, "immortal_ignore_hunt_targets");
     public static final TagKey<Item> DEMOLISHER_SUPPORTED_PROJECTILES = registerTagKey(Registry.ITEM_REGISTRY, "demolisher_supported_projectiles");
 
     private static <T> TagKey<T> registerTagKey(ResourceKey<Registry<T>> registry, String key) {

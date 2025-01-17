@@ -174,11 +174,7 @@ public abstract class EMHierarchicalModel<E extends Entity> extends EntityModel<
     /****************** 以下是基于 AnimationDefinition 播放动画方法 ****************** */
 
     public Optional<ModelPart> getAnyDescendantWithName(String name) {
-        return name.equals("root") ? Optional.of(this.root()) : this.root().getAllParts().filter((part) -> {
-            return part.hasChild(name);
-        }).findFirst().map((part) -> {
-            return part.getChild(name);
-        });
+        return name.equals("root") ? Optional.of(this.root()) : this.root().getAllParts().filter((part) -> part.hasChild(name)).findFirst().map((part) -> part.getChild(name));
     }
 
     protected void animate(AnimationState animationState, AnimationDefinition animationDefinition, float ageInTicks) {
@@ -187,9 +183,12 @@ public abstract class EMHierarchicalModel<E extends Entity> extends EntityModel<
 
     protected void animate(AnimationState animationState, AnimationDefinition animationDefinition, float ageInTicks, float speed) {
         animationState.updateTime(ageInTicks, speed);
-        animationState.ifStarted((state) -> {
-            EMKeyframeAnimations.animate(this, animationDefinition, state.getAccumulatedTime(), 1.0F, ANIMATION_VECTOR_CACHE);
-        });
+        animationState.ifStarted((state) -> EMKeyframeAnimations.animate(this, animationDefinition, state.getAccumulatedTime(), 1.0F, ANIMATION_VECTOR_CACHE));
+    }
+
+    protected void animate(AnimationState animationState, AnimationDefinition animationDefinition, float ageInTicks, float speed, float scale) {
+        animationState.updateTime(ageInTicks, speed);
+        animationState.ifStarted((state) -> EMKeyframeAnimations.animate(this, animationDefinition, state.getAccumulatedTime(), scale, ANIMATION_VECTOR_CACHE));
     }
 
     protected void animateWalk(AnimationDefinition animationDefinition, float limbSwing, float limbSwingAmount, float maxAnimationSpeed, float animationScaleFactor) {

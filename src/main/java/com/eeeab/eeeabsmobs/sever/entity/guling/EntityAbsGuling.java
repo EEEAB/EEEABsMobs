@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
@@ -41,10 +42,30 @@ public abstract class EntityAbsGuling extends EEEABMobLibrary implements Enemy {
         }
     }
 
+    @Override
+    public boolean isAlliedTo(Entity entity) {
+        if (super.isAlliedTo(entity)) {
+            return true;
+        } else if (entity instanceof EntityAbsGuling) {
+            return EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() && this.getTeam() == null && entity.getTeam() == null;
+        } else {
+            return false;
+        }
+    }
+
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance instance, MobSpawnType spawnType, @Nullable SpawnGroupData groupData, @Nullable CompoundTag tag) {
         return groupData;
+    }
+
+    protected int getCoolingTimerUtil(int maxCooling, int minCooling, float healthPercentage) {
+        float maximumCoolingPercentage = 1 - healthPercentage;
+        float ratio = 1 - (this.getHealthPercentage() / 100);
+        if (ratio > maximumCoolingPercentage) {
+            ratio = maximumCoolingPercentage;
+        }
+        return (int) (maxCooling - (ratio / maximumCoolingPercentage) * (maxCooling - minCooling));
     }
 
     protected void doWalkEffect(int amount) {

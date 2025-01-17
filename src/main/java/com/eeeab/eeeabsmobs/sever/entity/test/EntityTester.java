@@ -4,11 +4,12 @@ import com.eeeab.animate.server.ai.animation.AnimationActivate;
 import com.eeeab.animate.server.ai.animation.AnimationDeactivate;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
-import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -21,6 +22,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -43,6 +45,11 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
     public EntityTester(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
         active = true;
+        AttributeInstance healthAttribute = this.getAttribute(Attributes.MAX_HEALTH);
+        if (healthAttribute != null) {
+            healthAttribute.setBaseValue(EMConfigHandler.COMMON.ENTITY.testerMaxHealth.get());
+            this.setHealth(this.getMaxHealth());
+        }
     }
 
     @Override
@@ -94,11 +101,24 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
     public boolean hurt(DamageSource source, float damage) {
         if (this.level.isClientSide) {
             return false;
-        } else if (!(source == DamageSource.OUT_OF_WORLD || source == DamageSource.GENERIC)) {
-            this.setDamage(damage);
-            damage = 0;
+        } else if (!source.isBypassInvul() && source.getEntity() == null && EMConfigHandler.COMMON.ENTITY.immuneToEnvironmentalOrStatusDamage.get()) {
+            return false;
+        } else {
+            this.lastDamageSource = source;
+            return super.hurt(source, damage);
         }
-        return super.hurt(source, damage);
+    }
+
+    @Override
+    public void setHealth(float health) {
+        if (!this.level.isClientSide && health < this.getHealth()) {
+            if (this.lastDamageSource != null && !this.lastDamageSource.isBypassInvul()) {
+                this.setDamage(this.getHealth() - health);
+                health = this.getMaxHealth();
+                this.lastDamageSource = null;
+            }
+        }
+        super.setHealth(health);
     }
 
     @Nullable
@@ -134,7 +154,7 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
         if (player.isShiftKeyDown()) {
             this.setDamage(0.0);
             this.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP);
-            player.displayClientMessage(Component.literal("reset success").setStyle(EMTUtils.STYLE_GREEN), true);
+            player.displayClientMessage(Component.literal("reset success").withStyle(ChatFormatting.GREEN), true);
             return InteractionResult.SUCCESS;
         }
         if (this.isNoAnimation()) {

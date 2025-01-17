@@ -1,7 +1,10 @@
 package com.eeeab.eeeabsmobs.sever.entity.guling;
 
 import com.eeeab.animate.server.ai.AnimationAI;
-import com.eeeab.animate.server.ai.animation.*;
+import com.eeeab.animate.server.ai.animation.AnimationActivate;
+import com.eeeab.animate.server.ai.animation.AnimationDeactivate;
+import com.eeeab.animate.server.ai.animation.AnimationDie;
+import com.eeeab.animate.server.ai.animation.AnimationHurt;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
@@ -17,7 +20,6 @@ import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -91,16 +93,6 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
     @Override
     protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
         return size.height * 0.75F;
-    }
-
-    @Override
-    public int getMaxHeadXRot() {
-        return 180;
-    }
-
-    @Override
-    public int getMaxHeadYRot() {
-        return 180;
     }
 
     @Override//被方块阻塞
@@ -292,10 +284,9 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
                             new float[]{0.0f, 0.6f, 0.6f, 0.0f},
                             new float[]{0f, 0.3f, 0.8f, 1f}
                     ), false),
-                    new ParticleComponent.PinLocation(new Vec3[]{this.position().add(0, this.getBbHeight() * 0.75, 0)})
+                    new ParticleComponent.PinLocationWithEntity(this, new Vec3(0, this.getBbHeight() * 0.75, 0))
             });
-        }
-        super.handleEntityEvent(id);
+        } else super.handleEntityEvent(id);
     }
 
     @Override

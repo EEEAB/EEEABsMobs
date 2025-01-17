@@ -25,7 +25,7 @@ public class EntityElectromagnetic extends EntityMagicEffects {
     private float damage = 5.0F;
     private float shockSpeed = 5;
     private float yaw = 0;
-    private static final EntityDataAccessor<Float> SIZE = SynchedEntityData.defineId(EntityElectromagnetic.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_SIZE = SynchedEntityData.defineId(EntityElectromagnetic.class, EntityDataSerializers.FLOAT);
 
     public EntityElectromagnetic(EntityType<? extends EntityElectromagnetic> type, Level world) {
         super(type, world);
@@ -60,11 +60,11 @@ public class EntityElectromagnetic extends EntityMagicEffects {
                 this.playSound(soundtype.getStepSound(), 1.0F, soundtype.getPitch());
             }
 
-            for (int p = 0; p < 4 * Mth.clamp((int) Math.pow((double) this.entityData.get(SIZE), 1.5), 1, 30); ++p) {
+            for (int p = 0; p < 4 * Mth.clamp((int) Math.pow((double) this.entityData.get(DATA_SIZE), 1.5), 1, 30); ++p) {
                 if (this.random.nextFloat() < 0.8F) {
-                    this.level.addParticle((new BlockParticleOption(ParticleTypes.BLOCK, blockState)).setPos(pos), this.getX() + ((double) this.random.nextFloat() - 0.5) * (double) this.entityData.get(SIZE), this.getY(), this.getZ() + ((double) this.random.nextFloat() - 0.5) * (double) this.entityData.get(SIZE), 4.0 * ((double) this.random.nextFloat() - 0.5), (double) this.random.nextFloat() * 5.0 + 0.5, ((double) this.random.nextFloat() - 0.5) * 4.0);
+                    this.level.addParticle((new BlockParticleOption(ParticleTypes.BLOCK, blockState)).setPos(pos), this.getX() + ((double) this.random.nextFloat() - 0.5) * (double) this.entityData.get(DATA_SIZE), this.getY(), this.getZ() + ((double) this.random.nextFloat() - 0.5) * (double) this.entityData.get(DATA_SIZE), 4.0 * ((double) this.random.nextFloat() - 0.5), (double) this.random.nextFloat() * 5.0 + 0.5, ((double) this.random.nextFloat() - 0.5) * 4.0);
                 } else {
-                    this.level.addParticle(ParticleInit.GUARDIAN_SPARK.get(), this.getX() + ((double) this.random.nextFloat() - 0.5) * (double) this.entityData.get(SIZE), this.getY(), this.getZ() + ((double) this.random.nextFloat() - 0.5) * (double) this.entityData.get(SIZE), 0, 0, 0);
+                    this.level.addParticle(ParticleInit.GUARDIAN_SPARK.get(), this.getX() + ((double) this.random.nextFloat() - 0.5) * (double) this.entityData.get(DATA_SIZE), this.getY(), this.getZ() + ((double) this.random.nextFloat() - 0.5) * (double) this.entityData.get(DATA_SIZE), 0, 0, 0);
                 }
             }
         }
@@ -72,7 +72,7 @@ public class EntityElectromagnetic extends EntityMagicEffects {
         if (!this.level.isClientSide && this.tickCount % this.shockSpeed == 0) {
             Vec3 lookVec = this.calculateViewVector(0.0F, this.yaw);
             this.setPos(this.getX() + lookVec.x, this.getY(), this.getZ() + lookVec.z);
-            AABB attackRange = ModEntityUtils.makeAABBWithSize(this.getX(), this.getY(), this.getZ(), 0.0, (double) this.entityData.get(SIZE), 0.6, (double) this.entityData.get(SIZE));
+            AABB attackRange = ModEntityUtils.makeAABBWithSize(this.getX(), this.getY(), this.getZ(), 0.0, (double) this.entityData.get(DATA_SIZE), 0.6, (double) this.entityData.get(DATA_SIZE));
             for (LivingEntity livingentity : this.level.getEntitiesOfClass(LivingEntity.class, attackRange)) {
                 if (this.caster == null) {
                     if (livingentity.hurt(DamageSource.MAGIC, this.damage)) {
@@ -98,7 +98,7 @@ public class EntityElectromagnetic extends EntityMagicEffects {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(SIZE, 2.0F);
+        this.entityData.define(DATA_SIZE, 2.0F);
     }
 
     private void strongKnockBlock(Entity entity) {
@@ -109,7 +109,7 @@ public class EntityElectromagnetic extends EntityMagicEffects {
     }
 
     public void setSize(float input) {
-        this.entityData.set(SIZE, input);
+        this.entityData.set(DATA_SIZE, input);
     }
 
     public static void shoot(Level world, LivingEntity caster, float damage, float size, int range, int speed, float yaw) {

@@ -1,9 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.init;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.client.particle.ParticleCritRing;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
-import com.eeeab.eeeabsmobs.client.particle.ParticlePuncturedAirFlow;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleData;
@@ -22,7 +20,8 @@ public class ParticleInit {
 
     public static final RegistryObject<SimpleParticleType> GUARDIAN_SPARK = PARTICLES.register("guardian_spark", () -> new SimpleParticleType(true));
     public static final RegistryObject<SimpleParticleType> POISON = PARTICLES.register("poison", () -> new SimpleParticleType(false));
-    public static final RegistryObject<SimpleParticleType> VERTICAL_LINE = PARTICLES.register("vertical_line", () -> new SimpleParticleType(false));
+    public static final RegistryObject<SimpleParticleType> WARLOCK_HEAL = PARTICLES.register("warlock_heal", () -> new SimpleParticleType(false));
+    public static final RegistryObject<SimpleParticleType> IMMORTAL_EXPLOSION = PARTICLES.register("immortal_explosion", () -> new SimpleParticleType(true));
     public static final RegistryObject<ParticleType<ParticleOrb.OrbData>> ORB = PARTICLES.register("orb", () -> new ParticleType<ParticleOrb.OrbData>(false, ParticleOrb.OrbData.DESERIALIZER) {
         @Override
         public Codec<ParticleOrb.OrbData> codec() {
@@ -41,18 +40,6 @@ public class ParticleInit {
             return ParticleRing.RingData.CODEC(RING.get());
         }
     });
-    public static final RegistryObject<ParticleType<ParticlePuncturedAirFlow.PuncturedAirFlowData>> PUNCTURED_AIR_FLOW = PARTICLES.register("punctured_air_flow", () -> new ParticleType<ParticlePuncturedAirFlow.PuncturedAirFlowData>(false, ParticlePuncturedAirFlow.PuncturedAirFlowData.DESERIALIZER) {
-        @Override
-        public Codec<ParticlePuncturedAirFlow.PuncturedAirFlowData> codec() {
-            return ParticlePuncturedAirFlow.PuncturedAirFlowData.PAFCODEC(PUNCTURED_AIR_FLOW.get());
-        }
-    });
-    public static final RegistryObject<ParticleType<ParticleCritRing.CritRingData>> CRIT_RING = PARTICLES.register("crit_ring", () -> new ParticleType<ParticleCritRing.CritRingData>(false, ParticleCritRing.CritRingData.DESERIALIZER) {
-        @Override
-        public Codec<ParticleCritRing.CritRingData> codec() {
-            return ParticleCritRing.CritRingData.CRCODEC(CRIT_RING.get());
-        }
-    });
 
     public static final RegistryObject<ParticleType<AdvancedParticleData>> SPELL_CASTING = ParticleInit.registerAdvancedParticle("spell_casting", AdvancedParticleData.DESERIALIZER);
     public static final RegistryObject<ParticleType<AdvancedParticleData>> ADV_ORB = ParticleInit.registerAdvancedParticle("adv_orb", AdvancedParticleData.DESERIALIZER);
@@ -60,6 +47,11 @@ public class ParticleInit {
     public static final RegistryObject<ParticleType<AdvancedParticleData>> CRIMSON_EYE = ParticleInit.registerAdvancedParticle("crimson_eye", AdvancedParticleData.DESERIALIZER);
     public static final RegistryObject<ParticleType<AdvancedParticleData>> STRIP_SOUL_FIRE = ParticleInit.registerAdvancedParticle("strip_soul_fire", AdvancedParticleData.DESERIALIZER);
     public static final RegistryObject<ParticleType<AdvancedParticleData>> GLOW = ParticleInit.registerAdvancedParticle("glow", AdvancedParticleData.DESERIALIZER);
+    public static final RegistryObject<ParticleType<AdvancedParticleData>> ADV_RING = ParticleInit.registerAdvancedParticle("adv_ring", AdvancedParticleData.DESERIALIZER);
+    public static final RegistryObject<ParticleType<AdvancedParticleData>> BIG_RING = ParticleInit.registerAdvancedParticle("big_ring", AdvancedParticleData.DESERIALIZER);
+    public static final RegistryObject<ParticleType<AdvancedParticleData>> CRIT_RING = ParticleInit.registerAdvancedParticle("crit_ring", AdvancedParticleData.DESERIALIZER);
+    public static final RegistryObject<ParticleType<AdvancedParticleData>> THUMP_RING = ParticleInit.registerAdvancedParticle("thump_ring", AdvancedParticleData.DESERIALIZER);
+    public static final RegistryObject<ParticleType<AdvancedParticleData>> PUNCTURED_AIR_RING = ParticleInit.registerAdvancedParticle("punctured_air_ring", AdvancedParticleData.DESERIALIZER);
     public static final RegistryObject<ParticleType<RibbonParticleData>> FLAT_RIBBON = ParticleInit.registerRibbonParticle("flat_ribbon", RibbonParticleData.DESERIALIZER);
 
     private static RegistryObject<ParticleType<AdvancedParticleData>> registerAdvancedParticle(String key, ParticleOptions.Deserializer<AdvancedParticleData> deserializer) {

@@ -7,8 +7,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
@@ -174,7 +172,6 @@ public class VertigoCapability {
         @Override
         public void tick(LivingEntity entity) {
             if (isVertigo) {
-                entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 2, 50, false, false, false));
                 if (entity.level.isClientSide()) {
                     for (int i = 0; i < 5; i++) {
                         Vec3 pos = new Vec3(entity.getX(), entity.getY() + (entity.getBbHeight() + 0.25D), entity.getZ()).add(new Vec3(1.0D, 0, 0).yRot((float) Math.toRadians(entity.getRandom().nextInt(360))));

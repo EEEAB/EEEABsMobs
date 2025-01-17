@@ -10,6 +10,7 @@ import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
+import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.advancements.EMCriteriaTriggers;
@@ -19,17 +20,19 @@ import com.eeeab.eeeabsmobs.sever.entity.IBoss;
 import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
 import com.eeeab.eeeabsmobs.sever.entity.XpReward;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.*;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate.*;
 import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityFallingBlock;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianLaser;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.entity.util.ShockWaveUtils;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
+import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -66,14 +69,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.*;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeMod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -161,6 +164,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     private boolean fmFlag = true;
     private int attackTick;
     private int destroyBlocksTick;
+    private int illegalityCount;
     //BGM高潮部分的时长
     public static final int MADNESS_TICK = 1300;
     public static final int NEVER_STOP = -1;
@@ -178,9 +182,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     private final static int ROBUST_ATTACK_TICK = 650;
     private final static int WEAK_STATE_TICK = 160;
     private final static int HARD_MODE_STATE_TICK = 80;
+    private static final byte PLAY_PRELUDE_MUSIC_ID = 75;
+    private static final byte PLAY_CLIMAX_MUSIC_ID = 76;
     private final EntityNamelessGuardianPart core;
     private final EntityNamelessGuardianPart[] subEntities;
-    private final DynamicGameEventListener<EntityNamelessGuardian.Listener> dynamicListener;
+    private final DynamicGameEventListener<Listener> dynamicListener;
     private static final float[][] ROBUST_ATTACK_BLOCK_OFFSETS = {
             {-0.5F, -0.5F},
             {-0.5F, 0.5F},
@@ -215,7 +221,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     public float getStepHeight() {
-        return 1.5F;
+        return 2.5F;
     }
 
     @Override//可以站立的流体
@@ -235,8 +241,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override//强制添加药水效果
     public void forceAddEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        if (this.isActive() && ModEntityUtils.isBeneficial(effectInstance.getEffect()))
-            super.forceAddEffect(effectInstance, entity);
+        if (this.isActive() && ModEntityUtils.isBeneficial(effectInstance.getEffect())) super.forceAddEffect(effectInstance, entity);
     }
 
     @Override//添加效果时额外条件
@@ -269,6 +274,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     @Override
     public boolean removeWhenFarAway(double distance) {
         return false;
+    }
+
+    @Override
+    public boolean canDisableShield() {
+        return true;
     }
 
     @Override
@@ -305,6 +315,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     @Override
+    protected boolean intervalProtect() {
+        return EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.intervalProtect.get() || this.isChallengeMode();
+    }
+
+    @Override
     protected boolean showBossBloodBars() {
         return EMConfigHandler.COMMON.OTHER.enableShowBloodBars.get();
     }
@@ -320,16 +335,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     @Override
-    public int getMaxHeadXRot() {
-        return 30;
-    }
-
-    @Override
-    public int getMaxHeadYRot() {
-        return 30;
-    }
-
-    @Override
     protected boolean isAffectedByFluids() {
         return !(this.getAnimation() == this.leapAnimation || this.getAnimation() == this.smashDownAnimation);
     }
@@ -337,7 +342,10 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     @Override
     protected void onAnimationStart(Animation animation) {
         if (!this.level.isClientSide) {
-            if (animation == this.weakAnimation1) {
+            if (animation == this.roarAnimation) {
+                if (!this.isChallengeMode()) this.level.broadcastEntityEvent(this, PLAY_CLIMAX_MUSIC_ID);
+            } else if (animation == this.weakAnimation1) {
+                if (!this.isChallengeMode()) this.level.broadcastEntityEvent(this, PLAY_PRELUDE_MUSIC_ID);
                 this.setExecuteWeak(true);
                 this.setPowered(false);
                 int duration = Difficulty.HARD.equals(this.level.getDifficulty()) ? HARD_MODE_STATE_TICK : WEAK_STATE_TICK;
@@ -354,11 +362,17 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         if (!this.level.isClientSide) {
             if (animation == this.deactivateAnimation || animation == this.activateAnimation) {
                 this.fmFlag = true;
-                this.attackTick = this.madnessTick = this.guardianInvulnerableTime = 0;
+                this.attackTick = this.madnessTick = this.nextMadnessTick = this.guardianInvulnerableTime = 0;
                 this.setExecuteWeak(false);
+                this.setPowered(false);
                 this.resetTimeOutToUseSkill();
+                if (this.outOfCombatFlag()) {
+                    this.setIllegalityCount(0);
+                    if (EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.enableNonCombatHeal.get()) this.heal(this.getMaxHealth());
+                }
             } else if (animation == this.roarAnimation) {
                 this.setMadnessTick(this.isChallengeMode() ? NEVER_STOP : MADNESS_TICK);
+                this.setPowered(true);
                 this.setRobustTick();
                 if (this.isFirstMadness() && !this.isChallengeMode()) this.fmFlag = false;
                 this.laserTick = this.pounceTick = this.smashTick = this.attackTick = 0;
@@ -404,7 +418,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
             @Override
             public void tick() {
-                setDeltaMovement(0, getDeltaMovement().y, 0);
+                entity.anchorToGround();
                 if (entity.getAnimation() == entity.weakAnimation1) {
                     if (entity.getAnimationTick() >= entity.weakAnimation1.getDuration() - 1) {
                         entity.playAnimation(entity.weakAnimation2);
@@ -431,7 +445,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             }
         });
         this.goalSelector.addGoal(1, new GuardianShootLaserGoal(this, () -> laserAnimation));
-        this.goalSelector.addGoal(2, new AnimationRepel<>(this, () -> concussionAnimation, 6.5F, 8, 2.5F, 0.2F, true));
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> concussionAnimation, 6.5F, 8, 2.5F, 0.2F, true));
         this.goalSelector.addGoal(2, new GuardianAIGoal(this));
     }
 
@@ -474,7 +488,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 this.active = true;
             } else if (this.noConflictingTasks() && !this.isNoAi()) {
                 if (this.isActive()) {
-                    if (this.getTarget() == null && !this.isPowered() && zza == 0 && this.isAtRestPos()) {
+                    if ((this.outOfCombatFlag() || this.getTarget() == null && !this.isPowered()) && zza == 0 && this.isAtRestPos()) {
                         this.playAnimation(this.deactivateAnimation);
                         this.setActive(false);
                     }
@@ -485,7 +499,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             }
 
             if (!this.isUnnatural()) {
-                if (this.noConflictingTasks() && this.getTarget() == null && this.getNavigation().isDone() && !this.isAtRestPos() && this.isActive()) {
+                if (this.noConflictingTasks() && (this.getTarget() == null || this.outOfCombatFlag()) && this.getNavigation().isDone() && !this.isAtRestPos() && this.isActive()) {
                     this.moveToRestPos();
                 }
             }
@@ -500,19 +514,10 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             }
         }
 
-        this.pushEntitiesAway(1.7F, getBbHeight(), 1.7F, 1.7F);
+        if (this.isNoAnimation()) this.pushEntitiesAway(1.7F, getBbHeight(), 1.7F, 1.7F);
 
         if (!this.isActive()) {
             this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
-        }
-
-        if (this.getAnimation() != this.getNoAnimation()
-                && this.getAnimation() != this.pounceAttackAnimation1
-                && this.getAnimation() != this.pounceAttackAnimation2
-                && this.getAnimation() != this.pounceAttackAnimation3
-                && this.getAnimation() != this.roarAnimation
-                && this.getAnimation() != this.laserAnimation
-                || !this.isActive()) {
             this.yHeadRot = this.yBodyRot = this.getYRot();
         }
 
@@ -520,25 +525,28 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         if (this.getAnimation() == this.dieAnimation) {
             this.doExplodeEffect();
         } else if (this.getAnimation() == this.roarAnimation) {
-            this.setPowered(true);
             this.doRoarEffect();
         } else if (this.getAnimation() == this.concussionAnimation) {
-            this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
+            this.anchorToGround();
             if (tick == 8) {
                 ModParticleUtils.sphericalParticleOutburst(level, 10F, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleInit.GUARDIAN_SPARK.get()}, this, 2.5F, 0, 0, 3);
                 EntityCameraShake.cameraShake(level, position(), 30, 0.125F, 0, 20);
             } else if (tick > 8) {
                 this.strongKnockBlock();
             }
-            if (this.getTarget() != null) this.lookAt(getTarget(), 30F, 30F);
+            LivingEntity target = getTarget();
+            if (target != null) {
+                this.getLookControl().setLookAt(target, 30F, 30F);
+                this.lookAt(target, 30F, 30F);
+            }
         } else if (this.getAnimation() == this.attackAnimation6) {
-            if (tick == 14) this.doSplashParticlesEffect(20);
+            if (tick == 15) this.doSplashParticlesEffect(20);
         } else if (this.getAnimation() == this.shakeGroundAttackAnimation1) {
-            if (tick == 24) this.doSplashParticlesEffect(25);
+            if (tick == 25) this.doSplashParticlesEffect(25);
         } else if (this.getAnimation() == this.shakeGroundAttackAnimation2) {
-            if (tick == 17) this.doSplashParticlesEffect(20);
+            if (tick == 18) this.doSplashParticlesEffect(20);
         } else if (this.getAnimation() == this.shakeGroundAttackAnimation3) {
-            if (tick == 26) this.doSplashParticlesEffect(30);
+            if (tick == 27) this.doSplashParticlesEffect(30);
         } else if (this.getAnimation() == this.robustAttackAnimation) {
             if (tick < 35) {
                 this.preRobustAttack();
@@ -561,6 +569,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         } else if (this.getAnimation() == this.activateAnimation) {
             LivingEntity target = getTarget();
             if (target != null && tick > 40) {
+                this.getLookControl().setLookAt(target, 30F, 30F);
                 this.lookAt(target, 30F, 30F);
             }
         }
@@ -598,8 +607,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     private void strongKnockBlock() {
         List<Entity> entities = getNearByEntities(Entity.class, 8, 8, 8, 8);
-        double mx = 0, my = 0;
         for (Entity entity : entities) {
+            double mx = 0, my = 0;
             if (entity instanceof Projectile) {
                 double angle = (getAngleBetweenEntities(this, entity) + 90) * Math.PI / 180;
                 mx = -Math.cos(angle);
@@ -630,9 +639,12 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 25, ParticleDust.EnumDustBehavior.SHRINK, 1.0f);
             ModParticleUtils.annularParticleOutburst(level, 15, new ParticleOptions[]{dustData}, getX(), this.getY(), getZ(), 0.8F, 0.1);
         } else if (id == 8) {
-            ModParticleUtils.roundParticleOutburst(level, 200, new ParticleOptions[]{ParticleTypes.LARGE_SMOKE, ParticleTypes.SMOKE, ParticleTypes.EXPLOSION}, getX(), this.getY(0.1), getZ(), 1);
-        }
-        super.handleEntityEvent(id);
+            ModParticleUtils.roundParticleOutburst(level, 200, new ParticleOptions[]{ParticleTypes.LARGE_SMOKE, ParticleTypes.SMOKE, ParticleTypes.EXPLOSION}, getX(), this.getY(0.5), getZ(), 1);
+        } else if (id == PLAY_PRELUDE_MUSIC_ID) {
+            BossMusicPlayer.resetBossMusic(this, SoundInit.GUARDIANS_PRELUDE.get());
+        } else if (id == PLAY_CLIMAX_MUSIC_ID) {
+            BossMusicPlayer.resetBossMusic(this, SoundInit.GUARDIANS_CLIMAX.get());
+        } else super.handleEntityEvent(id);
     }
 
     @Override
@@ -717,7 +729,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             if (!this.isNoAi() && this.destroyBlocksTick > 0) {
                 this.destroyBlocksTick--;
                 if (this.destroyBlocksTick == 0 && ModEntityUtils.canMobDestroy(this)) {
-                    ModEntityUtils.advancedBreakBlocks(this.level, this, 50F, 2, 4, 2, 0, 0, true, true);
+                    ModEntityUtils.advancedBreakBlocks(this.level, this, 50F, 2, 4, 2, 0, 0, this.checkCanDropItems(), true);
                 }
             }
         }
@@ -756,21 +768,24 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     public boolean hurt(DamageSource source, float damage) {
-        if (!this.level.isClientSide/* 在服务端进行判断 */) {
+        if (!this.level.isClientSide) {
             Entity entity = source.getEntity();
             if ((!active || getTarget() == null) && entity instanceof LivingEntity livingEntity
                     && !(livingEntity instanceof Player player && player.isCreative() || this.level.getDifficulty() == Difficulty.PEACEFUL)
                     && (!EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() || !(livingEntity instanceof EntityAbsGuling))) {
-                this.setLastHurtByMob(livingEntity);//使得可以有多个仇恨目标
+                this.setLastHurtByMob(livingEntity);
             }
             if (this.guardianInvulnerableTime > 0) {
                 return false;
             } else if (entity != null) {
-                if (this.shouldSetPowered()) {
-                    damage = 1F;
-                }
+                if (!this.isUnnatural() && this.isNoAnimation() && entity instanceof Player player) this.checkPlayerAttackLegality(player, this, 4);
+                if (this.shouldSetPowered() || this.outOfCombatFlag()) damage = Math.min(damage, 1F);
                 if (this.isPowered()) {
-                    if (this.guardianInvulnerableTime <= 0) guardianInvulnerableTime = 20 /*不能小于等于10*/;
+                    if (this.guardianInvulnerableTime <= 0) {
+                        ForgeConfigSpec.IntValue eit = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.extraInvulnerableTick;
+                        this.guardianInvulnerableTime = eit.get();
+                        if (this.isChallengeMode()) this.guardianInvulnerableTime = eit.getDefault();
+                    }
                     if (ModEntityUtils.isProjectileSource(source)) return false;
                 }
                 return super.hurt(source, damage);
@@ -795,8 +810,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int pLooting, boolean pRecentlyHit) {
-        super.dropCustomDeathLoot(source, pLooting, pRecentlyHit);
+    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
+        super.dropCustomDeathLoot(source, looting, recentlyHit);
         if (source.getEntity() != null || this.getTarget() != null) {
             ItemEntity itementity = this.spawnAtLocation(ItemInit.GUARDIAN_CORE.get());
             if (itementity != null) {
@@ -856,6 +871,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         this.setUnnatural(compound.getBoolean("isUnnatural"));
         this.setMadnessTick(compound.getInt("madnessCountdownTick"));
         this.setNextMadnessTick(compound.getInt("nextMadnessTick"));
+        this.readBossSaveData(compound);
         active = isActive();
     }
 
@@ -871,6 +887,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         compound.putBoolean("isUnnatural", this.entityData.get(DATA_IS_UNNATURAL));
         compound.putBoolean("isActive", this.entityData.get(DATA_ACTIVE));
         compound.putInt("nextMadnessTick", this.nextMadnessTick);
+        this.addBossSaveData(compound);
     }
 
     public static AttributeSupplier.Builder setAttributes() {
@@ -880,6 +897,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 add(Attributes.ATTACK_DAMAGE, 15.0D).
                 add(Attributes.FOLLOW_RANGE, 50.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.3D).
+                add(ForgeMod.ENTITY_GRAVITY.get(), 0.1D).
                 add(Attributes.KNOCKBACK_RESISTANCE, 1.0D);
     }
 
@@ -893,6 +911,10 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     public float getAttackDamageAttributeValue() {
         return (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
+    }
+
+    public void anchorToGround() {
+        this.setDeltaMovement(0F, this.isOnGround() && !this.isNoGravity() ? -0.01F : this.getDeltaMovement().y, 0F);
     }
 
     @Override
@@ -918,6 +940,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     static class GuardianAIGoal extends Goal {
         private final EntityNamelessGuardian guardian;
         private final RandomSource random;
+        private boolean attackFlag;
         private boolean isPowered;
         private double targetX;
         private double targetY;
@@ -940,7 +963,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
         @Override
         public boolean canUse() {
-            return this.guardian.getTarget() != null && this.guardian.getTarget().isAlive() && this.guardian.isActive() && this.guardian.noConflictingTasks();
+            return this.guardian.getTarget() != null && this.guardian.getTarget().isAlive() && this.guardian.isActive() && this.guardian.noConflictingTasks() && !this.guardian.outOfCombatFlag();
         }
 
         @Override
@@ -955,6 +978,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             if (target == null) return;
             double dist = this.guardian.distanceToSqr(this.targetX, this.targetY, this.targetZ);
             this.guardian.getLookControl().setLookAt(target, 30.0F, 30.0F);
+            this.guardian.lookAt(target, 30.0F, 30.0F);
             if (--this.rePath <= 0 && (
                     this.targetX == 0.0D && this.targetY == 0.0D && this.targetZ == 0.0D ||
                             target.distanceToSqr(this.targetX, this.targetY, this.targetZ) >= 1.0D) ||
@@ -973,14 +997,15 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                     this.rePath += 15;
                 }
             }
-            dist = this.guardian.distanceToSqr(this.targetX, this.targetY, this.targetZ);
+            dist = this.guardian.distanceToSqr(target);
             if (this.guardian.attackTick <= 0 && this.guardian.getSensing().hasLineOfSight(target)) {
                 boolean checkAttackHeight = target.getY() - guardian.getY() < 4 && target.getY() - this.guardian.getY() > -4;
                 double entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this.guardian, target);
                 boolean canRobust = dist <= 144D && this.isPowered && (this.guardian.getMadnessTick() == 0 || this.guardian.isChallengeMode() && this.guardian.getRobustTick() == 0);
                 boolean canSmash = (checkAttackHeight || target.isOnGround()) && (this.random.nextFloat() < 0.6F && dist <= (this.isPowered ? 50D : 25D) && this.guardian.getSmashTick() <= 0);
                 if (dist < 25D && !canSmash && !canRobust) {
-                    Animation attackAnimation = this.random.nextBoolean() ? this.guardian.attackAnimation1 : this.guardian.attackAnimation4;
+                    Animation attackAnimation = this.attackFlag ? this.guardian.attackAnimation1 : this.guardian.attackAnimation4;
+                    this.attackFlag = !this.attackFlag;
                     this.guardian.playAnimation(attackAnimation);
                 } else if (canRobust) {
                     this.guardian.playAnimation(this.guardian.robustAttackAnimation);
@@ -992,7 +1017,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
                 boolean canLaser = this.random.nextFloat() < 0.6F && this.isPowered && checkModeOrPreventTimeouts(120) && (((checkAttackHeight ? this.guardian.targetDistance > 10.0D : this.guardian.targetDistance > 4.0D) && (entityRelativeAngle < 60.0 || entityRelativeAngle > 300) && this.guardian.targetDistance < EntityGuardianLaser.GUARDIAN_RADIUS && this.guardian.getLaserTick() <= 0) || this.guardian.isTimeOutToUseSkill());
                 boolean canShakeGround = (checkAttackHeight || target.isOnGround()) && !this.guardian.isTimeOutToUseSkill() && this.random.nextFloat() < 0.6F && (this.guardian.getHealthPercentage() <= 75 || !this.guardian.isFirstMadness()) && this.guardian.targetDistance < 6.0D && this.guardian.getShakeGroundTick() <= 0 && !this.guardian.shouldSetPowered() && checkModeOrPreventTimeouts(180);
-                boolean canLeap = this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 12.0D && this.guardian.targetDistance < 24.0 && this.guardian.getLeapTick() <= 0 && checkModeOrPreventTimeouts(100);
+                boolean canLeap = this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 16.0D && this.guardian.targetDistance < 24.0 && this.guardian.getLeapTick() <= 0 && checkModeOrPreventTimeouts(100);
                 boolean canPouch = checkAttackHeight && checkModeOrPreventTimeouts(80) && (this.random.nextFloat() < 0.6F && this.guardian.targetDistance > 6.0D && this.guardian.targetDistance < 14.0 && this.guardian.getPounceTick() <= 0 || this.guardian.isTimeOutToUseSkill());
                 if (canShakeGround) {
                     this.guardian.playAnimation(this.guardian.shakeGroundAttackAnimation1);
@@ -1016,10 +1041,9 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     private void preRobustAttack() {
-        List<Entity> entities = getNearByEntities(Entity.class, 16, 16, 16, 16);
-        for (Entity inRangeEntity : entities) {
+        List<LivingEntity> entities = getNearByEntities(LivingEntity.class, 16, 16, 16, 16);
+        for (LivingEntity inRangeEntity : entities) {
             if (inRangeEntity instanceof Player player && player.getAbilities().invulnerable) continue;
-            if (!(inRangeEntity instanceof LivingEntity)) continue;
             Vec3 diff = inRangeEntity.position().subtract(this.position().add(Math.cos(Math.toRadians(this.yBodyRot + 90)) * 3.2F, 0, Math.sin(Math.toRadians(this.yBodyRot + 90)) * 3.2F));
             diff = diff.normalize().scale(0.08);
             inRangeEntity.setDeltaMovement(inRangeEntity.getDeltaMovement().subtract(diff));
@@ -1030,7 +1054,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     /**
-     * 无名守卫者通用撼地攻击
+     * 无名守卫者撼地攻击
      *
      * @param damageSource         伤害源
      * @param distance             距离
@@ -1046,57 +1070,28 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
      */
     public void shockAttack(DamageSource damageSource, int distance, float maxFallingDistance, double spreadArc, double offset, float hitEntityMaxHealth,
                             float baseDamageMultiplier, float damageMultiplier, boolean disableShield, boolean randomOffset, boolean continuous) {
-        ServerLevel level = (ServerLevel) this.level;
-        double perpFacing = this.yBodyRot * (Math.PI / 180);
-        double facingAngle = perpFacing + Math.PI / 2;
-        double spread = Math.PI * spreadArc;
-        int arcLen = Mth.ceil(distance * spread);
-        double minY = this.getBoundingBox().minY - 2D;
-        double maxY = this.getBoundingBox().maxY;
-        int hitY = Mth.floor(this.getBoundingBox().minY - 0.5);
-        for (int i = 0; i < arcLen; i++) {
-            double theta = (i / (arcLen - 1.0) - 0.5) * spread + facingAngle;
-            double vx = Math.cos(theta);
-            double vz = Math.sin(theta);
-            double px = this.getX() + vx * distance + offset * Math.cos((double) (this.yBodyRot + 90.0F) * Math.PI / 180.0D);
-            double pz = this.getZ() + vz * distance + offset * Math.sin((double) (this.yBodyRot + 90.0F) * Math.PI / 180.0D);
-            AABB aabb = new AABB(px - 1.5D, minY, pz - 1.5D, px + 1.5D, maxY, pz + 1.5D);
-            List<Entity> entities = level.getEntitiesOfClass(Entity.class, aabb);
-            float factor = 1F - ((float) distance / 2F - 2F) / maxFallingDistance;
-            for (Entity hit : entities) {
-                if (hit.isOnGround()) {
-                    if (hit == this || hit instanceof EntityFallingBlock) {
-                        continue;
-                    }
-                    if (hit instanceof LivingEntity livingEntity) {
-                        this.guardianHurtTarget(damageSource, this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, false, disableShield, false);
-                    }
-                    double magnitude = level.random.nextGaussian() * 0.15F + 0.1F;
-                    double angle = this.getAngleBetweenEntities(this, hit);
-                    double x1 = Math.cos(Math.toRadians(angle - 90));
-                    double z1 = Math.sin(Math.toRadians(angle - 90));
-                    float x = 0F, y = 0F, z = 0F;
-                    x += (float) (x1 * magnitude * 0.15);
-                    y += (float) (0.1 + factor * 0.15) * 0.5F;
-                    z += (float) (z1 * magnitude * 0.15);
-                    if (hit instanceof ServerPlayer) {
-                        ((ServerPlayer) hit).connection.send(new ClientboundSetEntityMotionPacket(hit));
-                    }
-                    if (continuous) y *= 0.5F;
-                    hit.setDeltaMovement(hit.getDeltaMovement().add(x, y, z));
+        float factor = 1F - ((float) distance / 2F - 2F) / maxFallingDistance;
+        ShockWaveUtils.doAdvShockWave(this, distance, maxFallingDistance, spreadArc, offset, 2F, randomOffset, continuous, hit -> {
+            if (hit.isOnGround()) {
+                if (hit instanceof EntityFallingBlock) return;
+                if (hit instanceof LivingEntity livingEntity) {
+                    this.guardianHurtTarget(damageSource, this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, false, disableShield, false);
                 }
-            }
-            if (continuous || this.getRandom().nextBoolean()) {
-                int hitX = Mth.floor(px);
-                int hitZ = Mth.floor(pz);
-                BlockPos pos = new BlockPos(hitX, hitY, hitZ);
-                if (randomOffset) {
-                    ModEntityUtils.spawnFallingBlockByPos(level, pos, factor);
-                } else {
-                    ModEntityUtils.spawnFallingBlockByPos(level, pos);
+                double magnitude = level.random.nextGaussian() * 0.15F + 0.1F;
+                double angle = this.getAngleBetweenEntities(this, hit);
+                double x1 = Math.cos(Math.toRadians(angle - 90));
+                double z1 = Math.sin(Math.toRadians(angle - 90));
+                float x = 0F, y = 0F, z = 0F;
+                x += (float) (x1 * magnitude * 0.15);
+                y += (float) (0.1 + factor * 0.15) * 0.5F;
+                z += (float) (z1 * magnitude * 0.15);
+                if (hit instanceof ServerPlayer serverPlayer) {
+                    serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(hit));
                 }
+                if (continuous) y *= 0.5F;
+                hit.setDeltaMovement(hit.getDeltaMovement().add(x, y, z));
             }
-        }
+        }, 0);
     }
 
     private void doRoarEffect() {
@@ -1158,40 +1153,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     public void doSplashParticlesEffect(int count) {
         if (this.level.isClientSide) {
-            double theta = yBodyRot * (Math.PI / 180);
-            double perpX = Math.cos(theta);
-            double perpZ = Math.sin(theta);
-            theta += Math.PI / 2;
-            double vecX = Math.cos(theta);
-            double vecZ = Math.sin(theta);
-            double x = getX() + 4.0 * vecX;
+            double theta = Math.toRadians(this.getYRot());
+            double x = getX() + 4.0 * Math.cos(theta + Math.PI / 2);
             double y = getBoundingBox().minY + 0.1;
-            double z = getZ() + 4.0 * vecZ;
-            int hitY = Mth.floor(getY() - 0.2);
-            for (float[] robustAttackBlockOffset : ROBUST_ATTACK_BLOCK_OFFSETS) {
-                float ox = robustAttackBlockOffset[0], oy = robustAttackBlockOffset[1];
-                int hitX = Mth.floor(x + ox);
-                int hitZ = Mth.floor(z + oy);
-                BlockPos hit = new BlockPos(hitX, hitY, hitZ);
-                BlockState block = level.getBlockState(hit);
-                if (block.getRenderShape() != RenderShape.INVISIBLE) {
-                    for (int n = 0; n < count; n++) {
-                        double pa = random.nextDouble() * 2 * Math.PI;
-                        double pd = random.nextDouble() * 0.6 + 0.1;
-                        double px = x + Math.cos(pa) * pd;
-                        double pz = z + Math.sin(pa) * pd;
-                        double magnitude = random.nextDouble() * 4 + 5;
-                        double velX = perpX * magnitude;
-                        double velY = random.nextDouble() * 3 + 6;
-                        double velZ = perpZ * magnitude;
-                        if (vecX * (pz - getZ()) - vecZ * (px - getX()) > 0) {
-                            velX = -velX;
-                            velZ = -velZ;
-                        }
-                        level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, block), px, y, pz, velX, velY, velZ);
-                    }
-                }
-            }
+            double z = getZ() + 4.0 * Math.sin(theta + Math.PI / 2);
+            ModParticleUtils.generateParticleEffects(level, x, y, z, theta, count, ROBUST_ATTACK_BLOCK_OFFSETS, pos -> level.getBlockState(pos), 2F);
         }
     }
 
@@ -1229,7 +1195,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         if (!this.level.isClientSide) {
             if (tick == 50) {
                 this.level.broadcastEntityEvent(this, (byte) 8);
-                this.level.explode(this, this.getX(), this.getY(), this.getZ(), 5F, false, Explosion.BlockInteraction.NONE);
+                this.level.explode(this, this.getX(), this.getY(), this.getZ(), 6F, false, Explosion.BlockInteraction.NONE);
                 EntityCameraShake.cameraShake(this.level, position(), 20, 0.2F, 10, 20);
             }
         }
@@ -1243,18 +1209,14 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public boolean guardianHurtTarget(DamageSource damageSource, EntityNamelessGuardian guardian, LivingEntity hitEntity, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier,
                                       boolean shouldHeal, boolean disableShield, boolean ignoreHit) {
         float finalDamage = ((guardian.getAttackDamageAttributeValue() * baseDamageMultiplier) + hitEntity.getMaxHealth() * hitEntityMaxHealth) * damageMultiplier;
-        if ("guardian_laser_attack".equals(damageSource.msgId)) {
-            finalDamage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(finalDamage, hitEntity.getArmorValue(), (float) hitEntity.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0.8F);
-        }
+        //治疗量 = 攻击力15% + 生命上限1.5% - 目标护甲值5%
+        float healAmount = (guardian.getAttackDamageAttributeValue() * 0.15F) + (guardian.getMaxHealth() * 0.015F) - Mth.clamp(hitEntity.getArmorValue() * 0.05F, 0F, 1.5F);
         boolean flag = hitEntity.hurt(damageSource, finalDamage);
-        double suckBloodMultiplier = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.suckBloodMultiplier.get();
-        //治疗值 = 攻击力15% + 生命上限1.5% - 目标护甲值5%
-        float heal = (guardian.getAttackDamageAttributeValue() * 0.15F) + (guardian.getMaxHealth() * 0.015F) - (Mth.clamp(hitEntity.getArmorValue() * 0.05F, 0F, 1.5F));
         boolean blocking = hitEntity instanceof Player && hitEntity.isBlocking();
         boolean checkConfig = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.enableForcedSuckBlood.get() || this.isChallengeMode();
         if ((flag || (ignoreHit && this.isPowered() && !blocking && checkConfig)) && shouldHeal) {
-            if (!flag) heal *= 0.5F;//未能造成伤害减少吸血量
-            guardian.heal((float) (heal * suckBloodMultiplier));
+            if (!flag) healAmount *= 0.5F;//未能造成伤害减少吸血量
+            guardian.heal((float) (healAmount * EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.suckBloodMultiplier.get()));
         }
         if (disableShield && blocking) {
             Player player = (Player) hitEntity;
@@ -1266,20 +1228,16 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     public void playAnimation(Animation animation) {
-        if (animation != this.getNoAnimation() && this.attackTick <= 0 && !this.isPowered()) {
+        if (animation != NO_ANIMATION && this.attackTick <= 0 && !this.isPowered()) {
             this.attackTick = 10;
         }
         super.playAnimation(animation);
     }
 
-    private int getCoolingTimerUtil(int maxCooling, int minCooling, float healthPercentage) {
+    @Override
+    protected int getCoolingTimerUtil(int maxCooling, int minCooling, float healthPercentage) {
         if (this.isChallengeMode()) return minCooling;
-        float maximumCoolingPercentage = 1 - healthPercentage;
-        float ratio = 1 - (this.getHealthPercentage() / 100);
-        if (ratio > maximumCoolingPercentage) {
-            ratio = maximumCoolingPercentage;
-        }
-        return (int) (maxCooling - (ratio / maximumCoolingPercentage) * (maxCooling - minCooling));
+        return super.getCoolingTimerUtil(maxCooling, minCooling, healthPercentage);
     }
 
     public void setPowered(boolean flag) {
@@ -1420,6 +1378,21 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     @Override
+    public int getIllegalityCount() {
+        return this.illegalityCount;
+    }
+
+    @Override
+    public void setIllegalityCount(int count) {
+        this.illegalityCount = count;
+    }
+
+    @Override
+    public int getMaxIllegalityCount() {
+        return (int) (this.getMaxHealth() / 40);
+    }
+
+    @Override
     public boolean isGlow() {
         return this.getHealth() > 0 && this.isActive() && !(this.getAnimation() == this.weakAnimation1 || this.getAnimation() == this.weakAnimation2 || (this.getAnimation() == this.weakAnimation3 && this.getAnimationTick() < 20));
     }
@@ -1469,12 +1442,12 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     @Override
     protected boolean canHandOffMusic() {
-        return (this.getAnimation() == this.roarAnimation && this.getAnimationTick() == 34) || (this.getAnimation() == this.weakAnimation1 && this.getAnimationTick() == 1);
+        return this.getAnimation() == this.roarAnimation || this.getAnimation() == this.weakAnimation1;
     }
 
     @Override
     public SoundEvent getBossMusic() {
-        return !this.isPowered() ? SoundInit.GUARDIANS_PRELUDE.get() : this.isChallengeMode() ? SoundInit.GUARDIANS.get() : SoundInit.GUARDIANS_CLIMAX.get();
+        return this.isChallengeMode() ? SoundInit.GUARDIANS.get() : !this.isPowered() ? SoundInit.GUARDIANS_PRELUDE.get() : SoundInit.GUARDIANS_CLIMAX.get();
     }
 
     @Override

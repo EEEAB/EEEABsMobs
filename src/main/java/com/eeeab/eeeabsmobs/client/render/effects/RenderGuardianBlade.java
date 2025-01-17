@@ -24,16 +24,22 @@ public class RenderGuardianBlade extends EntityRenderer<EntityGuardianBlade> {
         this.model = new ModelGuardianBlade(context.bakeLayer(EMModelLayer.GUARDIAN_BLADE));
         //初始化文件地址
         for (int i = 0; i < TEXTURES.length; i++) {
-            TEXTURES[i] = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/guardian_blade/gb_" + (i + 1) + ".png");
+            TEXTURES[i] = new ResourceLocation(EEEABMobs.MOD_ID, "textures/effects/guardian_blade/index_" + (i + 1) + ".png");
         }
     }
 
     @Override
     public void render(EntityGuardianBlade entity, float pEntityYaw, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
         pPoseStack.pushPose();
-        pPoseStack.translate(0F, 2.0F, 0F);
-        pPoseStack.scale(1F, -1.0F, -1.0F);
-        float f = entity.controlled.getAnimationProgressTemporaryInvesed();
+        pPoseStack.translate(0F, 1.5F, 0F);
+        pPoseStack.scale(0.65F, -1.0F, -0.65F);
+        float animationProgress = Math.min(entity.controlled.getAnimationFraction(pPartialTick) + 0.1F, 1F);
+        float f;
+        if (animationProgress > 0.5) {
+            f = 1.0F - (animationProgress - 0.5F) * 2.0F;
+        } else {
+            f = 1.0F;
+        }
         pPoseStack.mulPose(Vector3f.YP.rotationDegrees(entity.getYRot()));
         model.renderToBuffer(pPoseStack, pBuffer.getBuffer(EMRenderType.getGlowingCutOutEffect(getTextureLocation(entity))), pPackedLight, OverlayTexture.NO_OVERLAY, f, f, f, f);
         pPoseStack.popPose();

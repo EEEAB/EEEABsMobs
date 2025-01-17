@@ -8,22 +8,33 @@ import com.eeeab.eeeabsmobs.sever.capability.FrenzyCapability;
 import com.eeeab.eeeabsmobs.sever.capability.PlayerCapability;
 import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.EEEABMobEntity;
+import com.eeeab.eeeabsmobs.sever.entity.IBoss;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityAbsCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalExecutioner;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
+import com.eeeab.eeeabsmobs.sever.init.AttributeInit;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.eeeab.eeeabsmobs.sever.item.IUnbreakableItem;
+import com.eeeab.eeeabsmobs.sever.item.ItemDemolisher;
 import com.eeeab.eeeabsmobs.sever.message.MessageFrenzyEffect;
 import com.eeeab.eeeabsmobs.sever.message.MessageVertigoEffect;
+import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.AbstractGolem;
@@ -36,8 +47,10 @@ import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -46,6 +59,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
+
+import java.util.Objects;
 
 //服务端事件处理器
 public final class HandlerServerEvent {
@@ -59,6 +74,24 @@ public final class HandlerServerEvent {
         if (event.getObject() instanceof Player) {
             event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "ability_processor"), new AbilityCapability.AbilityCapabilityProvider());
             event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "player_processor"), new PlayerCapability.PlayerCapabilityProvider());
+        }
+    }
+
+    @SubscribeEvent
+    public void onItemAttributeModifier(ItemAttributeModifierEvent event) {
+        if (event.getItemStack().getItem() instanceof IUnbreakableItem unbreakableItem) {
+            ItemStack itemStack = event.getItemStack();
+            CompoundTag tag = itemStack.getOrCreateTag();
+            boolean flag = tag.contains("Unbreakable");
+            if (!unbreakableItem.canBreakItem()) {
+                if (!flag) {
+                    tag.putBoolean("Unbreakable", true);
+                    tag.putBoolean("CodeAddFlag", true);
+                }
+            } else if (flag && tag.contains("CodeAddFlag")) {
+                tag.remove("Unbreakable");
+                tag.remove("CodeAddFlag");
+            }
         }
     }
 
@@ -161,6 +194,14 @@ public final class HandlerServerEvent {
         }
     }
 
+    //当实体生命值≤0时触发
+    @SubscribeEvent
+    public void onLivingDeathEvent(LivingDeathEvent event) {
+        LivingEntity entity = event.getEntity();
+        if (event.isCancelable() && entity instanceof EEEABMobEntity && entity.getHealth() > 0) {
+            event.setCanceled(true);
+        }
+    }
 
     //新效果或者已存在但是等级更高或时间更长的效果 添加到实体触发
     @SubscribeEvent
@@ -218,7 +259,7 @@ public final class HandlerServerEvent {
     public void onLivingJump(LivingEvent.LivingJumpEvent event) {
         if (event.getEntity() != null) {
             LivingEntity entity = event.getEntity();
-            if (entity.hasEffect(EffectInit.VERTIGO_EFFECT.get()) && entity.isOnGround()) {
+            if (entity.hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
                 entity.setDeltaMovement(entity.getDeltaMovement().multiply(1, 0, 1));
             }
         }
@@ -227,7 +268,14 @@ public final class HandlerServerEvent {
     //玩家攻击实体时
     @SubscribeEvent
     public void onPlayerAttack(AttackEntityEvent event) {
-        if (event.isCancelable() && event.getEntity().hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
+        boolean cancelable = event.isCancelable();
+        if (cancelable && event.getEntity().hasEffect(EffectInit.VERTIGO_EFFECT.get())) {
+            event.setCanceled(true);
+            return;
+        }
+
+        ItemStack itemStack = event.getEntity().getMainHandItem();
+        if (cancelable && itemStack.getItem() instanceof ItemDemolisher && ItemDemolisher.getWeaponState(itemStack) == 1) {
             event.setCanceled(true);
         }
     }
@@ -296,8 +344,18 @@ public final class HandlerServerEvent {
     //实体被击退
     @SubscribeEvent
     public void onLivingEntityKnockBack(LivingKnockBackEvent event) {
-        LivingEntity living = event.getEntity();
-        if (event.isCancelable() && living instanceof EntityNamelessGuardian) {
+        LivingEntity entity = event.getEntity();
+        if (event.isCancelable() && entity instanceof IBoss) {
+            event.setStrength(0F);
+            event.setCanceled(true);
+        }
+    }
+
+    //挂载实体时
+    @SubscribeEvent
+    public void onEntityMountEntity(EntityMountEvent event) {
+        Entity entity = event.getEntityMounting();
+        if (event.isCancelable() && entity instanceof IBoss) {
             event.setCanceled(true);
         }
     }
@@ -307,12 +365,38 @@ public final class HandlerServerEvent {
     public void onLivingEntityHurt(LivingHurtEvent event) {
         DamageSource source = event.getSource();
         Entity directEntity = source.getDirectEntity();
-        Entity attacker = source.getEntity();
         LivingEntity hurtEntity = event.getEntity();
 
         if (directEntity instanceof EntityShamanBomb shamanBomb) {
             if (shamanBomb.reboundFlag && !shamanBomb.isPlayer()) {
                 hurtEntity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), 100, 0, false, false));
+            }
+        }
+
+        FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(hurtEntity, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
+        if (frenzyCapability != null && frenzyCapability.isFrenzy() && !source.isBypassInvul() && !source.isBypassArmor()) {
+            float damage = event.getAmount();
+            if (hurtEntity.getHealth() > 1F) {
+                //至多减少50%伤害
+                damage -= damage * (Math.min((frenzyCapability.getLevel() + 1F), 5)) * 0.1F;
+            }
+            event.setAmount(damage);
+        }
+
+        AttributeInstance attribute = hurtEntity.getAttribute(AttributeInit.CRIT_CHANCE.get());
+        Entity attacker = source.getEntity();
+        if (attribute != null && attacker != null) {
+            double chance = attribute.getValue() - 1D;
+            if (chance > 0 && hurtEntity.getRandom().nextFloat() <= chance) {
+                float damage = event.getAmount();
+                if (Objects.equals(source.getMsgId(), "crit_heal") && attacker instanceof LivingEntity mob) {
+                    float maxHealth = mob.getMaxHealth();
+                    mob.heal(Math.min(damage * 0.3F + maxHealth * 0.01F, maxHealth * 0.1F));
+                }
+                damage *= 1.5F;
+                event.setAmount(damage);
+                hurtEntity.level.playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.PLAYER_ATTACK_CRIT, hurtEntity.getSoundSource(), 1.0F, 1.0F);
+                if (hurtEntity.level instanceof ServerLevel serverLevel) serverLevel.getChunkSource().broadcastAndSend(attacker, new ClientboundAnimatePacket(hurtEntity, 4));
             }
         }
 
@@ -322,15 +406,16 @@ public final class HandlerServerEvent {
                 playerCapability.hurt(player, source, event.getAmount());
             }
         }
+    }
 
-        FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(hurtEntity, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
-        if (frenzyCapability != null && frenzyCapability.isFrenzy() && !(source == DamageSource.OUT_OF_WORLD || source == DamageSource.GENERIC) && !source.isBypassArmor()) {
-            float damage = event.getAmount();
-            if (hurtEntity.getHealth() > 1F) {
-                //至多减少50%伤害
-                damage -= damage * (Math.min((frenzyCapability.getLevel() + 1F), 5)) * 0.1F;
-            }
-            event.setAmount(damage);
+    //实体治疗时
+    @SubscribeEvent
+    public void onLivingEntityHeal(LivingHealEvent event) {
+        LivingEntity entity = event.getEntity();
+        MobEffectInstance instance = entity.getEffect(EffectInit.ERODE_EFFECT.get());
+        if (instance != null) {
+            float newAmount = Mth.clamp(1F - (instance.getAmplifier() + 1) * 0.1F, 0F, 1F);
+            event.setAmount(event.getAmount() * newAmount);
         }
     }
 
@@ -361,9 +446,10 @@ public final class HandlerServerEvent {
         if (event.getRayTraceResult() instanceof EntityHitResult hitResult) {
             if (projectile instanceof EntityBloodBall bloodBall && !bloodBall.isHeal() && hitResult.getEntity() instanceof EntityCorpseWarlock) {
                 event.setCanceled(true);
+                return;
             }
             if (projectile instanceof AbstractArrow arrow) {
-                if (!arrow.fireImmune() && !arrow.isOnFire() && hitResult.getEntity() instanceof EntityImmortalExecutioner) {
+                if (arrow.getPierceLevel() == 0 && !arrow.fireImmune() && !arrow.isOnFire() && hitResult.getEntity() instanceof EntityImmortalExecutioner) {
                     arrow.setSecondsOnFire(100);
                 }
                 if (arrow.getOwner() instanceof EntityAbsImmortal && hitResult.getEntity() instanceof EntityAbsImmortal && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()) {

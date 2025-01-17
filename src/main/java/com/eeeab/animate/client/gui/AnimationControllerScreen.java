@@ -114,7 +114,7 @@ public class AnimationControllerScreen extends AbstractContainerScreen<Animation
                     int index = Integer.parseInt(value);
                     if (index >= 0 && index < animations.length) {
                         Animation animation = animations[index];
-                        if (animation != null && animatedEntity.getNoAnimation() == animatedEntity.getAnimation()) {
+                        if (animation != null && EMAnimatedEntity.NO_ANIMATION == animatedEntity.getAnimation()) {
                             EEEABMobs.NETWORK.sendToServer(new PlayAnimationMessage(animationEntity.getId(), ArrayUtils.indexOf(animations, animation)));
                             close();
                         }

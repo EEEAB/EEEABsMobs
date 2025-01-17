@@ -53,7 +53,6 @@ public class EntityMovingController extends Entity {
     }
 
 
-
     @Override
     public void positionRider(Entity passenger) {
         if (this.hasPassenger(passenger)) {

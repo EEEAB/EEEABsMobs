@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class ItemImmortalStaff extends Item {
-    public ItemImmortalStaff(Item.Properties properties) {
+    public ItemImmortalStaff(Properties properties) {
         super(properties);
     }
 
@@ -25,12 +25,13 @@ public class ItemImmortalStaff extends Item {
         if (entity instanceof Player player) {
             InteractionHand hand = player.getUsedItemHand();
             AbilityCapability.IAbilityCapability capability = AbilityHandler.INSTANCE.getAbilityCapability(player);
-            if (capability != null) {
-                AbilityHandler.INSTANCE.sendPlayerAbilityMessage(player, AbilityHandler.IMMORTAL_STAFF_ABILITY_TYPE);
+            if (player.getCooldowns().isOnCooldown(this)) {
+                return;
+            } else if (capability != null) {
                 player.getCooldowns().addCooldown(this, (int) (EMConfigHandler.COMMON.ITEM.itemImmortalStaffCoolingTime.get() * 20));
+                if (!level.isClientSide) AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.IMMORTAL_STAFF_ABILITY_TYPE);
             }
             player.swing(hand, true);
-            player.stopUsingItem();
         }
     }
 
@@ -58,7 +59,7 @@ public class ItemImmortalStaff extends Item {
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
         EMConfigHandler.Item item = EMConfigHandler.COMMON.ITEM;
-        tooltip.add(EMTUtils.itemCoolTime(item.itemImmortalStaffCoolingTime.get()));
-        tooltip.add(EMTUtils.simpleWeaponText(this.getDescriptionId(), EMTUtils.STYLE_GRAY));
+        if (EMTUtils.SHOW_ITEM_CD) tooltip.add(EMTUtils.itemCoolTime(item.itemImmortalStaffCoolingTime.get()));
+        tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId()));
     }
 }

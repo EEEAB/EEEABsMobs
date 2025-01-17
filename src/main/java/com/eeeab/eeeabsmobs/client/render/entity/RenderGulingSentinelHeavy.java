@@ -9,6 +9,7 @@ import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityGulingSentinelHeavy;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +26,7 @@ public class RenderGulingSentinelHeavy extends MobRenderer<EntityGulingSentinelH
         this.addLayer(new LayerBreath<>(this, GLOW_LAYER, 0.05F, e -> e.isGlow() && e.getAnimation() != e.activeAnimation && e.getAnimation() != e.electromagneticAnimation, 0.075F));
         this.addLayer(new LayerGlow<>(this, GLOW_LAYER, 0.5F) {
             @Override
-            protected float getBrightness(EntityGulingSentinelHeavy entity) {
+            protected float getBrightness(EntityGulingSentinelHeavy entity, float partialTicks) {
                 float timer = entity.glowControlled.getPrevTimer();
                 if (entity.getAnimation() == entity.electromagneticAnimation) {
                     timer += entity.electromagneticConControlled.getTimer();
@@ -34,9 +35,15 @@ public class RenderGulingSentinelHeavy extends MobRenderer<EntityGulingSentinelH
             }
         });
         this.addLayer(new LayerGlow<>(this, HOT_LAYER, 1F) {
+
             @Override
-            protected float getBrightness(EntityGulingSentinelHeavy entity) {
-                return entity.hotControlled.getAnimationFraction();
+            protected float getBrightness(EntityGulingSentinelHeavy entity, float partialTicks) {
+                return entity.hotControlled.getAnimationFraction(partialTicks);
+            }
+
+            @Override
+            protected RenderType getRenderType(EntityGulingSentinelHeavy entity) {
+                return RenderType.entityTranslucentEmissive(this.location);
             }
         });
     }

@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.projectile;
 
+import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import net.minecraft.core.Position;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -12,7 +13,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class EntityPoisonArrow extends AbstractArrow {
+public class EntityPoisonArrow extends AbstractArrow implements IEntity {
     private int duration;
 
     public EntityPoisonArrow(EntityType<? extends EntityPoisonArrow> entityType, Level level) {
@@ -21,7 +22,7 @@ public class EntityPoisonArrow extends AbstractArrow {
 
     public EntityPoisonArrow(Level level, Position position) {
         super(EntityInit.POISON_ARROW.get(), position.x(), position.y(), position.z(), level);
-        this.pickup = AbstractArrow.Pickup.DISALLOWED;
+        this.pickup = Pickup.DISALLOWED;
         this.duration = 100;
         this.setBaseDamage(6.0D);
     }

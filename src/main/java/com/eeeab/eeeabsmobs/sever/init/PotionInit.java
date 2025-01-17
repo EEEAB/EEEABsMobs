@@ -12,7 +12,7 @@ public class PotionInit {
     private static final DeferredRegister<Potion> POTION = DeferredRegister.create(ForgeRegistries.POTIONS, EEEABMobs.MOD_ID);
 
     public static final RegistryObject<Potion> FRENZY_POTION = POTION.register("frenzy_potion",
-            () -> new Potion(new MobEffectInstance(EffectInit.FRENZY_EFFECT.get(), 1000, 4)));
+            () -> new Potion(new MobEffectInstance(EffectInit.FRENZY_EFFECT.get(), 1200, 4)));
 
     public static void register(IEventBus bus) {
         POTION.register(bus);

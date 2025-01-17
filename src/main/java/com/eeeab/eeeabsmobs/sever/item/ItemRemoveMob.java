@@ -2,6 +2,7 @@ package com.eeeab.eeeabsmobs.sever.item;
 
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -16,7 +17,7 @@ import java.util.List;
 public class ItemRemoveMob extends Item {
     private static final double findSize = 16;
 
-    public ItemRemoveMob(Item.Properties properties) {
+    public ItemRemoveMob(Properties properties) {
         super(properties);
     }
 
@@ -53,7 +54,7 @@ public class ItemRemoveMob extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, EMTUtils.STYLE_GRAY, this.getDescriptionId()));
+        tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, ChatFormatting.GRAY, this.getDescriptionId()));
     }
 
     private static List<Entity> getNearByEntities(Entity entity, double size) {

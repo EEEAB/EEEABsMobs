@@ -34,15 +34,17 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier {
     private double ty;
     private double tz;
     private int life;
+    private boolean canConsumeItem;
 
     public EntityEyeOfStructure(EntityType<?> entityType, Level level) {
         super(entityType, level);
     }
 
 
-    public EntityEyeOfStructure(Level level, double px, double py, double pz) {
+    public EntityEyeOfStructure(Level level, double px, double py, double pz, boolean canConsumeItem) {
         super(EntityInit.EYE_OF_STRUCTURE.get(), level);
         this.setPos(px, py, pz);
+        this.canConsumeItem = canConsumeItem;
     }
 
     //public void setColor(Color color) {
@@ -193,7 +195,7 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier {
                 this.playSound(SoundEvents.ENDER_EYE_DEATH, 1.0F, 1.0F);
                 this.level.broadcastEntityEvent(this, (byte) 5);
                 this.discard();
-                this.level.addFreshEntity(new ItemEntity(this.level, this.getX(), this.getY(), this.getZ(), this.getItem()));
+                if (this.canConsumeItem) this.level.addFreshEntity(new ItemEntity(this.level, this.getX(), this.getY(), this.getZ(), this.getItem()));
             }
         } else {
             this.setPosRaw(d0, d1, d2);
@@ -219,7 +221,7 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier {
         compoundTag.putFloat("R", getR());
         compoundTag.putFloat("G", getG());
         compoundTag.putFloat("B", getB());
-
+        compoundTag.putBoolean("CanConsumeItem", this.canConsumeItem);
     }
 
     @Override
@@ -229,6 +231,7 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier {
         setR(compoundTag.getFloat("R"));
         setG(compoundTag.getFloat("G"));
         setB(compoundTag.getFloat("B"));
+        this.canConsumeItem = compoundTag.getBoolean("CanConsumeItem");
     }
 
     @Override

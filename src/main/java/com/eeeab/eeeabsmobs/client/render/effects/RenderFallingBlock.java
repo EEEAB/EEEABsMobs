@@ -44,7 +44,7 @@ public class RenderFallingBlock extends EntityRenderer<EntityFallingBlock> {
 
     @Override
     public void render(EntityFallingBlock entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
-        if (EMConfigHandler.COMMON.OTHER.enableRenderFallingBlock.get()) {
+        if (EMConfigHandler.COMMON.ENTITY.enableRenderFallingBlock.get()) {
             BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
             matrixStackIn.pushPose();
             if (entityIn.getMode() == EntityFallingBlock.FallingMoveType.OVERALL_MOVE) {

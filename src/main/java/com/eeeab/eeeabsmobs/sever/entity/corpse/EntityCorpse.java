@@ -9,10 +9,10 @@ import com.eeeab.eeeabsmobs.sever.capability.FrenzyCapability;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerCopyTargetGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerDieGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerProtectGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerResetGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.CopyOwnerTargetGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.ReFindOwnerGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.RedirectOwnerHatredGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.WhenOwnerDeadGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMWallClimberNavigation;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
@@ -133,10 +133,10 @@ public class EntityCorpse extends EntityAbsCorpse implements IEntity {
         this.goalSelector.addGoal(2, new AnimationMeleeAI<>(this, 1.2D, 5, () -> attackAnimation1, () -> attackAnimation2, () -> attackAnimation3));
         this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new EMLookAtGoal(this, EntityAbsCorpse.class, 6.0F));
-        this.goalSelector.addGoal(1, new OwnerResetGoal<>(this, EntityCorpseWarlock.class, 18D));
-        this.targetSelector.addGoal(2, new OwnerCopyTargetGoal<>(this));
-        this.goalSelector.addGoal(3, new OwnerProtectGoal<>(this, 16F));
-        this.goalSelector.addGoal(3, new OwnerDieGoal<>(this));
+        this.goalSelector.addGoal(1, new ReFindOwnerGoal<>(this, EntityCorpseWarlock.class, 18D));
+        this.targetSelector.addGoal(2, new CopyOwnerTargetGoal<>(this));
+        this.goalSelector.addGoal(3, new RedirectOwnerHatredGoal<>(this, 16F));
+        this.goalSelector.addGoal(3, new WhenOwnerDeadGoal<>(this));
     }
 
     @Override
@@ -239,7 +239,7 @@ public class EntityCorpse extends EntityAbsCorpse implements IEntity {
 
     public static AttributeSupplier.Builder setAttributes() {
         return createMobAttributes().add(Attributes.MAX_HEALTH, 30.0D).
-                add(Attributes.MOVEMENT_SPEED, 0.3D).
+                add(Attributes.MOVEMENT_SPEED, 0.25D).
                 add(Attributes.FOLLOW_RANGE, 32.0D).
                 add(Attributes.ATTACK_DAMAGE, 6D);
     }

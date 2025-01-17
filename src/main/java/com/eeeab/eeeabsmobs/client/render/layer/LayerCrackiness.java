@@ -21,7 +21,7 @@ import java.util.Map;
  *
  * @param <T> 实体
  * @param <M> 模型
- * @see com.eeeab.eeeabsmobs.sever.entity.CrackinessEntity
+ * @see CrackinessEntity
  */
 @OnlyIn(Dist.CLIENT)
 public class LayerCrackiness<T extends LivingEntity & CrackinessEntity<T>, M extends EntityModel<T>> extends RenderLayer<T, M> {

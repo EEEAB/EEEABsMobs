@@ -1,11 +1,13 @@
 package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
-import com.eeeab.animate.server.ai.*;
+import com.eeeab.animate.server.ai.AnimationAI;
+import com.eeeab.animate.server.ai.AnimationMeleeAI;
+import com.eeeab.animate.server.ai.AnimationRangeAI;
 import com.eeeab.animate.server.ai.animation.*;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.OwnerCopyTargetGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.CopyOwnerTargetGoal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
@@ -19,6 +21,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -40,9 +43,13 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implements RangedAttackMob {
     public final Animation swingArmAnimation = Animation.create(15);
@@ -127,12 +134,19 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
                 if (target != null) {
                     this.entity.getLookControl().setLookAt(target, 30F, 30F);
                     if (animation == this.entity.crossBowChangeAnimation) {
-                        if (tick == animation.getDuration() - 1) {
+                        boolean isLoaded = this.entity.isHolding(is -> is.getItem() instanceof CrossbowItem && CrossbowItem.isCharged(is));
+                        if (tick == animation.getDuration() - 1 || isLoaded) {
+                            if (!isLoaded && this.entity.isHolding(is -> is.getItem() instanceof CrossbowItem)) {
+                                CrossbowItem.setCharged(this.entity.getUseItem(), true);
+                            }
                             this.entity.playAnimation(this.entity.crossBowHoldAnimation);
                         }
                     } else if (animation == this.entity.crossBowHoldAnimation) {
                         if (tick == 9) {
                             this.entity.performRangedAttack(target, 0F);
+                            if (this.entity.isHolding(is -> is.getItem() instanceof CrossbowItem)) {
+                                CrossbowItem.setCharged(this.entity.getUseItem(), false);
+                            }
                         }
                     }
                 }
@@ -181,19 +195,21 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         this.goalSelector.addGoal(1, new AnimationAreaMelee<>(this, () -> meleeAnimation2, 6, 2.8F, 1.0F, 1.0F, 90F, 2.8F, true));
         this.goalSelector.addGoal(1, new AnimationBlock<>(this, () -> blockAnimation));
         this.goalSelector.addGoal(2, new AnimationDie<>(this));
-        this.targetSelector.addGoal(2, new OwnerCopyTargetGoal<>(this));
-        this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 20, 10F, Items.CROSSBOW, e -> e.active && e.checkHoldItemIsCareerWeapon(CareerType.ARCHER, CareerType.KNIGHT), () -> crossBowChangeAnimation));
-        this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 25, 12F, Items.BOW, e -> e.active && e.checkHoldItemIsCareerWeapon(CareerType.ARCHER, CareerType.KNIGHT), () -> bowAnimation));
-        this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 300, 16F, null, e -> e.active && e.checkHoldItemIsCareerWeapon(CareerType.MAGE), () -> castAnimation));
-        this.goalSelector.addGoal(4, new AnimationMeleeAI<>(this, 1D, 10, e -> e.checkHoldItemIsCareerWeapon(CareerType.WARRIOR, CareerType.KNIGHT), () -> meleeAnimation1, () -> meleeAnimation2));
-        this.goalSelector.addGoal(5, new AnimationMeleeAI<>(this, 1.05D, 10, EntityAbsImmortalSkeleton::checkConformCareerWeapon, () -> swingArmAnimation));
+        this.targetSelector.addGoal(2, new CopyOwnerTargetGoal<>(this));
+        Predicate<EntityAbsImmortalSkeleton> AKPredicate = e -> e.checkHoldItemIsCareerWeapon(CareerType.ARCHER, CareerType.KNIGHT);
+        int randomInterval = this.random.nextInt(10);
+        this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 20 + randomInterval, 10F, Items.CROSSBOW, AKPredicate, () -> crossBowChangeAnimation));
+        this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 25 + randomInterval, 12F, Items.BOW, AKPredicate, () -> bowAnimation));
+        this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 300 + this.random.nextInt(100), 16F, null, e -> e.checkHoldItemIsCareerWeapon(CareerType.MAGE), () -> castAnimation));
+        this.goalSelector.addGoal(4, new AnimationMeleeAI<>(this, 1D, 10 + randomInterval, e -> e.checkHoldItemIsCareerWeapon(CareerType.WARRIOR, CareerType.KNIGHT), () -> meleeAnimation1, () -> meleeAnimation2));
+        this.goalSelector.addGoal(5, new AnimationMeleeAI<>(this, 1.05D, 10 + randomInterval, EntityAbsImmortalSkeleton::checkConformCareerWeapon, () -> swingArmAnimation));
     }
 
     @Override
     public void tick() {
         super.tick();
         EMAnimationHandler.INSTANCE.updateAnimations(this);
-        if (this.getCareerType() == CareerType.ARCHER) {
+        if (this.getVariant() == CareerType.ARCHER) {
             if (this.getTarget() != null && !isNoAi() && isActive()) {
                 LivingEntity target = getTarget();
                 if (attackTick == 0 && getSensing().hasLineOfSight(target)) {
@@ -211,7 +227,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
                 attacking = false;
             }
         }
-        if (getAnimation() != this.getNoAnimation()) {
+        if (getAnimation() != NO_ANIMATION) {
             getNavigation().stop();
         }
     }
@@ -231,20 +247,26 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     public boolean hurt(DamageSource source, float damage) {
         Entity entity = source.getEntity();
         boolean hitFlag = true;
+        byte pierceLevel = 0;
         float attackArc = 220;
         if (entity != null) {
             float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this, entity.position());
             hitFlag = (entityRelativeAngle <= attackArc / 2f && entityRelativeAngle >= -attackArc / 2f) || (entityRelativeAngle >= 360 - attackArc / 2f || entityRelativeAngle <= -attackArc + 90f / 2f);
         }
+        if (source.getDirectEntity() instanceof AbstractArrow arrow) pierceLevel = arrow.getPierceLevel();
         if (hitFlag && this.checkHoldItemCanBlock() && entity instanceof LivingEntity livingEntity && !source.isBypassArmor() && (this.isNoAnimation() || this.getAnimation() == this.blockAnimation)) {
             this.blockEntity = livingEntity;
-            if (livingEntity.getItemInHand(livingEntity.getUsedItemHand()).getItem() instanceof AxeItem || damage >= this.getMaxHealth()) {
+            if (livingEntity.canDisableShield() || damage >= this.getMaxHealth()) {
                 this.playSound(SoundEvents.SHIELD_BREAK);
                 this.blockCoolTick = 100;
-            } else {
+            } else if (pierceLevel == 0) {
                 this.playSound(SoundEvents.SHIELD_BLOCK);
             }
             if (this.getAnimation() != this.blockAnimation) this.playAnimation(this.blockAnimation);
+            if (pierceLevel > 0) {
+                damage *= 0.6F + Math.min(pierceLevel * 0.1F, 0.4F);
+                return super.hurt(source, damage);
+            }
             return false;
         }
         return super.hurt(source, damage);
@@ -282,7 +304,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         RandomSource inRandom = worldIn.getRandom();
         int id = this.getCareerId(inRandom);
-        this.setCareerType(id);
+        this.entityData.set(DATA_CAREER_TYPE, id);
         AttributeInstance attack = this.getAttribute(Attributes.ATTACK_DAMAGE);
         AttributeInstance health = this.getAttribute(Attributes.MAX_HEALTH);
         AttributeInstance armor = this.getAttribute(Attributes.ARMOR);
@@ -334,37 +356,37 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt("careerType", this.getCareerType().id);
+        compound.putInt("careerType", this.getVariant().id);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setCareerType(compound.getInt("careerType"));
+        this.entityData.set(DATA_CAREER_TYPE, compound.getInt("careerType"));
     }
 
 
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficultyIn) {
-        CareerType careerType = this.getCareerType();
+        CareerType careerType = this.getVariant();
         this.setItemSlot(EquipmentSlot.MAINHAND, careerType.holdItems[randomSource.nextInt(careerType.holdItems.length)].getDefaultInstance());
     }
 
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 20.0D).
-                add(Attributes.MOVEMENT_SPEED, 0.3D).
+                add(Attributes.MOVEMENT_SPEED, 0.28D).
                 add(Attributes.FOLLOW_RANGE, 32.0D).
                 add(Attributes.ATTACK_DAMAGE, 1.0D).
                 add(Attributes.ATTACK_KNOCKBACK, 0D).
                 add(Attributes.KNOCKBACK_RESISTANCE, 0D);
     }
 
-    public CareerType getCareerType() {
+    public @NotNull CareerType getVariant() {
         return CareerType.byId(this.entityData.get(DATA_CAREER_TYPE));
     }
 
-    public void setCareerType(int id) {
-        this.entityData.set(DATA_CAREER_TYPE, id);
+    public void setVariant(CareerType careerType) {
+        this.entityData.set(DATA_CAREER_TYPE, careerType.id);
     }
 
     public boolean checkHoldItemCanBlock() {
@@ -376,10 +398,10 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
 
     public boolean checkHoldItemIsCareerWeapon(CareerType... careerType) {
         for (CareerType type : careerType) {
-            if (this.getCareerType() == type) {
+            if (this.getVariant() == type) {
                 for (Item holdItem : type.holdItems) {
                     if (this.getMainHandItem().is(holdItem)) {
-                        return true;
+                        return this.active;
                     }
                 }
             }
@@ -388,35 +410,36 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     }
 
     public boolean checkConformCareerWeapon() {
-        return this.getCareerType() == CareerType.NONE || !this.checkHoldItemIsCareerWeapon(this.getCareerType());
+        return this.getVariant() == CareerType.NONE || !this.checkHoldItemIsCareerWeapon(this.getVariant());
     }
 
     public boolean isWarrior() {
-        return CareerType.WARRIOR == this.getCareerType();
+        return CareerType.WARRIOR == this.getVariant();
     }
 
     public boolean isArcher() {
-        return CareerType.ARCHER == this.getCareerType();
+        return CareerType.ARCHER == this.getVariant();
     }
 
     public boolean isMage() {
-        return CareerType.MAGE == this.getCareerType();
+        return CareerType.MAGE == this.getVariant();
     }
 
     public boolean isKnight() {
-        return CareerType.KNIGHT == this.getCareerType();
+        return CareerType.KNIGHT == this.getVariant();
     }
 
-    public enum CareerType {
-        NONE(-1, 5F, 4F, 0F, 0F, 1.05F, Items.AIR, ItemInit.IMMORTAL_BONE.get()),
-        MAGE(0, 20F, 0F, 2F, 0.08F, 1.05F, Items.AIR),
-        ARCHER(1, 10F, 6F, 4F, 0.05F, 1.1F, Items.BOW, Items.CROSSBOW),
-        WARRIOR(2, 15F, 5F, 6F, -0.02F, 1.1F, Items.STONE_SWORD),
-        KNIGHT(3, 25F, 6F, 8F, -0.02F, 1.2F, ItemInit.IMMORTAL_AXE.get(), ItemInit.IMMORTAL_SWORD.get(), Items.BOW, Items.CROSSBOW),
+    public enum CareerType implements StringRepresentable {
+        NONE(0, "none", 5F, 4F, 0F, 0.01F, 1.05F, Items.AIR, ItemInit.IMMORTAL_BONE.get()),
+        MAGE(1, "mage", 20F, 0F, 2F, 0.03F, 1.05F, Items.AIR),
+        ARCHER(2, "archer", 10F, 6F, 4F, 0.025F, 1.1F, Items.BOW, Items.CROSSBOW),
+        WARRIOR(3, "warrior", 15F, 5F, 6F, 0.02F, 1.1F, Items.STONE_SWORD),
+        KNIGHT(4, "knight", 25F, 6F, 8F, 0F, 1.2F, ItemInit.IMMORTAL_AXE.get(), ItemInit.IMMORTAL_SWORD.get(), Items.BOW, Items.CROSSBOW),
         ;
 
-        CareerType(int id, float health, float attack, float armor, float speed, float scale, Item... holdItems) {
+        CareerType(int id, String name, float health, float attack, float armor, float speed, float scale, Item... holdItems) {
             this.id = id;
+            this.name = name;
             this.health = health;
             this.attack = attack;
             this.armor = armor;
@@ -426,20 +449,26 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         }
 
         public final int id;
+        public final String name;
         public final float health;
         public final float attack;
         public final float armor;
         public final float speed;
         public final float scale;
         public final Item[] holdItems;
+        private static final CareerType[] BY_ID = Arrays.stream(values()).sorted(Comparator.comparingInt(CareerType::getId)).toArray(CareerType[]::new);
+
+        public int getId() {
+            return id;
+        }
 
         public static CareerType byId(int id) {
-            for (CareerType value : values()) {
-                if (value.id == id) {
-                    return value;
-                }
-            }
-            return NONE;
+            return BY_ID[id % BY_ID.length];
+        }
+
+        @Override
+        public @NotNull String getSerializedName() {
+            return this.name;
         }
     }
 }

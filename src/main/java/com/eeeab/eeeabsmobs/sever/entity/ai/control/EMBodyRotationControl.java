@@ -17,15 +17,7 @@ public class EMBodyRotationControl extends BodyRotationControl {
 
     @Override
     public void clientTick() {
-        double dx = this.mob.getX() - this.mob.xo;
-        double dz = this.mob.getZ() - this.mob.zo;
-        //实体正在移动
         if (this.isMoving()) {
-            //double moveAngle = (float) Mth.atan2(dz, dx) * (180 / (float) Math.PI) - 90;
-            //mob.yBodyRot += Mth.wrapDegrees(moveAngle - mob.yBodyRot) * 0.6F;
-            //this.rotateHeadIfNecessary();
-            //this.lastStableYHeadRot = this.mob.yHeadRot;
-            //this.headStableTime = 0;
             this.mob.yBodyRot = this.mob.getYRot();
             this.rotateHeadIfNecessary();
             this.lastStableYHeadRot = this.mob.yHeadRot;
@@ -63,10 +55,11 @@ public class EMBodyRotationControl extends BodyRotationControl {
         return mob.getPassengers().isEmpty() || !(mob.getPassengers().get(0) instanceof Mob);
     }
 
+    //复制自: net.minecraft.world.entity.ai.control.BodyRotationControl.isMoving()
     private boolean isMoving() {
         double d0 = this.mob.getX() - this.mob.xo;
         double d1 = this.mob.getZ() - this.mob.zo;
-        return d0 * d0 + d1 * d1 > 2.5E-7;
+        return d0 * d0 + d1 * d1 > (double) 2.5000003E-7F;
     }
 
     private void rotateBodyIfNecessary() {

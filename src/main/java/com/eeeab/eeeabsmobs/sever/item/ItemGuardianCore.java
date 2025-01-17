@@ -7,8 +7,7 @@ import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
-import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.client.Minecraft;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -23,9 +22,7 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 import java.util.Optional;
 
-//TODO 待优化:部分参数由配置文件控制
 public class ItemGuardianCore extends Item {
-
     public ItemGuardianCore(Properties properties) {
         super(properties);
     }
@@ -106,12 +103,8 @@ public class ItemGuardianCore extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340)) {
-            tooltip.add(EMTUtils.UNABLE_BREAKS);
-            tooltip.add(EMTUtils.simpleShiftDownText(null, EMTUtils.STYLE_GREEN));
-        } else {
-            tooltip.add(EMTUtils.simpleWeaponText(this.getDescriptionId(), EMTUtils.STYLE_GREEN, EMConfigHandler.COMMON.ENTITY.GUARDIAN_LASER.playerShootRadius.get()));
-            tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, EMTUtils.STYLE_GRAY, this.getDescriptionId()));
-        }
+        tooltip.add(EMTUtils.UNABLE_BREAKS);
+        tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), Component.literal(EMConfigHandler.COMMON.ENTITY.guardianLaserShootRadius.get() + "").withStyle(ChatFormatting.YELLOW)));
+        tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, ChatFormatting.GRAY, this.getDescriptionId()));
     }
 }

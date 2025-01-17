@@ -2,19 +2,14 @@ package com.eeeab.eeeabsmobs.client.model.entity;
 
 import com.eeeab.animate.client.model.EMHierarchicalModel;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationCommon;
+import com.eeeab.eeeabsmobs.client.model.animation.AnimationImmortalGolem;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalGolem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.animation.AnimationChannel;
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.animation.Keyframe;
-import net.minecraft.client.animation.KeyframeAnimations;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ModelImmortalGolem extends EMHierarchicalModel<EntityImmortalGolem> implements ArmedModel {
     private final ModelPart root;
@@ -43,7 +38,7 @@ public class ModelImmortalGolem extends EMHierarchicalModel<EntityImmortalGolem>
         PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
         PartDefinition upper = root.addOrReplaceChild("upper", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
         PartDefinition head = upper.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -7.5F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(-0.3F))
-                .texOffs(34, 0).addBox(-4.0F, -6.5F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(-0.6F)), PartPose.offset(0.0F, -18.0F, 0.0F));
+                .texOffs(32, 0).addBox(-4.0F, -6.5F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(-0.6F)), PartPose.offset(0.0F, -18.0F, 0.0F));
         PartDefinition body = upper.addOrReplaceChild("body", CubeListBuilder.create().texOffs(11, 22).addBox(-3.5F, 0.0F, -2.0F, 7.0F, 10.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -18.0F, 0.0F));
         PartDefinition leftArm = body.addOrReplaceChild("leftArm", CubeListBuilder.create().texOffs(35, 24).addBox(-1.5F, -1.0F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(5.0F, 1.0F, 0.0F, -1.5708F, 0.0F, 0.0F));
         PartDefinition leftHand = leftArm.addOrReplaceChild("leftHand", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
@@ -52,7 +47,7 @@ public class ModelImmortalGolem extends EMHierarchicalModel<EntityImmortalGolem>
         PartDefinition lower = root.addOrReplaceChild("lower", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
         PartDefinition leftLeg = lower.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(1, 26).addBox(-1.0F, 1.0F, -1.1F, 2.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(2.0F, -9.0F, 0.1F));
         PartDefinition rightLeg = lower.addOrReplaceChild("rightLeg", CubeListBuilder.create().texOffs(1, 26).mirror().addBox(-1.0F, 1.0F, -1.1F, 2.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(-2.0F, -9.0F, 0.1F));
-        return LayerDefinition.create(meshdefinition, 128, 128);
+        return LayerDefinition.create(meshdefinition, 64, 64);
     }
 
     @Override
@@ -115,100 +110,5 @@ public class ModelImmortalGolem extends EMHierarchicalModel<EntityImmortalGolem>
         } else {
             translate.translate(-0.125, 0.1625, 0);
         }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private static class AnimationImmortalGolem {
-
-        public static final AnimationDefinition ATTACK = AnimationDefinition.Builder.withLength(0.6f)
-                .addAnimation("root",
-                        new AnimationChannel(AnimationChannel.Targets.POSITION,
-                                new Keyframe(0f, KeyframeAnimations.posVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(0.25f, KeyframeAnimations.posVec(0f, 0.1f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(0.5f, KeyframeAnimations.posVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
-                .addAnimation("root",
-                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(-2.5f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(0.3433333f, KeyframeAnimations.degreeVec(2.5f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(0.5f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
-                .addAnimation("upper",
-                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(-5f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(0.3433333f, KeyframeAnimations.degreeVec(2.5f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(0.5f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
-                .addAnimation("head",
-                        new AnimationChannel(AnimationChannel.Targets.POSITION,
-                                new Keyframe(0f, KeyframeAnimations.posVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.16766666f, KeyframeAnimations.posVec(0f, 0.5f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.3433333f, KeyframeAnimations.posVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR)))
-                .addAnimation("head",
-                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(-10f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.3433333f, KeyframeAnimations.degreeVec(-5f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.5f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR)))
-                .addAnimation("leftArm",
-                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(-60.08f, 4.53f, -2.12f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.25f, KeyframeAnimations.degreeVec(6.38f, 20.49f, -15.99f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.3433333f, KeyframeAnimations.degreeVec(42.39f, -3.92f, -7.47f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.5f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR)))
-                .addAnimation("rightArm",
-                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(-60.08f, -4.53f, 2.12f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.25f, KeyframeAnimations.degreeVec(6.38f, -20.49f, 15.99f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.3433333f, KeyframeAnimations.degreeVec(42.39f, 3.92f, 7.47f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.5f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR))).build();
-        public static final AnimationDefinition HURT = AnimationDefinition.Builder.withLength(0.5f)
-                .addAnimation("head",
-                        new AnimationChannel(AnimationChannel.Targets.POSITION,
-                                new Keyframe(0f, KeyframeAnimations.posVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(0.125f, KeyframeAnimations.posVec(0f, 2f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(0.2916767f, KeyframeAnimations.posVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
-                .addAnimation("head",
-                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(0.08343333f, KeyframeAnimations.degreeVec(-5f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(5f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(0.2916767f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM))).build();
     }
 }

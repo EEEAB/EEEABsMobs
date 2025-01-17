@@ -1,10 +1,11 @@
 package com.eeeab.eeeabsmobs.sever.entity.util;
 
+import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityFallingBlock;
 import com.mojang.math.Quaternion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerLevel;;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.CombatRules;
@@ -12,7 +13,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
@@ -24,6 +26,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 /**
@@ -57,7 +60,12 @@ public class ModEntityUtils {
         return entity instanceof Projectile || source.isProjectile();
     }
 
-
+    /**
+     * 检查实际伤害实体与直接伤害实体是否一致
+     *
+     * @param source 伤害源
+     * @return 布尔值
+     */
     public static boolean checkDirectEntityConsistency(DamageSource source) {
         return source.getEntity() == source.getDirectEntity();
     }
@@ -111,6 +119,19 @@ public class ModEntityUtils {
     }
 
     /**
+     * 判断一个实体是否背对着另一个实体
+     *
+     * @param referEntity  参照实体
+     * @param targetEntity 目标实体
+     * @param tolerance    容差角度
+     */
+    public static boolean isTargetFacingAway(Entity referEntity, Entity targetEntity, double tolerance) {
+        Vec3 lookVec = targetEntity.getLookAngle();
+        Vec3 toOtherVec = referEntity.position().subtract(targetEntity.position()).normalize();
+        return Math.acos(lookVec.dot(toOtherVec)) > -Math.cos(Math.toRadians(tolerance));
+    }
+
+    /**
      * 根据指定坐标计算获得轴对称边界框
      *
      * @param yOffset 边界框y轴偏移
@@ -120,7 +141,6 @@ public class ModEntityUtils {
         y += yOffset;
         return new AABB(x - sizeX / 2.0, y - sizeY / 2.0, z - sizeZ / 2.0, x + sizeX / 2.0, y + sizeY / 2.0, z + sizeZ / 2.0);
     }
-
 
     /**
      * 寻找到目标的直线延展坐标
@@ -217,20 +237,30 @@ public class ModEntityUtils {
     }
 
     /**
-     * 击退指定实体(受事件影响)
+     * 击退指定实体
+     *
+     * @param attacker 攻击者
+     * @param target   目标实体
+     * @param strength 击退强度
+     * @param ratioX   x轴击退比率
+     * @param ratioZ   z轴击退比率
+     * @param optional 是否受到事件/实体击退抗性/举盾的影响
      */
-    public static void forceKnockBack(LivingEntity attackTarget, float strength, double ratioX, double ratioZ, double knockBackResistanceReduction, boolean canceledEventKnockBack) {
-        LivingKnockBackEvent event = ForgeHooks.onLivingKnockBack(attackTarget, strength, ratioX, ratioZ);
-        if (canceledEventKnockBack && event.isCanceled()) return;
-        strength = event.getStrength();
-        ratioX = event.getRatioX();
-        ratioZ = event.getRatioZ();
-        strength = (float) ((double) strength * (1.0D - attackTarget.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE) * knockBackResistanceReduction));
-        if (!(strength <= 0.0F)) {
-            attackTarget.hasImpulse = true;
-            Vec3 vector3d = attackTarget.getDeltaMovement();
-            Vec3 vector3d1 = (new Vec3(ratioX, 0.0D, ratioZ)).normalize().scale((double) strength);
-            attackTarget.setDeltaMovement(vector3d.x / 2.0D - vector3d1.x, attackTarget.isOnGround() ? Math.min(0.4D, vector3d.y / 2.0D + (double) strength) : vector3d.y, vector3d.z / 2.0D - vector3d1.z);
+    public static void forceKnockBack(LivingEntity attacker, LivingEntity target, float strength, double ratioX, double ratioZ, boolean optional) {
+        LivingKnockBackEvent event = ForgeHooks.onLivingKnockBack(attacker, strength, ratioX, ratioZ);
+        if (optional && event.isCanceled()) return;
+        strength = optional ? event.getStrength() : strength;
+        ratioX = optional ? event.getRatioX() : ratioX;
+        ratioZ = optional ? event.getRatioZ() : ratioZ;
+        if (optional) {
+            strength *= (float) (1.0F - target.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
+        }
+        if (strength > 0) {
+            attacker.hasImpulse = true;
+            if (!optional) target.hurtMarked = true;
+            Vec3 vector3d = attacker.getDeltaMovement();
+            Vec3 vector3d1 = (new Vec3(ratioX, 0.0D, ratioZ)).normalize().scale(strength);
+            target.setDeltaMovement(vector3d.x / 2.0D - vector3d1.x, attacker.isOnGround() ? Math.min(0.4D, vector3d.y / 2.0D + strength) : vector3d.y, vector3d.z / 2.0D - vector3d1.z);
         }
     }
 
@@ -242,6 +272,7 @@ public class ModEntityUtils {
      * @param fallingFactor y轴下降系数
      */
     public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos, float fallingFactor) {
+        if (!EMConfigHandler.COMMON.ENTITY.enableSpawnFallingBlock.get()) return;
         Random random = new Random();
         BlockPos abovePos = new BlockPos(pos).above();//获取上面方块的坐标,以用来判断是否需要生成下落的方块
         BlockState block = level.getBlockState(pos);//获取下落方块,以用于渲染方块材质
@@ -266,8 +297,11 @@ public class ModEntityUtils {
      *
      * @param level 服务端
      * @param pos   区块坐标
+     * @param mx    向量x
+     * @param mz    向量z
      */
-    public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos) {
+    public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos, double mx, double mz) {
+        if (!EMConfigHandler.COMMON.ENTITY.enableSpawnFallingBlock.get()) return;
         RandomSource random = RandomSource.create();
         BlockPos abovePos = new BlockPos(pos).above();//获取上面方块的坐标,以用来判断是否需要生成下落的方块
         BlockState block = level.getBlockState(pos);//获取下落方块,以用于渲染方块材质
@@ -275,11 +309,10 @@ public class ModEntityUtils {
 
         if (!block.isAir() && block.isRedstoneConductor(level, pos) && !block.hasBlockEntity() && !blockAbove.getMaterial().blocksMotion()) {
             EntityFallingBlock fallingBlock = new EntityFallingBlock(level, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, block, 10);
-            fallingBlock.push(0, 0.2 + random.nextGaussian() * 0.2, 0);
+            fallingBlock.push(mx, 0.2 + random.nextGaussian() * 0.2, mz);
             level.addFreshEntity(fallingBlock);
         }
     }
-
 
     /**
      * 生成模拟裂纹方块(渲染移动)
@@ -290,6 +323,7 @@ public class ModEntityUtils {
      * @param fallingFactor y轴下降系数
      */
     public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos, Quaternion quaternionf, int duration, float fallingFactor) {
+        if (!EMConfigHandler.COMMON.ENTITY.enableSpawnFallingBlock.get()) return;
         BlockPos abovePos = new BlockPos(pos).above();//获取上面方块的坐标,以用来判断是否需要生成下落的方块
         BlockState block = level.getBlockState(pos);//获取下落方块,以用于渲染方块材质
         BlockState blockAbove = level.getBlockState(abovePos);//获取上面方块的状态,,以用来判断是否需要生成下落的方块
@@ -302,19 +336,26 @@ public class ModEntityUtils {
     }
 
     /**
-     * 添加药水效果(可堆叠等级 上限5级)
+     * 给指定实体添加药水效果
+     *
+     * @param refreshDuration 是否刷新持续时间
+     * @param force           是否强制添加药水效果
      */
-    public static void addEffectStackingAmplifier(LivingEntity target, MobEffect mobEffect, int duration, boolean ambient, boolean visible, boolean showIcon) {
+    public static void addEffectStackingAmplifier(@Nullable Entity entity, LivingEntity target, MobEffect mobEffect, int duration, int maxLevel, boolean ambient, boolean visible, boolean showIcon, boolean refreshDuration, boolean force) {
         if (!target.hasEffect(mobEffect)) {
             target.addEffect(new MobEffectInstance(mobEffect, duration, 0, ambient, visible, showIcon));
         } else {
             MobEffectInstance instance = target.getEffect(mobEffect);
             if (instance != null) {
                 int level = instance.getAmplifier();
-                if (level < 4) {
-                    level++;
-                }
-                target.addEffect(new MobEffectInstance(mobEffect, duration, level, ambient, visible, showIcon));
+                if (level < Math.max(maxLevel - 1, 0)) level++;
+                /*
+                    假如原先已有药水效果:在原有的基础上提升1级的同时持续时间减半(不小于duration添加的时长)
+                    当原先的药水效果时长为-1时:则会在基础上提升1级的同时使用duration添加的时长,在失效时会自动恢复到原先等级的药水效果且时效依旧永久
+                 */
+                duration = refreshDuration ? duration : Math.max(instance.getDuration() / 2, duration);
+                if (force) target.forceAddEffect(new MobEffectInstance(mobEffect, duration, level, ambient, visible, showIcon), entity);
+                else target.addEffect(new MobEffectInstance(mobEffect, duration, level, ambient, visible, showIcon), entity);
             }
         }
     }

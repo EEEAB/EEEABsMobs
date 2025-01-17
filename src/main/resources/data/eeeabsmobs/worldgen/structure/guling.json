@@ -1,6 +1,6 @@
 {
   "type": "eeeabsmobs:guling",
-  "biomes": "#eeeabsmobs:guling_biomes",
+  "biomes": "#eeeabsmobs:has_structure/guling",
   "step": "underground_decoration",
   "start_height": {
     "absolute": 0

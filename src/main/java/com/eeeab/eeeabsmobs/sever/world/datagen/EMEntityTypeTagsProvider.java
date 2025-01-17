@@ -6,6 +6,7 @@ import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +23,11 @@ public class EMEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(EntityInit.IMMORTAL_BOSS.get());
         tag(EntityTypeTags.ARROWS)
                 .add(EntityInit.POISON_ARROW.get());
+        //不朽者不主动进攻实体
+        tag(EMTagKey.IMMORTAL_IGNORE_HUNT_TARGETS)
+                .add(EntityType.ENDER_DRAGON)
+                .add(EntityType.ARMOR_STAND)
+                .add(EntityType.WOLF);
         //陷阱白名单
         tag(EMTagKey.TRAP_WHITELIST)
                 .add(EntityInit.IMMORTAL_GOLEM.get())

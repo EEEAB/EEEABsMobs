@@ -2,7 +2,9 @@ package com.eeeab.eeeabsmobs.sever.entity;
 
 import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
+import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.init.EffectInit;
+import com.eeeab.eeeabsmobs.sever.util.damage.DamageAdaptation;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,6 +37,7 @@ import java.util.UUID;
  */
 public abstract class EEEABMobEntity extends PathfinderMob {
     private final EMBossInfoServer bossInfo = new EMBossInfoServer(this);
+    private final DamageAdaptation intervalProtector;
     private DamageSource killDataCause;//死亡的伤害源
     public DamageSource lastDamageSource;//受到的伤害源
     public Player killDataAttackingPlayer;
@@ -46,7 +49,6 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     public int killDataRecentlyHit;
     public LivingEntity blockEntity = null;
     private static final byte MAKE_POOF_ID = 60;
-    private static final byte RESET_BOSS_MUSIC_ID = 76;
     private static final byte PLAY_BOSS_MUSIC_ID = 77;
     private static final byte STOP_BOSS_MUSIC_ID = 78;
     private static final UUID HEALTH_UUID = UUID.fromString("cca33d36-6842-43d8-b615-0cad4460a18a");
@@ -55,6 +57,7 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     public EEEABMobEntity(EntityType<? extends EEEABMobEntity> type, Level level) {
         super(type, level);
         this.xpReward = this.getEntityReward().getXp();
+        this.intervalProtector = new DamageAdaptation(50, 9, 0.35F, 0.9995F, true).setAdaptBypassesDamage(true);
         //加载配置文件并修改值
         EMConfigHandler.AttributeConfig config = this.getAttributeConfig();
         if (config != null) {
@@ -72,34 +75,39 @@ public abstract class EEEABMobEntity extends PathfinderMob {
         }
     }
 
-    protected EMConfigHandler.AttributeConfig getAttributeConfig() {
-        return null;
-    }
-
-    protected EMConfigHandler.DamageCapConfig getDamageCap() {
-        return null;
-    }
-
+    @Override
     public boolean isInvulnerableTo(DamageSource damageSource) {
         return super.isInvulnerableTo(damageSource);
     }
 
-    @Override//是否免疫爆炸
+    /**
+     * @return 是否免疫爆炸
+     */
+    @Override
     public boolean ignoreExplosion() {
         return super.ignoreExplosion();
     }
 
-    @Override//是否在实体上渲染着火效果
+    /**
+     * @return 是否在实体上渲染着火效果
+     */
+    @Override
     public boolean displayFireAnimation() {
         return super.displayFireAnimation();
     }
 
-    @Override//是否免疫摔伤
+    /**
+     * @return 是否免疫摔伤
+     */
+    @Override
     public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource damageSource) {
         return super.causeFallDamage(fallDistance, multiplier, damageSource);
     }
 
-    @Override//是否免疫药水效果
+    /**
+     * @return 是否可以被添加药水效果
+     */
+    @Override
     public boolean addEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
         return super.addEffect(effectInstance, entity);
     }
@@ -117,40 +125,15 @@ public abstract class EEEABMobEntity extends PathfinderMob {
         if (!level.isClientSide) {
             //if (tickCount % 20 == 0) this.setFoundTarget(getTarget() != null);
             if (getBossMusic() != null) {
-                if (canHandOffMusic()) {
-                    this.level.broadcastEntityEvent(this, RESET_BOSS_MUSIC_ID);
-                } else if (canPlayMusic()) {
-                    this.level.broadcastEntityEvent(this, PLAY_BOSS_MUSIC_ID);
-                } else {
+                if (!canPlayMusic()) {
                     this.level.broadcastEntityEvent(this, STOP_BOSS_MUSIC_ID);
+                } else if (!canHandOffMusic()) {
+                    this.level.broadcastEntityEvent(this, PLAY_BOSS_MUSIC_ID);
                 }
             }
         }
     }
 
-    @Override
-    public void handleEntityEvent(byte id) {
-        if (id == RESET_BOSS_MUSIC_ID) {
-            BossMusicPlayer.resetBossMusic(this);
-        } else if (id == PLAY_BOSS_MUSIC_ID) {
-            BossMusicPlayer.playBossMusic(this);
-        } else if (id == STOP_BOSS_MUSIC_ID) {
-            BossMusicPlayer.stopBossMusic(this);
-        } else if (id == MAKE_POOF_ID) {
-            makePoofParticles();
-        } else {
-            super.handleEntityEvent(id);
-        }
-    }
-
-    protected void makePoofParticles() {
-        for (int i = 0; i < 20; ++i) {
-            double d0 = this.random.nextGaussian() * 0.02D;
-            double d1 = this.random.nextGaussian() * 0.02D;
-            double d2 = this.random.nextGaussian() * 0.02D;
-            this.level.addParticle(ParticleTypes.POOF, this.getRandomX(1.0D), this.getRandomY(), this.getRandomZ(1.0D), d0, d1, d2);
-        }
-    }
 
     @Override
     protected void customServerAiStep() {
@@ -170,8 +153,14 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     protected float getNewHealthByCap(float health, EMConfigHandler.DamageCapConfig config) {
         if (config != null) {
             float oldDamage = this.getHealth() - health;
-            float newDamage = Math.min(oldDamage, this.lastDamageSource == null || (this.lastDamageSource == DamageSource.OUT_OF_WORLD || this.lastDamageSource == DamageSource.GENERIC)
-                    ? oldDamage : config.damageCap.get().floatValue());
+            float newDamage = oldDamage;
+            float damageCap = config.damageCap.get().floatValue();
+            if (this.lastDamageSource == null) {
+                newDamage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(Math.min(oldDamage, damageCap), this.getArmorValue(), (float) this.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1F);
+            } else if (this.lastDamageSource != DamageSource.OUT_OF_WORLD || this.lastDamageSource != DamageSource.GENERIC) {
+                newDamage = Math.min(oldDamage, damageCap);
+            }
+            if (this.intervalProtect()) newDamage = this.intervalProtector.damageAfterAdaptingOnce(this, this.lastDamageSource, newDamage);
             health = this.getHealth() - newDamage;
         }
         return health;
@@ -187,6 +176,7 @@ public abstract class EEEABMobEntity extends PathfinderMob {
 
     @Override
     protected final void tickDeath() {
+        this.dying();
         ++this.deathTime;
         int deathDuration = getDeathDuration();
         if (this.deathTime >= deathDuration && !this.level.isClientSide()) {
@@ -196,8 +186,15 @@ public abstract class EEEABMobEntity extends PathfinderMob {
                 this.dropAllDeathLoot(killDataCause);
             }
             this.level.broadcastEntityEvent(this, (byte) 60);
-            this.remove(Entity.RemovalReason.KILLED);
+            this.remove(RemovalReason.KILLED);
         }
+    }
+
+    protected void dying() {
+    }
+
+    protected int getDeathDuration() {
+        return 20;
     }
 
     @Override
@@ -205,10 +202,6 @@ public abstract class EEEABMobEntity extends PathfinderMob {
         if (!dropAfterDeathAnim || deathTime > 0) {
             super.dropAllDeathLoot(source);
         }
-    }
-
-    protected int getDeathDuration() {
-        return 20;
     }
 
     @Override
@@ -277,6 +270,29 @@ public abstract class EEEABMobEntity extends PathfinderMob {
         }
     }
 
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == PLAY_BOSS_MUSIC_ID) {
+            BossMusicPlayer.playBossMusic(this, getBossMusic());
+        } else if (id == STOP_BOSS_MUSIC_ID) {
+            BossMusicPlayer.stopBossMusic(this);
+        } else if (id == MAKE_POOF_ID) {
+            makePoofParticles();
+        } else {
+            super.handleEntityEvent(id);
+        }
+    }
+
+    protected void makePoofParticles() {
+        for (int i = 0; i < 20; ++i) {
+            double d0 = this.random.nextGaussian() * 0.02D;
+            double d1 = this.random.nextGaussian() * 0.02D;
+            double d2 = this.random.nextGaussian() * 0.02D;
+            this.level.addParticle(ParticleTypes.POOF, this.getRandomX(1.0D), this.getRandomY(), this.getRandomZ(1.0D), d0, d1, d2);
+        }
+    }
+
+    @Override
     protected void registerGoals() {
         this.registerCustomGoals();
     }
@@ -325,20 +341,26 @@ public abstract class EEEABMobEntity extends PathfinderMob {
         }
     }
 
-
-    @Override//初始化NBT数据
+    /**
+     * 初始化NBT数据
+     */
+    @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
     }
 
-
-    @Override//退出时保存自定义NBT(不然数据将会重置)
+    /**
+     * 退出时保存自定义NBT(不然数据将会重置)
+     */
+    @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
     }
 
-
-    @Override//加载世界时读写自定义NBT
+    /**
+     * 加载世界时读写自定义NBT
+     */
+    @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
     }
@@ -347,23 +369,28 @@ public abstract class EEEABMobEntity extends PathfinderMob {
         return this.getNearByEntities(LivingEntity.class, range, range, range, range);
     }
 
-    //获取特定范围所有实体
     public List<LivingEntity> getNearByLivingEntities(double rangeX, double height, double rangeZ, double radius) {
         return this.getNearByEntities(LivingEntity.class, rangeX, height, rangeZ, radius);
     }
 
-    //获取特定范围某一个实体
+    /**
+     * @return 获取特定范围所有实体
+     */
     public <T extends Entity> List<T> getNearByEntities(Class<T> entityClass, double x, double y, double z, double radius) {
         return level.getEntitiesOfClass(entityClass, getBoundingBox().inflate(x, y, z), targetEntity -> targetEntity != this &&
                 distanceTo(targetEntity) <= radius + targetEntity.getBbWidth() / 2f && targetEntity.getY() <= getY() + y);
     }
 
-    //获取实体之间的角度
+    /**
+     * @return 获取实体之间的角度
+     */
     public double getAngleBetweenEntities(Entity attacker, Entity target) {
         return Math.atan2(target.getZ() - attacker.getZ(), target.getX() - attacker.getX()) * (180 / Math.PI) + 90;
     }
 
-    //推开其他实体
+    /**
+     * 推开其他实体
+     */
     protected void pushEntitiesAway(float X, float Y, float Z, float radius) {
         List<LivingEntity> entityList = getNearByLivingEntities(X, Y, Z, radius);
         for (Entity entity : entityList) {
@@ -374,12 +401,26 @@ public abstract class EEEABMobEntity extends PathfinderMob {
         }
     }
 
-    //指定坐标添加弧度
+    /**
+     * @return 指定坐标添加弧度
+     */
     public Vec3 circlePosition(Vec3 targetVec3, float radius, float speed, boolean direction, int circleFrame, float offset) {
         double theta = (direction ? 1 : -1) * circleFrame * 0.5 * speed / radius + offset;
         return targetVec3.add(radius * Math.cos(theta), 0, radius * Math.sin(theta));
     }
 
+    /**
+     * 使目标短暂失去行动力
+     *
+     * @param source   效果源自实体
+     * @param target   目标实体
+     * @param duration 持续时间(tick)
+     * @param force    是否强制添加
+     */
+    public void stun(@Nullable LivingEntity source, LivingEntity target, int duration, boolean force) {
+        if (target.isBlocking() || this.isAlliedTo(target) || target instanceof Player player && (player.isSpectator() || player.isCreative())) return;
+        ModEntityUtils.addEffectStackingAmplifier(source, target, EffectInit.VERTIGO_EFFECT.get(), duration, 1, false, false, true, true, force);
+    }
 
     @Override
     public void startSeenByPlayer(ServerPlayer player) {
@@ -391,6 +432,18 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     public void stopSeenByPlayer(ServerPlayer player) {
         super.stopSeenByPlayer(player);
         this.bossInfo.removePlayer(player);
+    }
+
+    protected EMConfigHandler.AttributeConfig getAttributeConfig() {
+        return null;
+    }
+
+    protected EMConfigHandler.DamageCapConfig getDamageCap() {
+        return null;
+    }
+
+    protected boolean intervalProtect() {
+        return false;
     }
 
     protected XpReward getEntityReward() {

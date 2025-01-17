@@ -2,10 +2,10 @@ package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
-import com.eeeab.eeeabsmobs.sever.entity.util.ModMobType;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
+import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
+import com.eeeab.eeeabsmobs.sever.entity.util.ModMobType;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -17,7 +17,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.*;
@@ -150,11 +153,12 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy
         }
     }
 
+    @Override
     public boolean isAlliedTo(Entity entity) {
         if (super.isAlliedTo(entity)) {
             return true;
         } else if (entity instanceof LivingEntity && ((LivingEntity) entity).getMobType() == ModMobType.IMMORTAL) {
-            return this.getTeam() == null && entity.getTeam() == null;
+            return EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() && this.getTeam() == null && entity.getTeam() == null;
         } else {
             return false;
         }

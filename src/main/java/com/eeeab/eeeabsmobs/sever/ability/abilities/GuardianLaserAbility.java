@@ -48,7 +48,7 @@ public class GuardianLaserAbility extends Ability<Player> {
     protected void tickUsing() {
         Player player = this.getUser();
         Level level = player.level;
-        if (level.isClientSide) EEEABMobs.PROXY.playLaserSound(player);
+        if (level.isClientSide) EEEABMobs.PROXY.playGuardianLaserSound(player);
     }
 
     @Override
@@ -61,6 +61,6 @@ public class GuardianLaserAbility extends Ability<Player> {
             guardianLaser.discard();
         }
         player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
-        if (level.isClientSide) EEEABMobs.PROXY.endLaserSound(player);
+        if (level.isClientSide) EEEABMobs.PROXY.stopGuardianLaserSound(player);
     }
 }

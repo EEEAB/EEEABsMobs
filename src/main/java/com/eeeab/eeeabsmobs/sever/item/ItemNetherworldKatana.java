@@ -16,7 +16,7 @@ import net.minecraftforge.common.ForgeMod;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class ItemNetherworldKatana extends SwordItem implements ConfigurableItem {
+public class ItemNetherworldKatana extends SwordItem implements ConfigurableItem, IUnbreakableItem {
     private Multimap<Attribute, AttributeModifier> defaultModifiers;
     private static final UUID NETHERWORLD_KATANA_BASE_ENTITY_REACH_UUID = UUID.fromString("7293EB63-DAD9-4B73-A591-C0EFA6F10647");
 
@@ -47,5 +47,10 @@ public class ItemNetherworldKatana extends SwordItem implements ConfigurableItem
     @Override
     public void refreshAttributesFromConfig() {
         this.defaultModifiers = this.creatAttributesFromConfig();
+    }
+
+    @Override
+    public boolean canBreakItem() {
+        return EMConfigHandler.COMMON.ITEM.enableGhostWarriorSeriesItemDurability.get();
     }
 }

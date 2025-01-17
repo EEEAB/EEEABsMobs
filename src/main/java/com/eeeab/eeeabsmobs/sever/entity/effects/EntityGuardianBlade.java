@@ -1,31 +1,22 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
 public class EntityGuardianBlade extends EntityMagicEffects {
-    public final ControlledAnimation controlled = new ControlledAnimation(100);
-    private static final int DURATION = 35;
+    public final ControlledAnimation controlled = new ControlledAnimation(30);
     private boolean moveOffset;
     private float damage = 1F;
     private static final float[][] BLOCK_OFFSETS = {
@@ -44,10 +35,16 @@ public class EntityGuardianBlade extends EntityMagicEffects {
 
     public EntityGuardianBlade(Level level, LivingEntity caster, double x, double y, double z, float yRot, boolean moveOffset) {
         this(EntityInit.GUARDIAN_BLADE.get(), level);
+        this.damage = (float) caster.getAttributeValue(Attributes.ATTACK_DAMAGE) + EnchantmentHelper.getDamageBonus(caster.getMainHandItem(), caster.getMobType());
+        this.setYRot((yRot * (180F / (float) Math.PI)) - 90F);
         this.moveOffset = moveOffset;
         this.caster = caster;
-        this.setYRot((yRot * (180F / (float) Math.PI)) - 90F);
         this.setPos(x, y, z);
+    }
+
+    @Override
+    protected float getEyeHeight(Pose pose, EntityDimensions dimensions) {
+        return dimensions.height * 0.5F;
     }
 
     @Override
@@ -55,20 +52,17 @@ public class EntityGuardianBlade extends EntityMagicEffects {
         super.tick();
         this.controlled.updatePrevTimer();
         this.move(MoverType.SELF, this.getDeltaMovement());
+
         if (this.controlled.isStop()) {
             Vec3 lookAngle = this.getLookAngle();
             float speed = 1.35F;
             if (moveOffset) speed += this.random.nextFloat() * 0.5F;
             this.shoot(lookAngle.x, lookAngle.y, lookAngle.z, speed);
-            if (this.caster != null) this.damage = (float) this.caster.getAttributeValue(Attributes.ATTACK_DAMAGE);
             this.controlled.increaseTimer(1);
-        } else if (this.controlled.increaseTimerChain().getTimer() <= DURATION) {
-            if (this.controlled.getTimer() % 5 == 0) {
-                double ac = DURATION / 70D;
-                this.setDeltaMovement(this.getDeltaMovement().multiply(ac, ac, ac));
-            }
-        }
-        if (this.controlled.getTimer() > DURATION || this.tickCount > this.controlled.getDuration()) {
+        } else if (this.controlled.increaseTimerChain().getTimer() % 5 == 0)
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.5));
+
+        if (this.controlled.isEnd() || this.tickCount > this.controlled.getDuration() * 2) {
             this.discard();
         } else {
             this.breakBlockEffect();
@@ -82,13 +76,11 @@ public class EntityGuardianBlade extends EntityMagicEffects {
 
     private void doHurtTarget() {
         if (!this.level.isClientSide) {
-            float progress = this.controlled.getAnimationProgressTemporaryInvesed();
-            if (progress < 0.2) return;
+            float progress = 1F - this.controlled.getAnimationFraction();
             List<LivingEntity> entities = this.level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.2));
             for (LivingEntity target : entities) {
                 if (target == caster) continue;
                 if (caster instanceof EntityNamelessGuardian) damage += target.getMaxHealth() * 0.05F;
-                if (caster instanceof Player) damage = (float) Math.min(EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamageValue * 2F, damage);
                 damage = Math.max(1, damage * progress);
                 damage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(damage, target.getArmorValue(), (float) target.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1F);
                 target.hurt(DamageSource.indirectMagic(this, caster), damage);
@@ -98,43 +90,15 @@ public class EntityGuardianBlade extends EntityMagicEffects {
 
     private void breakBlockEffect() {
         if (this.level.isClientSide) {
-            double theta = this.getYRot() * (Math.PI / 180);
-            double perpX = Math.cos(theta);
-            double perpZ = Math.sin(theta);
-            theta += Math.PI / 2;
-            double vecX = Math.cos(theta);
-            double vecZ = Math.sin(theta);
-            double x = getX() + 1 * vecX;
+            double theta = Math.toRadians(this.getYRot());
+            double x = getX() + Math.cos(theta + Math.PI / 2);
             double y = getBoundingBox().minY + 0.1;
-            double z = getZ() + 1 * vecZ;
-            int hitY = Mth.floor(getY() - 0.2);
-            for (float[] floats : BLOCK_OFFSETS) {
-                float ox = floats[0], oy = floats[1];
-                int hitX = Mth.floor(x + ox);
-                int hitZ = Mth.floor(z + oy);
-                BlockPos hit = new BlockPos(hitX, hitY, hitZ);
-                BlockState block = level.getBlockState(hit);
-                if (block.getRenderShape() != RenderShape.INVISIBLE) {
-                    double count = Math.max(0, Math.floor(15 * this.controlled.getAnimationProgressTemporaryInvesed()) - 2);
-                    for (int n = 0; n < count; n++) {
-                        double pa = random.nextDouble() * 2 * Math.PI;
-                        double pd = random.nextDouble() * 0.6 - 0.1;
-                        double px = x + Math.cos(pa) * pd;
-                        double pz = z + Math.sin(pa) * pd;
-                        double magnitude = random.nextDouble() * 4 + 5;
-                        double velX = perpX * magnitude;
-                        double velY = random.nextDouble() * 3 + 6;
-                        double velZ = perpZ * magnitude;
-                        if (vecX * (pz - getZ()) - vecZ * (px - getX()) > 0) {
-                            velX = -velX;
-                            velZ = -velZ;
-                        }
-                        level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, block), px, y, pz, velX, velY, velZ);
-                    }
-                }
-            }
-            if (this.controlled.getTimer() % 6 == 0) {
-                level.addParticle(ParticleInit.GUARDIAN_SPARK.get(), getRandomX(0.5F), getRandomY(), getRandomZ(0.5F), 0, this.random.nextFloat() * 0.05F, 0);
+            double z = getZ() + Math.sin(theta + Math.PI / 2);
+            int count = (int) Math.floor(15 * (Math.max(1F - (this.controlled.getAnimationFraction() + 0.2F), 0F)));
+            ModParticleUtils.generateParticleEffects(level, x, y, z, theta, count, BLOCK_OFFSETS, pos -> level.getBlockState(pos), 1F);
+            if (count > 3 && this.controlled.getTimer() % 2 == 0) {
+                Vec3 movement = this.getDeltaMovement();
+                level.addParticle(ParticleInit.GUARDIAN_SPARK.get(), getRandomX(0.25F), getRandomY(), getRandomZ(0.25F), movement.x * 0.25, this.random.nextFloat() * 0.05F, movement.z * 0.25);
             }
         }
     }

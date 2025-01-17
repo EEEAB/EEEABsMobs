@@ -34,9 +34,20 @@ public class EMRenderType extends RenderType {
         return create("glow_strong_effect", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true, rendertype$state);
     }
 
+    @Deprecated
     public static RenderType getGlowingCutOutEffect(ResourceLocation location) {
         RenderStateShard.TextureStateShard shard = new RenderStateShard.TextureStateShard(location, false, false);
         RenderType.CompositeState rendertype$state = RenderType.CompositeState.builder().setTextureState(shard).setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER).setTransparencyState(TRANSLUCENT_TRANSPARENCY).setCullState(NO_CULL).setOverlayState(OVERLAY).setLightmapState(LIGHTMAP).createCompositeState(true);
+        return create("old_glow_cutout_effect", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, false, rendertype$state);
+    }
+
+    public static RenderType getGlowingCutOutEffect(ResourceLocation location, boolean backFaceCulling) {
+        RenderStateShard.TextureStateShard shard = new RenderStateShard.TextureStateShard(location, false, false);
+        CompositeState.CompositeStateBuilder stateBuilder = CompositeState.builder().setTextureState(shard).setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER).setTransparencyState(TRANSLUCENT_TRANSPARENCY);
+        if (backFaceCulling) {
+            stateBuilder.setDepthTestState(LEQUAL_DEPTH_TEST).setWriteMaskState(COLOR_DEPTH_WRITE);
+        }
+        RenderType.CompositeState rendertype$state = stateBuilder.setCullState(CULL).setOverlayState(OVERLAY).setLightmapState(LIGHTMAP).createCompositeState(false);
         return create("glow_cutout_effect", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, false, rendertype$state);
     }
 

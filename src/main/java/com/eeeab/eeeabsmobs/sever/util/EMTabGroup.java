@@ -12,7 +12,7 @@ public class EMTabGroup {
     public static CreativeModeTab TABS = new CreativeModeTab(EEEABMobs.MOD_ID + ".creative_tab") {
         @Override
         public @NotNull ItemStack makeIcon() {
-            return new ItemStack(ItemInit.IMMORTAL_AXE.get());
+            return new ItemStack(ItemInit.GUARDIAN_AXE.get());
         }
 
         @Override

@@ -1,6 +1,6 @@
 {
   "type": "eeeabsmobs:bloody_altar",
-  "biomes": "#eeeabsmobs:bloody_altar_biomes",
+  "biomes": "#eeeabsmobs:has_structure/bloody_altar",
   "step": "surface_structures",
   "terrain_adaptation": "beard_box",
   "start_height": {

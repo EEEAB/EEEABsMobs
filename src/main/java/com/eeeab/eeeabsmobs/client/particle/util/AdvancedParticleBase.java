@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.client.particle.util;
 
 import com.eeeab.eeeabsmobs.client.render.EMRenderType;
+import com.eeeab.eeeabsmobs.sever.util.EMMathUtils;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
@@ -184,9 +185,9 @@ public class AdvancedParticleBase extends TextureSheetParticle {
             float rotX = eulerRot.prevPitch + (eulerRot.pitch - eulerRot.prevPitch) * partialTicks;
             float rotY = eulerRot.prevYaw + (eulerRot.yaw - eulerRot.prevYaw) * partialTicks;
             float rotZ = eulerRot.prevRoll + (eulerRot.roll - eulerRot.prevRoll) * partialTicks;
-            Quaternion quatX = new Quaternion(rotX, 0, 0, false);
-            Quaternion quatY = new Quaternion(0, rotY, 0, false);
-            Quaternion quatZ = new Quaternion(0, 0, rotZ, false);
+            Quaternion quatX = EMMathUtils.rotationXYZ(rotX, 0, 0, false);
+            Quaternion quatY = EMMathUtils.rotationXYZ(0, rotY, 0, false);
+            Quaternion quatZ = EMMathUtils.rotationXYZ(0, 0, rotZ, false);
             quaternion.mul(quatZ);
             quaternion.mul(quatY);
             quaternion.mul(quatX);
@@ -196,8 +197,8 @@ public class AdvancedParticleBase extends TextureSheetParticle {
             double z = orientRot.prevOrientation.z + (orientRot.orientation.z - orientRot.prevOrientation.z) * partialTicks;
             float pitch = (float) Math.asin(-y);
             float yaw = (float) (Mth.atan2(x, z));
-            Quaternion quatX = new Quaternion(pitch, 0, 0, false);
-            Quaternion quatY = new Quaternion(0, yaw, 0, false);
+            Quaternion quatX = EMMathUtils.rotationXYZ(pitch, 0, 0, false);
+            Quaternion quatY = EMMathUtils.rotationXYZ(0, yaw, 0, false);
             quaternion.mul(quatY);
             quaternion.mul(quatX);
         }

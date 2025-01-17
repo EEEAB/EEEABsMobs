@@ -1,20 +1,26 @@
 package com.eeeab.eeeabsmobs.sever;
 
+import com.eeeab.animate.server.message.AnimationMessage;
 import com.eeeab.animate.server.message.PlayAnimationMessage;
+import com.eeeab.animate.server.message.StopAnimationMessage;
 import com.eeeab.eeeabsmobs.EEEABMobs;
-
 import com.eeeab.eeeabsmobs.sever.advancements.EMCriteriaTriggers;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalLaser;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
+import com.eeeab.eeeabsmobs.sever.init.AttributeInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.message.MessageFrenzyEffect;
 import com.eeeab.eeeabsmobs.sever.message.MessagePlayerUseAbility;
 import com.eeeab.eeeabsmobs.sever.message.MessageUseAbility;
 import com.eeeab.eeeabsmobs.sever.message.MessageVertigoEffect;
+import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import com.eeeab.eeeabsmobs.sever.world.portal.VoidCrackTeleporter;
-import com.eeeab.animate.server.message.AnimationMessage;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -43,13 +49,22 @@ public class ServerProxy {
         EEEABMobs.NETWORK.messageBuilder(MessageFrenzyEffect.class, nextID()).encoder(MessageFrenzyEffect::serialize).decoder(MessageFrenzyEffect::deserialize).consumerNetworkThread(new MessageFrenzyEffect.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(AnimationMessage.class, nextID()).encoder(AnimationMessage::serialize).decoder(AnimationMessage::deserialize).consumerNetworkThread(new AnimationMessage.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(PlayAnimationMessage.class, nextID()).encoder(PlayAnimationMessage::serialize).decoder(PlayAnimationMessage::deserialize).consumerNetworkThread(new PlayAnimationMessage.Handler<>()).add();
+        EEEABMobs.NETWORK.messageBuilder(StopAnimationMessage.class, nextID()).encoder(StopAnimationMessage::serialize).decoder(StopAnimationMessage::deserialize).consumerNetworkThread(new StopAnimationMessage.Handler()).add();
     }
 
     public void init(IEventBus bus) {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, EMConfigHandler.SPEC);
         bus.addListener(HandlerCapability::registerCapabilities);
-        bus.addListener(this::register);
+        bus.addListener(this::onEntityAttributeModification);
         bus.addListener(this::onModConfigInit);
+        bus.addListener(this::register);
+    }
+
+    @SubscribeEvent
+    public void onEntityAttributeModification(final EntityAttributeModificationEvent event) {
+        for (EntityType<? extends LivingEntity> type : event.getTypes()) {
+            event.add(type, AttributeInit.CRIT_CHANCE.get());
+        }
     }
 
     @SubscribeEvent
@@ -60,6 +75,7 @@ public class ServerProxy {
             EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamageValue = EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamage.get().floatValue();
             EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackSpeedValue = EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackSpeed.get().floatValue();
             EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackDamageValue = EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackDamage.get().floatValue();
+            EMTUtils.SHOW_ITEM_CD = EMConfigHandler.COMMON.OTHER.enableShowItemCD.get();
         }
     }
 
@@ -80,10 +96,12 @@ public class ServerProxy {
         return null;
     }
 
-    public void playLaserSound(Player player) {
+    public void playGuardianLaserSound(Player player) {
     }
 
-    public void endLaserSound(Player player) {
+    public void stopGuardianLaserSound(Player player) {
     }
 
+    public void playImmortalLaserSound(EntityImmortalLaser laser) {
+    }
 }

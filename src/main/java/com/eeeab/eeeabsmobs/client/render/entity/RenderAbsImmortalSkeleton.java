@@ -1,10 +1,10 @@
 package com.eeeab.eeeabsmobs.client.render.entity;
 
-import com.eeeab.animate.client.layer.LayerOuter;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelAbsImmortalSkeleton;
 import com.eeeab.eeeabsmobs.client.model.util.EMModelLayer;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
+import com.eeeab.eeeabsmobs.client.render.layer.LayerOuter;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortalSkeleton;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalKnight;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -39,12 +39,12 @@ public class RenderAbsImmortalSkeleton extends MobRenderer<EntityAbsImmortalSkel
 
     @Override
     protected void scale(EntityAbsImmortalSkeleton entity, PoseStack poseStack, float partialTickTime) {
-        float scale = entity.getCareerType().scale;
+        float scale = entity.getVariant().scale;
         poseStack.scale(scale, scale, scale);
     }
 
     @Override
     public ResourceLocation getTextureLocation(EntityAbsImmortalSkeleton entity) {
-        return entity instanceof EntityImmortalKnight || entity.getCareerType() == EntityAbsImmortalSkeleton.CareerType.WARRIOR ? VARIANTS_TEXTURE : TEXTURE;
+        return entity instanceof EntityImmortalKnight || entity.getVariant() == EntityAbsImmortalSkeleton.CareerType.WARRIOR ? VARIANTS_TEXTURE : TEXTURE;
     }
 }

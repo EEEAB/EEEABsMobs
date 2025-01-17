@@ -17,7 +17,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  *
  * @param <T> 实体
  * @param <M> 实体模型
- * @see com.eeeab.eeeabsmobs.sever.entity.GlowEntity
+ * @see GlowEntity
  */
 @OnlyIn(Dist.CLIENT)
 public class LayerBreath<T extends LivingEntity & GlowEntity, M extends EntityModel<T>> extends LayerGlow<T, M> {
@@ -36,7 +36,7 @@ public class LayerBreath<T extends LivingEntity & GlowEntity, M extends EntityMo
     public void render(PoseStack stack, MultiBufferSource bufferSource, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         if (predicate.glow(entity)) {
             float alpha = Mth.clamp((Mth.cos(ageInTicks * speed) * 2.0F) - 1.0F, 0, 1.0F);
-            renderLayer(stack, bufferSource.getBuffer(RenderType.eyes(this.location)), packedLightIn, alpha, alpha, alpha, 1.0F);
+            renderLayer(entity, stack, bufferSource.getBuffer(RenderType.eyes(this.location)), packedLightIn, alpha, alpha, alpha, 1.0F);
         }
     }
 }

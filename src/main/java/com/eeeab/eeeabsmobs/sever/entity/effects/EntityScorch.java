@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
-import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;

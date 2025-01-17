@@ -1,5 +1,8 @@
 package com.eeeab.eeeabsmobs.sever.util;
 
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+
 /**
  * 数学工具类
  *
@@ -44,5 +47,51 @@ public class EMMathUtils {
     public static float calculateSpeedMultiplier(float tickFactor, float distanceFactor, float exponent, float speedModifier) {
         float speedFactor = (float) Math.pow(tickFactor, exponent) * (float) Math.pow(2, -exponent * (1 - tickFactor)) * distanceFactor;
         return speedModifier * speedFactor;
+    }
+
+    public static EMMathUtils.Axis XN = new EMMathUtils.Axis(-1.0F, 0.0F, 0.0F);
+    public static EMMathUtils.Axis XP = new EMMathUtils.Axis(1.0F, 0.0F, 0.0F);
+    public static EMMathUtils.Axis YN = new EMMathUtils.Axis(0.0F, -1.0F, 0.0F);
+    public static EMMathUtils.Axis YP = new EMMathUtils.Axis(0.0F, 1.0F, 0.0F);
+    public static EMMathUtils.Axis ZN = new EMMathUtils.Axis(0.0F, 0.0F, -1.0F);
+    public static EMMathUtils.Axis ZP = new EMMathUtils.Axis(0.0F, 0.0F, 1.0F);
+
+    /**
+     * 指定轴旋转
+     *
+     * @param axis  转轴方向矢量
+     * @param angle 轴旋转角度
+     * @return 新复合旋转四元数实例
+     */
+    public static Quaternion rotation(Vector3f axis, float angle, boolean degrees) {
+        return new Quaternion(axis, angle, degrees);
+    }
+
+    /**
+     * 复合旋转
+     *
+     * @param x X轴旋转角度
+     * @param y Y轴旋转角度
+     * @param z Z轴旋转角度
+     * @return 新复合旋转四元数实例
+     */
+    public static Quaternion rotationXYZ(float x, float y, float z, boolean degrees) {
+        return new Quaternion(x, y, z, degrees);
+    }
+
+    public static class Axis {
+        private final Vector3f axis;
+
+        public Axis(float x, float y, float z) {
+            this.axis = new Vector3f(x, y, z);
+        }
+
+        public Quaternion rotation(float angle) {
+            return EMMathUtils.rotation(axis, angle, false);
+        }
+
+        public Quaternion rotationDegrees(float degrees) {
+            return EMMathUtils.rotation(axis, degrees, true);
+        }
     }
 }

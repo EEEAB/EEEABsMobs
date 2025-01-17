@@ -1,25 +1,23 @@
 package com.eeeab.eeeabsmobs.sever.util.damage;
 
+import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 伤害适应
  *
  * @author EEEAB
- * @version 1.2
+ * @version 1.7
  */
 public class DamageAdaptation {
     /**
@@ -42,8 +40,8 @@ public class DamageAdaptation {
      * 是否适应相同类型生物
      */
     private final boolean adaptsSameTypeMobs;
-    private static final RandomSource random = RandomSource.create();
-    private final Map<String, DamageInfo> ADAPT_MAP = new HashMap<>();
+    private final Map<String, DamageInfo> adaptMap = new ConcurrentHashMap<>();
+    private boolean adaptBypassesDamage;
 
     public DamageAdaptation(int adaptDamageTypesCount, int resetCountdown, float singleAdaptFactor, float maxAdaptFactor, boolean adaptsSameTypeMobs) {
         this.adaptDamageTypesCount = adaptDamageTypesCount;
@@ -55,81 +53,92 @@ public class DamageAdaptation {
 
     public DamageAdaptation(EMConfigHandler.DamageSourceAdaptConfig config) {
         this.adaptDamageTypesCount = config.maxDamageSourceAdaptCount.get();
-        this.resetCountdown = config.resetCountdown.get() * 1000;
+        this.resetCountdown = config.resetCountdown.get() * 20;
         this.singleAdaptFactor = config.singleAdaptFactor.get().floatValue();
         this.maxAdaptFactor = config.maxAdaptFactor.get().floatValue();
+        this.adaptBypassesDamage = config.adaptBypassesDamage.get();
         this.adaptsSameTypeMobs = config.adaptsSameTypeMobs;
     }
 
-    public void tick(LivingEntity entity) {
-        if (entity.tickCount % (this.resetCountdown / 1000 * 20) == 0) {
-            this.updateCache();
-        }
+    public DamageAdaptation setAdaptBypassesDamage(boolean adaptBypassesDamage) {
+        this.adaptBypassesDamage = adaptBypassesDamage;
+        return this;
     }
 
-    public float damageAfterAdaptingOnce(@Nullable DamageSource source, float amount) {
-        String key = getKey(source, this.adaptsSameTypeMobs);
-        if (key == null) {
-            return amount;
-        }
-        DamageInfo info = ADAPT_MAP.getOrDefault(key, null);
-        long systemMs = System.currentTimeMillis();
-        if (info != null) {
-            // 如果当前时间超过最后受伤时间加上重置倒计时，则重置该伤害类型
-            if (systemMs - info.getTimestamp() > resetCountdown) {
-                ADAPT_MAP.remove(key);
-            } else {
-                float newAdaptFactor = Math.min(info.getAdaptFactor() + singleAdaptFactor, maxAdaptFactor);
-                float adaptedAmount = amount * (1 - newAdaptFactor);
-                //累计适应因子 更新时间戳
-                info.setAdaptFactor(newAdaptFactor);
-                info.setTimestamp(systemMs);
-                ADAPT_MAP.put(key, info);
-                return Math.max(adaptedAmount, 0);
+    public float damageAfterAdaptingOnce(LivingEntity entity, @Nullable DamageSource source, float amount) {
+        //检查是否适应伤害
+        if (maxAdaptFactor <= 0F || singleAdaptFactor <= 0F) return amount;
+        try {
+            String key = getKey(source, adaptsSameTypeMobs, adaptBypassesDamage);
+            if (key == null) return amount;
+
+            DamageInfo info = adaptMap.getOrDefault(key, null);
+            long tickStamp = entity.tickCount;
+            if (info != null) {
+                //判断适应伤害是否失效
+                if (tickStamp > info.getTimestamp() + resetCountdown) {
+                    adaptMap.remove(key);
+                } else {
+                    float newAdaptFactor = Math.min(info.getAdaptFactor() + singleAdaptFactor, maxAdaptFactor);
+                    float adaptedAmount = amount * (1F - newAdaptFactor);
+                    //累计适应因子 更新刻度戳
+                    info.setAdaptFactor(newAdaptFactor);
+                    info.setTimestamp(tickStamp);
+                    adaptMap.put(key, info);
+                    return Math.max(adaptedAmount, 0);
+                }
+            } else if (adaptMap.size() >= adaptDamageTypesCount) {
+                updateCache(entity);
+                return amount;
             }
+            adaptMap.put(key, new DamageInfo(tickStamp, 0));
+        } catch (Exception e) {
+            EEEABMobs.LOGGER.error("An unexpected exception occurred when calculating damage: {}", e.getMessage());
         }
-        if (ADAPT_MAP.size() > adaptDamageTypesCount) {
-            List<String> keys = ADAPT_MAP.keySet().stream().toList();
-            ADAPT_MAP.remove(keys.get(random.nextInt(keys.size())));
-            return amount;
-        }
-        ADAPT_MAP.put(key, new DamageInfo(systemMs, singleAdaptFactor));
         return amount;
     }
 
-    public void updateCache() {
-        Iterator<Map.Entry<String, DamageInfo>> iterator = ADAPT_MAP.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, DamageInfo> entry = iterator.next();
-            long systemMs = System.currentTimeMillis();
-            if (systemMs - entry.getValue().getTimestamp() > resetCountdown) {
-                iterator.remove();
-            }
+
+    public float getAdaptFactorTotalBySource(LivingEntity entity, @Nullable DamageSource source) {
+        String key = getKey(source, adaptsSameTypeMobs, adaptBypassesDamage);
+        if (key == null) return -1F;
+        DamageInfo damageInfo = adaptMap.get(key);
+        if (damageInfo != null) {
+            return entity.tickCount > damageInfo.getTimestamp() + resetCountdown ? -1F : damageInfo.getAdaptFactor();
         }
+        return -1F;
+    }
+
+    public boolean isFullyAdapted(LivingEntity entity, @Nullable DamageSource source) {
+        return maxAdaptFactor > 0 && getAdaptFactorTotalBySource(entity, source) >= maxAdaptFactor;
+    }
+
+    public void updateCache(LivingEntity entity) {
+        adaptMap.entrySet().removeIf(entry -> entity.tickCount > entry.getValue().getTimestamp() + resetCountdown);
     }
 
     public void clearCache() {
-        ADAPT_MAP.clear();
+        adaptMap.clear();
     }
 
-    private static @Nullable String getKey(@Nullable DamageSource source, boolean adaptsSameTypeMobs) {
+    private static @Nullable String getKey(@Nullable DamageSource source, boolean adaptsSameTypeMobs, boolean adaptBypassesDamage) {
         if (source == null) {
-            return "unknown:source";
+            return "unknown_source";
         } else if (source.getEntity() == null && !(source == DamageSource.OUT_OF_WORLD || source == DamageSource.GENERIC)) {
-            return "unknown:entity";
+            return spliceCharacters(source.msgId, "unknown_entity");
         } else if (source.getEntity() != null) {
+            //避免荆棘伤害导致适应玩家持有武器问题
+            if (source instanceof EntityDamageSource entityDamageSource && entityDamageSource.isThorns()) return null;
             Entity entity = source.getEntity();
-            String id = adaptsSameTypeMobs ? entity.getClass().getName() : entity.getStringUUID();
-            String key;
+            String id = adaptsSameTypeMobs ? entity.getType().getDescriptionId() : entity.getStringUUID();
+            String key = id;
             if (entity instanceof Player player) {
                 InteractionHand hand = player.getUsedItemHand();
                 key = spliceCharacters(id, player.getItemInHand(hand).getItem().getDescriptionId());
-            } else {
-                key = spliceCharacters(id, source.getMsgId());
             }
             return key;
         } else {
-            return null;
+            return adaptBypassesDamage ? spliceCharacters(source.msgId, "bypasses_source") : null;
         }
     }
 

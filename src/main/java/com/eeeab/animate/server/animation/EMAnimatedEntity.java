@@ -1,13 +1,16 @@
 package com.eeeab.animate.server.animation;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * 动画实体
  *
  * @author EEEAB
  */
 public interface EMAnimatedEntity {
+    /**
+     * 无动画(默认值)
+     */
+    Animation NO_ANIMATION = Animation.create(0);
+
     /**
      * @return 获取动画关键Tick
      */
@@ -33,14 +36,6 @@ public interface EMAnimatedEntity {
      * @param animation 准备播放动画
      */
     void setAnimation(Animation animation);
-
-    /**
-     * 用于设置每个实体的闲置动画
-     *
-     * @return 闲置动画
-     */
-    @NotNull
-    Animation getNoAnimation();
 
     /**
      * 通过数组索引作为网络传输的参数，保证客户端与服务端的数据一致

@@ -17,7 +17,7 @@ public class LayerGuardianLaser extends LayerGlow<EntityNamelessGuardian, ModelN
     }
 
     @Override
-    protected float getBrightness(EntityNamelessGuardian entity) {
+    protected float getBrightness(EntityNamelessGuardian entity, float partialTicks) {
         float timer = entity.accumulationControlled.getPrevTimer();
         return timer * 0.1F;
     }

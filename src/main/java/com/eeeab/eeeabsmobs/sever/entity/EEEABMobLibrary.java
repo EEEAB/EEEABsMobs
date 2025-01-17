@@ -3,27 +3,19 @@ package com.eeeab.eeeabsmobs.sever.entity;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.animation.EMAnimatedEntity;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
-import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import org.apache.commons.lang3.ArrayUtils;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * <b>EEEABMobLibrary</b><br/>
  */
 public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimatedEntity, IEntityAdditionalSpawnData {
     private int animationTick;
-    private final Animation noAnimation = Animation.create(0);
-    private Animation animation = noAnimation;
+    private Animation animation = NO_ANIMATION;
     public boolean canplayHurtAnimation = true;//可以播放受伤动画
     public boolean hurtInterruptsAnimation = false;//伤害中断其他动画
 
@@ -33,57 +25,35 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
     }
 
     public Animation getDeathAnimation() {
-        return this.noAnimation;
+        return null;
     }
 
     public Animation getHurtAnimation() {
-        return this.noAnimation;
+        return null;
     }
 
 
     @Override
     public boolean hurt(DamageSource source, float damage) {
         boolean attack = super.hurt(source, damage);
-        if (attack) {
-            if (getHealth() > 0.0F && (getAnimation() == getNoAnimation() || hurtInterruptsAnimation) && canplayHurtAnimation) {
-                this.playAnimation(this.getHurtAnimation());
-            } else if (getHealth() <= 0.0F) {
-                this.stopAllSuperpositionAnimation();
-                this.playAnimation(this.getDeathAnimation());
-            }
+        if (attack && this.getHealth() > 0.0F && (this.isNoAnimation() || this.hurtInterruptsAnimation) && this.canplayHurtAnimation) {
+            this.playAnimation(this.getHurtAnimation());
         }
         return attack;
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        this.checkAnimationLegality();
-    }
-
-    private void checkAnimationLegality() {
-        if (!EMConfigHandler.COMMON.OTHER.enableAnimationLegalityLogPrint.get()) return;
-        if (this.tickCount % 200 == 0) {
-            Animation[] animations = this.getAnimations();
-            if (animations != null && this.isAlive()) {
-                List<Animation> filterAnimations = Arrays.stream(animations).filter(a -> a != this.noAnimation && a != this.getAnimation()
-                        && a.isStarted() && !a.isSuperposition()).toList();
-                for (Animation animation : filterAnimations) {
-                    EEEABMobs.LOGGER.warn("{} → there is illegal action data: Mob= {} Animation= {}[{}]",
-                            this.level.isClientSide ? "Client" : "Server",
-                            this.getName().getString(), animation,
-                            ArrayUtils.indexOf(this.getAnimations(), animation));
-                }
-            }
+    protected void dying() {
+        if (this.getDeathAnimation() != null && this.getAnimation() != this.getDeathAnimation()) {
+            this.stopAllSuperpositionAnimation();
+            this.playAnimation(this.getDeathAnimation());
         }
     }
 
     @Override
     protected int getDeathDuration() {
         Animation death;
-        if ((death = getDeathAnimation()) != this.getNoAnimation()) {
-            return death.getDuration();
-        }
+        if ((death = getDeathAnimation()) != null) return death.getDuration();
         return 20;
     }
 
@@ -108,7 +78,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
 
     @Override
     public void setAnimation(Animation animation) {
-        if (animation != this.getNoAnimation()) {
+        if (animation != NO_ANIMATION) {
             onAnimationStart(animation);
         } else {
             onAnimationFinish(this.animation);
@@ -116,19 +86,12 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
         this.animation = animation;
     }
 
-    @Override
-    public @NotNull Animation getNoAnimation() {
-        return this.noAnimation;
-    }
-
     public boolean isNoAnimation() {
-        return this.animation == this.getNoAnimation();
+        return this.animation == NO_ANIMATION;
     }
 
     public void stopAllSuperpositionAnimation() {
-        if (this.level.isClientSide && this.getAnimations() != null) {
-            Arrays.stream(this.getAnimations()).filter(Animation::isSuperposition).forEach(AnimationState::stop);
-        }
+        EMAnimationHandler.INSTANCE.sendEMAnimationMessage(this, true);
     }
 
     protected void onAnimationStart(Animation animation) {
@@ -152,7 +115,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
         yBodyRotO = yBodyRot = yHeadRotO = yHeadRot;
         int animOrdinal = additionalData.readInt();
         int animTick = additionalData.readInt();
-        this.setAnimation(animOrdinal == -1 ? this.noAnimation : this.getAnimations()[animOrdinal]);
+        this.setAnimation(animOrdinal == -1 ? NO_ANIMATION : this.getAnimations()[animOrdinal]);
         this.setAnimationTick(animTick);
     }
 }

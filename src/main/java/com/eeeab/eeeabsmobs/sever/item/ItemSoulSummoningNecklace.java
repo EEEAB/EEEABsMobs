@@ -2,7 +2,6 @@ package com.eeeab.eeeabsmobs.sever.item;
 
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
-import com.google.errorprone.annotations.Var;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +19,7 @@ public class ItemSoulSummoningNecklace extends Item implements ICuriosItem {
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
         EMConfigHandler.Item item = EMConfigHandler.COMMON.ITEM;
-        tooltip.add(EMTUtils.itemCoolTime(item.SSNCoolingTime.get()));
-        tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), EMTUtils.STYLE_GRAY, item.SSNCumulativeMaximumDamage.get()));
+        if (EMTUtils.SHOW_ITEM_CD) tooltip.add(EMTUtils.itemCoolTime(item.SSNCoolingTime.get()));
+        tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), item.SSNCumulativeMaximumDamage.get()));
     }
 }

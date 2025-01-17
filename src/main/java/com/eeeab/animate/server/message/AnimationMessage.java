@@ -1,5 +1,6 @@
 package com.eeeab.animate.server.message;
 
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.animation.EMAnimatedEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -45,15 +46,17 @@ public class AnimationMessage {
                 if (Minecraft.getInstance().level != null) {
                     Entity entity = Minecraft.getInstance().level.getEntity(message.entityID);
                     if (entity instanceof EMAnimatedEntity animationEntity) {
+                        //判断当前动画是否是可堆叠的 是可堆叠则由客户端单独计算结束时间并停止动画
+                        if (!animationEntity.getAnimation().isSuperposition()) animationEntity.getAnimation().stop();
                         if (message.animationsIndex == -1) {
-                            animationEntity.setAnimation(animationEntity.getNoAnimation());
+                            animationEntity.setAnimation(EMAnimatedEntity.NO_ANIMATION);
                         } else {
-                            //判断当前动画是否是可堆叠的 是可堆叠则由客户端单独计算结束时间并停止动画
-                            if (!animationEntity.getAnimation().isSuperposition()) animationEntity.getAnimation().stop();
-                            animationEntity.setAnimation(animationEntity.getAnimations()[message.animationsIndex]);
+                            Animation animation = animationEntity.getAnimations()[message.animationsIndex];
+                            animationEntity.setAnimation(animation);
+                            //需注意：当重复播放同一动画时，且动画是可叠加的，后面的动作不会会覆盖前面的动作，而是会继续进行
+                            animation.startIfStopped(entity.tickCount);
                         }
                         animationEntity.setAnimationTick(0);
-                        animationEntity.getAnimation().start(entity.tickCount);
                     }
                 }
             });

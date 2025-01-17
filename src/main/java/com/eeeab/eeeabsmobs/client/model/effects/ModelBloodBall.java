@@ -32,7 +32,7 @@ public class ModelBloodBall extends EMHierarchicalModel<EntityBloodBall> {
     }
 
     public void setupAnim(EntityBloodBall bloodBall, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.ball_1.yRot = (float) (netHeadYaw * (Math.PI / 180F));
-        this.ball_1.xRot = (float) (headPitch * (Math.PI / 180F));
+        this.ball_1.yRot = toRadians(netHeadYaw);
+        this.ball_1.xRot = toRadians(headPitch);
     }
 }
