@@ -154,16 +154,19 @@ public class ModelNamelessGuardian extends EMHierarchicalModel<EntityNamelessGua
             this.walk(upper, 0.1F, 0.05F, false, 0, 0, frame, 1);
             this.walk(head, 0.1F, 0.05F, true, 0, 0, frame, 1);
             //Walk
-            if (entity.isNoAnimation() && entity.getDeltaMovement().horizontalDistanceSqr() > 0) {
-                this.animateWalk(AnimationNamelessGuardian.WALK, limbSwing, limbSwingAmount, 1.5F, 1.5F);
-            }
             float speed = 0.2F;
-            float degree = 0.6F;
+            float degree = 0.66F;
+            if (entity.isNoAnimation()) {
+                if (entity.getDeltaMovement().horizontalDistanceSqr() > 0) {
+                    this.animateWalk(AnimationNamelessGuardian.WALK, limbSwing, limbSwingAmount, 1.5F, 1.5F);
+                } else {
+                    this.walk(this.leftArm, speed, degree * 0.8F, true, 0.0F, -0.05F, limbSwing, limbSwingAmount);
+                    this.walk(this.rightArm, speed * 0.8F, 0.2F, false, 0.0F, 0, limbSwing, limbSwingAmount);
+                }
+            }
             this.walk(this.root, speed * 2F, degree * 0.12F, false, 0, 0, limbSwing, limbSwingAmount);
             this.flap(this.upper, speed, degree * 0.12F, true, 0, 0, limbSwing, limbSwingAmount);
             this.swing(this.upper, speed, degree * 0.12F, false, 0, 0, limbSwing, limbSwingAmount);
-            this.walk(this.leftArm, speed, degree * 0.8F, true, 0.0F, -0.05F, limbSwing, limbSwingAmount);
-            this.walk(this.rightArm, speed * 0.8F, 0.2F, false, 0.0F, 0, limbSwing, limbSwingAmount);
         }
         //Animation effect
         int tick = entity.getAnimationTick();
