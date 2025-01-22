@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+//TODO 未完成方块
 //参考自: package net.minecraft.world.level.block.entity.JukeboxBlockEntity
 public class EntityBlockTombstone extends BaseContainerBlockEntity {
     public int tick;

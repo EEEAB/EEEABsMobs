@@ -7,10 +7,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -18,24 +19,16 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.BooleanOp;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
-import java.util.stream.Stream;
 
 //TODO 未完成方块
 public class BlockTombstone extends BaseEntityBlock {
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
 
     public BlockTombstone() {
-        super(BlockBehaviour.Properties.of().lightLevel(state -> state.getValue(POWER)).hasPostProcess((state, level, pos) -> state.getValue(POWER) > 0).strength(-1.0F, 3600000.0F).sound(SoundType.STONE));
+        super(BlockBehaviour.Properties.of().lightLevel(state -> state.getValue(POWER)).hasPostProcess((state, level, pos) -> state.getValue(POWER) > 0).strength(-1.0F, 3600000.0F).sound(SoundType.STONE).noLootTable());
         this.registerDefaultState(this.stateDefinition.any().setValue(POWER, 0));
     }
 
