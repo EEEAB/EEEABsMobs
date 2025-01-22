@@ -98,7 +98,7 @@ public class ImmortalPounceGoal extends AnimationAI<EntityImmortal> {
                 if (tick == 9) entity.playSound(SoundInit.IMMORTAL_SHAKE_GROUND.get());
                 else if (tick == 10) {
                     Vec3 pos = entity.getPosOffset(false, 3F, 0.5F, -1F);
-                    for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), pos, 3.5D, 0F, false, 20)) {
+                    for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), pos, 3.4D, -0.01F, false, 20)) {
                         if (entityHit == entity) continue;
                         entity.doHurtTarget(entityHit, false, false, true, false, 0.025F, 1.0F, 0.9F);
                         entity.disableShield(entityHit, 50);

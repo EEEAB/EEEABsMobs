@@ -522,10 +522,10 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
             if (tick == 12) this.doImmortalMagicMatrixEffect(MagicCircleType.POWER, 7, 1.5F, 0.5F, 9F);
         } else if (animation == this.smashGround1Animation) {
             this.doSwipeEffect(tick == 17, tick > 17 && tick <= 21, null);
-            if (tick == 20) this.doShakeGroundEffect(12, 2.5F, 0F, 0.58F, 0.94F, false, true);
+            if (tick == 20) this.doShakeGroundEffect(12, 2.3F, 0F, 0.58F, 0.94F, false, true);
         } else if (animation == this.smashGround2Animation) {
             this.doSwipeEffect(tick == 13, tick > 13 && tick <= 17, null);
-            if (tick == 16) this.doShakeGroundEffect(14, 2.5F, 0F, 0.55F, 0.95F, false, true);
+            if (tick == 16) this.doShakeGroundEffect(14, 2.2F, 0F, 0.55F, 0.945F, false, true);
         } else if (animation == this.smashGround3Animation) {
             this.doSwipeEffect(tick == 10, tick > 10 && tick <= 20, null);
             if (tick == 19) {
@@ -537,7 +537,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
             if (tick == 5) this.doImmortalMagicMatrixEffect(MagicCircleType.SPEED, 5, 2.5F, 0.4F, 8F);
         } else if (animation == this.pounceSmashAnimation) {
             this.doSwipeEffect(tick == 8, tick > 8 && tick <= 11, true);
-            if (tick == 10) this.doShakeGroundEffect(15, 3.7F, 0F, 0.58F, 0.92F, false, true);
+            if (tick == 10) this.doShakeGroundEffect(15, 3.7F, 0F, 0.58F, 0.93F, false, true);
         } else if (animation == this.pounceHoldAnimation) {
             if (tick == 1) {
                 if (!this.isSilent()) this.level().playLocalSound(this.blockPosition(), SoundInit.IMMORTAL_SUBSONIC.get(), this.getSoundSource(), 0.4F, 1.5F, false);

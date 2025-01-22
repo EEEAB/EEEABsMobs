@@ -46,7 +46,7 @@ public class ImmortalShakeGroundGoal extends AnimationAI<EntityImmortal> {
             else if (tick == 19) entity.playSound(SoundInit.IMMORTAL_SHAKE_GROUND.get(), 1F, 1F);
             else if (tick == 21) {
                 boolean onGround = entity.onGround();
-                for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), entity.getPosOffset(false, 1.5F, 0F, -1F), 3.8D, -0.03F, false, 12)) {
+                for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), entity.getPosOffset(false, 1.5F, 0F, -1F), 3.6D, 0F, false, 12)) {
                     if (entityHit == entity) continue;
                     boolean hit = entity.doHurtTarget(entityHit, false, false, false, false, 0.025F, 1.2F, 0.9F);
                     entity.disableShield(entityHit, 50);
@@ -62,7 +62,7 @@ public class ImmortalShakeGroundGoal extends AnimationAI<EntityImmortal> {
             if (tick == 12) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.7F, entity.getVoicePitch() + 0.1F);
             else if (tick == 16) entity.playSound(SoundInit.IMMORTAL_SHAKE_GROUND.get(), 1.2F, 1F);
             else if (tick == 17) {
-                for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), entity.getPosOffset(false, 1.5F, 0F, -1F), 5D, 0F, true, 35)) {
+                for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), entity.getPosOffset(false, 1.5F, 0F, -1F), 4D, -0.01F, true, 35)) {
                     if (entityHit == entity) continue;
                     entity.doHurtTarget(entityHit, false, false, false, false, 0.025F, 1.1F, 1.1F);
                     entity.disableShield(entityHit, 50);
@@ -144,7 +144,7 @@ public class ImmortalShakeGroundGoal extends AnimationAI<EntityImmortal> {
             else if (tick == 44) entity.playSound(SoundInit.IMMORTAL_SHORYUKEN.get(), 0.6F, 0.9F);
             else if (tick == 46) entity.playSound(SoundInit.IMMORTAL_SHAKE_GROUND.get(), 1.2F, 1.2F);
             else if (tick == 47) {
-                for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), entity.getPosOffset(false, 4.5F, 0F, -1F), 2.5D, -0.05F, false, 10)) {
+                for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), entity.getPosOffset(false, 4.5F, 0F, -1F), 2.46D, 0F, false, 10)) {
                     if (entityHit == entity) continue;
                     int preInvulnerableTime = entityHit.invulnerableTime;
                     entityHit.invulnerableTime = 0;
