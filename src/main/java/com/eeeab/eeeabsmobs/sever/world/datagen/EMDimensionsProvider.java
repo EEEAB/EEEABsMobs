@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.world.dimension;
+package com.eeeab.eeeabsmobs.sever.world.datagen;
 
 import com.eeeab.eeeabsmobs.sever.util.EMResourceKey;
 import com.mojang.datafixers.util.Pair;
@@ -27,8 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.OptionalLong;
 
-public class DimensionsCrackProvider {
-
+public class EMDimensionsProvider {
     public static void bootstrapType(BootstapContext<DimensionType> context) {
         context.register(EMResourceKey.VOID_CRACK_TYPE, new DimensionType(
                 OptionalLong.empty()/*OptionalLong.of(12000)*/, // fixedTime

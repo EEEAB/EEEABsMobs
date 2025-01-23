@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.world.biome;
+package com.eeeab.eeeabsmobs.sever.world.datagen;
 
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.util.EMResourceKey;
@@ -10,8 +10,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.*;
 import net.minecraft.world.level.levelgen.GenerationStep;
 
-public class BiomesCrackProvider {
-
+public class EMBiomesProvider {
     public static void boostrap(BootstapContext<Biome> context) {
         context.register(EMResourceKey.VOID_CRACK_BIOME, testBiome(context));
     }

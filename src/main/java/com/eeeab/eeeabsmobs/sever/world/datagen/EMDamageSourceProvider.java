@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.util.damage;
+package com.eeeab.eeeabsmobs.sever.world.datagen;
 
 import com.eeeab.eeeabsmobs.sever.util.EMResourceKey;
 import net.minecraft.data.worldgen.BootstapContext;
@@ -6,8 +6,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageScaling;
 import net.minecraft.world.damagesource.DamageType;
 
-public class DamageSourceProvider {
-
+public class EMDamageSourceProvider {
     public static void boostrap(BootstapContext<DamageType> context) {
         ResourceKey<DamageType> shamanBombing = EMResourceKey.SHAMAN_BOMBING;
         ResourceKey<DamageType> guardianLaser = EMResourceKey.GUARDIAN_LASER;
