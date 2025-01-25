@@ -179,6 +179,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     private int battleTimestamp;
     private int destroyBlocksTick;
     private int closeProximityTickCount;
+    private int unableAttackTickCount;
     private int universalCDTime;
     private int immortalInvulnerableTime;
     private final DamageAdaptation damageAdaptation;
@@ -411,6 +412,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
             } else if (animation == this.unleashEnergyAnimation) {
                 this.timeUntilLaser = this.getCoolingTimerUtil(LASER_TIME.sample(this.random), 10F);
             }
+            this.unableAttackTickCount = 0;
         }
     }
 
@@ -604,11 +606,12 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
                 float targetRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this, target);
                 if (this.battleTimestamp == 0) this.battleTimestamp = this.tickCount;
 
-                if (this.timeUntilTeleport <= 0 && (this.isNoAnimation() || this.canInterruptsAnimation) && (this.hurtCount > 30 || this.closeProximityTickCount >= 400 && this.random.nextFloat() < 0.3F)) {
+                if (this.timeUntilTeleport <= 0 && (this.isNoAnimation() || this.canInterruptsAnimation) && (this.hurtCount > 30 || this.unableAttackTickCount >= 150 || (this.closeProximityTickCount >= 400 && this.random.nextFloat() < 0.3F))) {
                     this.hurtCount = 0;
-                    this.closeProximityTickCount = 0;
                     this.canInterruptsAnimation = false;
-                    this.setTeleportType(targetFacingAway ? TeleportType.FRONT : this.timeUntilPounce <= 0 || this.random.nextFloat() < 0.4F ? TeleportType.SNEAK : TeleportType.BEHIND);
+                    this.closeProximityTickCount = 0;
+                    if (this.unableAttackTickCount >= 150) this.setTeleportType(TeleportType.FORCE);
+                    else this.setTeleportType(targetFacingAway ? TeleportType.FRONT : this.timeUntilPounce <= 0 && this.random.nextFloat() < this.getHealth() / this.getMaxHealth() ? TeleportType.BEHIND : TeleportType.SNEAK);
                     this.playAnimation(this.teleportAnimation);
                     this.timeUntilTeleport = this.getCoolingTimerUtil(TIME_UNTIL_TELEPORT, 5F);
                 } else if (this.timeUntilLaser <= 0 && (this.getCumulativeBattleTick() > 2400 || this.getHealthPercentage() < 60) && this.isNoAnimation() && targetRelativeHeight < 10 && this.targetDistance >= 12 && this.targetDistance < EntityImmortalLaser.IMMORTAL_RADIUS) {
@@ -645,10 +648,13 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
                     this.attackTick = TIME_UNTIL_ATTACK;
                 }
 
-                if (this.targetDistance <= 5) {
+                if (this.targetDistance <= 5 && targetRelativeHeight <= 5) {
                     this.closeProximityTickCount++;
                     if (this.getCumulativeBattleTick() > 3600 || this.getHealthPercentage() < 50) this.closeProximityTickCount++;
-                } else if (tickCount % 2 == 0 && this.closeProximityTickCount > 0) this.closeProximityTickCount--;
+                } else if (tickCount % 2 == 0) {
+                    this.unableAttackTickCount++;
+                    if (this.closeProximityTickCount > 0) this.closeProximityTickCount--;
+                }
             }
             if (target == null && this.tickCount % 100 == 0 && this.battleTimestamp > 0) this.battleTimestamp = (int) (this.battleTimestamp * 0.5);
         }
@@ -1010,7 +1016,13 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
         if (this.level().isClientSide || !this.isAlive()) return false;
         if (target == null) type = TeleportType.RANDOM;
         double x, y, z;
-        if (TeleportType.SNEAK == type) {
+        if (TeleportType.FORCE == type) {
+            x = target.getX();
+            y = target.getY();
+            z = target.getZ();
+            this.teleportTo(x, y, z);
+            return true;
+        } else if (TeleportType.SNEAK == type) {
             float width = this.getBbWidth() + target.getBbWidth();
             double radians = Math.toRadians(target.getYRot() + 270);
             x = target.getX() + width * Math.cos(radians);
@@ -1571,7 +1583,9 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
         RANDOM(0),
         FRONT(1),
         BEHIND(2),
-        SNEAK(3);
+        SNEAK(3),
+        //强制传送:对传送的坐标不做任何检查
+        FORCE(4);
 
         TeleportType(int id) {
             this.id = (byte) id;
