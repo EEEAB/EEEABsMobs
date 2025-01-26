@@ -745,7 +745,6 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     public boolean hurt(DamageSource source, float damage) {
         if (!this.level().isClientSide) {
             Entity entity = source.getEntity();
-            if (entity instanceof Mob mob && mob.getMobType() == ModMobType.IMMORTAL) return false;
             this.hurtCount++;
             this.lastDamageSource = source;
             byte pierceLevel = 0;

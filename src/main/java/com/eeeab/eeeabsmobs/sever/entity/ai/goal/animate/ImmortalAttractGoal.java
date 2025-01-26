@@ -7,6 +7,7 @@ import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 public class ImmortalAttractGoal extends AnimationAI<EntityImmortal> {
@@ -38,23 +39,27 @@ public class ImmortalAttractGoal extends AnimationAI<EntityImmortal> {
                 float attackArc = 180;
                 boolean hitFlag = false;
                 float attackDistance = 5F;
-                for (LivingEntity entityHit : entity.getNearByEntities(LivingEntity.class, attackDistance, attackDistance, attackDistance, attackDistance)) {
-                    float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, entityHit);
+                for (Entity entityHit : entity.getNearByEntities(Entity.class, attackDistance, attackDistance, attackDistance, attackDistance)) {
+                    float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, entityHit.position());
                     float entityHitDistance = (float) Math.sqrt((entityHit.getZ() - entity.getZ()) * (entityHit.getZ() - entity.getZ()) + (entityHit.getX() - entity.getX()) * (entityHit.getX() - entity.getX())) - entityHit.getBbWidth() / 2f;
                     if (entityHitDistance <= attackDistance && ((entityRelativeAngle >= -attackArc / 2 && entityRelativeAngle <= attackArc / 2) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
                         if (tick == 40) {
-                            int preInvulnerableTime = entityHit.invulnerableTime;
-                            entityHit.invulnerableTime = 0;
-                            entity.stun(null, entityHit, 40, false);
-                            if (!entity.doHurtTarget(entityHit, true, entityHit.hasEffect(EffectInit.ERODE_EFFECT.get()), false, false, 0.035F, 1.0F, 1.2F)) entityHit.invulnerableTime = preInvulnerableTime;
-                            if (!hitFlag) {
-                                hitFlag = true;
-                                entity.playSound(SoundInit.IMMORTAL_PUNCH_HARD_HIT.get(), 1.2F, 1.1F);
-                                entity.level().broadcastEntityEvent(entity, (byte) 10);
+                            if (entityHit instanceof LivingEntity livingHit) {
+                                int preInvulnerableTime = entityHit.invulnerableTime;
+                                entityHit.invulnerableTime = 0;
+                                entity.stun(null, livingHit, 40, false);
+                                if (!entity.doHurtTarget(livingHit, true, livingHit.hasEffect(EffectInit.ERODE_EFFECT.get()), false, false, 0.035F, 1.0F, 1.2F)) entityHit.invulnerableTime = preInvulnerableTime;
+                                if (!hitFlag) {
+                                    hitFlag = true;
+                                    entity.playSound(SoundInit.IMMORTAL_PUNCH_HARD_HIT.get(), 1.2F, 1.1F);
+                                    entity.level().broadcastEntityEvent(entity, (byte) 10);
+                                }
+                            } else if (!entityHit.isRemoved() && entityHit.isAttackable()) {
+                                entity.doHurtTarget(entityHit);
                             }
                         }
                     }
-                    entity.knockBack(entityHit, 1, 0.2, true, tick > 40);
+                    if (entityHit instanceof LivingEntity livingHit) entity.knockBack(livingHit, 1, 0.2, true, tick > 40);
                 }
                 int offset = (int) (attackDistance / 2);
                 if (tick == 41 && ModEntityUtils.canMobDestroy(entity) && ModEntityUtils.advancedBreakBlocks(entity.level(), entity, 50, offset, (int) attackDistance, offset, 0, offset, entity.checkCanDropItems(), true)) {
