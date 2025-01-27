@@ -32,7 +32,7 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
     private static final float INERTIA_DEFAULT = 0.95F;
     private static final int DANGEROUS_TIMER = 30;
     private static final int NO_DANGEROUS_TIMER = 50;
-    private float baseDamage = 6.0F;
+    private float baseDamage = 8.0F;
     public boolean reboundFlag;
     private static final EntityDataAccessor<Boolean> DANGEROUS = SynchedEntityData.defineId(EntityShamanBomb.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> IS_PLAYER = SynchedEntityData.defineId(EntityShamanBomb.class, EntityDataSerializers.BOOLEAN);
@@ -73,20 +73,20 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
             Entity ownerEntity = this.getOwner();//(发射|反弹)弹射物的实体
             boolean flag;
             if (ownerEntity instanceof LivingEntity owner && resultEntity instanceof LivingEntity livingEntity) {
-                flag = resultEntity.hurt(EMDamageSource.shamanBombing(this, owner), (livingEntity.getMaxHealth() * 0.1F * (isPlayer() ? 0 : 1F)) + baseDamage);
+                flag = resultEntity.hurt(EMDamageSource.shamanBombing(this, owner), (livingEntity.getMaxHealth() * 0.05F * (isPlayer() ? 0 : 1F)) + baseDamage);
                 if (flag && resultEntity.isAlive()) {
                     this.doEnchantDamageEffects(owner, resultEntity);
                 }
             } else {
-                flag = resultEntity.hurt(this.damageSources().magic(), 10.0F);
+                flag = resultEntity.hurt(this.damageSources().magic(), 11.4514F);
             }
 
-            if (flag && resultEntity instanceof LivingEntity livingEntity && !isPlayer()) {
-                int duration = 20;
+            if (flag && resultEntity instanceof LivingEntity livingEntity) {
+                int duration = 10;
                 int amplifier = 0;
 
-                if (this.level().getDifficulty() == Difficulty.HARD) {
-                    duration = 30;
+                if (!isPlayer() && this.level().getDifficulty() == Difficulty.HARD) {
+                    duration = 15;
                     amplifier = 1;
                 }
 
@@ -135,7 +135,7 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
 
     @Override
     public void remove(RemovalReason reason) {
-        EntityCameraShake.cameraShake(level(), position(), 8, 0.2f, 0, 20);
+        EntityCameraShake.cameraShake(level(), position(), 8, 0.15F, 0, 20);
         super.remove(reason);
     }
 
@@ -154,7 +154,7 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
     //如果为true 则可以打回去
     @Override
     public boolean isPickable() {
-        return !this.isDangerous() && !isPlayer();
+        return !this.isDangerous();
     }
 
     //返回弹射物的速度系数 该因子乘以初始速度
@@ -189,7 +189,7 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
 
 
     public void setDangerous(boolean flag) {
-        if (flag) this.baseDamage = 8;
+        if (flag) this.baseDamage *= 1.2F;
         this.entityData.set(DANGEROUS, flag);
     }
 
@@ -200,6 +200,7 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
 
 
     public void setIsPlayer(boolean flag) {
+        if (flag) this.baseDamage = EMConfigHandler.COMMON.ITEM.itemImmortalStaffProjectileDamage.get().floatValue();
         this.entityData.set(IS_PLAYER, flag);
     }
 }

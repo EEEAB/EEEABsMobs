@@ -22,6 +22,7 @@ import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.init.*;
+import com.eeeab.eeeabsmobs.sever.item.ItemImmortalStaff;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -32,10 +33,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -147,11 +148,6 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         this.goalSelector.addGoal(4, new ShamanBombing(this));
         this.goalSelector.addGoal(5, new ShamanWololo(this));
         this.goalSelector.addGoal(6, new KeepDistanceGoal<>(this, 1.0D, 16.0F, 1.5F));
-    }
-
-    @Override
-    public boolean addEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        return (effectInstance.getEffect() == MobEffects.REGENERATION || effectInstance.getEffect() == EffectInit.VERTIGO_EFFECT.get()) && super.addEffect(effectInstance, entity);
     }
 
     @Override
@@ -349,6 +345,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
                 add(Attributes.ARMOR, 2.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.35D).
                 add(Attributes.FOLLOW_RANGE, 32.0D).
+                add(Attributes.LUCK, 1.0D).
                 add(Attributes.KNOCKBACK_RESISTANCE, 0.5D);
     }
 
@@ -470,7 +467,6 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
     }
 
     private class ShamanBombing extends AnimationSpellAI<EntityImmortalShaman> {
-
         public ShamanBombing(EntityImmortalShaman spellCaster) {
             super(spellCaster);
         }
@@ -486,9 +482,9 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         @Override
         protected void inSpellCasting() {
             LivingEntity target = this.spellCaster.getTarget();
-            RandomSource random = this.spellCaster.getRandom();
             if (target != null) {
-                this.spellCaster.performRangedAttack(target, random.nextInt(5) == 0);
+                boolean hold = this.spellCaster.getItemInHand(InteractionHand.MAIN_HAND).getItem().equals(ItemInit.IMMORTAL_STAFF.get()) || this.spellCaster.getItemInHand(InteractionHand.OFF_HAND).getItem().equals(ItemInit.IMMORTAL_STAFF.get());
+                this.spellCaster.performRangedAttack(target, hold && ItemImmortalStaff.isDangerBomb(this.spellCaster));
             }
         }
 

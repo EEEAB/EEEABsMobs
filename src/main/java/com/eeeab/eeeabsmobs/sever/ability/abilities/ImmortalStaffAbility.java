@@ -5,6 +5,7 @@ import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityPeriod;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityType;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
+import com.eeeab.eeeabsmobs.sever.item.ItemImmortalStaff;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -31,7 +32,7 @@ public class ImmortalStaffAbility extends Ability<Player> {
             EntityShamanBomb shamanBomb = new EntityShamanBomb(user.level(), user, user.getLookAngle().x, user.getLookAngle().y, user.getLookAngle().z);
             shamanBomb.setOwner(user);
             shamanBomb.setIsPlayer(true);
-            shamanBomb.setDangerous(user.getRandom().nextFloat() < 0.25 + user.getLuck() * 0.15);
+            shamanBomb.setDangerous(ItemImmortalStaff.isDangerBomb(user));
             shamanBomb.absMoveTo(shamanBomb.getX() + width * Math.cos(yBodyRadians), user.getY(0.55), shamanBomb.getZ() + width * Math.sin(yBodyRadians));
             serverLevel.addFreshEntity(shamanBomb);
         }

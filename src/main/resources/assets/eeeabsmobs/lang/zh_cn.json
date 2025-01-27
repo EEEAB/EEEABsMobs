@@ -274,6 +274,7 @@
   "other.eeeabsmobs.damage_adapt_5.config": "启用适应虚空与指令伤害",
   "other.eeeabsmobs.effective_range.config": "设置弹射物能造成伤害的有效距离",
   "other.eeeabsmobs.attack_radius.config": "设置攻击半径",
+  "other.eeeabsmobs.projectile_damage.config": "设置弹射物伤害",
   "other.eeeabsmobs.summoning_soul_necklace.config": "设置最大累计伤害",
   "other.eeeabsmobs.howitzer_1.config": "设置爆炸伤害上限",
   "other.eeeabsmobs.howitzer_2.config": "设置爆炸半径",

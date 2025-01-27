@@ -91,6 +91,8 @@ public final class EMConfigHandler {
             {
                 builder.push("Immortal Staff");
                 itemImmortalStaffCoolingTime = itemCD(1.5D);
+                itemImmortalStaffProjectileDamage = BUILDER.translation(getTranslationKey("projectile_damage"))
+                        .defineInRange("Set projectile damage", 8D, 1D, Float.MAX_VALUE);
                 builder.pop();
             }
             {
@@ -117,6 +119,7 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.IntValue itemGuardianAxeSweepingLevel;
         public final ForgeConfigSpec.DoubleValue itemGuardianAxeCoolingTime;
         public final ForgeConfigSpec.DoubleValue itemImmortalStaffCoolingTime;
+        public final ForgeConfigSpec.DoubleValue itemImmortalStaffProjectileDamage;
         public final ForgeConfigSpec.DoubleValue itemGuardianCoreShootRadius;
         public final ForgeConfigSpec.BooleanValue itemGuardianCoreLaserCanDestroyBlock;
         public final ForgeConfigSpec.BooleanValue enableGhostWarriorSeriesItemDurability;
@@ -554,9 +557,9 @@ public final class EMConfigHandler {
             this.attackSpeedValue = attackSpeed;
             this.attackDamageValue = attackDamage;
             this.attackDamage = BUILDER.comment("Set tool attack damage")
-                    .translation(getTranslationKey("tool_damage")).defineInRange("Attack damage", attackDamage, 0d, Float.MAX_VALUE);
+                    .translation(getTranslationKey("tool_damage")).defineInRange("Attack damage", attackDamage, 0D, Float.MAX_VALUE);
             this.attackSpeed = BUILDER.comment("Set tool attack speed")
-                    .translation(getTranslationKey("tool_speed")).defineInRange("Attack speed", attackSpeed, 0d, Float.MAX_VALUE);
+                    .translation(getTranslationKey("tool_speed")).defineInRange("Attack speed", attackSpeed, 0D, Float.MAX_VALUE);
         }
 
         public final ForgeConfigSpec.DoubleValue attackDamage;

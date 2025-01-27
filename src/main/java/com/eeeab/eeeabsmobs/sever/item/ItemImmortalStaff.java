@@ -8,6 +8,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
@@ -61,5 +63,20 @@ public class ItemImmortalStaff extends Item {
         EMConfigHandler.Item item = EMConfigHandler.COMMON.ITEM;
         if (EMTUtils.SHOW_ITEM_CD) tooltip.add(EMTUtils.itemCoolTime(item.itemImmortalStaffCoolingTime.get()));
         tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId()));
+    }
+
+    /**
+     * 根据使用者的幸运值判断是否发射强力弹丸
+     *
+     * @param caster 使用者
+     * @return 是否发射强力弹丸
+     */
+    public static boolean isDangerBomb(LivingEntity caster) {
+        float l0 = 0F;
+        AttributeInstance luck = caster.getAttribute(Attributes.LUCK);
+        if (luck != null) {
+            l0 = (float) luck.getValue();
+        }
+        return caster.getRandom().nextFloat() < 0.25 + l0 * 0.15;
     }
 }
