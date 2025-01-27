@@ -23,8 +23,7 @@ public class BlockTombSummonTrap extends BlockStepOnTrap {
             EntityImmortalGolem golem = EntityInit.IMMORTAL_GOLEM.get().create(level);
             if (level instanceof ServerLevel server && golem != null) {
                 golem.setInitSpawn();
-                golem.finalizeSpawn(server, level.getCurrentDifficultyAt(BlockPos.containing(pos.getX(), pos.getY(), pos.getZ())),
-                        MobSpawnType.MOB_SUMMONED, null, null);
+                golem.finalizeSpawn(server, level.getCurrentDifficultyAt(BlockPos.containing(pos.getX(), pos.getY(), pos.getZ())), MobSpawnType.TRIGGERED, null, null);
                 golem.setDangerous(level.random.nextBoolean());
                 golem.moveTo((double) pos.getX() + 0.5, pos.getY() + 1, (double) pos.getZ() + 0.5, 0.0F, 0.0F);
                 server.addFreshEntity(golem);
