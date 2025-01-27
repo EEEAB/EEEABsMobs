@@ -82,7 +82,8 @@
   "block.eeeabsmobs.tomb_summon_trap": "古墓踩踏式骷髅陷阱",
   "block.eeeabsmobs.tomb_arrows_trap": "古墓信号式毒镖陷阱",
   "block.eeeabsmobs.erosion_deepslate_bricks": "侵蚀深板岩砖",
-  "block.eeesbsmobs.erosion_portal": "侵蚀传送门",
+  "block.eeeabsmobs.erosion_portal": "侵蚀传送门",
+  "block.eeeabsmobs.bone_bush": "枯骨灌木",
 
   "_comment": "刷怪蛋",
   "item.eeeabsmobs.immortal_skeleton_egg": "不朽骷髅刷怪蛋",
@@ -295,9 +296,9 @@
   "other.eeeabsmobs.falling_block_3.config": "设置生成下落方块纵向探测范围",
   "other.eeeabsmobs.tester_1.config": "设置生命上限",
   "other.eeeabsmobs.tester_2.config": "启用免疫由环境或者状态因素造成的伤害",
+  "other.eeeabsmobs.guardian_core.config": "启用激光是否可以破坏方块",
   "other.eeeabsmobs.guardian_laser_1.config": "启用激光射向地面的烧焦效果",
-  "other.eeeabsmobs.guardian_laser_2.config": "启用激光是否可以破坏方块",
-  "other.eeeabsmobs.guardian_laser_3.config": "设置激光可破坏方块的最大硬度",
+  "other.eeeabsmobs.guardian_laser_2.config": "设置激光可破坏方块的最大硬度",
   "other.eeeabsmobs.corpse.config": "启用杀死僵尸/村民后转化为死尸",
   "other.eeeabsmobs.eye_of_structure.config": "启用释放时消耗物品"
 }

@@ -27,6 +27,7 @@ import java.util.List;
 
 public class EntityGuardianLaser extends EntityAbsBeam {
     public static final double GUARDIAN_RADIUS = 32;
+    public static double PLAYER_RADIUS = 16;
     private static final EntityDataAccessor<Boolean> DATA_IS_PLAYER = SynchedEntityData.defineId(EntityGuardianLaser.class, EntityDataSerializers.BOOLEAN);
 
     @OnlyIn(Dist.CLIENT)
@@ -37,6 +38,7 @@ public class EntityGuardianLaser extends EntityAbsBeam {
         if (level.isClientSide) {
             attractorPos = new Vec3[]{new Vec3(0, 0, 0)};
         }
+        PLAYER_RADIUS = EMConfigHandler.COMMON.ITEM.itemGuardianCoreShootRadius.get();
     }
 
     public EntityGuardianLaser(EntityType<? extends EntityGuardianLaser> type, Level world, LivingEntity caster, double x, double y, double z, float yaw, float pitch, int duration) {
@@ -46,7 +48,7 @@ public class EntityGuardianLaser extends EntityAbsBeam {
         this.setPitch(pitch);
         this.setDuration(duration);
         this.setPos(x, y, z);
-        this.calculateEndPos(GUARDIAN_RADIUS);
+        this.calculateEndPos(caster instanceof Player ? PLAYER_RADIUS : GUARDIAN_RADIUS);
         if (!level().isClientSide) {
             setCasterId(caster.getId());
         }
@@ -82,7 +84,7 @@ public class EntityGuardianLaser extends EntityAbsBeam {
             }, false);
         }
         if (this.tickCount >= this.getCountDown()) {
-            this.calculateEndPos(isPlayer() ? EMConfigHandler.COMMON.ENTITY.guardianLaserShootRadius.get() : GUARDIAN_RADIUS);
+            this.calculateEndPos(isPlayer() ? PLAYER_RADIUS : GUARDIAN_RADIUS);
             List<LivingEntity> hit = raytraceEntities(level(), new Vec3(getX(), getY(), getZ()), new Vec3(endPosX, endPosY, endPosZ)).getEntities();
             if (this.blockSide != null) {
                 if (!this.level().isClientSide && this.tickCount % 5 == 0) {
@@ -92,7 +94,7 @@ public class EntityGuardianLaser extends EntityAbsBeam {
                         if ((ModEntityUtils.canDestroyBlock(this.level(), pos, this, EMConfigHandler.COMMON.ENTITY.guardianLaserCanDestroyMaxBlockHardness.get().floatValue()))) {
                             if (ModEntityUtils.canMobDestroy(this) && caster instanceof EntityNamelessGuardian guardian) {
                                 this.level().destroyBlock(pos, guardian.checkCanDropItems());
-                            } else if (isPlayer() && this.caster instanceof Player && EMConfigHandler.COMMON.ENTITY.guardianLaserCanDestroyBlock.get()) {
+                            } else if (isPlayer() && this.caster instanceof Player && EMConfigHandler.COMMON.ITEM.itemGuardianCoreLaserCanDestroyBlock.get()) {
                                 this.level().destroyBlock(pos, true);
                             }
                         }
@@ -151,8 +153,7 @@ public class EntityGuardianLaser extends EntityAbsBeam {
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
-        Double radius = EMConfigHandler.COMMON.ENTITY.guardianLaserShootRadius.get();
-        return isPlayer() ? distance < (radius * radius) * 2 : distance < (GUARDIAN_RADIUS * GUARDIAN_RADIUS) * 2;
+        return isPlayer() ? distance < (PLAYER_RADIUS * PLAYER_RADIUS) * 2 : distance < (GUARDIAN_RADIUS * GUARDIAN_RADIUS) * 2;
     }
 
     private void updateWithPlayer() {

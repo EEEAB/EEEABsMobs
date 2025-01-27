@@ -42,11 +42,38 @@ public final class EMConfigHandler {
         public Item(final ForgeConfigSpec.Builder builder) {
             builder.push("Items");
             {
-                builder.push("Summoning Soul Necklace");
-                SSNCumulativeMaximumDamage = BUILDER.comment("Set maximum amount of damage a player can take while holding this item")
-                        .translation(getTranslationKey("summoning_soul_necklace"))
-                        .defineInRange("Set maximum cumulative damage taken", 50D, 1D, Float.MAX_VALUE);
-                SSNCoolingTime = itemCD(20D);
+                builder.push("Eye Of Structure");
+                consumeEyeItemOnRelease = BUILDER.comment("If set to 'True' eye of structure will be consume item on release")
+                        .translation(getTranslationKey("eye_of_structure"))
+                        .define("Consume Item On Release", false);
+                eyeItemCoolingTime = itemCD(4D);
+                builder.pop();
+            }
+            {
+                builder.push("Guardian Battleaxe");
+                itemGuardianAxeSweepingLevel = BUILDER.comment("The increase in damage should refer to the Sweeping Edge enchantment")
+                        .translation(getTranslationKey("guardian_axe"))
+                        .defineInRange("Set sweep attack level", 1, 0, 4);
+                itemGuardianAxeCoolingTime = itemCD(5D);
+                GUARDIAN_AXE_TOOL = new ToolConfig(15D, 0.9D);
+                builder.pop();
+            }
+            {
+                builder.push("Guardian Core");
+                this.itemGuardianCoreShootRadius = BUILDER.comment("Set the maximum shooting distance for players")
+                        .translation(getTranslationKey("attack_radius"))
+                        .defineInRange("Set attack radius", 16D, 1D, 64D);
+                this.itemGuardianCoreLaserCanDestroyBlock = BUILDER.comment("If set to 'False' disable block destruction by players")
+                        .translation(getTranslationKey("guardian_core"))
+                        .define("Enable destroy block", false);
+                builder.pop();
+            }
+            {
+                builder.push("Ghost Warrior Series");
+                enableGhostWarriorSeriesItemDurability = BUILDER.comment("If set to 'True' armor or weapon will be depleted")
+                        .translation(getTranslationKey("series_depleted"))
+                        .define("Enable armor or weapon can be depleted", false);
+                NETHERWORLD_KATANA_TOOL = new ToolConfig(14D, 1.4D);
                 builder.pop();
             }
             {
@@ -62,33 +89,16 @@ public final class EMConfigHandler {
                 builder.pop();
             }
             {
-                builder.push("Guardian Battleaxe");
-                itemGuardianAxeSweepingLevel = BUILDER.comment("The increase in damage should refer to the Sweeping Edge enchantment")
-                        .translation(getTranslationKey("guardian_axe"))
-                        .defineInRange("Set sweep attack level", 1, 0, 4);
-                itemGuardianAxeCoolingTime = itemCD(5D);
-                GUARDIAN_AXE_TOOL = new ToolConfig(15D, 0.9D);
-                builder.pop();
-            }
-            {
                 builder.push("Immortal Staff");
                 itemImmortalStaffCoolingTime = itemCD(1.5D);
                 builder.pop();
             }
             {
-                builder.push("Ghost Warrior Series");
-                enableGhostWarriorSeriesItemDurability = BUILDER.comment("If set to 'True' armor or weapon will be depleted")
-                        .translation(getTranslationKey("series_depleted"))
-                        .define("Enable armor or weapon can be depleted", false);
-                NETHERWORLD_KATANA_TOOL = new ToolConfig(14D, 1.4D);
-                builder.pop();
-            }
-            {
-                builder.push("Eye Of Structure");
-                consumeEyeItemOnRelease = BUILDER.comment("If set to 'True' eye of structure will be consume item on release")
-                        .translation(getTranslationKey("eye_of_structure"))
-                        .define("Consume Item On Release", false);
-                eyeItemCoolingTime = itemCD(4D);
+                builder.push("Summoning Soul Necklace");
+                SSNCumulativeMaximumDamage = BUILDER.comment("Set maximum amount of damage a player can take while holding this item")
+                        .translation(getTranslationKey("summoning_soul_necklace"))
+                        .defineInRange("Set maximum cumulative damage taken", 50D, 1D, Float.MAX_VALUE);
+                SSNCoolingTime = itemCD(20D);
                 builder.pop();
             }
             builder.pop();
@@ -107,6 +117,8 @@ public final class EMConfigHandler {
         public final ForgeConfigSpec.IntValue itemGuardianAxeSweepingLevel;
         public final ForgeConfigSpec.DoubleValue itemGuardianAxeCoolingTime;
         public final ForgeConfigSpec.DoubleValue itemImmortalStaffCoolingTime;
+        public final ForgeConfigSpec.DoubleValue itemGuardianCoreShootRadius;
+        public final ForgeConfigSpec.BooleanValue itemGuardianCoreLaserCanDestroyBlock;
         public final ForgeConfigSpec.BooleanValue enableGhostWarriorSeriesItemDurability;
 
         private static ForgeConfigSpec.DoubleValue itemCD(double defaultCD) {
@@ -127,14 +139,8 @@ public final class EMConfigHandler {
                 this.enableGenerateScorchEntity = BUILDER.comment("If set to 'False' disable scorch generate on the ground")
                         .translation(getTranslationKey("guardian_laser_1"))
                         .define("Enable scorch generate", true);
-                this.guardianLaserShootRadius = BUILDER.comment("Set the maximum shooting distance for players")
-                        .translation(getTranslationKey("attack_radius"))
-                        .defineInRange("Set attack radius", 16D, 1D, 64D);
-                this.guardianLaserCanDestroyBlock = BUILDER.comment("If set to 'False' disable block destruction by players")
-                        .translation(getTranslationKey("guardian_laser_2"))
-                        .define("Enable destroy block", true);
                 this.guardianLaserCanDestroyMaxBlockHardness = BUILDER.comment("Set max block hardness for laser destruction")
-                        .translation(getTranslationKey("guardian_laser_3"))
+                        .translation(getTranslationKey("guardian_laser_2"))
                         .defineInRange("Set laser max hardness", 1D, 1D, Float.MAX_VALUE);
                 builder.pop();
             }
@@ -157,10 +163,6 @@ public final class EMConfigHandler {
             builder.pop();
         }
 
-        //当守卫者激光使用者是玩家时的最大射击距离
-        public final ForgeConfigSpec.DoubleValue guardianLaserShootRadius;
-        //当守卫者激光使用者是玩家是是否可以破坏方块
-        public final ForgeConfigSpec.BooleanValue guardianLaserCanDestroyBlock;
         //守卫者激光能破坏指定硬度内的方块
         public final ForgeConfigSpec.DoubleValue guardianLaserCanDestroyMaxBlockHardness;
         //生成烧焦的地面实体
