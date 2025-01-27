@@ -44,8 +44,8 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy
     }
 
     @Override
-    public boolean addEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        return effectInstance.getEffect() != EffectInit.ERODE_EFFECT.get() && super.addEffect(effectInstance, entity);
+    public boolean canBeAffected(MobEffectInstance effectInstance) {
+        return effectInstance.getEffect() != EffectInit.ERODE_EFFECT.get() && super.canBeAffected(effectInstance);
     }
 
     @Override
@@ -114,12 +114,6 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy
             }
             return super.hurt(source, damage);
         }
-    }
-
-    //设置召唤物存在时长
-    protected void setSummonAliveTime(int time) {
-        this.isSummon = true;
-        this.countdown = time;
     }
 
     @Override
@@ -203,6 +197,12 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy
     public void setInitSpawn() {
         this.active = false;
         this.setActive(false);
+    }
+
+    //设置召唤物存在时长
+    protected void setSummonAliveTime(int time) {
+        this.isSummon = true;
+        this.countdown = time;
     }
 
     @Nullable

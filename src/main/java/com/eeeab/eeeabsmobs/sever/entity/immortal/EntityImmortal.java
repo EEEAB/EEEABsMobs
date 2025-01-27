@@ -729,12 +729,13 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     @Override
     public void setHealth(float health) {
         if (health < this.getHealth()) {
-            float nowHealth = this.getHealth();
-            float damage = nowHealth - this.getNewHealthByCap(health, EMConfigHandler.COMMON.MOB.IMMORTAL.THE_IMMORTAL.maximumDamageCap);
-            health = nowHealth - this.damageAdaptation.damageAfterAdaptingOnce(this, this.lastDamageSource, damage);
+            //在同一刻只会受到一次伤害 同理也只会适应一种伤害
             if (this.isSwitching() || this.immortalInvulnerableTime > 0) {
                 return;
             } else this.immortalInvulnerableTime = 2;
+            float nowHealth = this.getHealth();
+            float damage = nowHealth - this.getNewHealthByCap(health, EMConfigHandler.COMMON.MOB.IMMORTAL.THE_IMMORTAL.maximumDamageCap);
+            health = nowHealth - this.damageAdaptation.damageAfterAdaptingOnce(this, this.lastDamageSource, damage);
             if (this.damageAdaptation.isFullyAdapted(this, this.lastDamageSource)) this.level().broadcastEntityEvent(this, (byte) 4);
         }
         super.setHealth(health);
