@@ -9,6 +9,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.level.Level;
@@ -19,6 +22,12 @@ import org.jetbrains.annotations.Nullable;
 public abstract class EntityAbsGuling extends EEEABMobLibrary implements Enemy {
     public EntityAbsGuling(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
+    }
+
+    @Override
+    public boolean canBeAffected(MobEffectInstance effectInstance) {
+        MobEffect effect = effectInstance.getEffect();
+        return MobEffects.POISON != effect && MobEffects.MOVEMENT_SLOWDOWN != effect && super.canBeAffected(effectInstance);
     }
 
     @Override
