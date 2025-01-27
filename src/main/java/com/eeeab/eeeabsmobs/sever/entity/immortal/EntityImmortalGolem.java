@@ -14,11 +14,13 @@ import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.CopyOwnerTargetGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.WhenOwnerDeadGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.ReFindOwnerGoal;
+import com.eeeab.eeeabsmobs.sever.entity.guling.EntityAbsGuling;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
@@ -47,6 +49,7 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
             spawnAnimation
     };
     private boolean boom;
+    private boolean trapGen;
 
     public EntityImmortalGolem(EntityType<? extends EntityImmortalGolem> type, Level level) {
         super(type, level);
@@ -63,7 +66,6 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
     protected EMConfigHandler.AttributeConfig getAttributeConfig() {
         return EMConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_GOLEM.combatConfig;
     }
-
 
     @Override
     protected void registerGoals() {
@@ -85,7 +87,6 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
         this.goalSelector.addGoal(3, new WhenOwnerDeadGoal<>(this));
     }
 
-
     @Override
     public void tick() {
         super.tick();
@@ -94,17 +95,6 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
             if (this.getAnimationTick() == 6) this.boom();
         }
         if (this.isDangerous() && this.isOnFire()) this.boom();
-    }
-
-    private void boom() {
-        if (!this.level().isClientSide) {
-            if (!this.boom) {
-                this.boom = true;
-                this.level().broadcastEntityEvent(this, (byte) 5);
-                this.level().explode(this, this.getX(), this.getY(), this.getZ(), 1.0F, false, Level.ExplosionInteraction.NONE);
-                this.kill();
-            }
-        }
     }
 
     @Override
@@ -123,19 +113,25 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
     }
 
     @Override
+    public boolean isAlliedTo(Entity entity) {
+        if (trapGen && entity instanceof EntityAbsGuling) return EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() && this.getTeam() == null && entity.getTeam() == null;
+        return super.isAlliedTo(entity);
+    }
+
+    @Override
     public boolean hurt(DamageSource source, float damage) {
-        Entity sourceSource = source.getEntity();
-        if (sourceSource != null) {
-            if (getTarget() == null && sourceSource instanceof LivingEntity && !(sourceSource instanceof Player && ((Player) sourceSource).isCreative()) && !(((LivingEntity) sourceSource).getMobType() == this.getMobType())) {
-                this.setTarget((LivingEntity) sourceSource);
-            }
+        Entity entity = source.getEntity();
+        if (entity != null) {
+            if (this.isAlliedTo(entity) && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()) return false;
+            if (getTarget() == null && entity instanceof LivingEntity && !(entity instanceof Player && ((Player) entity).isCreative())
+                    && !(((LivingEntity) entity).getMobType() == this.getMobType())) this.setTarget((LivingEntity) entity);
         }
         return super.hurt(source, damage);
     }
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (player.getItemInHand(hand).is(Items.FLINT_AND_STEEL)) {
+        if (this.isDangerous() && player.getItemInHand(hand).is(ItemTags.CREEPER_IGNITERS)) {
             this.boom();
             return InteractionResult.SUCCESS;
         }
@@ -147,6 +143,10 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
     //在初始生成时调用
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         RandomSource randomsource = worldIn.getRandom();
+        if (MobSpawnType.TRIGGERED == reason) {
+            this.setSummonAliveTime(20 * (15 + randomsource.nextInt(15)));
+            this.trapGen = true;
+        }
         this.populateDefaultEquipmentSlots(randomsource, difficultyIn);
         return spawnDataIn;
     }
@@ -157,6 +157,16 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0f);
     }
 
+    private void boom() {
+        if (!this.level().isClientSide) {
+            if (!this.boom) {
+                this.boom = true;
+                this.level().broadcastEntityEvent(this, (byte) 5);
+                this.level().explode(this, this.getX(), this.getY(), this.getZ(), 1.0F, false, Level.ExplosionInteraction.NONE);
+                this.kill();
+            }
+        }
+    }
 
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 12.0D).
@@ -164,7 +174,6 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
                 add(Attributes.FOLLOW_RANGE, 12.0D).
                 add(Attributes.ATTACK_DAMAGE, 2.5D);
     }
-
 
     @Override
     public Animation getSpawnAnimation() {
@@ -200,5 +209,4 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
             this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.TNT));
         }
     }
-
 }
