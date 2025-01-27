@@ -367,7 +367,7 @@ public final class HandlerServerEvent {
         LivingEntity hurtEntity = event.getEntity();
 
         if (directEntity instanceof EntityShamanBomb shamanBomb) {
-            if (shamanBomb.reboundFlag && !shamanBomb.isPlayer()) {
+            if (shamanBomb.reboundFlag) {
                 hurtEntity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), 100, 0, false, false));
             }
         }
