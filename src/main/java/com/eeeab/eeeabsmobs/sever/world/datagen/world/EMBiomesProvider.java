@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.world.datagen;
+package com.eeeab.eeeabsmobs.sever.world.datagen.world;
 
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.util.EMResourceKey;

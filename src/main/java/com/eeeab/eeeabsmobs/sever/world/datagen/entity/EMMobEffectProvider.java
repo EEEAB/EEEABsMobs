@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.world.datagen;
+package com.eeeab.eeeabsmobs.sever.world.datagen.entity;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public class EMMobEffectProvider extends TagsProvider<MobEffect> {
-    protected EMMobEffectProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> completableFuture, @Nullable ExistingFileHelper existingFileHelper) {
+    public EMMobEffectProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> completableFuture, @Nullable ExistingFileHelper existingFileHelper) {
         super(output, Registries.MOB_EFFECT, completableFuture, EEEABMobs.MOD_ID, existingFileHelper);
     }
 
