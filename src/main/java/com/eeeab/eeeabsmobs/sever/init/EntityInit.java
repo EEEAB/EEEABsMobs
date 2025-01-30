@@ -126,6 +126,12 @@ public class EntityInit {
             ENTITIES.register("explode",
                     () -> EntityType.Builder.<EntityExplode>of(EntityExplode::new, MobCategory.MISC).sized(0f, 0f)
                             .setUpdateInterval(1).build(new ResourceLocation(EEEABMobs.MOD_ID, "explode").toString()));
+
+    //过载爆炸
+    public static final RegistryObject<EntityType<EntityOverloadExplode>> OVERLOAD_EXPLODE =
+            ENTITIES.register("overload_explode",
+                    () -> EntityType.Builder.<EntityOverloadExplode>of(EntityOverloadExplode::new, MobCategory.MISC).sized(0f, 0f)
+                            .setUpdateInterval(1).build(new ResourceLocation(EEEABMobs.MOD_ID, "overload_explode").toString()));
     //巫师炸弹
     public static final RegistryObject<EntityType<EntityShamanBomb>> SHAMAN_BOMB =
             ENTITIES.register("shaman_bomb",

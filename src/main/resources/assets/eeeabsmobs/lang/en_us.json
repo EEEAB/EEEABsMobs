@@ -139,6 +139,7 @@
   "effect.eeeabsmobs.armor_lower_effect": "Armor Reduction",
   "effect.eeeabsmobs.vertigo_effect": "Vertigo",
   "effect.eeeabsmobs.frenzy_effect": "Frenzy",
+  "effect.eeeabsmobs.em_overload_effect": "Electromagnetic Overload",
 
   "_comment": "JEI Description",
   "jei.eeeabsmobs.eye_of_structure.tip": "It will guide you to the corresponding structure just like an Ender Eye does.",
@@ -146,6 +147,7 @@
   "effect.eeeabsmobs.armor_lower_effect.description": "Each level provides an additional 20% reduction in armor and armor toughness.",
   "effect.eeeabsmobs.vertigo_effect.description": "During vertigo, you are unable to use items or place blocks, attack mobs or break blocks, or look around",
   "effect.eeeabsmobs.frenzy_effect.description": "Obtain a boost in base attributes and damage reduction. While holding the sprint key, perform a charge. During the charge, you will destroy blocks around you and daze mobs. In water, you will not take suffocation damage. \nSide effect: After the effect ends, you will be weakened.",
+  "effect.eeeabsmobs.em_overload_effect.description": "Triggers an overload reaction when set on fire, causing explosive damage and then clearing the effect.",
 
   "_comment": "Potion",
   "item.minecraft.potion.effect.frenzy_potion": "Potion of Frenzy",
@@ -160,6 +162,7 @@
   "death.attack.eeeabsmobs.immortal_magic":"%1$s was killed by %2$s using immortal magic",
   "death.attack.eeeabsmobs.ignore_armor_attack":"%1$s died from a penetrating injury",
   "death.attack.eeeabsmobs.crit_heal":"%1$s was over-healed by a critical strike",
+  "death.attack.eeeabsmobs.overload_explode":"%1$s blew up",
 
   "_comment": "Music Desc",
   "item.eeeabsmobs.guardians_music_disc.desc": "Guardians - Evan King",

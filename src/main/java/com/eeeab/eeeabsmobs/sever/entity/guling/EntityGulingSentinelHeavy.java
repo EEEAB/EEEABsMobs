@@ -246,8 +246,8 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
 
             @Override
             protected void onHit(LivingEntity entity) {
-                if (!this.entity.hotControlled.isStop()) {
-                    entity.setSecondsOnFire(3);
+                if (!this.entity.hotControlled.isStop() && !this.entity.isAlliedTo(entity)) {
+                    entity.setSecondsOnFire(5);
                 }
             }
         });
@@ -741,7 +741,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                     float amount = (float) (this.entity.getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.25F);
                     for (int i = 0; i < count; ++i) {
                         float f1 = (float) (this.entity.getYRot() + (i + offset) * (float) Math.PI * (2.0 / count));
-                        EntityElectromagnetic.shoot(this.entity.level(), this.entity, amount, 2.0F, count + 2, 3, (f1 * (180F / (float) Math.PI)) - 90F);
+                        EntityElectromagnetic.shoot(this.entity.level(), this.entity, amount, 2.0F, count + 2, 3, (f1 * (180F / (float) Math.PI)) - 90F, tick == 65);
                     }
                 }
             }

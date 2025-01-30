@@ -1,8 +1,10 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
+import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,6 +12,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -34,6 +37,11 @@ public class EntityGrenade extends EntityMagicEffects {
             if (this.caster != null && !(this.caster instanceof Player)) {
                 //基于使用者(非玩家)决定攻击伤害
                 maxDamage = (float) this.caster.getAttributeValue(Attributes.ATTACK_DAMAGE);
+            }
+            if (hitresult instanceof EntityHitResult entityHitResult) {
+                if (entityHitResult.getEntity() instanceof LivingEntity entityHit && entityHit != this.caster) {
+                    entityHit.addEffect(new MobEffectInstance(EffectInit.EM_OVERLOAD_EFFECT.get(), 300, 0, false, false, true), this);
+                }
             }
             EntityExplode.explode(this.level(), this.position(), this.damageSources().explosion(this, this.caster), this.caster, this.radius, this.maxDamage);
             EntityCameraShake.cameraShake(this.level(), this.position(), 16F, 0.125F, 5, 15);

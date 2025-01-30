@@ -139,6 +139,7 @@
   "effect.eeeabsmobs.armor_lower_effect": "弱防",
   "effect.eeeabsmobs.vertigo_effect": "眩晕",
   "effect.eeeabsmobs.frenzy_effect": "狂乱",
+  "effect.eeeabsmobs.em_overload_effect": "电磁过载",
 
   "_comment": "JEI 描述",
   "jei.eeeabsmobs.eye_of_structure.tip": "会像末影之眼一样引导你前往对应的结构。",
@@ -146,6 +147,7 @@
   "effect.eeeabsmobs.armor_lower_effect.description": "每一级都额外降低20%的护甲值与盔甲韧性。",
   "effect.eeeabsmobs.vertigo_effect.description": "眩晕期间无法使用物品与放置方块、攻击生物与破坏方块、移动与转动视角。",
   "effect.eeeabsmobs.frenzy_effect.description": "获得基础属性提升与减伤，按住疾跑键进行突刺。突刺状态下会破坏自身周围方块以及撞晕生物，在水中则不会受到窒息伤害。\n副作用：在效果结束后陷入虚弱。",
+  "effect.eeeabsmobs.em_overload_effect.description": "在自身着火时触发超载反应，造成爆炸伤害的同时清除该效果。",
 
   "_comment": "药水",
   "item.minecraft.potion.effect.frenzy_potion": "狂乱药水",
@@ -160,6 +162,7 @@
   "death.attack.eeeabsmobs.immortal_magic":"%1$s 被 %2$s 使用的不朽魔法杀死了",
   "death.attack.eeeabsmobs.ignore_armor_attack":"%1$s 死于穿透伤",
   "death.attack.eeeabsmobs.crit_heal":"%1$s 被暴击治疗过量致死",
+  "death.attack.eeeabsmobs.overload_explode":"%1$s 爆炸了",
 
   "_comment": "音乐描述",
   "item.eeeabsmobs.guardians_music_disc.desc": "Guardians - Evan King",

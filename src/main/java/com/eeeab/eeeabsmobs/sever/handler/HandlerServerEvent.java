@@ -12,6 +12,7 @@ import com.eeeab.eeeabsmobs.sever.entity.EEEABMobEntity;
 import com.eeeab.eeeabsmobs.sever.entity.IBoss;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityAbsCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityOverloadExplode;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalExecutioner;
 import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
@@ -147,6 +148,8 @@ public final class HandlerServerEvent {
             if (frenzyCapability != null) {
                 frenzyCapability.tick(entity);
             }
+
+            if (!entity.level().isClientSide && entity.getRemainingFireTicks() > 0) tryTriggerOverloadExplosion(entity);
         }
     }
 
@@ -156,41 +159,13 @@ public final class HandlerServerEvent {
         if (event.phase == TickEvent.Phase.START || event.player == null) {
             return;
         }
-        useGuardianCoreStack(event);
 
         PlayerCapability.IPlayerCapability playerCapability = HandlerCapability.getCapability(event.player, HandlerCapability.PLAYER_CAPABILITY);
         if (playerCapability != null) {
             playerCapability.tick(event.player);
         }
-    }
 
-    /**
-     * 守卫者核心的耐久减少或恢复
-     */
-    private void useGuardianCoreStack(TickEvent.PlayerTickEvent event) {
-        Player player = event.player;
-        Ability<?> ability = AbilityHandler.INSTANCE.getAbility(player, AbilityHandler.GUARDIAN_LASER_ABILITY_TYPE);
-        ItemStack itemStack = player.getUseItem();
-        if (ability != null) {
-            if (!ability.isUsing()) {
-                for (ItemStack stack : player.getInventory().items) {
-                    if (stack.is(ItemInit.GUARDIAN_CORE.get()))
-                        stack.setDamageValue(Math.max(stack.getDamageValue() - 1, 0));
-                }
-                for (ItemStack stack : player.getInventory().offhand) {
-                    if (stack.is(ItemInit.GUARDIAN_CORE.get()))
-                        stack.setDamageValue(Math.max(stack.getDamageValue() - 1, 0));
-                }
-            } else if (itemStack.is(ItemInit.GUARDIAN_CORE.get())) {
-                if (itemStack.getDamageValue() + 1 < itemStack.getMaxDamage()) {
-                    itemStack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(player.getUsedItemHand()));
-                } else {
-                    ability.end();
-                }
-            } else {
-                ability.end();
-            }
-        }
+        updateGuardianCoreStack(event);
     }
 
     //当实体生命值≤0时触发
@@ -207,7 +182,7 @@ public final class HandlerServerEvent {
     public void onAddPointEffect(MobEffectEvent.Added event) {
         MobEffectInstance effectInstance = event.getEffectInstance();
         if (!event.getEntity().level().isClientSide()) {
-            doCRCapabilityWithEffect(effectInstance, event.getEntity(), true);
+            doCapabilityEffect(effectInstance, event.getEntity(), true);
         }
     }
 
@@ -216,7 +191,7 @@ public final class HandlerServerEvent {
     public void onRemovePotionEffect(MobEffectEvent.Remove event) {
         MobEffectInstance effectInstance = event.getEffectInstance();
         if (!event.getEntity().level().isClientSide() && effectInstance != null) {
-            doCRCapabilityWithEffect(effectInstance, event.getEntity(), false);
+            doCapabilityEffect(effectInstance, event.getEntity(), false);
         }
     }
 
@@ -225,31 +200,7 @@ public final class HandlerServerEvent {
     public void onExpirePotionEffect(MobEffectEvent.Expired event) {
         MobEffectInstance effectInstance = event.getEffectInstance();
         if (!event.getEntity().level().isClientSide() && effectInstance != null) {
-            doCRCapabilityWithEffect(effectInstance, event.getEntity(), false);
-        }
-    }
-
-    private void doCRCapabilityWithEffect(MobEffectInstance effectInstance, LivingEntity entity, boolean flag) {
-        if (effectInstance.getEffect() == EffectInit.VERTIGO_EFFECT.get()) {
-            EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new MessageVertigoEffect(entity, flag));
-            VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
-            if (capability != null) {
-                if (flag)
-                    capability.onStart(entity);
-                else
-                    capability.onEnd(entity);
-            }
-        }
-        if (effectInstance.getEffect() == EffectInit.FRENZY_EFFECT.get()) {
-            EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new MessageFrenzyEffect(entity, flag));
-            FrenzyCapability.IFrenzyCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
-            if (capability != null) {
-                capability.setLevel(effectInstance.getAmplifier());
-                if (flag)
-                    capability.onStart(entity);
-                else
-                    capability.onEnd(entity);
-            }
+            doCapabilityEffect(effectInstance, event.getEntity(), false);
         }
     }
 
@@ -405,6 +356,8 @@ public final class HandlerServerEvent {
                 playerCapability.hurt(player, source, event.getAmount());
             }
         }
+
+        if (source.is(DamageTypeTags.IS_FIRE)) tryTriggerOverloadExplosion(hurtEntity);
     }
 
     //实体治疗时
@@ -464,6 +417,64 @@ public final class HandlerServerEvent {
                     event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
                 }
             }
+        }
+    }
+
+    private static void updateGuardianCoreStack(TickEvent.PlayerTickEvent event) {
+        Player player = event.player;
+        Ability<?> ability = AbilityHandler.INSTANCE.getAbility(player, AbilityHandler.GUARDIAN_LASER_ABILITY_TYPE);
+        ItemStack itemStack = player.getUseItem();
+        if (ability != null) {
+            if (!ability.isUsing()) {
+                for (ItemStack stack : player.getInventory().items) {
+                    if (stack.is(ItemInit.GUARDIAN_CORE.get()))
+                        stack.setDamageValue(Math.max(stack.getDamageValue() - 1, 0));
+                }
+                for (ItemStack stack : player.getInventory().offhand) {
+                    if (stack.is(ItemInit.GUARDIAN_CORE.get()))
+                        stack.setDamageValue(Math.max(stack.getDamageValue() - 1, 0));
+                }
+            } else if (itemStack.is(ItemInit.GUARDIAN_CORE.get())) {
+                if (itemStack.getDamageValue() + 1 < itemStack.getMaxDamage()) {
+                    itemStack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(player.getUsedItemHand()));
+                } else {
+                    ability.end();
+                }
+            } else {
+                ability.end();
+            }
+        }
+    }
+
+    private static void doCapabilityEffect(MobEffectInstance effectInstance, LivingEntity entity, boolean flag) {
+        if (effectInstance.getEffect() == EffectInit.VERTIGO_EFFECT.get()) {
+            EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new MessageVertigoEffect(entity, flag));
+            VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
+            if (capability != null) {
+                if (flag)
+                    capability.onStart(entity);
+                else
+                    capability.onEnd(entity);
+            }
+        }
+        if (effectInstance.getEffect() == EffectInit.FRENZY_EFFECT.get()) {
+            EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new MessageFrenzyEffect(entity, flag));
+            FrenzyCapability.IFrenzyCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
+            if (capability != null) {
+                capability.setLevel(effectInstance.getAmplifier());
+                if (flag)
+                    capability.onStart(entity);
+                else
+                    capability.onEnd(entity);
+            }
+        }
+    }
+
+    private static void tryTriggerOverloadExplosion(LivingEntity target) {
+        if (target.removeEffect(EffectInit.EM_OVERLOAD_EFFECT.get())) {
+            double radians = Math.toRadians(target.getYRot() + 90);
+            EntityOverloadExplode.explode(target.level(), target.position().add(Math.cos(radians), target.getBbHeight() * 0.3, Math.sin(radians)), null, 2F, 8F);
+            target.clearFire();
         }
     }
 }

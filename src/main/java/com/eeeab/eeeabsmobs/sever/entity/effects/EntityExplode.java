@@ -23,12 +23,12 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class EntityExplode extends EntityMagicEffects {
-    private DamageSource damageSource;
-    private float maxDamage;
+    protected DamageSource damageSource;
+    protected float maxDamage;
     private static final EntityDataAccessor<Boolean> DATA_EXPLODE = SynchedEntityData.defineId(EntityExplode.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Float> DATA_RADIUS = SynchedEntityData.defineId(EntityExplode.class, EntityDataSerializers.FLOAT);
 
-    public EntityExplode(EntityType<EntityExplode> type, Level level) {
+    public EntityExplode(EntityType<?> type, Level level) {
         super(type, level);
     }
 
@@ -52,7 +52,7 @@ public class EntityExplode extends EntityMagicEffects {
         }
     }
 
-    private void explode(DamageSource damageSource, @Nullable Entity entity, float maxDamage) {
+    protected void explode(DamageSource damageSource, @Nullable Entity entity, float maxDamage) {
         Vec3 vec3 = this.position();
         float f2 = this.getRadius() * 2.0F;
         int k1 = Mth.floor(vec3.x - (double) f2 - 1.0D);
@@ -63,9 +63,7 @@ public class EntityExplode extends EntityMagicEffects {
         int j1 = Mth.floor(vec3.z + (double) f2 + 1.0D);
         List<Entity> list = this.level().getEntities(entity, new AABB(k1, i2, j2, l1, i1, j1));
         for (Entity hit : list) {
-            if (this.caster != null && hit == this.caster) {
-                continue;
-            }
+            if (this.caster != null && hit == this.caster) continue;
             if (!hit.ignoreExplosion()) {
                 double d12 = Math.sqrt(hit.distanceToSqr(vec3)) / (double) f2;
                 if (d12 <= 1.0D) {
@@ -80,28 +78,36 @@ public class EntityExplode extends EntityMagicEffects {
                         double d14 = Explosion.getSeenPercent(vec3, hit);
                         double d10 = (1.0D - d12) * d14;
                         float damage = Math.min(((int) ((d10 * d10 + d10) / 2.0D * 7.0D * (double) f2 + 1.0D)), maxDamage);
-                        if (damageSource == null) {
-                            damageSource = this.damageSources().explosion(this, this);
-                        }
-                        hit.hurt(damageSource, damage);
-                        double d11;
-                        if (hit instanceof LivingEntity livingEntity) {
-                            d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingEntity, d10);
-                        } else {
-                            d11 = d10;
-                        }
-                        d5 *= d11;
-                        d7 *= d11;
-                        d9 *= d11;
-                        Vec3 vec31 = new Vec3(d5, d7, d9);
-                        hit.setDeltaMovement(hit.getDeltaMovement().add(vec31));
+                        doHurtEntity(damageSource, hit, damage);
+                        doKnockbackEffect(hit, d10, d5, d7, d9);
                     }
                 }
             }
         }
     }
 
-    private void doExplodeEffect(Vec3 vec3, float radius) {
+    protected void doHurtEntity(DamageSource damageSource, Entity hitEntity, float damage) {
+        if (damageSource == null) {
+            damageSource = this.damageSources().explosion(this, this);
+        }
+        hitEntity.hurt(damageSource, damage);
+    }
+
+    protected void doKnockbackEffect(Entity hitEntity, double strength, double x, double y, double z) {
+        double d0;
+        if (hitEntity instanceof LivingEntity livingEntity) {
+            d0 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingEntity, strength);
+        } else {
+            d0 = strength;
+        }
+        x *= d0;
+        y *= d0;
+        z *= d0;
+        Vec3 vec31 = new Vec3(x, y, z);
+        hitEntity.setDeltaMovement(hitEntity.getDeltaMovement().add(vec31));
+    }
+
+    protected void doExplodeEffect(Vec3 vec3, float radius) {
         if (this.level().isClientSide) {
             this.level().playLocalSound(vec3.x, vec3.y, vec3.z, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4.0F, (1.0F + (this.level().random.nextFloat() - this.level().random.nextFloat()) * 0.2F) * 0.7F, false);
             if (!(radius < 2.0F)) {
@@ -113,7 +119,7 @@ public class EntityExplode extends EntityMagicEffects {
     }
 
     @Override
-    public void setDeltaMovement(double x, double y, double z) {
+    public void setDeltaMovement(Vec3 deltaMovement) {
     }
 
     @Override
