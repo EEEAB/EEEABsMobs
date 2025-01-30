@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.world.datagen;
+package com.eeeab.eeeabsmobs.sever.world.datagen.damage;
 
 import com.eeeab.eeeabsmobs.sever.util.EMResourceKey;
 import net.minecraft.data.worldgen.BootstapContext;
@@ -11,6 +11,7 @@ public class EMDamageSourceProvider {
         ResourceKey<DamageType> shamanBombing = EMResourceKey.SHAMAN_BOMBING;
         ResourceKey<DamageType> guardianLaser = EMResourceKey.GUARDIAN_LASER;
         ResourceKey<DamageType> robustAttack = EMResourceKey.ROBUST_ATTACK;
+        ResourceKey<DamageType> overloadExplode = EMResourceKey.OVERLOAD_EXPLODE;
         ResourceKey<DamageType> immortalMagic = EMResourceKey.IMMORTAL_MAGIC;
         ResourceKey<DamageType> ignoreArmorAttack = EMResourceKey.IGNORE_ARMOR_ATTACK;
         ResourceKey<DamageType> critHeal = EMResourceKey.CRIT_HEAL;
@@ -18,6 +19,7 @@ public class EMDamageSourceProvider {
         context.register(shamanBombing, new DamageType(getMsgId(shamanBombing), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.1F));
         context.register(guardianLaser, new DamageType(getMsgId(guardianLaser), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0F));
         context.register(robustAttack, new DamageType(getMsgId(robustAttack), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.1F));
+        context.register(overloadExplode, new DamageType(getMsgId(overloadExplode), DamageScaling.ALWAYS, 0.1F));
         context.register(immortalMagic, new DamageType(getMsgId(immortalMagic), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0F));
         context.register(ignoreArmorAttack, new DamageType(getMsgId(ignoreArmorAttack), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.1F));
         context.register(critHeal, new DamageType(getMsgId(critHeal), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.1F));

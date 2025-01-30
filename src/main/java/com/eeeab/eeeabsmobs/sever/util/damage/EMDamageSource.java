@@ -5,7 +5,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
-import org.jetbrains.annotations.NotNull;
 
 public class EMDamageSource {
     public static DamageSource shamanBombing(Entity bomb, Entity caster) {
@@ -21,6 +20,11 @@ public class EMDamageSource {
     public static DamageSource guardianLaserAttack(Entity laser, Entity caster) {
         return new DamageSource(laser.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).
                 getHolderOrThrow(EMResourceKey.GUARDIAN_LASER), laser, caster);
+    }
+
+    public static DamageSource overloadExplode(Entity causingEntity, Entity directEntity) {
+        return new DamageSource(causingEntity.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).
+                getHolderOrThrow(EMResourceKey.OVERLOAD_EXPLODE), causingEntity, directEntity);
     }
 
     public static DamageSource immortalMagicAttack(Entity magic, Entity caster) {
