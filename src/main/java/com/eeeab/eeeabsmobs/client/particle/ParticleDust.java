@@ -81,10 +81,10 @@ public class ParticleDust extends TextureSheetParticle {
 
 
     @OnlyIn(Dist.CLIENT)
-    public static final class DustFactory implements ParticleProvider<DustData> {
+    public static final class Factory implements ParticleProvider<DustData> {
         private final SpriteSet spriteSet;
 
-        public DustFactory(SpriteSet sprite) {
+        public Factory(SpriteSet sprite) {
             this.spriteSet = sprite;
         }
 

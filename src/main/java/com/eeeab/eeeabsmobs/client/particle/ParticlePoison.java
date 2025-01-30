@@ -42,10 +42,10 @@ public class ParticlePoison extends PortalParticle {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static class PoisonFactory implements ParticleProvider<SimpleParticleType> {
+    public static class Factory implements ParticleProvider<SimpleParticleType> {
         private final SpriteSet sprite;
 
-        public PoisonFactory(SpriteSet pSprites) {
+        public Factory(SpriteSet pSprites) {
             this.sprite = pSprites;
         }
 

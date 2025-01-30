@@ -138,10 +138,10 @@ public class ParticleRing extends TextureSheetParticle {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static final class RingFactory implements ParticleProvider<RingData> {
+    public static final class Factory implements ParticleProvider<RingData> {
         private final SpriteSet spriteSet;
 
-        public RingFactory(SpriteSet sprite) {
+        public Factory(SpriteSet sprite) {
             this.spriteSet = sprite;
         }
 

@@ -125,15 +125,15 @@ public class HandlerRegister {
         event.registerSpriteSet(ParticleInit.THUMP_RING.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.PUNCTURED_AIR_RING.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.FLAT_RIBBON.get(), ParticleRibbon.Factory::new);
-        event.registerSpriteSet(ParticleInit.DUST.get(), ParticleDust.DustFactory::new);
-        event.registerSpriteSet(ParticleInit.ORB.get(), ParticleOrb.OrbFactory::new);
-        event.registerSpriteSet(ParticleInit.GUARDIAN_SPARK.get(), ParticleGuardianSpark.GuardianSparkFactory::new);
-        event.registerSpriteSet(ParticleInit.POISON.get(), ParticlePoison.PoisonFactory::new);
+        event.registerSpriteSet(ParticleInit.DUST.get(), ParticleDust.Factory::new);
+        event.registerSpriteSet(ParticleInit.ORB.get(), ParticleOrb.Factory::new);
+        event.registerSpriteSet(ParticleInit.GUARDIAN_SPARK.get(), ParticleGuardianSpark.Factory::new);
+        event.registerSpriteSet(ParticleInit.POISON.get(), ParticlePoison.Factory::new);
         event.registerSpriteSet(ParticleInit.WARLOCK_HEAL.get(), SuspendedTownParticle.HappyVillagerProvider::new);
-        event.registerSpriteSet(ParticleInit.IMMORTAL_EXPLOSION.get(), ParticleImmortalExplosion.ImmortalExplosionFactory::new);
-        event.registerSpriteSet(ParticleInit.OVERLOAD_EXPLOSION.get(), ParticleOverloadExplosion.EMOverloadExplosionFactory::new);
-        event.registerSpriteSet(ParticleInit.RING.get(), ParticleRing.RingFactory::new);
-        event.registerSpecial(ParticleInit.OVERLOAD_EXPLOSION_EMITTER.get(), new ParticleHugeEMExplosionSeed.Provider());
+        event.registerSpriteSet(ParticleInit.IMMORTAL_EXPLOSION.get(), ParticleImmortalExplosion.Factory::new);
+        event.registerSpriteSet(ParticleInit.OVERLOAD_EXPLOSION.get(), ParticleOverloadExplosion.Factory::new);
+        event.registerSpriteSet(ParticleInit.RING.get(), ParticleRing.Factory::new);
+        event.registerSpecial(ParticleInit.OVERLOAD_EXPLOSION_EMITTER.get(), new ParticleHugeEMExplosionSeed.Factory());
     }
 
     @SubscribeEvent

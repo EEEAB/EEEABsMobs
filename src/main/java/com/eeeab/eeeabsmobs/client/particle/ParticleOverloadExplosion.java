@@ -22,10 +22,10 @@ public class ParticleOverloadExplosion extends ParticleImmortalExplosion {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static class EMOverloadExplosionFactory implements ParticleProvider<SimpleParticleType> {
+    public static class Factory implements ParticleProvider<SimpleParticleType> {
         private final SpriteSet sprites;
 
-        public EMOverloadExplosionFactory(SpriteSet spriteSet) {
+        public Factory(SpriteSet spriteSet) {
             this.sprites = spriteSet;
         }
 

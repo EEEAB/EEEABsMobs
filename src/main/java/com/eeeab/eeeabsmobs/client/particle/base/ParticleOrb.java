@@ -63,10 +63,10 @@ public class ParticleOrb extends TextureSheetParticle {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static final class OrbFactory implements ParticleProvider<OrbData> {
+    public static final class Factory implements ParticleProvider<OrbData> {
         private final SpriteSet spriteSet;
 
-        public OrbFactory(SpriteSet sprite) {
+        public Factory(SpriteSet sprite) {
             this.spriteSet = sprite;
         }
 

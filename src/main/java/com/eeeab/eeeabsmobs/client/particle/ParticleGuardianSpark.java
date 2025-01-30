@@ -66,10 +66,10 @@ public class ParticleGuardianSpark extends TextureSheetParticle {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static final class GuardianSparkFactory implements ParticleProvider<SimpleParticleType> {
+    public static final class Factory implements ParticleProvider<SimpleParticleType> {
         private final SpriteSet sprite;
 
-        public GuardianSparkFactory(SpriteSet sprite) {
+        public Factory(SpriteSet sprite) {
             this.sprite = sprite;
         }
 

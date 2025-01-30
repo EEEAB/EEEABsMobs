@@ -33,7 +33,7 @@ public class ParticleHugeEMExplosionSeed extends NoRenderParticle {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static class Provider implements ParticleProvider<SimpleParticleType> {
+    public static class Factory implements ParticleProvider<SimpleParticleType> {
         public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
             return new ParticleHugeEMExplosionSeed(level, x, y, z);
         }

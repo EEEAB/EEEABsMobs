@@ -51,10 +51,10 @@ public class ParticleImmortalExplosion extends TextureSheetParticle {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static class ImmortalExplosionFactory implements ParticleProvider<SimpleParticleType> {
+    public static class Factory implements ParticleProvider<SimpleParticleType> {
         private final SpriteSet sprites;
 
-        public ImmortalExplosionFactory(SpriteSet spriteSet) {
+        public Factory(SpriteSet spriteSet) {
             this.sprites = spriteSet;
         }
 
