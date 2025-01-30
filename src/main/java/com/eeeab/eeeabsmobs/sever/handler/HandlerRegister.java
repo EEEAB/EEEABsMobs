@@ -7,6 +7,7 @@ import com.eeeab.eeeabsmobs.client.model.item.ModelGuardianBattleaxe;
 import com.eeeab.eeeabsmobs.client.model.util.EMItemModels;
 import com.eeeab.eeeabsmobs.client.model.armor.ModelGhostWarriorArmor;
 import com.eeeab.eeeabsmobs.client.particle.*;
+import com.eeeab.eeeabsmobs.client.particle.ParticleHugeEMExplosionSeed;
 import com.eeeab.eeeabsmobs.sever.integration.curios.model.ModelSoulSummoningNecklace;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelBloodBall;
 import com.eeeab.eeeabsmobs.client.model.effects.ModelGrenade;
@@ -90,6 +91,7 @@ public class HandlerRegister {
         event.registerEntityRenderer(EntityInit.SHAMAN_BOMB.get(), RenderShamanBomb::new);
         event.registerEntityRenderer(EntityInit.CAMERA_SHAKE.get(), EmptyRender::new);
         event.registerEntityRenderer(EntityInit.EXPLODE.get(), EmptyRender::new);
+        event.registerEntityRenderer(EntityInit.OVERLOAD_EXPLODE.get(), EmptyRender::new);
         event.registerEntityRenderer(EntityInit.MOVING_CONTROLLER.get(), EmptyRender::new);
         event.registerEntityRenderer(EntityInit.FALLING_BLOCK.get(), RenderFallingBlock::new);
         event.registerEntityRenderer(EntityInit.GUARDIAN_LASER.get(), RenderGuardianLaser::new);
@@ -129,7 +131,9 @@ public class HandlerRegister {
         event.registerSpriteSet(ParticleInit.POISON.get(), ParticlePoison.PoisonFactory::new);
         event.registerSpriteSet(ParticleInit.WARLOCK_HEAL.get(), SuspendedTownParticle.HappyVillagerProvider::new);
         event.registerSpriteSet(ParticleInit.IMMORTAL_EXPLOSION.get(), ParticleImmortalExplosion.ImmortalExplosionFactory::new);
+        event.registerSpriteSet(ParticleInit.OVERLOAD_EXPLOSION.get(), ParticleOverloadExplosion.EMOverloadExplosionFactory::new);
         event.registerSpriteSet(ParticleInit.RING.get(), ParticleRing.RingFactory::new);
+        event.registerSpecial(ParticleInit.OVERLOAD_EXPLOSION_EMITTER.get(), new ParticleHugeEMExplosionSeed.Provider());
     }
 
     @SubscribeEvent

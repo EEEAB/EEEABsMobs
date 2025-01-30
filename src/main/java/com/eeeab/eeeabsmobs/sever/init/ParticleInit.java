@@ -22,6 +22,8 @@ public class ParticleInit {
     public static final RegistryObject<SimpleParticleType> POISON = PARTICLES.register("poison", () -> new SimpleParticleType(false));
     public static final RegistryObject<SimpleParticleType> WARLOCK_HEAL = PARTICLES.register("warlock_heal", () -> new SimpleParticleType(false));
     public static final RegistryObject<SimpleParticleType> IMMORTAL_EXPLOSION = PARTICLES.register("immortal_explosion", () -> new SimpleParticleType(true));
+    public static final RegistryObject<SimpleParticleType> OVERLOAD_EXPLOSION = PARTICLES.register("overload_explosion", () -> new SimpleParticleType(true));
+    public static final RegistryObject<SimpleParticleType> OVERLOAD_EXPLOSION_EMITTER = PARTICLES.register("overload_explosion_emitter", () -> new SimpleParticleType(true));
     public static final RegistryObject<ParticleType<ParticleOrb.OrbData>> ORB = PARTICLES.register("orb", () -> new ParticleType<ParticleOrb.OrbData>(false, ParticleOrb.OrbData.DESERIALIZER) {
         @Override
         public Codec<ParticleOrb.OrbData> codec() {
