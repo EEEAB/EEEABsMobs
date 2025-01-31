@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.util.damage;
+package com.eeeab.eeeabsmobs.sever.entity.util.damage;
 
 public class DamageInfo {
     private long timestamp;

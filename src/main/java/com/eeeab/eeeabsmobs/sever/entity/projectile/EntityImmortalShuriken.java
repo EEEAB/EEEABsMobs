@@ -14,7 +14,7 @@ import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
-import com.eeeab.eeeabsmobs.sever.util.damage.EMDamageSource;
+import com.eeeab.eeeabsmobs.sever.entity.util.damage.EMDamageSource;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;

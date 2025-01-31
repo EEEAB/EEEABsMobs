@@ -5,7 +5,7 @@ import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
-import com.eeeab.eeeabsmobs.sever.util.damage.DamageAdaptation;
+import com.eeeab.eeeabsmobs.sever.entity.util.damage.DamageAdaptation;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
