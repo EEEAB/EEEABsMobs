@@ -15,7 +15,7 @@ import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
-import com.eeeab.eeeabsmobs.sever.entity.XpReward;
+import com.eeeab.eeeabsmobs.sever.entity.MobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
@@ -64,8 +64,6 @@ import net.minecraftforge.common.ForgeMod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntity, GlowEntity, RangedAttackMob {
     public final Animation dieAnimation = Animation.create(60);
     public final Animation activeAnimation = Animation.create(30);
@@ -113,8 +111,8 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     }
 
     @Override
-    protected XpReward getEntityReward() {
-        return XpReward.XP_REWARD_ELITE;
+    protected MobLevel getMobLevel() {
+        return MobLevel.ELITE;
     }
 
     @Override

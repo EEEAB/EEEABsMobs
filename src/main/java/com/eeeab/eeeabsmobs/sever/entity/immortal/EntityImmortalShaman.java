@@ -3,7 +3,6 @@ package com.eeeab.eeeabsmobs.sever.entity.immortal;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import com.eeeab.animate.server.ai.AnimationSpellAI;
 import com.eeeab.animate.server.ai.animation.AnimationDie;
-import com.eeeab.animate.server.ai.animation.AnimationHurt;
 import com.eeeab.animate.server.ai.animation.AnimationRepel;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
@@ -14,7 +13,7 @@ import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
-import com.eeeab.eeeabsmobs.sever.entity.XpReward;
+import com.eeeab.eeeabsmobs.sever.entity.MobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.KeepDistanceGoal;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
@@ -90,8 +89,8 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
     }
 
     @Override
-    protected XpReward getEntityReward() {
-        return XpReward.XP_REWARD_HARD;
+    protected MobLevel getMobLevel() {
+        return MobLevel.HARD;
     }
 
     @Override

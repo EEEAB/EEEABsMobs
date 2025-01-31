@@ -18,7 +18,7 @@ import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
 import com.eeeab.eeeabsmobs.sever.entity.IBoss;
 import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
-import com.eeeab.eeeabsmobs.sever.entity.XpReward;
+import com.eeeab.eeeabsmobs.sever.entity.MobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate.*;
@@ -214,8 +214,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     @Override
-    protected XpReward getEntityReward() {
-        return XpReward.XP_REWARD_BOSS;
+    protected MobLevel getMobLevel() {
+        return MobLevel.BOSS;
     }
 
     @Override

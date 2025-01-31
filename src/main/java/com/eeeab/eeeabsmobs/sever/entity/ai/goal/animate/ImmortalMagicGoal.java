@@ -6,7 +6,7 @@ import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalMagicCircle;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.ImmortalMagic;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.eeeab.eeeabsmobs.sever.entity.util.ModMobType;
+import com.eeeab.eeeabsmobs.sever.entity.ModMobType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.attributes.Attributes;

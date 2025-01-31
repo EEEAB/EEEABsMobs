@@ -57,7 +57,7 @@ public abstract class EEEABMobEntity extends PathfinderMob {
 
     public EEEABMobEntity(EntityType<? extends EEEABMobEntity> type, Level level) {
         super(type, level);
-        this.xpReward = this.getEntityReward().getXp();
+        this.xpReward = this.getMobLevel().getXp();
         this.intervalProtector = new DamageAdaptation(50, 9, 0.35F, 0.9995F, true).setAdaptBypassesDamage(true);
         //加载配置文件并修改值
         EMConfigHandler.AttributeConfig config = this.getAttributeConfig();
@@ -476,8 +476,8 @@ public abstract class EEEABMobEntity extends PathfinderMob {
         return false;
     }
 
-    protected XpReward getEntityReward() {
-        return XpReward.XP_REWARD_NORMAL;
+    protected MobLevel getMobLevel() {
+        return MobLevel.NORMAL;
     }
 
     protected boolean setDarkenScreen() {

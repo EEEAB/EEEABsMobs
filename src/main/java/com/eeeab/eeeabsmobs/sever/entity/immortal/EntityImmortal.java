@@ -23,7 +23,7 @@ import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IBoss;
-import com.eeeab.eeeabsmobs.sever.entity.XpReward;
+import com.eeeab.eeeabsmobs.sever.entity.MobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate.*;
@@ -32,7 +32,7 @@ import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalLaser;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalMagicCircle.MagicCircleType;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.eeeab.eeeabsmobs.sever.entity.util.ModMobType;
+import com.eeeab.eeeabsmobs.sever.entity.ModMobType;
 import com.eeeab.eeeabsmobs.sever.entity.util.TickBasedProbabilityBooster;
 import com.eeeab.eeeabsmobs.sever.init.*;
 import com.eeeab.eeeabsmobs.sever.util.EMMathUtils;
@@ -232,8 +232,8 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     }
 
     @Override
-    protected XpReward getEntityReward() {
-        return XpReward.XP_REWARD_EPIC_BOSS;
+    protected MobLevel getMobLevel() {
+        return MobLevel.EPIC_BOSS;
     }
 
     @Override

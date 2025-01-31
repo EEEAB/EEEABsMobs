@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.entity.util;
+package com.eeeab.eeeabsmobs.sever.entity;
 
 import net.minecraft.world.entity.MobType;
 

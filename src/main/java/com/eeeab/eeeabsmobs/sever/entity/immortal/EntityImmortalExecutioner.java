@@ -14,7 +14,7 @@ import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
-import com.eeeab.eeeabsmobs.sever.entity.XpReward;
+import com.eeeab.eeeabsmobs.sever.entity.MobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
@@ -125,8 +125,8 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
     }
 
     @Override
-    protected XpReward getEntityReward() {
-        return XpReward.XP_REWARD_ELITE;
+    protected MobLevel getMobLevel() {
+        return MobLevel.ELITE;
     }
 
     @Override
