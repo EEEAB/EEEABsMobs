@@ -166,7 +166,7 @@ public abstract class EEEABMobEntity extends PathfinderMob {
             float damageCap = config.damageCap.get().floatValue();
             if (this.lastDamageSource == null) {
                 newDamage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(Math.min(oldDamage, damageCap), this.getArmorValue(), (float) this.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1F);
-            } else if (!this.lastDamageSource.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
+            } else if (!this.lastDamageSource.is(EMTagKey.BYPASSES_DAMAGE_CAP)) {
                 newDamage = Math.min(oldDamage, damageCap);
             }
             if (this.intervalProtect()) newDamage = this.intervalProtector.damageAfterAdaptingOnce(this, this.lastDamageSource, newDamage);
@@ -179,6 +179,9 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     public boolean hurt(DamageSource source, float amount) {
         if (!this.level().isClientSide) {
             this.lastDamageSource = source;
+            if (getDamageCap() != null && !source.is(EMTagKey.BYPASSES_DAMAGE_CAP)) {
+                amount = Math.min(amount, getDamageCap().damageCap.get().floatValue());
+            }
         }
         return super.hurt(source, amount);
     }
