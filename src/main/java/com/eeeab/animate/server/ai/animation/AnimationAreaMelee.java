@@ -11,7 +11,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class AnimationAreaMelee<T extends EEEABMobLibrary & EMAnimatedEntity> extends AnimationMelee<T> {
-    private final float attackArc;
     private final float leftAttackArc;
     private final float rightAttackArc;
     private final float attackHeight;
@@ -20,7 +19,7 @@ public class AnimationAreaMelee<T extends EEEABMobLibrary & EMAnimatedEntity> ex
 
     public AnimationAreaMelee(T entity, Supplier<Animation> animationSupplier, int damageKeyframes, float attackDistance, float applyDamage, float applyKnockBack, float attackArc, float attackHeight, boolean faceTarget) {
         super(entity, animationSupplier, damageKeyframes, attackDistance, applyDamage, applyKnockBack);
-        this.rightAttackArc = this.leftAttackArc = this.attackArc = attackArc;
+        this.rightAttackArc = this.leftAttackArc = attackArc;
         this.attackHeight = attackHeight;
         this.faceTarget = faceTarget;
         this.consumer = null;
@@ -30,7 +29,6 @@ public class AnimationAreaMelee<T extends EEEABMobLibrary & EMAnimatedEntity> ex
         super(entity, animationSupplier, damageKeyframes, attackDistance, applyDamage, applyKnockBack);
         this.rightAttackArc = rightAttackArc;
         this.leftAttackArc = leftAttackArc;
-        this.attackArc = rightAttackArc + leftAttackArc;
         this.attackHeight = attackHeight;
         this.faceTarget = faceTarget;
     }
@@ -50,7 +48,7 @@ public class AnimationAreaMelee<T extends EEEABMobLibrary & EMAnimatedEntity> ex
                 for (LivingEntity entityHit : entitiesHit) {
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, entityHit);
                     float entityHitDistance = (float) Math.sqrt((entityHit.getZ() - entity.getZ()) * (entityHit.getZ() - entity.getZ()) + (entityHit.getX() - entity.getX()) * (entityHit.getX() - entity.getX())) - entityHit.getBbWidth() / 2f;
-                    if (entityHitDistance <= attackDistance && (entityRelativeAngle <= rightAttackArc / 2 && entityRelativeAngle >= -leftAttackArc / 2) || (entityRelativeAngle >= 360 - attackArc / 2 || entityRelativeAngle <= -360 + attackArc / 2)) {
+                    if (entityHitDistance <= attackDistance && (entityRelativeAngle <= rightAttackArc / 2 && entityRelativeAngle >= -leftAttackArc / 2) || (entityRelativeAngle >= 360 - leftAttackArc / 2 || entityRelativeAngle <= -360 + rightAttackArc / 2)) {
                         if (this.consumer != null) {
                             this.consumer.accept(entityHit);
                         } else {

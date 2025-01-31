@@ -105,20 +105,16 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
                     }
                 }
                 if (tick % 2 == 0) {
-                    List<LivingEntity> livingEntities = entity.getNearByLivingEntities(2.5F, 5F, 2.5F, 5F);
-                    for (LivingEntity hitEntity : livingEntities) {
-                        float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
-                        float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
-                        if (entityHitDistance <= 3F && (entityRelativeAngle <= 120 / 2F && entityRelativeAngle >= -120 / 2F) || (entityRelativeAngle >= 360 - 120 / 2F || entityRelativeAngle <= -360 + 120 / 2F)) {
-                            entity.guardianHurtTarget(entity, hitEntity, 0.05F, 1.0F, baseDamageMultiplier, false, false, false);
-                            double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
-                            double ratioZ = (-Math.cos(entity.getYRot() * ((float) Math.PI / 180F)));
-                            ModEntityUtils.forceKnockBack(entity, hitEntity, 1.5F, ratioX, ratioZ, true);
-                            double duration = 1.5;
-                            if (Difficulty.HARD.equals(entity.level().getDifficulty())) duration = 2.5;
-                            entity.stun(null, hitEntity, (int) (duration * 20), entity.isChallengeMode());
-                        }
-                    }
+                    double width = entity.getBbWidth() * 0.8;
+                    entity.rangeAttack(width, 5F, width, width, 120F, 120F, hitEntity -> {
+                        entity.guardianHurtTarget(entity, hitEntity, 0.05F, 1.0F, baseDamageMultiplier, false, false, false);
+                        double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
+                        double ratioZ = (-Math.cos(entity.getYRot() * ((float) Math.PI / 180F)));
+                        ModEntityUtils.forceKnockBack(entity, hitEntity, 1.5F, ratioX, ratioZ, true);
+                        double duration = 1.5;
+                        if (Difficulty.HARD.equals(entity.level().getDifficulty())) duration = 2.5;
+                        entity.stun(null, hitEntity, (int) (duration * 20), entity.isChallengeMode());
+                    });
                 }
             } else {
                 entity.playAnimation(entity.pounceAttackAnimation3);

@@ -1,23 +1,19 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
+import com.eeeab.animate.server.ai.AnimationAI;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianBlade;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
-import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.entity.util.damage.EMDamageSource;
-import com.eeeab.animate.server.ai.AnimationAI;
+import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.List;
-
 public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGuardian> {
-
     public GuardianShakeGroundAttackGoal(EntityNamelessGuardian entity) {
         super(entity);
     }
@@ -45,16 +41,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
                 if (this.entity.targetDistance > 1.8 || entity.getTarget() == null)
                     this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * 1.2F, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * 1.2F));
             } else if (tick == 24) {
-                final float attackArc = 40F;
-                final float range = 4.6F;
-                List<LivingEntity> entities = entity.getNearByLivingEntities(range, range - 0.6F, range, range);
-                for (LivingEntity hitEntity : entities) {
-                    float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
-                    float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
-                    if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                        entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1F, 1.2F, true, true, true);
-                    }
-                }
+                doHurtTarget(1F, 1.2F, false);
                 doSpawnBlade(5, 1.75F);
             } else if (tick == 25) {
                 this.entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
@@ -75,16 +62,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
                 if (this.entity.targetDistance > 1.8 || entity.getTarget() == null)
                     this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * 1.2F, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * 1.2F));
             } else if (tick == 17) {
-                final float attackArc = 40F;
-                final float range = 4.6F;
-                List<LivingEntity> entities = entity.getNearByLivingEntities(range, range - 0.6F, range, range);
-                for (LivingEntity hitEntity : entities) {
-                    float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
-                    float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
-                    if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                        entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1F, 1.0F, true, true, true);
-                    }
-                }
+                doHurtTarget(1F, 1F, false);
                 doSpawnBlade(5, 1.75F);
             } else if (tick == 18) {
                 this.entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
@@ -105,24 +83,23 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
                 if (this.entity.targetDistance > 1.8 || entity.getTarget() == null)
                     this.entity.move(MoverType.SELF, new Vec3(Math.cos(Math.toRadians(entity.getYRot() + 90)) * 1.2F, 0, Math.sin(Math.toRadians(entity.getYRot() + 90)) * 1.2F));
             } else if (tick == 26) {
-                final float attackArc = 40F;
-                final float range = 4.6F;
-                List<LivingEntity> entities = entity.getNearByLivingEntities(range, range - 0.6F, range, range);
-                for (LivingEntity hitEntity : entities) {
-                    float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
-                    float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
-                    if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                        double duration = 2;
-                        if (Difficulty.HARD.equals(this.entity.level().getDifficulty())) duration = 4;
-                        entity.stun(null, hitEntity, (int) (duration * 20), entity.isChallengeMode());
-                        entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, 1.5F, 1.2F, true, true, true);
-                    }
-                }
+                doHurtTarget(1.5F, 1.2F, true);
                 doSpawnBlade(6, 2F);
                 this.entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                 EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.2F, 5, 10);
             }
         }
+    }
+
+    private void doHurtTarget(float baseDamageMultiplier, float damageMultiplier, boolean stun) {
+        entity.rangeAttack(4.6, 4.6, 4.6, 4.6, 40F, 40F, hitEntity -> {
+            if (stun) {
+                double duration = 2;
+                if (Difficulty.HARD.equals(this.entity.level().getDifficulty())) duration = 4;
+                entity.stun(null, hitEntity, (int) (duration * 20), entity.isChallengeMode());
+            }
+            entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, baseDamageMultiplier, damageMultiplier, true, true, true);
+        });
     }
 
     private void doSpawnBlade(int count, float totalOffset) {

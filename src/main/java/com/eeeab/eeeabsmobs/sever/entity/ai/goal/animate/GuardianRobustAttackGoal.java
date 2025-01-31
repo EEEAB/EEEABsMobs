@@ -1,22 +1,19 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
+import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
-import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.entity.util.damage.EMDamageSource;
-import com.eeeab.animate.server.ai.AnimationSimpleAI;
+import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.function.Supplier;
 
 public class GuardianRobustAttackGoal extends AnimationSimpleAI<EntityNamelessGuardian> {
-
     public GuardianRobustAttackGoal(EntityNamelessGuardian entity, Supplier<Animation> animationSupplier) {
         super(entity, animationSupplier);
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
@@ -36,19 +33,12 @@ public class GuardianRobustAttackGoal extends AnimationSimpleAI<EntityNamelessGu
         if (tick == 1) entity.playSound(SoundInit.NAMELESS_GUARDIAN_CREAK.get(), 1.0F, 1.0F);
         else if (tick == 30) entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2F, 1.2F);
         else if (tick == 35) {
-            final float attackArc = 40F;
-            final float range = 4.6F;
-            List<LivingEntity> entities = entity.getNearByLivingEntities(range, range - 0.6F, range, range);
-            for (LivingEntity hitEntity : entities) {
-                float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
-                float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
-                if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                    double duration = 3;
-                    if (Difficulty.HARD.equals(this.entity.level().getDifficulty())) duration = 5;
-                    entity.stun(null, hitEntity, (int) (duration * 20), entity.isChallengeMode());
-                    entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.03F, 1.85F, 1.4F, true, true, true);
-                }
-            }
+            entity.rangeAttack(4.6, 5, 4.6, 4.6, 40F, 40F, hitEntity -> {
+                double duration = 3;
+                if (Difficulty.HARD.equals(this.entity.level().getDifficulty())) duration = 5;
+                entity.stun(null, hitEntity, (int) (duration * 20), entity.isChallengeMode());
+                entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.03F, 1.85F, 1.4F, true, true, true);
+            });
         } else if (tick == 36) {
             entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 2F, 0.2F);
             EntityCameraShake.cameraShake(entity.level(), entity.position(), 10, 0.3F, 0, 10);

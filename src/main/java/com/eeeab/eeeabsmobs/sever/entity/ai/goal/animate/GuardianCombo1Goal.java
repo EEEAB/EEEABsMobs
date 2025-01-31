@@ -1,20 +1,15 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
-import com.eeeab.eeeabsmobs.sever.init.EffectInit;
-import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.ai.AnimationAI;
+import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.List;
 
 public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
     private final float range;
@@ -56,25 +51,19 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
             } else if (tick == 10) {
                 pursuit(1.5F);
             } else if (tick == 11) {
-                List<LivingEntity> entities = entity.getNearByLivingEntities(range, 5F, range, range + 1F);
-                for (LivingEntity hitEntity : entities) {
-                    float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
-                    float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
-                    if ((entityHitDistance <= range - 0.5F && (entityRelativeAngle <= 10F && entityRelativeAngle >= -(attackArc + 20) / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                        entity.guardianHurtTarget(entity, hitEntity, 0.025F, 1.0F, baseDamageMultiplier, true, true, true);
-                        double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
-                        double ratioZ = (-Math.cos(entity.getYRot() * ((float) Math.PI / 180F)));
-                        entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
-                        ModEntityUtils.forceKnockBack(entity, hitEntity, 0.6F, ratioX, ratioZ, !isPowered);
-                    }
-                }
+                entity.rangeAttack(range, 5, range, range + 0.5, attackArc + 20F, 20F, hitEntity -> {
+                    entity.guardianHurtTarget(entity, hitEntity, 0.025F, 1.0F, baseDamageMultiplier, true, true, true);
+                    double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
+                    double ratioZ = (-Math.cos(entity.getYRot() * ((float) Math.PI / 180F)));
+                    entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
+                    ModEntityUtils.forceKnockBack(entity, hitEntity, 0.6F, ratioX, ratioZ, !isPowered);
+                });
             } else if (tick == 20 && entity.checkCanAttackRange(1.5, range) && canToggleAnimation(90)) {
                 entity.playAnimation(entity.attackAnimation2);
             }
 
         } else if (entity.getAnimation() == entity.attackAnimation2) {
             int tick = entity.getAnimationTick();
-            float attackArc1 = attackArc + 40;
             float baseDamageMultiplier = isPowered ? 1.0F : 0.8F;
             if (tick < 11 && target != null) {
                 entity.getLookControl().setLookAt(target, 30F, 30F);
@@ -86,18 +75,13 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
                 entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 1.95f, entity.getVoicePitch());
             } else if (tick == 13) {
                 pursuit(1.6F);
-                List<LivingEntity> entities = entity.getNearByLivingEntities(range - 0.1F, 5F, range - 0.1F, range + 1F);
-                for (LivingEntity hitEntity : entities) {
-                    float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, hitEntity);
-                    float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - entity.getZ()) * (hitEntity.getZ() - entity.getZ()) + (hitEntity.getX() - entity.getX()) * (hitEntity.getX() - entity.getX())) - hitEntity.getBbWidth() / 2F;
-                    if ((entityHitDistance <= range - 0.1F && (entityRelativeAngle <= attackArc1 / 2F && entityRelativeAngle >= -attackArc1 / 2F) || (entityRelativeAngle >= 360 - attackArc1 / 2F || entityRelativeAngle <= -360 + attackArc1 / 2F))) {
-                        entity.guardianHurtTarget(entity, hitEntity, 0.025F, 1.0F, baseDamageMultiplier, true, true, true);
-                        entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
-                        double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
-                        double ratioZ = (-Math.cos(entity.getYRot() * ((float) Math.PI / 180F)));
-                        ModEntityUtils.forceKnockBack(entity, hitEntity, 0.5F, ratioX, ratioZ, !isPowered);
-                    }
-                }
+                entity.rangeAttack(range, 5, range, range + 0.25, attackArc + 40F, attackArc + 40F, hitEntity -> {
+                    entity.guardianHurtTarget(entity, hitEntity, 0.025F, 1.0F, baseDamageMultiplier, true, true, true);
+                    entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
+                    double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
+                    double ratioZ = (-Math.cos(entity.getYRot() * ((float) Math.PI / 180F)));
+                    ModEntityUtils.forceKnockBack(entity, hitEntity, 0.5F, ratioX, ratioZ, !isPowered);
+                });
             } else if (tick == 25) {
                 if (entity.checkCanAttackRange(1.5, range) && canToggleAnimation(80)) {
                     entity.playAnimation(entity.attackAnimation3);
@@ -116,8 +100,7 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
                 entity.playSound(SoundInit.NAMELESS_GUARDIAN_WHOOSH.get(), 2.2f, entity.getVoicePitch() - 0.2f);
                 pursuit(2F);
             } else if (tick == 14) {
-                List<LivingEntity> entities = entity.getNearByLivingEntities(range + 0.1F, 6.0F, range + 0.1F, range + 1F);
-                for (LivingEntity hitEntity : entities) {
+                entity.rangeAttack(range + 0.1F, 6F, range + 0.1F, range + 0.5F, hitEntity -> {
                     double duration = 1.5;
                     if (Difficulty.HARD.equals(entity.level().getDifficulty())) duration = 2.5;
                     entity.stun(null, hitEntity, (int) (duration * 20), entity.isChallengeMode());
@@ -126,7 +109,7 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
                     double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
                     double ratioZ = (-Math.cos(entity.getYRot() * ((float) Math.PI / 180F)));
                     ModEntityUtils.forceKnockBack(entity, hitEntity, 1.8F, ratioX, ratioZ, false);
-                }
+                });
                 entity.playSound(SoundEvents.GENERIC_EXPLODE, 1.25F, 1F + entity.getRandom().nextFloat() * 0.1F);
             } else if (tick > 15 && tick < 22) {
                 entity.shockAttack(entity.damageSources().mobAttack(entity), tick - 13, 1F, 1F, 1.5F, 0.025F, 0.5F, (isPowered ? 1.0F : 0.8F), true, false, false);

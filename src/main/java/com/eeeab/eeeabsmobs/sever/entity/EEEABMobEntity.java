@@ -15,10 +15,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -34,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * <b>EEEABMobEntity</b><br/>
@@ -391,6 +389,26 @@ public abstract class EEEABMobEntity extends PathfinderMob {
     public <T extends Entity> List<T> getNearByEntities(Class<T> entityClass, double x, double y, double z, double radius) {
         return level().getEntitiesOfClass(entityClass, getBoundingBox().inflate(x, y, z), targetEntity -> targetEntity != this &&
                 distanceTo(targetEntity) <= radius + targetEntity.getBbWidth() / 2f && targetEntity.getY() <= getY() + y);
+    }
+
+    public void rangeAttack(double rangeX, double height, double rangeZ, double radius, @Nullable Consumer<LivingEntity> hitMethodProvider) {
+        rangeAttack(rangeX, height, rangeZ, radius, 180F, 180F, hitMethodProvider);
+    }
+
+    public void rangeAttack(double rangeX, double height, double rangeZ, double radius, float leftArc, float rightArc, @Nullable Consumer<LivingEntity> hitMethodProvider) {
+        float attackArc = leftArc + rightArc;
+        for (LivingEntity hitEntity : getNearByEntities(LivingEntity.class, rangeX, height, rangeZ, radius)) {
+            float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this, hitEntity.position());
+            float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - this.getZ()) * (hitEntity.getZ() - this.getZ()) + (hitEntity.getX() - this.getX()) * (hitEntity.getX() - this.getX())) - hitEntity.getBbWidth() / 2F;
+            boolean isInAngle = (entityRelativeAngle >= -leftArc / 2F && entityRelativeAngle <= rightArc / 2F) || (entityRelativeAngle >= 360F - leftArc / 2F || entityRelativeAngle <= -360F + rightArc / 2F);
+            if (attackArc >= 360F || (entityHitDistance <= radius && isInAngle)) {
+                if (hitMethodProvider != null) {
+                    hitMethodProvider.accept(hitEntity);
+                } else {
+                    this.doHurtTarget(hitEntity);
+                }
+            }
+        }
     }
 
     /**

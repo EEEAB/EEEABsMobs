@@ -333,19 +333,12 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 this.setYRot(this.yRotO);
             }
             if (tick == 38) {
-                float range = 5F;
-                float attackArc = 120F;
-                List<LivingEntity> entities = this.getNearByLivingEntities(range - 0.5F, 3F, range - 0.5F, range - 0.5F);
-                for (LivingEntity hitEntity : entities) {
-                    float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this, hitEntity);
-                    float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - this.getZ()) * (hitEntity.getZ() - this.getZ()) + (hitEntity.getX() - this.getX()) * (hitEntity.getX() - this.getX())) - hitEntity.getBbWidth() / 2F;
-                    if ((entityHitDistance <= range - 0.5F && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                        this.gshHurtTarget(hitEntity, 3F, true);
-                        double ratioX = Math.sin(this.getYRot() * ((float) Math.PI / 180F));
-                        double ratioZ = (-Math.cos(this.getYRot() * ((float) Math.PI / 180F)));
-                        ModEntityUtils.forceKnockBack(this, hitEntity, 0.5F, ratioX, ratioZ, true);
-                    }
-                }
+                this.rangeAttack(4.5, this.getBbHeight() * 0.9, 4.5, 4.5, 120F, 120F, hitEntity -> {
+                    this.gshHurtTarget(hitEntity, 3F, true);
+                    double ratioX = Math.sin(this.getYRot() * ((float) Math.PI / 180F));
+                    double ratioZ = (-Math.cos(this.getYRot() * ((float) Math.PI / 180F)));
+                    ModEntityUtils.forceKnockBack(this, hitEntity, 0.5F, ratioX, ratioZ, true);
+                });
             } else if (tick == 39) {
                 boolean hot = !this.hotControlled.isStop();
                 EntityCameraShake.cameraShake(level(), position(), 15, 0.125F, 0, 10);
@@ -624,19 +617,12 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 this.entity.setYRot(this.entity.yRotO);
             }
             if (tick == 10) {
-                final float attackArc = 30F;
-                final float range = 6F;
-                List<LivingEntity> entities = entity.getNearByLivingEntities(range, this.entity.getBbHeight(), range, range);
-                for (LivingEntity livingEntity : entities) {
-                    float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, livingEntity);
-                    float entityHitDistance = (float) Math.sqrt((livingEntity.getZ() - entity.getZ()) * (livingEntity.getZ() - entity.getZ()) + (livingEntity.getX() - entity.getX()) * (livingEntity.getX() - entity.getX())) - livingEntity.getBbWidth() / 2F;
-                    if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                        entity.gshHurtTarget(livingEntity, 1F, true);
-                        double ratioX = -Math.sin(entity.yBodyRot * ((float) Math.PI / 180F));
-                        double ratioZ = Math.cos(entity.yBodyRot * ((float) Math.PI / 180F));
-                        ModEntityUtils.forceKnockBack(entity, livingEntity, 0.8F, ratioX, ratioZ, true);
-                    }
-                }
+                entity.rangeAttack(6, entity.getBbHeight() * 1.2, 6, 6, 30F, 30F, hitEntity -> {
+                    entity.gshHurtTarget(hitEntity, 1F, true);
+                    double ratioX = -Math.sin(entity.yBodyRot * ((float) Math.PI / 180F));
+                    double ratioZ = Math.cos(entity.yBodyRot * ((float) Math.PI / 180F));
+                    ModEntityUtils.forceKnockBack(entity, hitEntity, 0.8F, ratioX, ratioZ, true);
+                });
             } else if (tick == 18) {
                 float leftArc = 45F;
                 float rightArc = 45F;
@@ -645,16 +631,10 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                 } else {
                     leftArc = 90F;
                 }
-                final float range = 4.5F;
-                List<LivingEntity> entities = entity.getNearByLivingEntities(range);
-                for (LivingEntity livingEntity : entities) {
-                    float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, livingEntity);
-                    float entityHitDistance = (float) Math.sqrt((livingEntity.getZ() - entity.getZ()) * (livingEntity.getZ() - entity.getZ()) + (livingEntity.getX() - entity.getX()) * (livingEntity.getX() - entity.getX())) - livingEntity.getBbWidth() / 2F;
-                    if ((entityHitDistance <= range && (entityRelativeAngle <= rightArc / 2F && entityRelativeAngle >= -leftArc / 2F) || (entityRelativeAngle >= 360 - 90F / 2F || entityRelativeAngle <= -360 + 90F / 2F))) {
-                        entity.gshHurtTarget(livingEntity, 1.25F, false);
-                        ModEntityUtils.forceKnockBack(entity, livingEntity, 0.25F, this.entity.getX() - livingEntity.getX(), this.entity.getZ() - livingEntity.getZ(), true);
-                    }
-                }
+                entity.rangeAttack(4.5, 4.5, 4.5, 4.5, leftArc, rightArc, hitEntity -> {
+                    entity.gshHurtTarget(hitEntity, 1.25F, false);
+                    ModEntityUtils.forceKnockBack(entity, hitEntity, 0.25F, this.entity.getX() - hitEntity.getX(), this.entity.getZ() - hitEntity.getZ(), true);
+                });
             }
         }
     }

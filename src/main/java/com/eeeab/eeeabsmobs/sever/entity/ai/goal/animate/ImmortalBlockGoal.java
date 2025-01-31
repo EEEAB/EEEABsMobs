@@ -6,11 +6,7 @@ import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalMagicCircle;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.FlyingMob;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-
-import java.util.List;
 
 public class ImmortalBlockGoal extends AnimationGroupAI<EntityImmortal> {
     public ImmortalBlockGoal(EntityImmortal entity) {
@@ -34,20 +30,19 @@ public class ImmortalBlockGoal extends AnimationGroupAI<EntityImmortal> {
             nextAnimation(animation, entity.armBlockEndAnimation);
         } else if (animation == entity.armBlockCounterattackAnimation) {
             if (tick == 4) {
-                List<LivingEntity> hitEntities = entity.getNearByLivingEntities(6F, 6F, 6F, 6F);
-                for (LivingEntity hit : hitEntities) {
-                    entity.doHurtTarget(hit, true, false, false, false, 0.025F, 0.65F, 0.9F);
-                    if (!hit.isInvulnerable()) {
-                        if (hit instanceof Player player && player.getAbilities().invulnerable) continue;
-                        double angle = entity.getAngleBetweenEntities(entity, hit);
+                entity.rangeAttack(6, 6, 6, 6, hitEntity -> {
+                    entity.doHurtTarget(hitEntity, true, false, false, false, 0.025F, 0.65F, 0.9F);
+                    if (!hitEntity.isInvulnerable()) {
+                        if (hitEntity instanceof Player player && player.getAbilities().invulnerable) return;
+                        double angle = entity.getAngleBetweenEntities(entity, hitEntity);
                         double x = 1.5F * Math.cos(Math.toRadians(angle - 90));
                         double z = 1.5F * Math.sin(Math.toRadians(angle - 90));
-                        hit.setDeltaMovement(x, 0.35, z);
-                        if (hit instanceof ServerPlayer serverPlayer) {
-                            serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(hit));
+                        hitEntity.setDeltaMovement(x, 0.35, z);
+                        if (hitEntity instanceof ServerPlayer serverPlayer) {
+                            serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(hitEntity));
                         }
                     }
-                }
+                });
             }
             if (tick >= 15) {
                 if (!nextAnimation(entity.armBlockCounterattackAnimation, entity.blockEntity != null && entity.getHealthPercentage() < 50 && entity.getTimeUntilLaser() <= 0

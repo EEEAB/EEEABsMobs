@@ -133,7 +133,7 @@ public class ImmortalShakeGroundGoal extends AnimationAI<EntityImmortal> {
                     hitFlag = true;
                     float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, entityHit);
                     float entityHitDistance = (float) Math.sqrt((entityHit.getZ() - entity.getZ()) * (entityHit.getZ() - entity.getZ()) + (entityHit.getX() - entity.getX()) * (entityHit.getX() - entity.getX())) - entityHit.getBbWidth() / 2f;
-                    if (entityHitDistance <= attackDistance && ((entityRelativeAngle >= -40F / 2 && entityRelativeAngle <= 90) || (entityRelativeAngle >= 360 - 100F / 2F || entityRelativeAngle <= -360 + 100F / 2F))) {
+                    if (entityHitDistance <= attackDistance && ((entityRelativeAngle >= -20 && entityRelativeAngle <= 90) || (entityRelativeAngle >= 360 - 20 || entityRelativeAngle <= -360 + 90))) {
                         entity.doHurtTarget(entityHit, false, entityHit.hasEffect(EffectInit.ERODE_EFFECT.get()), true, false, 0.03F, 0.8F, 1.0F);
                         entity.knockBack(entityHit, 0.65, 0.45, true, false);
                     }

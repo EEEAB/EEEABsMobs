@@ -9,12 +9,10 @@ import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.util.List;
-
 public class ImmortalComboGoal extends AnimationGroupAI<EntityImmortal> {
     private final TickBasedProbabilityBooster consecutivePunchProb = new TickBasedProbabilityBooster(0.2F, 0.05F, 0.5F);
     private final TickBasedProbabilityBooster criticalHitProb = new TickBasedProbabilityBooster(0.1F, 0.01F, 0.25F);
-    private static final float PUNCH_ATTACK_RANGE = 4.5F;
+    private static final float PUNCH_ATTACK_RANGE = 5F;
     private boolean comboFlag;
 
     public ImmortalComboGoal(EntityImmortal entity) {
@@ -84,13 +82,11 @@ public class ImmortalComboGoal extends AnimationGroupAI<EntityImmortal> {
     }
 
     private void doHurtTargetAndTryBreakBlock(float attackDistance, float rightAttackArc, float leftAttackArc, float strength, boolean continuous, boolean disableShied, boolean canHit, boolean ignoreArmor, boolean canStun, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier) {
-        float attackArc = rightAttackArc + leftAttackArc;
-        List<LivingEntity> entitiesHit = entity.getNearByLivingEntities(attackDistance, PUNCH_ATTACK_RANGE, attackDistance, attackDistance);
         boolean hitFlag = false;
-        for (LivingEntity entityHit : entitiesHit) {
+        for (LivingEntity entityHit : entity.getNearByLivingEntities(attackDistance, PUNCH_ATTACK_RANGE, attackDistance, attackDistance)) {
             float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, entityHit);
             float entityHitDistance = (float) Math.sqrt((entityHit.getZ() - entity.getZ()) * (entityHit.getZ() - entity.getZ()) + (entityHit.getX() - entity.getX()) * (entityHit.getX() - entity.getX())) - entityHit.getBbWidth() / 2f;
-            if (entityHitDistance <= attackDistance && ((entityRelativeAngle >= -leftAttackArc / 2 && entityRelativeAngle <= rightAttackArc / 2) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
+            if (entityHitDistance <= attackDistance && (entityRelativeAngle >= -leftAttackArc / 2 && entityRelativeAngle <= rightAttackArc / 2) || (entityRelativeAngle >= 360 - leftAttackArc / 2 || entityRelativeAngle <= -360 + rightAttackArc / 2)) {
                 boolean hit = true;
                 if (canHit) {
                     if (canStun) entity.stun(null, entityHit, 30, false);

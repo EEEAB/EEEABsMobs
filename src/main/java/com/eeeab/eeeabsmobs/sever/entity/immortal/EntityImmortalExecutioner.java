@@ -331,10 +331,10 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                 this.playSound(SoundInit.IMMORTAL_EXECUTIONER_DETONATION.get(), 1F + 0.5F * (i / 3F), 1.75F - (i / 3F));
                 ModParticleUtils.sphericalParticleOutburst(level(), 4F, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleTypes.SMOKE}, this, this.getBbHeight() * 0.5F, 0, 0, 1 - 0.5 * (i / 3F));
                 AABB attackRange = ModEntityUtils.makeAABBWithSize(this.getX(), this.getY(), this.getZ(), 0F, 6F, 12F, 6F);
-                for (LivingEntity entityHit : this.level().getEntitiesOfClass(LivingEntity.class, attackRange)) {
-                    if (entityHit == this) continue;
-                    if (this.executionerHurtTarget(entityHit)) {
-                        entityHit.setSecondsOnFire((int) (2.5 * this.getFlameStrength()));
+                for (LivingEntity hitEntity : this.level().getEntitiesOfClass(LivingEntity.class, attackRange)) {
+                    if (hitEntity == this) continue;
+                    if (this.executionerHurtTarget(hitEntity)) {
+                        hitEntity.setSecondsOnFire((int) (2.5 * this.getFlameStrength()));
                     }
                 }
             }
@@ -720,7 +720,6 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
     }
 
     static class ExecutionerCullGoal extends ExecutionerGroupAI {
-
         public ExecutionerCullGoal(EntityImmortalExecutioner entity) {
             super(entity, true, () -> entity.cullStorageAnimation, () -> entity.cullHoldAnimation, () -> entity.cullStopAnimation, () -> entity.counterAnimation);
         }
@@ -762,17 +761,12 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
         }
 
         private void doHurtTarget(float attackArc, float range, boolean knock) {
-            List<LivingEntity> entities = entity.getNearByLivingEntities(range, range - 0.5F, range, range);
-            for (LivingEntity livingEntity : entities) {
-                float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, livingEntity);
-                float entityHitDistance = (float) Math.sqrt((livingEntity.getZ() - entity.getZ()) * (livingEntity.getZ() - entity.getZ()) + (livingEntity.getX() - entity.getX()) * (livingEntity.getX() - entity.getX())) - livingEntity.getBbWidth() / 2F;
-                if ((entityHitDistance <= range && (entityRelativeAngle <= attackArc / 2F && entityRelativeAngle >= -attackArc / 2F) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F))) {
-                    entity.executionerHurtTarget(livingEntity);
-                    if (knock) {
-                        livingEntity.setDeltaMovement(livingEntity.getDeltaMovement().add(0, 0.45, 0));
-                    }
+            entity.rangeAttack(range, range - 0.5, range, range, attackArc, attackArc, hitEntity -> {
+                entity.executionerHurtTarget(hitEntity);
+                if (knock) {
+                    hitEntity.setDeltaMovement(hitEntity.getDeltaMovement().add(0, 0.45, 0));
                 }
-            }
+            });
         }
 
         private void pursuit(float pursuitDistance, float moveMultiplier, double y) {
