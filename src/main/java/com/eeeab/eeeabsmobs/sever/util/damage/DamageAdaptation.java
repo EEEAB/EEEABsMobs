@@ -125,21 +125,23 @@ public class DamageAdaptation {
     private static @Nullable String getKey(@Nullable DamageSource source, boolean adaptsSameTypeMobs, boolean adaptBypassesDamage) {
         if (source == null) {
             return "unknown_source";
-        } else if (source.getEntity() == null && !source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
-            return spliceCharacters(source.type().msgId(), "unknown_entity");
-        } else if (source.getEntity() != null) {
-            //避免荆棘伤害导致适应玩家持有武器问题
-            if (source.is(DamageTypes.THORNS)) return null;
-            Entity entity = source.getEntity();
-            String id = adaptsSameTypeMobs ? entity.getType().getDescriptionId() : entity.getStringUUID();
-            String key = id;
-            if (entity instanceof Player player) {
-                InteractionHand hand = player.getUsedItemHand();
-                key = spliceCharacters(id, player.getItemInHand(hand).getItem().getDescriptionId());
-            }
-            return key;
         } else {
-            return adaptBypassesDamage ? spliceCharacters(source.type().msgId(), "bypasses_source") : null;
+            //避免荆棘伤害导致适应玩家持有武器问题
+            if (source.is(DamageTypes.THORNS)) return "thorns";
+            if (source.getEntity() == null && !source.is(EMTagKey.BYPASSES_DAMAGE_CAP)) {
+                return spliceCharacters(source.type().msgId(), "unknown_entity");
+            } else if (source.getEntity() != null) {
+                Entity entity = source.getEntity();
+                String id = adaptsSameTypeMobs ? entity.getType().getDescriptionId() : entity.getStringUUID();
+                String key = id;
+                if (entity instanceof Player player) {
+                    InteractionHand hand = player.getUsedItemHand();
+                    key = spliceCharacters(id, player.getItemInHand(hand).getItem().getDescriptionId());
+                }
+                return key;
+            } else {
+                return adaptBypassesDamage ? spliceCharacters(source.type().msgId(), "bypasses_source") : null;
+            }
         }
     }
 
