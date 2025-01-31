@@ -14,7 +14,7 @@ public class EffectInit {
     public static final RegistryObject<MobEffect> ARMOR_LOWER_EFFECT = EFFECTS.register("armor_lower_effect", EffectArmorLower::new);
     public static final RegistryObject<MobEffect> VERTIGO_EFFECT = EFFECTS.register("vertigo_effect", EffectVertigo::new);
     public static final RegistryObject<MobEffect> FRENZY_EFFECT = EFFECTS.register("frenzy_effect", EffectFrenzy::new);
-    public static final RegistryObject<MobEffect> EM_OVERLOAD_EFFECT = EFFECTS.register("em_overload_effect", EffectEMPOverload::new);
+    public static final RegistryObject<MobEffect> EM_OVERLOAD_EFFECT = EFFECTS.register("em_overload_effect", EffectOverload::new);
 
     public static void register(IEventBus bus) {
         EFFECTS.register(bus);
