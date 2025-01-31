@@ -324,7 +324,7 @@ public final class HandlerServerEvent {
         }
 
         FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(hurtEntity, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
-        if (frenzyCapability != null && frenzyCapability.isFrenzy() && !source.is(EMTagKey.GENERAL_UNRESISTANT_TO) && !source.is(DamageTypeTags.BYPASSES_ARMOR)) {
+        if (frenzyCapability != null && frenzyCapability.isFrenzy() && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !source.is(DamageTypeTags.BYPASSES_ARMOR)) {
             float damage = event.getAmount();
             if (hurtEntity.getHealth() > 1F) {
                 //至多减少50%伤害

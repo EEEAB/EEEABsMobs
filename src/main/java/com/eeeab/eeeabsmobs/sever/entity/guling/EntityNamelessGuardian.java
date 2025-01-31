@@ -788,7 +788,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                     if (ModEntityUtils.isProjectileSource(source)) return false;
                 }
                 return super.hurt(source, damage);
-            } else if (source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
+            } else if (source.is(EMTagKey.BYPASSES_DAMAGE_CAP)) {
                 return super.hurt(source, damage);
             } else if (this.destroyBlocksTick <= 0) {
                 this.destroyBlocksTick = 20;

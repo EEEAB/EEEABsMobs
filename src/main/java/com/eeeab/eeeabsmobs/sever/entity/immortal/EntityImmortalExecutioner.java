@@ -441,7 +441,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
             }
             if (this.getAnimation() == this.detonationAnimation || this.getAnimation() == this.impactStorageAnimation)
                 damage *= 0.5F;
-            if (source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) damage = preDamage;
+            if (source.is(EMTagKey.BYPASSES_DAMAGE_CAP)) damage = preDamage;
         }
         return super.hurt(source, damage);
     }

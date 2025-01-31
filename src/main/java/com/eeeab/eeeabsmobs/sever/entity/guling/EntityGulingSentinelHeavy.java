@@ -448,7 +448,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         if (this.level().isClientSide) {
             return false;
         } else {
-            if (!source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
+            if (!source.is(EMTagKey.BYPASSES_DAMAGE_CAP)) {
                 if (this.getAnimation() == this.electromagneticAnimation) {
                     damage *= 0.2F;
                 } else {

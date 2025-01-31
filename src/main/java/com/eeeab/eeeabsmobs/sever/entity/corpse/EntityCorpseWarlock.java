@@ -441,7 +441,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         if (animation == teleportAnimation) {
             return false;
         } else if (animation == vampireAnimation || animation == robustAnimation) {
-            if (!source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) damage *= 0.2F;
+            if (!source.is(EMTagKey.BYPASSES_DAMAGE_CAP)) damage *= 0.2F;
         }
         if (entity != null) {
             if (animation == babbleAnimation) this.playAnimation(this.teleportAnimation);
@@ -459,7 +459,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         if (source.getEntity() == this) {
             damage = 0.0F;
         }
-        if (source.is(EMTagKey.MAGIC_UNRESISTANT_TO)) {
+        if (source.is(EMTagKey.MAGIC_RESISTANT_TO)) {
             damage *= 0.5F;//魔法造成的伤害减少50%
         }
         return damage;

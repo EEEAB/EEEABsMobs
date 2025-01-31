@@ -751,6 +751,9 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
             byte pierceLevel = 0;
             if (source.getDirectEntity() instanceof AbstractArrow arrow) pierceLevel = arrow.getPierceLevel();
             if (entity != null) {
+                if (!source.is(EMTagKey.BYPASSES_DAMAGE_CAP)) {
+                    damage = Math.min(damage, EMConfigHandler.COMMON.MOB.IMMORTAL.THE_IMMORTAL.maximumDamageCap.damageCap.get().floatValue());
+                }
                 boolean inUnleash = this.getAnimation() == this.unleashEnergyAnimation;
                 if ((inUnleash || ModEntityUtils.isProjectileSource(source) || !ModEntityUtils.checkDirectEntityConsistency(source))
                         && this.distanceTo(entity) >= EMConfigHandler.COMMON.MOB.IMMORTAL.THE_IMMORTAL.maxDistanceTakeDamage.get()
@@ -788,7 +791,7 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
                 }
             }
             damage *= 1F - Mth.clamp((this.targets.size() - 1) * 4F, 0F, 20F) / 100F;
-            if (entity != null || source.is(EMTagKey.GENERAL_UNRESISTANT_TO)) {
+            if (entity != null || source.is(EMTagKey.BYPASSES_DAMAGE_CAP)) {
                 boolean flag = super.hurt(source, damage);
                 if (flag) this.stunCheck(source, damage);
                 return flag;

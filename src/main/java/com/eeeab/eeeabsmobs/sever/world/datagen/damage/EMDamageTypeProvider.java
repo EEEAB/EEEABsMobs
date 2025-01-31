@@ -28,8 +28,8 @@ public class EMDamageTypeProvider extends DamageTypeTagsProvider {
         tag(DamageTypeTags.BYPASSES_ARMOR).add(EMResourceKey.GUARDIAN_LASER, EMResourceKey.IMMORTAL_MAGIC, EMResourceKey.IGNORE_ARMOR_ATTACK);
         tag(DamageTypeTags.BYPASSES_SHIELD).remove(EMResourceKey.IMMORTAL_MAGIC);
         tag(DamageTypeTags.IS_EXPLOSION).add(EMResourceKey.OVERLOAD_EXPLODE);
-        tag(EMTagKey.GENERAL_UNRESISTANT_TO).add(DamageTypes.FELL_OUT_OF_WORLD, DamageTypes.GENERIC_KILL);
-        tag(EMTagKey.MAGIC_UNRESISTANT_TO).addTag(DamageTypeTags.WITCH_RESISTANT_TO);
+        tag(EMTagKey.BYPASSES_DAMAGE_CAP).add(DamageTypes.FELL_OUT_OF_WORLD, DamageTypes.GENERIC_KILL);
+        tag(EMTagKey.MAGIC_RESISTANT_TO).addTag(DamageTypeTags.WITCH_RESISTANT_TO);
         tag(EMTagKey.CAN_CRIT_HEAL).add(EMResourceKey.CRIT_HEAL);
     }
 }

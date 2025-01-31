@@ -257,7 +257,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
             }
             Entity entity = source.getDirectEntity();
             if (entity instanceof LivingEntity livingEntity) {
-                if (this.getAnimation() != this.getHurtAnimation() && !source.is(EMTagKey.GENERAL_UNRESISTANT_TO) && !source.is(DamageTypes.THORNS)) {
+                if (this.getAnimation() != this.getHurtAnimation() && !source.is(EMTagKey.BYPASSES_DAMAGE_CAP) && !source.is(DamageTypes.THORNS)) {
                     livingEntity.hurt(this.damageSources().thorns(this), damage * 0.2F);
                 }
                 Item item = livingEntity.getMainHandItem().getItem();
