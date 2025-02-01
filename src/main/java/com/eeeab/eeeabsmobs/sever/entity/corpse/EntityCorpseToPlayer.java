@@ -10,7 +10,7 @@ import com.eeeab.eeeabsmobs.sever.entity.*;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player.PlayerHatredRedirectionGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player.ReFindPlayerGoal;
-import com.eeeab.eeeabsmobs.sever.entity.MobLevel;
+import com.eeeab.eeeabsmobs.sever.entity.IMobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.ModMobType;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
@@ -72,8 +72,8 @@ public class EntityCorpseToPlayer extends EEEABMobLibrary implements IEntity, Gl
     }
 
     @Override
-    protected MobLevel getMobLevel() {
-        return MobLevel.NONE;
+    public IMobLevel.MobLevel getMobLevel() {
+        return IMobLevel.MobLevel.NONE;
     }
 
     @Override

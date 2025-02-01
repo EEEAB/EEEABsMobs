@@ -279,8 +279,6 @@
   "other.eeeabsmobs.attack_radius.config": "Set attack radius",
   "other.eeeabsmobs.projectile_damage.config": "Set projectile damage",
   "other.eeeabsmobs.summoning_soul_necklace.config": "Set maximum cumulative damage taken",
-  "other.eeeabsmobs.howitzer_1.config": "Set explosion damage cap",
-  "other.eeeabsmobs.howitzer_2.config": "Set explosion radius",
   "other.eeeabsmobs.guardian_axe.config": "Set sweep attack level",
   "other.eeeabsmobs.immortal_executioner.config": "Set maximum ignite count",
   "other.eeeabsmobs.corpse_to_player.config": "Set death Heal Amount",

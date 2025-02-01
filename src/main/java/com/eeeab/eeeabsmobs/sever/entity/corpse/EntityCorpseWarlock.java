@@ -15,7 +15,7 @@ import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
-import com.eeeab.eeeabsmobs.sever.entity.MobLevel;
+import com.eeeab.eeeabsmobs.sever.entity.IMobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.KeepDistanceGoal;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCrimsonCrack;
@@ -126,8 +126,8 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     }
 
     @Override
-    protected MobLevel getMobLevel() {
-        return MobLevel.ELITE;
+    public IMobLevel.MobLevel getMobLevel() {
+        return IMobLevel.MobLevel.ELITE;
     }
 
     @Override
@@ -297,7 +297,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                     this.entities.forEach(LivingEntity::kill);
                     this.setIsHeal(isNotEmpty && ((target != null && this.getHealthPercentage() < 50) || (target == null && this.getHealthPercentage() != 100)));
                     if (!isNotEmpty) this.level().broadcastEntityEvent(this, (byte) 13);
-                    this.performRangedAttack(target, !isNotEmpty ? 4F : this.entities.size());
+                    this.performRangedAttack(target, !isNotEmpty ? 5F : this.entities.size());
                 } else if (tick > 60) {
                     this.setDeltaMovement(0, 0, 0);
                     if (!this.isHeal() && target != null) {
@@ -604,6 +604,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             bloodBall.setTargetUUID(entity.getUUID());
         }
         bloodBall.setOwner(this);
+        bloodBall.setDamage((float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
         bloodBall.setPos(this.position().add(0, 5, 0));
         this.level().addFreshEntity(bloodBall);
     }
@@ -757,7 +758,6 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     }
 
     static class WarlockSummonGoal extends AnimationSpellAI<EntityCorpseWarlock> {
-
         public WarlockSummonGoal(EntityCorpseWarlock spellCaster) {
             super(spellCaster);
         }
@@ -867,7 +867,6 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     }
 
     static class WarlockTeleportGoal extends AnimationSpellAI<EntityCorpseWarlock> {
-
         public WarlockTeleportGoal(EntityCorpseWarlock spellCaster) {
             super(spellCaster);
         }
@@ -970,6 +969,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                     targetWidth = Math.min(this.target.getBbWidth(), 1.5);
                 }
                 EntityCrimsonCrack crack = new EntityCrimsonCrack(this.spellCaster.level(), this.spellCaster, new Vec3(this.targetX - targetWidth * Math.cos(radians), this.targetY + 0.56125F, this.targetZ - targetWidth * Math.sin(radians)));
+                crack.setDamage((float) this.spellCaster.getAttributeValue(Attributes.ATTACK_DAMAGE));
                 this.spellCaster.level().addFreshEntity(crack);
             }
         }
@@ -992,7 +992,6 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     }
 
     static class WarlockRobustGoal extends AnimationSpellAI<EntityCorpseWarlock> {
-
         public WarlockRobustGoal(EntityCorpseWarlock spellCaster) {
             super(spellCaster);
         }
@@ -1073,5 +1072,4 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             return this.spellCaster.robustAnimation;
         }
     }
-
 }

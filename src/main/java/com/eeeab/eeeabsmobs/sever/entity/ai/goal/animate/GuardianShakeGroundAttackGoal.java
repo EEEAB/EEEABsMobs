@@ -98,7 +98,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
                 if (Difficulty.HARD.equals(this.entity.level().getDifficulty())) duration = 4;
                 entity.stun(null, hitEntity, (int) (duration * 20), entity.isChallengeMode());
             }
-            entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.025F, baseDamageMultiplier, damageMultiplier, true, true, true);
+            entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, baseDamageMultiplier, damageMultiplier, true, true, true);
         });
     }
 

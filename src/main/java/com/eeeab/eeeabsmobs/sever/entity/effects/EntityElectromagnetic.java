@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
+import com.eeeab.eeeabsmobs.sever.entity.IMobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.SteppableTriggerTrapEntity;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
@@ -78,15 +79,21 @@ public class EntityElectromagnetic extends EntityMagicEffects implements Steppab
             Vec3 lookVec = this.calculateViewVector(0.0F, this.yaw);
             this.setPos(this.getX() + lookVec.x, this.getY(), this.getZ() + lookVec.z);
             AABB attackRange = ModEntityUtils.makeAABBWithSize(this.getX(), this.getY(), this.getZ(), 0.0, (double) this.entityData.get(DATA_SIZE), 0.6, (double) this.entityData.get(DATA_SIZE));
-            for (LivingEntity entityHit : this.level().getEntitiesOfClass(LivingEntity.class, attackRange)) {
+            for (LivingEntity hitEntity : this.level().getEntitiesOfClass(LivingEntity.class, attackRange)) {
                 if (this.caster == null) {
-                    if (entityHit.hurt(this.damageSources().magic(), this.damage)) {
-                        this.strongKnockBlock(entityHit);
+                    if (hitEntity.hurt(this.damageSources().magic(), this.damage)) {
+                        this.strongKnockBlock(hitEntity);
                     }
-                } else if (entityHit != this.caster && !entityHit.isAlliedTo(this.caster) && entityHit.hurt(this.damageSources().mobAttack(this.caster), this.damage)) {
-                    if (this.entityData.get(DATA_FIRE)) entityHit.setSecondsOnFire(5);
-                    else entityHit.addEffect(new MobEffectInstance(EffectInit.EM_OVERLOAD_EFFECT.get(), 300, 0, false, false, true), this);
-                    this.strongKnockBlock(entityHit);
+                } else {
+                    float finalDamage = damage;
+                    if (this.caster instanceof IMobLevel mob) {
+                        finalDamage += mob.getDamageAmountByTargetHealthPct(hitEntity);
+                    }
+                    if (hitEntity != this.caster && !hitEntity.isAlliedTo(this.caster) && hitEntity.hurt(this.damageSources().mobAttack(this.caster), finalDamage)) {
+                        if (this.entityData.get(DATA_FIRE)) hitEntity.setSecondsOnFire(5);
+                        else hitEntity.addEffect(new MobEffectInstance(EffectInit.EM_OVERLOAD_EFFECT.get(), 300, 0, false, false, true), this);
+                        this.strongKnockBlock(hitEntity);
+                    }
                 }
             }
             if (this.shockRange > 0) {

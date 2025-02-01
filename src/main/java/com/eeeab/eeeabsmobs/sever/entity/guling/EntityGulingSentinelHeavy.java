@@ -15,7 +15,7 @@ import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
-import com.eeeab.eeeabsmobs.sever.entity.MobLevel;
+import com.eeeab.eeeabsmobs.sever.entity.IMobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
@@ -111,8 +111,8 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     }
 
     @Override
-    protected MobLevel getMobLevel() {
-        return MobLevel.ELITE;
+    public IMobLevel.MobLevel getMobLevel() {
+        return IMobLevel.MobLevel.ELITE;
     }
 
     @Override
@@ -332,7 +332,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             }
             if (tick == 38) {
                 this.rangeAttack(4.5, this.getBbHeight() * 0.9, 4.5, 4.5, 120F, 120F, hitEntity -> {
-                    this.gshHurtTarget(hitEntity, 3F, true);
+                    this.sentinelHurtTarget(hitEntity, 3F, true);
                     double ratioX = Math.sin(this.getYRot() * ((float) Math.PI / 180F));
                     double ratioZ = (-Math.cos(this.getYRot() * ((float) Math.PI / 180F)));
                     ModEntityUtils.forceKnockBack(this, hitEntity, 0.5F, ratioX, ratioZ, true);
@@ -557,6 +557,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         for (int i = 1; i <= 2; i++) {
             double yBodyRadians = Math.toRadians(this.yBodyRot + (180 * (i - 1)));
             EntityGrenade grenade = new EntityGrenade(this.level(), this);
+            grenade.setDamage((float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
             grenade.shoot(d1, d2 + d4, d3, velocity, 3F);
             Vec3 vec3 = this.position().add(this.getLookAngle());
             grenade.setPos(vec3.x + this.getBbWidth() * 0.82F * Math.cos(yBodyRadians), this.getY(0.48D), vec3.z + this.getBbWidth() * 0.82F * Math.sin(yBodyRadians));
@@ -564,9 +565,9 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         }
     }
 
-    public void gshHurtTarget(LivingEntity hitEntity, float damageMultiplier, boolean disableShield) {
+    public void sentinelHurtTarget(LivingEntity hitEntity, float damageMultiplier, boolean disableShield) {
         double baseDamage = this.getAttributeValue(Attributes.ATTACK_DAMAGE);
-        boolean flag = hitEntity.hurt(this.damageSources().mobAttack(this), (float) (baseDamage * damageMultiplier));
+        boolean flag = hitEntity.hurt(this.damageSources().mobAttack(this), (float) (baseDamage * damageMultiplier) + getDamageAmountByTargetHealthPct(hitEntity));
         boolean hot = !this.hotControlled.isStop();
         if (flag) {
             hitEntity.invulnerableTime = 0;
@@ -616,7 +617,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             }
             if (tick == 10) {
                 entity.rangeAttack(6, entity.getBbHeight() * 1.2, 6, 6, 30F, 30F, hitEntity -> {
-                    entity.gshHurtTarget(hitEntity, 1F, true);
+                    entity.sentinelHurtTarget(hitEntity, 1F, true);
                     double ratioX = -Math.sin(entity.yBodyRot * ((float) Math.PI / 180F));
                     double ratioZ = Math.cos(entity.yBodyRot * ((float) Math.PI / 180F));
                     ModEntityUtils.forceKnockBack(entity, hitEntity, 0.8F, ratioX, ratioZ, true);
@@ -630,7 +631,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
                     leftArc = 90F;
                 }
                 entity.rangeAttack(4.5, 4.5, 4.5, 4.5, leftArc, rightArc, hitEntity -> {
-                    entity.gshHurtTarget(hitEntity, 1.25F, false);
+                    entity.sentinelHurtTarget(hitEntity, 1.25F, false);
                     ModEntityUtils.forceKnockBack(entity, hitEntity, 0.25F, this.entity.getX() - hitEntity.getX(), this.entity.getZ() - hitEntity.getZ(), true);
                 });
             }

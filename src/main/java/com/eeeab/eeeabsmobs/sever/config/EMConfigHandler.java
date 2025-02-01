@@ -78,12 +78,11 @@ public final class EMConfigHandler {
             }
             {
                 builder.push("Howitzer");
-                itemHowitzerGrenadeDamage = BUILDER.comment("Set Grenade maximum explosion damage(damage to the center of the explosion)")
-                        .translation(getTranslationKey("howitzer_1"))
-                        .defineInRange("Set explosion damage cap", 10D, 1D, 128D);
-                itemHowitzerGrenadeExplosionRadius = BUILDER.comment("Set Grenade explosion radius(the bigger the blast radius, the higher the damage)")
-                        .translation(getTranslationKey("howitzer_2"))
-                        .defineInRange("Set explosion radius", 2.5D, 1D, 10D);
+                itemHowitzerGrenadeDamage = BUILDER.translation(getTranslationKey("projectile_damage"))
+                        .defineInRange("Set projectile damage", 10D, 1D, Float.MAX_VALUE);
+                itemHowitzerGrenadeExplosionRadius = BUILDER.comment("Set Grenade explosion radius")
+                        .translation(getTranslationKey("attack_radius"))
+                        .defineInRange("Set attack radius", 2.5D, 1D, 10D);
                 itemHowitzerCoolingTime = itemCD(2D);
                 DEMOLISHER_TOOL = new ToolConfig(8D, 1.6D);
                 builder.pop();

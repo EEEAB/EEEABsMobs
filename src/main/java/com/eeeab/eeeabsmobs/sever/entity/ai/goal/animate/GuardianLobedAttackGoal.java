@@ -42,7 +42,7 @@ public class GuardianLobedAttackGoal extends AnimationSimpleAI<EntityNamelessGua
             } else if (tick == 24) {
                 entity.playSound(SoundEvents.STONE_BREAK, 1.5F, 1.0F);
             }
-            entity.shockAttack(entity.damageSources().mobAttack(entity), tick - 19, maxFallingDistance, 2F, 0F, 0.025F, 0.5F, (isPowered ? 1.0F : 0.8F), false, true, false);
+            entity.shockAttack(entity.damageSources().mobAttack(entity), tick - 19, maxFallingDistance, 2F, 0F, 0.5F, (isPowered ? 1.0F : 0.8F), false, true, false);
         }
     }
 

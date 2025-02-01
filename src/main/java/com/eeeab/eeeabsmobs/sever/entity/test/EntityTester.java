@@ -7,7 +7,7 @@ import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
-import com.eeeab.eeeabsmobs.sever.entity.MobLevel;
+import com.eeeab.eeeabsmobs.sever.entity.IMobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -54,8 +54,8 @@ public class EntityTester extends EEEABMobLibrary implements IEntity {
     }
 
     @Override
-    protected MobLevel getMobLevel() {
-        return MobLevel.NONE;
+    public IMobLevel.MobLevel getMobLevel() {
+        return IMobLevel.MobLevel.NONE;
     }
 
     @Override

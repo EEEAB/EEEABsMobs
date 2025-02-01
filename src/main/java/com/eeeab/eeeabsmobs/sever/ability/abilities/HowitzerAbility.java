@@ -28,7 +28,7 @@ public class HowitzerAbility extends Ability<Player> {
             double yBodyRadians = Math.toRadians(user.yHeadRot + (180 * (user.getUsedItemHand() == InteractionHand.MAIN_HAND ? 1 : 2)));
             float width = user.getBbWidth();
             EntityGrenade grenade = new EntityGrenade(level, user);
-            grenade.setMaxDamage(EMConfigHandler.COMMON.ITEM.itemHowitzerGrenadeDamage.get().floatValue());
+            grenade.setDamage(EMConfigHandler.COMMON.ITEM.itemHowitzerGrenadeDamage.get().floatValue());
             grenade.setRadius(EMConfigHandler.COMMON.ITEM.itemHowitzerGrenadeExplosionRadius.get().floatValue());
             Vec3 lookPos = user.getLookAngle();
             Vec3 playerPos = user.position();

@@ -9,7 +9,7 @@ import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
-import com.eeeab.eeeabsmobs.sever.entity.MobLevel;
+import com.eeeab.eeeabsmobs.sever.entity.IMobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.CopyOwnerTargetGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.WhenOwnerDeadGoal;
@@ -58,8 +58,8 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
     }
 
     @Override
-    protected MobLevel getMobLevel() {
-        return MobLevel.NONE;
+    public IMobLevel.MobLevel getMobLevel() {
+        return IMobLevel.MobLevel.NONE;
     }
 
     @Override

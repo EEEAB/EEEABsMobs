@@ -14,7 +14,7 @@ import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
-import com.eeeab.eeeabsmobs.sever.entity.MobLevel;
+import com.eeeab.eeeabsmobs.sever.entity.IMobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
@@ -125,8 +125,8 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
     }
 
     @Override
-    protected MobLevel getMobLevel() {
-        return MobLevel.ELITE;
+    public IMobLevel.MobLevel getMobLevel() {
+        return IMobLevel.MobLevel.ELITE;
     }
 
     @Override
@@ -539,7 +539,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
 
     public boolean executionerHurtTarget(LivingEntity hitEntity) {
         double baseDamage = this.getAttributeValue(Attributes.ATTACK_DAMAGE);
-        boolean flag = hitEntity.hurt(this.damageSources().mobAttack(this), (float) (baseDamage * Math.max(this.getFirePower(), 0)));
+        boolean flag = hitEntity.hurt(this.damageSources().mobAttack(this), (float) (baseDamage * Math.max(this.getFirePower(), 0)) + getDamageAmountByTargetHealthPct(hitEntity));
         if (this.random.nextFloat() < Math.max(this.getFlameStrength() - 1F, 0F)) {
             if (hitEntity instanceof Player player && player.isBlocking()) {
                 player.disableShield(true);

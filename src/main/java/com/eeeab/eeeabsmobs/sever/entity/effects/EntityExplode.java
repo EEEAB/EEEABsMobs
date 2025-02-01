@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
+import com.eeeab.eeeabsmobs.sever.entity.IMobLevel;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -23,8 +24,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class EntityExplode extends EntityMagicEffects {
+    protected float damage;
     protected DamageSource damageSource;
-    protected float maxDamage;
     private static final EntityDataAccessor<Boolean> DATA_EXPLODE = SynchedEntityData.defineId(EntityExplode.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Float> DATA_RADIUS = SynchedEntityData.defineId(EntityExplode.class, EntityDataSerializers.FLOAT);
 
@@ -32,11 +33,11 @@ public class EntityExplode extends EntityMagicEffects {
         super(type, level);
     }
 
-    public EntityExplode(Level level, DamageSource damageSource, @Nullable LivingEntity caster, float radius, float maxDamage) {
+    public EntityExplode(Level level, DamageSource damageSource, @Nullable LivingEntity caster, float radius, float damage) {
         this(EntityInit.EXPLODE.get(), level);
         this.setRadius(radius);
         this.damageSource = damageSource;
-        this.maxDamage = maxDamage;
+        this.damage = damage;
         this.caster = caster;
     }
 
@@ -47,12 +48,12 @@ public class EntityExplode extends EntityMagicEffects {
             this.discard();
         } else {
             this.entityData.set(DATA_EXPLODE, true);
-            this.explode(damageSource, this, maxDamage);
+            this.explode(damageSource, this);
             this.doExplodeEffect(this.position(), this.getRadius());
         }
     }
 
-    protected void explode(DamageSource damageSource, @Nullable Entity entity, float maxDamage) {
+    protected void explode(DamageSource damageSource, @Nullable Entity entity) {
         Vec3 vec3 = this.position();
         float f2 = this.getRadius() * 2.0F;
         int k1 = Mth.floor(vec3.x - (double) f2 - 1.0D);
@@ -77,9 +78,17 @@ public class EntityExplode extends EntityMagicEffects {
                         d9 /= d13;
                         double d14 = Explosion.getSeenPercent(vec3, hit);
                         double d10 = (1.0D - d12) * d14;
-                        float damage = Math.min(((int) ((d10 * d10 + d10) / 2.0D * 7.0D * (double) f2 + 1.0D)), maxDamage);
-                        doHurtEntity(damageSource, hit, damage);
-                        doKnockbackEffect(hit, d10, d5, d7, d9);
+                        //damage = Math.min((int) ((d10 * d10 + d10) / 2.0D * 7.0D * (double) f2 + 1.0D), damage);
+                        if (hit.isAttackable()) {
+                            float finalDamage = damage;
+                            if (hit instanceof LivingEntity target) {
+                                if (this.caster instanceof IMobLevel mob) {
+                                    finalDamage += mob.getDamageAmountByTargetHealthPct(target);
+                                }
+                            }
+                            doHurtEntity(damageSource, hit, finalDamage);
+                        }
+                        doKnockbackEntity(hit, d10, d5, d7, d9);
                     }
                 }
             }
@@ -93,7 +102,7 @@ public class EntityExplode extends EntityMagicEffects {
         hitEntity.hurt(damageSource, damage);
     }
 
-    protected void doKnockbackEffect(Entity hitEntity, double strength, double x, double y, double z) {
+    protected void doKnockbackEntity(Entity hitEntity, double strength, double x, double y, double z) {
         double d0;
         if (hitEntity instanceof LivingEntity livingEntity) {
             d0 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingEntity, strength);
@@ -148,11 +157,11 @@ public class EntityExplode extends EntityMagicEffects {
      * @param damageSource 伤害源
      * @param caster       造成爆炸的实体
      * @param radius       半径
-     * @param maxDamage    最大伤害限制
+     * @param damage       造成的伤害(受到方块阻挡与距离爆炸中心的影响)
      */
-    public static void explode(Level world, Vec3 vec3, DamageSource damageSource, @Nullable LivingEntity caster, float radius, float maxDamage) {
+    public static void explode(Level world, Vec3 vec3, DamageSource damageSource, @Nullable LivingEntity caster, float radius, float damage) {
         if (!world.isClientSide) {
-            EntityExplode explode = new EntityExplode(world, damageSource, caster, radius, maxDamage);
+            EntityExplode explode = new EntityExplode(world, damageSource, caster, radius, damage);
             explode.setPos(vec3);
             world.addFreshEntity(explode);
         }

@@ -13,7 +13,7 @@ import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
-import com.eeeab.eeeabsmobs.sever.entity.MobLevel;
+import com.eeeab.eeeabsmobs.sever.entity.IMobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.KeepDistanceGoal;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
@@ -89,8 +89,8 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
     }
 
     @Override
-    protected MobLevel getMobLevel() {
-        return MobLevel.HARD;
+    public IMobLevel.MobLevel getMobLevel() {
+        return IMobLevel.MobLevel.HARD;
     }
 
     @Override
@@ -123,7 +123,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> spellCastingBombAnimation));
         this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> spellCastingWololoAnimation));
         this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> avoidAnimation));
-        this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> spellCastingFRAnimation, 4.5F, 9, 2.0F, 5.0F, true) {
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> spellCastingFRAnimation, 4.5F, 9, 2.0F, 0.625F, true) {
             @Override
             public void onHit(LivingEntity entity) {
                 if (entity instanceof Player player) {
@@ -340,7 +340,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
 
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 80.0D).
-                add(Attributes.ATTACK_DAMAGE, 1.0D).
+                add(Attributes.ATTACK_DAMAGE, 8.0D).
                 add(Attributes.ARMOR, 2.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.35D).
                 add(Attributes.FOLLOW_RANGE, 32.0D).
@@ -386,13 +386,13 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         double d4 = entity.getZ() - (this.getZ() + vec3.z * d1);
         shamanBomb = new EntityShamanBomb(level(), this, d2, d3, d4);
         shamanBomb.setOwner(this);
+        shamanBomb.setDamage((float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
         shamanBomb.setDangerous(dangerous);
         shamanBomb.setPos(this.getX() + vec3.x * d1, this.getY(0.74D), shamanBomb.getZ() + vec3.z * d1);
         this.level().addFreshEntity(shamanBomb);
     }
 
     private class ShamanAnimationCommonGoal extends AnimationSimpleAI<EntityImmortalShaman> {
-
         public ShamanAnimationCommonGoal(EntityImmortalShaman entity, Supplier<Animation> animationSupplier) {
             super(entity, animationSupplier);
         }

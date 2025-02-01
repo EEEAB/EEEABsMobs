@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.projectile;
 
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.sever.entity.IMobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.util.damage.EMDamageSource;
@@ -32,7 +33,7 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
     private static final float INERTIA_DEFAULT = 0.95F;
     private static final int DANGEROUS_TIMER = 30;
     private static final int NO_DANGEROUS_TIMER = 50;
-    private float baseDamage = 8.0F;
+    private float damage = 8.0F;
     public boolean reboundFlag;
     private static final EntityDataAccessor<Boolean> DANGEROUS = SynchedEntityData.defineId(EntityShamanBomb.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> IS_PLAYER = SynchedEntityData.defineId(EntityShamanBomb.class, EntityDataSerializers.BOOLEAN);
@@ -72,8 +73,11 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
             Entity resultEntity = result.getEntity();//被击中的实体
             Entity ownerEntity = this.getOwner();//(发射|反弹)弹射物的实体
             boolean flag;
-            if (ownerEntity instanceof LivingEntity owner && resultEntity instanceof LivingEntity livingEntity) {
-                flag = resultEntity.hurt(EMDamageSource.shamanBombing(this, owner), (livingEntity.getMaxHealth() * 0.05F * (isPlayer() ? 0 : 1F)) + baseDamage);
+            if (ownerEntity instanceof LivingEntity owner && resultEntity instanceof LivingEntity target) {
+                if (owner instanceof IMobLevel mob) {
+                    damage += mob.getDamageAmountByTargetHealthPct(target);
+                }
+                flag = resultEntity.hurt(EMDamageSource.shamanBombing(this, owner), damage);
                 if (flag && resultEntity.isAlive()) {
                     this.doEnchantDamageEffects(owner, resultEntity);
                 }
@@ -187,20 +191,21 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
         return this.entityData.get(DANGEROUS);
     }
 
-
     public void setDangerous(boolean flag) {
-        if (flag) this.baseDamage *= 1.2F;
+        if (flag) this.damage *= 1.2F;
         this.entityData.set(DANGEROUS, flag);
     }
-
 
     public boolean isPlayer() {
         return this.entityData.get(IS_PLAYER);
     }
 
-
     public void setIsPlayer(boolean flag) {
-        if (flag) this.baseDamage = EMConfigHandler.COMMON.ITEM.itemImmortalStaffProjectileDamage.get().floatValue();
+        if (flag) this.damage = EMConfigHandler.COMMON.ITEM.itemImmortalStaffProjectileDamage.get().floatValue();
         this.entityData.set(IS_PLAYER, flag);
+    }
+
+    public void setDamage(float damage) {
+        this.damage = damage;
     }
 }

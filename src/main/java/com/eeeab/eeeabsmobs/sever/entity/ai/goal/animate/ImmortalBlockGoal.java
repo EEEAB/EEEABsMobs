@@ -31,7 +31,7 @@ public class ImmortalBlockGoal extends AnimationGroupAI<EntityImmortal> {
         } else if (animation == entity.armBlockCounterattackAnimation) {
             if (tick == 4) {
                 entity.rangeAttack(6, 6, 6, 6, hitEntity -> {
-                    entity.doHurtTarget(hitEntity, true, false, false, false, 0.025F, 0.65F, 0.9F);
+                    entity.immortalHurtTarget(hitEntity, true, false, false, false, 0.65F, 0.9F);
                     if (!hitEntity.isInvulnerable()) {
                         if (hitEntity instanceof Player player && player.getAbilities().invulnerable) return;
                         double angle = entity.getAngleBetweenEntities(entity, hitEntity);

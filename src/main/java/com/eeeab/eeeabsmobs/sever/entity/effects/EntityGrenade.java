@@ -19,7 +19,7 @@ import net.minecraft.world.phys.Vec3;
 public class EntityGrenade extends EntityMagicEffects {
     private static final float GRAVITY = 0.03F;
     private float radius = 2.5F;
-    private float maxDamage = 10F;
+    private float damage = 8F;
 
     public EntityGrenade(EntityType<? extends EntityMagicEffects> entityType, Level level) {
         super(entityType, level);
@@ -36,14 +36,14 @@ public class EntityGrenade extends EntityMagicEffects {
         if (hitresult.getType() != HitResult.Type.MISS) {
             if (this.caster != null && !(this.caster instanceof Player)) {
                 //基于使用者(非玩家)决定攻击伤害
-                maxDamage = (float) this.caster.getAttributeValue(Attributes.ATTACK_DAMAGE);
+                damage = (float) this.caster.getAttributeValue(Attributes.ATTACK_DAMAGE);
             }
-            if (hitresult instanceof EntityHitResult entityHitResult) {
+            if (!this.level().isClientSide && hitresult instanceof EntityHitResult entityHitResult) {
                 if (entityHitResult.getEntity() instanceof LivingEntity entityHit && entityHit != this.caster) {
                     entityHit.addEffect(new MobEffectInstance(EffectInit.EM_OVERLOAD_EFFECT.get(), 300, 0, false, false, true), this);
                 }
             }
-            EntityExplode.explode(this.level(), this.position(), this.damageSources().explosion(this, this.caster), this.caster, this.radius, this.maxDamage);
+            EntityExplode.explode(this.level(), this.position(), this.damageSources().explosion(this, this.caster), this.caster, this.radius, this.damage);
             EntityCameraShake.cameraShake(this.level(), this.position(), 16F, 0.125F, 5, 15);
             this.discard();
         }
@@ -80,8 +80,8 @@ public class EntityGrenade extends EntityMagicEffects {
         }
     }
 
-    public void setMaxDamage(float maxDamage) {
-        this.maxDamage = maxDamage;
+    public void setDamage(float damage) {
+        this.damage = damage;
     }
 
     public void setRadius(float radius) {

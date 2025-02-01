@@ -19,6 +19,7 @@ import java.util.Optional;
 
 //基于自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/server/entity/effects/EntitySolarBeam.java
 public class EntityAbsBeam extends EntityMagicEffects {
+    protected float damage;
     public float yaw, pitch;
     public float preYaw, prePitch;
     public double endPosX, endPosY, endPosZ;
@@ -166,6 +167,10 @@ public class EntityAbsBeam extends EntityMagicEffects {
 
     protected float getBaseScale() {
         return 0.5F;
+    }
+
+    public void setDamage(float damage) {
+        this.damage = damage;
     }
 
     public static class HitResult {

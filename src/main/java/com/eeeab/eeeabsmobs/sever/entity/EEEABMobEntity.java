@@ -36,7 +36,7 @@ import java.util.function.Consumer;
 /**
  * <b>EEEABMobEntity</b><br/>
  */
-public abstract class EEEABMobEntity extends PathfinderMob {
+public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel {
     private final EMBossInfoServer bossInfo = new EMBossInfoServer(this);
     private final DamageAdaptation intervalProtector;
     private DamageSource killDataCause;//死亡的伤害源
@@ -236,7 +236,7 @@ public abstract class EEEABMobEntity extends PathfinderMob {
         return doHurtTarget(entity, damageMultiplier, knockBackMultiplier, false);
     }
 
-    //复制自: net.minecraft.world.entity.Mob.doHurtTarget(Entity entity)
+    //基于自: net.minecraft.world.entity.Mob.doHurtTarget(Entity entity)
     public boolean doHurtTarget(Entity entity, float damageMultiplier, float knockBackMultiplier, boolean canDisableShield) {
         float f = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * damageMultiplier;
         float f1 = (float) this.getAttributeValue(Attributes.ATTACK_KNOCKBACK) * knockBackMultiplier;
@@ -250,10 +250,14 @@ public abstract class EEEABMobEntity extends PathfinderMob {
             entity.setSecondsOnFire(i * 4);
         }
 
+        if (entity instanceof LivingEntity livingEntity) {
+            f += getDamageAmountByTargetHealthPct(livingEntity);
+        }
+
         boolean flag = entity.hurt(this.damageSources().mobAttack(this), f);
         if (flag) {
-            if (f1 > 0.0F && entity instanceof LivingEntity) {
-                ((LivingEntity) entity).knockback((double) (f1 * 0.5F), (double) Mth.sin(this.getYRot() * ((float) Math.PI / 180F)), (double) (-Mth.cos(this.getYRot() * ((float) Math.PI / 180F))));
+            if (f1 > 0.0F && entity instanceof LivingEntity livingEntity) {
+                livingEntity.knockback(f1 * 0.5F, Mth.sin(this.getYRot() * ((float) Math.PI / 180F)), -Mth.cos(this.getYRot() * ((float) Math.PI / 180F)));
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
             }
 
@@ -476,8 +480,9 @@ public abstract class EEEABMobEntity extends PathfinderMob {
         return false;
     }
 
-    protected MobLevel getMobLevel() {
-        return MobLevel.NORMAL;
+    @Override
+    public IMobLevel.MobLevel getMobLevel() {
+        return IMobLevel.MobLevel.NORMAL;
     }
 
     protected boolean setDarkenScreen() {

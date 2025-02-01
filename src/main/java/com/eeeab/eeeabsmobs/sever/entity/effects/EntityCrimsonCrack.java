@@ -4,6 +4,7 @@ import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
 import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
 import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.sever.entity.IMobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
@@ -22,6 +23,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class EntityCrimsonCrack extends EntityMagicEffects {
+    private float damage = 5F;
     public static final float ATTACK_RANGE = 3F;
     private static final EntityDataAccessor<Integer> DATA_PHASE = SynchedEntityData.defineId(EntityCrimsonCrack.class, EntityDataSerializers.INT);
     public final ControlledAnimation phaseControlled = new ControlledAnimation(30);
@@ -81,7 +83,11 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
                                 continue;
                             target.setDeltaMovement(target.getDeltaMovement().add(this.position().subtract(target.position()).normalize().scale(0.1F)));
                             if (this.distanceTo(target) <= ATTACK_RANGE) {
-                                boolean flag = target.hurt(this.damageSources().indirectMagic(this, caster), 5F + target.getMaxHealth() * 0.015F);
+                                float finalDamage = damage;
+                                if (this.caster instanceof IMobLevel mob) {
+                                    finalDamage += mob.getDamageAmountByTargetHealthPct(target);
+                                }
+                                boolean flag = target.hurt(this.damageSources().indirectMagic(this, caster), finalDamage + target.getMaxHealth() * 0.015F);
                                 if (flag && target.isAlive()) {
                                     ModEntityUtils.addEffectStackingAmplifier(null, target, EffectInit.ARMOR_LOWER_EFFECT.get(), 300, 5, true, true, true, true, false);
                                     this.doEnchantDamageEffects(this.caster, target);
@@ -144,6 +150,10 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
 
     public void setPhase(int phase) {
         this.entityData.set(DATA_PHASE, phase);
+    }
+
+    public void setDamage(float damage) {
+        this.damage = damage;
     }
 
     @Override

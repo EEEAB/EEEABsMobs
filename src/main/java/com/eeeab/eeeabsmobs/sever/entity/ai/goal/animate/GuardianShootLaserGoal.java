@@ -7,6 +7,7 @@ import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 
 import java.util.EnumSet;
 import java.util.function.Supplier;
@@ -35,6 +36,7 @@ public class GuardianShootLaserGoal extends AnimationSimpleAI<EntityNamelessGuar
             float yHeadRotAngle = (float) Math.toRadians(this.entity.yHeadRot + 90);
             float xHeadRotAngle = (float) (float) Math.toRadians(-this.entity.getXRot());
             EntityGuardianLaser laser = new EntityGuardianLaser(EntityInit.GUARDIAN_LASER.get(), this.entity.level(), this.entity, px, py, pz, yHeadRotAngle, xHeadRotAngle, 70);
+            laser.setDamage((float) (this.entity.getAttributeValue(Attributes.ATTACK_DAMAGE) / 3));
             this.entity.level().addFreshEntity(laser);
         }
         if (tick < 11) {

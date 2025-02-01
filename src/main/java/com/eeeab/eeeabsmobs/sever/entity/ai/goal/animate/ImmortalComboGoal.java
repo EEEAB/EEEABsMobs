@@ -44,7 +44,7 @@ public class ImmortalComboGoal extends AnimationGroupAI<EntityImmortal> {
             if (tick == 10) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.5F, entity.getVoicePitch());
             if (tick == 11) entity.pursuit(5F, 0, 0.35);
             else if (tick >= 14 && tick <= 16) {
-                doHurtTargetAndTryBreakBlock(PUNCH_ATTACK_RANGE, left ? 40F : 120F, left ? 120F : 40F, 0.5F, tick > 14, false, tick == 14, false, false, 0.02F, 0.89F, 1.0F);
+                doHurtTargetAndTryBreakBlock(PUNCH_ATTACK_RANGE, left ? 40F : 120F, left ? 120F : 40F, 0.5F, tick > 14, false, tick == 14, false, false, 0.89F, 1.0F);
             } else if (tick > 16) {
                 if (!comboFlag && entity.checkComboRange(5, 1) && tick > 20 && tick < 25) {
                     if (nextAnimation(animation, entity.getRandom().nextFloat() < criticalHitProb.getProbability(), left ? entity.hardPunchRightAnimation : entity.hardPunchLeftAnimation)) {
@@ -76,12 +76,12 @@ public class ImmortalComboGoal extends AnimationGroupAI<EntityImmortal> {
             if (tick >= 21 && tick < 24) {
                 boolean left = animation == entity.hardPunchLeftAnimation;
                 if (tick == 21) entity.pursuit(6F, 0, 0.5);
-                doHurtTargetAndTryBreakBlock(PUNCH_ATTACK_RANGE + 0.5F, left ? 20F : 90F, left ? 90F : 20F, 1F, tick < 23, true, tick < 23, true, tick < 23, 0.04F, 0.9F, 0.8F);
+                doHurtTargetAndTryBreakBlock(PUNCH_ATTACK_RANGE + 0.5F, left ? 20F : 90F, left ? 90F : 20F, 1F, tick < 23, true, tick < 23, true, tick < 23, 0.9F, 0.8F);
             }
         }
     }
 
-    private void doHurtTargetAndTryBreakBlock(float attackDistance, float rightAttackArc, float leftAttackArc, float strength, boolean continuous, boolean disableShied, boolean canHit, boolean ignoreArmor, boolean canStun, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier) {
+    private void doHurtTargetAndTryBreakBlock(float attackDistance, float rightAttackArc, float leftAttackArc, float strength, boolean continuous, boolean disableShied, boolean canHit, boolean ignoreArmor, boolean canStun, float baseDamageMultiplier, float damageMultiplier) {
         boolean hitFlag = false;
         for (LivingEntity entityHit : entity.getNearByLivingEntities(attackDistance, PUNCH_ATTACK_RANGE, attackDistance, attackDistance)) {
             float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(entity, entityHit);
@@ -90,7 +90,7 @@ public class ImmortalComboGoal extends AnimationGroupAI<EntityImmortal> {
                 boolean hit = true;
                 if (canHit) {
                     if (canStun) entity.stun(null, entityHit, 30, false);
-                    hit = entity.doHurtTarget(entityHit, disableShied, entityHit.hasEffect(EffectInit.ERODE_EFFECT.get()), true, ignoreArmor, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier);
+                    hit = entity.immortalHurtTarget(entityHit, disableShied, entityHit.hasEffect(EffectInit.ERODE_EFFECT.get()), true, ignoreArmor, baseDamageMultiplier, damageMultiplier);
                     if (!disableShied) entity.disableShield(entityHit, 40);
                     if (!hitFlag) {
                         hitFlag = true;

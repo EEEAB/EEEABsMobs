@@ -279,8 +279,6 @@
   "other.eeeabsmobs.attack_radius.config": "设置攻击半径",
   "other.eeeabsmobs.projectile_damage.config": "设置弹射物伤害",
   "other.eeeabsmobs.summoning_soul_necklace.config": "设置最大累计伤害",
-  "other.eeeabsmobs.howitzer_1.config": "设置爆炸伤害上限",
-  "other.eeeabsmobs.howitzer_2.config": "设置爆炸半径",
   "other.eeeabsmobs.guardian_axe.config": "设置横扫攻击级别",
   "other.eeeabsmobs.immortal_executioner.config": "设置强化自身次数",
   "other.eeeabsmobs.corpse_to_player.config": "设置死亡恢复召唤者生命量",

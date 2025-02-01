@@ -23,7 +23,7 @@ import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IBoss;
-import com.eeeab.eeeabsmobs.sever.entity.MobLevel;
+import com.eeeab.eeeabsmobs.sever.entity.IMobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate.*;
@@ -232,8 +232,8 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     }
 
     @Override
-    protected MobLevel getMobLevel() {
-        return MobLevel.EPIC_BOSS;
+    public IMobLevel.MobLevel getMobLevel() {
+        return IMobLevel.MobLevel.EPIC_BOSS;
     }
 
     @Override
@@ -916,15 +916,15 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
         return false;
     }
 
-    public boolean doHurtTarget(LivingEntity target, boolean disableShield, boolean addEffect, boolean critHeal, boolean ignoreArmor, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier) {
-        return doHurtTarget(EMDamageSource.immortalAttack(this, critHeal && target.getAttributeValue(AttributeInit.CRIT_CHANCE.get()) > 1D, ignoreArmor), target, disableShield, addEffect, ignoreArmor, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier);
+    public boolean immortalHurtTarget(LivingEntity target, boolean disableShield, boolean addEffect, boolean critHeal, boolean ignoreArmor, float baseDamageMultiplier, float damageMultiplier) {
+        return immortalHurtTarget(EMDamageSource.immortalAttack(this, critHeal && target.getAttributeValue(AttributeInit.CRIT_CHANCE.get()) > 1D, ignoreArmor), target, disableShield, addEffect, ignoreArmor, baseDamageMultiplier, damageMultiplier);
     }
 
-    public boolean doHurtTarget(DamageSource source, LivingEntity target, boolean disableShield, boolean addEffect, boolean ignoreArmor, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier) {
+    public boolean immortalHurtTarget(DamageSource source, LivingEntity target, boolean disableShield, boolean addEffect, boolean ignoreArmor, float baseDamageMultiplier, float damageMultiplier) {
         double baseATK = this.getAttributeValue(Attributes.ATTACK_DAMAGE);
         //当目标数量＞1时，根据目标数量增加攻击伤害，每个目标增加0.4基础攻击伤害
         baseATK += Mth.clamp((targets.size() - 1) * 0.4F, 0F, 2F);
-        boolean flag = target.hurt(source, (float) ((baseATK * baseDamageMultiplier) + target.getMaxHealth() * hitEntityMaxHealth) * damageMultiplier);
+        boolean flag = target.hurt(source, (float) ((baseATK * baseDamageMultiplier) + getDamageAmountByTargetHealthPct(target)) * damageMultiplier);
         if (flag && addEffect) {
             ModEntityUtils.addEffectStackingAmplifier(this, target, EffectInit.ERODE_EFFECT.get(), 300, 5, true, true, true, true, false);
         } else if (disableShield) {

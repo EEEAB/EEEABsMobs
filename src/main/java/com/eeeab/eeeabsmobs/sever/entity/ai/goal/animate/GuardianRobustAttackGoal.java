@@ -37,14 +37,14 @@ public class GuardianRobustAttackGoal extends AnimationSimpleAI<EntityNamelessGu
                 double duration = 3;
                 if (Difficulty.HARD.equals(this.entity.level().getDifficulty())) duration = 5;
                 entity.stun(null, hitEntity, (int) (duration * 20), entity.isChallengeMode());
-                entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 0.03F, 1.85F, 1.4F, true, true, true);
+                entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, 1.85F, 1.4F, true, true, true);
             });
         } else if (tick == 36) {
             entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 2F, 0.2F);
             EntityCameraShake.cameraShake(entity.level(), entity.position(), 10, 0.3F, 0, 10);
         } else if (tick == 45) {
             for (int i = 2; i <= 12; i++) {
-                entity.shockAttack(EMDamageSource.guardianRobustAttack(this.entity), i, 3F, 2F, 4F, 0.025F, 1.3F, 1.25F, true, false, true);
+                entity.shockAttack(EMDamageSource.guardianRobustAttack(this.entity), i, 3F, 2F, 4F, 1.3F, 1.25F, true, false, true);
             }
         } else if (tick == 46) {
             entity.playSound(SoundEvents.GENERIC_EXPLODE, 1.5F, 1F + entity.getRandom().nextFloat() * 0.1F);

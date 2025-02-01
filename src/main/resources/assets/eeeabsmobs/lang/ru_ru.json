@@ -198,8 +198,6 @@
   "other.eeeabsmobs.effective_range.config": "Настроить эффективную дистанцию снарядов",
   "other.eeeabsmobs.attack_radius.config": "Настроить радиус атаки",
   "other.eeeabsmobs.summoning_soul_necklace.config": "Настроить максимальный накопленный урон для призыва",
-  "other.eeeabsmobs.howitzer_1.config": "Настроить предел урона от взрыва",
-  "other.eeeabsmobs.howitzer_2.config": "Настроить радиус взрыва",
   "other.eeeabsmobs.guardian_axe.config": "Set sweep attack level",
   "other.eeeabsmobs.immortal_executioner.config": "Настроить количество усилений для существа",
   "other.eeeabsmobs.corpse_to_player.config": "Настроить восстановление здоровья после смерти для призывателя",

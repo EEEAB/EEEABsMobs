@@ -71,7 +71,7 @@ public class EntityImmortalLaser extends EntityAbsBeam {
                         float damageMultiplier = 0F;
                         MobEffectInstance instance = target.getEffect(EffectInit.ERODE_EFFECT.get());
                         if (instance != null) damageMultiplier += (instance.getAmplifier() + 1) * 0.08F;
-                        hurtFlag = immortal.doHurtTarget(indirectMagic, target, false, false, false, 0.03F, 0.375F, 1F + damageMultiplier);
+                        hurtFlag = immortal.immortalHurtTarget(indirectMagic, target, false, false, false, 0.375F, 1F + damageMultiplier);
                     } else if (this.caster != null) {
                         hurtFlag = target.hurt(indirectMagic, 5F + target.getMaxHealth() * 0.01F);
                     }

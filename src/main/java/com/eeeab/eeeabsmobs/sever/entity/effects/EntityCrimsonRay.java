@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.sever.entity.IMobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
@@ -12,6 +13,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -22,6 +24,7 @@ public class EntityCrimsonRay extends EntityAbsBeam {
 
     public EntityCrimsonRay(EntityType<? extends EntityCrimsonRay> type, Level level) {
         super(type, level, 1);
+        this.damage = 5;
     }
 
     public EntityCrimsonRay(Level world, LivingEntity caster, Vec3 pos, int duration, int attackHeight) {
@@ -62,7 +65,11 @@ public class EntityCrimsonRay extends EntityAbsBeam {
             if (!this.level().isClientSide) {
                 for (LivingEntity target : hit) {
                     if (target == this.caster) continue;
-                    target.hurt(this.damageSources().indirectMagic(this, caster), 5F + target.getMaxHealth() * 0.01F);
+                    float finalDamage = damage;
+                    if (this.caster instanceof IMobLevel mob) {
+                        finalDamage += mob.getDamageAmountByTargetHealthPct(target);
+                    }
+                    target.hurt(this.damageSources().indirectMagic(this, caster), finalDamage);
                 }
             }
         }
@@ -139,7 +146,9 @@ public class EntityCrimsonRay extends EntityAbsBeam {
                         break;
                     case 5:
                         if (this.phaseController.increaseTimerChain().isEnd()) {
-                            this.level().addFreshEntity(new EntityCrimsonRay(this.level(), this.caster, this.pos, 10, this.attackHeight));
+                            EntityCrimsonRay ray = new EntityCrimsonRay(this.level(), this.caster, this.pos, 10, this.attackHeight);
+                            ray.setDamage((float) this.caster.getAttributeValue(Attributes.ATTACK_DAMAGE));
+                            this.level().addFreshEntity(ray);
                             this.discard();
                         }
                 }

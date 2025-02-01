@@ -53,7 +53,7 @@ public class ImmortalStunGoal extends AnimationAI<EntityImmortal> {
         else if (tick == 15) {
             for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), entity.getPosOffset(true, 1F, this.entity.getBbWidth() * 0.6F, -0.1F), 2D, 0F, false, 10)) {
                 if (entityHit == entity) continue;
-                entity.doHurtTarget(entityHit, false, false, false, false, 0F, 1F, 0.5F);
+                entity.immortalHurtTarget(entityHit, false, false, false, false, 1F, 0.5F);
             }
         } else if (tick == 16) entity.shakeGround(0.2F, 20F, 0.125F, 3, 2);
     }

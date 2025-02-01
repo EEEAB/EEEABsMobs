@@ -18,7 +18,7 @@ import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
 import com.eeeab.eeeabsmobs.sever.entity.IBoss;
 import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
-import com.eeeab.eeeabsmobs.sever.entity.MobLevel;
+import com.eeeab.eeeabsmobs.sever.entity.IMobLevel;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate.*;
@@ -214,8 +214,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     }
 
     @Override
-    protected MobLevel getMobLevel() {
-        return MobLevel.BOSS;
+    public IMobLevel.MobLevel getMobLevel() {
+        return IMobLevel.MobLevel.BOSS;
     }
 
     @Override
@@ -435,7 +435,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             public void tick() {
                 int tick = entity.getAnimationTick();
                 if (tick >= 2 && tick < 6) {
-                    entity.shockAttack(entity.damageSources().mobAttack(entity), tick + 1, 1.5F, 2F, 0F, 0.02F, 0.5F, (entity.isPowered() ? 0.8F : 0.6F), false, true, false);
+                    entity.shockAttack(entity.damageSources().mobAttack(entity), tick + 1, 1.5F, 2F, 0F, 0.5F, (entity.isPowered() ? 0.8F : 0.6F), false, true, false);
                     if (tick == 2) {
                         entity.playSound(SoundEvents.GENERIC_EXPLODE, 1.0F, 1F + entity.getRandom().nextFloat() * 0.1F);
                         EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.125F, 8, 17);
@@ -1060,21 +1060,20 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
      * @param maxFallingDistance   最大y轴起伏
      * @param spreadArc            攻击角度
      * @param offset               前后偏移
-     * @param hitEntityMaxHealth   目标最大生命百分比
      * @param baseDamageMultiplier 基础伤害乘数
      * @param damageMultiplier     总伤害乘数
      * @param disableShield        是否禁用盾牌
      * @param randomOffset         是否生成方块随机y轴偏移
      * @param continuous           是否在同一时刻发生
      */
-    public void shockAttack(DamageSource damageSource, int distance, float maxFallingDistance, double spreadArc, double offset, float hitEntityMaxHealth,
+    public void shockAttack(DamageSource damageSource, int distance, float maxFallingDistance, double spreadArc, double offset,
                             float baseDamageMultiplier, float damageMultiplier, boolean disableShield, boolean randomOffset, boolean continuous) {
         float factor = 1F - ((float) distance / 2F - 2F) / maxFallingDistance;
         ShockWaveUtils.doAdvShockWave(this, distance, maxFallingDistance, spreadArc, offset, 2F, randomOffset, continuous, hit -> {
             if (hit.onGround()) {
                 if (hit instanceof EntityFallingBlock) return;
                 if (hit instanceof LivingEntity livingEntity) {
-                    this.guardianHurtTarget(damageSource, this, livingEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, false, disableShield, false);
+                    this.guardianHurtTarget(damageSource, this, livingEntity, baseDamageMultiplier, damageMultiplier, false, disableShield, false);
                 }
                 double magnitude = level().random.nextGaussian() * 0.15F + 0.1F;
                 double angle = this.getAngleBetweenEntities(this, hit);
@@ -1202,12 +1201,12 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
 
     public boolean guardianHurtTarget(EntityNamelessGuardian guardian, LivingEntity hitEntity, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier, boolean shouldHeal, boolean disableShield, boolean ignoreHit) {
-        return this.guardianHurtTarget(this.damageSources().mobAttack(guardian), guardian, hitEntity, hitEntityMaxHealth, baseDamageMultiplier, damageMultiplier, shouldHeal, disableShield, ignoreHit);
+        return this.guardianHurtTarget(this.damageSources().mobAttack(guardian), guardian, hitEntity, baseDamageMultiplier, damageMultiplier, shouldHeal, disableShield, ignoreHit);
     }
 
-    public boolean guardianHurtTarget(DamageSource damageSource, EntityNamelessGuardian guardian, LivingEntity hitEntity, float hitEntityMaxHealth, float baseDamageMultiplier, float damageMultiplier,
+    public boolean guardianHurtTarget(DamageSource damageSource, EntityNamelessGuardian guardian, LivingEntity hitEntity, float baseDamageMultiplier, float damageMultiplier,
                                       boolean shouldHeal, boolean disableShield, boolean ignoreHit) {
-        float finalDamage = ((guardian.getAttackDamageAttributeValue() * baseDamageMultiplier) + hitEntity.getMaxHealth() * hitEntityMaxHealth) * damageMultiplier;
+        float finalDamage = ((guardian.getAttackDamageAttributeValue() * baseDamageMultiplier) + getDamageAmountByTargetHealthPct(hitEntity)) * damageMultiplier;
         //治疗量 = 攻击力15% + 生命上限1.5% - 目标护甲值5%
         float healAmount = (guardian.getAttackDamageAttributeValue() * 0.15F) + (guardian.getMaxHealth() * 0.015F) - Mth.clamp(hitEntity.getArmorValue() * 0.05F, 0F, 1.5F);
         boolean flag = hitEntity.hurt(damageSource, finalDamage);

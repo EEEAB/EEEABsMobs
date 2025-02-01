@@ -195,7 +195,7 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
                 float damageMultiplier = 0F;
                 MobEffectInstance instance = hitEntity.getEffect(EffectInit.ERODE_EFFECT.get());
                 if (instance != null) damageMultiplier += (instance.getAmplifier() + 1) * 0.08F;
-                immortal.doHurtTarget(EMDamageSource.immortalMagicAttack(this, immortal), hitEntity, false, false, false, 0.025F, 0.3F, 1F + damageMultiplier);
+                immortal.immortalHurtTarget(EMDamageSource.immortalMagicAttack(this, immortal), hitEntity, false, false, false, 0.3F, 1F + damageMultiplier);
             } else {
                 hitEntity.hurt(EMDamageSource.immortalMagicAttack(this, getOwner()), 2F + hitEntity.getMaxHealth() * 0.025F);
             }

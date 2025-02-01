@@ -34,6 +34,7 @@ import java.util.UUID;
 
 public class EntityBloodBall extends Projectile implements IEntity {
     private int duration;
+    private float damage = 5F;
     private boolean locating;
     private final boolean isHeal;
     private static final int MAX_ACTIVE = 400;
@@ -44,95 +45,95 @@ public class EntityBloodBall extends Projectile implements IEntity {
 
     public EntityBloodBall(EntityType<? extends EntityBloodBall> entityType, Level level) {
         super(entityType, level);
-        this.isHeal = false;
+        isHeal = false;
     }
 
     public EntityBloodBall(Level level, int duration, boolean isHeal, int power) {
         super(EntityInit.BLOOD_BALL.get(), level);
         this.duration = duration;
         this.isHeal = isHeal;
-        this.setPower(Mth.clamp(power, 0, 10));
+        setPower(Mth.clamp(power, 1, 10));
     }
 
     @Override
     public void tick() {
-        this.scaleControlled.updatePrevTimer();
-        Entity entity = this.getOwner();
-        if (this.level().isClientSide || (entity == null || !entity.isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
+        scaleControlled.updatePrevTimer();
+        Entity entity = getOwner();
+        if (level().isClientSide || (entity == null || !entity.isRemoved()) && level().hasChunkAt(blockPosition())) {
             super.tick();
-            this.move(MoverType.SELF, this.getDeltaMovement());
+            move(MoverType.SELF, getDeltaMovement());
 
             HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
             if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
-                this.onHit(hitresult);
+                onHit(hitresult);
             }
 
-            this.checkInsideBlocks();
+            checkInsideBlocks();
 
-            if (this.tickCount >= MAX_ACTIVE) {
-                this.discard();
+            if (tickCount >= MAX_ACTIVE) {
+                discard();
             } else {
-                Entity owner = this.getOwner();
-                if (this.tickCount < this.duration && owner != null && owner.isAlive()) {
-                    this.setPos(owner.position().add(0, 5, 0));
-                } else if (this.level().isClientSide) {
+                Entity owner = getOwner();
+                if (tickCount < duration && owner != null && owner.isAlive()) {
+                    setPos(owner.position().add(0, 5, 0));
+                } else if (level().isClientSide) {
                     for (int i = 0; i < 2; ++i) {
-                        double dx = this.getX() + this.random.nextGaussian() * 0.15D;
-                        double dy = this.getY(1) - this.random.nextGaussian() * 0.15D;
-                        double dz = this.getZ() + this.random.nextGaussian() * 0.15D;
-                        this.level().addParticle(REDSTONE_PARTICLE, dx, dy, dz, -this.getDeltaMovement().x() * 0.25F, -this.getDeltaMovement().y() * 0.25F, -this.getDeltaMovement().z() * 0.25F);
+                        double dx = getX() + random.nextGaussian() * 0.15D;
+                        double dy = getY(1) - random.nextGaussian() * 0.15D;
+                        double dz = getZ() + random.nextGaussian() * 0.15D;
+                        level().addParticle(REDSTONE_PARTICLE, dx, dy, dz, -getDeltaMovement().x() * 0.25F, -getDeltaMovement().y() * 0.25F, -getDeltaMovement().z() * 0.25F);
                     }
                 }
-                this.scaleControlled.increaseTimer();
+                scaleControlled.increaseTimer();
             }
 
-            if (!this.level().isClientSide && this.tickCount >= this.duration && !this.locating) {
-                this.locating = true;
-                if (this.getSavedTargetByUUID() != null && this.getSavedTargetByUUID().isAlive() && !this.isHeal) {
-                    this.shoot(this.getSavedTargetByUUID(), -0.1F, 1.5F);
+            if (!level().isClientSide && tickCount >= duration && !locating) {
+                locating = true;
+                if (getSavedTargetByUUID() != null && getSavedTargetByUUID().isAlive() && !isHeal) {
+                    shoot(getSavedTargetByUUID(), -0.1F, 1.5F);
                 } else {
-                    this.shoot(this.getOwner(), 0.2F, 0.5F);
+                    shoot(getOwner(), 0.2F, 0.5F);
                 }
             }
         } else {
-            this.discard();
+            discard();
         }
     }
 
     private void shoot(Entity target, float yOffset, float velocity) {
         if (target != null) {
-            double x = target.getX() - this.getX();
-            double y = target.getY(0.3333333333333333D) - this.getY();
-            double z = target.getZ() - this.getZ();
-            this.shoot(x, y + Math.sqrt(x * x + z * z) * yOffset, z, velocity, 1.0F);
+            double x = target.getX() - getX();
+            double y = target.getY(0.3333333333333333D) - getY();
+            double z = target.getZ() - getZ();
+            shoot(x, y + Math.sqrt(x * x + z * z) * yOffset, z, velocity, 1.0F);
         }
     }
 
     @Override
     protected void onHitEntity(EntityHitResult hitResult) {
         super.onHitEntity(hitResult);
-        this.preDestroy(hitResult.getEntity());
+        preDestroy(hitResult.getEntity());
     }
 
     @Override
     protected void onHitBlock(BlockHitResult hitResult) {
         super.onHitBlock(hitResult);
-        this.preDestroy(null);
+        preDestroy(null);
     }
 
     private void preDestroy(@Nullable Entity entity) {
-        if (!this.level().isClientSide) {
-            if (this.getOwner() == entity && entity instanceof LivingEntity livingEntity) {
-                if (this.isHeal) {
-                    livingEntity.heal(Math.min(livingEntity.getMaxHealth() * 0.05F * this.getPower(), livingEntity.getMaxHealth() * 0.5F));
-                    this.level().broadcastEntityEvent(livingEntity, (byte) 14);
+        if (!level().isClientSide) {
+            if (getOwner() == entity && entity instanceof LivingEntity livingEntity) {
+                if (isHeal) {
+                    livingEntity.heal(Math.min(livingEntity.getMaxHealth() * 0.05F * getPower(), livingEntity.getMaxHealth() * 0.5F));
+                    level().broadcastEntityEvent(livingEntity, (byte) 14);
                 }
             } else {
-                EntityExplode.explode(this.level(), this.position(), this.damageSources().explosion(this, entity), null, Math.min(this.getPower() + 1, 5F), 30F);
-                EntityCameraShake.cameraShake(this.level(), this.position(), 16F, 0.125F, 5, 15);
+                EntityExplode.explode(level(), position(), damageSources().explosion(this, entity), null, getPower(), damage * getPower());
+                EntityCameraShake.cameraShake(level(), position(), 16F, 0.125F, 5, 15);
             }
         }
-        this.discard();
+        discard();
     }
 
     public boolean isHeal() {
@@ -157,7 +158,7 @@ public class EntityBloodBall extends Projectile implements IEntity {
 
     @Override
     public boolean isPickable() {
-        return !this.locating;
+        return !locating;
     }
 
     @Override
@@ -169,20 +170,20 @@ public class EntityBloodBall extends Projectile implements IEntity {
      * Called when the entity is attacked.
      */
     public boolean hurt(DamageSource source, float amount) {
-        if (this.isInvulnerableTo(source)) {
+        if (isInvulnerableTo(source)) {
             return false;
-        } else if (this.level().isClientSide) {
+        } else if (level().isClientSide) {
             return false;
-        } else if (this.locating) {
+        } else if (locating) {
             return false;
         } else {
-            this.markHurt();
+            markHurt();
             Entity entity = source.getEntity();
             if (entity != null) {
-                if (this.getOwner() instanceof LivingEntity livingEntity) {
+                if (getOwner() instanceof LivingEntity livingEntity) {
                     livingEntity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), 50, 0, false, false));
                 }
-                this.preDestroy(null);
+                preDestroy(null);
                 return true;
             } else {
                 return false;
@@ -191,18 +192,18 @@ public class EntityBloodBall extends Projectile implements IEntity {
     }
 
     public void setTargetUUID(UUID uuid) {
-        this.entityData.set(DATA_TARGET_UUID, Optional.of(uuid));
+        entityData.set(DATA_TARGET_UUID, Optional.of(uuid));
     }
 
     public UUID getTargetUUID() {
-        return this.entityData.get(DATA_TARGET_UUID).orElse(null);
+        return entityData.get(DATA_TARGET_UUID).orElse(null);
     }
 
     @Nullable
     public Entity getSavedTargetByUUID() {
-        if (this.level() instanceof ServerLevel level) {
-            if (this.getTargetUUID() != null) {
-                return level.getEntity(this.getTargetUUID());
+        if (level() instanceof ServerLevel level) {
+            if (getTargetUUID() != null) {
+                return level.getEntity(getTargetUUID());
             }
         }
         return null;
@@ -210,18 +211,18 @@ public class EntityBloodBall extends Projectile implements IEntity {
 
     @Override
     protected void defineSynchedData() {
-        this.entityData.define(DATA_TARGET_UUID, Optional.empty());
-        this.entityData.define(DATA_POWER, 0);
+        entityData.define(DATA_TARGET_UUID, Optional.empty());
+        entityData.define(DATA_POWER, 0);
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag nbt) {
         super.addAdditionalSaveData(nbt);
-        if (this.getTargetUUID() != null) {
-            nbt.putUUID("target_uuid", this.getTargetUUID());
+        if (getTargetUUID() != null) {
+            nbt.putUUID("target_uuid", getTargetUUID());
         }
-        nbt.putBoolean("locating", this.locating);
-        nbt.putInt("power", this.getPower());
+        nbt.putBoolean("locating", locating);
+        nbt.putInt("power", getPower());
     }
 
     /**
@@ -231,17 +232,21 @@ public class EntityBloodBall extends Projectile implements IEntity {
     public void readAdditionalSaveData(CompoundTag nbt) {
         super.readAdditionalSaveData(nbt);
         if (nbt.hasUUID("target_uuid")) {
-            this.setTargetUUID(nbt.getUUID("target_uuid"));
+            setTargetUUID(nbt.getUUID("target_uuid"));
         }
-        this.locating = nbt.getBoolean("locating");
-        this.setPower(nbt.getInt("power"));
+        locating = nbt.getBoolean("locating");
+        setPower(nbt.getInt("power"));
     }
 
     public int getPower() {
-        return this.entityData.get(DATA_POWER);
+        return entityData.get(DATA_POWER);
     }
 
     public void setPower(int power) {
-        this.entityData.set(DATA_POWER, power);
+        entityData.set(DATA_POWER, power);
+    }
+
+    public void setDamage(float damage) {
+        this.damage = damage;
     }
 }

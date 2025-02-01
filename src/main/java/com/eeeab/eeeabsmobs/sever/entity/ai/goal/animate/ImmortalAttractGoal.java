@@ -48,7 +48,7 @@ public class ImmortalAttractGoal extends AnimationAI<EntityImmortal> {
                                 int preInvulnerableTime = entityHit.invulnerableTime;
                                 entityHit.invulnerableTime = 0;
                                 entity.stun(null, livingHit, 40, false);
-                                if (!entity.doHurtTarget(livingHit, true, livingHit.hasEffect(EffectInit.ERODE_EFFECT.get()), false, false, 0.035F, 1.0F, 1.2F)) entityHit.invulnerableTime = preInvulnerableTime;
+                                if (!entity.immortalHurtTarget(livingHit, true, livingHit.hasEffect(EffectInit.ERODE_EFFECT.get()), false, false, 1.0F, 1.2F)) entityHit.invulnerableTime = preInvulnerableTime;
                                 if (!hitFlag) {
                                     hitFlag = true;
                                     entity.playSound(SoundInit.IMMORTAL_PUNCH_HARD_HIT.get(), 1.2F, 1.1F);

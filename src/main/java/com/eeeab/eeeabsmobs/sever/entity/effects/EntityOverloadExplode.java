@@ -20,10 +20,10 @@ public class EntityOverloadExplode extends EntityExplode {
         super(type, level);
     }
 
-    public EntityOverloadExplode(Level level, @Nullable LivingEntity caster, float radius, float maxDamage) {
+    public EntityOverloadExplode(Level level, @Nullable LivingEntity caster, float radius, float damage) {
         this(EntityInit.OVERLOAD_EXPLODE.get(), level);
         this.setRadius(radius);
-        this.maxDamage = maxDamage;
+        this.damage = damage;
         this.caster = caster;
     }
 
@@ -43,7 +43,7 @@ public class EntityOverloadExplode extends EntityExplode {
     }
 
     @Override
-    protected void doKnockbackEffect(Entity hit, double strength, double x, double y, double z) {
+    protected void doKnockbackEntity(Entity hit, double strength, double x, double y, double z) {
     }
 
     @Override
@@ -74,9 +74,9 @@ public class EntityOverloadExplode extends EntityExplode {
         }
     }
 
-    public static void explode(Level world, Vec3 vec3, @Nullable LivingEntity caster, float radius, float maxDamage) {
+    public static void explode(Level world, Vec3 vec3, @Nullable LivingEntity caster, float radius, float damage) {
         if (!world.isClientSide) {
-            EntityOverloadExplode explode = new EntityOverloadExplode(world, caster, radius, maxDamage);
+            EntityOverloadExplode explode = new EntityOverloadExplode(world, caster, radius, damage);
             explode.setPos(vec3);
             world.addFreshEntity(explode);
         }
