@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.effects;
 
+import com.eeeab.eeeabsmobs.sever.entity.SteppableTriggerTrapEntity;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
@@ -19,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public class EntityElectromagnetic extends EntityMagicEffects {
+public class EntityElectromagnetic extends EntityMagicEffects implements SteppableTriggerTrapEntity {
     private float shockRange = 10;
     private float damage = 5.0F;
     private float shockSpeed = 5;
@@ -48,15 +49,15 @@ public class EntityElectromagnetic extends EntityMagicEffects {
     @Override
     public void tick() {
         super.tick();
-        int i = Mth.floor(this.getX());
-        int j = Mth.floor(this.getY() - 0.2F);
-        int k = Mth.floor(this.getZ());
-        BlockPos pos = new BlockPos(i, j, k);
+        BlockPos pos = new BlockPos(Mth.floor(this.getX()), Mth.floor(this.getY() - 0.2F), Mth.floor(this.getZ()));
         BlockState blockState = this.level().getBlockState(pos);
         if (!blockState.isAir()) {
             if (this.tickCount % 5 == 0) {
                 SoundType soundtype = blockState.getSoundType(this.level(), pos, this);
                 this.playSound(soundtype.getStepSound(), 1.0F, soundtype.getPitch());
+                if (!this.level().isClientSide) {
+                    blockState.getBlock().stepOn(this.level(), pos, blockState, this);
+                }
             }
 
             for (int p = 0; p < 4 * Mth.clamp((int) Math.pow((double) this.entityData.get(DATA_SIZE), 1.5), 1, 30); ++p) {

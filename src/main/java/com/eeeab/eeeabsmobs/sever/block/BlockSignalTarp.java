@@ -55,14 +55,14 @@ public abstract class BlockSignalTarp extends Block {
     }
 
     /**
-     * 在服务端激活时调用此方法
+     * 在客户端激活时调用此方法
      */
     protected void effect(BlockState state, Level level, BlockPos pos) {
 
     }
 
     /**
-     * 在客户端激活时调用此方法
+     * 在服务端激活时调用此方法
      */
     protected void active(BlockState state, ServerLevel level, BlockPos pos) {
 

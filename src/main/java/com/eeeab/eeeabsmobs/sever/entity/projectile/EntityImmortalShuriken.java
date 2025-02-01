@@ -40,7 +40,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 public class EntityImmortalShuriken extends Projectile implements IEntity {
-    private static final double TRACKING_DISTANCE_THRESHOLD = 2.4D;
+    private static final double TRACKING_DISTANCE_THRESHOLD = 2.6D;
     private static final double RE_FIND_RANGE = 30D;
     private static final int MAX_ACTIVE = 600;
     private LivingEntity target;

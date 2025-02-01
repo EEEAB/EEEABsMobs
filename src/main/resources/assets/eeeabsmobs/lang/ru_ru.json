@@ -82,7 +82,7 @@
   "block.eeeabsmobs.tomb_summon_trap": "Древняя Могильная Ловушка Призыва Скелетов",
   "block.eeeabsmobs.tomb_arrows_trap": "Древняя Могильная Ловушка с Отравленными Стрелами",
   "block.eeeabsmobs.erosion_deepslate_bricks": "Кирпичи из Эрозионного Глубинного Сланца",
-  "block.eeesbsmobs.erosion_portal": "Эрозионный Портал",
+  "block.eeeabsmobs.erosion_portal": "Эрозионный Портал",
 
   "_comment": "Яйца призыва",
   "item.eeeabsmobs.immortal_skeleton_egg": "Яйцо Призыва Бессмертного Скелета",

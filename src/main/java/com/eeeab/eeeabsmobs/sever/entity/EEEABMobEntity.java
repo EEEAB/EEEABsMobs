@@ -10,6 +10,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -21,6 +22,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
@@ -74,6 +76,12 @@ public abstract class EEEABMobEntity extends PathfinderMob {
                 attackAttribute.addTransientModifier(new AttributeModifier(ATTACK_UUID, "Reset attack damage by config", finalValue, AttributeModifier.Operation.ADDITION));
             }
         }
+    }
+
+    @Override
+    public SoundSource getSoundSource() {
+        //如果实现了Enemy接口，则声音源为怪物类型
+        return this instanceof Enemy ? SoundSource.HOSTILE : super.getSoundSource();
     }
 
     @Override

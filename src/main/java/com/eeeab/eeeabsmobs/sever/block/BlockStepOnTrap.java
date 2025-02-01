@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.block;
 
+import com.eeeab.eeeabsmobs.sever.entity.SteppableTriggerTrapEntity;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -93,7 +94,7 @@ public abstract class BlockStepOnTrap extends Block {
             }
             return !(livingEntity instanceof ArmorStand);
         }
-        return false;
+        return entity instanceof SteppableTriggerTrapEntity;
     }
 
     protected void active(Level level, BlockPos pos, BlockState state, Entity entity) {

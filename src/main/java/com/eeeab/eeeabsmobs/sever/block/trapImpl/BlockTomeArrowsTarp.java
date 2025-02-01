@@ -11,11 +11,11 @@ import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockTomeArrowsTarp extends BlockSignalTarp {
-
     public BlockTomeArrowsTarp(Properties properties) {
         super(properties, 20);
     }
 
+    @Override
     protected void active(BlockState state, ServerLevel level, BlockPos pos) {
         Position position = DispenserBlock.getDispensePosition(new BlockSourceImpl(level, pos));
         Direction direction = state.getValue(FACING);
@@ -27,5 +27,4 @@ public class BlockTomeArrowsTarp extends BlockSignalTarp {
         level.levelEvent(1002, pos, 0);
         level.levelEvent(2000, pos, direction.get3DDataValue());
     }
-
 }

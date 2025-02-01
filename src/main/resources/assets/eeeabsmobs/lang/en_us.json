@@ -82,7 +82,8 @@
   "block.eeeabsmobs.tomb_summon_trap": "Tomb Treadle Skeleton Trap",
   "block.eeeabsmobs.tomb_arrows_trap": "Tomb Signal Poison Dart Trap",
   "block.eeeabsmobs.erosion_deepslate_bricks": "Erosion Deepslate Bricks",
-  "block.eeesbsmobs.erosion_portal": "Erosion Portal",
+  "block.eeeabsmobs.erosion_portal": "Erosion Portal",
+  "block.eeeabsmobs.bone_bush": "Bony Shrub",
 
   "_comment": "Spawn Egg",
   "item.eeeabsmobs.immortal_skeleton_egg": "Immortal Skeleton Spawn Egg",
@@ -273,6 +274,7 @@
   "other.eeeabsmobs.damage_adapt_5.config": "Enable adaptation bypasses damage source",
   "other.eeeabsmobs.effective_range.config": "Set projectile damage range",
   "other.eeeabsmobs.attack_radius.config": "Set attack radius",
+  "other.eeeabsmobs.projectile_damage.config": "Set projectile damage",
   "other.eeeabsmobs.summoning_soul_necklace.config": "Set maximum cumulative damage taken",
   "other.eeeabsmobs.howitzer_1.config": "Set explosion damage cap",
   "other.eeeabsmobs.howitzer_2.config": "Set explosion radius",
@@ -295,9 +297,9 @@
   "other.eeeabsmobs.falling_block_3.config": "Set below check range",
   "other.eeeabsmobs.tester_1.config": "Set max health",
   "other.eeeabsmobs.tester_2.config": "Enable immune to environmental or status damage",
+  "other.eeeabsmobs.guardian_core.config": "Enable destroy block",
   "other.eeeabsmobs.guardian_laser_1.config": "Enable scorch generate",
-  "other.eeeabsmobs.guardian_laser_2.config": "Enable destroy block",
-  "other.eeeabsmobs.guardian_laser_3.config": "Set max block hardness for laser destruction",
+  "other.eeeabsmobs.guardian_laser_2.config": "Set max block hardness for laser destruction",
   "other.eeeabsmobs.corpse.config": "Enable killed Zombies and Villagers turning into Corpses",
   "other.eeeabsmobs.eye_of_structure.config": "Enable consume item on release"
 }
