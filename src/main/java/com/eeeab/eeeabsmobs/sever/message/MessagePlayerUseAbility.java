@@ -37,7 +37,7 @@ public class MessagePlayerUseAbility {
             final NetworkEvent.Context context = contextSupplier.get();
             final ServerPlayer player = context.getSender();
             context.enqueueWork(() -> {
-                AbilityCapability.IAbilityCapability abilityCapability = HandlerCapability.getCapability(player, HandlerCapability.CUSTOM_ABILITY_CAPABILITY);
+                AbilityCapability.IAbilityCapability abilityCapability = HandlerCapability.getCapability(player, HandlerCapability.ABILITY_CAPABILITY);
                 if (abilityCapability != null) {
                     AbilityHandler.INSTANCE.sendAbilityMessage(player, abilityCapability.getAbilityTypeByEntity(player)[message.index]);
                 }

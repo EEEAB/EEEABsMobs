@@ -59,8 +59,8 @@ public class HandlerClientEvent {
         if (event.getOverlay().overlay() == VanillaGuiOverlay.FROSTBITE.type().overlay()) {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null) {
-                FrenzyCapability.IFrenzyCapability capability = HandlerCapability.getCapability(player, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
-                if (capability != null && capability.isFrenzy() && Minecraft.getInstance().options.getCameraType() == CameraType.FIRST_PERSON) {
+                FrenzyCapability.IFrenzyCapability capability = HandlerCapability.getCapability(player, HandlerCapability.FRENZY_CAPABILITY);
+                if (capability != null && capability.flag() && Minecraft.getInstance().options.getCameraType() == CameraType.FIRST_PERSON) {
                     RenderSystem.setShaderTexture(0, FRENZY_OUTLINE_LOCATION);
                     Window res = event.getWindow();
                     event.getGuiGraphics().blit(FRENZY_OUTLINE_LOCATION, 0, 0, 0, 0, res.getGuiScaledWidth(), res.getGuiScaledHeight(), res.getGuiScaledWidth(), res.getGuiScaledHeight());
@@ -73,8 +73,8 @@ public class HandlerClientEvent {
     @SubscribeEvent
     public void onRenderTick(TickEvent.RenderTickEvent event) {
         Player player = Minecraft.getInstance().player;
-        VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(player, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
-        if (capability != null && capability.isVertigo()) {
+        VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(player, HandlerCapability.STUN_CAPABILITY);
+        if (capability != null && capability.flag()) {
             player.yHeadRot = capability.getYawHead();
             player.yRotO = player.getYRot();
             player.xRotO = player.getXRot();
@@ -88,8 +88,8 @@ public class HandlerClientEvent {
     @SubscribeEvent
     public void onRenderLiving(RenderLivingEvent.Pre<LivingEntity, EntityModel<LivingEntity>> event) {
         LivingEntity entity = event.getEntity();
-        VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
-        if (capability != null && capability.isVertigo()) {
+        VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.STUN_CAPABILITY);
+        if (capability != null && capability.flag()) {
             entity.yHeadRot = entity.yHeadRotO = capability.getYawHead();
             entity.yBodyRot = entity.yBodyRotO = capability.getCRenderYawOffset();
             entity.attackAnim = entity.oAttackAnim = capability.getCSwingProgress();

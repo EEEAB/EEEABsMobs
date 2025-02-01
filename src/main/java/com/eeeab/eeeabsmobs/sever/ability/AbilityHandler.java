@@ -30,7 +30,7 @@ public enum AbilityHandler {
     };
 
     public AbilityCapability.IAbilityCapability getAbilityCapability(LivingEntity entity) {
-        return HandlerCapability.getCapability(entity, HandlerCapability.CUSTOM_ABILITY_CAPABILITY);
+        return HandlerCapability.getCapability(entity, HandlerCapability.ABILITY_CAPABILITY);
     }
 
     public Ability<?> getAbility(Player player, AbilityType<?, ?> abilityType) {

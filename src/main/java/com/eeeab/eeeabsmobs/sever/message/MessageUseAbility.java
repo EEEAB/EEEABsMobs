@@ -43,7 +43,7 @@ public class MessageUseAbility {
                 if (Minecraft.getInstance().level != null) {
                     Entity entity = Minecraft.getInstance().level.getEntity(message.entityID);
                     if (entity instanceof LivingEntity livingEntity) {
-                        AbilityCapability.IAbilityCapability livingCapability = HandlerCapability.getCapability(livingEntity, HandlerCapability.CUSTOM_ABILITY_CAPABILITY);
+                        AbilityCapability.IAbilityCapability livingCapability = HandlerCapability.getCapability(livingEntity, HandlerCapability.ABILITY_CAPABILITY);
                         if (livingCapability != null) {
                             livingCapability.onActive(livingEntity, livingCapability.getAbilityTypeByEntity(livingEntity)[message.index]);
                         }

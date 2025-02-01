@@ -141,7 +141,7 @@ public class AbilityCapability {
 
         @Override
         public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-            return HandlerCapability.CUSTOM_ABILITY_CAPABILITY.orEmpty(cap, instance.cast());
+            return HandlerCapability.ABILITY_CAPABILITY.orEmpty(cap, instance.cast());
         }
 
         @Override

@@ -1,9 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.handler;
 
-import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
-import com.eeeab.eeeabsmobs.sever.capability.FrenzyCapability;
-import com.eeeab.eeeabsmobs.sever.capability.PlayerCapability;
-import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
+import com.eeeab.eeeabsmobs.sever.capability.*;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -17,15 +14,20 @@ import javax.annotation.Nullable;
 
 //自定义能力处理器
 public class HandlerCapability {
-
-    public static final Capability<VertigoCapability.IVertigoCapability> MOVING_CONTROLLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    public static final Capability<VertigoCapability.IVertigoCapability> STUN_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
     });
-    public static final Capability<AbilityCapability.IAbilityCapability> CUSTOM_ABILITY_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    public static final Capability<FrenzyCapability.IFrenzyCapability> FRENZY_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
     });
-    public static final Capability<FrenzyCapability.IFrenzyCapability> FRENZY_EFFECT_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    public static final Capability<AbilityCapability.IAbilityCapability> ABILITY_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
     });
     public static final Capability<PlayerCapability.IPlayerCapability> PLAYER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
     });
+    public static final Capability<?>[] CAPABILITIES = new Capability[]{
+            STUN_CAPABILITY,
+            FRENZY_CAPABILITY,
+            ABILITY_CAPABILITY,
+            PLAYER_CAPABILITY,
+    };
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.register(VertigoCapability.IVertigoCapability.class);

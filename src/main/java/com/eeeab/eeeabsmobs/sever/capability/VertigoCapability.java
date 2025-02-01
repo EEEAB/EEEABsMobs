@@ -7,8 +7,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
@@ -26,9 +24,7 @@ import java.util.UUID;
 public class VertigoCapability {
     public static ResourceLocation ID = new ResourceLocation(EEEABMobs.MOD_ID, "vertigo_processor_cap");
 
-    public interface IVertigoCapability extends INBTSerializable<CompoundTag> {
-        boolean isVertigo();
-
+    public interface IVertigoCapability extends GeneralCapability, INBTSerializable<CompoundTag> {
         float getYaw();
 
         float getPitch();
@@ -40,12 +36,6 @@ public class VertigoCapability {
         float getCSwingProgress();
 
         float getCLimbSwingAmount();
-
-        void onStart(LivingEntity entity);
-
-        void onEnd(LivingEntity entity);
-
-        void tick(LivingEntity entity);
     }
 
     public static class VertigoCapabilityImp implements IVertigoCapability {
@@ -59,7 +49,7 @@ public class VertigoCapability {
         private UUID prevAttackTargetUUID;
 
         @Override
-        public boolean isVertigo() {
+        public boolean flag() {
             return isVertigo;
         }
 
@@ -190,7 +180,7 @@ public class VertigoCapability {
             compoundTag.putFloat("yaw", getYaw());
             compoundTag.putFloat("pitch", getPitch());
             compoundTag.putFloat("yawHead", getYawHead());
-            compoundTag.putBoolean("isVertigo", isVertigo());
+            compoundTag.putBoolean("isVertigo", flag());
             if (getPrevAttackTargetUUID() != null)
                 compoundTag.putUUID("prevAttackTargetUUID", getPrevAttackTargetUUID());
             compoundTag.putFloat("renderYawOffset", getCRenderYawOffset());
@@ -221,7 +211,7 @@ public class VertigoCapability {
 
         @Override
         public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-            return HandlerCapability.MOVING_CONTROLLER_CAPABILITY.orEmpty(cap, instance.cast());
+            return HandlerCapability.STUN_CAPABILITY.orEmpty(cap, instance.cast());
         }
 
         @Override

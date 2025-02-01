@@ -10,10 +10,7 @@ import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalLaser;
 import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
 import com.eeeab.eeeabsmobs.sever.init.AttributeInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
-import com.eeeab.eeeabsmobs.sever.message.MessageFrenzyEffect;
-import com.eeeab.eeeabsmobs.sever.message.MessagePlayerUseAbility;
-import com.eeeab.eeeabsmobs.sever.message.MessageUseAbility;
-import com.eeeab.eeeabsmobs.sever.message.MessageVertigoEffect;
+import com.eeeab.eeeabsmobs.sever.message.*;
 import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import com.eeeab.eeeabsmobs.sever.world.portal.VoidCrackTeleporter;
 import net.minecraft.resources.ResourceLocation;
@@ -43,10 +40,9 @@ public class ServerProxy {
                 .clientAcceptedVersions(VERSION::equals)
                 .serverAcceptedVersions(VERSION::equals)
                 .simpleChannel();
-        EEEABMobs.NETWORK.messageBuilder(MessageVertigoEffect.class, nextID()).encoder(MessageVertigoEffect::serialize).decoder(MessageVertigoEffect::deserialize).consumerNetworkThread(new MessageVertigoEffect.Handler()).add();
+        EEEABMobs.NETWORK.messageBuilder(MessageICapability.class, nextID()).encoder(MessageICapability::serialize).decoder(MessageICapability::deserialize).consumerNetworkThread(new MessageICapability.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(MessageUseAbility.class, nextID()).encoder(MessageUseAbility::serialize).decoder(MessageUseAbility::deserialize).consumerNetworkThread(new MessageUseAbility.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(MessagePlayerUseAbility.class, nextID()).encoder(MessagePlayerUseAbility::serialize).decoder(MessagePlayerUseAbility::deserialize).consumerNetworkThread(new MessagePlayerUseAbility.Handler()).add();
-        EEEABMobs.NETWORK.messageBuilder(MessageFrenzyEffect.class, nextID()).encoder(MessageFrenzyEffect::serialize).decoder(MessageFrenzyEffect::deserialize).consumerNetworkThread(new MessageFrenzyEffect.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(AnimationMessage.class, nextID()).encoder(AnimationMessage::serialize).decoder(AnimationMessage::deserialize).consumerNetworkThread(new AnimationMessage.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(PlayAnimationMessage.class, nextID()).encoder(PlayAnimationMessage::serialize).decoder(PlayAnimationMessage::deserialize).consumerNetworkThread(new PlayAnimationMessage.Handler<>()).add();
         EEEABMobs.NETWORK.messageBuilder(StopAnimationMessage.class, nextID()).encoder(StopAnimationMessage::serialize).decoder(StopAnimationMessage::deserialize).consumerNetworkThread(new StopAnimationMessage.Handler()).add();

@@ -75,7 +75,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
             avoidAnimation,
             dieAnimation
     };
-    private final VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(this, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
+    private final VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(this, HandlerCapability.STUN_CAPABILITY);
     //无需在退出游戏后存储数据
     private int hurtCountBeforeHeal = 0;
     private static final int CAN_STOP_HEAL_COUNT = 3;
@@ -167,7 +167,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
     //如果有该buff 则应该陷入虚弱状态
     public boolean isWeakness() {
         if (this.capability != null) {
-            return this.capability.isVertigo();
+            return this.capability.flag();
         }
         return false;
     }

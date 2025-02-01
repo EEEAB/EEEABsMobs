@@ -34,18 +34,8 @@ import java.util.List;
 public class FrenzyCapability {
     public static final ResourceLocation ID = new ResourceLocation(EEEABMobs.MOD_ID, "frenzy_cap");
 
-    public interface IFrenzyCapability extends INBTSerializable<CompoundTag> {
-        boolean isFrenzy();
-
-        void setLevel(int level);
-
+    public interface IFrenzyCapability extends GeneralCapability, INBTSerializable<CompoundTag> {
         int getLevel();
-
-        void onStart(LivingEntity entity);
-
-        void onEnd(LivingEntity entity);
-
-        void tick(LivingEntity entity);
     }
 
     public static class FrenzyCapabilityImpl implements IFrenzyCapability {
@@ -54,15 +44,9 @@ public class FrenzyCapability {
         private int level;
 
         @Override
-        public boolean isFrenzy() {
+        public boolean flag() {
             return this.isFrenzy;
         }
-
-        @Override
-        public void setLevel(int level) {
-            this.level = level;
-        }
-
 
         @Override
         public int getLevel() {
@@ -73,6 +57,10 @@ public class FrenzyCapability {
         public void onStart(LivingEntity entity) {
             if (entity != null) {
                 this.isFrenzy = true;
+                MobEffectInstance instance = entity.getEffect(EffectInit.FRENZY_EFFECT.get());
+                if (instance != null) {
+                    this.level = instance.getAmplifier();
+                }
             }
         }
 
@@ -200,7 +188,7 @@ public class FrenzyCapability {
 
         @Override
         public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-            return HandlerCapability.FRENZY_EFFECT_CAPABILITY.orEmpty(cap, instance.cast());
+            return HandlerCapability.FRENZY_CAPABILITY.orEmpty(cap, instance.cast());
         }
 
         @Override

@@ -3,10 +3,7 @@ package com.eeeab.eeeabsmobs.sever.handler;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
-import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
-import com.eeeab.eeeabsmobs.sever.capability.FrenzyCapability;
-import com.eeeab.eeeabsmobs.sever.capability.PlayerCapability;
-import com.eeeab.eeeabsmobs.sever.capability.VertigoCapability;
+import com.eeeab.eeeabsmobs.sever.capability.*;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobEntity;
 import com.eeeab.eeeabsmobs.sever.entity.IBoss;
@@ -22,8 +19,7 @@ import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.item.IUnbreakableItem;
 import com.eeeab.eeeabsmobs.sever.item.ItemDemolisher;
-import com.eeeab.eeeabsmobs.sever.message.MessageFrenzyEffect;
-import com.eeeab.eeeabsmobs.sever.message.MessageVertigoEffect;
+import com.eeeab.eeeabsmobs.sever.message.MessageICapability;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
@@ -48,6 +44,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.TickEvent;
@@ -134,17 +131,17 @@ public final class HandlerServerEvent {
         if (event.getEntity() != null) {
             LivingEntity entity = event.getEntity();
 
-            VertigoCapability.IVertigoCapability vertigoCapability = HandlerCapability.getCapability(entity, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
+            VertigoCapability.IVertigoCapability vertigoCapability = HandlerCapability.getCapability(entity, HandlerCapability.STUN_CAPABILITY);
             if (vertigoCapability != null) {
                 vertigoCapability.tick(entity);
             }
 
-            AbilityCapability.IAbilityCapability abilityCapability = HandlerCapability.getCapability(entity, HandlerCapability.CUSTOM_ABILITY_CAPABILITY);
+            AbilityCapability.IAbilityCapability abilityCapability = HandlerCapability.getCapability(entity, HandlerCapability.ABILITY_CAPABILITY);
             if (abilityCapability != null) {
                 abilityCapability.tick(entity);
             }
 
-            FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(entity, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
+            FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(entity, HandlerCapability.FRENZY_CAPABILITY);
             if (frenzyCapability != null) {
                 frenzyCapability.tick(entity);
             }
@@ -323,8 +320,8 @@ public final class HandlerServerEvent {
             }
         }
 
-        FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(hurtEntity, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
-        if (frenzyCapability != null && frenzyCapability.isFrenzy() && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !source.is(DamageTypeTags.BYPASSES_ARMOR)) {
+        FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(hurtEntity, HandlerCapability.FRENZY_CAPABILITY);
+        if (frenzyCapability != null && frenzyCapability.flag() && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !source.is(DamageTypeTags.BYPASSES_ARMOR)) {
             float damage = event.getAmount();
             if (hurtEntity.getHealth() > 1F) {
                 //至多减少50%伤害
@@ -447,25 +444,19 @@ public final class HandlerServerEvent {
     }
 
     private static void doCapabilityEffect(MobEffectInstance effectInstance, LivingEntity entity, boolean flag) {
+        Capability<?> capability = null;
         if (effectInstance.getEffect() == EffectInit.VERTIGO_EFFECT.get()) {
-            EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new MessageVertigoEffect(entity, flag));
-            VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
-            if (capability != null) {
-                if (flag)
-                    capability.onStart(entity);
-                else
-                    capability.onEnd(entity);
-            }
+            capability = HandlerCapability.STUN_CAPABILITY;
         }
         if (effectInstance.getEffect() == EffectInit.FRENZY_EFFECT.get()) {
-            EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new MessageFrenzyEffect(entity, flag));
-            FrenzyCapability.IFrenzyCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.FRENZY_EFFECT_CAPABILITY);
-            if (capability != null) {
-                capability.setLevel(effectInstance.getAmplifier());
-                if (flag)
-                    capability.onStart(entity);
-                else
-                    capability.onEnd(entity);
+            capability = HandlerCapability.FRENZY_CAPABILITY;
+        }
+        if (capability != null) {
+            EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new MessageICapability(entity, flag, capability));
+            GeneralCapability iCapability = (GeneralCapability) HandlerCapability.getCapability(entity, capability);
+            if (iCapability != null) {
+                if (flag) iCapability.onStart(entity);
+                else iCapability.onEnd(entity);
             }
         }
     }
