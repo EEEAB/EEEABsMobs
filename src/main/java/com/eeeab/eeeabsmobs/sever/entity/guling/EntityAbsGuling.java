@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -35,6 +36,7 @@ public abstract class EntityAbsGuling extends EEEABMobLibrary implements Enemy {
         if (source.getEntity() instanceof EntityAbsGuling && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()) {
             return false;
         }
+        if (source.is(DamageTypeTags.IS_EXPLOSION)) damage *= 0.5F;
         return super.hurt(source, damage);
     }
 
