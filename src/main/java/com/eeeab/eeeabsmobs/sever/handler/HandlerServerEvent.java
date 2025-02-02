@@ -29,6 +29,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -67,6 +68,7 @@ public final class HandlerServerEvent {
         if (event.getObject() instanceof LivingEntity) {
             event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "vertigo_processor"), new VertigoCapability.VertigoCapabilityProvider());
             event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "frenzy_processor"), new FrenzyCapability.FrenzyCapabilityProvider());
+            event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "electricity_processor"), new ElectricityCapability.ElectricityCapabilityProvider());
         }
         if (event.getObject() instanceof Player) {
             event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "ability_processor"), new AbilityCapability.AbilityCapabilityProvider());
@@ -144,6 +146,11 @@ public final class HandlerServerEvent {
             FrenzyCapability.IFrenzyCapability frenzyCapability = HandlerCapability.getCapability(entity, HandlerCapability.FRENZY_CAPABILITY);
             if (frenzyCapability != null) {
                 frenzyCapability.tick(entity);
+            }
+
+            ElectricityCapability.IElectricityCapability electricityCapability = HandlerCapability.getCapability(entity, HandlerCapability.ELECTRICITY_CAPABILITY);
+            if (electricityCapability != null) {
+                electricityCapability.tick(entity);
             }
 
             if (!entity.level().isClientSide && entity.getRemainingFireTicks() > 0) tryTriggerOverloadExplosion(entity);
@@ -445,11 +452,13 @@ public final class HandlerServerEvent {
 
     private static void doCapabilityEffect(MobEffectInstance effectInstance, LivingEntity entity, boolean flag) {
         Capability<?> capability = null;
-        if (effectInstance.getEffect() == EffectInit.VERTIGO_EFFECT.get()) {
+        MobEffect effect = effectInstance.getEffect();
+        if (effect == EffectInit.VERTIGO_EFFECT.get()) {
             capability = HandlerCapability.STUN_CAPABILITY;
-        }
-        if (effectInstance.getEffect() == EffectInit.FRENZY_EFFECT.get()) {
+        } else if (effect == EffectInit.FRENZY_EFFECT.get()) {
             capability = HandlerCapability.FRENZY_CAPABILITY;
+        } else if (effect == EffectInit.EM_OVERLOAD_EFFECT.get()) {
+            capability = HandlerCapability.ELECTRICITY_CAPABILITY;
         }
         if (capability != null) {
             EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new MessageICapability(entity, flag, capability));

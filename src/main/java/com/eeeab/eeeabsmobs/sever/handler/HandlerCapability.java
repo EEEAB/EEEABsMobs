@@ -18,6 +18,8 @@ public class HandlerCapability {
     });
     public static final Capability<FrenzyCapability.IFrenzyCapability> FRENZY_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
     });
+    public static final Capability<ElectricityCapability.IElectricityCapabilityImpl> ELECTRICITY_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    });
     public static final Capability<AbilityCapability.IAbilityCapability> ABILITY_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
     });
     public static final Capability<PlayerCapability.IPlayerCapability> PLAYER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
@@ -25,6 +27,7 @@ public class HandlerCapability {
     public static final Capability<?>[] CAPABILITIES = new Capability[]{
             STUN_CAPABILITY,
             FRENZY_CAPABILITY,
+            ELECTRICITY_CAPABILITY,
             ABILITY_CAPABILITY,
             PLAYER_CAPABILITY,
     };
@@ -48,6 +51,7 @@ public class HandlerCapability {
         if (entity instanceof LivingEntity) {
             event.addCapability(VertigoCapability.ID, new VertigoCapability.VertigoCapabilityProvider());
             event.addCapability(FrenzyCapability.ID, new FrenzyCapability.FrenzyCapabilityProvider());
+            event.addCapability(ElectricityCapability.ID, new ElectricityCapability.ElectricityCapabilityProvider());
             if (entity instanceof Player) {
                 event.addCapability(AbilityCapability.ID, new AbilityCapability.AbilityCapabilityProvider());
                 event.addCapability(PlayerCapability.ID, new PlayerCapability.PlayerCapabilityProvider());
