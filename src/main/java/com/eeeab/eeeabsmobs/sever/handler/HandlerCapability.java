@@ -33,10 +33,11 @@ public class HandlerCapability {
     };
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.register(VertigoCapability.IVertigoCapability.class);
         event.register(AbilityCapability.IAbilityCapability.class);
-        event.register(FrenzyCapability.IFrenzyCapability.class);
         event.register(PlayerCapability.IPlayerCapability.class);
+        event.register(ElectricityCapability.IElectricityCapabilityImpl.class);
+        event.register(VertigoCapability.IVertigoCapability.class);
+        event.register(FrenzyCapability.IFrenzyCapability.class);
     }
 
     @Nullable
