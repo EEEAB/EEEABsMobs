@@ -4,7 +4,10 @@
 
   "_comment": "Mobs",
   "entity.eeeabsmobs.immortal_skeleton": "Immortal Skeleton",
-  "entity.eeeabsmobs.immortal_knight": "Immortal Knight",
+  "entity.eeeabsmobs.immortal_archer": "Immortal Skeleton(Archer)",
+  "entity.eeeabsmobs.immortal_mage": "Immortal Skeleton(Mage)",
+  "entity.eeeabsmobs.immortal_warrior": "Immortal Skeleton(Warrior)",
+  "entity.eeeabsmobs.immortal_knight": "Immortal Skeleton(Knight)",
   "entity.eeeabsmobs.immortal_shaman": "Immortal Shaman",
   "entity.eeeabsmobs.immortal_golem": "Immortal Golem",
   "entity.eeeabsmobs.immortal_executioner": "Immortal Executioner",
@@ -87,7 +90,10 @@
 
   "_comment": "Spawn Egg",
   "item.eeeabsmobs.immortal_skeleton_egg": "Immortal Skeleton Spawn Egg",
-  "item.eeeabsmobs.immortal_knight_egg": "Immortal Knight Spawn Egg",
+  "item.eeeabsmobs.immortal_archer_egg": "Immortal Skeleton(Archer) Spawn Egg",
+  "item.eeeabsmobs.immortal_mage_egg": "Immortal Skeleton(Mage) Spawn Egg",
+  "item.eeeabsmobs.immortal_warrior_egg": "Immortal Skeleton(Warrior) Spawn Egg",
+  "item.eeeabsmobs.immortal_knight_egg": "Immortal Skeleton(Knight) Spawn Egg",
   "item.eeeabsmobs.immortal_shaman_egg": "Immortal Shaman Spawn Egg",
   "item.eeeabsmobs.immortal_golem_egg": "Immortal Golem Spawn Egg",
   "item.eeeabsmobs.immortal_executioner_egg": "Immortal Executioner Spawn Egg",

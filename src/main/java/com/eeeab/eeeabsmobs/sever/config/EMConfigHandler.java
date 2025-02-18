@@ -201,7 +201,6 @@ public final class EMConfigHandler {
         public ImmortalMobs(final ForgeConfigSpec.Builder builder) {
             builder.push("Immortal Mobs");
             IMMORTAL_SKELETON = new ImmortalSkeleton(builder);
-            IMMORTAL_KNIGHT = new ImmortalKnight(builder);
             IMMORTAL_SHAMAN = new ImmortalShaman(builder);
             IMMORTAL_GOLEM = new ImmortalGolem(builder);
             IMMORTAL_EXECUTIONER = new ImmortalExecutioner(builder);
@@ -210,7 +209,6 @@ public final class EMConfigHandler {
         }
 
         public final ImmortalSkeleton IMMORTAL_SKELETON;
-        public final ImmortalKnight IMMORTAL_KNIGHT;
         public final ImmortalShaman IMMORTAL_SHAMAN;
         public final ImmortalGolem IMMORTAL_GOLEM;
         public final ImmortalExecutioner IMMORTAL_EXECUTIONER;
@@ -221,17 +219,6 @@ public final class EMConfigHandler {
     public static class ImmortalSkeleton {
         public ImmortalSkeleton(final ForgeConfigSpec.Builder builder) {
             builder.push("Immortal Skeleton");
-            combatConfig = new AttributeConfig();
-            builder.pop();
-        }
-
-        public final AttributeConfig combatConfig;
-    }
-
-    //不朽骷髅骑士
-    public static class ImmortalKnight {
-        public ImmortalKnight(final ForgeConfigSpec.Builder builder) {
-            builder.push("Immortal Knight");
             combatConfig = new AttributeConfig();
             builder.pop();
         }

@@ -149,7 +149,7 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy
         if (super.isAlliedTo(entity)) {
             return true;
         } else if (entity instanceof LivingEntity && ((LivingEntity) entity).getMobType() == ModMobType.IMMORTAL) {
-            return EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() && this.getTeam() == null && entity.getTeam() == null;
+            return EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() || (this.getTeam() == null && entity.getTeam() == null);
         } else {
             return false;
         }
@@ -200,7 +200,7 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy
     }
 
     //设置召唤物存在时长
-    protected void setSummonAliveTime(int time) {
+    public void setSummonAliveTime(int time) {
         this.isSummon = true;
         this.countdown = time;
     }

@@ -73,7 +73,10 @@ public class HandlerRegister {
     @SubscribeEvent
     public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(EntityInit.IMMORTAL_SKELETON.get(), RenderAbsImmortalSkeleton::new);
+        event.registerEntityRenderer(EntityInit.IMMORTAL_ARCHER.get(), RenderAbsImmortalSkeleton::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_KNIGHT.get(), RenderAbsImmortalSkeleton::new);
+        event.registerEntityRenderer(EntityInit.IMMORTAL_MAGE.get(), RenderAbsImmortalSkeleton::new);
+        event.registerEntityRenderer(EntityInit.IMMORTAL_WARRIOR.get(), RenderAbsImmortalSkeleton::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_SHAMAN.get(), RenderImmortalShaman::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_GOLEM.get(), RenderImmortalGolem::new);
         event.registerEntityRenderer(EntityInit.IMMORTAL_EXECUTIONER.get(), RenderImmortalExecutioner::new);

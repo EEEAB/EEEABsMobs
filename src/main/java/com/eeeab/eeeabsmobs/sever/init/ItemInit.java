@@ -19,15 +19,17 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class ItemInit {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, EEEABMobs.MOD_ID);
-    public static final int IMMORTAL_LIGHT_COLOR = rgb2dec(30, 45, 51);
     public static final int CORPSE_GREEN_COLOR = rgb2dec(28, 47, 49);
 
     //刷怪蛋
-    public static final RegistryObject<Item> IMMORTAL_SKELETON_EGG = registerEgg("immortal_skeleton_egg", EntityInit.IMMORTAL_SKELETON, rgb2dec(138, 138, 153), IMMORTAL_LIGHT_COLOR);
-    public static final RegistryObject<Item> IMMORTAL_KNIGHT_EGG = registerEgg("immortal_knight_egg", EntityInit.IMMORTAL_KNIGHT, rgb2dec(108, 107, 104), IMMORTAL_LIGHT_COLOR);
-    public static final RegistryObject<Item> IMMORTAL_SHAMAN_EGG = registerEgg("immortal_shaman_egg", EntityInit.IMMORTAL_SHAMAN, rgb2dec(129, 136, 129), IMMORTAL_LIGHT_COLOR);
-    public static final RegistryObject<Item> IMMORTAL_GOLEM_EGG = registerEgg("immortal_golem_egg", EntityInit.IMMORTAL_GOLEM, rgb2dec(161, 178, 178), IMMORTAL_LIGHT_COLOR);
-    public static final RegistryObject<Item> IMMORTAL_EXECUTIONER_EGG = registerEgg("immortal_executioner_egg", EntityInit.IMMORTAL_EXECUTIONER, rgb2dec(84, 85, 90), IMMORTAL_LIGHT_COLOR);
+    public static final RegistryObject<Item> IMMORTAL_SKELETON_EGG = registerEgg("immortal_skeleton_egg", EntityInit.IMMORTAL_SKELETON, rgb2dec(147, 147, 143), rgb2dec(83, 83, 77));
+    public static final RegistryObject<Item> IMMORTAL_ARCHER_EGG = registerEgg("immortal_archer_egg", EntityInit.IMMORTAL_ARCHER, rgb2dec(62, 53, 43), rgb2dec(131, 136, 135));
+    public static final RegistryObject<Item> IMMORTAL_KNIGHT_EGG = registerEgg("immortal_knight_egg", EntityInit.IMMORTAL_KNIGHT, rgb2dec(30, 41, 47), rgb2dec(151, 155, 154));
+    public static final RegistryObject<Item> IMMORTAL_MAGE_EGG = registerEgg("immortal_mage_egg", EntityInit.IMMORTAL_MAGE, rgb2dec(97, 108, 116), rgb2dec(46, 54, 59));
+    public static final RegistryObject<Item> IMMORTAL_WARRIOR_EGG = registerEgg("immortal_warrior_egg", EntityInit.IMMORTAL_WARRIOR, rgb2dec(75, 81, 84), rgb2dec(151, 155, 154));
+    public static final RegistryObject<Item> IMMORTAL_SHAMAN_EGG = registerEgg("immortal_shaman_egg", EntityInit.IMMORTAL_SHAMAN, rgb2dec(117, 143, 146), rgb2dec(56, 67, 69));
+    public static final RegistryObject<Item> IMMORTAL_GOLEM_EGG = registerEgg("immortal_golem_egg", EntityInit.IMMORTAL_GOLEM, rgb2dec(150, 163, 143), rgb2dec(90, 97, 84));
+    public static final RegistryObject<Item> IMMORTAL_EXECUTIONER_EGG = registerEgg("immortal_executioner_egg", EntityInit.IMMORTAL_EXECUTIONER, rgb2dec(32, 35, 36), rgb2dec(131, 151, 161));
     public static final RegistryObject<Item> IMMORTAL_BOSS_EGG = registerEgg("immortal_boss_egg", EntityInit.IMMORTAL_BOSS, rgb2dec(16, 37, 51), rgb2dec(116, 175, 216));
     public static final RegistryObject<Item> NAMELESS_GUARDIAN_EGG = registerEgg("nameless_guardian_egg", EntityInit.NAMELESS_GUARDIAN, rgb2dec(15, 15, 15), rgb2dec(100, 100, 105));
     public static final RegistryObject<Item> GULING_SENTINEL_EGG = registerEgg("guling_sentinel_egg", EntityInit.GULING_SENTINEL, rgb2dec(25, 25, 25), rgb2dec(110, 130, 160));
@@ -85,5 +87,4 @@ public class ItemInit {
         THE_NETHERWORLD_KATANA.get().refreshAttributesFromConfig();
         DEMOLISHER.get().refreshAttributesFromConfig();
     }
-
 }

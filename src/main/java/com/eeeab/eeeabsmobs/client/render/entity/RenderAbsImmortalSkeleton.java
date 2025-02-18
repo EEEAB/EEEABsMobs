@@ -1,35 +1,36 @@
 package com.eeeab.eeeabsmobs.client.render.entity;
 
-import com.eeeab.eeeabsmobs.client.render.layer.LayerOuter;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelAbsImmortalSkeleton;
 import com.eeeab.eeeabsmobs.client.model.util.EMModelLayer;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortalSkeleton;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalKnight;
+import com.eeeab.eeeabsmobs.client.render.layer.LayerVariantHolder;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.skeleton.EntityAbsImmortalSkeleton;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.skeleton.EntityAbsImmortalSkeleton.CareerType;
+import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.Map;
+
 public class RenderAbsImmortalSkeleton extends MobRenderer<EntityAbsImmortalSkeleton, ModelAbsImmortalSkeleton> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/immortal_skeleton.png");
-    private static final ResourceLocation VARIANTS_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/immortal_skeleton_variants.png");
-    private static final ResourceLocation WARRIOR_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/career/warrior.png");
-    private static final ResourceLocation KNIGHT_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/career/knight.png");
-    private static final ResourceLocation ARCHER_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/career/archer.png");
-    private static final ResourceLocation MAGE_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/career/mage.png");
     private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/immortal_skeleton_eyes.png");
+    private static final Map<CareerType, ResourceLocation> RESOURCE_LOCATION_MAP = ImmutableMap.of(
+            CareerType.ARCHER, new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/career/archer.png"),
+            CareerType.KNIGHT, new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/career/knight.png"),
+            CareerType.MAGE, new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/career/mage.png"),
+            CareerType.WARRIOR, new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/career/warrior.png")
+    );
 
     public RenderAbsImmortalSkeleton(EntityRendererProvider.Context context) {
         super(context, new ModelAbsImmortalSkeleton(context.bakeLayer(EMModelLayer.IMMORTAL_SKELETON)), 0.5F);
         this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
         this.addLayer(new LayerGlow<>(this, GLOW_LAYER));
-        this.addLayer(new LayerOuter<>(this, MAGE_LAYER, false, EntityAbsImmortalSkeleton::isMage));
-        this.addLayer(new LayerOuter<>(this, ARCHER_LAYER, false, EntityAbsImmortalSkeleton::isArcher));
-        this.addLayer(new LayerOuter<>(this, WARRIOR_LAYER, false, EntityAbsImmortalSkeleton::isWarrior));
-        this.addLayer(new LayerOuter<>(this, KNIGHT_LAYER, false, EntityAbsImmortalSkeleton::isKnight));
+        this.addLayer(new LayerVariantHolder<>(this, RESOURCE_LOCATION_MAP));
     }
 
     @Override
@@ -45,6 +46,6 @@ public class RenderAbsImmortalSkeleton extends MobRenderer<EntityAbsImmortalSkel
 
     @Override
     public ResourceLocation getTextureLocation(EntityAbsImmortalSkeleton entity) {
-        return entity instanceof EntityImmortalKnight || entity.getVariant() == EntityAbsImmortalSkeleton.CareerType.WARRIOR ? VARIANTS_TEXTURE : TEXTURE;
+        return TEXTURE;
     }
 }

@@ -4,7 +4,10 @@
 
   "_comment": "生物",
   "entity.eeeabsmobs.immortal_skeleton": "不朽骷髅",
-  "entity.eeeabsmobs.immortal_knight": "不朽骑士",
+  "entity.eeeabsmobs.immortal_archer": "不朽骷髅(射手)",
+  "entity.eeeabsmobs.immortal_mage": "不朽骷髅(法师)",
+  "entity.eeeabsmobs.immortal_warrior": "不朽骷髅(战士)",
+  "entity.eeeabsmobs.immortal_knight": "不朽骷髅(骑士)",
   "entity.eeeabsmobs.immortal_shaman": "不朽巫师",
   "entity.eeeabsmobs.immortal_golem": "不朽傀儡",
   "entity.eeeabsmobs.immortal_executioner": "不朽斩魂者",
@@ -87,7 +90,10 @@
 
   "_comment": "刷怪蛋",
   "item.eeeabsmobs.immortal_skeleton_egg": "不朽骷髅刷怪蛋",
-  "item.eeeabsmobs.immortal_knight_egg": "不朽骑士刷怪蛋",
+  "item.eeeabsmobs.immortal_archer_egg": "不朽骷髅(射手)刷怪蛋",
+  "item.eeeabsmobs.immortal_mage_egg": "不朽骷髅(法师)刷怪蛋",
+  "item.eeeabsmobs.immortal_warrior_egg": "不朽骷髅(战士)刷怪蛋",
+  "item.eeeabsmobs.immortal_knight_egg": "不朽骷髅(骑士)刷怪蛋",
   "item.eeeabsmobs.immortal_shaman_egg": "不朽巫师刷怪蛋",
   "item.eeeabsmobs.immortal_golem_egg": "不朽傀儡刷怪蛋",
   "item.eeeabsmobs.immortal_executioner_egg": "不朽斩魂者刷怪蛋",

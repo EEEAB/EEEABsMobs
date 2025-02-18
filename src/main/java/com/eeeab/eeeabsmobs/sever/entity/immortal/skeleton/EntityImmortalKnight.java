@@ -1,8 +1,7 @@
-package com.eeeab.eeeabsmobs.sever.entity.immortal;
+package com.eeeab.eeeabsmobs.sever.entity.immortal.skeleton;
 
+import com.eeeab.animate.server.ai.AnimationMeleeAI;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
@@ -17,6 +16,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
@@ -28,7 +28,7 @@ import net.minecraft.world.phys.AABB;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 
-public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements IEntity {
+public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements RangedAttackMob {
     private static final UniformInt ALERT_INTERVAL = TimeUtil.rangeOfSeconds(3, 5);
     private static final UniformInt ROAR_INTERVAL = TimeUtil.rangeOfSeconds(15, 30);
     private int ticksUntilNextAlert;
@@ -36,17 +36,11 @@ public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements I
 
     public EntityImmortalKnight(EntityType<? extends EntityImmortalKnight> type, Level level) {
         super(type, level);
-        active = true;
     }
-
-    @Override
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
-        return dimensions.height * 0.88f;
-    }
-
 
     @Override
     protected void registerCustomGoals() {
+        this.addRangeAI(this);
         this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, () -> roarAnimation, EnumSet.of(Goal.Flag.MOVE, Goal.Flag.JUMP)) {
             @Override
             public void tick() {
@@ -64,12 +58,8 @@ public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements I
                 super.stop();
             }
         });
+        this.goalSelector.addGoal(4, new AnimationMeleeAI<>(this, 1D, 10 + this.random.nextInt(10), e -> e.active, () -> meleeAnimation1, () -> meleeAnimation2));
         super.registerCustomGoals();
-    }
-
-    @Override
-    protected EMConfigHandler.AttributeConfig getAttributeConfig() {
-        return EMConfigHandler.COMMON.MOB.IMMORTAL.IMMORTAL_KNIGHT.combatConfig;
     }
 
     @Override
@@ -81,7 +71,6 @@ public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements I
     public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource damageSource) {
         return false;
     }
-
 
     @Override
     public void tick() {
@@ -170,11 +159,6 @@ public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements I
     }
 
     @Override
-    protected int getCareerId(RandomSource random) {
-        return CareerType.KNIGHT.id;
-    }
-
-    @Override
     protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficultyIn) {
         this.setItemSlot(EquipmentSlot.MAINHAND, randomSource.nextFloat() < 0.2F ? CareerType.KNIGHT.holdItems[0].getDefaultInstance() : CareerType.KNIGHT.holdItems[1].getDefaultInstance());
         this.setDropChance(EquipmentSlot.MAINHAND, 0);
@@ -198,11 +182,21 @@ public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements I
     }
 
     @Override
+    public void performRangedAttack(LivingEntity target, float velocity) {
+        this.performRangedAttack(target);
+    }
+
+    @Override
     protected AbstractArrow getArrow(ItemStack arrowStack, float distanceFactor) {
         AbstractArrow arrow = super.getArrow(arrowStack, distanceFactor);
         if (arrow instanceof Arrow) {
             ((Arrow) arrow).addEffect(new MobEffectInstance(EffectInit.ERODE_EFFECT.get(), 200));
         }
         return arrow;
+    }
+
+    @Override
+    protected int getCareerId() {
+        return CareerType.KNIGHT.id;
     }
 }
