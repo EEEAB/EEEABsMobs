@@ -55,7 +55,7 @@ public abstract class EntityAbsGuling extends EEEABMobLibrary implements Enemy {
         if (super.isAlliedTo(entity)) {
             return true;
         } else if (entity instanceof EntityAbsGuling) {
-            return EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() && this.getTeam() == null && entity.getTeam() == null;
+            return EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() || (this.getTeam() == null && entity.getTeam() == null);
         } else {
             return false;
         }

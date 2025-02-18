@@ -10,11 +10,11 @@ import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.IMobLevel;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.CopyOwnerTargetGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.WhenOwnerDeadGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.ReFindOwnerGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.WhenOwnerDeadGoal;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityAbsGuling;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.skeleton.EntityImmortalMage;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -72,8 +72,6 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
         super.registerGoals();
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null));
-        this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(8, new EMLookAtGoal(this, EntityImmortalShaman.class, 6.0F));
     }
 
     @Override
@@ -82,7 +80,7 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
         this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> attackAnimation, 7, 1.5f, 1.0f, 1.0f));
         this.goalSelector.addGoal(1, new AnimationHurt<>(this, false));
         this.goalSelector.addGoal(2, new AnimationMeleeAI<>(this, 1.0D, () -> attackAnimation));
-        this.goalSelector.addGoal(1, new ReFindOwnerGoal<>(this, EntityImmortalShaman.class, 20D));
+        this.goalSelector.addGoal(1, new ReFindOwnerGoal<>(this, EntityImmortalMage.class, 20D));
         this.targetSelector.addGoal(2, new CopyOwnerTargetGoal<>(this));
         this.goalSelector.addGoal(3, new WhenOwnerDeadGoal<>(this));
     }
@@ -114,8 +112,17 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
 
     @Override
     public boolean isAlliedTo(Entity entity) {
-        if (trapGen && entity instanceof EntityAbsGuling) return EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() && this.getTeam() == null && entity.getTeam() == null;
-        return super.isAlliedTo(entity);
+        boolean flag = super.isAlliedTo(entity);
+        if (trapGen && entity instanceof EntityAbsGuling) return EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() || flag || (this.getTeam() == null && entity.getTeam() == null);
+        return flag;
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        super.die(source);
+        if (!this.level().isClientSide && this.getOwner() != null && this.getOwner().isActive()) {
+            this.shiftHatred(this, 16D);
+        }
     }
 
     @Override
@@ -171,7 +178,7 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 12.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.4D).
-                add(Attributes.FOLLOW_RANGE, 12.0D).
+                add(Attributes.FOLLOW_RANGE, 16.0D).
                 add(Attributes.ATTACK_DAMAGE, 2.5D);
     }
 
