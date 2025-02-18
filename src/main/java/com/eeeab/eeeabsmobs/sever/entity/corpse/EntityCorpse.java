@@ -32,16 +32,13 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
@@ -189,15 +186,7 @@ public class EntityCorpse extends EntityAbsCorpse implements IEntity {
                 this.getOwner().heal(this.getOwner().getMaxHealth() * 0.01F);
                 this.getOwner().level().broadcastEntityEvent(this.getOwner(), (byte) 14);
             }
-            this.level().getNearbyEntities(Mob.class, TargetingConditions.DEFAULT, this, this.getBoundingBox().inflate(16))
-                    .stream().filter(mob -> mob != this && mob != this.getOwner() && mob.isAlive() && mob.getTarget() == this)
-                    .forEach(mob -> {
-                        mob.setTarget(this.getOwner());
-                        Brain<?> mobBrain = mob.getBrain();
-                        if (mobBrain.hasMemoryValue(MemoryModuleType.ATTACK_TARGET)) {
-                            mobBrain.setMemory(MemoryModuleType.ATTACK_TARGET, this.getOwner());
-                        }
-                    });
+            this.shiftHatred(this, 16D);
         }
         super.die(source);
     }
