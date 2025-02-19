@@ -34,11 +34,12 @@ public class EntityImmortalMage extends EntityAbsImmortalSkeleton {
             @Override
             public void tick() {
                 int tick = this.entity.getAnimationTick();
-                if (tick == 40) {
-                    if (this.entity.getTarget() != null) {
-                        LivingEntity livingEntity = this.entity.getTarget();
-                        double minY = Math.min(livingEntity.getY(), this.entity.getY());
-                        double maxY = Math.max(livingEntity.getY(), this.entity.getY()) + 1.0D;
+                LivingEntity target = this.entity.getTarget();
+                if (target != null) {
+                    this.entity.getLookControl().setLookAt(target, 30F, 30F);
+                    if (tick == 30) {
+                        double minY = Math.min(target.getY(), this.entity.getY());
+                        double maxY = Math.max(target.getY(), this.entity.getY()) + 1.0D;
                         Vec3 point1 = ModEntityUtils.checkSummonEntityPoint(this.entity, this.entity.getX() - 1, this.entity.getZ(), minY, maxY);
                         summonEntity(point1);
                         Vec3 point2 = ModEntityUtils.checkSummonEntityPoint(this.entity, this.entity.getX() + 1, this.entity.getZ(), minY, maxY);

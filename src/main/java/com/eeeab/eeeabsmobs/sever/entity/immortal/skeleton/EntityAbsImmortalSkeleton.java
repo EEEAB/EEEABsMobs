@@ -51,7 +51,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     public final Animation bowAnimation = Animation.create(30);
     public final Animation crossBowChangeAnimation = Animation.create(30);
     public final Animation crossBowHoldAnimation = Animation.create(10);
-    public final Animation castAnimation = Animation.create(45);
+    public final Animation castAnimation = Animation.create(35);
     public final Animation blockAnimation = Animation.create(10);
     public final Animation spawnAnimation = Animation.create(20);
     public final Animation roarAnimation = Animation.create(45);
