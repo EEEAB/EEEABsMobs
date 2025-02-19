@@ -197,6 +197,7 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy
     public void setInitSpawn() {
         this.active = false;
         this.setActive(false);
+        this.playAnimation(getSpawnAnimation());
     }
 
     //设置召唤物存在时长
