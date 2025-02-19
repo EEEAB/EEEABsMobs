@@ -98,13 +98,13 @@ public class ModelAbsImmortalSkeleton extends EMHierarchicalModel<EntityAbsImmor
         }
         if (entity.getAnimation() == entity.castAnimation) {
             this.rightArm.z = 0.0F;
-            this.rightArm.x = -5.0F;
+            this.rightArm.x = -6.0F;
             this.leftArm.z = 0.0F;
-            this.leftArm.x = 5.0F;
-            this.rightArm.xRot = Mth.cos(ageInTicks * 0.6662F) * 0.25F;
-            this.leftArm.xRot = Mth.cos(ageInTicks * 0.6662F) * 0.25F;
-            this.rightArm.zRot = 2.3561945F;
-            this.leftArm.zRot = -2.3561945F;
+            this.leftArm.x = 6.0F;
+            this.rightArm.xRot = Mth.cos(ageInTicks * 0.6662F) * 0.45F;
+            this.leftArm.xRot = Mth.cos(ageInTicks * 0.6662F) * 0.45F;
+            this.rightArm.zRot = 2.181661565F;
+            this.leftArm.zRot = -2.181661565F;
             this.rightArm.yRot = 0.0F;
             this.leftArm.yRot = 0.0F;
         } else if (entity.getAnimation() == entity.bowAnimation) {
