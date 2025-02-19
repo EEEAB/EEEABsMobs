@@ -51,11 +51,10 @@ public class ModelImmortalShaman extends EMHierarchicalModel<EntityImmortalShama
         PartDefinition leftArmUnder = leftArm.addOrReplaceChild("leftArmUnder", CubeListBuilder.create().texOffs(9, 16).addBox(-1.1038F, 0.5872F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(1.0F, 8.0F, 0.0F));
         PartDefinition rightArm = upper.addOrReplaceChild("rightArm", CubeListBuilder.create().texOffs(9, 16).mirror().addBox(-1.8962F, -1.4128F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-4.1F, -8.5F, 0.0F, 0.0F, 0.0F, 0.0436F));
         PartDefinition rightArmUnder = rightArm.addOrReplaceChild("rightArmUnder", CubeListBuilder.create().texOffs(9, 16).mirror().addBox(-0.8962F, 0.5872F, -1.0F, 2.0F, 10.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(-1.0F, 8.0F, 0.0F));
-        PartDefinition lower = root.addOrReplaceChild("lower", CubeListBuilder.create(), PartPose.offset(1.0F, -21.0F, 0.0F));
-        PartDefinition leftLeg = lower.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(0, 16).addBox(-1.2F, 0.0F, -1.0F, 2.0F, 20.0F, 2.0F, new CubeDeformation(0.0F))
-                .texOffs(0, 51).addBox(-2.2F, -0.2F, -2.0F, 4.0F, 20.0F, 4.0F, new CubeDeformation(0.22F)), PartPose.offset(2.2F, 1.0F, 0.0F));
-        PartDefinition rightLeg = lower.addOrReplaceChild("rightLeg", CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-1.0F, 0.0F, -1.0F, 2.0F, 20.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false)
-                .texOffs(0, 51).mirror().addBox(-2.0F, -0.2F, -2.0F, 4.0F, 20.0F, 4.0F, new CubeDeformation(0.22F)).mirror(false), PartPose.offset(-2.0F, 1.0F, 0.0F));
+        PartDefinition lower = root.addOrReplaceChild("lower", CubeListBuilder.create().texOffs(0, 51).addBox(0.0F, 0.8F, -2.0F, 4.0F, 20.0F, 4.0F, new CubeDeformation(0.22F))
+                .texOffs(0, 51).mirror().addBox(-4.0F, 0.8F, -2.0F, 4.0F, 20.0F, 4.0F, new CubeDeformation(0.22F)).mirror(false), PartPose.offset(1.0F, -21.0F, 0.0F));
+        PartDefinition leftLeg = lower.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(0, 16).addBox(-1.2F, 0.0F, -1.0F, 2.0F, 20.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(2.2F, 1.0F, 0.0F));
+        PartDefinition rightLeg = lower.addOrReplaceChild("rightLeg", CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-1.0F, 0.0F, -1.0F, 2.0F, 20.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(-2.0F, 1.0F, 0.0F));
         return LayerDefinition.create(meshdefinition, 64, 128);
     }
 
@@ -71,11 +70,6 @@ public class ModelImmortalShaman extends EMHierarchicalModel<EntityImmortalShama
         lookAtAnimation(netHeadYaw, headPitch, 1.0F, this.head);
         float delta = ageInTicks - entity.tickCount;
         float frame = entity.frame + delta;
-        if (entity.isAlive() && entity.isWeakness()) {
-            this.setStaticRotationAngle(head, toRadians(1.5), 0, 0);
-            this.walk(head, 0.2F, 0.15F, false, 0, 0, frame, 1);
-            this.walk(root, 0.1F, 0.1F, false, 0, 0, frame, 1);
-        }
         //Walk
         float walkSpeed = 0.6F;
         float walkDegree = 0.6F;
@@ -86,12 +80,18 @@ public class ModelImmortalShaman extends EMHierarchicalModel<EntityImmortalShama
         //Idle
         float speed = 0.16F;
         float degree = 0.04F;
-        if (entity.isAlive() && !entity.isWeakness()) {
-            this.walk(head, speed, degree, false, 0.5F, -0.05F, frame, 1);
-            this.flap(rightArm, speed, degree * 0.5F, true, 0, 0, frame, 1);
-            this.swing(rightArm, speed, degree, true, 0, 0, frame, 1);
-            this.flap(leftArm, speed, degree * 0.5F, false, 0, 0, frame, 1);
-            this.swing(leftArm, speed, degree, false, 0, 0, frame, 1);
+        if (entity.isAlive()){
+            if (entity.isWeakness()) {
+                this.setStaticRotationAngle(head, toRadians(1.5), 0, 0);
+                this.walk(head, 0.2F, 0.15F, false, 0, 0, frame, 1);
+                this.walk(root, 0.1F, 0.1F, false, 0, 0, frame, 1);
+            }else {
+                this.walk(head, speed, degree, false, 0.5F, -0.05F, frame, 1);
+                this.flap(rightArm, speed, degree * 0.5F, true, 0, 0, frame, 1);
+                this.swing(rightArm, speed, degree, true, 0, 0, frame, 1);
+                this.flap(leftArm, speed, degree * 0.5F, false, 0, 0, frame, 1);
+                this.swing(leftArm, speed, degree, false, 0, 0, frame, 1);
+            }
         }
         this.animate(entity.spellCastingBombAnimation, AnimationImmortalShaman.BOMB, ageInTicks);
         this.animate(entity.spellCastingHealAnimation, AnimationImmortalShaman.HEAL, ageInTicks);
@@ -101,21 +101,19 @@ public class ModelImmortalShaman extends EMHierarchicalModel<EntityImmortalShama
         this.animate(entity.avoidAnimation, AnimationImmortalShaman.AVOID, ageInTicks);
         this.animate(entity.dieAnimation, AnimationCommon.DIE, ageInTicks);
         int tick = entity.getAnimationTick();
-        if (entity.getAnimation() == entity.spellCastingSummonAnimation || entity.getAnimation() == entity.spellCastingWololoAnimation) {
-            if (tick < 34) {
-                generalShake(frame);
-            }
-        } else if (entity.getAnimation() == entity.spellCastingHealAnimation) {
+        if (entity.getAnimation() == entity.spellCastingHealAnimation) {
             if (tick < 50) {
-                generalShake(frame);
+                this.walk(head, 1.4F, 0.04F, false, 0, 0, frame, 1);
+                this.swing(head, 1.6F, 0.08F, false, 0, 0, frame, 1);
+                this.walk(leftArm, 0.45F, 0.2F, false, 0, 0, frame, 1);
+                this.walk(rightArm, 0.45F, 0.2F, false, 0, 0, frame, 1);
+                this.bob(root, 0.4F, 1.2F, false, frame, 1);
             }
-
         } else if (entity.getAnimation() == entity.spellCastingFRAnimation) {
             if (tick < 12) {
                 this.walk(root, 2.5F, 0.125F - tick * 0.01F, false, 0, 0, frame, 1);
                 this.flap(root, 1.5F, 0.1F - tick * 0.01F, false, 0, 0, frame, 1);
             }
-
         } else if (entity.getAnimation() == entity.spellCastingBombAnimation) {
             if (tick < 15) {
                 this.walk(head, 1.2F, 0.08F, false, 0, 0, frame, 1);
@@ -146,13 +144,5 @@ public class ModelImmortalShaman extends EMHierarchicalModel<EntityImmortalShama
         } else {
             translate.translate(-0.125, -0.125, 0);
         }
-    }
-
-    private void generalShake(float frame) {
-        this.walk(head, 1.4F, 0.04F, false, 0, 0, frame, 1);
-        this.swing(head, 1.6F, 0.08F, false, 0, 0, frame, 1);
-        this.walk(leftArm, 0.45F, 0.2F, false, 0, 0, frame, 1);
-        this.walk(rightArm, 0.45F, 0.2F, false, 0, 0, frame, 1);
-        this.bob(root, 0.4F, 1.2F, false, frame, 1);
     }
 }
