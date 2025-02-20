@@ -111,8 +111,8 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
     public final Animation spawnAnimation = Animation.create(100);
     public final Animation switchStageAnimation = Animation.create(100);
     public final Animation teleportAnimation = Animation.coexist(25);
-    public final Animation smashGround1Animation = Animation.coexist(45);
-    public final Animation smashGround2Animation = Animation.coexist(80);
+    public final Animation smashGround1Animation = Animation.create(45);
+    public final Animation smashGround2Animation = Animation.create(80);
     public final Animation smashGround3Animation = Animation.create(50);
     public final Animation punchRightAnimation = Animation.coexist(40);
     public final Animation punchLeftAnimation = Animation.coexist(40);
@@ -359,11 +359,6 @@ public class EntityImmortal extends EntityAbsImmortal implements IBoss {
 
     @Override
     protected boolean isAffectedByFluids() {
-        return false;
-    }
-
-    @Override
-    public boolean canDrownInFluidType(FluidType type) {
         return false;
     }
 

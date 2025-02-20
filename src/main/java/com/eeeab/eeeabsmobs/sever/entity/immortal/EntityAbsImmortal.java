@@ -24,6 +24,7 @@ import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,6 +65,11 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy
     @Override//是否被流体推动
     public boolean isPushedByFluid() {
         return this.isActive();
+    }
+
+    @Override
+    public boolean canDrownInFluidType(FluidType type) {
+        return false;
     }
 
     @Override

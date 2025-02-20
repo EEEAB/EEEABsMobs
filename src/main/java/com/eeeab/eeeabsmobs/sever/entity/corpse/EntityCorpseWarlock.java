@@ -66,6 +66,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
+import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -151,6 +152,11 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     @Override//减少实体在水下的空气供应
     protected int decreaseAirSupply(int air) {
         return air;
+    }
+
+    @Override
+    public boolean canDrownInFluidType(FluidType type) {
+        return false;
     }
 
     @Override//是否免疫摔伤
