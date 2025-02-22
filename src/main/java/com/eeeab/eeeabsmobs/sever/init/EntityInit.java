@@ -264,7 +264,7 @@ public class EntityInit {
         event.put(EntityInit.CORPSE_TO_PLAYER.get(), EntityCorpseToPlayer.setAttributes().build());
         event.put(EntityInit.IMMORTAL_SKELETON.get(), EntityAbsImmortalSkeleton.setAttributes(5F, 4F, 0F, 0.01F));
         event.put(EntityInit.IMMORTAL_MAGE.get(), EntityAbsImmortalSkeleton.setAttributes(5F, 0F, 2F, 0.03F));
-        event.put(EntityInit.IMMORTAL_ARCHER.get(), EntityAbsImmortalSkeleton.setAttributes(10F, 6F, 4F, 0.025F));
+        event.put(EntityInit.IMMORTAL_ARCHER.get(), EntityAbsImmortalSkeleton.setAttributes(10F, 4F, 4F, 0.025F));
         event.put(EntityInit.IMMORTAL_WARRIOR.get(), EntityAbsImmortalSkeleton.setAttributes(15F, 5F, 6F, 0.02F));
         event.put(EntityInit.IMMORTAL_KNIGHT.get(), EntityAbsImmortalSkeleton.setAttributes(25F, 6F, 8F, 0F));
         event.put(EntityInit.IMMORTAL_SHAMAN.get(), EntityImmortalShaman.setAttributes().build());

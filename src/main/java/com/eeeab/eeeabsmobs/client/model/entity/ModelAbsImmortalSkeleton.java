@@ -116,10 +116,10 @@ public class ModelAbsImmortalSkeleton extends EMHierarchicalModel<EntityAbsImmor
             AnimationUtils.animateCrossbowHold(this.rightArm, this.leftArm, this.head, true);
         }
         this.animate(entity.spawnAnimation, AnimationCommon.SPAWN, ageInTicks);
-        this.animate(entity.swingArmAnimation, entity.getMainHandItem().isEmpty() ? AnimationImmortalSkeleton.SWINGARM : AnimationImmortalSkeleton.MELEE1, ageInTicks);
+        this.animate(entity.swingArmAnimation, entity.getMainHandItem().isEmpty() ? AnimationImmortalSkeleton.SWING : AnimationImmortalSkeleton.MELEE1, ageInTicks);
         this.animate(entity.meleeAnimation1, AnimationImmortalSkeleton.MELEE1, ageInTicks);
         this.animate(entity.meleeAnimation2, AnimationImmortalSkeleton.MELEE2, ageInTicks);
-        this.animate(entity.roarAnimation, AnimationImmortalSkeleton.ROAR, ageInTicks);
+        this.animate(entity.putUpAnimation, AnimationImmortalSkeleton.PUT_UP, ageInTicks);
         this.animate(entity.blockAnimation, AnimationImmortalSkeleton.BLOCK, ageInTicks);
         this.animate(entity.dieAnimation, AnimationCommon.DIE, ageInTicks);
     }

@@ -2,10 +2,10 @@ package com.eeeab.eeeabsmobs.sever.entity.immortal.skeleton;
 
 import com.eeeab.animate.server.ai.AnimationMeleeAI;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
+import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
+import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
-import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -30,7 +30,7 @@ import java.util.EnumSet;
 
 public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements RangedAttackMob {
     private static final UniformInt ALERT_INTERVAL = TimeUtil.rangeOfSeconds(3, 5);
-    private static final UniformInt ROAR_INTERVAL = TimeUtil.rangeOfSeconds(15, 30);
+    private static final UniformInt INVIGORATE_INTERVAL = TimeUtil.rangeOfSeconds(15, 30);
     private int ticksUntilNextAlert;
     private int nextBoostTick;
 
@@ -41,15 +41,14 @@ public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements R
     @Override
     protected void registerCustomGoals() {
         this.addRangeAI(this);
-        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, () -> roarAnimation, EnumSet.of(Goal.Flag.MOVE, Goal.Flag.JUMP)) {
+        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, () -> putUpAnimation, EnumSet.of(Goal.Flag.MOVE, Goal.Flag.JUMP)) {
             @Override
             public void tick() {
-                super.tick();
-                if (getAnimationTick() == 8) {
-                    playSound(SoundInit.IMMORTAL_SKELETON_ROAR.get(), 0.8F, (entity.random.nextFloat() - entity.random.nextFloat()) * 0.2F + 1.0F);
-                }
                 LivingEntity target = getTarget();
                 if (target != null) entity.getLookControl().setLookAt(target, 30F, 30F);
+                if (entity.getAnimationTick() == 10) {
+                    entity.level().broadcastEntityEvent(entity, (byte) 12);
+                }
             }
 
             @Override
@@ -75,10 +74,9 @@ public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements R
     @Override
     public void tick() {
         super.tick();
-        boolean flag = this.random.nextFloat() < 0.1F + level().getCurrentDifficultyAt(new BlockPos(BlockPos.containing(getX(), getY(), getZ()))).getSpecialMultiplier();
-        if (!this.level().isClientSide && !this.isNoAi() && this.isActive() && this.getTarget() != null && this.isNoAnimation() && this.tickCount % 60 == 0 && this.nextBoostTick == 0 && flag) {
-            this.playAnimation(this.roarAnimation);
-            this.nextBoostTick = ROAR_INTERVAL.sample(this.random);
+        if (!this.level().isClientSide && this.nextBoostTick == 0 && !this.isNoAi() && this.isActive() && this.getTarget() != null && this.isNoAnimation() && this.tickCount % 2 == 0 && this.random.nextFloat() < 0.1F) {
+            this.playAnimation(this.putUpAnimation);
+            this.nextBoostTick = INVIGORATE_INTERVAL.sample(this.random);
         }
     }
 
@@ -93,63 +91,20 @@ public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements R
         super.customServerAiStep();
     }
 
-    private void maybeAlertOthers() {
-        if (this.ticksUntilNextAlert > 0) {
-            --this.ticksUntilNextAlert;
-        } else {
-            LivingEntity target = this.getTarget();
-            if (target != null && this.getSensing().hasLineOfSight(target)) {
-                this.alertOthers();
-            }
-
-            this.ticksUntilNextAlert = ALERT_INTERVAL.sample(this.random);
-        }
-    }
-
-    private void invigorateOthers() {
-        double range = this.getAttributeValue(Attributes.FOLLOW_RANGE);
-        AABB aabb = AABB.unitCubeFromLowerCorner(this.position()).inflate(range, 5.0D, range);
-        if (getTarget() != null) {
-            this.level().getEntitiesOfClass(EntityAbsImmortalSkeleton.class, aabb, EntitySelector.NO_SPECTATORS).
-                    stream().
-                    filter(skeleton -> !(skeleton instanceof EntityImmortalKnight))
-                    .forEach(skeleton -> skeleton.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 200, 0), this
-                    ));
-            this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 20 * 10, 0), this);
-        }
-    }
-
-    private void alertOthers() {
-        double range = this.getAttributeValue(Attributes.FOLLOW_RANGE);
-        AABB aabb = AABB.unitCubeFromLowerCorner(this.position()).inflate(range, 5.0D, range);
-        if (getTarget() != null) {
-            this.level().getEntitiesOfClass(EntityImmortalSkeleton.class, aabb, EntitySelector.NO_SPECTATORS).
-                    stream().
-                    filter(immortalSkeleton -> immortalSkeleton.getTarget() == null && !isAlliedTo(getTarget())).
-                    forEach(immortalSkeleton -> immortalSkeleton.setTarget(getTarget())
-                    );
-        }
-    }
-
+    @Override
     public void setTarget(@Nullable LivingEntity entity) {
         if (this.getTarget() == null && entity != null) {
             this.ticksUntilNextAlert = ALERT_INTERVAL.sample(this.random);
         }
-
         if (entity instanceof Player) {
             this.setLastHurtByPlayer((Player) entity);
         }
-
         super.setTarget(entity);
     }
 
     @Override
     public boolean hurt(DamageSource source, float damage) {
         if (!level().isClientSide) {
-            if (getTarget() == null && source.getEntity() instanceof LivingEntity livingEntity
-                    && livingEntity.getMobType() != getMobType()) {
-                this.setLastHurtByMob(livingEntity);
-            }
             if (ModEntityUtils.isProjectileSource(source)) {
                 damage *= 0.5F;
             }
@@ -198,5 +153,51 @@ public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements R
     @Override
     protected int getCareerId() {
         return CareerType.KNIGHT.id;
+    }
+
+    @Override
+    protected void doEnhanceEffect() {
+        if (this.level().isClientSide) {
+            for (int i = 0; i < 12; i++) {
+                this.level().addParticle(new ParticleOrb.OrbData(0.2F, 0.92F, 1F, 2F, 30), this.getRandomX(1.5), this.getY(this.random.nextDouble() * 0.2), this.getRandomZ(1.5), 0, 0.2 + this.random.nextDouble() * 0.05, 0);
+            }
+            this.level().addParticle(new ParticleRing.RingData(0F, (float) (Math.PI / 2F), 15, 0.2F, 0.92F, 1F, 1F, 30F, false, ParticleRing.EnumRingBehavior.GROW), this.getX(), this.getY() + 0.1, this.getZ(), 0, 0, 0);
+        }
+    }
+
+    private void maybeAlertOthers() {
+        if (this.ticksUntilNextAlert > 0) {
+            --this.ticksUntilNextAlert;
+        } else {
+            LivingEntity target = this.getTarget();
+            if (target != null && this.getSensing().hasLineOfSight(target)) {
+                this.alertOthers();
+            }
+            this.ticksUntilNextAlert = ALERT_INTERVAL.sample(this.random);
+        }
+    }
+
+    private void invigorateOthers() {
+        double range = this.getAttributeValue(Attributes.FOLLOW_RANGE);
+        AABB aabb = AABB.unitCubeFromLowerCorner(this.position()).inflate(range, 5.0D, range);
+        if (getTarget() != null) {
+            for (EntityAbsImmortalSkeleton skeleton : this.level().getEntitiesOfClass(EntityAbsImmortalSkeleton.class, aabb, skeleton -> CareerType.KNIGHT != skeleton.getVariant() && CareerType.MAGE != skeleton.getVariant())) {
+                this.level().broadcastEntityEvent(skeleton, (byte) 12);
+                skeleton.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 200, 0), this);
+            }
+            this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 300, 0), this);
+        }
+    }
+
+    private void alertOthers() {
+        double range = this.getAttributeValue(Attributes.FOLLOW_RANGE);
+        AABB aabb = AABB.unitCubeFromLowerCorner(this.position()).inflate(range, 5.0D, range);
+        if (getTarget() != null) {
+            this.level().getEntitiesOfClass(EntityAbsImmortalSkeleton.class, aabb, LivingEntity::isAlive).
+                    stream().
+                    filter(immortalSkeleton -> immortalSkeleton.getTarget() == null && !isAlliedTo(getTarget())).
+                    forEach(immortalSkeleton -> immortalSkeleton.setTarget(getTarget())
+                    );
+        }
     }
 }

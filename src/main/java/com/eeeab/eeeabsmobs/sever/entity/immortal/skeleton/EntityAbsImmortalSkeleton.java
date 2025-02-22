@@ -6,6 +6,7 @@ import com.eeeab.animate.server.ai.AnimationRangeAI;
 import com.eeeab.animate.server.ai.animation.*;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
+import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
@@ -54,7 +55,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     public final Animation castAnimation = Animation.create(35);
     public final Animation blockAnimation = Animation.create(10);
     public final Animation spawnAnimation = Animation.create(20);
-    public final Animation roarAnimation = Animation.create(45);
+    public final Animation putUpAnimation = Animation.create(30);
     public final Animation dieAnimation = Animation.create(30);
     private final Animation[] animations = new Animation[]{
             swingArmAnimation,
@@ -66,7 +67,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
             castAnimation,
             blockAnimation,
             spawnAnimation,
-            roarAnimation,
+            putUpAnimation,
             dieAnimation
     };
     protected int blockCoolTick;
@@ -158,12 +159,22 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         return super.hurt(source, damage);
     }
 
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == 12) {
+            this.doEnhanceEffect();
+        } else {
+            super.handleEntityEvent(id);
+        }
+    }
+
     //使用远程攻击攻击指定的实体
     public void performRangedAttack(LivingEntity target) {
         ItemStack itemstack = this.getProjectile(this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof ProjectileWeaponItem)));
         AbstractArrow abstractarrow = this.getArrow(itemstack, BowItem.getPowerForTime(20));
         if (this.getMainHandItem().getItem() instanceof BowItem)
             abstractarrow = ((BowItem) this.getMainHandItem().getItem()).customArrow(abstractarrow);
+        abstractarrow.setBaseDamage(this.getAttributeValue(Attributes.ATTACK_DAMAGE) / 2);
         double x = target.getX() - this.getX();
         double y = target.getY(0.3333333333333333D) - abstractarrow.getY();
         double z = target.getZ() - this.getZ();
@@ -236,7 +247,15 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
                 add(Attributes.ATTACK_DAMAGE, 1.0D + addAttack).
                 add(Attributes.ATTACK_KNOCKBACK, 0D).
                 add(Attributes.ARMOR, 0D + addArmor).
-                add(Attributes.KNOCKBACK_RESISTANCE, 0D).build();
+                add(Attributes.KNOCKBACK_RESISTANCE, 0.5D).build();
+    }
+
+    protected void doEnhanceEffect() {
+        if (this.level().isClientSide) {
+            for (int i = 0; i < 9; i++) {
+                this.level().addParticle(new ParticleOrb.OrbData(1F, 0.78F, 0F, 2F, 30), this.getRandomX(1.5), this.getY(this.random.nextDouble() * 0.2), this.getRandomZ(1.5), 0, 0.2 + this.random.nextDouble() * 0.05, 0);
+            }
+        }
     }
 
     public boolean checkHoldItemCanBlock() {
