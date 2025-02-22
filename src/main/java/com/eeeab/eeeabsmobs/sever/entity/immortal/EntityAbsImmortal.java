@@ -96,7 +96,7 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy
         }
 
         if (this.isSummon() && --countdown <= 0) {
-            this.hurt(damageSources().starve(), 1.0F);
+            this.hurt(damageSources().starve(), getMaxHealth() * 0.25F);
             countdown = 20;
         }
     }
