@@ -427,13 +427,13 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
                 return false;
             } else {
                 int size = this.spellCaster.level().getNearbyEntities(EntityAbsImmortalSkeleton.class, TARGETING_CONDITIONS, this.spellCaster, this.spellCaster.getBoundingBox().inflate(32.0D)).size();
-                return size < this.spellCaster.random.nextInt(9) + 1 && this.spellCaster.getTarget() != null && this.spellCaster.targetDistance > 8.0;
+                return size < this.spellCaster.random.nextInt(6) + 1 && this.spellCaster.getTarget() != null && this.spellCaster.targetDistance > 8.0;
             }
         }
 
         @Override
         protected int getSpellCastingCooling() {
-            return 360;
+            return 500;
         }
 
         @Override
@@ -448,7 +448,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
             }
             Vec3 looking = this.spellCaster.getLookAngle();
             float totalOffset = 3F;
-            int count = 3;
+            int count = Difficulty.HARD == this.spellCaster.level().getDifficulty() ? 3 : 2;
             float angleStep = totalOffset / (count + 1);
             for (int i = 0; i < count; i++) {
                 float angle = -totalOffset / 2.0F + (i + 1) * angleStep;
