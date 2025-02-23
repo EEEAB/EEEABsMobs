@@ -43,15 +43,14 @@ public class AnimationRange<T extends EEEABMobLibrary & EMAnimatedEntity & Range
         super.tick();
         LivingEntity entityTarget = entity.getTarget();
         if (entityTarget != null) {
-            if (entity.getAnimationTick() < attackFrame) {
-                entity.lookAt(entityTarget, 30F, 30F);
-            }
             if (entity.getAnimationTick() == attackFrame) {
                 entity.performRangedAttack(entityTarget, 0);
                 if (attackSound != null) {
                     entity.playSound(attackSound, 1.0F, 1.0F);
                 }
                 entity.stopUsingItem();
+            } else {
+                entity.getLookControl().setLookAt(entityTarget, 30F, 30F);
             }
         }
     }

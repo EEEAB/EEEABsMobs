@@ -16,7 +16,7 @@ public class EntityImmortalWarrior extends EntityAbsImmortalSkeleton {
     }
 
     @Override
-    protected int getCareerId() {
-        return CareerType.WARRIOR.id;
+    protected int getClassId() {
+        return ClassType.WARRIOR.id;
     }
 }

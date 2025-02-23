@@ -45,7 +45,7 @@ public class EntityImmortalArcher extends EntityAbsImmortalSkeleton implements R
     }
 
     @Override
-    protected int getCareerId() {
-        return CareerType.ARCHER.id;
+    protected int getClassId() {
+        return ClassType.ARCHER.id;
     }
 }

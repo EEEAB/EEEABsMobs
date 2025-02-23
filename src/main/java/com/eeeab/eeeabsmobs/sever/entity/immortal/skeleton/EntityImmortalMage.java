@@ -62,7 +62,7 @@ public class EntityImmortalMage extends EntityAbsImmortalSkeleton {
                 }
             }
         });
-        this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 300 + this.random.nextInt(100), 16F, null, e -> e.active, () -> castAnimation));
+        this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 400 + this.random.nextInt(100), 16F, null, e -> e.active, () -> castAnimation));
         super.registerCustomGoals();
     }
 
@@ -72,7 +72,7 @@ public class EntityImmortalMage extends EntityAbsImmortalSkeleton {
     }
 
     @Override
-    protected int getCareerId() {
-        return CareerType.MAGE.id;
+    protected int getClassId() {
+        return ClassType.MAGE.id;
     }
 }

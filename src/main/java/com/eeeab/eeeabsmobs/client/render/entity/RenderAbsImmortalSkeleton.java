@@ -6,7 +6,7 @@ import com.eeeab.eeeabsmobs.client.model.util.EMModelLayer;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerVariantHolder;
 import com.eeeab.eeeabsmobs.sever.entity.immortal.skeleton.EntityAbsImmortalSkeleton;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.skeleton.EntityAbsImmortalSkeleton.CareerType;
+import com.eeeab.eeeabsmobs.sever.entity.immortal.skeleton.EntityAbsImmortalSkeleton.ClassType;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -19,11 +19,11 @@ import java.util.Map;
 public class RenderAbsImmortalSkeleton extends MobRenderer<EntityAbsImmortalSkeleton, ModelAbsImmortalSkeleton> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/immortal_skeleton.png");
     private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/immortal_skeleton_eyes.png");
-    private static final Map<CareerType, ResourceLocation> RESOURCE_LOCATION_MAP = ImmutableMap.of(
-            CareerType.ARCHER, new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/career/archer.png"),
-            CareerType.KNIGHT, new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/career/knight.png"),
-            CareerType.MAGE, new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/career/mage.png"),
-            CareerType.WARRIOR, new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/career/warrior.png")
+    private static final Map<ClassType, ResourceLocation> RESOURCE_LOCATION_MAP = ImmutableMap.of(
+            ClassType.ARCHER, new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/career/archer.png"),
+            ClassType.KNIGHT, new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/career/knight.png"),
+            ClassType.MAGE, new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/career/mage.png"),
+            ClassType.WARRIOR, new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal/immortal_skeleton/career/warrior.png")
     );
 
     public RenderAbsImmortalSkeleton(EntityRendererProvider.Context context) {

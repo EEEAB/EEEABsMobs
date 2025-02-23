@@ -9,7 +9,7 @@ public class EntityImmortalSkeleton extends EntityAbsImmortalSkeleton {
     }
 
     @Override
-    protected int getCareerId() {
-        return CareerType.NONE.id;
+    protected int getClassId() {
+        return ClassType.NONE.id;
     }
 }

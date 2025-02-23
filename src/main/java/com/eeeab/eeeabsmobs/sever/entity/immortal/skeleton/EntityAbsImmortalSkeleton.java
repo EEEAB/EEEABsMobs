@@ -45,7 +45,7 @@ import javax.annotation.Nullable;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
-public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implements IEntity, VariantHolder<EntityAbsImmortalSkeleton.CareerType> {
+public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implements IEntity, VariantHolder<EntityAbsImmortalSkeleton.ClassType> {
     public final Animation swingArmAnimation = Animation.create(15);
     public final Animation meleeAnimation1 = Animation.create(15);
     public final Animation meleeAnimation2 = Animation.create(15);
@@ -80,7 +80,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
 
     @Override
     protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
-        return dimensions.height * 0.88f;
+        return dimensions.height * 0.92f;
     }
 
     @Override
@@ -200,11 +200,11 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
 
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficultyIn) {
-        CareerType careerType = this.getVariant();
-        this.setItemSlot(EquipmentSlot.MAINHAND, careerType.holdItems[randomSource.nextInt(careerType.holdItems.length)].getDefaultInstance());
+        ClassType classType = this.getVariant();
+        this.setItemSlot(EquipmentSlot.MAINHAND, classType.holdItems[randomSource.nextInt(classType.holdItems.length)].getDefaultInstance());
     }
 
-    protected abstract int getCareerId();
+    protected abstract int getClassId();
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
@@ -232,12 +232,12 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     }
 
     @Override
-    public @NotNull CareerType getVariant() {
-        return CareerType.byId(getCareerId());
+    public @NotNull EntityAbsImmortalSkeleton.ClassType getVariant() {
+        return ClassType.byId(getClassId());
     }
 
     @Override
-    public void setVariant(CareerType careerType) {
+    public void setVariant(ClassType classType) {
     }
 
     public static AttributeSupplier setAttributes(float addHealth, float addAttack, float addArmor, float addSpeed) {
@@ -265,8 +265,8 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         return false;
     }
 
-    public boolean checkHoldItemIsCareerWeapon(CareerType... careerType) {
-        for (CareerType type : careerType) {
+    public boolean checkHoldItemIsCareerWeapon(ClassType... classType) {
+        for (ClassType type : classType) {
             if (this.getVariant() == type) {
                 for (Item holdItem : type.holdItems) {
                     if (this.getMainHandItem().is(holdItem)) {
@@ -279,7 +279,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     }
 
     public boolean checkConformCareerWeapon() {
-        return this.getVariant() == CareerType.NONE || !this.checkHoldItemIsCareerWeapon(this.getVariant());
+        return this.getVariant() == ClassType.NONE || !this.checkHoldItemIsCareerWeapon(this.getVariant());
     }
 
     protected <T extends EntityAbsImmortalSkeleton & RangedAttackMob> void addRangeAI(T entity) {
@@ -341,7 +341,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         }
     }
 
-    public enum CareerType implements StringRepresentable {
+    public enum ClassType implements StringRepresentable {
         NONE(-1, "none", 1.15F, Items.AIR, ItemInit.IMMORTAL_BONE.get()),
         MAGE(0, "mage", 1.15F, Items.AIR),
         ARCHER(1, "archer", 1.2F, Items.BOW, Items.CROSSBOW),
@@ -349,7 +349,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         KNIGHT(3, "knight", 1.25F, ItemInit.IMMORTAL_AXE.get(), ItemInit.IMMORTAL_SWORD.get(), Items.BOW, Items.CROSSBOW),
         ;
 
-        CareerType(int id, String name, float scale, Item... holdItems) {
+        ClassType(int id, String name, float scale, Item... holdItems) {
             this.id = id;
             this.name = name;
             this.scale = scale;
@@ -360,9 +360,9 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         public final String name;
         public final float scale;
         public final Item[] holdItems;
-        private static final IntFunction<CareerType> BY_ID = ByIdMap.sparse(c -> c.id, values(), NONE);
+        private static final IntFunction<ClassType> BY_ID = ByIdMap.sparse(c -> c.id, values(), NONE);
 
-        public static CareerType byId(int id) {
+        public static ClassType byId(int id) {
             return BY_ID.apply(id);
         }
 

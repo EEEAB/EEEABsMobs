@@ -115,7 +115,7 @@ public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements R
 
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficultyIn) {
-        this.setItemSlot(EquipmentSlot.MAINHAND, randomSource.nextFloat() < 0.2F ? CareerType.KNIGHT.holdItems[0].getDefaultInstance() : CareerType.KNIGHT.holdItems[1].getDefaultInstance());
+        this.setItemSlot(EquipmentSlot.MAINHAND, randomSource.nextFloat() < 0.2F ? ClassType.KNIGHT.holdItems[0].getDefaultInstance() : ClassType.KNIGHT.holdItems[1].getDefaultInstance());
         this.setDropChance(EquipmentSlot.MAINHAND, 0);
         if (randomSource.nextFloat() < 0.2F) {
             this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.SHIELD));
@@ -151,8 +151,8 @@ public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements R
     }
 
     @Override
-    protected int getCareerId() {
-        return CareerType.KNIGHT.id;
+    protected int getClassId() {
+        return ClassType.KNIGHT.id;
     }
 
     @Override
@@ -181,7 +181,7 @@ public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements R
         double range = this.getAttributeValue(Attributes.FOLLOW_RANGE);
         AABB aabb = AABB.unitCubeFromLowerCorner(this.position()).inflate(range, 5.0D, range);
         if (getTarget() != null) {
-            for (EntityAbsImmortalSkeleton skeleton : this.level().getEntitiesOfClass(EntityAbsImmortalSkeleton.class, aabb, skeleton -> CareerType.KNIGHT != skeleton.getVariant() && CareerType.MAGE != skeleton.getVariant())) {
+            for (EntityAbsImmortalSkeleton skeleton : this.level().getEntitiesOfClass(EntityAbsImmortalSkeleton.class, aabb, skeleton -> ClassType.KNIGHT != skeleton.getVariant() && ClassType.MAGE != skeleton.getVariant())) {
                 this.level().broadcastEntityEvent(skeleton, (byte) 12);
                 skeleton.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 200, 0), this);
             }
