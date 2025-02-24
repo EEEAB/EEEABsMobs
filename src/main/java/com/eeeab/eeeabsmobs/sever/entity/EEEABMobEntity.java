@@ -58,7 +58,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
     public EEEABMobEntity(EntityType<? extends EEEABMobEntity> type, Level level) {
         super(type, level);
         this.xpReward = this.getMobLevel().getXp();
-        this.intervalProtector = new DamageAdaptation(50, 9, 0.35F, 0.9995F, true).setAdaptBypassesDamage(true);
+        this.intervalProtector = new DamageAdaptation(1, 9, 0.35F, 0.9995F).adaptBypassesDamage().intervalProtector();
         //加载配置文件并修改值
         EMConfigHandler.AttributeConfig config = this.getAttributeConfig();
         if (config != null) {

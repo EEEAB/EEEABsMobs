@@ -3,7 +3,6 @@ package com.eeeab.eeeabsmobs.sever.entity.util.damage;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
@@ -18,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 伤害适应
  *
  * @author EEEAB
- * @version 1.7
+ * @version 1.8
  */
 public class DamageAdaptation {
     /**
@@ -38,18 +37,20 @@ public class DamageAdaptation {
      */
     private final float maxAdaptFactor;
     /**
-     * 是否适应相同类型生物
+     * 适应绕过伤害上限的伤害(例如:虚空与指令伤害)
      */
-    private final boolean adaptsSameTypeMobs;
-    private final Map<String, DamageInfo> adaptMap = new ConcurrentHashMap<>();
     private boolean adaptBypassesDamage;
+    /**
+     * 是否为帧伤保护
+     */
+    private boolean intervalProtectorFlag;
+    private final Map<String, DamageInfo> adaptMap = new ConcurrentHashMap<>();
 
-    public DamageAdaptation(int adaptDamageTypesCount, int resetCountdown, float singleAdaptFactor, float maxAdaptFactor, boolean adaptsSameTypeMobs) {
+    public DamageAdaptation(int adaptDamageTypesCount, int resetCountdown, float singleAdaptFactor, float maxAdaptFactor) {
         this.adaptDamageTypesCount = adaptDamageTypesCount;
         this.resetCountdown = resetCountdown;
         this.singleAdaptFactor = singleAdaptFactor;
         this.maxAdaptFactor = maxAdaptFactor;
-        this.adaptsSameTypeMobs = adaptsSameTypeMobs;
     }
 
     public DamageAdaptation(EMConfigHandler.DamageSourceAdaptConfig config) {
@@ -58,21 +59,29 @@ public class DamageAdaptation {
         this.singleAdaptFactor = config.singleAdaptFactor.get().floatValue();
         this.maxAdaptFactor = config.maxAdaptFactor.get().floatValue();
         this.adaptBypassesDamage = config.adaptBypassesDamage.get();
-        this.adaptsSameTypeMobs = config.adaptsSameTypeMobs;
     }
 
-    public DamageAdaptation setAdaptBypassesDamage(boolean adaptBypassesDamage) {
-        this.adaptBypassesDamage = adaptBypassesDamage;
+    public DamageAdaptation adaptBypassesDamage() {
+        this.adaptBypassesDamage = true;
+        return this;
+    }
+
+    public DamageAdaptation intervalProtector() {
+        this.intervalProtectorFlag = true;
         return this;
     }
 
     public float damageAfterAdaptingOnce(LivingEntity entity, @Nullable DamageSource source, float amount) {
         //检查是否适应伤害
         if (maxAdaptFactor <= 0F || singleAdaptFactor <= 0F) return amount;
+        String key;
+        if (intervalProtectorFlag) {
+            key = "interval_protector";
+        } else {
+            key = getKey(source, adaptBypassesDamage);
+        }
+        if (key == null) return amount;
         try {
-            String key = getKey(source, adaptsSameTypeMobs, adaptBypassesDamage);
-            if (key == null) return amount;
-
             DamageInfo info = adaptMap.getOrDefault(key, null);
             long tickStamp = entity.tickCount;
             if (info != null) {
@@ -99,9 +108,8 @@ public class DamageAdaptation {
         return amount;
     }
 
-
     public float getAdaptFactorTotalBySource(LivingEntity entity, @Nullable DamageSource source) {
-        String key = getKey(source, adaptsSameTypeMobs, adaptBypassesDamage);
+        String key = getKey(source, adaptBypassesDamage);
         if (key == null) return -1F;
         DamageInfo damageInfo = adaptMap.get(key);
         if (damageInfo != null) {
@@ -122,7 +130,7 @@ public class DamageAdaptation {
         adaptMap.clear();
     }
 
-    private static @Nullable String getKey(@Nullable DamageSource source, boolean adaptsSameTypeMobs, boolean adaptBypassesDamage) {
+    private static @Nullable String getKey(@Nullable DamageSource source, boolean adaptBypassesDamage) {
         if (source == null) {
             return "unknown_source";
         } else {
@@ -132,11 +140,14 @@ public class DamageAdaptation {
                 return spliceCharacters(source.type().msgId(), "unknown_entity");
             } else if (source.getEntity() != null) {
                 Entity entity = source.getEntity();
-                String id = adaptsSameTypeMobs ? entity.getType().getDescriptionId() : entity.getStringUUID();
+                String id = entity.getType().getDescriptionId();
                 String key = id;
                 if (entity instanceof Player player) {
-                    InteractionHand hand = player.getUsedItemHand();
-                    key = spliceCharacters(id, player.getItemInHand(hand).getItem().getDescriptionId());
+                    if (source.getEntity() == source.getDirectEntity()) {
+                        key = spliceCharacters(id, player.getMainHandItem().getDescriptionId());
+                    } else {
+                        key = spliceCharacters(id, player.getItemInHand(player.getUsedItemHand()).getDescriptionId());
+                    }
                 }
                 return key;
             } else {
