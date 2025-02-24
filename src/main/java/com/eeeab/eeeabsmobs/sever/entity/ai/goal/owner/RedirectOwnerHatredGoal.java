@@ -8,14 +8,13 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RedirectOwnerHatredGoal<T extends Mob & VenerableEntity<T>> extends Goal {
     private final T venerable;
     private final float searchRange;
     private final int randomCooling;
-    private final List<Mob> mandatoryTarget = new ArrayList<>();
+    private List<? extends Mob> mandatoryTargets = List.of();
 
     public RedirectOwnerHatredGoal(T venerable, float searchRange) {
         this.venerable = venerable;
@@ -30,26 +29,21 @@ public class RedirectOwnerHatredGoal<T extends Mob & VenerableEntity<T>> extends
             LivingEntity target = owner.getTarget();
             if (!owner.isAlive() || target == null) return false;
             if (this.venerable.tickCount % randomCooling == 0) return false;
-            this.mandatoryTarget.addAll(this.venerable.getNearByEntitiesByClass(Mob.class, this.venerable.level(), this.venerable, searchRange, searchRange, searchRange, searchRange)
+            this.mandatoryTargets = this.venerable.getNearByEntitiesByClass(Mob.class, this.venerable.level(), this.venerable, searchRange, searchRange, searchRange, searchRange)
                     .stream().filter(mob -> mob != owner && !target.getType().is(EMTagKey.RESISTS_FORCED_CHANGE_TARGET) && mob.getTarget() == owner)
                     .limit(Mth.floor(searchRange * 2))//查找上限
-                    .toList());
+                    .toList();
         }
-        return !mandatoryTarget.isEmpty();
+        return !mandatoryTargets.isEmpty();
     }
 
     @Override
     public void start() {
-        try {
-            this.mandatoryTarget.stream().filter(Mob::isAlive).forEach(mob -> {
-                        mob.setTarget(this.venerable);
-                        if (mob.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET)) {
-                            mob.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, this.venerable);
-                        }
-                    }
-            );
-        } finally {
-            this.mandatoryTarget.clear();
+        for (Mob mob : this.mandatoryTargets) {
+            mob.setTarget(this.venerable);
+            if (mob.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET)) {
+                mob.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, this.venerable);
+            }
         }
     }
 }
