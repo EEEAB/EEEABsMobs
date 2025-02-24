@@ -181,7 +181,8 @@ public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements R
         double range = this.getAttributeValue(Attributes.FOLLOW_RANGE);
         AABB aabb = AABB.unitCubeFromLowerCorner(this.position()).inflate(range, 5.0D, range);
         if (getTarget() != null) {
-            for (EntityAbsImmortalSkeleton skeleton : this.level().getEntitiesOfClass(EntityAbsImmortalSkeleton.class, aabb, skeleton -> ClassType.KNIGHT != skeleton.getVariant() && ClassType.MAGE != skeleton.getVariant())) {
+            for (EntityAbsImmortalSkeleton skeleton : this.level().getEntitiesOfClass(EntityAbsImmortalSkeleton.class, aabb,
+                    skeleton -> ClassType.KNIGHT != skeleton.getVariant() && ClassType.MAGE != skeleton.getVariant() && isAlliedTo(skeleton))) {
                 this.level().broadcastEntityEvent(skeleton, (byte) 12);
                 skeleton.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 200, 0), this);
             }
@@ -195,9 +196,8 @@ public class EntityImmortalKnight extends EntityAbsImmortalSkeleton implements R
         if (getTarget() != null) {
             this.level().getEntitiesOfClass(EntityAbsImmortalSkeleton.class, aabb, LivingEntity::isAlive).
                     stream().
-                    filter(immortalSkeleton -> immortalSkeleton.getTarget() == null && !isAlliedTo(getTarget())).
-                    forEach(immortalSkeleton -> immortalSkeleton.setTarget(getTarget())
-                    );
+                    filter(immortalSkeleton -> immortalSkeleton.getTarget() == null && isAlliedTo(immortalSkeleton)).
+                    forEach(immortalSkeleton -> immortalSkeleton.setTarget(getTarget()));
         }
     }
 }

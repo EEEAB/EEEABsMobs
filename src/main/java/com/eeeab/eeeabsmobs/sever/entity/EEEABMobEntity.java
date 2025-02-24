@@ -392,7 +392,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
      */
     public <T extends Entity> List<T> getNearByEntities(Class<T> entityClass, double x, double y, double z, double radius) {
         return level().getEntitiesOfClass(entityClass, getBoundingBox().inflate(x, y, z), targetEntity -> targetEntity != this &&
-                distanceTo(targetEntity) <= radius + targetEntity.getBbWidth() / 2f && targetEntity.getY() <= getY() + y);
+                distanceTo(targetEntity) <= radius + targetEntity.getBbWidth() / 2f && !this.isAlliedTo(targetEntity));
     }
 
     public void rangeAttack(double rangeX, double height, double rangeZ, double radius, @Nullable Consumer<LivingEntity> hitMethodProvider) {

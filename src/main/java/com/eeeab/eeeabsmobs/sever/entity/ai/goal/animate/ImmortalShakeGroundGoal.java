@@ -21,12 +21,6 @@ public class ImmortalShakeGroundGoal extends AnimationAI<EntityImmortal> {
     }
 
     @Override
-    public void stop() {
-        entity.canInterruptsAnimation = false;
-        super.stop();
-    }
-
-    @Override
     protected boolean test(Animation animation) {
         return animation == entity.smashGround1Animation || animation == entity.smashGround2Animation || animation == entity.smashGround3Animation || animation == entity.shoryukenAnimation;
     }
@@ -46,8 +40,7 @@ public class ImmortalShakeGroundGoal extends AnimationAI<EntityImmortal> {
             else if (tick == 19) entity.playSound(SoundInit.IMMORTAL_SHAKE_GROUND.get(), 1F, 1F);
             else if (tick == 21) {
                 boolean onGround = entity.onGround();
-                for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), entity.getPosOffset(false, 1.5F, 0F, -1F), 3.6D, 0F, false, 12)) {
-                    if (entityHit == entity) continue;
+                for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity, entity.getPosOffset(false, 1.5F, 0F, -1F), 3.6D, 0F, false, 12)) {
                     boolean hit = entity.immortalHurtTarget(entityHit, false, false, false, false, 1.2F, 0.9F);
                     entity.disableShield(entityHit, 50);
                     entity.knockBack(entityHit, onGround ? hit ? 0.5 : 0.25 : 0.1, onGround ? hit ? 0.3 : 0.15 : -1, true, false);
@@ -62,8 +55,7 @@ public class ImmortalShakeGroundGoal extends AnimationAI<EntityImmortal> {
             if (tick == 12) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.7F, entity.getVoicePitch() + 0.1F);
             else if (tick == 16) entity.playSound(SoundInit.IMMORTAL_SHAKE_GROUND.get(), 1.2F, 1F);
             else if (tick == 17) {
-                for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), entity.getPosOffset(false, 1.5F, 0F, -1F), 4D, -0.01F, true, 35)) {
-                    if (entityHit == entity) continue;
+                for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity, entity.getPosOffset(false, 1.5F, 0F, -1F), 4D, -0.01F, true, 35)) {
                     entity.immortalHurtTarget(entityHit, false, false, false, false, 1.1F, 1.1F);
                     entity.disableShield(entityHit, 50);
                     entity.knockBack(entityHit, 0.5, 0.05, true, false);
@@ -83,7 +75,7 @@ public class ImmortalShakeGroundGoal extends AnimationAI<EntityImmortal> {
                         hit.setDeltaMovement(hit.getDeltaMovement().add(0, 0.025 * tickFactor, 0));
                     }
                 }, 0.1F + 0.65F * tickFactor);
-            } else if (tick == 75) entity.canInterruptsAnimation = true;
+            }
         } else if (animation == entity.smashGround3Animation) {
             if (entity.blockEntity != null) target = entity.blockEntity;
             if (tick < 20 && target != null) {
@@ -144,8 +136,7 @@ public class ImmortalShakeGroundGoal extends AnimationAI<EntityImmortal> {
             else if (tick == 44) entity.playSound(SoundInit.IMMORTAL_SHORYUKEN.get(), 0.6F, 0.9F);
             else if (tick == 46) entity.playSound(SoundInit.IMMORTAL_SHAKE_GROUND.get(), 1.2F, 1.2F);
             else if (tick == 47) {
-                for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), entity.getPosOffset(false, 4.5F, 0F, -1F), 2.46D, 0F, false, 10)) {
-                    if (entityHit == entity) continue;
+                for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity, entity.getPosOffset(false, 4.5F, 0F, -1F), 2.46D, 0F, false, 10)) {
                     int preInvulnerableTime = entityHit.invulnerableTime;
                     entityHit.invulnerableTime = 0;
                     boolean hit = entity.immortalHurtTarget(entityHit, false, false, false, false, 1.2F, 1.0F);
@@ -161,8 +152,7 @@ public class ImmortalShakeGroundGoal extends AnimationAI<EntityImmortal> {
     }
 
     private void smashGround(Vec3 pos) {
-        for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), pos, 2.8D, 0F, false, 5)) {
-            if (entityHit == entity) continue;
+        for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity, pos, 2.8D, 0F, false, 5)) {
             entity.immortalHurtTarget(entityHit, true, false, true, false, 1.1F, 1.2F);
             entity.knockBack(entityHit, 0.3, 0.1, true, false);
         }

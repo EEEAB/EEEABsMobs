@@ -28,7 +28,7 @@ public class ShockWaveUtils {
     /**
      * 通用撼地攻击
      *
-     * @param level           服务端
+     * @param attacker        攻击者
      * @param center          生成中心坐标
      * @param radius          生成半径
      * @param baseBouncing    基础起伏
@@ -36,7 +36,8 @@ public class ShockWaveUtils {
      * @param defaultLifeTime 默认存在时长
      * @return 包含在范围内的实体集合
      */
-    public static List<LivingEntity> doRingShockWave(Level level, Vec3 center, double radius, float baseBouncing, boolean customLife, int defaultLifeTime) {
+    public static List<LivingEntity> doRingShockWave(LivingEntity attacker, Vec3 center, double radius, float baseBouncing, boolean customLife, int defaultLifeTime) {
+        Level level = attacker.level();
         Vec3 closestEdge = new Vec3(Math.round(center.x), Math.floor(center.y), Math.round(center.z));
         Vec3 centerOfBlock = new Vec3(Math.floor(center.x) + 0.5D, Math.floor(center.y), Math.floor(center.z) + 0.5D);
         center = (closestEdge.distanceToSqr(center) < centerOfBlock.distanceToSqr(center)) ? closestEdge : centerOfBlock;
@@ -77,7 +78,7 @@ public class ShockWaveUtils {
         if (level.isClientSide) {
             return new ArrayList<>();
         }
-        return level.getEntitiesOfClass(LivingEntity.class, new AABB(xFrom, center.y - radius, zFrom, xTo, center.y + radius, zTo));
+        return level.getEntitiesOfClass(LivingEntity.class, new AABB(xFrom, center.y - radius, zFrom, xTo, center.y + radius, zTo), e -> !attacker.isAlliedTo(e));
     }
 
     /**
@@ -110,7 +111,7 @@ public class ShockWaveUtils {
             double px = attacker.getX() + vx * distance + offset * Math.cos((double) (attacker.yBodyRot + 90.0F) * Math.PI / 180.0D);
             double pz = attacker.getZ() + vz * distance + offset * Math.sin((double) (attacker.yBodyRot + 90.0F) * Math.PI / 180.0D);
             AABB aabb = new AABB(px - 1.5D, minY, pz - 1.5D, px + 1.5D, maxY, pz + 1.5D);
-            List<Entity> entities = attacker.level().getEntitiesOfClass(Entity.class, aabb, entity -> entity.isAttackable() && attacker != entity);
+            List<Entity> entities = attacker.level().getEntitiesOfClass(Entity.class, aabb, e -> e.isAttackable() && !attacker.isAlliedTo(e));
             for (Entity entity : entities) hitProvider.accept(entity);
             float factor = 1F - ((float) distance / 2F - 2F) / maxFallingDistance;
             if (continuous || attacker.getRandom().nextFloat() < 0.6F) {

@@ -331,8 +331,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
                 this.playSound(SoundInit.IMMORTAL_EXECUTIONER_DETONATION.get(), 1F + 0.5F * (i / 3F), 1.75F - (i / 3F));
                 ModParticleUtils.sphericalParticleOutburst(level(), 4F, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleTypes.SMOKE}, this, this.getBbHeight() * 0.5F, 0, 0, 1 - 0.5 * (i / 3F));
                 AABB attackRange = ModEntityUtils.makeAABBWithSize(this.getX(), this.getY(), this.getZ(), 0F, 6F, 12F, 6F);
-                for (LivingEntity hitEntity : this.level().getEntitiesOfClass(LivingEntity.class, attackRange)) {
-                    if (hitEntity == this) continue;
+                for (LivingEntity hitEntity : this.level().getEntitiesOfClass(LivingEntity.class, attackRange, e -> !this.isAlliedTo(e))) {
                     if (this.executionerHurtTarget(hitEntity)) {
                         hitEntity.setSecondsOnFire((int) (2.5 * this.getFlameStrength()));
                     }
@@ -605,7 +604,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
         if (result.getBlockHit() != null) {
             to = result.getBlockHit().getLocation();
         }
-        List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, new AABB(from, to).inflate(1.5));
+        List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, new AABB(from, to).inflate(1.5), e -> !this.isAlliedTo(e));
         for (LivingEntity entity : entities) {
             if (this == entity) {
                 continue;

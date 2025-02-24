@@ -51,8 +51,7 @@ public class ImmortalStunGoal extends AnimationAI<EntityImmortal> {
             entity.setDeltaMovement(entity.getDeltaMovement().add(Math.cos(radians) * speed, 0D, Math.sin(radians) * speed));
         } else if (tick == 13) entity.playSound(SoundInit.IMMORTAL_SHAKE_GROUND.get(), 1F, 1F);
         else if (tick == 15) {
-            for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity.level(), entity.getPosOffset(true, 1F, this.entity.getBbWidth() * 0.6F, -0.1F), 2D, 0F, false, 10)) {
-                if (entityHit == entity) continue;
+            for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity, entity.getPosOffset(true, 1F, this.entity.getBbWidth() * 0.6F, -0.1F), 2D, 0F, false, 10)) {
                 entity.immortalHurtTarget(entityHit, false, false, false, false, 1F, 0.5F);
             }
         } else if (tick == 16) entity.shakeGround(0.2F, 20F, 0.125F, 3, 2);

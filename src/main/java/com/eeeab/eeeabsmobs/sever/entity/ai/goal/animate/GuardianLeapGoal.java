@@ -74,7 +74,7 @@ public class GuardianLeapGoal extends AnimationSimpleAI<EntityNamelessGuardian> 
     private void doLeapEffect() {
         Vec3 position = entity.position();
         EntityCameraShake.cameraShake(entity.level(), position, 12F, 0.125F, 5, 0);
-        ShockWaveUtils.doRingShockWave(entity.level(), position, 2.4D, -0.04F, false, 10);
+        ShockWaveUtils.doRingShockWave(entity, position, 2.4D, -0.04F, false, 10);
     }
 
     private static Vec3 findTargetPoint(LivingEntity attacker, LivingEntity target) {
