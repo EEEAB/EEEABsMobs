@@ -275,7 +275,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
     @Override
     public void handleEntityEvent(byte id) {
         if (id == 7) {
-            AdvancedParticleBase.spawnParticle(level(), ParticleInit.GLOW.get(), this.getX(), this.getY(), this.getZ(), 0, 0, 0, true, 0, 0, 0, 0, 14, 0.63, 1, 1, 1, 1, 28, true, true, false, new ParticleComponent[]{
+            AdvancedParticleBase.spawnParticle(level(), ParticleInit.GLOW.get(), this.getX(), this.getY(), this.getZ(), 0, 0, 0, true, 0, 0, 0, 0, 14, 0.56, 0.78, 0.86, 1, 1, 28, true, true, false, new ParticleComponent[]{
                     new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, new AnimData.KeyTrack(
                             new float[]{0.0f, 0.6f, 0.6f, 0.0f},
                             new float[]{0f, 0.3f, 0.8f, 1f}
