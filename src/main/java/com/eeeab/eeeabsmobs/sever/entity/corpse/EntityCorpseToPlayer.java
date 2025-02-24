@@ -125,7 +125,7 @@ public class EntityCorpseToPlayer extends EEEABMobLibrary implements IEntity, Gl
         this.goalSelector.addGoal(2, new AnimationMeleeAI<>(this, 1.2D, 5, () -> attackAnimation1, () -> attackAnimation2, () -> attackAnimation3));
         this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(2, new ReFindPlayerGoal<>(this));
-        this.goalSelector.addGoal(3, new PlayerHatredRedirectionGoal<>(this, 12F));
+        this.goalSelector.addGoal(3, new PlayerHatredRedirectionGoal<>(this, 16F));
     }
 
     @Override
@@ -201,7 +201,7 @@ public class EntityCorpseToPlayer extends EEEABMobLibrary implements IEntity, Gl
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance instance, MobSpawnType spawnType, @Nullable SpawnGroupData groupData, @Nullable CompoundTag tag) {
-        this.countdown = 400 + this.random.nextInt(200);
+        this.countdown = 400;
         return groupData;
     }
 
