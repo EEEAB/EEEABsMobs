@@ -9,16 +9,13 @@ import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 
 import java.util.EnumSet;
-import java.util.List;
 
 public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian> {
     private final EntityNamelessGuardian entity;
@@ -105,7 +102,7 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
                     }
                 }
                 if (tick % 2 == 0) {
-                    double width = entity.getBbWidth() * 0.8;
+                    double width = entity.getBbWidth() * 1.2;
                     entity.rangeAttack(width, 5F, width, width, 120F, 120F, hitEntity -> {
                         entity.guardianHurtTarget(entity, hitEntity, 0.05F, 1.0F, baseDamageMultiplier, false, false, false);
                         double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
