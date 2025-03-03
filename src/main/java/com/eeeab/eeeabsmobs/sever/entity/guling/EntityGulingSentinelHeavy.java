@@ -26,7 +26,6 @@ import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
@@ -37,6 +36,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -439,7 +439,7 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         if (this.level().isClientSide) {
             return false;
         } else {
-            if (!source.is(EMTagKey.BYPASSES_DAMAGE_CAP)) {
+            if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
                 if (this.getAnimation() == this.electromagneticAnimation) {
                     damage *= 0.2F;
                 } else {

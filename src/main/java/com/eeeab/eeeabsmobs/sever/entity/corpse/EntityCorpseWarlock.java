@@ -36,6 +36,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -447,7 +448,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
         if (animation == teleportAnimation) {
             return false;
         } else if (animation == vampireAnimation || animation == robustAnimation) {
-            if (!source.is(EMTagKey.BYPASSES_DAMAGE_CAP)) damage *= 0.2F;
+            if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) damage *= 0.2F;
         }
         if (entity != null) {
             if (animation == babbleAnimation) this.playAnimation(this.teleportAnimation);

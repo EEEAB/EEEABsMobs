@@ -17,13 +17,13 @@ import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -257,7 +257,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
             }
             Entity entity = source.getDirectEntity();
             if (entity instanceof LivingEntity livingEntity) {
-                if (this.getAnimation() != this.getHurtAnimation() && !source.is(EMTagKey.BYPASSES_DAMAGE_CAP) && !source.is(DamageTypes.THORNS)) {
+                if (this.getAnimation() != this.getHurtAnimation() && !source.is(DamageTypeTags.AVOIDS_GUARDIAN_THORNS) && !source.is(DamageTypes.THORNS)) {
                     livingEntity.hurt(this.damageSources().thorns(this), damage * 0.2F);
                 }
                 Item item = livingEntity.getMainHandItem().getItem();

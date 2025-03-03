@@ -22,7 +22,6 @@ import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -440,7 +439,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
             }
             if (this.getAnimation() == this.detonationAnimation || this.getAnimation() == this.impactStorageAnimation)
                 damage *= 0.5F;
-            if (source.is(EMTagKey.BYPASSES_DAMAGE_CAP)) damage = preDamage;
+            if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) damage = preDamage;
         }
         return super.hurt(source, damage);
     }
