@@ -78,7 +78,7 @@ public class ShockWaveUtils {
         if (level.isClientSide) {
             return new ArrayList<>();
         }
-        return level.getEntitiesOfClass(LivingEntity.class, new AABB(xFrom, center.y - radius, zFrom, xTo, center.y + radius, zTo), e -> !attacker.isAlliedTo(e));
+        return level.getEntitiesOfClass(LivingEntity.class, new AABB(xFrom, center.y - radius, zFrom, xTo, center.y + radius, zTo), e -> e != attacker && (!attacker.isAlliedTo(e) || !EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()));
     }
 
     /**
@@ -111,7 +111,7 @@ public class ShockWaveUtils {
             double px = attacker.getX() + vx * distance + offset * Math.cos((double) (attacker.yBodyRot + 90.0F) * Math.PI / 180.0D);
             double pz = attacker.getZ() + vz * distance + offset * Math.sin((double) (attacker.yBodyRot + 90.0F) * Math.PI / 180.0D);
             AABB aabb = new AABB(px - 1.5D, minY, pz - 1.5D, px + 1.5D, maxY, pz + 1.5D);
-            List<Entity> entities = attacker.level().getEntitiesOfClass(Entity.class, aabb, e -> e.isAttackable() && !attacker.isAlliedTo(e));
+            List<Entity> entities = attacker.level().getEntitiesOfClass(Entity.class, aabb, e -> e != attacker && e.isAttackable() && (!attacker.isAlliedTo(e) || !EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()));
             for (Entity entity : entities) hitProvider.accept(entity);
             float factor = 1F - ((float) distance / 2F - 2F) / maxFallingDistance;
             if (continuous || attacker.getRandom().nextFloat() < 0.6F) {
