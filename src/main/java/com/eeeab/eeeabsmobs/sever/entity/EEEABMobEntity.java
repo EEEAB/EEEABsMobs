@@ -3,19 +3,20 @@ package com.eeeab.eeeabsmobs.sever.entity;
 import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.entity.util.damage.DamageAdaptation;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
-import com.eeeab.eeeabsmobs.sever.entity.util.damage.DamageAdaptation;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -83,43 +84,6 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
     }
 
     @Override
-    public boolean isInvulnerableTo(DamageSource damageSource) {
-        return super.isInvulnerableTo(damageSource);
-    }
-
-    /**
-     * @return 是否免疫爆炸
-     */
-    @Override
-    public boolean ignoreExplosion() {
-        return super.ignoreExplosion();
-    }
-
-    /**
-     * @return 是否在实体上渲染着火效果
-     */
-    @Override
-    public boolean displayFireAnimation() {
-        return super.displayFireAnimation();
-    }
-
-    /**
-     * @return 是否免疫摔伤
-     */
-    @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource damageSource) {
-        return super.causeFallDamage(fallDistance, multiplier, damageSource);
-    }
-
-    /**
-     * @return 是否可以被添加药水效果
-     */
-    @Override
-    public boolean addEffect(MobEffectInstance effectInstance, @Nullable Entity entity) {
-        return super.addEffect(effectInstance, entity);
-    }
-
-    @Override
     public void tick() {
         super.tick();
         frame++;
@@ -141,7 +105,6 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
         }
     }
 
-
     @Override
     protected void customServerAiStep() {
         super.customServerAiStep();
@@ -155,22 +118,6 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
             this.lastDamageSource = null;
         }
         super.setHealth(health);
-    }
-
-    protected float getNewHealthByCap(float health, EMConfigHandler.DamageCapConfig config) {
-        if (config != null) {
-            float oldDamage = this.getHealth() - health;
-            float newDamage = oldDamage;
-            float damageCap = config.damageCap.get().floatValue();
-            if (this.lastDamageSource == null) {
-                newDamage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(Math.min(oldDamage, damageCap), this.getArmorValue(), (float) this.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1F);
-            } else if (!this.lastDamageSource.is(EMTagKey.BYPASSES_DAMAGE_CAP)) {
-                newDamage = Math.min(oldDamage, damageCap);
-            }
-            if (this.intervalProtect()) newDamage = this.intervalProtector.damageAfterAdaptingOnce(this, this.lastDamageSource, newDamage);
-            health = this.getHealth() - newDamage;
-        }
-        return health;
     }
 
     @Override
@@ -240,18 +187,15 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
     public boolean doHurtTarget(Entity entity, float damageMultiplier, float knockBackMultiplier, boolean canDisableShield) {
         float f = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * damageMultiplier;
         float f1 = (float) this.getAttributeValue(Attributes.ATTACK_KNOCKBACK) * knockBackMultiplier;
-        if (entity instanceof LivingEntity) {
+        if (entity instanceof LivingEntity livingEntity) {
             f += EnchantmentHelper.getDamageBonus(this.getMainHandItem(), ((LivingEntity) entity).getMobType());
+            f += getDamageAmountByTargetHealthPct(livingEntity);
             f1 += (float) EnchantmentHelper.getKnockbackBonus(this);
         }
 
         int i = EnchantmentHelper.getFireAspect(this);
         if (i > 0) {
             entity.setSecondsOnFire(i * 4);
-        }
-
-        if (entity instanceof LivingEntity livingEntity) {
-            f += getDamageAmountByTargetHealthPct(livingEntity);
         }
 
         boolean flag = entity.hurt(this.damageSources().mobAttack(this), f);
@@ -355,30 +299,6 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
         }
     }
 
-    /**
-     * 初始化NBT数据
-     */
-    @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-    }
-
-    /**
-     * 退出时保存自定义NBT(不然数据将会重置)
-     */
-    @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-    }
-
-    /**
-     * 加载世界时读写自定义NBT
-     */
-    @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-    }
-
     public List<LivingEntity> getNearByLivingEntities(double range) {
         return this.getNearByEntities(LivingEntity.class, range, range, range, range);
     }
@@ -420,6 +340,25 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
      */
     public double getAngleBetweenEntities(Entity attacker, Entity target) {
         return Math.atan2(target.getZ() - attacker.getZ(), target.getX() - attacker.getX()) * (180 / Math.PI) + 90;
+    }
+
+    /**
+     * 根据配置计算限伤后的伤害
+     */
+    protected float getNewHealthByCap(float health, EMConfigHandler.DamageCapConfig config) {
+        if (config != null) {
+            float oldDamage = this.getHealth() - health;
+            float newDamage = oldDamage;
+            float damageCap = config.damageCap.get().floatValue();
+            if (this.lastDamageSource == null) {
+                newDamage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(Math.min(oldDamage, damageCap), this.getArmorValue(), (float) this.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1F);
+            } else if (!this.lastDamageSource.is(EMTagKey.BYPASSES_DAMAGE_CAP)) {
+                newDamage = Math.min(oldDamage, damageCap);
+            }
+            if (this.intervalProtect()) newDamage = this.intervalProtector.damageAfterAdaptingOnce(this, this.lastDamageSource, newDamage);
+            health = this.getHealth() - newDamage;
+        }
+        return health;
     }
 
     /**
