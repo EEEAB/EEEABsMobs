@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner;
 
-import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
+import com.eeeab.eeeabsmobs.sever.entity.SummoningEntity;
 import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,7 +10,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 
 import java.util.List;
 
-public class RedirectOwnerHatredGoal<T extends Mob & VenerableEntity<T>> extends Goal {
+public class RedirectOwnerHatredGoal<T extends Mob & SummoningEntity<T>> extends Goal {
     private final T venerable;
     private final float searchRange;
     private final int randomCooling;

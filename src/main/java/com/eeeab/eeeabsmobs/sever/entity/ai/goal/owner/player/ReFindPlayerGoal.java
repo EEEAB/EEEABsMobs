@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player;
 
-import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
+import com.eeeab.eeeabsmobs.sever.entity.SummoningEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.UUID;
 
-public class ReFindPlayerGoal<T extends Mob & VenerableEntity<Player>> extends Goal {
+public class ReFindPlayerGoal<T extends Mob & SummoningEntity<Player>> extends Goal {
     private final RandomSource random = RandomSource.create();
     private final T target;
 

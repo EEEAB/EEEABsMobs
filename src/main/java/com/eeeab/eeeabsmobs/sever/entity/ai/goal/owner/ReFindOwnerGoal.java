@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
+import com.eeeab.eeeabsmobs.sever.entity.SummoningEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -11,7 +11,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import java.util.List;
 import java.util.UUID;
 
-public class ReFindOwnerGoal<T extends Mob & VenerableEntity<T>> extends Goal {
+public class ReFindOwnerGoal<T extends Mob & SummoningEntity<T>> extends Goal {
     private final RandomSource random = RandomSource.create();
     private final Class<? extends Mob> ownerClass;
     private final double findRadius;

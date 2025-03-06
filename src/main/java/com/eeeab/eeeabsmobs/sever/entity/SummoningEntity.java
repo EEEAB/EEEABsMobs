@@ -11,8 +11,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public interface VenerableEntity<T extends LivingEntity> {
-
+public interface SummoningEntity<T extends LivingEntity> {
     @Nullable
     T getOwner();
 

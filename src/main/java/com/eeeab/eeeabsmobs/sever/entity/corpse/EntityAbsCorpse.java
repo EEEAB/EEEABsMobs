@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.sever.entity.corpse;
 
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
-import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
+import com.eeeab.eeeabsmobs.sever.entity.SummoningEntity;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public abstract class EntityAbsCorpse extends EEEABMobLibrary implements Enemy, GlowEntity, VenerableEntity<EntityAbsCorpse> {
+public abstract class EntityAbsCorpse extends EEEABMobLibrary implements Enemy, GlowEntity, SummoningEntity<EntityAbsCorpse> {
     private UUID ownerUUID;
     private boolean isSummon;
     boolean valuable;

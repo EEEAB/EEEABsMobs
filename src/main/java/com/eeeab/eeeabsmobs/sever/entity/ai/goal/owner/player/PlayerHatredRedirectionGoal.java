@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player;
 
-import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
+import com.eeeab.eeeabsmobs.sever.entity.SummoningEntity;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
 
-public class PlayerHatredRedirectionGoal<T extends Mob & VenerableEntity<Player>> extends Goal {
+public class PlayerHatredRedirectionGoal<T extends Mob & SummoningEntity<Player>> extends Goal {
     private final T venerable;
     private final float searchRange;
     private final int randomCooling;

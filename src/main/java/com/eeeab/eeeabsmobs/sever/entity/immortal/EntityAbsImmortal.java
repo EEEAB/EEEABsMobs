@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.sever.entity.immortal;
 
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.VenerableEntity;
+import com.eeeab.eeeabsmobs.sever.entity.SummoningEntity;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.ModMobType;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy, GlowEntity, VenerableEntity<EntityAbsImmortal> {
+public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy, GlowEntity, SummoningEntity<EntityAbsImmortal> {
     protected int attackTick;
     protected boolean attacking;
     private boolean isSummon;

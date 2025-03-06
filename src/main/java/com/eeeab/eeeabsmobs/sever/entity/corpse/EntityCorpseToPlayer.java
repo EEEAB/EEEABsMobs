@@ -49,7 +49,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class EntityCorpseToPlayer extends EEEABMobLibrary implements IEntity, GlowEntity, VenerableEntity<Player> {
+public class EntityCorpseToPlayer extends EEEABMobLibrary implements IEntity, GlowEntity, SummoningEntity<Player> {
     public final Animation attackAnimation1 = Animation.create(15);
     public final Animation attackAnimation2 = Animation.create(15);
     public final Animation attackAnimation3 = Animation.create(15);
