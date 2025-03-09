@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.util;
 
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.effects.EntityFallingBlock;
 import com.eeeab.eeeabsmobs.sever.util.EMMathUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -14,7 +15,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -38,6 +39,7 @@ public class ShockWaveUtils {
      */
     public static List<LivingEntity> doRingShockWave(LivingEntity attacker, Vec3 center, double radius, float baseBouncing, boolean customLife, int defaultLifeTime) {
         Level level = attacker.level();
+        if (level.isClientSide) return Collections.emptyList();
         Vec3 closestEdge = new Vec3(Math.round(center.x), Math.floor(center.y), Math.round(center.z));
         Vec3 centerOfBlock = new Vec3(Math.floor(center.x) + 0.5D, Math.floor(center.y), Math.floor(center.z) + 0.5D);
         center = (closestEdge.distanceToSqr(center) < centerOfBlock.distanceToSqr(center)) ? closestEdge : centerOfBlock;
@@ -48,9 +50,8 @@ public class ShockWaveUtils {
         int zTo = (int) Math.ceil(center.z + radius);
         for (int i = zFrom; i <= zTo; i++) {
             for (int j = xFrom; j <= xTo; j++) {
-                Vec2 vec2 = new Vec2(j, i);
                 double y = center.y;
-                BlockPos pos = new BlockPos.MutableBlockPos(vec2.x(), checkSpawnY(level, vec2.x(), vec2.z(), y), vec2.z());
+                BlockPos pos = new BlockPos.MutableBlockPos(j, checkSpawnY(level, j, i, y), i);
                 Vec3 blockCenter = new Vec3(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
                 Vec3 centerToBlock = blockCenter.subtract(center);
                 double distance = centerToBlock.horizontalDistance();
@@ -59,24 +60,19 @@ public class ShockWaveUtils {
                     continue;
                 }
                 double bounceExponent = Math.min(1D / (radius * radius), 0.1D) * (1D + distanceToMax / radius * 2D);
-                if (!level.isClientSide) {
-                    Vec3 rotAxis = new Vec3(0D, -1D, 0D).cross(centerToBlock).normalize();
-                    Vector3f axis = new Vector3f((float) rotAxis.x, (float) rotAxis.y, (float) rotAxis.z);
-                    Quaternionf rotator = EMMathUtils.rotation(axis, (float) (distance / radius) * 15F + level.random.nextFloat() * 10F - 5F, true);
-                    rotator.mul(EMMathUtils.XP.rotationDegrees(level.random.nextFloat() * 12F - 6F));
-                    rotator.mul(EMMathUtils.YP.rotationDegrees(level.random.nextFloat() * 40F - 20F));
-                    rotator.mul(EMMathUtils.ZP.rotationDegrees(level.random.nextFloat() * 12F - 6F));
-                    float bouncing = (float) (baseBouncing + distance * bounceExponent);
-                    int liftTime = defaultLifeTime;
-                    if (!customLife) {
-                        liftTime = defaultLifeTime + level.random.nextInt((int) radius * defaultLifeTime);
-                    }
-                    ModEntityUtils.spawnFallingBlockByPos((ServerLevel) level, pos, rotator, liftTime, bouncing);
+                Vec3 rotAxis = new Vec3(0D, -1D, 0D).cross(centerToBlock).normalize();
+                Vector3f axis = new Vector3f((float) rotAxis.x, (float) rotAxis.y, (float) rotAxis.z);
+                Quaternionf rotator = EMMathUtils.rotation(axis, (float) (distance / radius) * 15F + level.random.nextFloat() * 10F - 5F, true);
+                rotator.mul(EMMathUtils.XP.rotationDegrees(level.random.nextFloat() * 12F - 6F));
+                rotator.mul(EMMathUtils.YP.rotationDegrees(level.random.nextFloat() * 40F - 20F));
+                rotator.mul(EMMathUtils.ZP.rotationDegrees(level.random.nextFloat() * 12F - 6F));
+                float bouncing = (float) (baseBouncing + distance * bounceExponent);
+                int liftTime = defaultLifeTime;
+                if (!customLife) {
+                    liftTime = defaultLifeTime + level.random.nextInt((int) radius * defaultLifeTime);
                 }
+                spawnFallingBlockByPos((ServerLevel) level, pos, rotator, liftTime, bouncing);
             }
-        }
-        if (level.isClientSide) {
-            return new ArrayList<>();
         }
         return level.getEntitiesOfClass(LivingEntity.class, new AABB(xFrom, center.y - radius, zFrom, xTo, center.y + radius, zTo), e -> e != attacker && (!attacker.isAlliedTo(e) || !EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()));
     }
@@ -96,7 +92,8 @@ public class ShockWaveUtils {
      * @param knockBackStrength  击飞方块强度 !randomOffset生效
      */
     public static void doAdvShockWave(LivingEntity attacker, int distance, float maxFallingDistance, double spreadArc, double offset, double attackY, boolean randomOffset, boolean continuous, Consumer<Entity> hitProvider, float knockBackStrength) {
-        ServerLevel level = (ServerLevel) attacker.level();
+        Level level = attacker.level();
+        if (level.isClientSide) return;
         double perpFacing = attacker.yBodyRot * (Math.PI / 180);
         double facingAngle = perpFacing + Math.PI / 2;
         double spread = Math.PI * spreadArc;
@@ -118,12 +115,12 @@ public class ShockWaveUtils {
                 int hitX = Mth.floor(px);
                 int hitZ = Mth.floor(pz);
                 BlockPos pos = new BlockPos.MutableBlockPos(hitX, checkSpawnY(level, hitX, hitZ, hitY), hitZ);
-                if (randomOffset) ModEntityUtils.spawnFallingBlockByPos(level, pos, factor);
+                if (randomOffset) spawnFallingBlockByPos((ServerLevel) level, pos, factor);
                 else {
                     double d0 = hitX - attacker.getX();
                     double d1 = hitZ - attacker.getZ();
                     double d2 = Math.max(d0 * d0 + d1 * d1, 0.001);
-                    ModEntityUtils.spawnFallingBlockByPos(level, pos, d0 / d2 * knockBackStrength, d1 / d2 * knockBackStrength);
+                    spawnFallingBlockByPos((ServerLevel) level, pos, d0 / d2 * knockBackStrength, d1 / d2 * knockBackStrength);
                 }
             }
         }
@@ -149,7 +146,39 @@ public class ShockWaveUtils {
         return y;
     }
 
+    private static BlockState checkSpawnY(ServerLevel level, BlockPos pos) {
+        if (!EMConfigHandler.COMMON.ENTITY.enableSpawnFallingBlock.get()) return null;
+        BlockPos abovePos = new BlockPos(pos).above();
+        BlockState block = level.getBlockState(pos);
+        BlockState blockAbove = level.getBlockState(abovePos);
+        boolean flag = !block.isAir() && block.isRedstoneConductor(level, pos) && !block.hasBlockEntity() && !blockAbove.blocksMotion();
+        return flag ? block : null;
+    }
 
-    private record Vec2(float x, float z) {
+    public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos, float fallingFactor) {
+        BlockState block = checkSpawnY(level, pos);
+        if (block != null) {
+            EntityFallingBlock fallingBlock = new EntityFallingBlock(level, block, (float) (0.32 + fallingFactor * 0.2));
+            fallingBlock.setPos(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
+            level.addFreshEntity(fallingBlock);
+        }
+    }
+
+    public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos, double mx, double mz) {
+        BlockState block = checkSpawnY(level, pos);
+        if (block != null) {
+            EntityFallingBlock fallingBlock = new EntityFallingBlock(level, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, block, 10);
+            fallingBlock.push(mx, 0.2 + level.random.nextGaussian() * 0.2, mz);
+            level.addFreshEntity(fallingBlock);
+        }
+    }
+
+    public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos, Quaternionf quaternionf, int duration, float fallingFactor) {
+        BlockState block = checkSpawnY(level, pos);
+        if (block != null) {
+            EntityFallingBlock fallingBlock = new EntityFallingBlock(level, block, quaternionf, duration, fallingFactor);
+            fallingBlock.setPos(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
+            level.addFreshEntity(fallingBlock);
+        }
     }
 }

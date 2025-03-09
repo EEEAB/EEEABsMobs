@@ -1,19 +1,17 @@
 package com.eeeab.eeeabsmobs.sever.entity.util;
 
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityFallingBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.CombatRules;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
@@ -24,10 +22,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
-import org.joml.Quaternionf;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 
 /**
  * 实体工具类
@@ -261,77 +257,6 @@ public class ModEntityUtils {
             Vec3 vector3d = attacker.getDeltaMovement();
             Vec3 vector3d1 = (new Vec3(ratioX, 0.0D, ratioZ)).normalize().scale(strength);
             target.setDeltaMovement(vector3d.x / 2.0D - vector3d1.x, attacker.onGround() ? Math.min(0.4D, vector3d.y / 2.0D + strength) : vector3d.y, vector3d.z / 2.0D - vector3d1.z);
-        }
-    }
-
-    /**
-     * 生成下落方块(渲染移动)
-     *
-     * @param level         服务端
-     * @param pos           区块坐标
-     * @param fallingFactor y轴下降系数
-     */
-    public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos, float fallingFactor) {
-        if (!EMConfigHandler.COMMON.ENTITY.enableSpawnFallingBlock.get()) return;
-        Random random = new Random();
-        BlockPos abovePos = new BlockPos(pos).above();//获取上面方块的坐标,以用来判断是否需要生成下落的方块
-        BlockState block = level.getBlockState(pos);//获取下落方块,以用于渲染方块材质
-        BlockState blockAbove = level.getBlockState(abovePos);//获取上面方块的状态,,以用来判断是否需要生成下落的方块
-
-        //随机扰动
-        if (random.nextBoolean()) {
-            fallingFactor += (float) (0.4 + random.nextGaussian() * 0.2);
-        } else {
-            fallingFactor -= (float) Mth.clamp(0.2 + random.nextGaussian() * 0.2, 0.2, fallingFactor - 0.1);
-        }
-
-        if (!block.isAir() && block.isRedstoneConductor(level, pos) && !block.hasBlockEntity() && !blockAbove.blocksMotion()) {
-            EntityFallingBlock fallingBlock = new EntityFallingBlock(level, block, (float) (0.32 + fallingFactor * 0.2));
-            fallingBlock.setPos(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
-            level.addFreshEntity(fallingBlock);
-        }
-    }
-
-    /**
-     * 生成下落方块(整体移动)
-     *
-     * @param level 服务端
-     * @param pos   区块坐标
-     * @param mx    向量x
-     * @param mz    向量z
-     */
-    public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos, double mx, double mz) {
-        if (!EMConfigHandler.COMMON.ENTITY.enableSpawnFallingBlock.get()) return;
-        RandomSource random = RandomSource.create();
-        BlockPos abovePos = new BlockPos(pos).above();//获取上面方块的坐标,以用来判断是否需要生成下落的方块
-        BlockState block = level.getBlockState(pos);//获取下落方块,以用于渲染方块材质
-        BlockState blockAbove = level.getBlockState(abovePos);//获取上面方块的状态,,以用来判断是否需要生成下落的方块
-
-        if (!block.isAir() && block.isRedstoneConductor(level, pos) && !block.hasBlockEntity() && !blockAbove.blocksMotion()) {
-            EntityFallingBlock fallingBlock = new EntityFallingBlock(level, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, block, 10);
-            fallingBlock.push(mx, 0.2 + random.nextGaussian() * 0.2, mz);
-            level.addFreshEntity(fallingBlock);
-        }
-    }
-
-    /**
-     * 生成模拟裂纹方块(渲染移动)
-     *
-     * @param level         服务端
-     * @param pos           区块坐标
-     * @param quaternionf   四元数
-     * @param fallingFactor y轴下降系数
-     */
-    public static void spawnFallingBlockByPos(ServerLevel level, BlockPos pos, Quaternionf quaternionf, int duration, float fallingFactor) {
-        if (!EMConfigHandler.COMMON.ENTITY.enableSpawnFallingBlock.get()) return;
-        BlockPos abovePos = new BlockPos(pos).above();//获取上面方块的坐标,以用来判断是否需要生成下落的方块
-        BlockState block = level.getBlockState(pos);//获取下落方块,以用于渲染方块材质
-        BlockState blockAbove = level.getBlockState(abovePos);//获取上面方块的状态,,以用来判断是否需要生成下落的方块
-
-        if (!block.isAir() && block.isRedstoneConductor(level, pos) && !block.hasBlockEntity() && !blockAbove.blocksMotion()) {
-            EntityFallingBlock fallingBlock = new EntityFallingBlock(level, block, quaternionf, duration, fallingFactor);
-            fallingBlock.setPos(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
-            level.addFreshEntity(fallingBlock);
         }
     }
 
