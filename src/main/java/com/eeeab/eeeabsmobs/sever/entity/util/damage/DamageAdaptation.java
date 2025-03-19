@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.sever.entity.util.damage;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
@@ -79,8 +79,8 @@ public class DamageAdaptation {
             key = "interval_protector";
         } else {
             key = getKey(source, adaptBypassesDamage);
+            if (key == null) return amount;
         }
-        if (key == null) return amount;
         try {
             DamageInfo info = adaptMap.getOrDefault(key, null);
             long tickStamp = entity.tickCount;
@@ -136,7 +136,7 @@ public class DamageAdaptation {
         } else {
             //避免荆棘伤害导致适应玩家持有武器问题
             if (source.is(DamageTypes.THORNS)) return "thorns";
-            if (source.getEntity() == null && !source.is(EMTagKey.BYPASSES_DAMAGE_CAP)) {
+            else if (source.getEntity() == null && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
                 return spliceCharacters(source.type().msgId(), "unknown_entity");
             } else if (source.getEntity() != null) {
                 Entity entity = source.getEntity();

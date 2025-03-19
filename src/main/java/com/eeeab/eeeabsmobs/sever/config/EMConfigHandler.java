@@ -524,8 +524,8 @@ public final class EMConfigHandler {
             this.maxAdaptFactor = BUILDER.comment("Set the maximum damage reduction factor")
                     .translation(getTranslationKey("damage_adapt_4")).defineInRange("Same damage max adaptation factor", maxAdaptFactor, 0D, 1D);
             this.adaptsSameTypeMobs = adaptsSameTypeMobs;
-            this.adaptBypassesDamage = BUILDER.comment("If set to 'False' disable adaptation to out of world and generic kill damage source")
-                    .translation(getTranslationKey("damage_adapt_5")).define("Adaptation bypasses damage source", adaptBypassesDamage);
+            this.adaptBypassesDamage = BUILDER.comment("If set to 'False' disable adaptation to bypasses invulnerability damage source")
+                    .translation(getTranslationKey("damage_adapt_5")).define("Adaptation bypasses invulnerability damage source", adaptBypassesDamage);
             builder.pop();
         }
 
