@@ -138,13 +138,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             shakeGroundAttackAnimation2,
             shakeGroundAttackAnimation3
     };
-
-    private final EMLookAtGoal lookAtPlayerGoal = new EMLookAtGoal(this, Player.class, 8.0F);
-    private final WaterAvoidingRandomStrollGoal waterAvoidingRandomStrollGoal = new WaterAvoidingRandomStrollGoal(this, 1.0D);
-    private final RandomLookAroundGoal randomLookAroundGoal = new RandomLookAroundGoal(this);
     private static final EntityDataAccessor<Boolean> DATA_POWER = SynchedEntityData.defineId(EntityNamelessGuardian.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EntityNamelessGuardian.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> DATA_IS_UNNATURAL = SynchedEntityData.defineId(EntityNamelessGuardian.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Optional<BlockPos>> DATA_REST_POSITION = SynchedEntityData.defineId(EntityNamelessGuardian.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
     private int madnessTick;
     private int nextMadnessTick;
@@ -387,6 +381,19 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         super.registerGoals();
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this, EntityAbsGuling.class));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null));
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && EntityNamelessGuardian.this.isActive();
+            }
+        });
+        this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && EntityNamelessGuardian.this.isActive();
+            }
+        });
     }
 
     @Override
@@ -482,7 +489,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 this.playAnimation(this.roarAnimation);
             }
 
-            if (this.isUnnatural()) {
+            if (this.isAlwaysActive()) {
                 this.setActive(true);
                 this.active = true;
             } else if (this.noConflictingTasks() && !this.isNoAi()) {
@@ -497,7 +504,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 }
             }
 
-            if (!this.isUnnatural()) {
+            if (!this.isAlwaysActive()) {
                 if (this.noConflictingTasks() && (this.getTarget() == null || this.outOfCombatFlag()) && this.getNavigation().isDone() && !this.isAtRestPos() && this.isActive()) {
                     this.moveToRestPos();
                 }
@@ -769,15 +776,10 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public boolean hurt(DamageSource source, float damage) {
         if (!this.level().isClientSide) {
             Entity entity = source.getEntity();
-            if ((!active || getTarget() == null) && entity instanceof LivingEntity livingEntity
-                    && !(livingEntity instanceof Player player && player.isCreative() || this.level().getDifficulty() == Difficulty.PEACEFUL)
-                    && (!EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() || !(livingEntity instanceof EntityAbsGuling))) {
-                this.setLastHurtByMob(livingEntity);
-            }
             if (this.guardianInvulnerableTime > 0) {
                 return false;
             } else if (entity != null) {
-                if (!this.isUnnatural() && this.isNoAnimation() && entity instanceof Player player) this.checkPlayerAttackLegality(player, this, 4);
+                if (!this.isAlwaysActive() && this.isNoAnimation() && entity instanceof Player player) this.checkPlayerAttackLegality(player, this, 4);
                 if (this.shouldSetPowered() || this.outOfCombatFlag()) damage = Math.min(damage, 1F);
                 if (this.isPowered()) {
                     if (this.guardianInvulnerableTime <= 0) {
@@ -853,9 +855,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_POWER, false);
-        this.entityData.define(DATA_IS_UNNATURAL, false);
         this.entityData.define(DATA_REST_POSITION, Optional.empty());
-        this.entityData.define(DATA_ACTIVE, true);
     }
 
     @Override
@@ -865,13 +865,10 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             this.setRestPos(NbtUtils.readBlockPos(compound.getCompound("spawnPos")));
         }
         this.fmFlag = compound.getBoolean("fmFlag");
-        this.setActive(compound.getBoolean("isActive"));
         this.setPowered(compound.getBoolean("power"));
-        this.setUnnatural(compound.getBoolean("isUnnatural"));
         this.setMadnessTick(compound.getInt("madnessCountdownTick"));
         this.setNextMadnessTick(compound.getInt("nextMadnessTick"));
         this.readBossSaveData(compound);
-        active = isActive();
     }
 
     @Override
@@ -883,8 +880,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             compound.putInt("madnessCountdownTick", this.madnessTick);
         }
         compound.putBoolean("fmFlag", this.fmFlag);
-        compound.putBoolean("isUnnatural", this.entityData.get(DATA_IS_UNNATURAL));
-        compound.putBoolean("isActive", this.entityData.get(DATA_ACTIVE));
         compound.putInt("nextMadnessTick", this.nextMadnessTick);
         this.addBossSaveData(compound);
     }
@@ -903,7 +898,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor accessor, DifficultyInstance difficultyInstance, MobSpawnType spawnType, @Nullable SpawnGroupData groupData, @Nullable CompoundTag compoundTag) {
-        this.setUnnatural(spawnType == MobSpawnType.SPAWN_EGG);
         this.setRestPos(this.blockPosition());
         return groupData;
     }
@@ -1247,15 +1241,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         return this.entityData.get(DATA_POWER);
     }
 
-    public void setUnnatural(boolean flag) {
-        this.entityData.set(DATA_IS_UNNATURAL, flag);
-        if (flag && !this.level().isClientSide) {
-            this.goalSelector.addGoal(6, waterAvoidingRandomStrollGoal);
-            this.goalSelector.addGoal(7, lookAtPlayerGoal);
-            this.goalSelector.addGoal(8, randomLookAroundGoal);
-        }
-    }
-
     public boolean isFirstMadness() {
         return this.fmFlag;
     }
@@ -1274,10 +1259,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     public void setNextMadnessTick(int nextMadnessTick) {
         this.nextMadnessTick = nextMadnessTick;
-    }
-
-    public boolean isUnnatural() {
-        return entityData.get(DATA_IS_UNNATURAL);
     }
 
     public Optional<BlockPos> getRestPos() {
@@ -1393,14 +1374,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     @Override
     public boolean isGlow() {
         return this.getHealth() > 0 && this.isActive() && !(this.getAnimation() == this.weakAnimation1 || this.getAnimation() == this.weakAnimation2 || (this.getAnimation() == this.weakAnimation3 && this.getAnimationTick() < 20));
-    }
-
-    public void setActive(boolean isActive) {
-        this.entityData.set(DATA_ACTIVE, isActive);
-    }
-
-    public boolean isActive() {
-        return this.entityData.get(DATA_ACTIVE);
     }
 
     @Nullable

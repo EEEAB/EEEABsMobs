@@ -1,9 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.world.structure;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityGulingSentinel;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityGulingSentinelHeavy;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.guling.EntityAbsGuling;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.StructuresInit;
 import com.google.common.collect.ImmutableMap;
@@ -127,35 +125,27 @@ public class StructureGuling extends Structure {
         @Override
         protected void handleDataMarker(String function, BlockPos blockPos, ServerLevelAccessor levelAccessor, RandomSource source, BoundingBox box) {
             if ("boss_spawn".equals(function)) {
-                levelAccessor.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2);
-                EntityNamelessGuardian guardian = (EntityInit.NAMELESS_GUARDIAN.get()).create(levelAccessor.getLevel());
-                if (guardian != null) {
-                    guardian.moveTo(blockPos, 0, 0);
-                    guardian.finalizeSpawn(levelAccessor, levelAccessor.getCurrentDifficultyAt(blockPos), MobSpawnType.STRUCTURE, null, null);
-                    levelAccessor.addFreshEntity(guardian);
-                }
+                spawnGulingEntity(EntityInit.NAMELESS_GUARDIAN.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
             }
 
             if ("elite_spawn".equals(function)) {
-                levelAccessor.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2);
-                EntityGulingSentinelHeavy heavy = (EntityInit.GULING_SENTINEL_HEAVY.get()).create(levelAccessor.getLevel());
-                if (heavy != null) {
-                    heavy.moveTo(blockPos, 0, 0);
-                    heavy.finalizeSpawn(levelAccessor, levelAccessor.getCurrentDifficultyAt(blockPos), MobSpawnType.STRUCTURE, null, null);
-                    levelAccessor.addFreshEntity(heavy);
-                }
+                spawnGulingEntity(EntityInit.GULING_SENTINEL_HEAVY.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
             }
 
             if ("normal_spawn".equals(function)) {
-                levelAccessor.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2);
-                EntityGulingSentinel sentinel = (EntityInit.GULING_SENTINEL.get()).create(levelAccessor.getLevel());
-                if (sentinel != null) {
-                    sentinel.moveTo(blockPos, 0, 0);
-                    sentinel.finalizeSpawn(levelAccessor, levelAccessor.getCurrentDifficultyAt(blockPos), MobSpawnType.STRUCTURE, null, null);
-                    levelAccessor.addFreshEntity(sentinel);
-                }
+                spawnGulingEntity(EntityInit.GULING_SENTINEL.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
             }
         }
 
+        private static void spawnGulingEntity(EntityAbsGuling absGuling, BlockPos blockPos, ServerLevelAccessor levelAccessor) {
+            levelAccessor.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2);
+            if (absGuling != null) {
+                absGuling.moveTo(blockPos, 0, 0);
+                absGuling.finalizeSpawn(levelAccessor, levelAccessor.getCurrentDifficultyAt(blockPos), MobSpawnType.STRUCTURE, null, null);
+                absGuling.setActive(false);
+                absGuling.setAlwaysActive(false);
+                levelAccessor.addFreshEntity(absGuling);
+            }
+        }
     }
 }

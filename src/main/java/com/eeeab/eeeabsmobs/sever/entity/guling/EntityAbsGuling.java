@@ -6,8 +6,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
@@ -15,6 +19,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,6 +27,9 @@ import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class EntityAbsGuling extends EEEABMobLibrary implements Enemy {
+    private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EntityAbsGuling.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_ALWAYS_ACTIVE = SynchedEntityData.defineId(EntityAbsGuling.class, EntityDataSerializers.BOOLEAN);
+
     public EntityAbsGuling(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
     }
@@ -38,9 +46,17 @@ public abstract class EntityAbsGuling extends EEEABMobLibrary implements Enemy {
     }
 
     @Override
+    public boolean isAttackable() {
+        return this.isActive();
+    }
+
+    @Override
     public boolean hurt(DamageSource source, float damage) {
-        if (source.getEntity() instanceof EntityAbsGuling && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()) {
-            return false;
+        if (source.getEntity() instanceof EntityAbsGuling && EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()) return false;
+        if ((!active || getTarget() == null) && source.getEntity() instanceof LivingEntity livingEntity
+                && !(livingEntity instanceof Player player && player.isCreative() || this.level().getDifficulty() == Difficulty.PEACEFUL)
+                && (!EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get() || !(livingEntity instanceof EntityAbsGuling))) {
+            this.setLastHurtByMob(livingEntity);
         }
         if (source.is(DamageTypeTags.IS_EXPLOSION)) damage *= 0.5F;
         return super.hurt(source, damage);
@@ -71,6 +87,44 @@ public abstract class EntityAbsGuling extends EEEABMobLibrary implements Enemy {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance instance, MobSpawnType spawnType, @Nullable SpawnGroupData groupData, @Nullable CompoundTag tag) {
         return groupData;
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_ACTIVE, true);
+        this.entityData.define(DATA_ALWAYS_ACTIVE, true);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.entityData.set(DATA_ACTIVE, compound.getBoolean("isActive"));
+        this.entityData.set(DATA_ALWAYS_ACTIVE, compound.getBoolean("isAlwaysActive"));
+        this.active = this.isActive();
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putBoolean("isActive", this.entityData.get(DATA_ACTIVE));
+        compound.putBoolean("isAlwaysActive", this.entityData.get(DATA_ALWAYS_ACTIVE));
+    }
+
+    public boolean isActive() {
+        return this.entityData.get(DATA_ACTIVE);
+    }
+
+    public void setActive(boolean isActive) {
+        this.entityData.set(DATA_ACTIVE, isActive);
+    }
+
+    public boolean isAlwaysActive() {
+        return this.entityData.get(DATA_ALWAYS_ACTIVE);
+    }
+
+    public void setAlwaysActive(boolean alwaysActive) {
+        this.entityData.set(DATA_ALWAYS_ACTIVE, alwaysActive);
     }
 
     protected int getCoolingTimerUtil(int maxCooling, int minCooling, float healthPercentage) {

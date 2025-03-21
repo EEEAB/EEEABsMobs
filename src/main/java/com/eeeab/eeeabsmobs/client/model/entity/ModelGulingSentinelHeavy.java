@@ -124,7 +124,6 @@ public class ModelGulingSentinelHeavy extends EMHierarchicalModel<EntityGulingSe
         rebound *= rebound;
         this.head.xRot += pitch - idle * 0.1F;
         this.head.yRot += headYaw * 0.5F;
-        this.upper.xRot += idle * 0.05F;
         this.upper.yRot += headYaw * 0.25F;
         this.upper.y += Mth.sin(rebound * 3.1415927F) * 2.0F * limbSwingAmount;
         this.cube_r1.xRot += idle * 0.05F;

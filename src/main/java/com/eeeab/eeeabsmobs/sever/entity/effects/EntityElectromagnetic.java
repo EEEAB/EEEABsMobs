@@ -70,7 +70,7 @@ public class EntityElectromagnetic extends EntityMagicEffects implements Steppab
                     this.level().addParticle((new BlockParticleOption(ParticleTypes.BLOCK, blockState)).setPos(pos), this.getX() + ((double) this.random.nextFloat() - 0.5) * (double) this.entityData.get(DATA_SIZE), this.getY(), this.getZ() + ((double) this.random.nextFloat() - 0.5) * (double) this.entityData.get(DATA_SIZE), 4.0 * ((double) this.random.nextFloat() - 0.5), (double) this.random.nextFloat() * 5.0 + 0.5, ((double) this.random.nextFloat() - 0.5) * 4.0);
                 } else {
                     ParticleOptions options = this.entityData.get(DATA_FIRE) ? ParticleTypes.SOUL_FIRE_FLAME : ParticleInit.GUARDIAN_SPARK.get();
-                    this.level().addParticle(options, this.getX() + ((double) this.random.nextFloat() - 0.5) * (double) this.entityData.get(DATA_SIZE), this.getY(), this.getZ() + ((double) this.random.nextFloat() - 0.5) * (double) this.entityData.get(DATA_SIZE), 0, 0, 0);
+                    this.level().addParticle(options, this.getX() + ((double) this.random.nextFloat() - 0.5) * (double) this.entityData.get(DATA_SIZE), this.getY() + 0.2, this.getZ() + ((double) this.random.nextFloat() - 0.5) * (double) this.entityData.get(DATA_SIZE), 0, 0, 0);
                 }
             }
         }

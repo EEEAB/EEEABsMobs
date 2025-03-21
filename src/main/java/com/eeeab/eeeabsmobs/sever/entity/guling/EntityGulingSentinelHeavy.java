@@ -30,10 +30,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
@@ -85,8 +81,6 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             rangeAttackStopAnimation,
             electromagneticAnimation
     };
-    private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EntityGulingSentinelHeavy.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> DATA_ALWAYS_ACTIVE = SynchedEntityData.defineId(EntityGulingSentinelHeavy.class, EntityDataSerializers.BOOLEAN);
     private int deactivateTick;
     private int smashAttackTick;
     private int rangeAttackTick;
@@ -460,28 +454,6 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         }
     }
 
-    @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_ACTIVE, false);
-        this.entityData.define(DATA_ALWAYS_ACTIVE, false);
-    }
-
-    @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        this.entityData.set(DATA_ACTIVE, compound.getBoolean("isActive"));
-        this.entityData.set(DATA_ALWAYS_ACTIVE, compound.getBoolean("isAlwaysActive"));
-        this.active = this.isActive();
-    }
-
-    @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putBoolean("isActive", this.entityData.get(DATA_ACTIVE));
-        compound.putBoolean("isAlwaysActive", this.entityData.get(DATA_ALWAYS_ACTIVE));
-    }
-
     private boolean checkCanAttack() {
         return !this.isNoAi() && this.isActive() && this.isNoAnimation() && this.getTarget() != null && this.canAttack(this.getTarget());
     }
@@ -577,25 +549,13 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
         }
     }
 
-    public boolean isActive() {
-        return this.entityData.get(DATA_ACTIVE);
-    }
-
+    @Override
     public void setActive(boolean isActive) {
-        this.entityData.set(DATA_ACTIVE, isActive);
+        super.setActive(isActive);
         this.deactivateTick = 0;
     }
 
-    public boolean isAlwaysActive() {
-        return this.entityData.get(DATA_ALWAYS_ACTIVE);
-    }
-
-    public void setAlwaysActive(boolean alwaysActive) {
-        this.entityData.set(DATA_ALWAYS_ACTIVE, alwaysActive);
-    }
-
     static class GSHMeleeAttackGoal extends AnimationAI<EntityGulingSentinelHeavy> {
-
         protected GSHMeleeAttackGoal(EntityGulingSentinelHeavy entity) {
             super(entity);
         }
@@ -699,7 +659,6 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
     }
 
     static class GSHElectromagneticAttackGoal extends AnimationAI<EntityGulingSentinelHeavy> {
-
         public GSHElectromagneticAttackGoal(EntityGulingSentinelHeavy entity) {
             super(entity);
         }

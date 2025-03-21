@@ -1,7 +1,10 @@
 package com.eeeab.eeeabsmobs.sever.entity.guling;
 
 import com.eeeab.animate.server.ai.AnimationAI;
-import com.eeeab.animate.server.ai.animation.*;
+import com.eeeab.animate.server.ai.animation.AnimationActivate;
+import com.eeeab.animate.server.ai.animation.AnimationDeactivate;
+import com.eeeab.animate.server.ai.animation.AnimationDie;
+import com.eeeab.animate.server.ai.animation.AnimationHurt;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.EMAnimationHandler;
 import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
@@ -19,9 +22,6 @@ import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.Difficulty;
@@ -65,8 +65,6 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
     private int attackTick;
     private int deactivateTick;
     private static final EntityDimensions DEACTIVATE_SIZE = EntityDimensions.scalable(1, 1);
-    private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EntityGulingSentinel.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> DATA_ALWAYS_ACTIVE = SynchedEntityData.defineId(EntityGulingSentinel.class, EntityDataSerializers.BOOLEAN);
 
     public EntityGulingSentinel(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
@@ -286,28 +284,6 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DATA_ACTIVE, false);
-        this.entityData.define(DATA_ALWAYS_ACTIVE, false);
-    }
-
-    @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        this.entityData.set(DATA_ACTIVE, compound.getBoolean("isActive"));
-        this.entityData.set(DATA_ALWAYS_ACTIVE, compound.getBoolean("isAlwaysActive"));
-        this.active = this.isActive();
-    }
-
-    @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putBoolean("isActive", this.entityData.get(DATA_ACTIVE));
-        compound.putBoolean("isAlwaysActive", this.entityData.get(DATA_ALWAYS_ACTIVE));
-    }
-
-    @Override
     public void stopRiding() {
         super.stopRiding();
         this.yBodyRotO = 0.0F;
@@ -329,21 +305,10 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
         this.yBodyRotO = 0.0F;
     }
 
-    public boolean isActive() {
-        return this.entityData.get(DATA_ACTIVE);
-    }
-
+    @Override
     public void setActive(boolean isActive) {
-        this.entityData.set(DATA_ACTIVE, isActive);
+        super.setActive(isActive);
         this.deactivateTick = 0;
-    }
-
-    public boolean isAlwaysActive() {
-        return this.entityData.get(DATA_ALWAYS_ACTIVE);
-    }
-
-    public void setAlwaysActive(boolean alwaysActive) {
-        this.entityData.set(DATA_ALWAYS_ACTIVE, alwaysActive);
     }
 
     @Override
