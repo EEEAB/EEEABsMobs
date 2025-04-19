@@ -324,26 +324,28 @@ public class EntityGulingSentinelHeavy extends EntityAbsGuling implements IEntit
             } else {
                 this.setYRot(this.yRotO);
             }
-            if (tick == 38) {
-                this.rangeAttack(4.5, this.getBbHeight() * 0.9, 4.5, 4.5, 120F, 120F, hitEntity -> {
+            if (tick == 37) {
+                boolean hot = !this.hotControlled.isStop();
+                EntityCameraShake.cameraShake(level(), position(), 15, 0.125F, 0, 10);
+                if (this.level().isClientSide) {
+                    double radians = Math.toRadians(this.yBodyRot + 90);
+                    float width = this.getBbWidth() / 2;
+                    double x = getX() + width * Math.cos(radians);
+                    double y = getY() + 0.1;
+                    double z = getZ() + width * Math.sin(radians);
+                    ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 25, ParticleDust.EnumDustBehavior.GROW, 0.96f);
+                    ModParticleUtils.annularParticleOutburst(level(), 15, dustData, x, y, z, 0.5F, 0.1);
+                    if (hot) {
+                        ModParticleUtils.annularParticleOutburst(level(), 10, ParticleTypes.SOUL_FIRE_FLAME, x, y, z, 0.2F, 0.2);
+                    }
+                }
+            } else if (tick == 38) {
+                this.rangeAttack(4.5, this.getBbHeight() * 0.6, 4.5, 4.5, 120F, 120F, hitEntity -> {
                     this.sentinelHurtTarget(hitEntity, 3F, true);
                     double ratioX = Math.sin(this.getYRot() * ((float) Math.PI / 180F));
                     double ratioZ = (-Math.cos(this.getYRot() * ((float) Math.PI / 180F)));
                     ModEntityUtils.forceKnockBack(this, hitEntity, 0.5F, ratioX, ratioZ, true);
                 });
-            } else if (tick == 39) {
-                boolean hot = !this.hotControlled.isStop();
-                EntityCameraShake.cameraShake(level(), position(), 15, 0.125F, 0, 10);
-                if (this.level().isClientSide) {
-                    ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 25, ParticleDust.EnumDustBehavior.GROW, 1.0f);
-                    ParticleOptions[] options;
-                    if (hot) {
-                        options = new ParticleOptions[]{dustData, ParticleTypes.SOUL_FIRE_FLAME};
-                    } else {
-                        options = new ParticleOptions[]{dustData};
-                    }
-                    ModParticleUtils.annularParticleOutburst(level(), 15, options, getX(), this.getY(), getZ(), 0.5F, 0.1);
-                }
             }
         } else if (this.getAnimation() == this.electromagneticAnimation) {
             this.setDeltaMovement(0F, this.onGround() && !this.isNoGravity() ? -0.01F : this.getDeltaMovement().y, 0F);
