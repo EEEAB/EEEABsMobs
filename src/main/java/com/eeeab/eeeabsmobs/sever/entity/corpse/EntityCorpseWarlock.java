@@ -287,8 +287,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             int tick = this.getAnimationTick();
             if (!this.level().isClientSide) {
                 for (EntityCorpse corps : this.entities) {
-                    if (corps == null || !corps.isActive())
-                        continue;
+                    if (corps == null || !corps.isActive()) continue;
                     Vec3 diff = corps.position().subtract(this.position().add(0F, 5F, 0F));
                     float strength = 0.05F;
                     if (this.distanceTo(corps) >= 16) strength += 0.05F;
@@ -310,9 +309,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                     if (!this.isHeal() && target != null) {
                         this.getLookControl().setLookAt(target, 30F, 30F);
                     }
-                } else {
-                    this.setDeltaMovement(0, 0.12F, 0);
-                }
+                } else this.setDeltaMovement(0, 0.12F, 0);
             } else {
                 if (tick == 20) {
                     Vec3 vec3 = this.position();
@@ -363,9 +360,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
             if (tick > 35) {
                 this.doCrimsonEyeEffect(-1F);
                 this.setDeltaMovement(0, 0, 0);
-            } else {
-                this.setDeltaMovement(0, 0.25F, 0);
-            }
+            } else this.setDeltaMovement(0, 0.25F, 0);
         }
     }
 
@@ -425,13 +420,9 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     public void aiStep() {
         super.aiStep();
         if (!this.level().isClientSide) {
-            if (this.nextDPTick > 0) {
-                this.nextDPTick--;
-            }
+            if (this.nextDPTick > 0) this.nextDPTick--;
 
-            if (this.nextHealTick > 0) {
-                this.nextHealTick--;
-            }
+            if (this.nextHealTick > 0) this.nextHealTick--;
         }
         this.glowControllerAnimation.incrementOrDecreaseTimer(this.isGlow());
     }
@@ -572,9 +563,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
     public TargetType assessTargetAI() {
         LivingEntity target = this.getTarget();
         if (target != null) {
-            if (target instanceof Player) {
-                return TargetType.KNOTTY;
-            }
+            if (target instanceof Player) return TargetType.KNOTTY;
             AttributeInstance attribute = target.getAttribute(Attributes.ATTACK_DAMAGE);
             AttributeInstance attribute1 = target.getAttribute(Attributes.ARMOR);
             float health = target.getMaxHealth();
@@ -896,7 +885,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
 
         @Override
         protected int getSpellCastingCooling() {
-            return 150 + this.spellCaster.random.nextInt(90);
+            return 150 + this.spellCaster.random.nextInt(101);
         }
 
         @Nullable
@@ -1044,7 +1033,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements IEntity, Nee
                         this.spawnRay(rx, rz, minY, maxY);
                     }
                 }
-                if (this.spellCaster.random.nextBoolean() && (tick == 45 || tick == 55 || tick == 65 || tick == 75 || tick == 85)) {
+                if ((tick == 45 || tick == 55 || tick == 65 || tick == 75 || tick == 85) && this.spellCaster.random.nextBoolean()) {
                     this.spawnRay(target.getX(), target.getZ(), minY, maxY);
                 }
             }
