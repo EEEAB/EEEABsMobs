@@ -85,22 +85,7 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
             int keyFrame = isPowered ? 24 : 28;
             if (tick < keyFrame && pounceVec.length() != 0) {
                 entity.setDeltaMovement(pounceVec.x * moveSpeed * madnessSpeedMultiplier, -entity.getAttributeValue(ForgeMod.ENTITY_GRAVITY.get()) * 5.0F, pounceVec.z * moveSpeed * speedMultiplier);
-                if (!entity.level().isClientSide && ModEntityUtils.canMobDestroy(entity)) {
-                    AABB bb = entity.getBoundingBox();
-                    int minx = Mth.floor(bb.minX - 0.75D);
-                    int miny = Mth.floor(bb.minY + 0.0D);
-                    int minz = Mth.floor(bb.minZ - 0.75D);
-                    BlockPos min = new BlockPos(minx, miny, minz);
-                    int maxx = Mth.floor(bb.maxX + 0.75D);
-                    int maxy = Mth.floor(bb.maxY + 0.15D);
-                    int maxz = Mth.floor(bb.maxZ + 0.75D);
-                    BlockPos max = new BlockPos(maxx, maxy, maxz);
-                    if (entity.level().hasChunksAt(min, max)) {
-                        BlockPos.betweenClosedStream(min, max).
-                                filter((pos) -> ModEntityUtils.canDestroyBlock(entity.level(), pos, entity, 2F)).
-                                forEach((pos) -> entity.level().destroyBlock(pos, entity.checkCanDropItems()));
-                    }
-                }
+                ModEntityUtils.breakBlocksByEntityAABB(entity, 2F, 0.75F, 0F, 0.15F, entity.checkCanDropItems(), tick % 3 == 0);
                 if (tick % 2 == 0) {
                     double width = entity.getBbWidth() * 1.2;
                     entity.rangeAttack(width, 5F, width, width, 120F, 120F, hitEntity -> {

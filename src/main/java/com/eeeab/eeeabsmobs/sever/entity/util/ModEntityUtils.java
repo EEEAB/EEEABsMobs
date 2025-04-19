@@ -299,7 +299,8 @@ public class ModEntityUtils {
      * @param playSound        是否播放破坏方块的音效
      * @return 是否破坏成功
      */
-    public static boolean advancedBreakBlocks(Level level, LivingEntity entity, float maxBlockHardness, int destroyRangeX, int destroyRangeY, int destroyRangeZ, int offsetY, float offset, boolean dropBlock, boolean playSound) {
+    public static boolean breakBlocksInRect(Level level, LivingEntity entity, float maxBlockHardness, int destroyRangeX, int destroyRangeY, int destroyRangeZ, int offsetY, float offset, boolean dropBlock, boolean playSound) {
+        if (entity.level().isClientSide || !canMobDestroy(entity)) return false;
         double radians = Math.toRadians(entity.getYRot() + 90);
         int j1 = Mth.floor(entity.getY());
         int i2 = Mth.floor(entity.getX() + Math.cos(radians) * offset);
@@ -323,5 +324,33 @@ public class ModEntityUtils {
             level.levelEvent(null, 1022, entity.blockPosition(), 0);
         }
         return flag;
+    }
+
+    /**
+     * 破坏当前实体碰撞箱为基准周围的方块
+     *
+     * @param entity           实体
+     * @param maxBlockHardness 最高破坏硬度
+     * @param extraWidth       额外碰撞宽度
+     * @param minExtraHeight   最小额外碰撞高度
+     * @param maxExtraHeight   最大额外碰撞高度
+     * @param dropBlock        是否掉落方块
+     * @param playSound        是否播放破坏方块的音效
+     */
+    public static void breakBlocksByEntityAABB(LivingEntity entity, float maxBlockHardness, float extraWidth, float minExtraHeight, float maxExtraHeight, boolean dropBlock, boolean playSound) {
+        if (entity.level().isClientSide || !canMobDestroy(entity)) return;
+        AABB bb = entity.getBoundingBox();
+        BlockPos min = new BlockPos(Mth.floor(bb.minX - extraWidth), Mth.floor(bb.minY + minExtraHeight), Mth.floor(bb.minZ - extraWidth));
+        BlockPos max = new BlockPos(Mth.floor(bb.maxX + extraWidth), Mth.floor(bb.maxY + maxExtraHeight), Mth.floor(bb.maxZ + extraWidth));
+        boolean flag = false;
+        if (entity.level().hasChunksAt(min, max)) {
+            for (BlockPos pos : BlockPos.betweenClosed(min, max)) {
+                if (canDestroyBlock(entity.level(), pos, entity, maxBlockHardness)){
+                    entity.level().destroyBlock(pos, dropBlock);
+                    flag = true;
+                }
+            }
+        }
+        if (flag && playSound) entity.level().levelEvent(null, 1022, entity.blockPosition(), 0);
     }
 }

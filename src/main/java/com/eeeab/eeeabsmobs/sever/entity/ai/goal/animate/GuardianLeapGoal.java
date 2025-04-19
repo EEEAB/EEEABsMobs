@@ -1,16 +1,14 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
+import com.eeeab.animate.server.ai.AnimationSimpleAI;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import com.eeeab.eeeabsmobs.sever.entity.util.ShockWaveUtils;
-import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
@@ -47,25 +45,9 @@ public class GuardianLeapGoal extends AnimationSimpleAI<EntityNamelessGuardian> 
             entity.setYRot(entity.yRotO);
         }
 
-        if (tick > 12) {
-            boolean onGround = entity.onGround();
-            if (!this.entity.level().isClientSide && ModEntityUtils.canMobDestroy(this.entity) && !onGround) {
-                AABB bb = this.entity.getBoundingBox();
-                int minx = Mth.floor(bb.minX - 0.75D);
-                int miny = Mth.floor(bb.minY + 0.0D);
-                int minz = Mth.floor(bb.minZ - 0.75D);
-                BlockPos min = new BlockPos(minx, miny, minz);
-                int maxx = Mth.floor(bb.maxX + 0.75D);
-                int maxy = Mth.floor(bb.maxY + 0.15D);
-                int maxz = Mth.floor(bb.maxZ + 0.75D);
-                BlockPos max = new BlockPos(maxx, maxy, maxz);
-                if (this.entity.level().hasChunksAt(min, max)) {
-                    BlockPos.betweenClosedStream(min, max).
-                            filter((pos) -> ModEntityUtils.canDestroyBlock(this.entity.level(), pos, this.entity, 2F)).
-                            forEach((pos) -> this.entity.level().destroyBlock(pos, entity.checkCanDropItems()));
-                }
-            }
-            if (onGround) {
+        if (tick >= 12) {
+            ModEntityUtils.breakBlocksInRect(this.entity.level(), this.entity, 2F, 3, 5, 3, 0, 2F, entity.checkCanDropItems(), tick % 4 == 0);
+            if (tick > 12 && entity.onGround()) {
                 this.entity.playAnimation(this.entity.smashDownAnimation);
             }
         }
