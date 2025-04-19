@@ -359,10 +359,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 this.setExecuteWeak(false);
                 this.setPowered(false);
                 this.resetTimeOutToUseSkill();
-                if (this.outOfCombatFlag()) {
-                    this.setIllegalityCount(0);
-                    if (EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.enableNonCombatHeal.get()) this.heal(this.getMaxHealth());
-                }
             } else if (animation == this.roarAnimation) {
                 this.setMadnessTick(this.isChallengeMode() ? NEVER_STOP : MADNESS_TICK);
                 this.setPowered(true);
@@ -494,7 +490,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
                 this.active = true;
             } else if (this.noConflictingTasks() && !this.isNoAi()) {
                 if (this.isActive()) {
-                    if ((this.outOfCombatFlag() || this.getTarget() == null && !this.isPowered()) && zza == 0 && this.isAtRestPos()) {
+                    if (this.getTarget() == null && !this.isPowered() && zza == 0 && this.isAtRestPos()) {
                         this.playAnimation(this.deactivateAnimation);
                         this.setActive(false);
                     }
@@ -505,7 +501,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             }
 
             if (!this.isAlwaysActive()) {
-                if (this.noConflictingTasks() && (this.getTarget() == null || this.outOfCombatFlag()) && this.getNavigation().isDone() && !this.isAtRestPos() && this.isActive()) {
+                if (this.noConflictingTasks() && this.getTarget() == null && this.getNavigation().isDone() && !this.isAtRestPos() && this.isActive()) {
                     this.moveToRestPos();
                 }
             }
@@ -639,11 +635,11 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public void handleEntityEvent(byte id) {
         if (id == 6) {
             ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 20, ParticleDust.EnumDustBehavior.GROW, 1.0f);
-            ModParticleUtils.annularParticleOutburst(level(), 15, new ParticleOptions[]{dustData}, getX(), getY(), getZ(), 0.9, 0.5);
-            ModParticleUtils.annularParticleOutburst(level(), 15, new ParticleOptions[]{dustData}, getX(), getY(), getZ(), 0.6, 0.5);
+            ModParticleUtils.annularParticleOutburst(level(), 15, dustData, getX(), getY(), getZ(), 0.9, 0.5);
+            ModParticleUtils.annularParticleOutburst(level(), 15, dustData, getX(), getY(), getZ(), 0.6, 0.5);
         } else if (id == 7) {
             ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 25, ParticleDust.EnumDustBehavior.SHRINK, 1.0f);
-            ModParticleUtils.annularParticleOutburst(level(), 15, new ParticleOptions[]{dustData}, getX(), this.getY(), getZ(), 0.8F, 0.1);
+            ModParticleUtils.annularParticleOutburst(level(), 15, dustData, getX(), this.getY(), getZ(), 0.8F, 0.1);
         } else if (id == 8) {
             ModParticleUtils.roundParticleOutburst(level(), 200, new ParticleOptions[]{ParticleTypes.LARGE_SMOKE, ParticleTypes.SMOKE, ParticleTypes.EXPLOSION}, getX(), this.getY(0.5), getZ(), 1);
         } else if (id == PLAY_PRELUDE_MUSIC_ID) {
@@ -734,8 +730,8 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
             if (!this.isNoAi() && this.destroyBlocksTick > 0) {
                 this.destroyBlocksTick--;
-                if (this.destroyBlocksTick == 0 && ModEntityUtils.canMobDestroy(this)) {
-                    ModEntityUtils.advancedBreakBlocks(this.level(), this, 50F, 2, 4, 2, 0, 0, this.checkCanDropItems(), true);
+                if (this.destroyBlocksTick == 0) {
+                    ModEntityUtils.breakBlocksInRect(this.level(), this, 50F, 2, 4, 2, 0, 0, this.checkCanDropItems(), true);
                 }
             }
         }
@@ -779,8 +775,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             if (this.guardianInvulnerableTime > 0) {
                 return false;
             } else if (entity != null) {
-                if (!this.isAlwaysActive() && this.isNoAnimation() && entity instanceof Player player) this.checkPlayerAttackLegality(player, this, 4);
-                if (this.shouldSetPowered() || this.outOfCombatFlag()) damage = Math.min(damage, 1F);
+                if (this.shouldSetPowered()) damage = Math.min(damage, 1F);
                 if (this.isPowered()) {
                     if (this.guardianInvulnerableTime <= 0) {
                         ForgeConfigSpec.IntValue eit = EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.extraInvulnerableTick;
@@ -868,7 +863,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         this.setPowered(compound.getBoolean("power"));
         this.setMadnessTick(compound.getInt("madnessCountdownTick"));
         this.setNextMadnessTick(compound.getInt("nextMadnessTick"));
-        this.readBossSaveData(compound);
     }
 
     @Override
@@ -881,7 +875,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         }
         compound.putBoolean("fmFlag", this.fmFlag);
         compound.putInt("nextMadnessTick", this.nextMadnessTick);
-        this.addBossSaveData(compound);
     }
 
     public static AttributeSupplier.Builder setAttributes() {
@@ -956,7 +949,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
         @Override
         public boolean canUse() {
-            return this.guardian.getTarget() != null && this.guardian.getTarget().isAlive() && this.guardian.isActive() && this.guardian.noConflictingTasks() && !this.guardian.outOfCombatFlag();
+            return this.guardian.getTarget() != null && this.guardian.getTarget().isAlive() && this.guardian.isActive() && this.guardian.noConflictingTasks();
         }
 
         @Override
@@ -1063,26 +1056,26 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
     public void shockAttack(DamageSource damageSource, int distance, float maxFallingDistance, double spreadArc, double offset,
                             float baseDamageMultiplier, float damageMultiplier, boolean disableShield, boolean randomOffset, boolean continuous) {
         float factor = 1F - ((float) distance / 2F - 2F) / maxFallingDistance;
-        ShockWaveUtils.doAdvShockWave(this, distance, maxFallingDistance, spreadArc, offset, 2F, randomOffset, continuous, hit -> {
-            if (hit.onGround()) {
-                if (hit instanceof EntityFallingBlock) return;
-                if (hit instanceof LivingEntity livingEntity) {
-                    this.guardianHurtTarget(damageSource, this, livingEntity, baseDamageMultiplier, damageMultiplier, false, disableShield, false);
-                }
-                double magnitude = level().random.nextGaussian() * 0.15F + 0.1F;
-                double angle = this.getAngleBetweenEntities(this, hit);
-                double x1 = Math.cos(Math.toRadians(angle - 90));
-                double z1 = Math.sin(Math.toRadians(angle - 90));
-                float x = 0F, y = 0F, z = 0F;
-                x += (float) (x1 * magnitude * 0.15);
-                y += (float) (0.1 + factor * 0.15) * 0.5F;
-                z += (float) (z1 * magnitude * 0.15);
-                if (hit instanceof ServerPlayer serverPlayer) {
-                    serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(hit));
-                }
-                if (continuous) y *= 0.5F;
-                hit.setDeltaMovement(hit.getDeltaMovement().add(x, y, z));
+        ShockWaveUtils.doAdvShockWave(this, distance, maxFallingDistance, spreadArc, offset, 4F, randomOffset, continuous, hit -> {
+            if (hit instanceof EntityFallingBlock) return;
+            if (hit instanceof Player player && !player.onGround()) return;
+            if (hit instanceof LivingEntity livingEntity) {
+                this.guardianHurtTarget(damageSource, this, livingEntity, baseDamageMultiplier, damageMultiplier, false, disableShield, false);
             }
+            if (!hit.onGround()) return;
+            double magnitude = level().random.nextGaussian() * 0.15F + 0.1F;
+            double angle = this.getAngleBetweenEntities(this, hit);
+            double x1 = Math.cos(Math.toRadians(angle - 90));
+            double z1 = Math.sin(Math.toRadians(angle - 90));
+            float x = 0F, y = 0F, z = 0F;
+            x += (float) (x1 * magnitude * 0.15);
+            y += (float) (0.1 + factor * 0.15) * 0.5F;
+            z += (float) (z1 * magnitude * 0.15);
+            if (hit instanceof ServerPlayer serverPlayer) {
+                serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(hit));
+            }
+            if (continuous) y *= 0.5F;
+            hit.setDeltaMovement(hit.getDeltaMovement().add(x, y, z));
         }, 0);
     }
 
@@ -1245,6 +1238,7 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         return this.fmFlag;
     }
 
+    @Override
     public boolean isChallengeMode() {
         return EMConfigHandler.COMMON.MOB.GULING.NAMELESS_GUARDIAN.challengeMode.get();
     }
@@ -1354,21 +1348,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
 
     private void tickPart(EntityNamelessGuardianPart part, double x, double y, double z) {
         part.setPos(this.getX() + x, this.getY() + y, this.getZ() + z);
-    }
-
-    @Override
-    public int getIllegalityCount() {
-        return this.illegalityCount;
-    }
-
-    @Override
-    public void setIllegalityCount(int count) {
-        this.illegalityCount = count;
-    }
-
-    @Override
-    public int getMaxIllegalityCount() {
-        return (int) (this.getMaxHealth() / 40);
     }
 
     @Override
