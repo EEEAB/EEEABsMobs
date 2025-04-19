@@ -134,7 +134,7 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
     //获取轨道粒子效果
     @Override
     protected ParticleOptions getTrailParticle() {
-        return !this.isDangerous() ? ParticleTypes.SOUL : ParticleTypes.SOUL_FIRE_FLAME;
+        return this.isDangerous() ? ParticleTypes.SOUL : ParticleTypes.SOUL_FIRE_FLAME;
     }
 
     @Override
