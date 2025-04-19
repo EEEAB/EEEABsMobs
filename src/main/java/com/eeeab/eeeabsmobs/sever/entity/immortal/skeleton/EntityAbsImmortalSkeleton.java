@@ -96,7 +96,8 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this, EntityAbsImmortal.class).setAlertOthers());
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new EMLookAtGoal(this, Mob.class, 6.0F));
     }
 
     @Override

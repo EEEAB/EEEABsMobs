@@ -213,7 +213,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal implements IEnt
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this).setAlertOthers());
         this.goalSelector.addGoal(6, new RandomStrollGoal(this, 0.75F, 100));
         this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(8, new EMLookAtGoal(this, EntityAbsImmortal.class, 6.0F));
+        this.goalSelector.addGoal(8, new EMLookAtGoal(this, Mob.class, 6.0F));
     }
 
     @Override

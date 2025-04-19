@@ -43,6 +43,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -117,8 +118,9 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         this.targetSelector.addGoal(1, (new HurtByTargetGoal(this)).setAlertOthers());
         this.targetSelector.addGoal(2, (new NearestAttackableTargetGoal<>(this, Player.class, true)).setUnseenMemoryTicks(300));
         this.targetSelector.addGoal(3, (new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false)).setUnseenMemoryTicks(300));
+        this.goalSelector.addGoal(7, new RandomStrollGoal(this, 0.75F));
         this.goalSelector.addGoal(8, new EMLookAtGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(9, new EMLookAtGoal(this, EntityImmortalGolem.class, 6.0F));
+        this.goalSelector.addGoal(9, new EMLookAtGoal(this, Mob.class, 6.0F));
     }
 
 
