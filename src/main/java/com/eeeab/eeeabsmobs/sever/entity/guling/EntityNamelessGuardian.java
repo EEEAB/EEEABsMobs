@@ -638,10 +638,10 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
             ModParticleUtils.annularParticleOutburst(level(), 15, dustData, getX(), getY(), getZ(), 0.9, 0.5);
             ModParticleUtils.annularParticleOutburst(level(), 15, dustData, getX(), getY(), getZ(), 0.6, 0.5);
         } else if (id == 7) {
-            ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 25, ParticleDust.EnumDustBehavior.SHRINK, 1.0f);
-            ModParticleUtils.annularParticleOutburst(level(), 15, dustData, getX(), this.getY(), getZ(), 0.8F, 0.1);
+            ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24f, 0.24f, 0.24f, 40f, 30, ParticleDust.EnumDustBehavior.GROW, 0.94f);
+            ModParticleUtils.annularParticleOutburst(level(), 15, dustData, getX(), getY() + 0.2, getZ(), 0.8F, 0.5);
         } else if (id == 8) {
-            ModParticleUtils.roundParticleOutburst(level(), 200, new ParticleOptions[]{ParticleTypes.LARGE_SMOKE, ParticleTypes.SMOKE, ParticleTypes.EXPLOSION}, getX(), this.getY(0.5), getZ(), 1);
+            ModParticleUtils.roundParticleOutburst(level(), 200, new ParticleOptions[]{ParticleTypes.LARGE_SMOKE, ParticleTypes.SMOKE, ParticleTypes.EXPLOSION}, getX(), getY(0.5), getZ(), 1);
         } else if (id == PLAY_PRELUDE_MUSIC_ID) {
             BossMusicPlayer.resetBossMusic(this, SoundInit.GUARDIANS_PRELUDE.get());
         } else if (id == PLAY_CLIMAX_MUSIC_ID) {
