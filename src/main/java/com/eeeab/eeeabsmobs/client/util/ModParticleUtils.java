@@ -89,12 +89,12 @@ public class ModParticleUtils {
      * 环形粒子爆发(y轴偏移)
      *
      * @param points        生成数量
-     * @param particles     粒子
+     * @param particle      粒子
      * @param speedModifier 速度乘数
      * @param yOffSet       y轴偏移
      */
-    public static void annularParticleOutburst(Level world, double points, ParticleOptions[] particles, double x, double y, double z, double speedModifier, double yOffSet) {
-        annularParticleOutburst(world, points, particles, x, y, z, speedModifier, yOffSet, 360F, 0F);
+    public static void annularParticleOutburst(Level world, double points, ParticleOptions particle, double x, double y, double z, double speedModifier, double yOffSet) {
+        annularParticleOutburst(world, points, particle, x, y, z, speedModifier, yOffSet, 360F, 0F, 0F);
     }
 
 
@@ -102,20 +102,20 @@ public class ModParticleUtils {
      * 环形粒子爆发(可控角度 y轴偏移)
      *
      * @param points        生成数量
-     * @param particles     粒子
+     * @param particle      粒子
      * @param speedModifier 速度乘数
-     * @param yOffSet       y轴偏移
+     * @param yOffset       y轴偏移
      * @param angle         yaw角度
      * @param yMoveModifier y轴移动乘数
+     * @param entityYaw     实体yaw
      */
-    public static void annularParticleOutburst(Level world, double points, ParticleOptions[] particles, double x, double y, double z, double speedModifier, double yOffSet, float angle, float yMoveModifier) {
-        for (int i = 1; i <= points; i++) {
-            double yaw = i * angle / points;
-            double xSpeed = speedModifier * Math.cos(Math.toRadians(yaw));
-            double zSpeed = speedModifier * Math.sin(Math.toRadians(yaw));
-            for (ParticleOptions particle : particles) {
-                world.addParticle(particle, x, y + yOffSet, z, xSpeed, (0.001F + random.nextFloat() * 0.1F) * yMoveModifier, zSpeed);
-            }
+    public static void annularParticleOutburst(Level world, double points, ParticleOptions particle, double x, double y, double z, double speedModifier, double yOffset, float angle, float yMoveModifier, float entityYaw) {
+        for (int i = 0; i < points; i++) {
+            double currentAngle = entityYaw - (angle / 2) + (i * angle) / (points - 1);
+            double radians = Math.toRadians(currentAngle);
+            double xSpeed = -speedModifier * Math.sin(radians);
+            double zSpeed = speedModifier * Math.cos(radians);
+            world.addParticle(particle, x, y + yOffset, z, xSpeed, (random.nextFloat() - random.nextFloat()) * 0.1F * yMoveModifier, zSpeed);
         }
     }
 
