@@ -8,6 +8,7 @@ import com.eeeab.eeeabsmobs.sever.entity.ModMobType;
 import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -134,6 +135,15 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy
             double d1 = this.random.nextGaussian() * 0.02D;
             double d2 = this.random.nextGaussian() * 0.02D;
             this.level().addParticle(ParticleTypes.LARGE_SMOKE, this.getRandomX(1.0D), this.getRandomY(), this.getRandomZ(1.0D), d0, d1, d2);
+        }
+    }
+
+    protected void addParticlesAroundSelf(ParticleOptions options) {
+        for (int i = 0; i < 5; ++i) {
+            double d0 = this.random.nextGaussian() * 0.02D;
+            double d1 = this.random.nextGaussian() * 0.02D;
+            double d2 = this.random.nextGaussian() * 0.02D;
+            this.level().addParticle(options, this.getRandomX(1.0D), this.getRandomY() + 0.35D, this.getRandomZ(1.0D), d0, d1, d2);
         }
     }
 

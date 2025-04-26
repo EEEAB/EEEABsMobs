@@ -371,15 +371,6 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements IEntity, 
         }
     }
 
-    private void addParticlesAroundSelf(ParticleOptions options) {
-        for (int i = 0; i < 5; ++i) {
-            double d0 = this.random.nextGaussian() * 0.02D;
-            double d1 = this.random.nextGaussian() * 0.02D;
-            double d2 = this.random.nextGaussian() * 0.02D;
-            this.level().addParticle(options, this.getRandomX(1.0D), this.getRandomY() + 0.35D, this.getRandomZ(1.0D), d0, d1, d2);
-        }
-
-    }
 
     @Override
     public void performRangedAttack(LivingEntity entity, float velocity) {

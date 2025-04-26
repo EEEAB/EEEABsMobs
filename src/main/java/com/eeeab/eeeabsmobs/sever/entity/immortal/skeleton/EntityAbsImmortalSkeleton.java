@@ -15,6 +15,7 @@ import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -164,6 +165,8 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     public void handleEntityEvent(byte id) {
         if (id == 12) {
             this.doEnhanceEffect();
+        } else if (id == 13) {
+            this.addParticlesAroundSelf(ParticleTypes.ANGRY_VILLAGER);
         } else {
             super.handleEntityEvent(id);
         }

@@ -69,6 +69,7 @@ public class EntityImmortalMage extends EntityAbsImmortalSkeleton {
 
     @Override
     public Animation getHurtAnimation() {
+        if (!this.level().isClientSide && this.getAnimation() == this.castAnimation) this.level().broadcastEntityEvent(this, (byte) 13);
         return NO_ANIMATION;
     }
 
