@@ -198,7 +198,6 @@ public class EntityNamelessGuardian extends EntityAbsGuling implements IBoss, Gl
         this.subEntities = new EntityNamelessGuardianPart[]{this.core};
         this.dynamicListener = new DynamicGameEventListener<>(new Listener());
         this.setId(ENTITY_COUNTER.getAndAdd(this.subEntities.length + 1) + 1);
-        this.canplayHurtAnimation = false;
         this.setPathfindingMalus(BlockPathTypes.UNPASSABLE_RAIL, 0.0F);
         this.setPathfindingMalus(BlockPathTypes.DAMAGE_OTHER, 8.0F);
         this.setPathfindingMalus(BlockPathTypes.POWDER_SNOW, 8.0F);

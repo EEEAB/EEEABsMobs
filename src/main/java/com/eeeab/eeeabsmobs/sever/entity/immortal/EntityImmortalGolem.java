@@ -53,8 +53,9 @@ public class EntityImmortalGolem extends EntityAbsImmortal implements IEntity {
 
     public EntityImmortalGolem(EntityType<? extends EntityImmortalGolem> type, Level level) {
         super(type, level);
-        this.dropAfterDeathAnim = false;
         this.active = false;
+        this.dropAfterDeathAnim = false;
+        this.canplayHurtAnimation = true;
     }
 
     @Override

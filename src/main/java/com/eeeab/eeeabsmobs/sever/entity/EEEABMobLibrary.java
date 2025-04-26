@@ -16,9 +16,18 @@ import org.apache.commons.lang3.ArrayUtils;
 public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimatedEntity, IEntityAdditionalSpawnData {
     private int animationTick;
     private Animation animation = NO_ANIMATION;
-    public boolean canplayHurtAnimation = true;//可以播放受伤动画
-    public boolean hurtInterruptsAnimation = false;//伤害中断其他动画
-
+    /**
+     * 可以播放受伤动画
+     */
+    public boolean canplayHurtAnimation;
+    /**
+     * 受到伤害时中断其他动画
+     */
+    public boolean hurtInterruptsAnimation;
+    /**
+     * 死亡时清除其他正在播放的叠加动画
+     */
+    public boolean clearRedundantAnimationsOnDeath;
 
     public EEEABMobLibrary(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
@@ -36,7 +45,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
     @Override
     public boolean hurt(DamageSource source, float damage) {
         boolean attack = super.hurt(source, damage);
-        if (attack && this.getHealth() > 0.0F && (this.isNoAnimation() || this.hurtInterruptsAnimation) && this.canplayHurtAnimation) {
+        if (attack && this.canplayHurtAnimation && this.getHealth() > 0.0F && (this.isNoAnimation() || this.hurtInterruptsAnimation)) {
             this.playAnimation(this.getHurtAnimation());
         }
         return attack;
@@ -45,7 +54,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
     @Override
     protected void dying() {
         if (this.getDeathAnimation() != null && this.getAnimation() != this.getDeathAnimation()) {
-            this.stopAllSuperpositionAnimation();
+            if (this.clearRedundantAnimationsOnDeath) this.stopAllSuperpositionAnimation();
             this.playAnimation(this.getDeathAnimation());
         }
     }

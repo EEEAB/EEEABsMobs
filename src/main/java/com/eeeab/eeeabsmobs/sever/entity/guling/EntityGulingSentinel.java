@@ -69,6 +69,7 @@ public class EntityGulingSentinel extends EntityAbsGuling implements IEntity, Gl
     public EntityGulingSentinel(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
         this.active = false;
+        this.canplayHurtAnimation = true;
     }
 
     @Override
