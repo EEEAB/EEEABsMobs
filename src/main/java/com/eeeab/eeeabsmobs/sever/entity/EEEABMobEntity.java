@@ -1,11 +1,12 @@
 package com.eeeab.eeeabsmobs.sever.entity;
 
 import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.mob.IBoss;
+import com.eeeab.eeeabsmobs.sever.entity.mob.IMob;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.eeeab.eeeabsmobs.sever.entity.util.damage.DamageAdaptation;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
-import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
+import com.eeeab.eeeabsmobs.sever.util.ModTagKey;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -13,6 +14,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -37,12 +39,12 @@ import java.util.function.Consumer;
 /**
  * <b>EEEABMobEntity</b><br/>
  */
-public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel {
-    private final EMBossInfoServer bossInfo = new EMBossInfoServer(this);
-    private final DamageAdaptation intervalProtector;
-    private DamageSource killDataCause;//死亡的伤害源
-    public DamageSource lastDamageSource;//受到的伤害源
-    public Player killDataAttackingPlayer;
+public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
+    private static final UUID HEALTH_UUID = UUID.fromString("cca33d36-6842-43d8-b615-0cad4460a18a");
+    private static final UUID ATTACK_UUID = UUID.fromString("e1b02986-1699-4120-a687-40419a294482");
+    private static final byte MAKE_POOF_ID = 60;
+    private static final byte PLAY_BOSS_MUSIC_ID = 77;
+    private static final byte STOP_BOSS_MUSIC_ID = 78;
     public float targetDistance = -1;//与实体距离
     public float targetAngle = -1;//目标与实体之间的角度
     public boolean active;
@@ -50,18 +52,16 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
     public boolean dropAfterDeathAnim = true;//死亡掉落动画
     public int killDataRecentlyHit;
     public LivingEntity blockEntity = null;
-    private static final byte MAKE_POOF_ID = 60;
-    private static final byte PLAY_BOSS_MUSIC_ID = 77;
-    private static final byte STOP_BOSS_MUSIC_ID = 78;
-    private static final UUID HEALTH_UUID = UUID.fromString("cca33d36-6842-43d8-b615-0cad4460a18a");
-    private static final UUID ATTACK_UUID = UUID.fromString("e1b02986-1699-4120-a687-40419a294482");
+    private DamageSource killDataCause;//死亡的伤害源
+    public DamageSource lastDamageSource;//受到的伤害源
+    public Player killDataAttackingPlayer;
+    private final ModBossInfoServer bossInfo = new ModBossInfoServer(this);
 
     public EEEABMobEntity(EntityType<? extends EEEABMobEntity> type, Level level) {
         super(type, level);
         this.xpReward = this.getMobLevel().getXp();
-        this.intervalProtector = new DamageAdaptation(1, 9, 0.35F, 0.9995F).adaptBypassesDamage().intervalProtector();
         //加载配置文件并修改值
-        EMConfigHandler.AttributeConfig config = this.getAttributeConfig();
+        ModConfigHandler.AttributeConfig config = this.getAttributeConfig();
         if (config != null) {
             AttributeInstance healthAttribute = this.getAttribute(Attributes.MAX_HEALTH);
             if (healthAttribute != null) {
@@ -78,9 +78,8 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
     }
 
     @Override
-    public SoundSource getSoundSource() {
-        //如果实现了Enemy接口，则声音源为怪物类型
-        return this instanceof Enemy ? SoundSource.HOSTILE : super.getSoundSource();
+    public boolean canBeAffected(MobEffectInstance effectInstance) {
+        return (!(this instanceof IBoss) || ModEntityUtils.isBeneficial(effectInstance.getEffect())) && super.canBeAffected(effectInstance);
     }
 
     @Override
@@ -88,13 +87,10 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
         super.tick();
         frame++;
         if (getTarget() != null) {
-            //获取当前目标实体的模型(减去模型宽度的1/2)与当前实体之间的距离
             targetDistance = distanceTo(getTarget()) - getTarget().getBbWidth() / 2f;
             targetAngle = (float) getAngleBetweenEntities(this, getTarget());
-            //System.out.println("targetDistance: " + targetDistance+" || targetAngle: "+targetAngle);
         }
         if (!level().isClientSide) {
-            //if (tickCount % 20 == 0) this.setFoundTarget(getTarget() != null);
             if (getBossMusic() != null) {
                 if (!canPlayMusic()) {
                     this.level().broadcastEntityEvent(this, STOP_BOSS_MUSIC_ID);
@@ -112,20 +108,17 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
     }
 
     @Override
-    public void setHealth(float health) {
-        if (!this.level().isClientSide && health < this.getHealth()) {
-            health = this.getNewHealthByCap(health, this.getDamageCap());
-            this.lastDamageSource = null;
-        }
-        super.setHealth(health);
-    }
-
-    @Override
     public boolean hurt(DamageSource source, float amount) {
         if (!this.level().isClientSide) {
-            this.lastDamageSource = source;
-            if (getDamageCap() != null && !source.is(EMTagKey.BYPASSES_DAMAGE_CAP)) {
-                amount = Math.min(amount, getDamageCap().damageCap.get().floatValue());
+            ModConfigHandler.BossCommonConfig config = this.getBossConfig();
+            if (config != null) {
+                if (!source.is(ModTagKey.BYPASSES_DAMAGE_CAP)) amount = Math.min(amount, config.damageCap.get().floatValue() * this.getVulnMultiplier());
+                Entity entity = source.getEntity();
+                double distSqr = config.maxDamageDistance.get() * config.maxDamageDistance.get();
+                if ((ModEntityUtils.isProjectileSource(source) || !ModEntityUtils.checkDirectEntityConsistency(source))
+                        && entity != null && this.distanceToSqr(entity) >= distSqr) {
+                    return false;
+                }
             }
         }
         return super.hurt(source, amount);
@@ -145,13 +138,6 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
             this.level().broadcastEntityEvent(this, (byte) 60);
             this.remove(Entity.RemovalReason.KILLED);
         }
-    }
-
-    protected void dying() {
-    }
-
-    protected int getDeathDuration() {
-        return 20;
     }
 
     @Override
@@ -205,15 +191,15 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
             }
 
-            if (entity instanceof Player player) {
-                if (canDisableShield)
-                    this.maybeDisableShield(player, this.getMainHandItem(), player.isUsingItem() ? player.getUseItem() : ItemStack.EMPTY);
+            if (canDisableShield && entity instanceof Player player) {
+                this.maybeDisableShield(player, this.getMainHandItem(), player.isUsingItem() ? player.getUseItem() : ItemStack.EMPTY);
             }
 
             this.doEnchantDamageEffects(this, entity);
             this.setLastHurtMob(entity);
+        } else if (canDisableShield && entity instanceof Player player && player.isBlocking()) {
+            player.disableShield(true);
         }
-
         return flag;
     }
 
@@ -299,6 +285,12 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
         }
     }
 
+    @Override
+    public SoundSource getSoundSource() {
+        //如果实现了Enemy接口，则声音源为怪物类型
+        return this instanceof Enemy ? SoundSource.HOSTILE : super.getSoundSource();
+    }
+
     public List<LivingEntity> getNearByLivingEntities(double range) {
         return this.getNearByEntities(LivingEntity.class, range, range, range, range);
     }
@@ -312,7 +304,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
      */
     public <T extends Entity> List<T> getNearByEntities(Class<T> entityClass, double x, double y, double z, double radius) {
         return level().getEntitiesOfClass(entityClass, getBoundingBox().inflate(x, y, z), targetEntity -> targetEntity != this &&
-                distanceTo(targetEntity) <= radius + targetEntity.getBbWidth() / 2f && (!this.isAlliedTo(targetEntity) || !EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()));
+                distanceTo(targetEntity) <= radius + targetEntity.getBbWidth() / 2f && (!this.isAlliedTo(targetEntity) || !ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get()));
     }
 
     public void rangeAttack(double rangeX, double height, double rangeZ, double radius, @Nullable Consumer<LivingEntity> hitMethodProvider) {
@@ -324,8 +316,8 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
         for (LivingEntity hitEntity : getNearByEntities(LivingEntity.class, rangeX, height, rangeZ, radius)) {
             float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this, hitEntity.position());
             float entityHitDistance = (float) Math.sqrt((hitEntity.getZ() - this.getZ()) * (hitEntity.getZ() - this.getZ()) + (hitEntity.getX() - this.getX()) * (hitEntity.getX() - this.getX())) - hitEntity.getBbWidth() / 2F;
-            boolean isInAngle = (entityRelativeAngle >= -leftArc / 2F && entityRelativeAngle <= rightArc / 2F) || (entityRelativeAngle >= 360F - leftArc / 2F || entityRelativeAngle <= -360F + rightArc / 2F);
-            if (attackArc >= 360F || (entityHitDistance <= radius && isInAngle)) {
+            boolean inAngle = (entityRelativeAngle >= -leftArc / 2F && entityRelativeAngle <= rightArc / 2F) || (entityRelativeAngle >= 360F - leftArc / 2F || entityRelativeAngle <= -360F + rightArc / 2F);
+            if (entityHitDistance <= radius && (attackArc >= 360F || inAngle)) {
                 if (hitMethodProvider != null) {
                     hitMethodProvider.accept(hitEntity);
                 } else {
@@ -340,25 +332,6 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
      */
     public double getAngleBetweenEntities(Entity attacker, Entity target) {
         return Math.atan2(target.getZ() - attacker.getZ(), target.getX() - attacker.getX()) * (180 / Math.PI) + 90;
-    }
-
-    /**
-     * 根据配置计算限伤后的伤害
-     */
-    protected float getNewHealthByCap(float health, EMConfigHandler.DamageCapConfig config) {
-        if (config != null) {
-            float oldDamage = this.getHealth() - health;
-            float newDamage = oldDamage;
-            float damageCap = config.damageCap.get().floatValue();
-            if (this.lastDamageSource == null) {
-                newDamage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(Math.min(oldDamage, damageCap), this.getArmorValue(), (float) this.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1F);
-            } else if (!this.lastDamageSource.is(EMTagKey.BYPASSES_DAMAGE_CAP)) {
-                newDamage = Math.min(oldDamage, damageCap);
-            }
-            if (this.intervalProtect()) newDamage = this.intervalProtector.damageAfterAdaptingOnce(this, this.lastDamageSource, newDamage);
-            health = this.getHealth() - newDamage;
-        }
-        return health;
     }
 
     /**
@@ -392,7 +365,24 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
      */
     public void stun(@Nullable LivingEntity source, LivingEntity target, int duration, boolean force) {
         if (target.isBlocking() || this.isAlliedTo(target) || target instanceof Player player && (player.isSpectator() || player.isCreative())) return;
-        ModEntityUtils.addEffectStackingAmplifier(source, target, EffectInit.VERTIGO_EFFECT.get(), duration, 1, false, false, true, true, force);
+        ModEntityUtils.addEffectStackingAmplifier(source, target, EffectInit.STUN_EFFECT.get(), duration, 1, false, false, true, true, force);
+    }
+
+    /**
+     * 以自身坐标为基础进行调整
+     *
+     * @param right     左右方向
+     * @param frontBack 前后偏移
+     * @param leftRight 侧面偏移
+     * @param height    高度偏移
+     */
+    public Vec3 getPosOffset(boolean right, float frontBack, float leftRight, float height) {
+        double yawRadians = Math.toRadians(this.yBodyRot + 90.0F);
+        double pitchRadians = Math.toRadians(this.yBodyRot + (right ? 180 : 0));
+        double x = this.getX() + frontBack * Math.cos(yawRadians) + (leftRight * Math.cos(pitchRadians));
+        double y = this.getY() + height;
+        double z = this.getZ() + frontBack * Math.sin(yawRadians) + (leftRight * Math.sin(pitchRadians));
+        return new Vec3(x, y, z);
     }
 
     @Override
@@ -407,37 +397,49 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMobLevel 
         this.bossInfo.removePlayer(player);
     }
 
-    protected EMConfigHandler.AttributeConfig getAttributeConfig() {
+    @Override
+    public boolean isStunned() {
+        return this.hasEffect(EffectInit.STUN_EFFECT.get());
+    }
+
+    protected void dying() {
+    }
+
+    protected float getVulnMultiplier() {
+        return 1F;
+    }
+
+    protected int getDeathDuration() {
+        return 20;
+    }
+
+    protected ModConfigHandler.AttributeConfig getAttributeConfig() {
         return null;
     }
 
-    protected EMConfigHandler.DamageCapConfig getDamageCap() {
+    protected ModConfigHandler.BossCommonConfig getBossConfig() {
         return null;
-    }
-
-    protected boolean intervalProtect() {
-        return false;
     }
 
     @Override
-    public IMobLevel.MobLevel getMobLevel() {
-        return IMobLevel.MobLevel.NORMAL;
+    public MobLevel getMobLevel() {
+        return MobLevel.NORMAL;
     }
 
     protected boolean setDarkenScreen() {
         return false;
     }
 
-    protected boolean showBossBloodBars() {
-        return false;
+    protected boolean canShowBossBar() {
+        return true;
     }
 
-    protected BossEvent.BossBarColor bossBloodBarsColor() {
-        return BossEvent.BossBarColor.PURPLE;
+    protected BossEvent.BossBarColor bossBarColor() {
+        return BossEvent.BossBarColor.RED;
     }
 
     public float getHealthPercentage() {
-        return (this.getHealth() / this.getMaxHealth()) * 100;
+        return this.getHealth() / this.getMaxHealth();
     }
 
     public SoundEvent getBossMusic() {
