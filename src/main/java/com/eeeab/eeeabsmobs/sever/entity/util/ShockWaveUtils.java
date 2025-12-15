@@ -1,8 +1,8 @@
 package com.eeeab.eeeabsmobs.sever.entity.util;
 
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityFallingBlock;
-import com.eeeab.eeeabsmobs.sever.util.EMMathUtils;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityFallingBlock;
+import com.eeeab.eeeabsmobs.sever.util.ModMathUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -62,10 +62,10 @@ public class ShockWaveUtils {
                 double bounceExponent = Math.min(1D / (radius * radius), 0.1D) * (1D + distanceToMax / radius * 2D);
                 Vec3 rotAxis = new Vec3(0D, -1D, 0D).cross(centerToBlock).normalize();
                 Vector3f axis = new Vector3f((float) rotAxis.x, (float) rotAxis.y, (float) rotAxis.z);
-                Quaternionf rotator = EMMathUtils.rotation(axis, (float) (distance / radius) * 15F + level.random.nextFloat() * 10F - 5F, true);
-                rotator.mul(EMMathUtils.XP.rotationDegrees(level.random.nextFloat() * 12F - 6F));
-                rotator.mul(EMMathUtils.YP.rotationDegrees(level.random.nextFloat() * 40F - 20F));
-                rotator.mul(EMMathUtils.ZP.rotationDegrees(level.random.nextFloat() * 12F - 6F));
+                Quaternionf rotator = ModMathUtils.rotation(axis, (float) (distance / radius) * 15F + level.random.nextFloat() * 10F - 5F, true);
+                rotator.mul(ModMathUtils.XP.rotationDegrees(level.random.nextFloat() * 12F - 6F));
+                rotator.mul(ModMathUtils.YP.rotationDegrees(level.random.nextFloat() * 40F - 20F));
+                rotator.mul(ModMathUtils.ZP.rotationDegrees(level.random.nextFloat() * 12F - 6F));
                 float bouncing = (float) (baseBouncing + distance * bounceExponent);
                 int liftTime = defaultLifeTime;
                 if (!customLife) {
@@ -74,7 +74,7 @@ public class ShockWaveUtils {
                 spawnFallingBlockByPos((ServerLevel) level, pos, rotator, liftTime, bouncing);
             }
         }
-        return level.getEntitiesOfClass(LivingEntity.class, new AABB(xFrom, center.y - radius, zFrom, xTo, center.y + radius, zTo), e -> e != attacker && (!attacker.isAlliedTo(e) || !EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()));
+        return level.getEntitiesOfClass(LivingEntity.class, new AABB(xFrom, center.y - radius, zFrom, xTo, center.y + radius, zTo), e -> e != attacker && (!attacker.isAlliedTo(e) || !ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get()));
     }
 
     /**
@@ -108,7 +108,7 @@ public class ShockWaveUtils {
             double px = attacker.getX() + vx * distance + offset * Math.cos((double) (attacker.yBodyRot + 90.0F) * Math.PI / 180.0D);
             double pz = attacker.getZ() + vz * distance + offset * Math.sin((double) (attacker.yBodyRot + 90.0F) * Math.PI / 180.0D);
             AABB aabb = new AABB(px - 1.5D, minY, pz - 1.5D, px + 1.5D, maxY, pz + 1.5D);
-            List<Entity> entities = attacker.level().getEntitiesOfClass(Entity.class, aabb, e -> e != attacker && e.isAttackable() && (!attacker.isAlliedTo(e) || !EMConfigHandler.COMMON.OTHER.enableSameMobsTypeInjury.get()));
+            List<Entity> entities = attacker.level().getEntitiesOfClass(Entity.class, aabb, e -> e != attacker && e.isAttackable() && (!attacker.isAlliedTo(e) || !ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get()));
             for (Entity entity : entities) hitProvider.accept(entity);
             float factor = 1F - ((float) distance / 2F - 2F) / maxFallingDistance;
             if (continuous || attacker.getRandom().nextFloat() < 0.6F) {
@@ -137,7 +137,7 @@ public class ShockWaveUtils {
             }
             return y;
         }
-        for (int offset = 1; offset <= EMConfigHandler.COMMON.ENTITY.fallingBlockBelowCheckRange.get(); offset++) {
+        for (int offset = 1; offset <= ModConfigHandler.COMMON.entities.fallingBlockConfig2.get(); offset++) {
             BlockState stateBelow = level.getBlockState(pos.below(offset));
             if (!stateBelow.isAir()) {
                 return pos.getY() - offset;
@@ -147,7 +147,7 @@ public class ShockWaveUtils {
     }
 
     private static BlockState checkSpawnY(ServerLevel level, BlockPos pos) {
-        if (!EMConfigHandler.COMMON.ENTITY.enableSpawnFallingBlock.get()) return null;
+        if (!ModConfigHandler.COMMON.entities.fallingBlockConfig1.get()) return null;
         BlockPos abovePos = new BlockPos(pos).above();
         BlockState block = level.getBlockState(pos);
         BlockState blockAbove = level.getBlockState(abovePos);

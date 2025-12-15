@@ -2,9 +2,9 @@ package com.eeeab.eeeabsmobs.sever.capability;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
+import com.eeeab.eeeabsmobs.sever.handler.CapabilityHandler;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.integration.curios.ICuriosApi;
@@ -101,7 +101,7 @@ public class FrenzyCapability {
                             Vec3 movement = player.getDeltaMovement().scale(1.05);
                             player.setDeltaMovement(movement);
                         }
-                        boolean checkCanDestroyBlock = EMConfigHandler.COMMON.OTHER.enableFrenzyDestroyBlock.get();
+                        boolean checkCanDestroyBlock = ModConfigHandler.COMMON.others.enableFrenzyDestroyBlock.get();
                         if (!player.level().isClientSide && !inWater && checkCanDestroyBlock) {
                             Vec3 playerPos = player.position();
                             float yaw = player.getYRot() * ((float) Math.PI / 180F);
@@ -132,7 +132,7 @@ public class FrenzyCapability {
                                 double x = 3F * Math.cos(Math.toRadians(angle - 90));
                                 double z = 3F * Math.sin(Math.toRadians(angle - 90));
                                 hitEntity.setDeltaMovement(x, 0.35, z);
-                                hitEntity.addEffect(new MobEffectInstance(EffectInit.VERTIGO_EFFECT.get(), 20, 0, false, false, true));
+                                hitEntity.addEffect(new MobEffectInstance(EffectInit.STUN_EFFECT.get(), 20, 0, false, false, true));
                             }
                         }
                         if (player.level().isClientSide) {
@@ -191,7 +191,7 @@ public class FrenzyCapability {
 
         @Override
         public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-            return HandlerCapability.FRENZY_CAPABILITY.orEmpty(cap, instance.cast());
+            return CapabilityHandler.FRENZY_CAPABILITY.orEmpty(cap, instance.cast());
         }
 
         @Override
