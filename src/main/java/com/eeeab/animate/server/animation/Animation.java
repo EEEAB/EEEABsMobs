@@ -18,35 +18,23 @@ public class Animation extends AnimationState {
     private final int duration;
 
     /**
+     * 是否循环动画
+     */
+    private boolean looping;
+
+    /**
      * 是否允许该动画可以与后续播放动画堆叠
      */
-    private final boolean superposition;
+    private boolean overlap;
 
-    private Animation(int duration, boolean superposition) {
+    private Animation(int duration) {
         this.duration = duration;
-        this.superposition = superposition;
-    }
-
-    public static Animation create(int duration) {
-        return new Animation(duration, false);
-    }
-
-    public static Animation coexist(int duration) {
-        return new Animation(duration, true);
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public boolean isSuperposition() {
-        return superposition;
     }
 
     @Override
     public void updateTime(float ageInTicks, float speed) {
         super.updateTime(ageInTicks, speed);
-        if (this.isSuperposition() && this.isStarted()) {
+        if (this.isOverlap() && this.isStarted()) {
             int accumulateTick = Mth.floor(this.getAccumulatedTime() / 1000F * 20F);
             if (accumulateTick >= this.duration) {
                 this.stop();
@@ -56,9 +44,36 @@ public class Animation extends AnimationState {
 
     @Override
     public String toString() {
-        return "{" +
+        return "Animation{" +
                 "duration=" + duration +
-                ", superposition=" + superposition +
+                ", looping=" + looping +
+                ", overlap=" + overlap +
                 '}';
+    }
+
+    public Animation doesLoop() {
+        looping = true;
+        return this;
+    }
+
+    public Animation doesOverlap() {
+        overlap = true;
+        return this;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public boolean isOverlap() {
+        return overlap;
+    }
+
+    public boolean isLooping() {
+        return looping;
+    }
+
+    public static Animation create(int duration) {
+        return new Animation(duration);
     }
 }
