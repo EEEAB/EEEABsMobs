@@ -4,7 +4,7 @@ import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityPeriod;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityType;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianBlade;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityGuardianBlade;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.core.BlockPos;

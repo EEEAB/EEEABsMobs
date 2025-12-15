@@ -1,7 +1,9 @@
 package com.eeeab.eeeabsmobs.client.particle.util;
 
-import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
+import com.eeeab.animate.client.util.ModelPartUtils;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
 //参考自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/client/particle/util/RibbonComponent.java
@@ -35,12 +37,10 @@ public class RibbonComponent extends ParticleComponent {
     public void init(AdvancedParticleBase particle) {
         super.init(particle);
         if (particle != null) {
-
             ParticleComponent[] newComponents = new ParticleComponent[components.length + 2];
             System.arraycopy(components, 0, newComponents, 0, components.length);
             newComponents[components.length] = new AttachToParticle(particle);
             newComponents[components.length + 1] = new Trail();
-
             ParticleRibbon.spawnRibbon(particle.getWorld(), ribbon, length, particle.getPosX(), particle.getPosY(), particle.getPosZ(), 0, 0, 0, faceCamera, yaw, pitch, roll, scale, r, g, b, a, 0, particle.getLifetime() + length, emissive, newComponents, isAnimation);
         }
     }
@@ -85,8 +85,7 @@ public class RibbonComponent extends ParticleComponent {
     public static class Trail extends ParticleComponent {
         @Override
         public void postUpdate(AdvancedParticleBase particle) {
-            if (particle instanceof ParticleRibbon) {
-                ParticleRibbon ribbon = (ParticleRibbon) particle;
+            if (particle instanceof ParticleRibbon ribbon) {
                 for (int i = ribbon.positions.length - 1; i > 0; i--) {
                     ribbon.positions[i] = ribbon.positions[i - 1];
                     ribbon.prevPositions[i] = ribbon.prevPositions[i - 1];
@@ -108,10 +107,8 @@ public class RibbonComponent extends ParticleComponent {
 
         @Override
         public void postUpdate(AdvancedParticleBase particle) {
-            if (particle instanceof ParticleRibbon && validateLocation(startLocation) && validateLocation(endLocation)) {
-                ParticleRibbon ribbon = (ParticleRibbon) particle;
+            if (particle instanceof ParticleRibbon ribbon && validateLocation(startLocation) && validateLocation(endLocation)) {
                 ribbon.setPos(startLocation[0].x(), startLocation[0].y(), startLocation[0].z());
-
                 Vec3 increment = endLocation[0].subtract(startLocation[0]).scale(1.0f / (float) (ribbon.positions.length - 1));
                 for (int i = 0; i < ribbon.positions.length; i++) {
                     Vec3 newPos = startLocation[0].add(increment.scale(i));
@@ -137,12 +134,48 @@ public class RibbonComponent extends ParticleComponent {
 
         @Override
         public void preRender(AdvancedParticleBase particle, float partialTicks) {
-            if (particle instanceof ParticleRibbon) {
-                ParticleRibbon ribbon = (ParticleRibbon) particle;
+            if (particle instanceof ParticleRibbon ribbon) {
                 float time = (ribbon.getAge() - 1 + partialTicks) / (ribbon.getLifetime());
                 float t = (startOffset + time * speed) % 1.0f;
                 ribbon.texPanOffset = (ribbon.getMaxUPublic() - ribbon.getMinUPublic()) / 2 * t;
             }
+        }
+    }
+
+    /**
+     * 跟踪实体模型部件坐标组件
+     */
+    public static class PinLocationWithModelPart extends ParticleComponent {
+        private final Entity entity;
+        private final ModelPart modelPart;
+        private final String[] modelPartName;
+
+        /**
+         * PinLocationWithModelPart
+         *
+         * @param entity        实体
+         * @param modelPart     模型部件
+         * @param modelPartName 模型部件名称路径
+         */
+        public PinLocationWithModelPart(Entity entity, ModelPart modelPart, String[] modelPartName) {
+            this.entity = entity;
+            this.modelPart = modelPart;
+            this.modelPartName = modelPartName;
+        }
+
+        @Override
+        public void init(AdvancedParticleBase particle) {
+            updatePosition(particle);
+        }
+
+        @Override
+        public void preUpdate(AdvancedParticleBase particle) {
+            updatePosition(particle);
+        }
+
+        private void updatePosition(AdvancedParticleBase particle) {
+            Vec3 worldPos = ModelPartUtils.getWorldPosition(entity, entity.getVisualRotationYInDegrees(), modelPart, modelPartName);
+            particle.setPos(worldPos.x, worldPos.y, worldPos.z);
         }
     }
 }

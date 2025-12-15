@@ -3,8 +3,8 @@ package com.eeeab.eeeabsmobs.client.render.entity;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerOuter;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelTester;
-import com.eeeab.eeeabsmobs.client.model.util.EMModelLayer;
-import com.eeeab.eeeabsmobs.sever.entity.test.EntityTester;
+import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
+import com.eeeab.eeeabsmobs.sever.entity.mob.EntityTester;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -17,11 +17,11 @@ import net.minecraftforge.client.ForgeHooksClient;
 import org.joml.Matrix4f;
 
 public class RenderTester extends MobRenderer<EntityTester, ModelTester> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/tester/tester.png");
-    private static final ResourceLocation LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/tester/tester_plains.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/tester.png");
+    private static final ResourceLocation LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/tester_plains.png");
 
     public RenderTester(EntityRendererProvider.Context context) {
-        super(context, new ModelTester(context.bakeLayer(EMModelLayer.TESTER)), 0.3F);
+        super(context, new ModelTester(context.bakeLayer(ModModelLayer.TESTER)), 0.3F);
         this.addLayer(new LayerOuter<>(this, LAYER));
     }
 

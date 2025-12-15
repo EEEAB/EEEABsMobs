@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.util.damage;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 伤害适应
  *
  * @author EEEAB
- * @version 1.8
+ * @version 2.0
  */
 public class DamageAdaptation {
     /**
@@ -39,21 +39,19 @@ public class DamageAdaptation {
     /**
      * 适应绕过伤害上限的伤害(例如:虚空与指令伤害)
      */
-    private boolean adaptBypassesDamage;
-    /**
-     * 是否为帧伤保护
-     */
-    private boolean intervalProtectorFlag;
+    private final boolean adaptBypassesDamage;
+
     private final Map<String, DamageInfo> adaptMap = new ConcurrentHashMap<>();
 
-    public DamageAdaptation(int adaptDamageTypesCount, int resetCountdown, float singleAdaptFactor, float maxAdaptFactor) {
+    public DamageAdaptation(int adaptDamageTypesCount, int resetCountdown, float singleAdaptFactor, float maxAdaptFactor, boolean adaptBypassesDamage) {
         this.adaptDamageTypesCount = adaptDamageTypesCount;
         this.resetCountdown = resetCountdown;
         this.singleAdaptFactor = singleAdaptFactor;
         this.maxAdaptFactor = maxAdaptFactor;
+        this.adaptBypassesDamage = adaptBypassesDamage;
     }
 
-    public DamageAdaptation(EMConfigHandler.DamageSourceAdaptConfig config) {
+    public DamageAdaptation(ModConfigHandler.DamageSourceAdaptConfig config) {
         this.adaptDamageTypesCount = config.maxDamageSourceAdaptCount.get();
         this.resetCountdown = config.resetCountdown.get() * 20;
         this.singleAdaptFactor = config.singleAdaptFactor.get().floatValue();
@@ -61,26 +59,12 @@ public class DamageAdaptation {
         this.adaptBypassesDamage = config.adaptBypassesDamage.get();
     }
 
-    public DamageAdaptation adaptBypassesDamage() {
-        this.adaptBypassesDamage = true;
-        return this;
-    }
-
-    public DamageAdaptation intervalProtector() {
-        this.intervalProtectorFlag = true;
-        return this;
-    }
-
     public float damageAfterAdaptingOnce(LivingEntity entity, @Nullable DamageSource source, float amount) {
         //检查是否适应伤害
         if (maxAdaptFactor <= 0F || singleAdaptFactor <= 0F) return amount;
         String key;
-        if (intervalProtectorFlag) {
-            key = "interval_protector";
-        } else {
-            key = getKey(source, adaptBypassesDamage);
-            if (key == null) return amount;
-        }
+        key = getKey(source, adaptBypassesDamage);
+        if (key == null) return amount;
         try {
             DamageInfo info = adaptMap.getOrDefault(key, null);
             long tickStamp = entity.tickCount;
@@ -143,11 +127,8 @@ public class DamageAdaptation {
                 String id = entity.getType().getDescriptionId();
                 String key = id;
                 if (entity instanceof Player player) {
-                    if (source.getEntity() == source.getDirectEntity()) {
-                        key = spliceCharacters(id, player.getMainHandItem().getDescriptionId());
-                    } else {
-                        key = spliceCharacters(id, player.getItemInHand(player.getUsedItemHand()).getDescriptionId());
-                    }
+                    if (source.getEntity() == source.getDirectEntity()) key = spliceCharacters(id, player.getMainHandItem().getDescriptionId());
+                    else key = spliceCharacters(id, player.getItemInHand(player.getUsedItemHand()).getDescriptionId());
                 }
                 return key;
             } else {

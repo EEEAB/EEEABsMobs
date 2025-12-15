@@ -2,10 +2,10 @@ package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
 import com.eeeab.animate.server.ai.AnimationAI;
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianBlade;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
-import com.eeeab.eeeabsmobs.sever.entity.util.damage.EMDamageSource;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityGuardianBlade;
+import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.util.damage.ModDamageSource;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
@@ -98,7 +98,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
                 if (Difficulty.HARD.equals(this.entity.level().getDifficulty())) duration = 4;
                 entity.stun(null, hitEntity, (int) (duration * 20), entity.isChallengeMode());
             }
-            entity.guardianHurtTarget(EMDamageSource.guardianRobustAttack(entity), entity, hitEntity, baseDamageMultiplier, damageMultiplier, true, true, true);
+            entity.guardianHurtTarget(ModDamageSource.guardianRobustAttack(entity), entity, hitEntity, baseDamageMultiplier, damageMultiplier, true, true, true);
         });
     }
 

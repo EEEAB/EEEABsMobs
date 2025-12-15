@@ -2,8 +2,8 @@ package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.entity.util.ShockWaveUtils;
 import net.minecraft.util.Mth;
@@ -59,7 +59,7 @@ public class GuardianLeapGoal extends AnimationSimpleAI<EntityNamelessGuardian> 
         ShockWaveUtils.doRingShockWave(entity, position, 2.4D, -0.04F, false, 10);
     }
 
-    private static Vec3 findTargetPoint(LivingEntity attacker, LivingEntity target) {
+    public static Vec3 findTargetPoint(LivingEntity attacker, LivingEntity target) {
         Vec3 vec3 = target.position();
         float width = Math.min(target.getBbWidth(), 1.5F);
         RandomSource random = attacker.getRandom();

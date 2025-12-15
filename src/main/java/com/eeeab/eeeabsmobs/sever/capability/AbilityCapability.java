@@ -4,7 +4,7 @@ import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityType;
-import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
+import com.eeeab.eeeabsmobs.sever.handler.CapabilityHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -141,7 +141,7 @@ public class AbilityCapability {
 
         @Override
         public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-            return HandlerCapability.ABILITY_CAPABILITY.orEmpty(cap, instance.cast());
+            return CapabilityHandler.ABILITY_CAPABILITY.orEmpty(cap, instance.cast());
         }
 
         @Override

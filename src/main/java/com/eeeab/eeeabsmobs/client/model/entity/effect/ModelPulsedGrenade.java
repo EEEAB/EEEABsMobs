@@ -1,0 +1,32 @@
+package com.eeeab.eeeabsmobs.client.model.entity.effect;
+
+import com.eeeab.animate.client.model.ModHierarchicalModel;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityPulsedGrenade;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.*;
+
+public class ModelPulsedGrenade extends ModHierarchicalModel<EntityPulsedGrenade> {
+    public final ModelPart ball;
+
+    public ModelPulsedGrenade(ModelPart root) {
+        this.ball = root.getChild("ball");
+    }
+
+    public static LayerDefinition createBodyLayer() {
+        MeshDefinition meshdefinition = new MeshDefinition();
+        PartDefinition partdefinition = meshdefinition.getRoot();
+        partdefinition.addOrReplaceChild("ball", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F)), PartPose.ZERO);
+        return LayerDefinition.create(meshdefinition, 32, 32);
+    }
+
+    @Override
+    public ModelPart root() {
+        return this.ball;
+    }
+
+    public void setupAnim(EntityPulsedGrenade entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.ball.yRot = toRadians(netHeadYaw);
+        this.ball.xRot = toRadians(headPitch);
+    }
+}

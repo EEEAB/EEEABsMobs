@@ -1,17 +1,18 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.entity.SummoningEntity;
+import com.eeeab.eeeabsmobs.sever.entity.mob.SummoningEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 
 import java.util.List;
 import java.util.UUID;
 
-public class ReFindOwnerGoal<T extends Mob & SummoningEntity<T>> extends Goal {
+public class ReFindOwnerGoal<T extends LivingEntity & SummoningEntity<T>> extends Goal {
     private final RandomSource random = RandomSource.create();
     private final Class<? extends Mob> ownerClass;
     private final double findRadius;
@@ -39,27 +40,15 @@ public class ReFindOwnerGoal<T extends Mob & SummoningEntity<T>> extends Goal {
         if (uuid == null) return;
         if (target.level() instanceof ServerLevel serverLevel) {
             Entity entity = serverLevel.getEntity(uuid);
-            if (entity != null && entity.isAlive()) {
-                try {
-                    target.setOwner((T) entity);
-                    return;
-                } catch (ClassCastException ignored) {
-                    EEEABMobs.LOGGER.error("An exception occurred while trying to cast class: {}", entity.getName().getString());
-                }
+            if (entity != null) {
+                if (trySetOwner(target, entity)) return;
             }
         }
-
         /* 当前维度中Owner不存在时则执行下面逻辑 */
-
         List<? extends Mob> entities = target.getNearByEntitiesByClass(ownerClass, target.level(), target, findRadius, 10F, findRadius, findRadius);
         for (Mob entity : entities) {
             if (uuid.equals(entity.getUUID())) {
-                try {
-                    this.target.setOwner((T) entity);
-                    return;
-                } catch (ClassCastException ignored) {
-                    EEEABMobs.LOGGER.error("An exception occurred while trying to cast class: {}", entity.getName().getString());
-                }
+                if (trySetOwner(target, entity)) return;
             }
         }
         /*
@@ -73,6 +62,16 @@ public class ReFindOwnerGoal<T extends Mob & SummoningEntity<T>> extends Goal {
                 方案2:周期性搜索范围内目标,得到List集合,随机的取出List中的元素作为新Owner
         */
         if (!entities.isEmpty()) target.setOwnerUUID(entities.get(random.nextInt(entities.size())).getUUID());
+    }
+
+    private boolean trySetOwner(T target, Entity entity) {
+        try {
+            target.setOwner((T) entity);
+            return true;
+        } catch (ClassCastException ignored) {
+            EEEABMobs.LOGGER.warn("An exception occurred while trying to cast class: {}", entity.getName().getString());
+        }
+        return false;
     }
 }
 

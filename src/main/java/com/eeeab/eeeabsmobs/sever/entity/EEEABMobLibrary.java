@@ -1,8 +1,8 @@
 package com.eeeab.eeeabsmobs.sever.entity;
 
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.animate.server.animation.EMAnimatedEntity;
-import com.eeeab.animate.server.handler.EMAnimationHandler;
+import com.eeeab.animate.server.animation.AnimatedEntity;
+import com.eeeab.animate.server.handler.AnimationHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -13,7 +13,7 @@ import org.apache.commons.lang3.ArrayUtils;
 /**
  * <b>EEEABMobLibrary</b><br/>
  */
-public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimatedEntity, IEntityAdditionalSpawnData {
+public abstract class EEEABMobLibrary extends EEEABMobEntity implements AnimatedEntity, IEntityAdditionalSpawnData {
     private int animationTick;
     private Animation animation = NO_ANIMATION;
     /**
@@ -41,7 +41,6 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
         return null;
     }
 
-
     @Override
     public boolean hurt(DamageSource source, float damage) {
         boolean attack = super.hurt(source, damage);
@@ -67,7 +66,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
     }
 
     public void playAnimation(Animation animation) {
-        if (animation != null) EMAnimationHandler.INSTANCE.sendEMAnimationMessage(this, animation);
+        if (animation != null) AnimationHandler.INSTANCE.sendEMAnimationMessage(this, animation);
     }
 
     @Override
@@ -100,7 +99,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements EMAnimat
     }
 
     public void stopAllSuperpositionAnimation() {
-        EMAnimationHandler.INSTANCE.sendEMAnimationMessage(this, true);
+        AnimationHandler.INSTANCE.sendEMAnimationMessage(this, true);
     }
 
     protected void onAnimationStart(Animation animation) {

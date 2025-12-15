@@ -20,12 +20,9 @@ public class ParticleGuardianSpark extends TextureSheetParticle {
         this.yd = speed.y;
         this.zd = speed.z;
         this.quadSize *= 2.0F;
-        this.lifetime = 20;
+        this.lifetime = (int)(8.0 / (Math.random() * 0.5 + 0.95));
         this.setSpriteFromAge(sprite);
         this.roll = this.oRoll = (float) (random.nextInt(4) * Math.PI / 2);
-        this.rCol = 1f;
-        this.gCol = 1f;
-        this.bCol = 1f;
     }
 
     public void tick() {
@@ -36,20 +33,6 @@ public class ParticleGuardianSpark extends TextureSheetParticle {
             this.remove();
         } else {
             this.setSpriteFromAge(this.sprite);
-            this.yd += 0.004D;
-            this.move(this.xd, this.yd, this.zd);
-            if (this.y == this.yo) {
-                this.xd *= 1.1D;
-                this.zd *= 1.1D;
-            }
-
-            this.xd *= 0.96D;
-            this.yd *= 0.96D;
-            this.zd *= 0.96D;
-            if (this.onGround) {
-                this.xd *= 0.7D;
-                this.zd *= 0.7D;
-            }
         }
         this.age++;
     }
@@ -61,7 +44,7 @@ public class ParticleGuardianSpark extends TextureSheetParticle {
     }
 
     @Override
-    protected int getLightColor(float p_107249_) {
+    protected int getLightColor(float partialTick) {
         return 240;
     }
 

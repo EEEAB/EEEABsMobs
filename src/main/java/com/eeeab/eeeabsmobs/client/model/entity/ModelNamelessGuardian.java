@@ -1,15 +1,15 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.animate.client.model.EMHierarchicalModel;
+import com.eeeab.animate.client.model.ModHierarchicalModel;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationNamelessGuardian;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationNamelessGuardian2;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityNamelessGuardian;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
-public class ModelNamelessGuardian extends EMHierarchicalModel<EntityNamelessGuardian> {
+public class ModelNamelessGuardian extends ModHierarchicalModel<EntityNamelessGuardian> {
     private final ModelPart root;
     private final ModelPart head;
     private final ModelPart rightArm;
@@ -64,12 +64,12 @@ public class ModelNamelessGuardian extends EMHierarchicalModel<EntityNamelessGua
                 .texOffs(19, 205).addBox(2.7801F, 3.5444F, 19.1214F, 4.0F, 5.0F, 6.0F, new CubeDeformation(0.0F))
                 .texOffs(3, 209).addBox(3.1801F, 4.6444F, 25.1214F, 3.0F, 3.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(-4.0F, -4.4F, 0.0F));
         PartDefinition cube_r9 = lever.addOrReplaceChild("cube_r9", CubeListBuilder.create().texOffs(84, 186).addBox(-2.3102F, 5.7362F, -8.4468F, 4.0F, 3.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.7303F, 0.6472F, -11.2938F, -0.4363F, 0.0F, 0.0F));
-        PartDefinition blade = axe.addOrReplaceChild("blade", CubeListBuilder.create().texOffs(222, 196).addBox(2.7801F, 4.3444F, -37.1786F, 4.0F, 10.0F, 11.0F, new CubeDeformation(0.0F))
-                .texOffs(222, 196).addBox(2.7801F, -8.0556F, -37.1786F, 4.0F, 10.0F, 11.0F, new CubeDeformation(0.0F)), PartPose.offset(-4.0F, -4.4F, 0.0F));
-        PartDefinition cube_r10 = blade.addOrReplaceChild("cube_r10", CubeListBuilder.create().texOffs(102, 192).addBox(-2.3F, -8.5F, -4.5F, 5.0F, 16.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.7301F, -8.9005F, -34.8688F, 1.9199F, 0.0F, 0.0F));
-        PartDefinition cube_r11 = blade.addOrReplaceChild("cube_r11", CubeListBuilder.create().texOffs(132, 197).addBox(-1.8949F, -14.3568F, -2.9102F, 4.0F, 13.0F, 7.0F, new CubeDeformation(0.1F)), PartPose.offsetAndRotation(4.6F, -13.2029F, -31.8596F, -2.2078F, 0.0F, 0.0F));
-        PartDefinition cube_r12 = blade.addOrReplaceChild("cube_r12", CubeListBuilder.create().texOffs(182, 186).addBox(-1.8699F, -5.8044F, -3.1078F, 4.0F, 16.0F, 15.0F, new CubeDeformation(0.1F)), PartPose.offsetAndRotation(4.6F, 16.0029F, -31.8596F, -1.9199F, 0.0F, 0.0F));
-        PartDefinition cube_r13 = blade.addOrReplaceChild("cube_r13", CubeListBuilder.create().texOffs(156, 191).addBox(-1.8949F, -6.3321F, -9.8793F, 4.0F, 18.0F, 8.0F, new CubeDeformation(-0.1F)), PartPose.offsetAndRotation(4.6F, 16.0029F, -31.8596F, 2.2078F, 0.0F, 0.0F));
+        PartDefinition blade = axe.addOrReplaceChild("blade", CubeListBuilder.create().texOffs(222, 196).addBox(-1.2199F, 0.3444F, -8.1786F, 4.0F, 10.0F, 11.0F, new CubeDeformation(0.0F))
+                .texOffs(222, 196).addBox(-1.2199F, -12.0556F, -8.1786F, 4.0F, 10.0F, 11.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -0.4F, -29.0F));
+        PartDefinition cube_r10 = blade.addOrReplaceChild("cube_r10", CubeListBuilder.create().texOffs(102, 192).addBox(-2.3F, -8.5F, -4.5F, 5.0F, 16.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.7301F, -12.9005F, -5.8688F, 1.9199F, 0.0F, 0.0F));
+        PartDefinition cube_r11 = blade.addOrReplaceChild("cube_r11", CubeListBuilder.create().texOffs(132, 197).addBox(-1.8949F, -14.3568F, -2.9102F, 4.0F, 13.0F, 7.0F, new CubeDeformation(0.1F)), PartPose.offsetAndRotation(0.6F, -17.2029F, -2.8596F, -2.2078F, 0.0F, 0.0F));
+        PartDefinition cube_r12 = blade.addOrReplaceChild("cube_r12", CubeListBuilder.create().texOffs(182, 186).addBox(-1.8699F, -5.8044F, -3.1078F, 4.0F, 16.0F, 15.0F, new CubeDeformation(0.1F)), PartPose.offsetAndRotation(0.6F, 12.0029F, -2.8596F, -1.9199F, 0.0F, 0.0F));
+        PartDefinition cube_r13 = blade.addOrReplaceChild("cube_r13", CubeListBuilder.create().texOffs(156, 191).addBox(-1.8949F, -6.3321F, -9.8793F, 4.0F, 18.0F, 8.0F, new CubeDeformation(-0.1F)), PartPose.offsetAndRotation(0.6F, 12.0029F, -2.8596F, 2.2078F, 0.0F, 0.0F));
         PartDefinition leftArm = body.addOrReplaceChild("leftArm", CubeListBuilder.create(), PartPose.offsetAndRotation(14.3405F, -21.4257F, 0.0F, 0.0F, 0.0F, -0.0873F));
         PartDefinition leftArmAbove = leftArm.addOrReplaceChild("leftArmAbove", CubeListBuilder.create().texOffs(196, 2).mirror().addBox(-6.1277F, -5.4852F, -5.3222F, 15.0F, 12.0F, 15.0F, new CubeDeformation(0.0F)).mirror(false)
                 .texOffs(190, 111).mirror().addBox(-6.1277F, 5.0148F, -6.3222F, 16.0F, 2.0F, 17.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(2.6125F, -1.1939F, -3.0851F, -0.2618F, -0.2618F, 0.0F));

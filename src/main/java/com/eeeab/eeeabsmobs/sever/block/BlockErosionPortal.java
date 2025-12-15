@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.block;
 
 import com.eeeab.eeeabsmobs.sever.init.BlockInit;
-import com.eeeab.eeeabsmobs.sever.util.EMResourceKey;
+import com.eeeab.eeeabsmobs.sever.util.ModResourceKey;
 import com.eeeab.eeeabsmobs.sever.world.portal.CuboidPortalShape;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -73,7 +73,7 @@ public class BlockErosionPortal extends NetherPortalBlock {
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (entity.level() instanceof ServerLevel serverLevel) {
             MinecraftServer server = serverLevel.getServer();
-            ResourceKey<Level> resourceKey = entity.level().dimension() == EMResourceKey.VOID_CRACK_LEVEL ? Level.OVERWORLD : EMResourceKey.VOID_CRACK_LEVEL;
+            ResourceKey<Level> resourceKey = entity.level().dimension() == ModResourceKey.VOID_CRACK_LEVEL ? Level.OVERWORLD : ModResourceKey.VOID_CRACK_LEVEL;
             ServerLevel portalDimension = server.getLevel(resourceKey);
             if (portalDimension != null && !entity.isPassenger() && entity.canChangeDimensions()) {
                 if (entity.isOnPortalCooldown()) {

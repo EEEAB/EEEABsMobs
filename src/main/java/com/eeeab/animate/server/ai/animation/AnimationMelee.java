@@ -3,32 +3,39 @@ package com.eeeab.animate.server.ai.animation;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
-import com.eeeab.animate.server.animation.EMAnimatedEntity;
+import com.eeeab.animate.server.animation.AnimatedEntity;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.EnumSet;
 import java.util.function.Supplier;
 
-public class AnimationMelee<T extends EEEABMobLibrary & EMAnimatedEntity> extends AnimationSimpleAI<T> {
+public class AnimationMelee<T extends EEEABMobLibrary & AnimatedEntity> extends AnimationSimpleAI<T> {
     protected LivingEntity attackTarget;
     protected int damageKeyframes;
     protected float attackDistance;
     protected float damageMultiplier;
     protected float knockBackMultiplier;
+    protected boolean canDisableShield;
 
     public AnimationMelee(T entity, Supplier<Animation> animationSupplier, int damageKeyframes, float attackDistance, float applyDamage, float applyKnockBack) {
         this(entity, animationSupplier, false, damageKeyframes, attackDistance, applyDamage, applyKnockBack);
     }
 
     public AnimationMelee(T entity, Supplier<Animation> animationSupplier, boolean hurtInterruptsAnimation, int damageKeyframes, float attackDistance, float damageMultiplier, float knockBackMultiplier) {
+        this(entity, animationSupplier, hurtInterruptsAnimation, damageKeyframes, attackDistance, damageMultiplier, knockBackMultiplier, false);
+    }
+
+    public AnimationMelee(T entity, Supplier<Animation> animationSupplier, boolean hurtInterruptsAnimation, int damageKeyframes, float attackDistance, float damageMultiplier, float knockBackMultiplier, boolean canDisableShield) {
         super(entity, animationSupplier, false, hurtInterruptsAnimation);
         this.attackTarget = null;
         this.damageKeyframes = damageKeyframes;
         this.attackDistance = attackDistance;
         this.damageMultiplier = damageMultiplier;
         this.knockBackMultiplier = knockBackMultiplier;
+        this.canDisableShield = canDisableShield;
         setFlags(EnumSet.of(Flag.LOOK));
     }
+
 
     @Override
     public void start() {
@@ -46,7 +53,7 @@ public class AnimationMelee<T extends EEEABMobLibrary & EMAnimatedEntity> extend
         }
         if (entity.getAnimationTick() == damageKeyframes) {
             if (attackTarget != null && entity.targetDistance <= attackDistance) {
-                entity.doHurtTarget(attackTarget, damageMultiplier, knockBackMultiplier);
+                entity.doHurtTarget(attackTarget, damageMultiplier, knockBackMultiplier, canDisableShield);
                 onAttack(entity, attackTarget, damageMultiplier, knockBackMultiplier);
             }
         }

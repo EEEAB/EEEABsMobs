@@ -2,7 +2,7 @@ package com.eeeab.animate.server.ai.animation;
 
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.animate.server.animation.EMAnimatedEntity;
+import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,7 +12,7 @@ import net.minecraft.world.item.ProjectileWeaponItem;
 
 import java.util.function.Supplier;
 
-public class AnimationRange<T extends EEEABMobLibrary & EMAnimatedEntity & RangedAttackMob> extends AnimationSimpleAI<T> {
+public class AnimationRange<T extends EEEABMobLibrary & AnimatedEntity & RangedAttackMob> extends AnimationSimpleAI<T> {
     private final int attackFrame;
     private final SoundEvent attackSound;
 

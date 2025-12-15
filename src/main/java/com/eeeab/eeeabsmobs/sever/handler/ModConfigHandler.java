@@ -1,0 +1,672 @@
+package com.eeeab.eeeabsmobs.sever.handler;
+
+import com.eeeab.eeeabsmobs.EEEABMobs;
+import com.eeeab.eeeabsmobs.sever.util.TranslateUtils;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.common.Mod;
+
+@Mod.EventBusSubscriber(modid = EEEABMobs.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+public final class ModConfigHandler {
+    public static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
+    public static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
+    public static final ForgeConfigSpec COMMON_SPEC;
+    public static final ForgeConfigSpec CLIENT_SPEC;
+    public static final Common COMMON;
+    public static final Client CLIENT;
+
+    private ModConfigHandler() {
+    }
+
+    static {
+        COMMON = new Common(COMMON_BUILDER);
+        CLIENT = new Client(CLIENT_BUILDER);
+        COMMON_SPEC = COMMON_BUILDER.build();
+        CLIENT_SPEC = CLIENT_BUILDER.build();
+    }
+
+    private static String getTranslationKey(String key) {
+        return TranslateUtils.simpleConfigText(key, null).getString();
+    }
+
+    public static class Common {
+        public Common(final ForgeConfigSpec.Builder builder) {
+            items = new Item(builder);
+            entities = new Entity(builder);
+            mobs = new Mob(builder);
+            others = new Other(builder);
+        }
+
+        public final Mob mobs;
+        public final Entity entities;
+        public final Item items;
+        public final Other others;
+    }
+
+    public static class Item {
+        public Item(final ForgeConfigSpec.Builder builder) {
+            builder.push("Items");
+            {
+                builder.push("Eye Of Structure");
+                eyeOfStructureConfig1 = builder.comment("If set to 'True' eye of structure will be consume item on release")
+                        .translation(getTranslationKey("eye_of_structure"))
+                        .define("Consume Item On Release", false);
+                eyeOfStructureConfig2 = itemCD(4D);
+                builder.pop();
+            }
+            {
+                builder.push("Guardian Battleaxe");
+                guardianBattleaxeConfig1 = builder.comment("The increase in damage should refer to the Sweeping Edge enchantment")
+                        .translation(getTranslationKey("guardian_axe"))
+                        .defineInRange("Set Sweep Attack Level", 1, 0, 4);
+                guardianBattleaxeConfig2 = itemCD(5D);
+                guardianBattleaxe = new ToolConfig(15D, 0.9D);
+                builder.pop();
+            }
+            {
+                builder.push("Guardian Core");
+                guardianCoreConfig1 = builder.comment("Set the maximum shooting distance for players")
+                        .translation(getTranslationKey("attack_radius"))
+                        .defineInRange("Set Attack Radius", 16D, 1D, 64D);
+                guardianCoreConfig2 = builder.comment("If set to 'False' disable block destruction by players")
+                        .translation(getTranslationKey("guardian_core"))
+                        .define("Enable Destroy Block", false);
+                guardianLaser = new AttributeConfig(5F);
+                builder.pop();
+            }
+            {
+                builder.push("Ghost Warrior Series");
+                ghostWarriorSeriesConfig1 = builder.comment("If set to 'True' armor or weapon will be depleted")
+                        .translation(getTranslationKey("series_depleted"))
+                        .define("Enable Armor Or Weapon Can Be Depleted", false);
+                netherworldKatana = new ToolConfig(14D, 1.4D);
+                builder.pop();
+            }
+            {
+                builder.push("Howitzer");
+                howitzerConfig1 = builder.translation(getTranslationKey("projectile_damage"))
+                        .defineInRange("Set Projectile Damage", 10D, 1D, Float.MAX_VALUE);
+                howitzerConfig2 = builder.comment("Set Grenade explosion radius")
+                        .translation(getTranslationKey("attack_radius"))
+                        .defineInRange("Set Attack Radius", 2.5D, 1D, 10D);
+                howitzerConfig3 = itemCD(2D);
+                howitzer = new ToolConfig(8D, 1.6D);
+                builder.pop();
+            }
+            {
+                builder.push("Immortal Staff");
+                immortalStaffConfig1 = itemCD(1.5D);
+                immortalStaffConfig2 = builder.translation(getTranslationKey("projectile_damage"))
+                        .defineInRange("Set Projectile Damage", 8D, 1D, Float.MAX_VALUE);
+                builder.pop();
+            }
+            {
+                builder.push("Summoning Soul Necklace");
+                summoningSoulNecklaceConfig1 = builder.comment("Set maximum amount of damage a player can take while holding this item")
+                        .translation(getTranslationKey("summoning_soul_necklace"))
+                        .defineInRange("Set Maximum Cumulative Damage Taken", 50D, 1D, Float.MAX_VALUE);
+                summoningSoulNecklaceConfig2 = itemCD(20D);
+                builder.pop();
+            }
+            builder.pop();
+        }
+
+        public final ForgeConfigSpec.BooleanValue eyeOfStructureConfig1;
+        public final ForgeConfigSpec.DoubleValue eyeOfStructureConfig2;
+        public final ForgeConfigSpec.DoubleValue summoningSoulNecklaceConfig1;
+        public final ForgeConfigSpec.DoubleValue summoningSoulNecklaceConfig2;
+        public final ForgeConfigSpec.DoubleValue howitzerConfig1;
+        public final ForgeConfigSpec.DoubleValue howitzerConfig2;
+        public final ForgeConfigSpec.DoubleValue howitzerConfig3;
+        public final ToolConfig howitzer;
+        public final ForgeConfigSpec.IntValue guardianBattleaxeConfig1;
+        public final ForgeConfigSpec.DoubleValue guardianBattleaxeConfig2;
+        public final ToolConfig guardianBattleaxe;
+        public final ForgeConfigSpec.DoubleValue immortalStaffConfig1;
+        public final ForgeConfigSpec.DoubleValue immortalStaffConfig2;
+        public final ForgeConfigSpec.DoubleValue guardianCoreConfig1;
+        public final ForgeConfigSpec.BooleanValue guardianCoreConfig2;
+        public final AttributeConfig guardianLaser;
+        public final ForgeConfigSpec.BooleanValue ghostWarriorSeriesConfig1;
+        public final ToolConfig netherworldKatana;
+
+        private static ForgeConfigSpec.DoubleValue itemCD(double defaultCD) {
+            String CDComment = "Set item cool down time after player on use (in seconds)";
+            String CDPath = "Set Item Cool Down Time";
+            String CDKey = "item_cd";
+            return COMMON_BUILDER.comment(CDComment)
+                    .translation(getTranslationKey(CDKey))
+                    .defineInRange(CDPath, defaultCD, 0D, 60D);
+        }
+    }
+
+    public static class Entity {
+        public Entity(final ForgeConfigSpec.Builder builder) {
+            builder.push("Entities");
+            {
+                builder.push("Falling Block");
+                fallingBlockConfig1 = builder.comment("If set to 'False' disable falling block spawn")
+                        .translation(getTranslationKey("falling_block_1")).define("Enable Falling Block Spawn", true);
+                fallingBlockConfig2 = builder.comment("Set the maximum range for downward block detection to determine the Y-axis position where the entity spawns")
+                        .translation(getTranslationKey("falling_block_2")).defineInRange("Set Below Check Range", 3, 1, 10);
+                builder.pop();
+            }
+            {
+                builder.push("Tester");
+                testerConfig1 = builder.translation(getTranslationKey("tester_1")).defineInRange("Set Max Health", 20D, 1D, 1024D);
+                testerConfig2 = builder.translation(getTranslationKey("tester_2")).define("Enable Immune To Environmental Or Status Damage", true);
+                builder.pop();
+            }
+            builder.pop();
+        }
+
+        public final ForgeConfigSpec.BooleanValue fallingBlockConfig1;
+        public final ForgeConfigSpec.IntValue fallingBlockConfig2;
+        public final ForgeConfigSpec.DoubleValue testerConfig1;
+        public final ForgeConfigSpec.BooleanValue testerConfig2;
+    }
+
+    public static class Mob {
+        public Mob(final ForgeConfigSpec.Builder builder) {
+            builder.push("Mobs");
+            immortals = new ImmortalMobs(builder);
+            corpses = new CorpseMobs(builder);
+            relicrons = new Relicrons(builder);
+            minions = new MinionMobs(builder);
+            builder.pop();
+        }
+
+        public final CorpseMobs corpses;
+        public final ImmortalMobs immortals;
+        public final Relicrons relicrons;
+        public final MinionMobs minions;
+    }
+
+    public static class ImmortalMobs {
+        public ImmortalMobs(final ForgeConfigSpec.Builder builder) {
+            builder.push("Immortal Mobs");
+            immortalSkeleton = new ImmortalSkeleton(builder);
+            immortalShaman = new ImmortalShaman(builder);
+            immortalGolem = new ImmortalGolem(builder);
+            immortalExecutioner = new ImmortalExecutioner(builder);
+            immortal = new Immortal(builder);
+            builder.pop();
+        }
+
+        public final ImmortalSkeleton immortalSkeleton;
+        public final ImmortalShaman immortalShaman;
+        public final ImmortalGolem immortalGolem;
+        public final ImmortalExecutioner immortalExecutioner;
+        public final Immortal immortal;
+    }
+
+    //不朽骷髅
+    public static class ImmortalSkeleton {
+        public ImmortalSkeleton(final ForgeConfigSpec.Builder builder) {
+            builder.push("Immortal Skeleton");
+            combatConfig = new AttributeConfig();
+            builder.pop();
+        }
+
+        public final AttributeConfig combatConfig;
+    }
+
+    //不朽巫师
+    public static class ImmortalShaman {
+        public ImmortalShaman(final ForgeConfigSpec.Builder builder) {
+            builder.push("Immortal Shaman");
+            healPercentage = builder.comment("Immortal Shaman heal values (based on max health percentage)")
+                    .translation(getTranslationKey("heal_percentage")).defineInRange("Heal Percentage", 0.5D, 0D, 1D);
+            combatConfig = new AttributeConfig();
+            {
+                builder.push("Shaman Bomb").comment("BASE DAMAGE");
+                shamanBomb = new AttributeConfig(8F);
+                builder.pop();
+            }
+            builder.pop();
+        }
+
+        public final ForgeConfigSpec.DoubleValue healPercentage;
+        public final AttributeConfig combatConfig;
+        public final AttributeConfig shamanBomb;
+    }
+
+    //不朽傀儡
+    public static class ImmortalGolem {
+        public ImmortalGolem(final ForgeConfigSpec.Builder builder) {
+            builder.push("Immortal Golem");
+            combatConfig = new AttributeConfig();
+            builder.pop();
+        }
+
+        public final AttributeConfig combatConfig;
+    }
+
+    //不朽斩魂者
+    public static class ImmortalExecutioner {
+        public ImmortalExecutioner(final ForgeConfigSpec.Builder builder) {
+            builder.push("Immortal Executioner");
+            combatConfig = new AttributeConfig();
+            maximumDetonationCount = builder.comment("Set the number of times to strengthen this mob")
+                    .translation(getTranslationKey("immortal_executioner")).defineInRange("Ignite Count", 3, 0, 1024);
+            builder.pop();
+        }
+
+        public final AttributeConfig combatConfig;
+        public final ForgeConfigSpec.IntValue maximumDetonationCount;
+    }
+
+    //不朽
+    public static class Immortal {
+        public Immortal(final ForgeConfigSpec.Builder builder) {
+            builder.push("Immortal");
+            combatConfig = new AttributeConfig();
+            bossConfig = new BossCommonConfig(25D, 16D);
+            adaptConfig = new DamageSourceAdaptConfig(100, 30, 0.1125D, 0.9D, true, true);
+            builder.pop();
+        }
+
+        public final AttributeConfig combatConfig;
+        public final BossCommonConfig bossConfig;
+        public final DamageSourceAdaptConfig adaptConfig;
+    }
+
+    public static class CorpseMobs {
+        public CorpseMobs(final ForgeConfigSpec.Builder builder) {
+            builder.push("Corpse Mobs");
+            corpse = new Corpse(builder);
+            corpseWarlock = new CorpseWarlock(builder);
+            builder.pop();
+        }
+
+        public final Corpse corpse;
+        public final CorpseWarlock corpseWarlock;
+    }
+
+    //死尸&死尸村民
+    public static class Corpse {
+        public Corpse(final ForgeConfigSpec.Builder builder) {
+            builder.push("Corpse & Corpse Villager");
+            combatConfig = new AttributeConfig();
+            enableConvertToCorpse = builder.comment("If set to 'False', When zombies or villagers are killed by corpses, they will not converted into corpses themselves")
+                    .translation(getTranslationKey("corpse")).define("Converted To Corpse", true);
+            builder.pop();
+        }
+
+        public final AttributeConfig combatConfig;
+        public final ForgeConfigSpec.BooleanValue enableConvertToCorpse;
+    }
+
+    //死尸术士
+    public static class CorpseWarlock {
+        public CorpseWarlock(final ForgeConfigSpec.Builder builder) {
+            builder.push("Corpse Warlock");
+            combatConfig = new AttributeConfig();
+            {
+                builder.push("Crimson Ray");
+                crimsonRay = new AttributeConfig(5F);
+                builder.pop();
+            }
+            {
+                builder.push("Crimson Crack");
+                crimsonCrack = new AttributeConfig(5F);
+                builder.pop();
+            }
+            {
+                builder.push("Blood Ball").comment("BASE DAMAGE");
+                bloodBall = new AttributeConfig(5F);
+                builder.pop();
+            }
+            builder.pop();
+        }
+
+        public final AttributeConfig combatConfig;
+        public final AttributeConfig crimsonRay;
+        public final AttributeConfig crimsonCrack;
+        public final AttributeConfig bloodBall;
+    }
+
+    public static class Relicrons {
+        public Relicrons(final ForgeConfigSpec.Builder builder) {
+            builder.push("Relicrons");
+            relicObserver = new RelicObserver(builder);
+            relicRipper = new RelicRipper(builder);
+            relicEarthshaker = new RelicEarthshaker(builder);
+            relicAnnihilator = new RelicAnnihilator(builder);
+            namelessGuardian = new NamelessGuardian(builder);
+            enableNonCombatHeal = builder.comment("If set to 'False' disable out-of-combat heal")
+                    .translation(getTranslationKey("out_of_combat")).define("Enable Out-of-combat Healing", true);
+            builder.pop();
+        }
+
+        public final RelicObserver relicObserver;
+        public final RelicRipper relicRipper;
+        public final RelicEarthshaker relicEarthshaker;
+        public final RelicAnnihilator relicAnnihilator;
+        public final NamelessGuardian namelessGuardian;
+        public final ForgeConfigSpec.BooleanValue enableNonCombatHeal;
+    }
+
+    //遗迹观察者
+    public static class RelicObserver {
+        public RelicObserver(final ForgeConfigSpec.Builder builder) {
+            builder.push("Relic Observer");
+            combatConfig = new AttributeConfig();
+            {
+                builder.push("Guardian Laser");
+                guardianLaser = new AttributeConfig(5F);
+                builder.pop();
+            }
+            builder.pop();
+        }
+
+        public final AttributeConfig combatConfig;
+        public final AttributeConfig guardianLaser;
+    }
+
+    //遗迹撕裂者
+    public static class RelicRipper {
+        public RelicRipper(final ForgeConfigSpec.Builder builder) {
+            builder.push("Relic Ripper");
+            combatConfig = new AttributeConfig();
+            builder.pop();
+        }
+
+        public final AttributeConfig combatConfig;
+    }
+
+    //遗迹撼地者
+    public static class RelicEarthshaker {
+        public RelicEarthshaker(final ForgeConfigSpec.Builder builder) {
+            builder.push("Relic Earthshaker");
+            combatConfig = new AttributeConfig();
+            {
+                builder.push("Electromagnetic");
+                electromagnetic = new AttributeConfig(10F);
+                builder.pop();
+            }
+            {
+                builder.push("Pulsed Grenade");
+                pulsedGrenade = new AttributeConfig(8F);
+                builder.pop();
+            }
+            builder.pop();
+        }
+
+        public final AttributeConfig combatConfig;
+        public final AttributeConfig electromagnetic;
+        public final AttributeConfig pulsedGrenade;
+    }
+
+    //遗迹歼击者
+    public static class RelicAnnihilator {
+        public RelicAnnihilator(final ForgeConfigSpec.Builder builder) {
+            builder.push("Relic Annihilator");
+            combatConfig = new AttributeConfig();
+            bossConfig = new BossCommonConfig(20D, 18D);
+            {
+                builder.push("Guardian Laser");
+                guardianLaser = new AttributeConfig(10F);
+                builder.pop();
+            }
+            {
+                builder.push("Annihilator Missile");
+                annihilatorMissile = new AttributeConfig(8F);
+                builder.pop();
+            }
+            builder.pop();
+        }
+
+        public final AttributeConfig combatConfig;
+        public final BossCommonConfig bossConfig;
+        public final AttributeConfig guardianLaser;
+        public final AttributeConfig annihilatorMissile;
+    }
+
+    //无名守卫者
+    public static class NamelessGuardian {
+        public NamelessGuardian(final ForgeConfigSpec.Builder builder) {
+            builder.push("Nameless Guardian");
+            suckBloodMultiplier = builder.comment("Set suck blood multiplier")
+                    .translation(getTranslationKey("suck_blood")).defineInRange("Suck Blood Multiplier", 1D, 0D, 1024D);
+            enableForcedSuckBlood = builder.comment("If set to 'False' disable forced suck blood on power status(This setting does not take effect in Challenge Mode)")
+                    .translation(getTranslationKey("forced_suck_blood")).define("Enable Forced Suck Blood", true);
+            challengeMode = builder.comment("Be careful! It's going to get tricky!")
+                    .translation(getTranslationKey("challenge_mode")).define("Challenge Mode", false);
+            combatConfig = new AttributeConfig();
+            bossConfig = new BossCommonConfig(20D, 18D);
+            {
+                builder.push("Guardian Laser");
+                guardianLaser = new AttributeConfig(5F);
+                builder.pop();
+            }
+            {
+                builder.push("Guardian Blade");
+                guardianBlade = new AttributeConfig(15F);
+                builder.pop();
+            }
+            builder.pop();
+        }
+
+        //吸血倍率
+        public final ForgeConfigSpec.DoubleValue suckBloodMultiplier;
+        //启用强制吸血
+        public final ForgeConfigSpec.BooleanValue enableForcedSuckBlood;
+        //挑战模式
+        public final ForgeConfigSpec.BooleanValue challengeMode;
+        public final AttributeConfig combatConfig;
+        public final BossCommonConfig bossConfig;
+        public final AttributeConfig guardianLaser;
+        public final AttributeConfig guardianBlade;
+    }
+
+    //召唤类生物
+    public static class MinionMobs {
+        public MinionMobs(final ForgeConfigSpec.Builder builder) {
+            builder.push("Minion Mobs");
+            CORPSE_MINION = new CorpseToPlayer(builder);
+            builder.pop();
+        }
+
+        public final CorpseToPlayer CORPSE_MINION;
+    }
+
+    public static class CorpseToPlayer {
+        public CorpseToPlayer(final ForgeConfigSpec.Builder builder) {
+            builder.push("Corpse Minion");
+            combatConfig = new AttributeConfig();
+            minionDeathHealAmount = builder.comment("Set corpse minion to restore its owner's health")
+                    .translation(getTranslationKey("corpse_to_player")).defineInRange("Death Heal Amount", 5D, 0D, 1024D);
+            builder.pop();
+        }
+
+        public final AttributeConfig combatConfig;
+        public final ForgeConfigSpec.DoubleValue minionDeathHealAmount;
+    }
+
+    //其他设置
+    public static class Other {
+        public Other(final ForgeConfigSpec.Builder builder) {
+            builder.push("Others");
+            {
+                builder.push("Bosses");
+                enableShowBossBars = builder.comment("If set to 'False' disable show boss bar")
+                        .translation(getTranslationKey("boss_bar_1")).define("Enable Show Boss Health Bars", true);
+                enableCustomBossBars = builder.comment("If set to 'False' disable custom bosse health bar")
+                        .translation(getTranslationKey("boss_bar_2")).define("Enable Custom Boss Health Bars", true);
+                bossBarMaxDist = builder.comment("Set maximum render distance for boss health bar")
+                        .translation(getTranslationKey("boss_bar_3")).defineInRange("Set Render Distance For Boss Bars", 48D, 32D, 128D);
+                enableBossCanBreakingBlockDropItem = builder.comment("If set to 'False' disable bosses breaking blocks drop items")
+                        .translation(getTranslationKey("break_block_drop")).define("Enable Bosses Breaking Blocks Drop Items", false);
+                builder.pop();
+            }
+            enableSameMobsTypeInjury = builder.comment("If set to 'False' able inflict damage between mobs of the same team")
+                    .translation(getTranslationKey("team_damage")).define("Enable Allied Damage Protection", true);
+            enableFrenzyDestroyBlock = builder.comment("If set to 'False' disable frenzy potion destroy block")
+                    .translation(getTranslationKey("frenzy_destroy_block")).define("Enable Frenzy Potion Destroy Block", false);
+            enableShowItemCD = builder.comment("If set to 'False' disable showing cooldown time in tooltip")
+                    .translation(getTranslationKey("show_item_cd")).define("Enable Show Item Cd", false);
+            enableCombatPrompts = builder.comment("If set to 'False' disable all combat encounter prompts")
+                    .translation(getTranslationKey("combat_prompt")).define("Enable Combat Prompt Trigger Detection", true);
+            builder.pop();
+        }
+
+        //启用显示boss血条
+        public final ForgeConfigSpec.BooleanValue enableShowBossBars;
+        //启用自定义boss血条
+        public final ForgeConfigSpec.BooleanValue enableCustomBossBars;
+        //boss血条显示距离
+        public final ForgeConfigSpec.DoubleValue bossBarMaxDist;
+        //启用boss破坏方块掉落对应方块物品
+        public final ForgeConfigSpec.BooleanValue enableBossCanBreakingBlockDropItem;
+        //启用同类型生物之间无法造成伤害
+        public final ForgeConfigSpec.BooleanValue enableSameMobsTypeInjury;
+        //启用狂暴药水冲刺时破坏方块效果
+        public final ForgeConfigSpec.BooleanValue enableFrenzyDestroyBlock;
+        //启用显示物品冷却时间
+        public final ForgeConfigSpec.BooleanValue enableShowItemCD;
+        //启用战斗提示
+        public final ForgeConfigSpec.BooleanValue enableCombatPrompts;
+    }
+
+
+    //通用属性倍率
+    public static class AttributeConfig {
+        public AttributeConfig() {
+            this(1.0F, 1.0F);
+        }
+
+        public AttributeConfig(float healthMultiplier, float attackMultiplier) {
+            this.healthMultiplier = COMMON_BUILDER.comment("Set this mob health multiplier")
+                    .translation(getTranslationKey("mob_health")).defineInRange("Health Multiplier", healthMultiplier, 0D, Float.MAX_VALUE);
+            this.attackMultiplier = COMMON_BUILDER.comment("Set this mob attack multiplier")
+                    .translation(getTranslationKey("mob_attack")).defineInRange("Attack Multiplier", attackMultiplier, 0D, Float.MAX_VALUE);
+            damage = null;
+        }
+
+        public AttributeConfig(float damageAmount) {
+            damage = COMMON_BUILDER.comment("Set this entity attack damage")
+                    .translation(getTranslationKey("entity_damage")).defineInRange("Attack Damage", damageAmount, 1D, Float.MAX_VALUE);
+            attackMultiplier = null;
+            healthMultiplier = null;
+        }
+
+        public final ForgeConfigSpec.DoubleValue healthMultiplier;
+        public final ForgeConfigSpec.DoubleValue attackMultiplier;
+        public final ForgeConfigSpec.DoubleValue damage;
+    }
+
+    //Boss通用限制
+    public static class BossCommonConfig {
+        public BossCommonConfig(double d0, double d1) {
+            damageCap = COMMON_BUILDER.comment("Set this mob damage cap")
+                    .translation(getTranslationKey("damage_cap"))
+                    .defineInRange("Damage Cap", d0, 0D, Float.MAX_VALUE);
+            maxDamageDistance = COMMON_BUILDER.comment("Set this mob max effective damage range")
+                    .translation(getTranslationKey("damage_range")).defineInRange("Effective Damage Distance", d1, 1D, 64D);
+        }
+
+        public final ForgeConfigSpec.DoubleValue damageCap;
+        public final ForgeConfigSpec.DoubleValue maxDamageDistance;
+    }
+
+    //通用伤害源适应
+    public static class DamageSourceAdaptConfig {
+        public DamageSourceAdaptConfig(int maxDamageSourceAdaptCount, int resetCountdown, double singleAdaptFactor, double maxAdaptFactor, boolean adaptsSameTypeMobs, boolean adaptBypassesDamage) {
+            COMMON_BUILDER.push("Damage Adapt");
+            this.maxDamageSourceAdaptCount = COMMON_BUILDER.comment("Set max adaptable damage sources for this mob")
+                    .translation(getTranslationKey("damage_adapt_1")).defineInRange("Max Supported Damage Types Amount", maxDamageSourceAdaptCount, 10, 1024);
+            this.resetCountdown = COMMON_BUILDER.comment("Set the effective duration for a single adaptation damage source (in seconds)")
+                    .translation(getTranslationKey("damage_adapt_2")).defineInRange("Adaptation Duration", resetCountdown, 10, 1024);
+            this.singleAdaptFactor = COMMON_BUILDER.comment("Set the reduction factor for each instance of the same damage source")
+                    .translation(getTranslationKey("damage_adapt_3")).defineInRange("Single Hurt Adaptation Factor", singleAdaptFactor, 0D, 1D);
+            this.maxAdaptFactor = COMMON_BUILDER.comment("Set the maximum damage reduction factor")
+                    .translation(getTranslationKey("damage_adapt_4")).defineInRange("Same Damage Max Adaptation Factor", maxAdaptFactor, 0D, 1D);
+            this.adaptsSameTypeMobs = adaptsSameTypeMobs;
+            this.adaptBypassesDamage = COMMON_BUILDER.comment("If set to 'False' disable adaptation to bypasses invulnerability damage source")
+                    .translation(getTranslationKey("damage_adapt_5")).define("Adaptation Bypasses Invulnerability Damage Source", adaptBypassesDamage);
+            COMMON_BUILDER.pop();
+        }
+
+        public final ForgeConfigSpec.IntValue maxDamageSourceAdaptCount;
+        public final ForgeConfigSpec.IntValue resetCountdown;
+        public final ForgeConfigSpec.DoubleValue singleAdaptFactor;
+        public final ForgeConfigSpec.DoubleValue maxAdaptFactor;
+        public final ForgeConfigSpec.BooleanValue adaptBypassesDamage;
+        public final boolean adaptsSameTypeMobs;
+    }
+
+    //通用物品配置
+    public static class ToolConfig {
+        ToolConfig(double d0, double d1) {
+            attackSpeedValue = d1;
+            attackDamageValue = d0;
+            this.attackDamage = COMMON_BUILDER.comment("Set tool attack damage")
+                    .translation(getTranslationKey("tool_damage")).defineInRange("Attack Damage", d0, 0D, Float.MAX_VALUE);
+            this.attackSpeed = COMMON_BUILDER.comment("Set tool attack speed")
+                    .translation(getTranslationKey("tool_speed")).defineInRange("Attack Speed", d1, 0D, Float.MAX_VALUE);
+        }
+
+        public final ForgeConfigSpec.DoubleValue attackDamage;
+        public final ForgeConfigSpec.DoubleValue attackSpeed;
+
+        public double attackDamageValue;
+        public double attackSpeedValue;
+    }
+
+    /* ↓↓↓ 客户端配置 ↓↓↓ */
+
+    public static class Client {
+        public Client(final ForgeConfigSpec.Builder builder) {
+            combatPrompt = new CombatPrompt(builder);
+            enableCameraShake = builder.comment("If set to 'False' disable camera shake")
+                    .translation(getTranslationKey("camera_shake")).define("Enable Camera Shake", true);
+            enablePlayBossMusic = builder.comment("If set to 'False' disable play boss music")
+                    .translation(getTranslationKey("play_boss_music")).define("Enable Play Bosses Musics", true);
+            enableFallingBlockRender = builder.comment("If set to 'False' disable falling block rendering")
+                    .translation(getTranslationKey("falling_block_render")).define("Enable Falling Block Render", true);
+        }
+
+        public final CombatPrompt combatPrompt;
+        public final ForgeConfigSpec.BooleanValue enableCameraShake;
+        public final ForgeConfigSpec.BooleanValue enablePlayBossMusic;
+        public final ForgeConfigSpec.BooleanValue enableFallingBlockRender;
+    }
+
+    public static class CombatPrompt {
+        public CombatPrompt(final ForgeConfigSpec.Builder builder) {
+            builder.push("Combat Prompt");
+            enabled = builder.comment("If set to 'False' disable combat prompts")
+                    .translation(getTranslationKey("combat_prompt_enabled")).define("Enabled", true);
+            displayMode = builder
+                    .comment("HUD display mode: FADE_IN_OUT (fade in/out), IMMEDIATE (show immediately)")
+                    .translation(getTranslationKey("combat_prompt_display_mode")).defineEnum("Display Mode", DisplayMode.FADE_IN_OUT);
+            displayDuration = builder
+                    .comment("HUD display duration in ticks").translation(getTranslationKey("combat_prompt_display_duration"))
+                    .defineInRange("Display Duration", 100, 20, 200);
+            backgroundOpacity = builder
+                    .comment("HUD background opacity").translation(getTranslationKey("combat_prompt_background_opacity"))
+                    .defineInRange("Background Opacity", 0.08D, 0.0D, 1.0D);
+            textMaxWidth = builder
+                    .comment("Maximum width for text lines in pixels").translation(getTranslationKey("combat_prompt_text_max_width"))
+                    .defineInRange("Text Max Width", 300, 100, 400);
+            lineSpacing = builder.comment("Spacing between text lines in pixels")
+                    .translation(getTranslationKey("combat_prompt_line_spacing")).defineInRange("Line Spacing", 2, 0, 10);
+            hudPositionY = builder.comment("Vertical position of HUD from top of screen in pixels")
+                    .translation(getTranslationKey("combat_prompt_hud_position_y")).defineInRange("Hud Position Y", 30, 0, 100);
+            builder.pop();
+        }
+
+        public final ForgeConfigSpec.BooleanValue enabled;
+        public final ForgeConfigSpec.EnumValue<DisplayMode> displayMode;
+        public final ForgeConfigSpec.IntValue displayDuration;
+        public final ForgeConfigSpec.DoubleValue backgroundOpacity;
+        public final ForgeConfigSpec.IntValue textMaxWidth;
+        public final ForgeConfigSpec.IntValue lineSpacing;
+        public final ForgeConfigSpec.IntValue hudPositionY;
+
+        public enum DisplayMode {
+            FADE_IN_OUT,
+            IMMEDIATE
+        }
+    }
+}

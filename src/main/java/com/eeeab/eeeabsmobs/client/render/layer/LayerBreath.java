@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.render.layer;
 
-import com.eeeab.eeeabsmobs.sever.entity.GlowEntity;
+import com.eeeab.eeeabsmobs.sever.entity.mob.GlowEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -17,7 +17,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  *
  * @param <T> 实体
  * @param <M> 实体模型
- * @see com.eeeab.eeeabsmobs.sever.entity.GlowEntity
+ * @see GlowEntity
  */
 @OnlyIn(Dist.CLIENT)
 public class LayerBreath<T extends LivingEntity & GlowEntity, M extends EntityModel<T>> extends LayerGlow<T, M> {

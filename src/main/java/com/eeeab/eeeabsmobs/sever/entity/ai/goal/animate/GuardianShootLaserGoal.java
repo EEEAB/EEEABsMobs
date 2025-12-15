@@ -1,9 +1,8 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianLaser;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
-import com.eeeab.eeeabsmobs.sever.init.EntityInit;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityGuardianLaser;
+import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,9 +32,7 @@ public class GuardianShootLaserGoal extends AnimationSimpleAI<EntityNamelessGuar
             double px = this.entity.getX();
             double py = this.entity.getY() + 1.4;
             double pz = this.entity.getZ();
-            float yHeadRotAngle = (float) Math.toRadians(this.entity.yHeadRot + 90);
-            float xHeadRotAngle = (float) (float) Math.toRadians(-this.entity.getXRot());
-            EntityGuardianLaser laser = new EntityGuardianLaser(EntityInit.GUARDIAN_LASER.get(), this.entity.level(), this.entity, px, py, pz, yHeadRotAngle, xHeadRotAngle, 70);
+            EntityGuardianLaser laser = new EntityGuardianLaser(this.entity.level(), this.entity, px, py, pz, 70);
             laser.setDamage((float) (this.entity.getAttributeValue(Attributes.ATTACK_DAMAGE) / 3));
             this.entity.level().addFreshEntity(laser);
         }

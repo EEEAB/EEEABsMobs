@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.animate.server.animation.Animation;
@@ -57,7 +57,7 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
                     hitEntity.setDeltaMovement(hitEntity.getDeltaMovement().add(0, 0.4, 0));
                     entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                 });
-            } else if (tick == 20 && entity.checkCanAttackRange(2.0, range) && canToggleAnimation(80)) {
+            } else if (tick == 20 && entity.checkCanAttackRange(2.0, range) && canToggleAnimation(0.8F)) {
                 this.entity.playAnimation(entity.attackAnimation5);
             }
         } else if (animation == entity.attackAnimation5) {
@@ -80,7 +80,7 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
                     double ratioZ = (-Math.cos(entity.getYRot() * ((float) Math.PI / 180F)));
                     ModEntityUtils.forceKnockBack(entity, hitEntity, 0.5F, ratioX, ratioZ, !isPowered);
                 });
-            } else if (tick == 20 && entity.checkCanAttackRange(1.5, range) && canToggleAnimation(70)) {
+            } else if (tick == 20 && entity.checkCanAttackRange(1.5, range) && canToggleAnimation(0.7F)) {
                 this.entity.playAnimation(entity.attackAnimation6);
             }
         } else if (animation == entity.attackAnimation6) {
@@ -110,7 +110,7 @@ public class GuardianCombo2Goal extends AnimationAI<EntityNamelessGuardian> {
         }
     }
 
-    private boolean canToggleAnimation(int healthPercentage) {
+    private boolean canToggleAnimation(float healthPercentage) {
         return (!isPowered && ((entity.getHealthPercentage() >= healthPercentage && entity.getRandom().nextFloat() < 0.4F) ||
                 ((entity.getHealthPercentage() < healthPercentage || !entity.isFirstMadness()) && entity.getRandom().nextFloat() < 0.6F))) ||
                 (isPowered && entity.getRandom().nextFloat() < 0.9F);

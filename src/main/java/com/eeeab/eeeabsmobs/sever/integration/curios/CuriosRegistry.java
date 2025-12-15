@@ -1,6 +1,5 @@
 package com.eeeab.eeeabsmobs.sever.integration.curios;
 
-import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.integration.curios.render.RenderSoulSummoningNecklace;
 import net.minecraft.world.item.ItemStack;
@@ -20,33 +19,29 @@ public final class CuriosRegistry {
 
     public static CuriosRegistry getInstance() {
         if (ModList.get().isLoaded(MOD_ID)) {
-            if (instance == null) {
-                instance = new CuriosRegistry();
-            }
+            if (instance == null) instance = new CuriosRegistry();
             return instance;
         }
         return null;
     }
 
-    public static void register() {
+    public static void init() {
         var ins = getInstance();
         if (ins == null) return;
         ins.registerImpl();
     }
 
     private void registerImpl() {
-        EEEABMobs.LOGGER.info("Starting to register Curios item...");
         MinecraftForge.EVENT_BUS.addGenericListener(ItemStack.class, CuriosItemFactory::attachItemStackCapability);
     }
 
-    public static void clientRegister() {
+    public static void initClient() {
         var ins = getInstance();
         if (ins == null) return;
         ins.clientRegisterImpl();
     }
 
     private void clientRegisterImpl() {
-        EEEABMobs.LOGGER.info("Starting to register Curios item render...");
         CuriosRendererRegistry.register(ItemInit.SOUL_SUMMONING_NECKLACE.get(), RenderSoulSummoningNecklace::new);
     }
 }

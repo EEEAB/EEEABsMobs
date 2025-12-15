@@ -1,14 +1,14 @@
 package com.eeeab.animate.server.ai;
 
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
-import com.eeeab.animate.server.animation.EMAnimatedEntity;
+import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.animate.server.handler.EMAnimationHandler;
+import com.eeeab.animate.server.handler.AnimationHandler;
 import net.minecraft.world.entity.ai.goal.Goal;
 
 import java.util.EnumSet;
 
-public abstract class AnimationAI<T extends EEEABMobLibrary & EMAnimatedEntity> extends Goal {
+public abstract class AnimationAI<T extends EEEABMobLibrary & AnimatedEntity> extends Goal {
     protected final T entity;
     protected final boolean canInterruptsAnimation;
 
@@ -44,7 +44,7 @@ public abstract class AnimationAI<T extends EEEABMobLibrary & EMAnimatedEntity> 
     @Override
     public void stop() {
         if (this.test(this.entity.getAnimation())) {
-            EMAnimationHandler.INSTANCE.sendEMAnimationMessage(this.entity, EMAnimatedEntity.NO_ANIMATION);
+            AnimationHandler.INSTANCE.sendEMAnimationMessage(this.entity, AnimatedEntity.NO_ANIMATION);
         }
     }
 

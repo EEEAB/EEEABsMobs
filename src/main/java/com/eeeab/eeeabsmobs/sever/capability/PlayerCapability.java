@@ -1,9 +1,9 @@
 package com.eeeab.eeeabsmobs.sever.capability;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseToPlayer;
-import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpseToPlayer;
+import com.eeeab.eeeabsmobs.sever.handler.CapabilityHandler;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.integration.curios.ICuriosApi;
@@ -78,8 +78,8 @@ public class PlayerCapability {
         private void doSSNCapability(Player player, Entity target, Item item, float damage) {
             if (!player.getCooldowns().isOnCooldown(item)) {
                 this.SSNCumulativeDamage += damage;
-                if (this.SSNCumulativeDamage >= EMConfigHandler.COMMON.ITEM.SSNCumulativeMaximumDamage.get().floatValue()) {
-                    player.getCooldowns().addCooldown(item, (int) (EMConfigHandler.COMMON.ITEM.SSNCoolingTime.get() * 20));
+                if (this.SSNCumulativeDamage >= ModConfigHandler.COMMON.items.summoningSoulNecklaceConfig1.get().floatValue()) {
+                    player.getCooldowns().addCooldown(item, (int) (ModConfigHandler.COMMON.items.summoningSoulNecklaceConfig2.get() * 20));
                     if (!player.level().isClientSide) {
                         Vec3 vec3 = player.position();
                         EntityCorpseToPlayer entity = EntityInit.CORPSE_TO_PLAYER.get().create(player.level());
@@ -126,7 +126,7 @@ public class PlayerCapability {
 
         @Override
         public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-            return HandlerCapability.PLAYER_CAPABILITY.orEmpty(cap, instance.cast());
+            return CapabilityHandler.PLAYER_CAPABILITY.orEmpty(cap, instance.cast());
         }
 
         @Override
@@ -140,5 +140,4 @@ public class PlayerCapability {
 
         }
     }
-
 }

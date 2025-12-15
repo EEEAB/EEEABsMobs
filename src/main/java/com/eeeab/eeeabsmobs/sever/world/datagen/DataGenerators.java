@@ -1,12 +1,12 @@
 package com.eeeab.eeeabsmobs.sever.world.datagen;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.world.datagen.damage.EMDamageTypeProvider;
-import com.eeeab.eeeabsmobs.sever.world.datagen.entity.EMEntityTypeTagsProvider;
-import com.eeeab.eeeabsmobs.sever.world.datagen.entity.EMMobEffectProvider;
-import com.eeeab.eeeabsmobs.sever.world.datagen.loot.EMBlockLootTables;
-import com.eeeab.eeeabsmobs.sever.world.datagen.world.EMBiomeTagsProvider;
-import com.eeeab.eeeabsmobs.sever.world.datagen.world.EMStructureTagsProvider;
+import com.eeeab.eeeabsmobs.sever.world.datagen.damage.ModDamageTypeProvider;
+import com.eeeab.eeeabsmobs.sever.world.datagen.entity.ModEntityTypeTagsProvider;
+import com.eeeab.eeeabsmobs.sever.world.datagen.entity.ModMobEffectProvider;
+import com.eeeab.eeeabsmobs.sever.world.datagen.loot.ModBlockLootTables;
+import com.eeeab.eeeabsmobs.sever.world.datagen.world.ModBiomeTagsProvider;
+import com.eeeab.eeeabsmobs.sever.world.datagen.world.ModStructureTagsProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -31,25 +31,24 @@ public class DataGenerators {
         ExistingFileHelper helper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> provider = event.getLookupProvider();
         boolean includeServer = event.includeServer();
-        //手动执行
-        generator.addProvider(true, new EMDatapackBuiltinProvider(packOutput, provider));
-        generator.addProvider(includeServer, new EMItemModelProvider(packOutput, helper));
-        generator.addProvider(includeServer, new EMRecipeProvider(packOutput));
-        generator.addProvider(includeServer, new EMMobEffectProvider(packOutput, provider, helper));
-        generator.addProvider(includeServer, new EMDamageTypeProvider(packOutput, provider, helper));
-        generator.addProvider(includeServer, new EMStructureTagsProvider(packOutput, provider, helper));
-        generator.addProvider(includeServer, new EMBiomeTagsProvider(packOutput, provider, helper));
-        generator.addProvider(includeServer, new EMEntityTypeTagsProvider(packOutput, provider, helper));
-        EMBlockTagsProvider blockTagsProvider = new EMBlockTagsProvider(packOutput, provider, helper);
+        generator.addProvider(includeServer, new ModDatapackBuiltinProvider(packOutput, provider));
+        generator.addProvider(includeServer, new ModBlockStateProvider(packOutput, helper));
+        generator.addProvider(includeServer, new ModItemModelProvider(packOutput, helper));
+        generator.addProvider(includeServer, new ModRecipeProvider(packOutput));
+        generator.addProvider(includeServer, new ModMobEffectProvider(packOutput, provider, helper));
+        generator.addProvider(includeServer, new ModDamageTypeProvider(packOutput, provider, helper));
+        generator.addProvider(includeServer, new ModStructureTagsProvider(packOutput, provider, helper));
+        generator.addProvider(includeServer, new ModBiomeTagsProvider(packOutput, provider, helper));
+        generator.addProvider(includeServer, new ModEntityTypeTagsProvider(packOutput, provider, helper));
+        ModBlockTagsProvider blockTagsProvider = new ModBlockTagsProvider(packOutput, provider, helper);
         generator.addProvider(includeServer, createLootProvider(packOutput));
         generator.addProvider(includeServer, blockTagsProvider);
-        generator.addProvider(includeServer, new EMItemTagsProvider(packOutput, provider, blockTagsProvider.contentsGetter(), helper));
-        generator.addProvider(includeServer, new EMBlockStateProvider(packOutput, helper));
+        generator.addProvider(includeServer, new ModItemTagsProvider(packOutput, provider, blockTagsProvider.contentsGetter(), helper));
     }
 
     private static LootTableProvider createLootProvider(PackOutput output) {
         return new LootTableProvider(output, Set.of(), List.of(
-                new LootTableProvider.SubProviderEntry(EMBlockLootTables::new, LootContextParamSets.BLOCK)
+                new LootTableProvider.SubProviderEntry(ModBlockLootTables::new, LootContextParamSets.BLOCK)
         ));
     }
 }

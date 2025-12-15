@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.item;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.item.util.EMArmorMaterial;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -37,6 +37,6 @@ public class ItemGhostWarriorArmor extends ArmorItem implements IUnbreakableItem
 
     @Override
     public boolean canBreakItem() {
-        return EMConfigHandler.COMMON.ITEM.enableGhostWarriorSeriesItemDurability.get();
+        return ModConfigHandler.COMMON.items.ghostWarriorSeriesConfig1.get();
     }
 }

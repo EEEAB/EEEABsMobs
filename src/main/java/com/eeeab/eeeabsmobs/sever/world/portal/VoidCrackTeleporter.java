@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.sever.world.portal;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.init.BlockInit;
-import com.eeeab.eeeabsmobs.sever.util.EMResourceKey;
+import com.eeeab.eeeabsmobs.sever.util.ModResourceKey;
 import net.minecraft.BlockUtil;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -45,7 +45,7 @@ public class VoidCrackTeleporter implements ITeleporter {
     public static void onRegisterPointOfInterest(RegisterEvent event) {
         event.register(ForgeRegistries.Keys.POI_TYPES, registerHelper -> {
             PoiType poiType = new PoiType(Set.copyOf(BlockInit.EROSION_PORTAL.get().getStateDefinition().getPossibleStates()), 0, 1);
-            registerHelper.register(EMResourceKey.EROSION_PORTAL, poiType);
+            registerHelper.register(ModResourceKey.EROSION_PORTAL, poiType);
             poi = ForgeRegistries.POI_TYPES.getHolder(poiType).get();
         });
     }
@@ -180,7 +180,7 @@ public class VoidCrackTeleporter implements ITeleporter {
         if (entity instanceof ServerPlayer player) {
             player.setServerLevel(server);
             server.addDuringPortalTeleport(player);
-            if (currentWorld.dimension() == EMResourceKey.VOID_CRACK_LEVEL) {
+            if (currentWorld.dimension() == ModResourceKey.VOID_CRACK_LEVEL) {
                 BlockPos spawnPos = server.getSharedSpawnPos();
                 player.connection.teleport(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ(), 0, 0);
             } else {

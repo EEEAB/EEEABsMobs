@@ -1,8 +1,8 @@
 package com.eeeab.eeeabsmobs.sever.item.eye;
 
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityEyeOfStructure;
-import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityEyeOfStructure;
+import com.eeeab.eeeabsmobs.sever.util.TranslateUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -48,7 +48,7 @@ public abstract class ItemFindStructureEye extends Item {
         if (level instanceof ServerLevel serverlevel) {
             BlockPos blockpos = serverlevel.findNearestMapStructure(FIND_STRUCTURE, player.blockPosition(), FIND_MAX_HEIGHT, false);
             if (blockpos != null) {
-                boolean canConsumeItem = EMConfigHandler.COMMON.ITEM.consumeEyeItemOnRelease.get();
+                boolean canConsumeItem = ModConfigHandler.COMMON.items.eyeOfStructureConfig1.get();
                 EntityEyeOfStructure eye = new EntityEyeOfStructure(level, player.getX(), player.getY(0.5D), player.getZ(), canConsumeItem);
                 eye.setItem(eyeItem);
                 eye.signalTo(blockpos);
@@ -66,7 +66,7 @@ public abstract class ItemFindStructureEye extends Item {
                 if (canConsumeItem) {
                     if (!player.getAbilities().instabuild) eyeItem.shrink(1);
                 } else {
-                    player.getCooldowns().addCooldown(this, (int) (EMConfigHandler.COMMON.ITEM.eyeItemCoolingTime.get() * 20));
+                    player.getCooldowns().addCooldown(this, (int) (ModConfigHandler.COMMON.items.eyeOfStructureConfig2.get() * 20));
                 }
 
                 player.awardStat(Stats.ITEM_USED.get(this));
@@ -80,9 +80,9 @@ public abstract class ItemFindStructureEye extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        if (EMTUtils.SHOW_ITEM_CD && !EMConfigHandler.COMMON.ITEM.consumeEyeItemOnRelease.get()) {
-            tooltip.add(EMTUtils.itemCoolTime(EMConfigHandler.COMMON.ITEM.eyeItemCoolingTime.get()));
+        if (TranslateUtils.SHOW_ITEM_CD && !ModConfigHandler.COMMON.items.eyeOfStructureConfig1.get()) {
+            tooltip.add(TranslateUtils.itemCoolTime(ModConfigHandler.COMMON.items.eyeOfStructureConfig2.get()));
         }
-        tooltip.add(EMTUtils.simpleText(EMTUtils.ITEM_STRUCTURE_PREFIX, FIND_STRUCTURE.location().getPath(), ChatFormatting.GRAY));
+        tooltip.add(TranslateUtils.simpleText(TranslateUtils.ITEM_STRUCTURE_PREFIX, FIND_STRUCTURE.location().getPath(), ChatFormatting.GRAY));
     }
 }

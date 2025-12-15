@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.capability;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
+import com.eeeab.eeeabsmobs.sever.handler.CapabilityHandler;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -33,9 +33,11 @@ public class ElectricityCapability {
         public void tick(LivingEntity entity) {
             if (this.isElectrified) {
                 if (entity.level().isClientSide) {
-                    if (entity.tickCount % 8 == 0) {
-                        for (int i = 0; i < Math.min(entity.getBbHeight() * 3.5, 35); i++) {
-                            entity.level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), entity.getRandomX(0.6), entity.getY() + (entity.getRandom().nextFloat() * entity.getBbHeight()) * 0.8, entity.getRandomZ(0.6), 0D, 0.007D, 0D);
+                    int count = entity.getRandom().nextInt(5);
+                    if (entity.tickCount % 3 == 0) {
+                        for (int i = 0; i < count; i++) {
+                            double posY = entity.getY() + (entity.getBbHeight() * 0.25F) + (entity.getBbHeight() * 0.8F) * entity.getRandom().nextDouble();
+                            entity.level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), entity.getRandomX(0.6), posY, entity.getRandomZ(0.6), 0D, 0.007D, 0D);
                         }
                     }
                 }
@@ -71,7 +73,7 @@ public class ElectricityCapability {
 
         @Override
         public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-            return HandlerCapability.ELECTRICITY_CAPABILITY.orEmpty(cap, instance.cast());
+            return CapabilityHandler.ELECTRICITY_CAPABILITY.orEmpty(cap, instance.cast());
         }
 
         @Override

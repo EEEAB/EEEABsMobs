@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player;
 
-import com.eeeab.eeeabsmobs.sever.entity.SummoningEntity;
+import com.eeeab.eeeabsmobs.sever.entity.mob.SummoningEntity;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;

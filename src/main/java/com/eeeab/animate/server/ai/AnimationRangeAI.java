@@ -1,7 +1,7 @@
 package com.eeeab.animate.server.ai;
 
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.animate.server.animation.EMAnimatedEntity;
+import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,7 +13,7 @@ import java.util.EnumSet;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public class AnimationRangeAI<T extends EEEABMobLibrary & EMAnimatedEntity> extends Goal {
+public class AnimationRangeAI<T extends EEEABMobLibrary & AnimatedEntity> extends Goal {
     protected T attacker;
     protected int seeTime;
     protected double speed;

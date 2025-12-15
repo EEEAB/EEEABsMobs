@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner;
 
-import com.eeeab.eeeabsmobs.sever.entity.SummoningEntity;
-import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
+import com.eeeab.eeeabsmobs.sever.entity.mob.SummoningEntity;
+import com.eeeab.eeeabsmobs.sever.util.ModTagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -30,7 +30,7 @@ public class RedirectOwnerHatredGoal<T extends Mob & SummoningEntity<T>> extends
             if (!owner.isAlive() || target == null) return false;
             if (this.venerable.tickCount % randomCooling == 0) return false;
             this.mandatoryTargets = this.venerable.getNearByEntitiesByClass(Mob.class, this.venerable.level(), this.venerable, searchRange, searchRange, searchRange, searchRange)
-                    .stream().filter(mob -> mob != owner && !target.getType().is(EMTagKey.RESISTS_FORCED_CHANGE_TARGET) && mob.getTarget() == owner)
+                    .stream().filter(mob -> mob != owner && !target.getType().is(ModTagKey.RESISTS_FORCED_CHANGE_TARGET) && mob.getTarget() == owner)
                     .limit(Mth.floor(searchRange * 2))//查找上限
                     .toList();
         }

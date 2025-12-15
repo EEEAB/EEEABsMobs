@@ -1,9 +1,9 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGuardianBlade;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityGuardianBlade;
+import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityNamelessGuardian;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;

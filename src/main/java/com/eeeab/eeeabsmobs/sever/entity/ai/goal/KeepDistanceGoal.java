@@ -1,13 +1,12 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
-import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
+import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 
 import java.util.EnumSet;
 
-public class KeepDistanceGoal<T extends Mob & NeedStopAiEntity> extends Goal {
+public class KeepDistanceGoal<T extends EEEABMobLibrary> extends Goal {
     private final T mob;
     private final double speedModifier;
     private final float attackRadius;
@@ -18,8 +17,8 @@ public class KeepDistanceGoal<T extends Mob & NeedStopAiEntity> extends Goal {
 
     public KeepDistanceGoal(T entity, double speedModifier, float attackRadius, float moveBackSpeedModifier) {
         this.mob = entity;
-        this.speedModifier = speedModifier;//移动目标速度
-        this.attackRadius = attackRadius;//攻击范围
+        this.speedModifier = speedModifier;
+        this.attackRadius = attackRadius;
         if (moveBackSpeedModifier < 0) {
             moveBackSpeedModifier = 0.5F;
         }
@@ -29,9 +28,8 @@ public class KeepDistanceGoal<T extends Mob & NeedStopAiEntity> extends Goal {
 
     @Override
     public boolean canUse() {
-        return this.mob.getTarget() != null && this.mob.noConflictingTasks();
+        return this.mob.getTarget() != null && !this.mob.isStunned() && this.mob.isNoAnimation();
     }
-
 
     @Override
     public void stop() {

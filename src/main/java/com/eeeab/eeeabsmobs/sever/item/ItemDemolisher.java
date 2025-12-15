@@ -4,9 +4,9 @@ import com.eeeab.animate.client.util.ItemAnimationUtils;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
-import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
+import com.eeeab.eeeabsmobs.sever.util.TranslateUtils;
+import com.eeeab.eeeabsmobs.sever.util.ModTagKey;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
@@ -30,14 +30,15 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+//TODO 双持物品切换状态时概率复制物品
 public class ItemDemolisher extends SwordItem implements ConfigurableItem, IUnbreakableItem {
-    private static final Predicate<ItemStack> SUPPORTED_PROJECTILES_PREDICATE = stack -> stack.is(EMTagKey.DEMOLISHER_SUPPORTED_PROJECTILES);
-    private static final Component MELEE_MODE = EMTUtils.simpleText(EMTUtils.OTHER_PREFIX, "melee_mode", ChatFormatting.YELLOW);
-    private static final Component RANGED_MODE = EMTUtils.simpleText(EMTUtils.OTHER_PREFIX, "ranged_mode", ChatFormatting.YELLOW);
+    private static final Predicate<ItemStack> SUPPORTED_PROJECTILES_PREDICATE = stack -> stack.is(ModTagKey.DEMOLISHER_SUPPORTED_PROJECTILES);
+    private static final Component MELEE_MODE = TranslateUtils.simpleText(TranslateUtils.OTHER_PREFIX, "melee_mode", ChatFormatting.YELLOW);
+    private static final Component RANGED_MODE = TranslateUtils.simpleText(TranslateUtils.OTHER_PREFIX, "ranged_mode", ChatFormatting.YELLOW);
     private Multimap<Attribute, AttributeModifier> defaultModifiers;
 
     public ItemDemolisher(Tier tier, Properties properties) {
-        super(tier, (int) (-3D + EMConfigHandler.COMMON.ITEM.DEMOLISHER_TOOL.attackDamageValue), (float) (-4D + EMConfigHandler.COMMON.ITEM.DEMOLISHER_TOOL.attackSpeedValue), properties);
+        super(tier, (int) (-3D + ModConfigHandler.COMMON.items.howitzer.attackDamageValue), (float) (-4D + ModConfigHandler.COMMON.items.howitzer.attackSpeedValue), properties);
         this.defaultModifiers = this.creatAttributesFromConfig();
     }
 
@@ -59,7 +60,7 @@ public class ItemDemolisher extends SwordItem implements ConfigurableItem, IUnbr
         }
         ItemStack projectile = getProjectile(itemStack, player);
         if (projectile.isEmpty() && !player.getAbilities().instabuild) {
-            player.displayClientMessage(EMTUtils.simpleOtherText(this.getDescriptionId(), null), true);
+            player.displayClientMessage(TranslateUtils.simpleOtherText(this.getDescriptionId(), null), true);
             return InteractionResultHolder.fail(itemStack);
         }
         return ItemUtils.startUsingInstantly(level, player, usedHand);
@@ -75,11 +76,11 @@ public class ItemDemolisher extends SwordItem implements ConfigurableItem, IUnbr
                 if (player.getCooldowns().isOnCooldown(this)) {
                     return;
                 } else if ((projectile.isEmpty() && instabuild)) {
-                    player.displayClientMessage(EMTUtils.simpleOtherText(this.getDescriptionId(), null), true);
+                    player.displayClientMessage(TranslateUtils.simpleOtherText(this.getDescriptionId(), null), true);
                     player.stopUsingItem();
                     return;
                 }
-                player.getCooldowns().addCooldown(this, (int) (EMConfigHandler.COMMON.ITEM.itemHowitzerCoolingTime.get() * 20));
+                player.getCooldowns().addCooldown(this, (int) (ModConfigHandler.COMMON.items.howitzerConfig3.get() * 20));
                 if (!level.isClientSide) AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.HOWITZER_ABILITY_TYPE);
                 else ItemAnimationUtils.start(itemStack, player.tickCount);
                 //判断是否需要消耗弹药
@@ -113,16 +114,16 @@ public class ItemDemolisher extends SwordItem implements ConfigurableItem, IUnbr
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
         boolean flag = getWeaponState(stack) == 1;
-        Component component = EMTUtils.simpleText(EMTUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, EMTUtils.TIP_SUFFIX, flag ? RANGED_MODE : MELEE_MODE);
+        Component component = TranslateUtils.simpleText(null, TranslateUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, TranslateUtils.TIP_SUFFIX, flag ? RANGED_MODE : MELEE_MODE);
         if (flag) {
-            if (EMTUtils.SHOW_ITEM_CD) tooltip.add(EMTUtils.itemCoolTime(EMConfigHandler.COMMON.ITEM.itemHowitzerCoolingTime.get()));
+            if (TranslateUtils.SHOW_ITEM_CD) tooltip.add(TranslateUtils.itemCoolTime(ModConfigHandler.COMMON.items.howitzerConfig3.get()));
             tooltip.add(component);
-            tooltip.add(EMTUtils.simpleText(EMTUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, EMTUtils.TIP_SUFFIX + "_1", EMConfigHandler.COMMON.ITEM.itemHowitzerGrenadeDamage.get()));
+            tooltip.add(TranslateUtils.simpleText(null, TranslateUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, TranslateUtils.TIP_SUFFIX + "_1", ModConfigHandler.COMMON.items.howitzerConfig1.get()));
         } else {
             tooltip.add(component);
-            tooltip.add(EMTUtils.simpleText(EMTUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, EMTUtils.TIP_SUFFIX + "_2"));
+            tooltip.add(TranslateUtils.simpleText(null, TranslateUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, TranslateUtils.TIP_SUFFIX + "_2"));
         }
-        tooltip.add(EMTUtils.simpleText(EMTUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, EMTUtils.TIP_SUFFIX + "_3"));
+        tooltip.add(TranslateUtils.simpleText(null, TranslateUtils.ITEM_PREFIX, this.getDescriptionId(), ChatFormatting.GRAY, TranslateUtils.TIP_SUFFIX + "_3"));
     }
 
     @Override
@@ -138,8 +139,8 @@ public class ItemDemolisher extends SwordItem implements ConfigurableItem, IUnbr
     @Override
     public Multimap<Attribute, AttributeModifier> creatAttributesFromConfig() {
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-        builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", EMConfigHandler.COMMON.ITEM.DEMOLISHER_TOOL.attackDamageValue - 1D, AttributeModifier.Operation.ADDITION));
-        builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", EMConfigHandler.COMMON.ITEM.DEMOLISHER_TOOL.attackSpeedValue - 4D, AttributeModifier.Operation.ADDITION));
+        builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", ModConfigHandler.COMMON.items.howitzer.attackDamageValue - 1D, AttributeModifier.Operation.ADDITION));
+        builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", ModConfigHandler.COMMON.items.howitzer.attackSpeedValue - 4D, AttributeModifier.Operation.ADDITION));
         return builder.build();
     }
 

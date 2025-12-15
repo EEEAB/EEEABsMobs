@@ -1,14 +1,14 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.animate.client.model.EMHierarchicalModel;
-import com.eeeab.animate.server.animation.EMAnimatedEntity;
+import com.eeeab.animate.client.model.ModHierarchicalModel;
+import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 
 //未知模型 作为占位符使用
-public class ModelUnKnown<T extends EEEABMobLibrary & EMAnimatedEntity> extends EMHierarchicalModel<T> {
+public class ModelUnKnown<T extends EEEABMobLibrary & AnimatedEntity> extends ModHierarchicalModel<T> {
     private final ModelPart root;
     private final ModelPart head;
     private final ModelPart rightArm;

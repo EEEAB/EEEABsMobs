@@ -1,14 +1,14 @@
 package com.eeeab.animate.server.ai;
 
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.animate.server.animation.EMAnimatedEntity;
+import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
 
-public class AnimationGroupAI<T extends EEEABMobLibrary & EMAnimatedEntity> extends AnimationAI<T> {
+public class AnimationGroupAI<T extends EEEABMobLibrary & AnimatedEntity> extends AnimationAI<T> {
     protected final Supplier<Animation>[] animations;
 
     @SafeVarargs

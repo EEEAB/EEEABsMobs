@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.block;
 
-import com.eeeab.eeeabsmobs.sever.entity.SteppableTriggerTrapEntity;
-import com.eeeab.eeeabsmobs.sever.util.EMTagKey;
+import com.eeeab.eeeabsmobs.sever.entity.effect.TriggerTrapEntity;
+import com.eeeab.eeeabsmobs.sever.util.ModTagKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -88,13 +88,13 @@ public abstract class BlockStepOnTrap extends Block {
      * 检查实体是否能触发陷阱
      */
     public static boolean checkStepOnEntity(Entity entity) {
-        if (entity instanceof LivingEntity livingEntity && !livingEntity.getType().is(EMTagKey.TRAP_WHITELIST)) {
+        if (entity instanceof LivingEntity livingEntity && !livingEntity.getType().is(ModTagKey.TRAP_WHITELIST)) {
             if (livingEntity instanceof Player player) {
                 return !(player.isCreative() || player.isSpectator());
             }
             return !(livingEntity instanceof ArmorStand);
         }
-        return entity instanceof SteppableTriggerTrapEntity;
+        return entity instanceof TriggerTrapEntity;
     }
 
     protected void active(Level level, BlockPos pos, BlockState state, Entity entity) {

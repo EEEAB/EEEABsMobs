@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.block.trapImpl;
 
 import com.eeeab.eeeabsmobs.sever.block.BlockSignalTarp;
-import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityPoisonArrow;
+import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityPoisonArrow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockSourceImpl;
 import net.minecraft.core.Direction;

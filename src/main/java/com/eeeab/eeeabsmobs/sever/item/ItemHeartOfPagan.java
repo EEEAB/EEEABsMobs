@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.item;
 
-import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
+import com.eeeab.eeeabsmobs.sever.util.TranslateUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -17,6 +17,6 @@ public class ItemHeartOfPagan extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId()));
+        tooltip.add(TranslateUtils.simpleItemText(this.getDescriptionId()));
     }
 }

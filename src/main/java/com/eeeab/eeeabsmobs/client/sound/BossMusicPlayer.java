@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.sound;
 
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundEvent;
@@ -11,7 +11,7 @@ public class BossMusicPlayer {
     public static BossMusicSound bossMusic;
 
     public static void playBossMusic(EEEABMobEntity boss, SoundEvent music) {
-        if (!EMConfigHandler.COMMON.OTHER.enablePlayBossMusic.get()) return;
+        if (!ModConfigHandler.CLIENT.enablePlayBossMusic.get()) return;
         if (music != null && boss.isAlive()) {
             Player player = Minecraft.getInstance().player;
             if (bossMusic != null) {
@@ -35,7 +35,6 @@ public class BossMusicPlayer {
     }
 
     public static void stopBossMusic(EEEABMobEntity boss) {
-        if (!EMConfigHandler.COMMON.OTHER.enablePlayBossMusic.get()) return;
         if (bossMusic != null && bossMusic.getBoss() == boss) {
             bossMusic.setBoss(null);
             Minecraft.getInstance().getSoundManager().stop(bossMusic);
@@ -44,7 +43,6 @@ public class BossMusicPlayer {
     }
 
     public static void resetBossMusic(EEEABMobEntity boss, SoundEvent music) {
-        if (!EMConfigHandler.COMMON.OTHER.enablePlayBossMusic.get()) return;
         stopBossMusic(boss);
         playBossMusic(boss, music);
     }

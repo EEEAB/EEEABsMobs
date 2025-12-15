@@ -6,9 +6,9 @@ import net.minecraft.world.entity.ai.control.BodyRotationControl;
 
 public class EMBodyRotationControl extends BodyRotationControl {
     private static final float MAX_ROTATE = 75;
-    private final Mob mob;
-    private int headStableTime;
-    private float lastStableYHeadRot;
+    protected final Mob mob;
+    protected int headStableTime;
+    protected float lastStableYHeadRot;
 
     public EMBodyRotationControl(Mob mob) {
         super(mob);
@@ -41,7 +41,7 @@ public class EMBodyRotationControl extends BodyRotationControl {
         }
     }
 
-    public static float approach(float target, float current, float limit) {
+    protected static float approach(float target, float current, float limit) {
         float delta = Mth.wrapDegrees(current - target);
         if (delta < -limit) {
             delta = -limit;
@@ -51,22 +51,22 @@ public class EMBodyRotationControl extends BodyRotationControl {
         return target + delta * 0.55F;
     }
 
-    private boolean notCarryingMobPassengers() {
+    protected boolean notCarryingMobPassengers() {
         return mob.getPassengers().isEmpty() || !(mob.getPassengers().get(0) instanceof Mob);
     }
 
     //复制自: net.minecraft.world.entity.ai.control.BodyRotationControl.isMoving()
-    private boolean isMoving() {
+    protected boolean isMoving() {
         double d0 = this.mob.getX() - this.mob.xo;
         double d1 = this.mob.getZ() - this.mob.zo;
         return d0 * d0 + d1 * d1 > (double) 2.5000003E-7F;
     }
 
-    private void rotateBodyIfNecessary() {
+    protected void rotateBodyIfNecessary() {
         this.mob.yBodyRot = Mth.rotateIfNecessary(this.mob.yBodyRot, this.mob.yHeadRot, (float) this.mob.getMaxHeadYRot());
     }
 
-    private void rotateHeadIfNecessary() {
+    protected void rotateHeadIfNecessary() {
         this.mob.yHeadRot = Mth.rotateIfNecessary(this.mob.yHeadRot, this.mob.yBodyRot, (float) this.mob.getMaxHeadYRot());
     }
 }

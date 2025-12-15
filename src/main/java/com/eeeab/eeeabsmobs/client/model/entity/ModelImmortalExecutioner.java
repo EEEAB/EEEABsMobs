@@ -1,14 +1,14 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.animate.client.model.EMHierarchicalModel;
+import com.eeeab.animate.client.model.ModHierarchicalModel;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationImmortalExecutioner;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalExecutioner;
+import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalExecutioner;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
-public class ModelImmortalExecutioner extends EMHierarchicalModel<EntityImmortalExecutioner> {
+public class ModelImmortalExecutioner extends ModHierarchicalModel<EntityImmortalExecutioner> {
     private final ModelPart root;
     private final ModelPart head;
     private final ModelPart[] spine;

@@ -1,12 +1,12 @@
 package com.eeeab.animate.server.event;
 
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.animate.server.animation.EMAnimatedEntity;
+import com.eeeab.animate.server.animation.AnimatedEntity;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
-public class AnimationEvent<T extends Entity & EMAnimatedEntity> extends Event {
+public class AnimationEvent<T extends Entity & AnimatedEntity> extends Event {
     protected Animation animation;
     private final T entity;
 
@@ -24,7 +24,7 @@ public class AnimationEvent<T extends Entity & EMAnimatedEntity> extends Event {
     }
 
     @Cancelable
-    public static class Start<T extends Entity & EMAnimatedEntity> extends AnimationEvent<T> {
+    public static class Start<T extends Entity & AnimatedEntity> extends AnimationEvent<T> {
         public Start(T entity, Animation animation) {
             super(entity, animation);
         }
@@ -34,7 +34,7 @@ public class AnimationEvent<T extends Entity & EMAnimatedEntity> extends Event {
         }
     }
 
-    public static class Tick<T extends Entity & EMAnimatedEntity> extends AnimationEvent<T> {
+    public static class Tick<T extends Entity & AnimatedEntity> extends AnimationEvent<T> {
         protected int tick;
 
         public Tick(T entity, Animation animation, int tick) {

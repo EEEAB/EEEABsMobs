@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
 import com.eeeab.animate.server.ai.AnimationAI;
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.sounds.SoundEvents;
@@ -58,7 +58,7 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
                     entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                     ModEntityUtils.forceKnockBack(entity, hitEntity, 0.6F, ratioX, ratioZ, !isPowered);
                 });
-            } else if (tick == 20 && entity.checkCanAttackRange(1.5, range) && canToggleAnimation(90)) {
+            } else if (tick == 20 && entity.checkCanAttackRange(1.5, range) && canToggleAnimation(0.9F)) {
                 entity.playAnimation(entity.attackAnimation2);
             }
 
@@ -83,7 +83,7 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
                     ModEntityUtils.forceKnockBack(entity, hitEntity, 0.5F, ratioX, ratioZ, !isPowered);
                 });
             } else if (tick == 25) {
-                if (entity.checkCanAttackRange(1.5, range) && canToggleAnimation(80)) {
+                if (entity.checkCanAttackRange(1.5, range) && canToggleAnimation(0.8F)) {
                     entity.playAnimation(entity.attackAnimation3);
                 }
             }
@@ -117,7 +117,7 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
         }
     }
 
-    private boolean canToggleAnimation(int healthPercentage) {
+    private boolean canToggleAnimation(float healthPercentage) {
         return (!isPowered && ((entity.getHealthPercentage() >= healthPercentage && entity.getRandom().nextFloat() < 0.4F) ||
                 ((entity.getHealthPercentage() < healthPercentage || !entity.isFirstMadness()) && entity.getRandom().nextFloat() < 0.6F))) ||
                 (isPowered && entity.getRandom().nextFloat() < 0.9F);

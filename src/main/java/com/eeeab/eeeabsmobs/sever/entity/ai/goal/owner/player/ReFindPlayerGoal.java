@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player;
 
-import com.eeeab.eeeabsmobs.sever.entity.SummoningEntity;
+import com.eeeab.eeeabsmobs.sever.entity.mob.SummoningEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;

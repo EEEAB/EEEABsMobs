@@ -32,9 +32,6 @@ import javax.annotation.Nullable;
  */
 public class ModEntityUtils {
 
-    private ModEntityUtils() {
-    }
-
     /**
      * 检查药水是否是有益的
      *

@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.particle.util;
 
-import com.eeeab.eeeabsmobs.client.render.EMRenderType;
-import com.eeeab.eeeabsmobs.sever.util.EMMathUtils;
+import com.eeeab.eeeabsmobs.client.render.ModRenderType;
+import com.eeeab.eeeabsmobs.sever.util.ModMathUtils;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -89,7 +89,7 @@ public class AdvancedParticleBase extends TextureSheetParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return EMRenderType.PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH;
+        return ModRenderType.PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH;
     }
 
     public int getLightColor(float partialTick) {
@@ -187,9 +187,9 @@ public class AdvancedParticleBase extends TextureSheetParticle {
             float rotX = eulerRot.prevPitch + (eulerRot.pitch - eulerRot.prevPitch) * partialTicks;
             float rotY = eulerRot.prevYaw + (eulerRot.yaw - eulerRot.prevYaw) * partialTicks;
             float rotZ = eulerRot.prevRoll + (eulerRot.roll - eulerRot.prevRoll) * partialTicks;
-            Quaternionf quatX = EMMathUtils.rotationXYZ(rotX, 0, 0, false);
-            Quaternionf quatY = EMMathUtils.rotationXYZ(0, rotY, 0, false);
-            Quaternionf quatZ = EMMathUtils.rotationXYZ(0, 0, rotZ, false);
+            Quaternionf quatX = ModMathUtils.rotationXYZ(rotX, 0, 0, false);
+            Quaternionf quatY = ModMathUtils.rotationXYZ(0, rotY, 0, false);
+            Quaternionf quatZ = ModMathUtils.rotationXYZ(0, 0, rotZ, false);
             quaternion.mul(quatZ);
             quaternion.mul(quatY);
             quaternion.mul(quatX);
@@ -200,8 +200,8 @@ public class AdvancedParticleBase extends TextureSheetParticle {
             double z = orientRot.prevOrientation.z + (orientRot.orientation.z - orientRot.prevOrientation.z) * partialTicks;
             float pitch = (float) Math.asin(-y);
             float yaw = (float) (Mth.atan2(x, z));
-            Quaternionf quatX = EMMathUtils.rotationXYZ(pitch, 0, 0, false);
-            Quaternionf quatY = EMMathUtils.rotationXYZ(0, yaw, 0, false);
+            Quaternionf quatX = ModMathUtils.rotationXYZ(pitch, 0, 0, false);
+            Quaternionf quatY = ModMathUtils.rotationXYZ(0, yaw, 0, false);
             quaternion.mul(quatY);
             quaternion.mul(quatX);
         }
@@ -315,13 +315,10 @@ public class AdvancedParticleBase extends TextureSheetParticle {
         @Override
         public Particle createParticle(AdvancedParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
             AdvancedParticleBase particle;
-            if (typeIn.isAnimation()) {
-                particle = new AdvancedParticleBase(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getRotation(), typeIn.getScale(), typeIn.getRed(), typeIn.getGreen(), typeIn.getBlue(), typeIn.getAlpha(), typeIn.getAirDiffusionSpeed(), typeIn.getDuration(), typeIn.isEmissive(), typeIn.getCanCollide(), typeIn.getComponents(), spriteSet);
-                particle.setSpriteFromAge(spriteSet);
-            } else {
-                particle = new AdvancedParticleBase(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getRotation(), typeIn.getScale(), typeIn.getRed(), typeIn.getGreen(), typeIn.getBlue(), typeIn.getAlpha(), typeIn.getAirDiffusionSpeed(), typeIn.getDuration(), typeIn.isEmissive(), typeIn.getCanCollide(), typeIn.getComponents(), null);
-                particle.pickSprite(spriteSet);
-            }
+            boolean isAnimation = typeIn.isAnimation();
+            particle = new AdvancedParticleBase(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getRotation(), typeIn.getScale(), typeIn.getRed(), typeIn.getGreen(), typeIn.getBlue(), typeIn.getAlpha(), typeIn.getAirDiffusionSpeed(), typeIn.getDuration(), typeIn.isEmissive(), typeIn.getCanCollide(), typeIn.getComponents(), isAnimation ? spriteSet : null);
+            if (isAnimation) particle.setSpriteFromAge(spriteSet);
+            else particle.pickSprite(spriteSet);
             particle.setColor((float) typeIn.getRed(), (float) typeIn.getGreen(), (float) typeIn.getBlue());
             return particle;
         }

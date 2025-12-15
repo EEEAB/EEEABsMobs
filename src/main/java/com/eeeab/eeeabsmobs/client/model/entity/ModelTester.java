@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.animate.client.model.EMHierarchicalModel;
-import com.eeeab.eeeabsmobs.sever.entity.test.EntityTester;
+import com.eeeab.animate.client.model.ModHierarchicalModel;
+import com.eeeab.eeeabsmobs.sever.entity.mob.EntityTester;
 import net.minecraft.client.animation.AnimationChannel;
 import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.animation.Keyframe;
@@ -12,7 +12,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class ModelTester extends EMHierarchicalModel<EntityTester> {
+public class ModelTester extends ModHierarchicalModel<EntityTester> {
     private final ModelPart root;
     private final ModelPart upper;
     private final ModelPart head;

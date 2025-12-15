@@ -1,14 +1,17 @@
 package com.eeeab.eeeabsmobs.client.particle.util;
 
-import com.eeeab.eeeabsmobs.client.particle.util.anim.AnimData;
+import com.eeeab.eeeabsmobs.sever.util.FractalPathProvider;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 //参考自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/client/particle/util/ParticleComponent.java
 public abstract class ParticleComponent {
@@ -180,7 +183,7 @@ public abstract class ParticleComponent {
 
     /**
      * 跟踪实体坐标组件
-     * 
+     *
      * @author EEEAB
      */
     public static class PinLocationWithEntity extends ParticleComponent {
@@ -377,44 +380,41 @@ public abstract class ParticleComponent {
         }
     }
 
-
     /**
-     * 旋转移动组件
-     *
-     * @author EEEAB
+     * 按照路径顺序移动的组件
      */
-    public static class RotatingMotion extends ParticleComponent {
-        private final Vec3[] location;
-        private final AnimData strength;
-        private final float rotation;
+    public static class FollowPath extends ParticleComponent {
+        private final List<Vec3> path;
+        private final AnimData speedData;
 
         /**
-         * RotatingMotion
+         * FollowPath - 使用固定路径
          *
-         * @param location 环绕中心坐标
-         * @param strength 旋转强度
-         * @param rotation 旋转弧度
+         * @param path      移动路径列表
+         * @param speedData 移动速度控制（0-1的进度）
          */
-        public RotatingMotion(Vec3[] location, AnimData strength, float rotation) {
-            this.location = location;
-            this.strength = strength;
-            this.rotation = rotation;
+        public FollowPath(List<Vec3> path, AnimData speedData) {
+            this.path = path;
+            this.speedData = speedData;
+        }
+
+        @Override
+        public void init(AdvancedParticleBase particle) {
+            apply(particle, 0);
         }
 
         @Override
         public void preUpdate(AdvancedParticleBase particle) {
-            float ageFrac = particle.getAge() / (particle.getLifetime() - 1);
-            if (location.length > 0) {
-                Vec3 destinationVec = location[0];
-                Vec3 currPos = new Vec3(particle.getPosX(), particle.getPosY(), particle.getPosZ());
-                Vec3 diff = destinationVec.subtract(currPos);
-                //根据旋转角度计算切线方向的力 y轴作为旋转轴
-                Vec3 tangentForce = diff.cross(new Vec3(0, 1, 0));
-                tangentForce = tangentForce.normalize().scale(Mth.sin(rotation) * strength.evaluate(ageFrac));
-                particle.setMotionX(tangentForce.x);
-                particle.setMotionY(tangentForce.y);
-                particle.setMotionZ(tangentForce.z);
-            }
+            if (path.size() <= 1) return;
+            apply(particle, particle.getAge() / particle.getLifetime());
+        }
+
+        private void apply(AdvancedParticleBase particle, float t) {
+            float progress = speedData.evaluate(t);
+            int index = (int) (progress * (path.size() - 1));
+            index = Math.min(index, path.size() - 1);
+            Vec3 targetPos = path.get(index);
+            particle.setPos(targetPos.x, targetPos.y, targetPos.z);
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.eeeab.animate.server.ai;
 
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.animate.server.animation.EMAnimatedEntity;
+import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public class AnimationMeleeAI<T extends EEEABMobLibrary & EMAnimatedEntity> extends MeleeAttackGoal {
+public class AnimationMeleeAI<T extends EEEABMobLibrary & AnimatedEntity> extends MeleeAttackGoal {
     protected T attacker;
     protected final double speed;
     protected int ticksUntilNextAttack;
@@ -85,7 +85,7 @@ public class AnimationMeleeAI<T extends EEEABMobLibrary & EMAnimatedEntity> exte
 
     //随机获得动画
     private Animation getAnimationByRandom() {
-        if (animations == null || animations.length == 0) return EMAnimatedEntity.NO_ANIMATION;
+        if (animations == null || animations.length == 0) return AnimatedEntity.NO_ANIMATION;
         return animations[this.attacker.getRandom().nextInt(animations.length)].get();
     }
 }

@@ -1,23 +1,17 @@
 package com.eeeab.eeeabsmobs.sever.init;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpse;
-import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseToPlayer;
-import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
-import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseVillager;
-import com.eeeab.eeeabsmobs.sever.entity.effects.*;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityGulingSentinel;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityGulingSentinelHeavy;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.*;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.skeleton.*;
-import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityBloodBall;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityGrenade;
-import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityImmortalShuriken;
-import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityPoisonArrow;
-import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
-import com.eeeab.eeeabsmobs.sever.entity.test.EntityTester;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityInfraredRay;
+import com.eeeab.eeeabsmobs.sever.entity.effect.*;
+import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.*;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityPulsedGrenade;
+import com.eeeab.eeeabsmobs.sever.entity.mob.EntityTester;
+import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpse;
+import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpseToPlayer;
+import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpseVillager;
+import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpseWarlock;
+import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.*;
+import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -58,10 +52,10 @@ public class EntityInit {
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "corpse_to_player").toString()));
 
     public static final RegistryObject<EntityType<EntityImmortalSkeleton>> IMMORTAL_SKELETON = registerImmortalSkeletonEntity(EntityImmortalSkeleton::new, "immortal_skeleton");
-    public static final RegistryObject<EntityType<EntityImmortalArcher>> IMMORTAL_ARCHER = registerImmortalSkeletonEntity(EntityImmortalArcher::new, "immortal_archer");
-    public static final RegistryObject<EntityType<EntityImmortalKnight>> IMMORTAL_KNIGHT = registerImmortalSkeletonEntity(EntityImmortalKnight::new, "immortal_knight");
-    public static final RegistryObject<EntityType<EntityImmortalMage>> IMMORTAL_MAGE = registerImmortalSkeletonEntity(EntityImmortalMage::new, "immortal_mage");
-    public static final RegistryObject<EntityType<EntityImmortalWarrior>> IMMORTAL_WARRIOR = registerImmortalSkeletonEntity(EntityImmortalWarrior::new, "immortal_warrior");
+    public static final RegistryObject<EntityType<EntityImmortalSkeletonArcher>> IMMORTAL_ARCHER = registerImmortalSkeletonEntity(EntityImmortalSkeletonArcher::new, "immortal_archer");
+    public static final RegistryObject<EntityType<EntityImmortalSkeletonKnight>> IMMORTAL_KNIGHT = registerImmortalSkeletonEntity(EntityImmortalSkeletonKnight::new, "immortal_knight");
+    public static final RegistryObject<EntityType<EntityImmortalSkeletonMage>> IMMORTAL_MAGE = registerImmortalSkeletonEntity(EntityImmortalSkeletonMage::new, "immortal_mage");
+    public static final RegistryObject<EntityType<EntityImmortalSkeletonWarrior>> IMMORTAL_WARRIOR = registerImmortalSkeletonEntity(EntityImmortalSkeletonWarrior::new, "immortal_warrior");
 
     public static final RegistryObject<EntityType<EntityImmortalShaman>> IMMORTAL_SHAMAN =
             ENTITIES.register("immortal_shaman",
@@ -69,9 +63,9 @@ public class EntityInit {
                             .sized(0.6f, 2.6f).clientTrackingRange(8)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_shaman").toString()));
 
-    public static final RegistryObject<EntityType<EntityImmortalGolem>> IMMORTAL_GOLEM =
+    public static final RegistryObject<EntityType<EntityMagicGolem>> MAGIC_GOLEM =
             ENTITIES.register("immortal_golem",
-                    () -> EntityType.Builder.<EntityImmortalGolem>of(EntityImmortalGolem::new, MobCategory.MONSTER)
+                    () -> EntityType.Builder.<EntityMagicGolem>of(EntityMagicGolem::new, MobCategory.MONSTER)
                             .sized(0.6f, 1.2f).clientTrackingRange(8)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_golem").toString()));
 
@@ -81,24 +75,37 @@ public class EntityInit {
                             .sized(0.8f, 2.45f).fireImmune().clientTrackingRange(8)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal_executioner").toString()));
 
-    public static final RegistryObject<EntityType<EntityImmortal>> IMMORTAL_BOSS =
+    public static final RegistryObject<EntityType<EntityImmortalBoss>> IMMORTAL_BOSS =
             ENTITIES.register("immortal",
-                    () -> EntityType.Builder.<EntityImmortal>of(EntityImmortal::new, MobCategory.MONSTER)
+                    () -> EntityType.Builder.<EntityImmortalBoss>of(EntityImmortalBoss::new, MobCategory.MONSTER)
                             .sized(2.8f, 4.45f).fireImmune().clientTrackingRange(10)
                             .setShouldReceiveVelocityUpdates(true)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "immortal").toString()));
 
-    public static final RegistryObject<EntityType<EntityGulingSentinel>> GULING_SENTINEL =
-            ENTITIES.register("guling_sentinel",
-                    () -> EntityType.Builder.<EntityGulingSentinel>of(EntityGulingSentinel::new, MobCategory.MONSTER)
+    public static final RegistryObject<EntityType<EntityRelicObserver>> RELIC_OBSERVER =
+            ENTITIES.register("relic_observer",
+                    () -> EntityType.Builder.<EntityRelicObserver>of(EntityRelicObserver::new, MobCategory.MONSTER)
                             .sized(1f, 1.8f).fireImmune().clientTrackingRange(8)
-                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "guling_sentinel").toString()));
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "relic_observer").toString()));
 
-    public static final RegistryObject<EntityType<EntityGulingSentinelHeavy>> GULING_SENTINEL_HEAVY =
-            ENTITIES.register("guling_sentinel_heavy",
-                    () -> EntityType.Builder.<EntityGulingSentinelHeavy>of(EntityGulingSentinelHeavy::new, MobCategory.MONSTER)
+    public static final RegistryObject<EntityType<EntityRelicRipper>> RELIC_RIPPER =
+            ENTITIES.register("relic_ripper",
+                    () -> EntityType.Builder.<EntityRelicRipper>of(EntityRelicRipper::new, MobCategory.MONSTER)
+                            .sized(1.45f, 2.4995f).fireImmune()
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "relic_ripper").toString()));
+
+    public static final RegistryObject<EntityType<EntityRelicEarthshaker>> RELIC_EARTHSHAKER =
+            ENTITIES.register("relic_earthshaker",
+                    () -> EntityType.Builder.<EntityRelicEarthshaker>of(EntityRelicEarthshaker::new, MobCategory.MONSTER)
                             .sized(2.45f, 3.45f).fireImmune()
-                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "guling_sentinel_heavy").toString()));
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "relic_earthshaker").toString()));
+
+    public static final RegistryObject<EntityType<EntityRelicAnnihilator>> RELIC_ANNIHILATOR =
+            ENTITIES.register("relic_annihilator",
+                    () -> EntityType.Builder.<EntityRelicAnnihilator>of(EntityRelicAnnihilator::new, MobCategory.MONSTER)
+                            .sized(1.3f, 3.45f).fireImmune().clientTrackingRange(8)
+                            .setShouldReceiveVelocityUpdates(true)
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "relic_annihilator").toString()));
 
     public static final RegistryObject<EntityType<EntityNamelessGuardian>> NAMELESS_GUARDIAN =
             ENTITIES.register("nameless_guardian",
@@ -107,13 +114,11 @@ public class EntityInit {
                             .setShouldReceiveVelocityUpdates(true)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "nameless_guardian").toString()));
 
-    //test entity
     public static final RegistryObject<EntityType<EntityTester>> TESTER =
             ENTITIES.register("tester",
                     () -> EntityType.Builder.<EntityTester>of(EntityTester::new, MobCategory.CREATURE)
                             .sized(0.6f, 1.95f).clientTrackingRange(10)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "tester").toString()));
-
 
     //非生物实体
     //爆炸
@@ -154,6 +159,7 @@ public class EntityInit {
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "falling_block").toString()));
 
     //守卫者激光
+    public static final RegistryObject<EntityType<EntityInfraredRay>> INFRARED_RAY = registerCommonBeamEntity(EntityInfraredRay::new, "infrared_ray");
     public static final RegistryObject<EntityType<EntityGuardianLaser>> GUARDIAN_LASER = registerCommonBeamEntity(EntityGuardianLaser::new, "guardian_laser");
 
     //守卫者之刃
@@ -162,13 +168,6 @@ public class EntityInit {
                     () -> EntityType.Builder.<EntityGuardianBlade>of(EntityGuardianBlade::new, MobCategory.MISC)
                             .sized(0.3f, 3.5f).setUpdateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "guardian_blade").toString()));
-
-    //烧焦的地面
-    public static final RegistryObject<EntityType<EntityScorch>> SCORCH =
-            ENTITIES.register("scorch",
-                    () -> EntityType.Builder.<EntityScorch>of(EntityScorch::new, MobCategory.MISC)
-                            .sized(0.1f, 0.1f).setUpdateInterval(1)
-                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "scorch").toString()));
 
     //结构之眼
     public static final RegistryObject<EntityType<EntityEyeOfStructure>> EYE_OF_STRUCTURE =
@@ -206,12 +205,12 @@ public class EntityInit {
                             .sized(0.1f, 0.1f).setUpdateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "crimson_ray_pre").toString()));
 
-    //榴弹
-    public static final RegistryObject<EntityType<EntityGrenade>> GRENADE =
-            ENTITIES.register("grenade",
-                    () -> EntityType.Builder.<EntityGrenade>of(EntityGrenade::new, MobCategory.MISC)
+    //脉冲榴弹
+    public static final RegistryObject<EntityType<EntityPulsedGrenade>> PULSED_GRENADE =
+            ENTITIES.register("pulsed_grenade",
+                    () -> EntityType.Builder.<EntityPulsedGrenade>of(EntityPulsedGrenade::new, MobCategory.MISC)
                             .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(10)
-                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "grenade").toString()));
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "pulsed_grenade").toString()));
 
     //电磁脉冲
     public static final RegistryObject<EntityType<EntityElectromagnetic>> ELECTROMAGNETIC =
@@ -219,6 +218,13 @@ public class EntityInit {
                     () -> EntityType.Builder.<EntityElectromagnetic>of(EntityElectromagnetic::new, MobCategory.MISC)
                             .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(1)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "electromagnetic").toString()));
+
+    //歼击者导弹
+    public static final RegistryObject<EntityType<EntityAnnihilatorMissile>> ANNIHILATOR_MISSILE =
+            ENTITIES.register("annihilator_missile",
+                    () -> EntityType.Builder.<EntityAnnihilatorMissile>of(EntityAnnihilatorMissile::new, MobCategory.MISC)
+                            .sized(0.5F, 0.125F).clientTrackingRange(4).updateInterval(20)
+                            .build(new ResourceLocation(EEEABMobs.MOD_ID, "annihilator_missile").toString()));
 
     //异界传送门
     public static final RegistryObject<EntityType<EntityAlienPortal>> ALIEN_PORTAL =
@@ -268,11 +274,13 @@ public class EntityInit {
         event.put(EntityInit.IMMORTAL_WARRIOR.get(), EntityAbsImmortalSkeleton.setAttributes(15F, 5F, 6F, 0.02F));
         event.put(EntityInit.IMMORTAL_KNIGHT.get(), EntityAbsImmortalSkeleton.setAttributes(25F, 6F, 8F, 0F));
         event.put(EntityInit.IMMORTAL_SHAMAN.get(), EntityImmortalShaman.setAttributes().build());
-        event.put(EntityInit.IMMORTAL_GOLEM.get(), EntityImmortalGolem.setAttributes().build());
+        event.put(EntityInit.MAGIC_GOLEM.get(), EntityMagicGolem.setAttributes().build());
         event.put(EntityInit.IMMORTAL_EXECUTIONER.get(), EntityImmortalExecutioner.setAttributes().build());
-        event.put(EntityInit.IMMORTAL_BOSS.get(), EntityImmortal.setAttributes().build());
-        event.put(EntityInit.GULING_SENTINEL.get(), EntityGulingSentinel.setAttributes().build());
-        event.put(EntityInit.GULING_SENTINEL_HEAVY.get(), EntityGulingSentinelHeavy.setAttributes().build());
+        event.put(EntityInit.IMMORTAL_BOSS.get(), EntityImmortalBoss.setAttributes().build());
+        event.put(EntityInit.RELIC_OBSERVER.get(), EntityRelicObserver.setAttributes().build());
+        event.put(EntityInit.RELIC_EARTHSHAKER.get(), EntityRelicEarthshaker.setAttributes().build());
+        event.put(EntityInit.RELIC_RIPPER.get(), EntityRelicRipper.setAttributes().build());
+        event.put(EntityInit.RELIC_ANNIHILATOR.get(), EntityRelicAnnihilator.setAttributes().build());
         event.put(EntityInit.NAMELESS_GUARDIAN.get(), EntityNamelessGuardian.setAttributes().build());
         event.put(EntityInit.TESTER.get(), EntityTester.setAttributes().build());
     }

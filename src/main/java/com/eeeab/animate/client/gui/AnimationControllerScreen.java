@@ -1,8 +1,8 @@
 package com.eeeab.animate.client.gui;
 
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.animate.server.animation.EMAnimatedEntity;
-import com.eeeab.animate.server.message.PlayAnimationMessage;
+import com.eeeab.animate.server.animation.AnimatedEntity;
+import com.eeeab.animate.server.message.MessagePlayAnimation;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.animate.server.inventory.AnimationControllerMenu;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Pattern;
 
 public class AnimationControllerScreen extends AbstractContainerScreen<AnimationControllerMenu> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/screens/animation_controller.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/gui/animation_controller.png");
     private static final Pattern NUMBER_PATTERN = Pattern.compile("-?\\d+");
     private final Entity animationEntity;
     private final Component chatComponent;
@@ -97,7 +97,7 @@ public class AnimationControllerScreen extends AbstractContainerScreen<Animation
 
             private void doSuggestionMsg() {
                 int length = -1;
-                if (animationEntity instanceof EMAnimatedEntity animatedEntity && animatedEntity.getAnimations() != null) {
+                if (animationEntity instanceof AnimatedEntity animatedEntity && animatedEntity.getAnimations() != null) {
                     length = animatedEntity.getAnimations().length;
                 }
                 setSuggestion(getValue().isEmpty() ? Component.literal(length > 0 ? "index[0-" + length + ")" : "index[0]").getString() : null);
@@ -106,15 +106,16 @@ public class AnimationControllerScreen extends AbstractContainerScreen<Animation
         animationIndexEdit.setMaxLength(4);
         this.addWidget(this.animationIndexEdit);
         playButton = Button.builder(Component.literal("play"), e -> {
-            if (animationEntity instanceof EMAnimatedEntity animatedEntity) {
+            if (animationEntity instanceof AnimatedEntity animatedEntity) {
                 String value = animationIndexEdit.getValue();
                 Animation[] animations = animatedEntity.getAnimations();
                 if (animations != null && isInteger(value)) {
                     int index = Integer.parseInt(value);
                     if (index >= 0 && index < animations.length) {
                         Animation animation = animations[index];
-                        if (animation != null && EMAnimatedEntity.NO_ANIMATION == animatedEntity.getAnimation()) {
-                            EEEABMobs.NETWORK.sendToServer(new PlayAnimationMessage(animationEntity.getId(), ArrayUtils.indexOf(animations, animation)));
+                        Animation nowAnimation = animatedEntity.getAnimation();
+                        if (animation != null && (AnimatedEntity.NO_ANIMATION == nowAnimation || nowAnimation.isLooping())) {
+                            EEEABMobs.NETWORK.sendToServer(new MessagePlayAnimation(animationEntity.getId(), ArrayUtils.indexOf(animations, animation)));
                             close();
                         }
                     }

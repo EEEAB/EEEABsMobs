@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.sever.integration.curios.render;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.integration.curios.model.ModelSoulSummoningNecklace;
-import com.eeeab.eeeabsmobs.client.model.util.EMModelLayer;
+import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -23,7 +23,7 @@ public class RenderSoulSummoningNecklace implements ICurioRenderer {
     private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/armor/soul_summoning_necklace.png");
 
     public RenderSoulSummoningNecklace() {
-        this.model = new ModelSoulSummoningNecklace(Minecraft.getInstance().getEntityModels().bakeLayer(EMModelLayer.SOUL_SUMMONING_NECKLACE));
+        this.model = new ModelSoulSummoningNecklace(Minecraft.getInstance().getEntityModels().bakeLayer(ModModelLayer.SOUL_SUMMONING_NECKLACE));
     }
 
     @Override

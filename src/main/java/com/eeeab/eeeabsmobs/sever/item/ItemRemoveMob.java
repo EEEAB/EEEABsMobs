@@ -1,7 +1,8 @@
 package com.eeeab.eeeabsmobs.sever.item;
 
-import com.eeeab.eeeabsmobs.sever.entity.IEntity;
-import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
+import com.eeeab.eeeabsmobs.sever.entity.effect.IEntity;
+import com.eeeab.eeeabsmobs.sever.entity.mob.IMob;
+import com.eeeab.eeeabsmobs.sever.util.TranslateUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.stats.Stats;
@@ -27,9 +28,8 @@ public class ItemRemoveMob extends Item {
         ItemStack stack = player.getItemInHand(hand);
         player.startUsingItem(hand);
         if (!player.level().isClientSide) {
-            List<Entity> entities = getNearByEntities(player, findSize);
-            for (Entity mobEntity : entities) {
-                if (mobEntity instanceof IEntity) mobEntity.remove(Entity.RemovalReason.KILLED);
+            for (Entity entity : getNearByEntities(player, findSize)) {
+                if (entity instanceof IEntity || entity instanceof IMob) entity.remove(Entity.RemovalReason.KILLED);
             }
             player.awardStat(Stats.ITEM_USED.get(this));
             player.swing(hand, true);
@@ -42,7 +42,7 @@ public class ItemRemoveMob extends Item {
     //左键清除单个模组实体
     @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
-        if (entity instanceof IEntity) {
+        if (entity instanceof IEntity || entity instanceof IMob) {
             if (!entity.level().isClientSide) {
                 entity.remove(Entity.RemovalReason.KILLED);
             }
@@ -54,7 +54,7 @@ public class ItemRemoveMob extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, ChatFormatting.GRAY, this.getDescriptionId()));
+        tooltip.addAll(TranslateUtils.complexText(TranslateUtils.ITEM_PREFIX, 2, ChatFormatting.GRAY, this.getDescriptionId()));
     }
 
     private static List<Entity> getNearByEntities(Entity entity, double size) {

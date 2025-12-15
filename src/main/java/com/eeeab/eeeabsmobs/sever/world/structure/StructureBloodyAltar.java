@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.world.structure;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
+import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpseWarlock;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.StructuresInit;
 import com.google.common.collect.ImmutableMap;

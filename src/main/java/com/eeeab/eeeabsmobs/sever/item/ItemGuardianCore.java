@@ -4,9 +4,9 @@ import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.block.BlockErosionPortal;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
+import com.eeeab.eeeabsmobs.sever.util.TranslateUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -104,7 +104,7 @@ public class ItemGuardianCore extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId(), Component.literal(EMConfigHandler.COMMON.ITEM.itemGuardianCoreShootRadius.get() + "").withStyle(ChatFormatting.YELLOW)));
-        tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, ChatFormatting.GRAY, this.getDescriptionId()));
+        tooltip.add(TranslateUtils.simpleItemText(this.getDescriptionId(), Component.literal(ModConfigHandler.COMMON.items.guardianCoreConfig1.get() + "").withStyle(ChatFormatting.YELLOW)));
+        tooltip.addAll(TranslateUtils.complexText(TranslateUtils.ITEM_PREFIX, 2, ChatFormatting.GRAY, this.getDescriptionId()));
     }
 }

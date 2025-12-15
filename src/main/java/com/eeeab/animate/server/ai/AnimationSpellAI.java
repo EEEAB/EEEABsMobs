@@ -2,15 +2,14 @@ package com.eeeab.animate.server.ai;
 
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
-import com.eeeab.eeeabsmobs.sever.entity.NeedStopAiEntity;
-import com.eeeab.animate.server.animation.EMAnimatedEntity;
+import com.eeeab.animate.server.animation.AnimatedEntity;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 
 import javax.annotation.Nullable;
 
-public abstract class AnimationSpellAI<T extends EEEABMobLibrary & EMAnimatedEntity & NeedStopAiEntity> extends Goal {
+public abstract class AnimationSpellAI<T extends EEEABMobLibrary & AnimatedEntity> extends Goal {
     protected T spellCaster;
     protected int attackDelay;
     protected int nextAttackTickCount;
@@ -23,7 +22,7 @@ public abstract class AnimationSpellAI<T extends EEEABMobLibrary & EMAnimatedEnt
     public boolean canUse() {
         LivingEntity target = this.spellCaster.getTarget();
         if (target != null && target.isAlive() && this.spellCaster.canAttack(target)) {
-            if (!this.spellCaster.noConflictingTasks()) {
+            if (this.spellCaster.isStunned() || !this.spellCaster.isNoAnimation()) {
                 return false;
             } else {
                 return this.spellCaster.tickCount >= this.nextAttackTickCount;

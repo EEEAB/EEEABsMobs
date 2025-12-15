@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.render.layer;
 
-import com.eeeab.eeeabsmobs.sever.entity.CrackinessEntity;
+import com.eeeab.eeeabsmobs.sever.entity.mob.CrackinessEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -21,7 +21,7 @@ import java.util.Map;
  *
  * @param <T> 实体
  * @param <M> 模型
- * @see com.eeeab.eeeabsmobs.sever.entity.CrackinessEntity
+ * @see CrackinessEntity
  */
 @OnlyIn(Dist.CLIENT)
 public class LayerCrackiness<T extends LivingEntity & CrackinessEntity<T>, M extends EntityModel<T>> extends RenderLayer<T, M> {

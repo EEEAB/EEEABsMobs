@@ -1,9 +1,9 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.animate.client.model.EMHierarchicalModel;
+import com.eeeab.animate.client.model.ModHierarchicalModel;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationCommon;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationImmortalShaman;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortalShaman;
+import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalShaman;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -11,7 +11,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.HumanoidArm;
 
-public class ModelImmortalShaman extends EMHierarchicalModel<EntityImmortalShaman> implements ArmedModel {
+public class ModelImmortalShaman extends ModHierarchicalModel<EntityImmortalShaman> implements ArmedModel {
     private final ModelPart root;
     private final ModelPart head;
     private final ModelPart upper;
@@ -81,7 +81,7 @@ public class ModelImmortalShaman extends EMHierarchicalModel<EntityImmortalShama
         float speed = 0.16F;
         float degree = 0.04F;
         if (entity.isAlive()){
-            if (entity.isWeakness()) {
+            if (entity.isStunned()) {
                 this.setStaticRotationAngle(head, toRadians(1.5), 0, 0);
                 this.walk(head, 0.2F, 0.15F, false, 0, 0, frame, 1);
                 this.walk(root, 0.1F, 0.1F, false, 0, 0, frame, 1);

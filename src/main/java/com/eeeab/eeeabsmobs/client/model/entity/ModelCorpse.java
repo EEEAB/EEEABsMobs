@@ -1,14 +1,14 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.animate.client.model.EMHierarchicalModel;
+import com.eeeab.animate.client.model.ModHierarchicalModel;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationCommon;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationCorpse;
-import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpse;
+import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpse;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 
-public class ModelCorpse<T extends EntityCorpse> extends EMHierarchicalModel<T> {
+public class ModelCorpse<T extends EntityCorpse> extends ModHierarchicalModel<T> {
     private final ModelPart root;
     private final ModelPart head;
     private final ModelPart upper;
@@ -16,7 +16,6 @@ public class ModelCorpse<T extends EntityCorpse> extends EMHierarchicalModel<T> 
     private final ModelPart rightArm;
     private final ModelPart rightLeg;
     private final ModelPart leftLeg;
-
 
     public ModelCorpse(ModelPart root) {
         this.root = root.getChild("root");
@@ -92,7 +91,6 @@ public class ModelCorpse<T extends EntityCorpse> extends EMHierarchicalModel<T> 
             this.flap(this.rightArm, walkSpeed, walkDegree, true, -1, -0.5F, limbSwing, limbSwingAmount);
             this.flap(this.leftArm, walkSpeed, walkDegree, true, -1, 0.5F, limbSwing, limbSwingAmount);
         }
-
         //Idle
         float speed = 0.12F;
         float degree = 0.1F;

@@ -1,10 +1,10 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner;
 
-import com.eeeab.eeeabsmobs.sever.entity.SummoningEntity;
-import net.minecraft.world.entity.Mob;
+import com.eeeab.eeeabsmobs.sever.entity.mob.SummoningEntity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 
-public class WhenOwnerDeadGoal<T extends Mob & SummoningEntity<T>> extends Goal {
+public class WhenOwnerDeadGoal<T extends LivingEntity & SummoningEntity<T>> extends Goal {
     private final T venerable;
     private int downCount;
 
@@ -15,7 +15,7 @@ public class WhenOwnerDeadGoal<T extends Mob & SummoningEntity<T>> extends Goal 
 
     @Override
     public boolean canUse() {
-        Mob owner = venerable.getOwner();
+        T owner = venerable.getOwner();
         return owner != null && !owner.isAlive();
     }
 

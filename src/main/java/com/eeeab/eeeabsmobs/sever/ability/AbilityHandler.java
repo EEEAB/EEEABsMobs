@@ -6,10 +6,10 @@ import com.eeeab.eeeabsmobs.sever.ability.abilities.GuardianLaserAbility;
 import com.eeeab.eeeabsmobs.sever.ability.abilities.HowitzerAbility;
 import com.eeeab.eeeabsmobs.sever.ability.abilities.ImmortalStaffAbility;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
-import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
-import com.eeeab.eeeabsmobs.sever.message.MessagePlayerUseAbility;
-import com.eeeab.eeeabsmobs.sever.message.MessageUseAbility;
-import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
+import com.eeeab.eeeabsmobs.sever.handler.CapabilityHandler;
+import com.eeeab.eeeabsmobs.sever.message.PlayerUseAbilityMessage;
+import com.eeeab.eeeabsmobs.sever.message.UseAbilityMessage;
+import com.eeeab.eeeabsmobs.sever.util.TranslateUtils;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -30,7 +30,7 @@ public enum AbilityHandler {
     };
 
     public AbilityCapability.IAbilityCapability getAbilityCapability(LivingEntity entity) {
-        return HandlerCapability.getCapability(entity, HandlerCapability.ABILITY_CAPABILITY);
+        return CapabilityHandler.getCapability(entity, CapabilityHandler.ABILITY_CAPABILITY);
     }
 
     public Ability<?> getAbility(Player player, AbilityType<?, ?> abilityType) {
@@ -50,11 +50,11 @@ public enum AbilityHandler {
             Ability<?> instance = abilityCapability.getAbilitiesMap().get(abilityType);
             if (instance == null) return;
             if (instance.isCooling() && entity instanceof Player player) {
-                player.displayClientMessage(EMTUtils.simpleText(EMTUtils.OTHER_PREFIX, "cooling", null), true);
+                player.displayClientMessage(TranslateUtils.simpleText(TranslateUtils.OTHER_PREFIX, "cooling", null), true);
             }
             if (instance.canUse()) {
                 abilityCapability.onActive(entity, abilityType);
-                EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new MessageUseAbility(entity, ArrayUtils.indexOf(abilityCapability.getAbilityTypeByEntity(entity), abilityType)));
+                EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new UseAbilityMessage(entity, ArrayUtils.indexOf(abilityCapability.getAbilityTypeByEntity(entity), abilityType)));
             }
         }
     }
@@ -65,7 +65,7 @@ public enum AbilityHandler {
         }
         AbilityCapability.IAbilityCapability abilityCapability = getAbilityCapability(entity);
         if (abilityCapability != null) {
-            EEEABMobs.NETWORK.sendToServer(new MessagePlayerUseAbility(ArrayUtils.indexOf(abilityCapability.getAbilityTypeByEntity(entity), ability)));
+            EEEABMobs.NETWORK.sendToServer(new PlayerUseAbilityMessage(ArrayUtils.indexOf(abilityCapability.getAbilityTypeByEntity(entity), ability)));
         }
     }
 }

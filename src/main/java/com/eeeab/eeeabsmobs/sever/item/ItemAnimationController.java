@@ -1,9 +1,9 @@
 package com.eeeab.eeeabsmobs.sever.item;
 
-import com.eeeab.animate.server.animation.EMAnimatedEntity;
+import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.animate.server.inventory.AnimationControllerMenu;
 import com.eeeab.eeeabsmobs.sever.item.util.EMItemStackUtils;
-import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
+import com.eeeab.eeeabsmobs.sever.util.TranslateUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -35,12 +35,12 @@ public class ItemAnimationController extends Item {
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
-        if (entity instanceof EMAnimatedEntity) {
+        if (entity instanceof AnimatedEntity) {
             CompoundTag tag = new CompoundTag();
             tag.putUUID(NBT_ENTITY_UUID, entity.getUUID());
             EMItemStackUtils.putNBT(stack, NBT_ENTITY_UUID, tag);
             if (player.level().isClientSide) {
-                player.displayClientMessage(EMTUtils.simpleOtherText(this.getDescriptionId(), null, entity.getName().getString()), true);
+                player.displayClientMessage(TranslateUtils.simpleOtherText(this.getDescriptionId(), null, entity.getName().getString()), true);
             }
         }
         return true;
@@ -54,7 +54,7 @@ public class ItemAnimationController extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        tooltip.add(EMTUtils.simpleItemText(this.getDescriptionId()));
+        tooltip.add(TranslateUtils.simpleItemText(this.getDescriptionId()));
     }
 
     @Override
@@ -62,7 +62,7 @@ public class ItemAnimationController extends Item {
         ItemStack itemStack = player.getItemInHand(usedHand);
         if (level instanceof ServerLevel serverLevel && itemStack.hasTag()) {
             Entity entity = serverLevel.getEntity(EMItemStackUtils.getNBT(itemStack, NBT_ENTITY_UUID).getUUID(NBT_ENTITY_UUID));
-            if (player instanceof ServerPlayer serverPlayer && entity instanceof LivingEntity livingEntity && entity instanceof EMAnimatedEntity && entity.isAlive()) {
+            if (player instanceof ServerPlayer serverPlayer && entity instanceof LivingEntity livingEntity && entity instanceof AnimatedEntity && entity.isAlive()) {
                 NetworkHooks.openScreen(serverPlayer, new MenuProvider() {
                     @Override
                     public @NotNull Component getDisplayName() {

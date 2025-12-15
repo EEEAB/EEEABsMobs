@@ -1,8 +1,8 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.animate.client.model.EMHierarchicalModel;
+import com.eeeab.animate.client.model.ModHierarchicalModel;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationCorpseWarlock;
-import com.eeeab.eeeabsmobs.sever.entity.corpse.EntityCorpseWarlock;
+import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpseWarlock;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
@@ -11,7 +11,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class ModelCorpseWarlock extends EMHierarchicalModel<EntityCorpseWarlock> {
+public class ModelCorpseWarlock extends ModHierarchicalModel<EntityCorpseWarlock> {
     private final ModelPart root;
     private final ModelPart upper;
     private final ModelPart rightArm;

@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.model.item;
 
-import com.eeeab.animate.client.model.EMAnimatedItemModel;
+import com.eeeab.animate.client.model.AnimatedItemModel;
 import com.eeeab.eeeabsmobs.sever.item.ItemDemolisher;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class ModelDemolisher extends EMAnimatedItemModel {
+public class ModelDemolisher extends AnimatedItemModel {
     private final ModelPart root;
     private final ModelPart finger1;
     private final ModelPart finger2;
@@ -34,8 +34,10 @@ public class ModelDemolisher extends EMAnimatedItemModel {
         PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create().texOffs(0, 0).addBox(-5.65F, -11.0F, -5.85F, 11.0F, 22.0F, 12.0F, new CubeDeformation(-0.08F)), PartPose.offset(0.65F, 3.25F, -0.15F));
         PartDefinition shoulder = root.addOrReplaceChild("shoulder", CubeListBuilder.create(), PartPose.offset(-1.45F, -15.25F, 0.25F));
         PartDefinition cube_r1 = shoulder.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(0, 49).addBox(-6.9F, -6.0F, -6.05F, 14.0F, 12.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.5F, 0.0F, 0.0F, 0.0F, 0.0873F));
-        PartDefinition finger1 = root.addOrReplaceChild("finger1", CubeListBuilder.create().texOffs(0, 34).addBox(-1.5F, -1.0F, -2.5F, 3.0F, 10.0F, 5.0F, new CubeDeformation(0.02F)), PartPose.offset(-2.85F, 10.5F, -2.8375F));
-        PartDefinition finger2 = root.addOrReplaceChild("finger2", CubeListBuilder.create().texOffs(0, 34).addBox(-1.5F, -1.0F, -2.5F, 3.0F, 10.0F, 5.0F, new CubeDeformation(0.02F)), PartPose.offset(-2.85F, 10.5F, 3.0625F));
+        PartDefinition finger1 = root.addOrReplaceChild("finger1", CubeListBuilder.create(), PartPose.offset(-3.05F, 10.5F, -2.7875F));
+        PartDefinition cube_r2 = finger1.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(0, 34).addBox(-1.5F, -5.0F, -2.5F, 3.0F, 10.0F, 5.0F, new CubeDeformation(0.02F)), PartPose.offsetAndRotation(0.0F, 5.0F, 0.0F, 0.0F, 3.1416F, 0.0F));
+        PartDefinition finger2 = root.addOrReplaceChild("finger2", CubeListBuilder.create(), PartPose.offset(-3.05F, 10.5F, 3.1625F));
+        PartDefinition cube_r3 = finger2.addOrReplaceChild("cube_r3", CubeListBuilder.create().texOffs(0, 34).addBox(-1.4F, -5.0F, -2.55F, 3.0F, 10.0F, 5.0F, new CubeDeformation(0.02F)), PartPose.offsetAndRotation(0.1F, 5.0F, -0.05F, 0.0F, 3.1416F, 0.0F));
         PartDefinition finger3 = root.addOrReplaceChild("finger3", CubeListBuilder.create().texOffs(16, 34).addBox(-1.4F, 0.0F, -2.55F, 3.0F, 8.0F, 5.0F, new CubeDeformation(-0.08F)), PartPose.offset(2.5F, 10.5F, 0.1375F));
         return LayerDefinition.create(meshdefinition, 64, 128);
     }
@@ -65,7 +67,6 @@ public class ModelDemolisher extends EMAnimatedItemModel {
 
     @OnlyIn(Dist.CLIENT)
     private static class AnimationDemolisher {
-
         public static final AnimationDefinition SHOOT = AnimationDefinition.Builder.withLength(0.25f)
                 .addAnimation("finger1",
                         new AnimationChannel(AnimationChannel.Targets.POSITION,

@@ -1,9 +1,9 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.animate.client.model.EMHierarchicalModel;
+import com.eeeab.animate.client.model.ModHierarchicalModel;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationCommon;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationImmortalSkeleton;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.skeleton.EntityAbsImmortalSkeleton;
+import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityAbsImmortalSkeleton;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.AnimationUtils;
 import net.minecraft.client.model.ArmedModel;
@@ -13,7 +13,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 
-public class ModelAbsImmortalSkeleton extends EMHierarchicalModel<EntityAbsImmortalSkeleton> implements ArmedModel {
+public class ModelAbsImmortalSkeleton extends ModHierarchicalModel<EntityAbsImmortalSkeleton> implements ArmedModel {
     private final ModelPart root;
     private final ModelPart head;
     private final ModelPart upper;

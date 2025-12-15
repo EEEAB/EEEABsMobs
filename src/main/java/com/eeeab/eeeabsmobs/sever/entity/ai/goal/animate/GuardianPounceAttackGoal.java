@@ -2,16 +2,13 @@ package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
 import com.eeeab.animate.server.ai.AnimationAI;
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.eeeabsmobs.sever.entity.guling.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 
@@ -105,7 +102,7 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
             entity.setDeltaMovement(0, entity.getDeltaMovement().y(), 0);
             int maxExtraConsecutive = 2;
             if (consecutive < maxExtraConsecutive && entity.getTarget() != null && entity.getAnimationTick() <= 6 && entity.getAnimationTick() > 1 && checkModeOrPreventTimeouts() && entity.targetDistance < 16 && entity.targetDistance > 4
-                    && ((entity.hasEffect(EffectInit.VERTIGO_EFFECT.get()) && entity.getRandom().nextInt(3 - consecutive) == 0) || entity.getRandom().nextInt(10) == 0)) {
+                    && ((entity.hasEffect(EffectInit.STUN_EFFECT.get()) && entity.getRandom().nextInt(3 - consecutive) == 0) || entity.getRandom().nextInt(10) == 0)) {
                 consecutive++;
                 entity.playAnimation(entity.pounceAttackAnimation1);
             }

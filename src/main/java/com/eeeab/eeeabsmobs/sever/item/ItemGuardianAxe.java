@@ -3,10 +3,10 @@ package com.eeeab.eeeabsmobs.sever.item;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
+import com.eeeab.eeeabsmobs.sever.util.TranslateUtils;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
@@ -42,7 +42,7 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem, IUnbre
     private static final UUID GUARDIAN_BASE_KNOCKBACK_RESISTANCE_UUID = UUID.fromString("BFF48EEA-FF5B-45B6-88FC-3C8FBBAF78FA");
 
     public ItemGuardianAxe(Tier tier, Properties properties) {
-        super(tier, (float) (-3D + EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamageValue), (float) (-4D + EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackSpeedValue), properties);
+        super(tier, (float) (-3D + ModConfigHandler.COMMON.items.guardianBattleaxe.attackDamageValue), (float) (-4D + ModConfigHandler.COMMON.items.guardianBattleaxe.attackSpeedValue), properties);
         this.defaultModifiers = this.creatAttributesFromConfig();
     }
 
@@ -62,7 +62,7 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem, IUnbre
                 player.playSound(SoundEvents.GENERIC_EXPLODE, 1.5F, 1F + player.getRandom().nextFloat() * 0.1F);
                 EntityCameraShake.cameraShake(level, player.position(), 8, 0.125F, 0, 20);
                 if (!level.isClientSide) AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.GUARDIAN_AXE_ABILITY_TYPE);
-                player.getCooldowns().addCooldown(this, (int) (EMConfigHandler.COMMON.ITEM.itemGuardianAxeCoolingTime.get() * 20));
+                player.getCooldowns().addCooldown(this, (int) (ModConfigHandler.COMMON.items.guardianBattleaxeConfig2.get() * 20));
                 return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide);
             }
         }
@@ -90,15 +90,15 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem, IUnbre
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        if (EMTUtils.SHOW_ITEM_CD) tooltip.add(EMTUtils.itemCoolTime(EMConfigHandler.COMMON.ITEM.itemGuardianAxeCoolingTime.get()));
-        int i = (int) (SweepingEdgeEnchantment.getSweepingDamageRatio(EMConfigHandler.COMMON.ITEM.itemGuardianAxeSweepingLevel.get()) * 100);
-        tooltip.addAll(EMTUtils.complexText(EMTUtils.ITEM_PREFIX, 2, ChatFormatting.GRAY, this.getDescriptionId(), Component.literal(i > 0 ? i + "%" : "1.0").withStyle(ChatFormatting.YELLOW)));
+        if (TranslateUtils.SHOW_ITEM_CD) tooltip.add(TranslateUtils.itemCoolTime(ModConfigHandler.COMMON.items.guardianBattleaxeConfig2.get()));
+        int i = (int) (SweepingEdgeEnchantment.getSweepingDamageRatio(ModConfigHandler.COMMON.items.guardianBattleaxeConfig1.get()) * 100);
+        tooltip.addAll(TranslateUtils.complexText(TranslateUtils.ITEM_PREFIX, 2, ChatFormatting.GRAY, this.getDescriptionId(), Component.literal(i > 0 ? i + "%" : "1.0").withStyle(ChatFormatting.YELLOW)));
     }
 
     @Override
     public int getEnchantmentLevel(ItemStack stack, Enchantment enchantment) {
         if (Enchantments.SWEEPING_EDGE.equals(enchantment)) {
-            return EMConfigHandler.COMMON.ITEM.itemGuardianAxeSweepingLevel.get();
+            return ModConfigHandler.COMMON.items.guardianBattleaxeConfig1.get();
         }
         return super.getEnchantmentLevel(stack, enchantment);
     }
@@ -116,8 +116,8 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem, IUnbre
     @Override
     public Multimap<Attribute, AttributeModifier> creatAttributesFromConfig() {
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-        builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamageValue - 1D, AttributeModifier.Operation.ADDITION));
-        builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackSpeedValue - 4D, AttributeModifier.Operation.ADDITION));
+        builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", ModConfigHandler.COMMON.items.guardianBattleaxe.attackDamageValue - 1D, AttributeModifier.Operation.ADDITION));
+        builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", ModConfigHandler.COMMON.items.guardianBattleaxe.attackSpeedValue - 4D, AttributeModifier.Operation.ADDITION));
         builder.put(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(GUARDIAN_BASE_KNOCKBACK_RESISTANCE_UUID, "Weapon modifier", 0.1D, AttributeModifier.Operation.ADDITION));
         return builder.build();
     }
