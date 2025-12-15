@@ -1,87 +1,47 @@
 package com.eeeab.eeeabsmobs.sever;
 
-import com.eeeab.animate.server.message.AnimationMessage;
-import com.eeeab.animate.server.message.PlayAnimationMessage;
-import com.eeeab.animate.server.message.StopAnimationMessage;
+import com.eeeab.animate.server.message.MessageAnimation;
+import com.eeeab.animate.server.message.MessagePlayAnimation;
+import com.eeeab.animate.server.message.MessageStopAnimation;
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.advancements.EMCriteriaTriggers;
-import com.eeeab.eeeabsmobs.sever.config.EMConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalLaser;
-import com.eeeab.eeeabsmobs.sever.handler.HandlerCapability;
+import com.eeeab.eeeabsmobs.sever.commands.CombatHintHudCommand;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityImmortalLaser;
+import com.eeeab.eeeabsmobs.sever.handler.CapabilityHandler;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.AttributeInit;
-import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.message.*;
-import com.eeeab.eeeabsmobs.sever.util.EMTUtils;
 import com.eeeab.eeeabsmobs.sever.world.portal.VoidCrackTeleporter;
+import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.registries.RegisterEvent;
 
 public class ServerProxy {
     public static final String VERSION = "1.0";
-    private static int id = 0;
+    private static int ID = 0;
 
-    public static int nextID() {
-        return id++;
-    }
-
-    public void registerMessage() {
-        EEEABMobs.NETWORK = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(EEEABMobs.MOD_ID, "net"))
-                .networkProtocolVersion(() -> VERSION)
-                .clientAcceptedVersions(VERSION::equals)
-                .serverAcceptedVersions(VERSION::equals)
-                .simpleChannel();
-        EEEABMobs.NETWORK.messageBuilder(MessageICapability.class, nextID()).encoder(MessageICapability::serialize).decoder(MessageICapability::deserialize).consumerNetworkThread(new MessageICapability.Handler()).add();
-        EEEABMobs.NETWORK.messageBuilder(MessageUseAbility.class, nextID()).encoder(MessageUseAbility::serialize).decoder(MessageUseAbility::deserialize).consumerNetworkThread(new MessageUseAbility.Handler()).add();
-        EEEABMobs.NETWORK.messageBuilder(MessagePlayerUseAbility.class, nextID()).encoder(MessagePlayerUseAbility::serialize).decoder(MessagePlayerUseAbility::deserialize).consumerNetworkThread(new MessagePlayerUseAbility.Handler()).add();
-        EEEABMobs.NETWORK.messageBuilder(AnimationMessage.class, nextID()).encoder(AnimationMessage::serialize).decoder(AnimationMessage::deserialize).consumerNetworkThread(new AnimationMessage.Handler()).add();
-        EEEABMobs.NETWORK.messageBuilder(PlayAnimationMessage.class, nextID()).encoder(PlayAnimationMessage::serialize).decoder(PlayAnimationMessage::deserialize).consumerNetworkThread(new PlayAnimationMessage.Handler<>()).add();
-        EEEABMobs.NETWORK.messageBuilder(StopAnimationMessage.class, nextID()).encoder(StopAnimationMessage::serialize).decoder(StopAnimationMessage::deserialize).consumerNetworkThread(new StopAnimationMessage.Handler()).add();
-    }
-
-    public void init(IEventBus bus) {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, EMConfigHandler.SPEC);
-        bus.addListener(HandlerCapability::registerCapabilities);
+    public void initMod(IEventBus bus) {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ModConfigHandler.COMMON_SPEC);
+        bus.addListener(VoidCrackTeleporter::onRegisterPointOfInterest);
+        bus.addListener(CapabilityHandler::registerCapabilities);
         bus.addListener(this::onEntityAttributeModification);
-        bus.addListener(this::onModConfigInit);
-        bus.addListener(this::register);
     }
 
-    @SubscribeEvent
-    public void onEntityAttributeModification(final EntityAttributeModificationEvent event) {
-        for (EntityType<? extends LivingEntity> type : event.getTypes()) {
-            event.add(type, AttributeInit.CRIT_CHANCE.get());
-        }
-    }
-
-    @SubscribeEvent
-    public void onModConfigInit(final ModConfigEvent event) {
-        ModConfig config = event.getConfig();
-        if (config.getSpec() == EMConfigHandler.SPEC) {
-            EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackSpeedValue = EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackSpeed.get().floatValue();
-            EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamageValue = EMConfigHandler.COMMON.ITEM.GUARDIAN_AXE_TOOL.attackDamage.get().floatValue();
-            EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackSpeedValue = EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackSpeed.get().floatValue();
-            EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackDamageValue = EMConfigHandler.COMMON.ITEM.NETHERWORLD_KATANA_TOOL.attackDamage.get().floatValue();
-            EMTUtils.SHOW_ITEM_CD = EMConfigHandler.COMMON.OTHER.enableShowItemCD.get();
-        }
-    }
-
-    public void register(RegisterEvent event) {
-        VoidCrackTeleporter.onRegisterPointOfInterest(event);
+    public void initForge(IEventBus bus) {
+        bus.addListener(this::onCommandRegister);
     }
 
     public void loadComplete(IEventBus bus) {
-        EMCriteriaTriggers.register();
-        ItemInit.initializeAttributes();
     }
 
     public Object getISTERProperties() {
@@ -99,5 +59,37 @@ public class ServerProxy {
     }
 
     public void playImmortalLaserSound(EntityImmortalLaser laser) {
+    }
+
+    @SubscribeEvent
+    public void onCommandRegister(RegisterCommandsEvent event) {
+        CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
+        CommandBuildContext context = event.getBuildContext();
+        //TODO 编译jar包时注释这段代码
+        CombatHintHudCommand.register(dispatcher, context);
+    }
+
+    @SubscribeEvent
+    public void onEntityAttributeModification(final EntityAttributeModificationEvent event) {
+        for (EntityType<? extends LivingEntity> type : event.getTypes()) {
+            event.add(type, AttributeInit.CRIT_CHANCE.get());
+        }
+    }
+
+    public void initNetwork() {
+        EEEABMobs.NETWORK = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(EEEABMobs.MOD_ID, "net"))
+                .networkProtocolVersion(() -> VERSION)
+                .clientAcceptedVersions(VERSION::equals)
+                .serverAcceptedVersions(VERSION::equals)
+                .simpleChannel();
+        EEEABMobs.NETWORK.messageBuilder(ICapabilityMessage.class, ID++).encoder(ICapabilityMessage::serialize).decoder(ICapabilityMessage::deserialize).consumerNetworkThread(new ICapabilityMessage.Handler()).add();
+        EEEABMobs.NETWORK.messageBuilder(UseAbilityMessage.class, ID++).encoder(UseAbilityMessage::serialize).decoder(UseAbilityMessage::deserialize).consumerNetworkThread(new UseAbilityMessage.Handler()).add();
+        EEEABMobs.NETWORK.messageBuilder(PlayerUseAbilityMessage.class, ID++).encoder(PlayerUseAbilityMessage::serialize).decoder(PlayerUseAbilityMessage::deserialize).consumerNetworkThread(new PlayerUseAbilityMessage.Handler()).add();
+        EEEABMobs.NETWORK.messageBuilder(SyncMuzzlePosMessage.class, ID++).encoder(SyncMuzzlePosMessage::serialize).decoder(SyncMuzzlePosMessage::deserialize).consumerNetworkThread(new SyncMuzzlePosMessage.Handler()).add();
+        EEEABMobs.NETWORK.messageBuilder(UpdateBossBarMessage.class, ID++).encoder(UpdateBossBarMessage::serialize).decoder(UpdateBossBarMessage::deserialize).consumerNetworkThread(new UpdateBossBarMessage.Handler()).add();
+        EEEABMobs.NETWORK.messageBuilder(CombatPromptMessage.class, ID++).encoder(CombatPromptMessage::serialize).decoder(CombatPromptMessage::deserialize).consumerMainThread(CombatPromptMessage::handle).add();
+        EEEABMobs.NETWORK.messageBuilder(MessageAnimation.class, ID++).encoder(MessageAnimation::serialize).decoder(MessageAnimation::deserialize).consumerNetworkThread(new MessageAnimation.Handler()).add();
+        EEEABMobs.NETWORK.messageBuilder(MessagePlayAnimation.class, ID++).encoder(MessagePlayAnimation::serialize).decoder(MessagePlayAnimation::deserialize).consumerNetworkThread(new MessagePlayAnimation.Handler<>()).add();
+        EEEABMobs.NETWORK.messageBuilder(MessageStopAnimation.class, ID++).encoder(MessageStopAnimation::serialize).decoder(MessageStopAnimation::deserialize).consumerNetworkThread(new MessageStopAnimation.Handler()).add();
     }
 }
