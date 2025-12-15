@@ -1,18 +1,18 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.animate.client.model.EMHierarchicalModel;
+import com.eeeab.animate.client.model.ModHierarchicalModel;
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.animate.server.animation.EMAnimatedEntity;
+import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationImmortal;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationImmortal2;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
-import com.eeeab.eeeabsmobs.sever.util.EMMathUtils;
+import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalBoss;
+import com.eeeab.eeeabsmobs.sever.util.ModMathUtils;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
-public class ModelImmortal extends EMHierarchicalModel<EntityImmortal> {
+public class ModelImmortal extends ModHierarchicalModel<EntityImmortalBoss> {
     private final ModelPart root;
     private final ModelPart upper;
     private final ModelPart lower;
@@ -185,7 +185,7 @@ public class ModelImmortal extends EMHierarchicalModel<EntityImmortal> {
     }
 
     @Override
-    public void setupAnim(EntityImmortal entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(EntityImmortalBoss entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
         //LookAt
         lookAtAnimation(netHeadYaw, headPitch, 1.65F, this.head);
@@ -214,11 +214,12 @@ public class ModelImmortal extends EMHierarchicalModel<EntityImmortal> {
         this.animate(entity.armBlockEndAnimation, AnimationImmortal2.ARM_BLOCK_END, ageInTicks);
         this.animate(entity.armBlockCounterattackAnimation, AnimationImmortal2.ARM_BLOCK_COUNTERATTACK, ageInTicks);
         this.animate(entity.hurt1Animation, AnimationImmortal2.HURT_1, ageInTicks);
+        this.animate(entity.stunAnimation, AnimationImmortal2.STUN, ageInTicks);
         //Deactivate pose
         float delta = ageInTicks - entity.tickCount;
         float frame = entity.frame + delta;
         Animation animation = entity.getAnimation();
-        if (animation == EMAnimatedEntity.NO_ANIMATION && !entity.isActive()) {
+        if (animation == AnimatedEntity.NO_ANIMATION && !entity.isActive()) {
             core.xScale = 0F;
             core.yScale = 0F;
             core.zScale = 0F;
@@ -243,8 +244,8 @@ public class ModelImmortal extends EMHierarchicalModel<EntityImmortal> {
             this.animateWalk(AnimationImmortal.WALK, limbSwing, limbSwingAmount, inBlocking ? 1F : 0.5F, inBlocking ? -0.5F : 0.5F);
             //Idle
             float speed = 0.1F;
-            float degree = 0.8F;
-            this.bob(root, speed, degree, false, frame, 1);
+            float degree = 1F;
+            this.bob(root, speed, degree + 0.2F, false, frame, 1);
             this.bob(head, speed, speed, false, frame, 1);
             this.walk(head, speed, degree * 0.1F, true, 0, 0, frame, 1);
             this.walk(jaw, speed, degree * 0.11F, true, 0, 0, frame, 1);
@@ -256,15 +257,15 @@ public class ModelImmortal extends EMHierarchicalModel<EntityImmortal> {
             this.flap(rightArmUnder, speed, degree * 0.031F, true, 0, 0, frame, 1);
             this.flap(leftArmUnder, speed, degree * 0.031F, false, 0, 0, frame, 1);
             if (entity.isHoldKatana()) {
-                this.walk(rightFist, speed, degree * 0.02F, true, 0, 0, frame, 1);
-                this.walk(leftFist, speed, degree * 0.02F, true, 0, 0, frame, 1);
+                this.walk(rightFist, speed, degree * 0.1F, true, 0, 0, frame, 1);
+                this.walk(leftFist, speed, degree * 0.1F, true, 0, 0, frame, 1);
             }
             this.chainSwing(spine, speed + 0.1F, degree, 3, limbSwing, limbSwingAmount);
             this.chainSwing(spine, speed, degree * 0.25F, 1.5, frame, 1);
             float baseSpeed = animation == entity.unleashEnergyAnimation ? 0.03F : 0.015F;
             autorotation(core, frame, baseSpeed, true);
             autorotation(outCore, frame, baseSpeed, false);
-            float fraction = entity.coreControllerAnimation.getAnimationFraction(ageInTicks);
+            float fraction = entity.coreControlled.getAnimationFraction(ageInTicks);
             if (fraction > 0) {
                 this.core.x += (float) (Math.random() - 0.5) * fraction;
                 this.core.y += (float) (Math.random() - 0.5) * fraction;
@@ -272,13 +273,13 @@ public class ModelImmortal extends EMHierarchicalModel<EntityImmortal> {
             }
         }
         //Animation effect
-        if (animation == entity.attractAnimation && entity.getAnimationTick() < 37) {
-            float factor = EMMathUtils.getTickFactor(entity.getAnimationTick(), 37, false);
+        int tick = entity.getAnimationTick();
+        if (animation == entity.attractAnimation && tick < 37) {
+            float factor = ModMathUtils.getTickFactor(tick, 37, false);
             this.miniRightArm.x += (float) (Math.random() - 0.5) * 1.5F * factor;
             this.miniRightArm.y += (float) (Math.random() - 0.5) * 1.5F * factor;
             this.miniRightArm.z += (float) (Math.random() - 0.5) * 1.5F * factor;
         } else if (animation == entity.unleashEnergyAnimation) {
-            int tick = entity.getAnimationTick();
             if (tick > 30 && tick < 80) {
                 float scale = (float) (Math.random() * 0.5F);
                 this.core.xScale += scale;

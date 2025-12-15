@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.sound;
 
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalLaser;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityImmortalLaser;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;

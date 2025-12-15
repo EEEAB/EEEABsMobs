@@ -1,7 +1,7 @@
-package com.eeeab.eeeabsmobs.sever.entity.immortal;
+package com.eeeab.eeeabsmobs.sever.entity.mob.immortal;
 
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalLaser;
-import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityImmortalShuriken;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityImmortalLaser;
+import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityImmortalShuriken;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ImmortalMagic {
-
     public static void spawnImmortalLaser(LivingEntity caster, int count, float totalOffset, int duration, Vec3 spawnPos) {
         if (count <= 0) count = 1;
         Vec3 looking = caster.getLookAngle();

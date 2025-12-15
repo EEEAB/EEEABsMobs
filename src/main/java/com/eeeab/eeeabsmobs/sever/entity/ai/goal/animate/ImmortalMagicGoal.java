@@ -2,11 +2,11 @@ package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
 import com.eeeab.animate.server.ai.AnimationAI;
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalMagicCircle;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.ImmortalMagic;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityImmortalMagicCircle;
+import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalBoss;
+import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.ImmortalMagic;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.eeeab.eeeabsmobs.sever.entity.ModMobType;
+import com.eeeab.eeeabsmobs.sever.entity.mob.ModMobType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -16,11 +16,11 @@ import net.minecraft.world.entity.player.Player;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class ImmortalMagicGoal extends AnimationAI<EntityImmortal> {
+public class ImmortalMagicGoal extends AnimationAI<EntityImmortalBoss> {
     private final Predicate<LivingEntity> LIVING_ENTITY_SELECTOR = e -> entity.getSensing().hasLineOfSight(e) && e.isAlive() && (entity.getTarget() == e || (e.getMobType() != ModMobType.IMMORTAL && e.isAttackable() && !this.entity.isAlliedTo(e)
             && (e instanceof Enemy || e instanceof NeutralMob || (e instanceof Player player && !player.isCreative() && !player.isSpectator()))));
 
-    public ImmortalMagicGoal(EntityImmortal entity) {
+    public ImmortalMagicGoal(EntityImmortalBoss entity) {
         super(entity);
     }
 

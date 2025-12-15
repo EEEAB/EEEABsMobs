@@ -4,7 +4,7 @@ import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityPeriod;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityType;
-import com.eeeab.eeeabsmobs.sever.entity.projectile.EntityShamanBomb;
+import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityShamanBomb;
 import com.eeeab.eeeabsmobs.sever.item.ItemImmortalStaff;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;

@@ -2,14 +2,14 @@ package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
 import com.eeeab.animate.server.ai.AnimationGroupAI;
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.eeeabsmobs.sever.entity.effects.EntityImmortalMagicCircle;
-import com.eeeab.eeeabsmobs.sever.entity.immortal.EntityImmortal;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityImmortalMagicCircle;
+import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalBoss;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-public class ImmortalBlockGoal extends AnimationGroupAI<EntityImmortal> {
-    public ImmortalBlockGoal(EntityImmortal entity) {
+public class ImmortalBlockGoal extends AnimationGroupAI<EntityImmortalBoss> {
+    public ImmortalBlockGoal(EntityImmortalBoss entity) {
         super(entity, () -> entity.armBlockAnimation, () -> entity.armBlockHoldAnimation, () -> entity.armBlockEndAnimation, () -> entity.armBlockCounterattackAnimation);
     }
 
@@ -30,8 +30,9 @@ public class ImmortalBlockGoal extends AnimationGroupAI<EntityImmortal> {
             nextAnimation(animation, entity.armBlockEndAnimation);
         } else if (animation == entity.armBlockCounterattackAnimation) {
             if (tick == 4) {
-                entity.rangeAttack(6, 6, 6, 6, hitEntity -> {
-                    entity.immortalHurtTarget(hitEntity, true, false, false, false, 0.65F, 0.9F);
+                entity.rangeAttack(5, 6, 5, 5, hitEntity -> {
+                    entity.stun(null, hitEntity, 20, false);
+                    entity.doHurtTarget(hitEntity, true, false, false, false, 0.65F, 0.9F);
                     if (!hitEntity.isInvulnerable()) {
                         if (hitEntity instanceof Player player && player.getAbilities().invulnerable) return;
                         double angle = entity.getAngleBetweenEntities(entity, hitEntity);
@@ -45,11 +46,11 @@ public class ImmortalBlockGoal extends AnimationGroupAI<EntityImmortal> {
                 });
             }
             if (tick >= 15) {
-                if (!nextAnimation(entity.armBlockCounterattackAnimation, entity.blockEntity != null && entity.getHealthPercentage() < 50 && entity.getTimeUntilLaser() <= 0
+                if (!nextAnimation(entity.armBlockCounterattackAnimation, entity.blockEntity != null && entity.getHealthPercentage() < 0.5F && entity.getTimeUntilLaser() <= 0
                         && entity.distanceTo(entity.blockEntity) > 10 && this.entity.getRandom().nextFloat() < 0.5F, entity.unleashEnergyAnimation)) {
                     nextAnimation(entity.armBlockCounterattackAnimation, entity.smashGround3Animation, true);
                 }
-                if (tick == 15) EntityImmortalMagicCircle.spawn(entity.level(), entity, entity.position().add(0, 0.25, 0), 3F, 0F, 20, this.entity.getYRot(), EntityImmortalMagicCircle.MagicCircleType.POWER, true);
+                if (tick == 15) EntityImmortalMagicCircle.spawn(entity.level(), entity, entity.position().add(0, 0.25, 0), 3F, 0F, 80, this.entity.getYRot(), EntityImmortalMagicCircle.MagicCircleType.POWER, true);
             }
         }
     }
