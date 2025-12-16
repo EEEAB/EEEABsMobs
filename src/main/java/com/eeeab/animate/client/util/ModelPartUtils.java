@@ -60,16 +60,13 @@ public class ModelPartUtils {
         poseStack.translate(entity.getX(), entity.getY(), entity.getZ());
         poseStack.mulPose((new Quaternionf().rotationY((float) ((-yaw + 180F) * Math.PI / 180F))));
         poseStack.scale(-1F, -1F, 1F);
-        ModelPart nextPart = null;
-        for (int i = 0; i < modelPartName.length; i++) {
-            if (i == 0) {
-                nextPart = root.getChild(modelPartName[0]);
-                nextPart.translateAndRotate(poseStack);
-            } else {
-                ModelPart child = nextPart.getChild(modelPartName[i]);
-                child.translateAndRotate(poseStack);
-                nextPart = child;
-            }
+        ModelPart currentPart = root;
+        if (root.xRot != 0.0F || root.yRot != 0.0F || root.zRot != 0.0F) {
+            poseStack.mulPose((new Quaternionf()).rotationZYX(root.zRot, root.yRot, root.xRot));
+        }
+        for (String partName : modelPartName) {
+            currentPart = currentPart.getChild(partName);
+            currentPart.translateAndRotate(poseStack);
         }
         PoseStack.Pose last = poseStack.last();
         Matrix4f matrix4f = last.pose();
