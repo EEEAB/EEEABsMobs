@@ -404,7 +404,7 @@ public class EntityNamelessGuardian extends EntityAbsRelicron implements IBoss, 
     @Override
     public boolean isInvulnerableTo(DamageSource damageSource) {
         Animation animation = this.getAnimation();
-        return ((!this.isActive() || animation == this.activateAnimation || animation == this.deactivateAnimation || animation == this.roarAnimation || animation == this.weakAnimation1 || animation == this.weakAnimation3)) || super.isInvulnerableTo(damageSource);
+        return (animation == this.activateAnimation || animation == this.deactivateAnimation || animation == this.roarAnimation || animation == this.weakAnimation1 || animation == this.weakAnimation3) || super.isInvulnerableTo(damageSource);
     }
 
     @Override
