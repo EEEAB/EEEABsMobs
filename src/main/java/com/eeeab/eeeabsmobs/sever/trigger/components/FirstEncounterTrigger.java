@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.trigger.component;
+package com.eeeab.eeeabsmobs.sever.trigger.components;
 
 import com.eeeab.eeeabsmobs.sever.trigger.TriggerContext;
 import net.minecraft.resources.ResourceLocation;
