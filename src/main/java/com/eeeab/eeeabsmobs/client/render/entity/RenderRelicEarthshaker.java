@@ -62,7 +62,8 @@ public class RenderRelicEarthshaker extends MobRenderer<EntityRelicEarthshaker, 
     public void render(EntityRelicEarthshaker entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
         super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
         Animation animation = entity.getAnimation();
-        if (!entity.hotControlled.isStop() || animation == entity.activeAnimation || animation == entity.deactivateAnimation || animation == entity.electromagneticAnimation) {
+        if (!entity.hotControlled.isStop() || animation == entity.activeAnimation || animation == entity.deactivateAnimation
+                || animation == entity.electromagneticAnimation || animation == entity.rangeAttackAnimation) {
             entity.hand[0] = ModelPartUtils.getWorldPosition(entity, entity.yBodyRot, this.model.root(), LEFT_FINGER);
             entity.hand[1] = ModelPartUtils.getWorldPosition(entity, entity.yBodyRot, this.model.root(), RIGHT_FINGER);
         }

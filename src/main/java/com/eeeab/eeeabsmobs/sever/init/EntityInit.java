@@ -209,7 +209,7 @@ public class EntityInit {
     public static final RegistryObject<EntityType<EntityPulsedGrenade>> PULSED_GRENADE =
             ENTITIES.register("pulsed_grenade",
                     () -> EntityType.Builder.<EntityPulsedGrenade>of(EntityPulsedGrenade::new, MobCategory.MISC)
-                            .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(10)
+                            .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "pulsed_grenade").toString()));
 
     //电磁脉冲
