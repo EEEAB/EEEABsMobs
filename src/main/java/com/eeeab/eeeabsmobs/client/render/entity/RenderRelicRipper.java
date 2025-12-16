@@ -19,7 +19,12 @@ public class RenderRelicRipper extends MobRenderer<EntityRelicRipper, ModelRelic
 
     public RenderRelicRipper(EntityRendererProvider.Context context) {
         super(context, new ModelRelicRipper(context.bakeLayer(ModModelLayer.RELIC_RIPPER)), 1.2F);
-        this.addLayer(new LayerGlow<>(this, GLOW_LAYER));
+        this.addLayer(new LayerGlow<>(this, GLOW_LAYER, 1F, e -> !e.glowControlled.isStop()) {
+            @Override
+            protected float getBrightness(EntityRelicRipper entity, float partialTicks) {
+                return entity.glowControlled.getAnimationFraction(partialTicks);
+            }
+        });
     }
 
     @Override

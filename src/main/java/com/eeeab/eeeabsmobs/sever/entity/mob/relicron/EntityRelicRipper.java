@@ -56,15 +56,15 @@ public class EntityRelicRipper extends EntityAbsRelicron {
     public Animation cuttingKeepAnimation = Animation.create(100);
     public Animation cuttingEndAnimation = Animation.create(20).doesOverlap();
     private final Animation[] animations = new Animation[]{
-            this.activeAnimation,
-            this.deactivateAnimation,
-            this.dieAnimation,
-            this.sweep1Animation,
-            this.sweep2Animation,
-            this.smashAnimation,
-            this.cuttingStartAnimation,
-            this.cuttingKeepAnimation,
-            this.cuttingEndAnimation,
+            activeAnimation,
+            deactivateAnimation,
+            dieAnimation,
+            sweep1Animation,
+            sweep2Animation,
+            smashAnimation,
+            cuttingStartAnimation,
+            cuttingKeepAnimation,
+            cuttingEndAnimation,
     };
     private static final UniformInt SWEEP_INTERVAL = TimeUtil.rangeOfSeconds(7, 9);
     private static final UniformInt CUTTING_INTERVAL = TimeUtil.rangeOfSeconds(19, 21);
@@ -80,10 +80,11 @@ public class EntityRelicRipper extends EntityAbsRelicron {
     public Vec3 saw;
     private Vec3 preSaw = Vec3.ZERO;
     public final ControlledAnimation sawControlled = new ControlledAnimation(10);
+    public final ControlledAnimation glowControlled = new ControlledAnimation(10);
 
     public EntityRelicRipper(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
-        this.active = true;
+        this.active = false;
         this.dropAfterDeathAnim = false;
         if (this.level().isClientSide) {
             this.saw = new Vec3(0, 0, 0);
@@ -130,9 +131,9 @@ public class EntityRelicRipper extends EntityAbsRelicron {
         this.goalSelector.addGoal(1, new AnimationDie<>(this));
         this.goalSelector.addGoal(1, new AnimationActivate<>(this, () -> activeAnimation));
         this.goalSelector.addGoal(1, new AnimationDeactivate<>(this, () -> deactivateAnimation));
-        this.goalSelector.addGoal(1, new GRSweepAttackGoal(this));
-        this.goalSelector.addGoal(1, new GRCuttingAttackGoal(this));
-        this.goalSelector.addGoal(1, new GRSmashAttackGoal(this));
+        this.goalSelector.addGoal(1, new RRSweepAttackGoal(this));
+        this.goalSelector.addGoal(1, new RRCuttingAttackGoal(this));
+        this.goalSelector.addGoal(1, new RRSmashAttackGoal(this));
         this.goalSelector.addGoal(2, new AnimationMeleePlusAI<>(this, 1.0, 20));
     }
 
@@ -140,6 +141,7 @@ public class EntityRelicRipper extends EntityAbsRelicron {
     public void tick() {
         super.tick();
         this.sawControlled.updatePrevTimer();
+        this.glowControlled.updatePrevTimer();
         AnimationHandler.INSTANCE.updateAnimations(this);
         if (!this.level().isClientSide) {
             LivingEntity target = this.getTarget();
@@ -150,7 +152,7 @@ public class EntityRelicRipper extends EntityAbsRelicron {
             else prob += 0.7F * (1 - (HP - 0.3F) / 0.7F);
 
             if (canAttack && this.isNoAnimation() && this.timeUntilCutting <= 0 && this.targetDistance < 5 && this.random.nextFloat() < 0.6F) {
-                if (prob > this.random.nextFloat() && this.random.nextFloat() < 0.5F) this.derivedSkill = true;
+                this.derivedSkill = prob > this.random.nextFloat() && this.random.nextFloat() < 0.5F;
                 this.playAnimation(this.cuttingStartAnimation);
                 this.timeUntilCutting = CUTTING_INTERVAL.sample(this.random) + (this.derivedSkill ? 150 : 0);
             }
@@ -230,6 +232,7 @@ public class EntityRelicRipper extends EntityAbsRelicron {
             if (this.timeUntilCutting > 0) this.timeUntilCutting--;
             if (this.timeUntilDerivedSkill > 0) this.timeUntilDerivedSkill--;
         }
+        this.glowControlled.incrementOrDecreaseTimer(this.isGlow());
     }
 
     @Override
@@ -265,6 +268,16 @@ public class EntityRelicRipper extends EntityAbsRelicron {
     @Override
     public Animation getDeathAnimation() {
         return this.dieAnimation;
+    }
+
+    @Override
+    public Animation getActiveAnimation() {
+        return this.activeAnimation;
+    }
+
+    @Override
+    public Animation getDeactivateAnimation() {
+        return this.deactivateAnimation;
     }
 
     @Override
@@ -381,8 +394,8 @@ public class EntityRelicRipper extends EntityAbsRelicron {
         ModParticleUtils.blockParticlesAround(this.level(), this.saw.x, this.getY(), this.saw.z, 20, 0.5, 1.2, 1, 3, 2, strong ? 4 : 3, -0.2, 0.1);
     }
 
-    static class GRSweepAttackGoal extends AnimationAI<EntityRelicRipper> {
-        public GRSweepAttackGoal(EntityRelicRipper entity) {
+    static class RRSweepAttackGoal extends AnimationAI<EntityRelicRipper> {
+        public RRSweepAttackGoal(EntityRelicRipper entity) {
             super(entity, false);
         }
 
@@ -415,8 +428,8 @@ public class EntityRelicRipper extends EntityAbsRelicron {
         }
     }
 
-    static class GRCuttingAttackGoal extends AnimationGroupAI<EntityRelicRipper> {
-        public GRCuttingAttackGoal(EntityRelicRipper entity) {
+    static class RRCuttingAttackGoal extends AnimationGroupAI<EntityRelicRipper> {
+        public RRCuttingAttackGoal(EntityRelicRipper entity) {
             super(entity, false, () -> entity.cuttingStartAnimation, () -> entity.cuttingKeepAnimation, () -> entity.cuttingEndAnimation);
         }
 
@@ -441,8 +454,8 @@ public class EntityRelicRipper extends EntityAbsRelicron {
         }
     }
 
-    static class GRSmashAttackGoal extends AnimationSimpleAI<EntityRelicRipper> {
-        public GRSmashAttackGoal(EntityRelicRipper entity) {
+    static class RRSmashAttackGoal extends AnimationSimpleAI<EntityRelicRipper> {
+        public RRSmashAttackGoal(EntityRelicRipper entity) {
             super(entity, () -> entity.smashAnimation, false);
         }
 
