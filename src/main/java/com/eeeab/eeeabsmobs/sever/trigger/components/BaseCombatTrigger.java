@@ -34,7 +34,7 @@ public abstract class BaseCombatTrigger implements CombatTrigger {
     @Override
     public void trigger(ServerPlayer player) {
         EEEABMobs.NETWORK.sendTo(
-                new ShowHintMessage(getTriggerKey(), promptLevel),
+                new ShowHintMessage(getTriggerKey(), promptLevel, false),
                 player.connection.connection,
                 NetworkDirection.PLAY_TO_CLIENT
         );

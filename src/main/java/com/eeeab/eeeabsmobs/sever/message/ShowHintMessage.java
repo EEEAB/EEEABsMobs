@@ -8,32 +8,39 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class ShowHintMessage {
-    private ResourceLocation hintId;
-    private int hintLevel;
+    private ResourceLocation id;
+    private int level;
+    private boolean hint;
 
     public ShowHintMessage() {
     }
 
-    public ShowHintMessage(ResourceLocation hintId, int hintLevel) {
-        this.hintId = hintId;
-        this.hintLevel = hintLevel;
+    public ShowHintMessage(ResourceLocation id, int level, boolean hint) {
+        this.id = id;
+        this.level = level;
+        this.hint = hint;
     }
 
     public static void serialize(ShowHintMessage msg, FriendlyByteBuf buffer) {
-        buffer.writeResourceLocation(msg.hintId);
-        buffer.writeInt(msg.hintLevel);
+        buffer.writeResourceLocation(msg.id);
+        buffer.writeInt(msg.level);
+        buffer.writeBoolean(msg.hint);
     }
 
     public static ShowHintMessage deserialize(FriendlyByteBuf buffer) {
         ShowHintMessage message = new ShowHintMessage();
-        message.hintId = buffer.readResourceLocation();
-        message.hintLevel = buffer.readInt();
+        message.id = buffer.readResourceLocation();
+        message.level = buffer.readInt();
+        message.hint = buffer.readBoolean();
         return message;
     }
 
     public static void handle(ShowHintMessage msg, Supplier<NetworkEvent.Context> ctxSupplier) {
         NetworkEvent.Context ctx = ctxSupplier.get();
-        ctx.enqueueWork(() -> NotificationHandler.showHint(msg.hintId, msg.hintLevel));
+        ctx.enqueueWork(() -> {
+            if (msg.hint) NotificationHandler.showHint(msg.id, msg.level);
+            else NotificationHandler.showPrompt(msg.id, msg.level);
+        });
         ctx.setPacketHandled(true);
     }
 }

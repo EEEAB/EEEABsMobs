@@ -24,19 +24,22 @@ public class NotificationHandler {
     private static int targetY = 30;
 
     public static void init() {
-        promptIcons = new ResourceLocation(EEEABMobs.MOD_ID, "textures/gui/prompt_levels.png");
+        promptIcons = new ResourceLocation(EEEABMobs.MOD_ID, "textures/gui/msg_levels.png");
         alphaAnimation = new ControlledAnimation(ModConfigHandler.CLIENT.combatPrompt.displayDuration.get());
     }
 
+    /**
+     * 间接提示使用
+     */
     public static void showHint(ResourceLocation location, int level) {
-        if (!ModConfigHandler.CLIENT.combatPrompt.enabled.get()) return;
-        hintLevel = Mth.clamp(level, 0, 2);
-        currentPrompt = TranslateUtils.simpleText(location.getNamespace(), "prompt.", location.getPath(), getTextStyle(), "");
-        currentMode = ModConfigHandler.CLIENT.combatPrompt.displayMode.get();
-        targetY = ModConfigHandler.CLIENT.combatPrompt.hudPositionY.get();
-        alphaAnimation.setDuration(ModConfigHandler.CLIENT.combatPrompt.displayDuration.get());
-        alphaAnimation.resetTimer();
-        isShowing = true;
+        init("hint.", location, level);
+    }
+
+    /**
+     * 直接提示使用
+     */
+    public static void showPrompt(ResourceLocation location, int level) {
+        init("prompt.", location, level);
     }
 
     public static void clientTick() {
@@ -108,6 +111,17 @@ public class NotificationHandler {
             int textColor = 0xFFFFFF | (textAlpha << 24);
             MultiLineTextRenderer.drawWordWrapWithNewlines(guiGraphics, font, currentPrompt, textX, textY, textBlockWidth, textColor, lineSpacing);
         }
+    }
+
+    private static void init(String prefix, ResourceLocation location, int level) {
+        if (!ModConfigHandler.CLIENT.combatPrompt.enabled.get()) return;
+        hintLevel = Mth.clamp(level, 0, 2);
+        currentPrompt = TranslateUtils.simpleText(location.getNamespace(), prefix, location.getPath(), getTextStyle(), "");
+        currentMode = ModConfigHandler.CLIENT.combatPrompt.displayMode.get();
+        targetY = ModConfigHandler.CLIENT.combatPrompt.hudPositionY.get();
+        alphaAnimation.setDuration(ModConfigHandler.CLIENT.combatPrompt.displayDuration.get());
+        alphaAnimation.resetTimer();
+        isShowing = true;
     }
 
     private static ChatFormatting getTextStyle() {
