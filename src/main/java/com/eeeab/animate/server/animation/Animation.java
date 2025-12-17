@@ -27,6 +27,12 @@ public class Animation extends AnimationState {
      */
     private boolean overlap;
 
+    /**
+     * 在动画开始时弹出提示框
+     * 为空默认不显示
+     */
+    private String hintId;
+
     private Animation(int duration) {
         this.duration = duration;
     }
@@ -48,6 +54,7 @@ public class Animation extends AnimationState {
                 "duration=" + duration +
                 ", looping=" + looping +
                 ", overlap=" + overlap +
+                ", hintId='" + hintId + '\'' +
                 '}';
     }
 
@@ -61,6 +68,11 @@ public class Animation extends AnimationState {
         return this;
     }
 
+    public Animation sendHint(String hintId) {
+        this.hintId = hintId;
+        return this;
+    }
+
     public int getDuration() {
         return duration;
     }
@@ -71,6 +83,10 @@ public class Animation extends AnimationState {
 
     public boolean isLooping() {
         return looping;
+    }
+
+    public String getHintId() {
+        return hintId;
     }
 
     public static Animation create(int duration) {

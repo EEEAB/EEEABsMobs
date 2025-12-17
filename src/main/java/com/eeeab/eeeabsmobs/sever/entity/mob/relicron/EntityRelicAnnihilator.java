@@ -81,36 +81,36 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
     public final Animation swingAnimation = Animation.create(50).doesOverlap();
     public final Animation stabAnimation = Animation.create(60).doesOverlap();
     public final Animation cycloneAnimation = Animation.create(60);
-    public final Animation shot1Animation = Animation.create(35);
+    public final Animation shot1Animation = Animation.create(35).sendHint("weak_point");
     public final Animation shot2Animation = Animation.create(20).doesLoop();
     public final Animation shot3Animation = Animation.create(15);
-    public final Animation trickshot1Animation = Animation.create(20);
+    public final Animation trickshot1Animation = Animation.create(20).sendHint("weak_point");
     public final Animation trickshot2Animation = Animation.create(20).doesLoop();
     public final Animation trickshot3Animation = Animation.create(20);
-    public final Animation laserAnimation = Animation.create(90);
+    public final Animation laserAnimation = Animation.create(90).sendHint("weak_point");
     public final Animation groundPoundAnimation = Animation.create(50);
     public final Animation groundsSlam1Animation = Animation.create(15);
     public final Animation groundsSlam2Animation = Animation.create(100);
     public final Animation groundsSlam3Animation = Animation.create(40);
     public final Animation stunAnimation = Animation.create(80);
     private final Animation[] animations = new Animation[]{
-            this.dieAnimation,
-            this.slashAnimation,
-            this.swingAnimation,
-            this.stabAnimation,
-            this.cycloneAnimation,
-            this.shot1Animation,
-            this.shot2Animation,
-            this.shot3Animation,
-            this.trickshot1Animation,
-            this.trickshot2Animation,
-            this.trickshot3Animation,
-            this.laserAnimation,
-            this.groundPoundAnimation,
-            this.groundsSlam1Animation,
-            this.groundsSlam2Animation,
-            this.groundsSlam3Animation,
-            this.stunAnimation
+            dieAnimation,
+            slashAnimation,
+            swingAnimation,
+            stabAnimation,
+            cycloneAnimation,
+            shot1Animation,
+            shot2Animation,
+            shot3Animation,
+            trickshot1Animation,
+            trickshot2Animation,
+            trickshot3Animation,
+            laserAnimation,
+            groundPoundAnimation,
+            groundsSlam1Animation,
+            groundsSlam2Animation,
+            groundsSlam3Animation,
+            stunAnimation
     };
     private static final EntityDataAccessor<Boolean> DATA_BLIND = SynchedEntityData.defineId(EntityRelicAnnihilator.class, EntityDataSerializers.BOOLEAN);
     private int blindnessDuration;
@@ -245,10 +245,10 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
     protected void registerCustomGoals() {
         this.goalSelector.addGoal(0, new AnimationSimpleAI<>(this, () -> stunAnimation));
         this.goalSelector.addGoal(1, new AnimationDie<>(this));
-        this.goalSelector.addGoal(1, new GAMeleeAttackGoal(this));
-        this.goalSelector.addGoal(1, new GARangeAttackGoal(this));
-        this.goalSelector.addGoal(1, new GACycloneAttackGoal(this));
-        this.goalSelector.addGoal(1, new GALeapAttackGoal(this));
+        this.goalSelector.addGoal(1, new RAMeleeAttackGoal(this));
+        this.goalSelector.addGoal(1, new RARangeAttackGoal(this));
+        this.goalSelector.addGoal(1, new RACycloneAttackGoal(this));
+        this.goalSelector.addGoal(1, new RALeapAttackGoal(this));
         this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> groundsSlam3Animation, 4.75F, 3, 1.25F, 1.2F, true));
         this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> groundPoundAnimation, 4.5F, 20, 1.25F, 1.2F, true));
         this.goalSelector.addGoal(2, new KeepDistanceGoal(this));
@@ -887,13 +887,13 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
         }
     }
 
-    static class GAMeleeAttackGoal extends AnimationAI<EntityRelicAnnihilator> {
+    static class RAMeleeAttackGoal extends AnimationAI<EntityRelicAnnihilator> {
         private Vec3 pounceVec = Vec3.ZERO;
         private LivingEntity targetCache;
         private boolean stopFlag;
         private float distanceFactor;
 
-        public GAMeleeAttackGoal(EntityRelicAnnihilator entity) {
+        public RAMeleeAttackGoal(EntityRelicAnnihilator entity) {
             super(entity);
         }
 
@@ -1020,10 +1020,10 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
         }
     }
 
-    static class GARangeAttackGoal extends AnimationGroupAI<EntityRelicAnnihilator> {
+    static class RARangeAttackGoal extends AnimationGroupAI<EntityRelicAnnihilator> {
         private int loopCount;
 
-        public GARangeAttackGoal(EntityRelicAnnihilator entity) {
+        public RARangeAttackGoal(EntityRelicAnnihilator entity) {
             super(entity, () -> entity.laserAnimation, () -> entity.shot1Animation, () -> entity.shot2Animation, () -> entity.shot3Animation,
                     () -> entity.trickshot1Animation, () -> entity.trickshot2Animation, () -> entity.trickshot3Animation);
         }
@@ -1094,8 +1094,8 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
         }
     }
 
-    static class GACycloneAttackGoal extends AnimationAI<EntityRelicAnnihilator> {
-        public GACycloneAttackGoal(EntityRelicAnnihilator entity) {
+    static class RACycloneAttackGoal extends AnimationAI<EntityRelicAnnihilator> {
+        public RACycloneAttackGoal(EntityRelicAnnihilator entity) {
             super(entity);
         }
 
@@ -1142,8 +1142,8 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
         }
     }
 
-    static class GALeapAttackGoal extends AnimationAI<EntityRelicAnnihilator> {
-        public GALeapAttackGoal(EntityRelicAnnihilator entity) {
+    static class RALeapAttackGoal extends AnimationAI<EntityRelicAnnihilator> {
+        public RALeapAttackGoal(EntityRelicAnnihilator entity) {
             super(entity);
             setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
         }

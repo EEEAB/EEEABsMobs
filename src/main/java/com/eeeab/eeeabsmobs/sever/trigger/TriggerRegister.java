@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.trigger;
 
-import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.trigger.components.AnnihilatorWeakPointTrigger;
+import com.eeeab.eeeabsmobs.sever.init.EntityInit;
+import com.eeeab.eeeabsmobs.sever.trigger.components.BaseAnimationTrigger;
 import com.eeeab.eeeabsmobs.sever.trigger.components.FirstEncounterTrigger;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,10 +33,7 @@ public class TriggerRegister {
 
     public static void modRegister() {
         CombatTriggerHandler.registerTrigger(
-                new AnnihilatorWeakPointTrigger(
-                        new ResourceLocation(EEEABMobs.MOD_ID, "relic_annihilator_weak_point"),
-                        new ResourceLocation(EEEABMobs.MOD_ID, "relic_annihilator"), 0
-                )
+                new BaseAnimationTrigger(EntityInit.RELIC_ANNIHILATOR.getId(), 0, true)
         );
     }
 }

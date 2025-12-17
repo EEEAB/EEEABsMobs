@@ -1,8 +1,10 @@
 package com.eeeab.eeeabsmobs.sever.trigger;
 
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.event.AnimationEvent;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
+import com.google.common.base.Strings;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntitySelector;
@@ -30,8 +32,7 @@ public final class CombatTriggerEvent {
                         EntitySelector.NO_CREATIVE_OR_SPECTATOR
                 );
                 for (ServerPlayer player : nearbyPlayers) {
-                    TriggerContext context = new TriggerContext(entity, true);
-                    CombatTriggerHandler.checkAndTrigger(player, entityId, context);
+                    CombatTriggerHandler.checkAndTrigger(player, entityId, new TriggerContext(entity, true));
                 }
             }
         }
@@ -42,6 +43,7 @@ public final class CombatTriggerEvent {
         if (!ModConfigHandler.COMMON.others.enableCombatPrompts.get()) return;
         EEEABMobLibrary entity = event.getEntity();
         if (entity.level().isClientSide) return;
+        if (Strings.isNullOrEmpty(event.getAnimation().getHintId())) return;
         ResourceLocation entityId = EntityType.getKey(entity.getType());
         if (CombatTriggerHandler.canTriggerEntityType(entityId)) {
             List<ServerPlayer> nearbyPlayers = entity.level().getEntitiesOfClass(
@@ -49,9 +51,9 @@ public final class CombatTriggerEvent {
                     entity.getBoundingBox().inflate(32),
                     EntitySelector.NO_CREATIVE_OR_SPECTATOR
             );
+            Animation animation = entity.getAnimation();
             for (ServerPlayer player : nearbyPlayers) {
-                TriggerContext context = new TriggerContext(entity, entity.getAnimation());
-                CombatTriggerHandler.checkAndTrigger(player, entityId, context);
+                CombatTriggerHandler.checkAndTrigger(player, entityId, new TriggerContext(entity, animation));
             }
         }
     }
