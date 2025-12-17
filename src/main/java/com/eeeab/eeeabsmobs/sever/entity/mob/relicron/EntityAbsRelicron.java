@@ -55,6 +55,11 @@ public abstract class EntityAbsRelicron extends EEEABMobLibrary implements Enemy
     }
 
     @Override
+    public boolean isInvulnerableTo(DamageSource damageSource) {
+        return !this.isActive() || super.isInvulnerableTo(damageSource);
+    }
+
+    @Override
     public boolean removeWhenFarAway(double distance) {
         return false;
     }
