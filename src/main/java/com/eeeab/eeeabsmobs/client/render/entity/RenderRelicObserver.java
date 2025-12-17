@@ -8,6 +8,8 @@ import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
 import com.eeeab.eeeabsmobs.sever.entity.mob.CrackinessEntity;
 import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityRelicObserver;
 import com.google.common.collect.ImmutableMap;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -37,5 +39,19 @@ public class RenderRelicObserver extends MobRenderer<EntityRelicObserver, ModelR
     @Override
     public ResourceLocation getTextureLocation(EntityRelicObserver corpse) {
         return TEXTURE;
+    }
+
+    @Override
+    public void render(EntityRelicObserver entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
+        int savedHurtTime = entity.hurtTime;
+        int savedDeathTime = entity.deathTime;
+        if (entity.hurtTime > 0) entity.hurtTime = 0;
+        if (entity.deathTime > 0) entity.deathTime = 0;
+        try {
+            super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
+        } finally {
+            entity.hurtTime = savedHurtTime;
+            entity.deathTime = savedDeathTime;
+        }
     }
 }

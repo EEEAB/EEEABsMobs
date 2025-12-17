@@ -11,6 +11,7 @@ import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
 import com.eeeab.eeeabsmobs.client.particle.util.AnimData;
 import com.eeeab.eeeabsmobs.client.particle.util.AnimData.KeyTrack;
 import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
+import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.mob.CrackinessEntity;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
@@ -22,6 +23,8 @@ import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.sounds.SoundEvent;
@@ -64,18 +67,20 @@ public class EntityRelicObserver extends EntityAbsRelicron implements GlowEntity
     public final Animation shootLaserAnimation = Animation.create(50);
     public final Animation stormAnimation = Animation.create(50);
     private final Animation[] animations = new Animation[]{
-            this.dieAnimation,
-            this.hurtAnimation,
-            this.activeAnimation,
-            this.deactivateAnimation,
-            this.shootLaserAnimation,
-            this.stormAnimation
+            dieAnimation,
+            hurtAnimation,
+            activeAnimation,
+            deactivateAnimation,
+            shootLaserAnimation,
+            stormAnimation
     };
     private static final EntityDimensions DEACTIVATE_SIZE = EntityDimensions.scalable(1, 1);
-    private static final UniformInt HARD_INTERVAL = TimeUtil.rangeOfSeconds(5, 10);
-    private static final UniformInt NORMAL_INTERVAL = TimeUtil.rangeOfSeconds(10, 12);
+    private static final UniformInt HARD_INTERVAL = TimeUtil.rangeOfSeconds(7, 10);
+    private static final UniformInt NORMAL_INTERVAL = TimeUtil.rangeOfSeconds(12, 15);
+    private static final BlockParticleOption DEEPSLATE_BRICKS = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DEEPSLATE_BRICKS.defaultBlockState());
     private int timeUntilShootLaser;
     private int timeUntilStorm;
+    public final ControlledAnimation rotControlled = new ControlledAnimation(10);
 
     public EntityRelicObserver(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
@@ -199,8 +204,8 @@ public class EntityRelicObserver extends EntityAbsRelicron implements GlowEntity
                     if (tick < 22 || tick > 35) {
                         entity.lookAt(target, 360F, 180F);
                         entity.getLookControl().setLookAt(target, 360F, 180F);
-                        targetPos = target.position();
-                    } else if (this.targetPos != null) entity.lookAt(EntityAnchorArgument.Anchor.EYES, targetPos);
+                        targetPos = target.position().add(0, target.getBbHeight() / 2, 0);
+                    } else if (this.targetPos != null) entity.getLookControl().setLookAt(targetPos);
                     else entity.setYRot(this.entity.yRotO);
                 }
                 if (tick == 5) {
@@ -220,6 +225,7 @@ public class EntityRelicObserver extends EntityAbsRelicron implements GlowEntity
     @Override
     public void tick() {
         super.tick();
+        this.rotControlled.updatePrevTimer();
         AnimationHandler.INSTANCE.updateAnimations(this);
         if (!this.level().isClientSide) {
             LivingEntity target = this.getTarget();
@@ -231,7 +237,7 @@ public class EntityRelicObserver extends EntityAbsRelicron implements GlowEntity
                 if (this.isNoAnimation() && this.timeUntilStorm <= 0 && this.targetDistance <= 3.5) {
                     this.playAnimation(this.stormAnimation);
                     this.timeUntilStorm = this.level().getDifficulty() == Difficulty.HARD ? HARD_INTERVAL.sample(this.random) : NORMAL_INTERVAL.sample(this.random);
-                } else if (this.isNoAnimation() && this.timeUntilShootLaser <= 0 && Math.abs(this.getY() - target.getY()) < 2) {
+                } else if (this.isNoAnimation() && this.timeUntilShootLaser <= 0 /*&& Math.abs(this.getY() - target.getY()) < 2*/) {
                     this.playAnimation(this.shootLaserAnimation);
                     this.timeUntilShootLaser = this.level().getDifficulty() == Difficulty.HARD ? HARD_INTERVAL.sample(this.random) : NORMAL_INTERVAL.sample(this.random);
                 }
@@ -263,6 +269,7 @@ public class EntityRelicObserver extends EntityAbsRelicron implements GlowEntity
                     }
                 }
             }
+            this.rotControlled.incrementOrDecreaseTimer(animation == this.stormAnimation);
         }
     }
 
@@ -302,6 +309,12 @@ public class EntityRelicObserver extends EntityAbsRelicron implements GlowEntity
             }
             return super.hurt(source, damage);
         }
+    }
+
+    @Override
+    public void handleDamageEvent(DamageSource damageSource) {
+        super.handleDamageEvent(damageSource);
+        this.doHurtEffect();
     }
 
     @Override
@@ -378,18 +391,31 @@ public class EntityRelicObserver extends EntityAbsRelicron implements GlowEntity
         return SoundInit.RELIC_OBSERVER_DEATH.get();
     }
 
+    private void doHurtEffect() {
+        if (this.level().isClientSide) {
+            for (int i = 0; i < 5; ++i) {
+                double dx = getRandomX(0.5);
+                double dy = this.getEyeY();
+                double dz = getRandomZ(0.5);
+                level().addParticle(DEEPSLATE_BRICKS, dx, dy, dz, -getDeltaMovement().x() * 0.25F, -getDeltaMovement().y() * 0.25F, -getDeltaMovement().z() * 0.25F);
+            }
+        }
+    }
+
     private void doFractalEffect(int count) {
-        for (int i = 0; i < count; i++) {
-            double angle = random.nextDouble() * 2 * Math.PI;
-            double minHorizontalOffset = 1;
-            double maxHorizontalOffset = 3;
-            double minVerticalOffset = 0;
-            double maxVerticalOffset = 1.5;
-            double horizontalRadius = minHorizontalOffset + (random.nextDouble() * (maxHorizontalOffset - minHorizontalOffset));
-            double offsetX = Math.cos(angle) * horizontalRadius;
-            double offsetZ = Math.sin(angle) * horizontalRadius;
-            double offsetY = minVerticalOffset + (random.nextDouble() * (maxVerticalOffset - minVerticalOffset));
-            this.doFractalEffect(this.position().add(0, this.getEyeHeight(), 0), this.position().add(offsetX, this.getEyeHeight() + offsetY, offsetZ));
+        if (this.level().isClientSide) {
+            for (int i = 0; i < count; i++) {
+                double angle = random.nextDouble() * 2 * Math.PI;
+                double minHorizontalOffset = 1;
+                double maxHorizontalOffset = 3;
+                double minVerticalOffset = 0;
+                double maxVerticalOffset = 1.5;
+                double horizontalRadius = minHorizontalOffset + (random.nextDouble() * (maxHorizontalOffset - minHorizontalOffset));
+                double offsetX = Math.cos(angle) * horizontalRadius;
+                double offsetZ = Math.sin(angle) * horizontalRadius;
+                double offsetY = minVerticalOffset + (random.nextDouble() * (maxVerticalOffset - minVerticalOffset));
+                this.doFractalEffect(this.position().add(0, this.getEyeHeight(), 0), this.position().add(offsetX, this.getEyeHeight() + offsetY, offsetZ));
+            }
         }
     }
 
