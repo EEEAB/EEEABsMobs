@@ -89,7 +89,6 @@ public class ModelRelicObserver extends ModHierarchicalModel<EntityRelicObserver
         if (entity.isActive() && animation != entity.activeAnimation && animation != entity.deactivateAnimation && animation != entity.getDeathAnimation()) {
             float baseSpeed = 0.45F;
             float baseDegree = 0.6F;
-            // 创建波浪效果：从前到后依次启动
             float[] phaseOffsets = {0F, 0.2F, 0.4F, 0.6F, 0.8F, 1.0F, 1.2F, 1.4F};
             this.waveBob(root, baseSpeed, baseDegree, 0, frame);
             this.waveBob(block1, baseSpeed, baseDegree * 0.9F, phaseOffsets[0], frame);
