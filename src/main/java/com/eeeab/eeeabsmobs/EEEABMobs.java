@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs;
 import com.eeeab.eeeabsmobs.client.ClientProxy;
 import com.eeeab.animate.client.gui.AnimationControllerScreen;
 import com.eeeab.eeeabsmobs.client.gui.BossBarRegistry;
-import com.eeeab.eeeabsmobs.client.gui.NotificationHandler;
+import com.eeeab.eeeabsmobs.client.gui.PromptNotificationHandler;
 import com.eeeab.eeeabsmobs.sever.ServerProxy;
 import com.eeeab.eeeabsmobs.sever.advancements.ModCriteriaTriggers;
 import com.eeeab.eeeabsmobs.sever.handler.CapabilityHandler;
@@ -84,7 +84,7 @@ public class EEEABMobs {
 
     private void clientSetup(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            NotificationHandler.init();
+            PromptNotificationHandler.init();
             BossBarRegistry.init();
             CuriosRegistry.initClient();
             MenuScreens.register(MenuInit.ANIMATION_CONTROLLER.get(), AnimationControllerScreen::new);

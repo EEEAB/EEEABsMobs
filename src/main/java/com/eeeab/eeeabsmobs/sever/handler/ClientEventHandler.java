@@ -5,7 +5,7 @@ import com.eeeab.eeeabsmobs.client.ClientProxy;
 import com.eeeab.eeeabsmobs.client.gui.BossBarConfig;
 import com.eeeab.eeeabsmobs.client.gui.BossBarHandler;
 import com.eeeab.eeeabsmobs.client.gui.BossBarRegistry;
-import com.eeeab.eeeabsmobs.client.gui.NotificationHandler;
+import com.eeeab.eeeabsmobs.client.gui.PromptNotificationHandler;
 import com.eeeab.eeeabsmobs.sever.capability.FrenzyCapability;
 import com.eeeab.eeeabsmobs.sever.capability.StunCapability;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityCameraShake;
@@ -72,7 +72,7 @@ public class ClientEventHandler {
             }
         }
         if (event.getOverlay().overlay() == VanillaGuiOverlay.PLAYER_LIST.type().overlay()) {
-            NotificationHandler.renderOverlay(event.getGuiGraphics(), event.getPartialTick());
+            PromptNotificationHandler.renderOverlay(event.getGuiGraphics(), event.getPartialTick());
         }
     }
 
@@ -80,7 +80,7 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void onRenderTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            NotificationHandler.clientTick();
+            PromptNotificationHandler.clientTick();
         }
     }
 

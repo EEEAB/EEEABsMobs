@@ -617,7 +617,7 @@ public final class ModConfigHandler {
 
     public static class Client {
         public Client(final ForgeConfigSpec.Builder builder) {
-            combatPrompt = new CombatPrompt(builder);
+            popupNotification = new PopupNotification(builder);
             enableCameraShake = builder.comment("If set to 'False' disable camera shake")
                     .translation(getTranslationKey("camera_shake")).define("Enable Camera Shake", true);
             enablePlayBossMusic = builder.comment("If set to 'False' disable play boss music")
@@ -626,33 +626,33 @@ public final class ModConfigHandler {
                     .translation(getTranslationKey("falling_block_render")).define("Enable Falling Block Render", true);
         }
 
-        public final CombatPrompt combatPrompt;
+        public final PopupNotification popupNotification;
         public final ForgeConfigSpec.BooleanValue enableCameraShake;
         public final ForgeConfigSpec.BooleanValue enablePlayBossMusic;
         public final ForgeConfigSpec.BooleanValue enableFallingBlockRender;
     }
 
-    public static class CombatPrompt {
-        public CombatPrompt(final ForgeConfigSpec.Builder builder) {
-            builder.push("Combat Prompt");
-            enabled = builder.comment("If set to 'False' disable combat prompts")
-                    .translation(getTranslationKey("combat_prompt_enabled")).define("Enabled", true);
+    public static class PopupNotification {
+        public PopupNotification(final ForgeConfigSpec.Builder builder) {
+            builder.push("Popup Notification");
+            enabled = builder.comment("If set to 'False' disable popup notification")
+                    .translation(getTranslationKey("notification_enabled")).define("Enabled", true);
             displayMode = builder
                     .comment("HUD display mode: FADE_IN_OUT (fade in/out), IMMEDIATE (show immediately)")
-                    .translation(getTranslationKey("combat_prompt_display_mode")).defineEnum("Display Mode", DisplayMode.FADE_IN_OUT);
+                    .translation(getTranslationKey("notification_display_mode")).defineEnum("Display Mode", DisplayMode.FADE_IN_OUT);
             displayDuration = builder
-                    .comment("HUD display duration in ticks").translation(getTranslationKey("combat_prompt_display_duration"))
+                    .comment("HUD display duration in ticks").translation(getTranslationKey("notification_display_duration"))
                     .defineInRange("Display Duration", 100, 20, 200);
             backgroundOpacity = builder
-                    .comment("HUD background opacity").translation(getTranslationKey("combat_prompt_background_opacity"))
+                    .comment("HUD background opacity").translation(getTranslationKey("notification_background_opacity"))
                     .defineInRange("Background Opacity", 0.08D, 0.0D, 1.0D);
             textMaxWidth = builder
-                    .comment("Maximum width for text lines in pixels").translation(getTranslationKey("combat_prompt_text_max_width"))
+                    .comment("Maximum width for text lines in pixels").translation(getTranslationKey("notification_text_max_width"))
                     .defineInRange("Text Max Width", 300, 100, 400);
             lineSpacing = builder.comment("Spacing between text lines in pixels")
-                    .translation(getTranslationKey("combat_prompt_line_spacing")).defineInRange("Line Spacing", 2, 0, 10);
+                    .translation(getTranslationKey("notification_line_spacing")).defineInRange("Line Spacing", 2, 0, 10);
             hudPositionY = builder.comment("Vertical position of HUD from top of screen in pixels")
-                    .translation(getTranslationKey("combat_prompt_hud_position_y")).defineInRange("Hud Position Y", 30, 0, 100);
+                    .translation(getTranslationKey("notification_hud_position_y")).defineInRange("Hud Position Y", 30, 0, 100);
             builder.pop();
         }
 

@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.trigger.components;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.message.ShowHintMessage;
+import com.eeeab.eeeabsmobs.sever.message.PopupNotificationMessage;
 import com.eeeab.eeeabsmobs.sever.trigger.CombatTrigger;
 import com.eeeab.eeeabsmobs.sever.trigger.CooldownManager;
 import com.eeeab.eeeabsmobs.sever.trigger.TriggerContext;
@@ -34,7 +34,7 @@ public abstract class BaseCombatTrigger implements CombatTrigger {
     @Override
     public void trigger(ServerPlayer player) {
         EEEABMobs.NETWORK.sendTo(
-                new ShowHintMessage(getTriggerKey(), promptLevel, false),
+                new PopupNotificationMessage(getTriggerKey(), promptLevel, false),
                 player.connection.connection,
                 NetworkDirection.PLAY_TO_CLIENT
         );

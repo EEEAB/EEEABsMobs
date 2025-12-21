@@ -367,11 +367,11 @@
   "config.eeeabsmobs.guardian_core": "启用激光是否可以破坏方块",
   "config.eeeabsmobs.corpse": "启用杀死僵尸/村民后转化为死尸",
   "config.eeeabsmobs.eye_of_structure": "启用释放时消耗物品",
-  "config.eeeabsmobs.combat_prompt_enabled": "启用战斗提示",
-  "config.eeeabsmobs.combat_prompt_display_mode": "HUD显示方式",
-  "config.eeeabsmobs.combat_prompt_display_duration": "HUD显示时长",
-  "config.eeeabsmobs.combat_prompt_background_opacity": "HUD背景透明度",
-  "config.eeeabsmobs.combat_prompt_text_max_width": "文本最大宽度",
-  "config.eeeabsmobs.combat_prompt_line_spacing": "文本行间距",
-  "config.eeeabsmobs.combat_prompt_hud_position_y": "HUD垂直位置"
+  "config.eeeabsmobs.notification_enabled": "启用弹窗提示",
+  "config.eeeabsmobs.notification_display_mode": "HUD显示方式",
+  "config.eeeabsmobs.notification_display_duration": "HUD显示时长",
+  "config.eeeabsmobs.notification_background_opacity": "HUD背景透明度",
+  "config.eeeabsmobs.notification_text_max_width": "文本最大宽度",
+  "config.eeeabsmobs.notification_line_spacing": "文本行间距",
+  "config.eeeabsmobs.notification_hud_position_y": "HUD垂直位置"
 }

@@ -367,11 +367,11 @@
   "config.eeeabsmobs.guardian_core": "Enable Destroy Block",
   "config.eeeabsmobs.corpse": "Enable Killed Zombies And Villagers Turning Into Corpses",
   "config.eeeabsmobs.eye_of_structure": "Enable Consume Item On Release",
-  "config.eeeabsmobs.combat_prompt_enabled": "Enable Combat Prompts",
-  "config.eeeabsmobs.combat_prompt_display_mode": "Hud Display Mode",
-  "config.eeeabsmobs.combat_prompt_display_duration": "Hud Display Duration",
-  "config.eeeabsmobs.combat_prompt_background_opacity": "Hud Background Opacity",
-  "config.eeeabsmobs.combat_prompt_text_max_width": "Text Maximum Width",
-  "config.eeeabsmobs.combat_prompt_line_spacing": "Text Line Spacing",
-  "config.eeeabsmobs.combat_prompt_hud_position_y": "Hud Vertical Position"
+  "config.eeeabsmobs.notification_enabled": "Enable Popup Notification",
+  "config.eeeabsmobs.notification_display_mode": "Hud Display Mode",
+  "config.eeeabsmobs.notification_display_duration": "Hud Display Duration",
+  "config.eeeabsmobs.notification_background_opacity": "Hud Background Opacity",
+  "config.eeeabsmobs.notification_text_max_width": "Text Maximum Width",
+  "config.eeeabsmobs.notification_line_spacing": "Text Line Spacing",
+  "config.eeeabsmobs.notification_hud_position_y": "Hud Vertical Position"
 }

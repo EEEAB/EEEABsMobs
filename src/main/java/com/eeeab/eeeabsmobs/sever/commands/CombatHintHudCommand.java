@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.commands;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.message.ShowHintMessage;
+import com.eeeab.eeeabsmobs.sever.message.PopupNotificationMessage;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.minecraft.commands.CommandBuildContext;
@@ -49,6 +49,6 @@ public class CombatHintHudCommand {
     }
 
     private static void sendHint(ServerPlayer player, ResourceLocation location, int level) {
-        EEEABMobs.NETWORK.sendTo(new ShowHintMessage(location, level, true), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+        EEEABMobs.NETWORK.sendTo(new PopupNotificationMessage(location, level, true), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 }

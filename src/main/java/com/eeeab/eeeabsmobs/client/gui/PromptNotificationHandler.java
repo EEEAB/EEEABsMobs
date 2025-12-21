@@ -14,18 +14,18 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
-public class NotificationHandler {
-    private static ModConfigHandler.CombatPrompt.DisplayMode currentMode = ModConfigHandler.CombatPrompt.DisplayMode.FADE_IN_OUT;
-    private static ControlledAnimation alphaAnimation;
-    private static ResourceLocation promptIcons;
-    private static Component currentPrompt;
+public class PromptNotificationHandler {
+    private static ModConfigHandler.PopupNotification.DisplayMode currentMode = ModConfigHandler.PopupNotification.DisplayMode.FADE_IN_OUT;
+    private static ControlledAnimation alphaAControlled;
+    private static ResourceLocation icons;
+    private static Component current;
     private static boolean isShowing = false;
-    private static int hintLevel = 0;
+    private static int level = 0;
     private static int targetY = 30;
 
     public static void init() {
-        promptIcons = new ResourceLocation(EEEABMobs.MOD_ID, "textures/gui/msg_levels.png");
-        alphaAnimation = new ControlledAnimation(ModConfigHandler.CLIENT.combatPrompt.displayDuration.get());
+        icons = new ResourceLocation(EEEABMobs.MOD_ID, "textures/gui/msg_levels.png");
+        alphaAControlled = new ControlledAnimation(ModConfigHandler.CLIENT.popupNotification.displayDuration.get());
     }
 
     /**
@@ -45,20 +45,20 @@ public class NotificationHandler {
     public static void clientTick() {
         if (!isShowing) return;
 
-        alphaAnimation.updatePrevTimer();
+        alphaAControlled.updatePrevTimer();
 
-        if (!ModConfigHandler.CLIENT.combatPrompt.enabled.get() || alphaAnimation.isEnd()) {
+        if (!ModConfigHandler.CLIENT.popupNotification.enabled.get() || alphaAControlled.isEnd()) {
             isShowing = false;
-            currentPrompt = null;
+            current = null;
             return;
         }
 
-        alphaAnimation.increaseTimer();
+        alphaAControlled.increaseTimer();
     }
 
     public static void renderOverlay(GuiGraphics guiGraphics, float partialTick) {
-        if (!ModConfigHandler.CLIENT.combatPrompt.enabled.get()) return;
-        if (currentPrompt == null || !isShowing) return;
+        if (!ModConfigHandler.CLIENT.popupNotification.enabled.get()) return;
+        if (current == null || !isShowing) return;
 
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
@@ -68,11 +68,11 @@ public class NotificationHandler {
         //if (alpha <= 0.001f) return;
 
         //参数
-        int maxTextWidth = ModConfigHandler.CLIENT.combatPrompt.textMaxWidth.get();
-        int lineSpacing = ModConfigHandler.CLIENT.combatPrompt.lineSpacing.get();
-        float backgroundOpacity = ModConfigHandler.CLIENT.combatPrompt.backgroundOpacity.get().floatValue();
-        int textBlockHeight = MultiLineTextRenderer.calculateTotalHeight(font, currentPrompt, maxTextWidth, lineSpacing);
-        int textBlockWidth = MultiLineTextRenderer.calculateMaxLineWidth(font, currentPrompt, maxTextWidth);
+        int maxTextWidth = ModConfigHandler.CLIENT.popupNotification.textMaxWidth.get();
+        int lineSpacing = ModConfigHandler.CLIENT.popupNotification.lineSpacing.get();
+        float backgroundOpacity = ModConfigHandler.CLIENT.popupNotification.backgroundOpacity.get().floatValue();
+        int textBlockHeight = MultiLineTextRenderer.calculateTotalHeight(font, current, maxTextWidth, lineSpacing);
+        int textBlockWidth = MultiLineTextRenderer.calculateMaxLineWidth(font, current, maxTextWidth);
         int iconSize = 16;
         int iconSpacing = 6;
         int padding = 8;
@@ -95,11 +95,11 @@ public class NotificationHandler {
         int groupY = y + padding;
 
         //绘制图标
-        if (alpha > 0 && promptIcons != null) {
+        if (alpha > 0 && icons != null) {
             int iconX = groupX;
             int iconY = groupY + (contentHeight - iconSize) / 2;
             guiGraphics.setColor(1F, 1F, 1F, alpha);
-            guiGraphics.blit(promptIcons, iconX, iconY, 0, hintLevel * iconSize, iconSize, iconSize, 16, 48);
+            guiGraphics.blit(icons, iconX, iconY, 0, level * iconSize, iconSize, iconSize, 16, 48);
             guiGraphics.setColor(1F, 1F, 1F, 1F);
         }
 
@@ -109,23 +109,23 @@ public class NotificationHandler {
             int textY = groupY + (contentHeight - textBlockHeight) / 2;
             int textAlpha = (int) (alpha * 255);
             int textColor = 0xFFFFFF | (textAlpha << 24);
-            MultiLineTextRenderer.drawWordWrapWithNewlines(guiGraphics, font, currentPrompt, textX, textY, textBlockWidth, textColor, lineSpacing);
+            MultiLineTextRenderer.drawWordWrapWithNewlines(guiGraphics, font, current, textX, textY, textBlockWidth, textColor, lineSpacing);
         }
     }
 
     private static void init(String prefix, ResourceLocation location, int level) {
-        if (!ModConfigHandler.CLIENT.combatPrompt.enabled.get()) return;
-        hintLevel = Mth.clamp(level, 0, 2);
-        currentPrompt = TranslateUtils.simpleText(location.getNamespace(), prefix, location.getPath(), getTextStyle(), "");
-        currentMode = ModConfigHandler.CLIENT.combatPrompt.displayMode.get();
-        targetY = ModConfigHandler.CLIENT.combatPrompt.hudPositionY.get();
-        alphaAnimation.setDuration(ModConfigHandler.CLIENT.combatPrompt.displayDuration.get());
-        alphaAnimation.resetTimer();
+        if (!ModConfigHandler.CLIENT.popupNotification.enabled.get()) return;
+        PromptNotificationHandler.level = Mth.clamp(level, 0, 2);
+        current = TranslateUtils.simpleText(location.getNamespace(), prefix, location.getPath(), getTextStyle(), "");
+        currentMode = ModConfigHandler.CLIENT.popupNotification.displayMode.get();
+        targetY = ModConfigHandler.CLIENT.popupNotification.hudPositionY.get();
+        alphaAControlled.setDuration(ModConfigHandler.CLIENT.popupNotification.displayDuration.get());
+        alphaAControlled.resetTimer();
         isShowing = true;
     }
 
     private static ChatFormatting getTextStyle() {
-        return switch (hintLevel) {
+        return switch (level) {
             case 1 -> ChatFormatting.YELLOW;
             case 2 -> ChatFormatting.RED;
             default -> ChatFormatting.WHITE;
@@ -133,9 +133,9 @@ public class NotificationHandler {
     }
 
     private static float getAlphaByMode(float partialTick) {
-        float progress = alphaAnimation.getAnimationFraction(partialTick);
-        if (alphaAnimation.isEnd()) return 0.0F;
-        if (currentMode == ModConfigHandler.CombatPrompt.DisplayMode.FADE_IN_OUT) {
+        float progress = alphaAControlled.getAnimationFraction(partialTick);
+        if (alphaAControlled.isEnd()) return 0.0F;
+        if (currentMode == ModConfigHandler.PopupNotification.DisplayMode.FADE_IN_OUT) {
             if (progress < 0.125F) {
                 return Mth.clamp(progress * 8F, 0F, 1F);
             } else if (progress > 0.875f) {
