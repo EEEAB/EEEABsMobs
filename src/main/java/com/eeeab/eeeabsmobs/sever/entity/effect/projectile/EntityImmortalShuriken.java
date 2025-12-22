@@ -204,6 +204,16 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
     }
 
     @Override
+    public boolean shouldRenderAtSqrDistance(double distance) {
+        double d0 = this.getBoundingBox().getSize() * 4.0D;
+        if (Double.isNaN(d0)) {
+            d0 = 4.0D;
+        }
+        d0 *= 64.0D;
+        return distance < d0 * d0;
+    }
+
+    @Override
     protected void defineSynchedData() {
         this.entityData.define(DATA_DURATION, 20);
     }
