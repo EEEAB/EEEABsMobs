@@ -56,6 +56,7 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> RELIC_EARTHSHAKER_ELECTROMAGNETIC = create("relic_earthshaker.electromagnetic");
     public static final RegistryObject<SoundEvent> RELIC_EARTHSHAKER_PRE_ATTACK = create("relic_earthshaker.pre_attack");
     public static final RegistryObject<SoundEvent> RELIC_EARTHSHAKER_ATTACK = create("relic_earthshaker.attack");
+    public static final RegistryObject<SoundEvent> RELIC_EARTHSHAKER_LAUNCH_GRENADE = create("relic_earthshaker.launch_grenade");
     public static final RegistryObject<SoundEvent> RELIC_EARTHSHAKER_HURT = create("relic_earthshaker.hurt");
     public static final RegistryObject<SoundEvent> RELIC_EARTHSHAKER_DEATH = create("relic_earthshaker.death");
 
@@ -121,8 +122,7 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> CRIMSON_RAY = create("crimson_ray.shoot");
     public static final RegistryObject<SoundEvent> GIANT_AXE_HIT = create("giant_axe_hit");
     public static final RegistryObject<SoundEvent> CRIMSON_CRACK_BREAK = create("crimson_crack.break");
-    //TODO 待优化
-    public static final RegistryObject<SoundEvent> LAUNCH_GRENADE = create("grenade.launch");
+    public static final RegistryObject<SoundEvent> DEMOLISHER_LAUNCH = create("demolisher.launch");
     public static final RegistryObject<SoundEvent> MAGIC_MATRIX_OPEN = create("magic_matrix.open");
     public static final RegistryObject<SoundEvent> IMMORTAL_SHURIKEN_SPIN = create("immortal_shuriken.spin");
     public static final RegistryObject<SoundEvent> IMMORTAL_SHURIKEN_EXPLODE = create("immortal_shuriken.explode");

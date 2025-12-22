@@ -35,6 +35,6 @@ public class HowitzerAbility extends Ability<Player> {
             grenade.setPos(playerPos.x + width * 0.7F * Math.cos(yBodyRadians), user.getY(0.6D), playerPos.z + width * 0.7F * Math.sin(yBodyRadians));
             level.addFreshEntity(grenade);
         }
-        user.playSound(SoundInit.LAUNCH_GRENADE.get());
+        user.playSound(SoundInit.DEMOLISHER_LAUNCH.get());
     }
 }
