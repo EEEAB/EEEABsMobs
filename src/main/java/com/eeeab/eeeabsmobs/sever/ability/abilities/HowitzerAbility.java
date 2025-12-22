@@ -4,7 +4,7 @@ import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityPeriod;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityType;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.effect.EntityPulsedGrenade;
+import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityPulsedGrenade;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -27,7 +27,7 @@ public class HowitzerAbility extends Ability<Player> {
             ServerLevel level = (ServerLevel) user.level();
             double yBodyRadians = Math.toRadians(user.yHeadRot + (180 * (user.getUsedItemHand() == InteractionHand.MAIN_HAND ? 1 : 2)));
             float width = user.getBbWidth();
-            EntityPulsedGrenade grenade = new EntityPulsedGrenade(level, user);
+            EntityPulsedGrenade grenade = new EntityPulsedGrenade(level, user, true);
             grenade.setRadius(ModConfigHandler.COMMON.items.howitzerConfig2.get().floatValue());
             Vec3 lookPos = user.getLookAngle();
             Vec3 playerPos = user.position();

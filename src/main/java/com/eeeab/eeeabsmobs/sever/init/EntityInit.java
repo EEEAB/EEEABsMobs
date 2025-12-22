@@ -4,7 +4,7 @@ import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityInfraredRay;
 import com.eeeab.eeeabsmobs.sever.entity.effect.*;
 import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.*;
-import com.eeeab.eeeabsmobs.sever.entity.effect.EntityPulsedGrenade;
+import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityPulsedGrenade;
 import com.eeeab.eeeabsmobs.sever.entity.mob.EntityTester;
 import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpseToPlayer;
@@ -209,7 +209,7 @@ public class EntityInit {
     public static final RegistryObject<EntityType<EntityPulsedGrenade>> PULSED_GRENADE =
             ENTITIES.register("pulsed_grenade",
                     () -> EntityType.Builder.<EntityPulsedGrenade>of(EntityPulsedGrenade::new, MobCategory.MISC)
-                            .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20)
+                            .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(10)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "pulsed_grenade").toString()));
 
     //电磁脉冲
