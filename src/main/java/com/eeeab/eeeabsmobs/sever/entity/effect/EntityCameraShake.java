@@ -59,6 +59,11 @@ public class EntityCameraShake extends Entity {
     }
 
     @Override
+    public boolean ignoreExplosion() {
+        return true;
+    }
+
+    @Override
     protected void defineSynchedData() {
         getEntityData().define(RADIUS, 10.0f);
         getEntityData().define(MAGNITUDE, 1.0f);

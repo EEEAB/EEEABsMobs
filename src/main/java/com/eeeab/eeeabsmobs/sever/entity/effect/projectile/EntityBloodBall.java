@@ -130,7 +130,7 @@ public class EntityBloodBall extends Projectile implements IEntity {
                     level().broadcastEntityEvent(livingEntity, (byte) 14);
                 }
             } else {
-                EntityExplode.explode(level(), position(), damageSources().explosion(this, entity), null, getPower(), getBaseDamage() * getPower());
+                EntityExplode.explode(level(), position(), damageSources().explosion(this, entity), getOwner(), getPower(), getBaseDamage() * getPower());
                 EntityCameraShake.cameraShake(level(), position(), 16F, 0.125F, 5, 15);
             }
         }

@@ -28,17 +28,18 @@ public class EntityExplode extends EntityMagicEffects {
     private static final EntityDataAccessor<Float> DATA_RADIUS = SynchedEntityData.defineId(EntityExplode.class, EntityDataSerializers.FLOAT);
     protected DamageSource damageSource;
     protected float damage;
+    protected Entity owner;
 
     public EntityExplode(EntityType<?> type, Level level) {
         super(type, level);
     }
 
-    public EntityExplode(Level level, DamageSource damageSource, @Nullable LivingEntity caster, float radius, float damage) {
+    public EntityExplode(Level level, DamageSource damageSource, @Nullable Entity owner, float radius, float damage) {
         this(EntityInit.EXPLODE.get(), level);
         this.setRadius(radius);
         this.damageSource = damageSource;
         this.damage = damage;
-        this.caster = caster;
+        this.owner = owner;
     }
 
     @Override
@@ -62,7 +63,7 @@ public class EntityExplode extends EntityMagicEffects {
         int i1 = Mth.floor(pos.y + f1 + 1);
         int j2 = Mth.floor(pos.z - f1 - 1);
         int j1 = Mth.floor(pos.z + f1 + 1);
-        List<Entity> list = this.level().getEntities(this, new AABB(k1, i2, j2, l1, i1, j1), e -> e != this.caster || !e.ignoreExplosion());
+        List<Entity> list = this.level().getEntities(this, new AABB(k1, i2, j2, l1, i1, j1), e -> e != this.owner || !e.ignoreExplosion());
         for (Entity hit : list) {
             double d12 = Math.sqrt(hit.distanceToSqr(pos)) / (double) f1;
             if (d12 <= 1) {
@@ -79,7 +80,7 @@ public class EntityExplode extends EntityMagicEffects {
                     //damage = Math.min((int) ((d10 * d10 + d10) / 2.0D * 7.0D * (double) f1 + 1.0D), damage);
                     if (hit.isAttackable()) {
                         float finalDamage = damage;
-                        if (hit instanceof LivingEntity target && this.caster instanceof IMob mob) finalDamage += mob.getDamageAmountByTargetHealthPct(target);
+                        if (hit instanceof LivingEntity target && this.owner instanceof IMob mob) finalDamage += mob.getDamageAmountByTargetHealthPct(target);
                         doHurtEntity(this.damageSource, hit, finalDamage);
                     }
                     doKnockbackEntity(hit, d10, d5, d7, d9);
@@ -149,13 +150,13 @@ public class EntityExplode extends EntityMagicEffects {
      *
      * @param vec3         爆炸坐标
      * @param damageSource 伤害源
-     * @param caster       造成爆炸的实体
+     * @param owner        造成爆炸的实体
      * @param radius       半径
      * @param damage       造成的伤害(受到方块阻挡与距离爆炸中心的影响)
      */
-    public static void explode(Level world, Vec3 vec3, DamageSource damageSource, @Nullable LivingEntity caster, float radius, float damage) {
+    public static void explode(Level world, Vec3 vec3, DamageSource damageSource, @Nullable Entity owner, float radius, float damage) {
         if (!world.isClientSide) {
-            EntityExplode explode = new EntityExplode(world, damageSource, caster, radius, damage);
+            EntityExplode explode = new EntityExplode(world, damageSource, owner, radius, damage);
             explode.setPos(vec3);
             world.addFreshEntity(explode);
         }
