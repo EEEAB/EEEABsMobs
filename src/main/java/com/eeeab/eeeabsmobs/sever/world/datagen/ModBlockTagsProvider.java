@@ -21,14 +21,21 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
     protected void addTags(HolderLookup.Provider provider) {
         //挖掘相关
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(
+                BlockInit.ANCIENT_BOUNDARY_STONE.get(),
+                BlockInit.ROUGH_BOUNDARY_BRICKS.get(),
+                BlockInit.CRACKED_ROUGH_BOUNDARY_BRICKS.get(),
+                BlockInit.CHISELED_ROUGH_BOUNDARY_BRICKS.get(),
+                BlockInit.POLISHED_BOUNDARY_BRICKS.get(),
+                BlockInit.CRACKED_POLISHED_BOUNDARY_BRICKS.get(),
+                BlockInit.CHISELED_POLISHED_BOUNDARY_BRICKS.get(),
+                BlockInit.TOMB_ARROWS_TRAP.get(),
+                BlockInit.TOMB_GAS_TRAP.get(),
+                BlockInit.TOMB_SUMMON_TRAP.get(),
                 BlockInit.IMMORTAL_BLOCK.get(),
                 BlockInit.GHOST_STEEL_BLOCK.get(),
                 BlockInit.CUT_GHOST_STEEL_BLOCK.get(),
                 BlockInit.CUT_GHOST_STEEL_BLOCK_STAIRS.get(),
                 BlockInit.CUT_GHOST_STEEL_BLOCK_SLAB.get(),
-                BlockInit.TOMB_ARROWS_TRAP.get(),
-                BlockInit.TOMB_GAS_TRAP.get(),
-                BlockInit.TOMB_SUMMON_TRAP.get(),
                 BlockInit.EROSION_ROCK_BRICKS.get(),
                 BlockInit.BLIGHTED_STONE.get(),
                 BlockInit.DARKENED_COAL_ORE.get(),
@@ -63,7 +70,6 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 BlockInit.ERODED_SOIL.get()
         );
         tag(BlockTags.MINEABLE_WITH_HOE).add(
-                BlockInit.SOUL_LIGHT.get(),
                 BlockInit.EROSION_OAK_LEAVES.get()
         );
         tag(BlockTags.NEEDS_IRON_TOOL).add(
@@ -87,6 +93,11 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 BlockInit.STRIPPED_BLIGHTED_OAK_WOOD.get()
         );
         //方块标签相关
+        tag(Tags.Blocks.ENDERMAN_PLACE_ON_BLACKLIST).add(
+                BlockInit.DUNGEON_BRICK.get(),
+                BlockInit.UNCARVED_BOUNDARY_STONE.get(),
+                BlockInit.RUNIC_BOUNDARY_STONE.get()
+        );
         tag(BlockTags.LEAVES).add(
                 BlockInit.EROSION_OAK_LEAVES.get()
         );
@@ -97,6 +108,7 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 BlockInit.ERODED_SOIL.get()
         );
         tag(Tags.Blocks.STONE).add(
+                BlockInit.ANCIENT_BOUNDARY_STONE.get(),
                 BlockInit.BLIGHTED_STONE.get(),
                 BlockInit.BLIGHTED_COBBLESTONE.get(),
                 BlockInit.VOIDSHARD.get(),

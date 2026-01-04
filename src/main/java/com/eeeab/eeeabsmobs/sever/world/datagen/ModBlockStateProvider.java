@@ -1,17 +1,21 @@
 package com.eeeab.eeeabsmobs.sever.world.datagen;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
+import com.eeeab.eeeabsmobs.sever.block.BlockGalacticAlphabet;
 import com.eeeab.eeeabsmobs.sever.block.BlockMirroredFlower;
+import com.eeeab.eeeabsmobs.sever.block.properties.SGACharacter;
 import com.eeeab.eeeabsmobs.sever.init.BlockInit;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.*;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.ModelProvider;
+import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ModBlockStateProvider extends BlockStateProvider {
     public ModBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
@@ -20,11 +24,20 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
+        cubeAll(BlockInit.DUNGEON_BRICK);
+        cubeAll(BlockInit.ANCIENT_BOUNDARY_STONE);
+        cubeAll(BlockInit.ROUGH_BOUNDARY_BRICKS);
+        cubeAll(BlockInit.CRACKED_ROUGH_BOUNDARY_BRICKS);
+        cubeAll(BlockInit.CHISELED_ROUGH_BOUNDARY_BRICKS);
+        cubeAll(BlockInit.POLISHED_BOUNDARY_BRICKS);
+        cubeAll(BlockInit.CRACKED_POLISHED_BOUNDARY_BRICKS);
+        cubeAll(BlockInit.CHISELED_POLISHED_BOUNDARY_BRICKS);
+        cubeAll(BlockInit.UNCARVED_BOUNDARY_STONE);
         cubeAll(BlockInit.IMMORTAL_BLOCK);
         cubeAll(BlockInit.GHOST_STEEL_BLOCK);
         cubeAll(BlockInit.CUT_GHOST_STEEL_BLOCK);
         cubeAll(BlockInit.EROSION_DEEPSLATE_BRICKS);
-        cubeAll(BlockInit.SOUL_LIGHT);
+        cubeAll(BlockInit.BOUNDARY_LAMP);
         cubeAll(BlockInit.EROSION_ROCK_BRICKS);
         cubeAll(BlockInit.EROSION_OAK_PLANKS);
         cubeAll(BlockInit.BLIGHTED_OAK_PLANKS);
@@ -42,6 +55,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         cubeAll(BlockInit.CRACKED_DARK_EROSION_ROCK_BRICKS);
         //cubeAll(BlockInit.TOMBSTONE);
 
+        alphabets((BlockGalacticAlphabet) BlockInit.RUNIC_BOUNDARY_STONE.get());
         logBlock((RotatedPillarBlock) BlockInit.EROSION_OAK_LOG.get());
         blockItem(BlockInit.EROSION_OAK_LOG);
         axisBlock((RotatedPillarBlock) BlockInit.EROSION_OAK_WOOD.get(), blockTexture(BlockInit.EROSION_OAK_LOG.get()), blockTexture(BlockInit.EROSION_OAK_LOG.get()));
@@ -173,5 +187,36 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 .modelForState().modelFile(models().cross(blockTexture(rob.get()).getPath(), blockTexture(rob.get())).renderType(renderType)).addModel()
                 .partialState().with(BlockMirroredFlower.MIRRORED, true)
                 .modelForState().modelFile(models().cross(blockTexture(rob.get()).getPath() + "_mirrored", blockTexture(rob.get(), "_mirrored")).renderType(renderType)).addModel();
+    }
+
+    /**
+     * 标准银河字母(SGA)纹理
+     */
+    private void alphabets(BlockGalacticAlphabet block) {
+        String name = ForgeRegistries.BLOCKS.getKey(block).getPath();
+        VariantBlockStateBuilder builder = getVariantBuilder(block);
+        EnumSet<SGACharacter> supportedChars = block.getCharacters();
+        SGACharacter defaultChar = supportedChars.iterator().next();
+        Map<SGACharacter, ModelFile> modelCache = new HashMap<>();
+        for (SGACharacter character : supportedChars) {
+            ModelFile model = models().cubeAll(
+                    name + "_" + character,
+                    modLoc("block/" + name + "_" + character)
+            );
+            modelCache.put(character, model);
+        }
+        ModelFile defaultModel = modelCache.get(defaultChar);
+        for (SGACharacter character : SGACharacter.values()) {
+            ModelFile modelToUse;
+            if (supportedChars.contains(character)) {
+                modelToUse = modelCache.get(character);
+            } else {
+                modelToUse = defaultModel;
+            }
+            builder.partialState()
+                    .with(BlockGalacticAlphabet.CHARACTER, character)
+                    .setModels(new ConfiguredModel(modelToUse));
+        }
+        simpleBlockItem(block, defaultModel);
     }
 }
