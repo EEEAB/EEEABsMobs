@@ -51,7 +51,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ItemInit.LOGO_ITEM);
         simpleItem(ItemInit.REMOVE_MOB);
         simpleItem(ItemInit.ANIMATION_CONTROLLER);
-        simpleItem(ItemInit.COREFORGE_RUINS_EYE);
+        simpleItem(ItemInit.CORE_BASTION_EYE);
         simpleItem(ItemInit.BLOODY_ALTAR_EYE);
         simpleItem(ItemInit.GUARDIANS_MUSIC_DISC);
         simpleItem(ItemInit.THE_ARMY_OF_MINOTAUR_MUSIC_DISC);

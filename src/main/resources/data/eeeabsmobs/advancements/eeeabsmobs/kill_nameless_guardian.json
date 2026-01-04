@@ -1,5 +1,5 @@
 {
-  "parent": "eeeabsmobs:eeeabsmobs/coreforge_ruins",
+  "parent": "eeeabsmobs:eeeabsmobs/core_bastion",
   "display": {
     "icon": {
       "item": "eeeabsmobs:guardian_axe"

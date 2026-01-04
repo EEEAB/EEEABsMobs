@@ -13,39 +13,42 @@ public class CreativeTabInit {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, EEEABMobs.MOD_ID);
 
     public static final RegistryObject<CreativeModeTab> ITEMS_TAB = TABS.register(EEEABMobs.MOD_ID + "_tab1", () -> CreativeModeTab.builder()
-            .title(Component.translatable("itemGroup." + EEEABMobs.MOD_ID + ".creative_tab"))
+            .title(Component.translatable("item_group." + EEEABMobs.MOD_ID + ".creative_tab"))
             .icon(() -> new ItemStack(ItemInit.GUARDIAN_AXE.get()))
             .displayItems((enabledFeatures, entries) -> {
                 /* OP Item */
                 entries.accept(ItemInit.REMOVE_MOB.get());
                 entries.accept(ItemInit.ANIMATION_CONTROLLER.get());
+
+                /* Guling Structure Series */
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.DUNGEON_BRICK));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.ANCIENT_BOUNDARY_STONE));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.BOUNDARY_LAMP));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.ROUGH_BOUNDARY_BRICKS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.CRACKED_ROUGH_BOUNDARY_BRICKS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.CHISELED_ROUGH_BOUNDARY_BRICKS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.POLISHED_BOUNDARY_BRICKS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.CRACKED_POLISHED_BOUNDARY_BRICKS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.CHISELED_POLISHED_BOUNDARY_BRICKS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.TOMB_GAS_TRAP));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.TOMB_SUMMON_TRAP));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.TOMB_ARROWS_TRAP));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.UNCARVED_BOUNDARY_STONE));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.RUNIC_BOUNDARY_STONE));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_DEEPSLATE_BRICKS));
+
                 /* Misc Item */
                 entries.accept(ItemInit.HEART_OF_PAGAN.get());
                 entries.accept(ItemInit.ANCIENT_DRIVE_CRYSTAL.get());
-                entries.accept(ItemInit.IMMORTAL_BONE.get());
-                entries.accept(ItemInit.IMMORTAL_DEBRIS.get());
-                entries.accept(ItemInit.IMMORTAL_INGOT.get());
-                entries.accept(ItemInit.GHOST_STEEL_INGOT.get());
                 entries.accept(ItemInit.BLOODY_ALTAR_EYE.get());
-                entries.accept(ItemInit.COREFORGE_RUINS_EYE.get());
+                entries.accept(ItemInit.CORE_BASTION_EYE.get());
                 entries.accept(ItemInit.SOUL_SUMMONING_NECKLACE.get());
                 /* Fight Item */
                 entries.accept(ItemInit.DEMOLISHER.get());
                 entries.accept(ItemInit.GUARDIAN_CORE.get());
                 entries.accept(ItemInit.GUARDIAN_AXE.get());
-                entries.accept(ItemInit.IMMORTAL_AXE.get());
-                entries.accept(ItemInit.IMMORTAL_SWORD.get());
-                entries.accept(ItemInit.IMMORTAL_STAFF.get());
-                entries.accept(ItemInit.THE_NETHERWORLD_KATANA.get());
-                entries.accept(ItemInit.GHOST_WARRIOR_HELMET.get());
-                entries.accept(ItemInit.GHOST_WARRIOR_CHESTPLATE.get());
-                entries.accept(ItemInit.GHOST_WARRIOR_LEGGINGS.get());
-                entries.accept(ItemInit.GHOST_WARRIOR_BOOTS.get());
-                /*  Smithing Template */
-                entries.accept(ItemInit.GHOST_WARRIOR_UPGRADE_SMITHING_TEMPLATE.get());
                 /* Disc Item */
                 entries.accept(ItemInit.GUARDIANS_MUSIC_DISC.get());
-                entries.accept(ItemInit.THE_ARMY_OF_MINOTAUR_MUSIC_DISC.get());
                 /* Spawn Egg */
                 entries.accept(ItemInit.TESTER_EGG.get());
                 entries.accept(ItemInit.CORPSE_EGG.get());
@@ -56,27 +59,12 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.RELIC_EARTHSHAKER_EGG.get());
                 entries.accept(ItemInit.RELIC_ANNIHILATOR_EGG.get());
                 entries.accept(ItemInit.NAMELESS_GUARDIAN_EGG.get());
-                entries.accept(ItemInit.IMMORTAL_GOLEM_EGG.get());
-                entries.accept(ItemInit.IMMORTAL_SKELETON_EGG.get());
-                entries.accept(ItemInit.IMMORTAL_ARCHER_EGG.get());
-                entries.accept(ItemInit.IMMORTAL_MAGE_EGG.get());
-                entries.accept(ItemInit.IMMORTAL_WARRIOR_EGG.get());
-                entries.accept(ItemInit.IMMORTAL_KNIGHT_EGG.get());
-                entries.accept(ItemInit.IMMORTAL_SHAMAN_EGG.get());
-                entries.accept(ItemInit.IMMORTAL_EXECUTIONER_EGG.get());
-                entries.accept(ItemInit.IMMORTAL_BOSS_EGG.get());
             }).build());
 
-    public static final RegistryObject<CreativeModeTab> BLOCKS_TAB = TABS.register(EEEABMobs.MOD_ID + "_tab2", () -> CreativeModeTab.builder()
-            .title(Component.translatable("blockGroup." + EEEABMobs.MOD_ID + ".creative_tab"))
-            .icon(() -> new ItemStack(BlockInit.EROSION_DEEPSLATE_BRICKS.get()))
+    public static final RegistryObject<CreativeModeTab> DEV_TAB = TABS.register(EEEABMobs.MOD_ID + "_tab2", () -> CreativeModeTab.builder()
+            .title(Component.translatable("dev_group." + EEEABMobs.MOD_ID + ".creative_tab"))
+            .icon(() -> ItemInit.LOGO_ITEM.get().getDefaultInstance())
             .displayItems((enabledFeatures, entries) -> {
-                /* Guling Structure Series */
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.SOUL_LIGHT));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.TOMB_GAS_TRAP));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.TOMB_SUMMON_TRAP));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.TOMB_ARROWS_TRAP));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_DEEPSLATE_BRICKS));
                 /* Void Crack Series */
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.BONE_BUSH));
 
@@ -148,6 +136,35 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.CUT_GHOST_STEEL_BLOCK));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.CUT_GHOST_STEEL_BLOCK_STAIRS));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.CUT_GHOST_STEEL_BLOCK_SLAB));
+
+                /* Misc Item */
+                entries.accept(ItemInit.IMMORTAL_BONE.get());
+                entries.accept(ItemInit.IMMORTAL_DEBRIS.get());
+                entries.accept(ItemInit.IMMORTAL_INGOT.get());
+                entries.accept(ItemInit.GHOST_STEEL_INGOT.get());
+                /* Fight Item */
+                entries.accept(ItemInit.IMMORTAL_AXE.get());
+                entries.accept(ItemInit.IMMORTAL_SWORD.get());
+                entries.accept(ItemInit.IMMORTAL_STAFF.get());
+                entries.accept(ItemInit.THE_NETHERWORLD_KATANA.get());
+                entries.accept(ItemInit.GHOST_WARRIOR_HELMET.get());
+                entries.accept(ItemInit.GHOST_WARRIOR_CHESTPLATE.get());
+                entries.accept(ItemInit.GHOST_WARRIOR_LEGGINGS.get());
+                entries.accept(ItemInit.GHOST_WARRIOR_BOOTS.get());
+                /*  Smithing Template */
+                entries.accept(ItemInit.GHOST_WARRIOR_UPGRADE_SMITHING_TEMPLATE.get());
+                /* Disc Item */
+                entries.accept(ItemInit.THE_ARMY_OF_MINOTAUR_MUSIC_DISC.get());
+                /* Spawn Egg */
+                entries.accept(ItemInit.IMMORTAL_GOLEM_EGG.get());
+                entries.accept(ItemInit.IMMORTAL_SKELETON_EGG.get());
+                entries.accept(ItemInit.IMMORTAL_ARCHER_EGG.get());
+                entries.accept(ItemInit.IMMORTAL_MAGE_EGG.get());
+                entries.accept(ItemInit.IMMORTAL_WARRIOR_EGG.get());
+                entries.accept(ItemInit.IMMORTAL_KNIGHT_EGG.get());
+                entries.accept(ItemInit.IMMORTAL_SHAMAN_EGG.get());
+                entries.accept(ItemInit.IMMORTAL_EXECUTIONER_EGG.get());
+                entries.accept(ItemInit.IMMORTAL_BOSS_EGG.get());
             }).build());
 
     public static void register(IEventBus bus) {

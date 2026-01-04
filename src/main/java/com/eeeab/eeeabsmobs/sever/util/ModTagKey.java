@@ -14,7 +14,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
 public class ModTagKey {
-    public static final TagKey<Structure> EYE_OF_COREFORGE_RUINS = registerTagKey(Registries.STRUCTURE, "eye_of_coreforge_ruins");
+    public static final TagKey<Structure> EYE_OF_CORE_BASTION = registerTagKey(Registries.STRUCTURE, "eye_of_core_bastion");
     public static final TagKey<Structure> EYE_OF_BLOODY_ALTAR = registerTagKey(Registries.STRUCTURE, "eye_of_bloody_altar");
     public static final TagKey<Biome> HAS_GULING = registerTagKey(Registries.BIOME, "has_structure/guling");
     public static final TagKey<Biome> HAS_BLOODY_ALTAR = registerTagKey(Registries.BIOME, "has_structure/bloody_altar");

@@ -5,10 +5,10 @@
       "item": "minecraft:deepslate_bricks"
     },
     "title": {
-      "translate": "advancements.eeeabsmobs.coreforge_ruins.title"
+      "translate": "advancements.eeeabsmobs.core_bastion.title"
     },
     "description": {
-      "translate": "advancements.eeeabsmobs.coreforge_ruins.description"
+      "translate": "advancements.eeeabsmobs.core_bastion.description"
     },
     "frame": "goal",
     "show_toast": true,

@@ -17,13 +17,12 @@ public class JEIModPlugin implements IModPlugin {
         return new ResourceLocation(EEEABMobs.MOD_ID, "jei_plugin");
     }
 
-
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         IModPlugin.super.registerRecipes(registration);
         //物品描述
         registration.addItemStackInfo(List.of(
-                        ItemInit.COREFORGE_RUINS_EYE.get().getDefaultInstance(),
+                        ItemInit.CORE_BASTION_EYE.get().getDefaultInstance(),
                         ItemInit.BLOODY_ALTAR_EYE.get().getDefaultInstance()
                 ), TranslateUtils.simpleText("jei.", "eye_of_structure", null));
     }

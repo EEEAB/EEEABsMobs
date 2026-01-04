@@ -47,7 +47,7 @@ public class ItemInit {
     public static final RegistryObject<Item> IMMORTAL_BONE = ITEMS.register("immortal_bone", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> IMMORTAL_STAFF = ITEMS.register("immortal_staff", ItemImmortalStaff::new);
     public static final RegistryObject<Item> IMMORTAL_DEBRIS = ITEMS.register("immortal_debris", () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> COREFORGE_RUINS_EYE = ITEMS.register("coreforge_ruins_eye", ItemCoreforgeRuinsEye::new);
+    public static final RegistryObject<Item> CORE_BASTION_EYE = ITEMS.register("core_bastion_eye", ItemCoreforgeRuinsEye::new);
     public static final RegistryObject<Item> BLOODY_ALTAR_EYE = ITEMS.register("bloody_altar_eye", ItemBloodyAltarEye::new);
     public static final RegistryObject<Item> GUARDIAN_CORE = ITEMS.register("guardian_core", ItemGuardianCore::new);
     public static final RegistryObject<Item> ANIMATION_CONTROLLER = ITEMS.register("animation_controller", ItemAnimationController::new);
