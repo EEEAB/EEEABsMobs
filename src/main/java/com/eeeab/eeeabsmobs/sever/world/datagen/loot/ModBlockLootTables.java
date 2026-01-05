@@ -20,6 +20,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
     @Override
     protected void generate() {
         this.dropSelf(BlockInit.BOUNDARY_LAMP.get());
+        this.dropSelf(BlockInit.IRON_GRATE.get());
         this.dropSelf(BlockInit.ANCIENT_BOUNDARY_STONE.get());
         this.dropSelf(BlockInit.ROUGH_BOUNDARY_BRICKS.get());
         this.dropSelf(BlockInit.CRACKED_ROUGH_BOUNDARY_BRICKS.get());
@@ -27,9 +28,9 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(BlockInit.POLISHED_BOUNDARY_BRICKS.get());
         this.dropSelf(BlockInit.CRACKED_POLISHED_BOUNDARY_BRICKS.get());
         this.dropSelf(BlockInit.CHISELED_POLISHED_BOUNDARY_BRICKS.get());
-        this.dropSelf(BlockInit.TOMB_GAS_TRAP.get());
-        this.dropSelf(BlockInit.TOMB_SUMMON_TRAP.get());
-        this.dropSelf(BlockInit.TOMB_ARROWS_TRAP.get());
+        this.dropSelf(BlockInit.STEPPING_POISON_TRAP.get());
+        this.dropSelf(BlockInit.STEPPING_SKELETON_TRAP.get());
+        this.dropSelf(BlockInit.REDSTONE_POISON_DART_TRAP.get());
         this.dropSelf(BlockInit.EROSION_ROCK_BRICKS.get());
         this.dropSelf(BlockInit.IMMORTAL_BLOCK.get());
         this.dropSelf(BlockInit.GHOST_STEEL_BLOCK.get());

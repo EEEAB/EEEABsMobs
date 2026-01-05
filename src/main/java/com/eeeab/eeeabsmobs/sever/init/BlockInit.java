@@ -6,19 +6,22 @@ import com.eeeab.eeeabsmobs.sever.block.grower.BlightedOakGrower;
 import com.eeeab.eeeabsmobs.sever.block.grower.ErosionOakGrower;
 import com.eeeab.eeeabsmobs.sever.block.properties.SGACharacter;
 import com.eeeab.eeeabsmobs.sever.block.trapImpl.BlockTomeArrowsTarp;
-import com.eeeab.eeeabsmobs.sever.block.trapImpl.BlockTombGasTrap;
-import com.eeeab.eeeabsmobs.sever.block.trapImpl.BlockTombSummonTrap;
+import com.eeeab.eeeabsmobs.sever.block.trapImpl.BlockSteppingPoisonTrap;
+import com.eeeab.eeeabsmobs.sever.block.trapImpl.BlockSteppingSkeletonTrap;
 import com.eeeab.eeeabsmobs.sever.item.util.EMBlockEntityItemRender;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,6 +29,9 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -34,7 +40,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 import java.util.function.Supplier;
-import java.util.function.ToIntFunction;
 
 public class BlockInit {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, EEEABMobs.MOD_ID);
@@ -42,6 +47,25 @@ public class BlockInit {
     public static final RegistryObject<Block> DUNGEON_BRICK = registryBlock("dungeon_brick", () -> new Block(BlockBehaviour.Properties
             .copy(Blocks.BEDROCK).noLootTable()), false);
 
+    public static final RegistryObject<Block> IRON_GRATE = registryBlock("iron_grate", () -> new HalfTransparentBlock(BlockBehaviour.Properties
+            .of().strength(5.0F, 6.0F).sound(SoundType.METAL).noOcclusion().isValidSpawn(BlockInit::never)
+            .isRedstoneConductor(BlockInit::never).isSuffocating(BlockInit::never).isViewBlocking(BlockInit::never)
+    ) {
+        @Override
+        public VoxelShape getVisualShape(BlockState state, BlockGetter reader, BlockPos pos, CollisionContext context) {
+            return Shapes.empty();
+        }
+
+        @Override
+        public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+            return 1.0F;
+        }
+
+        @Override
+        public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos) {
+            return true;
+        }
+    }, false);
     public static final RegistryObject<Block> ANCIENT_BOUNDARY_STONE = registryBlock("ancient_boundary_stone", () -> new Block(BlockBehaviour.Properties
             .copy(Blocks.COBBLED_DEEPSLATE).strength(4F, 6.0F)), false);
     public static final RegistryObject<Block> BOUNDARY_LAMP = registryBlock("boundary_lamp", () -> new Block(BlockBehaviour.Properties
@@ -58,12 +82,8 @@ public class BlockInit {
             .copy(BlockInit.ROUGH_BOUNDARY_BRICKS.get())), false);
     public static final RegistryObject<Block> CHISELED_POLISHED_BOUNDARY_BRICKS = registryBlock("chiseled_polished_boundary_bricks", () -> new Block(BlockBehaviour.Properties
             .copy(BlockInit.ROUGH_BOUNDARY_BRICKS.get())), false);
-    public static final RegistryObject<Block> TOMB_GAS_TRAP = registryBlock("tomb_gas_trap", () -> new BlockTombGasTrap(BlockBehaviour.Properties
-            .copy(Blocks.DEEPSLATE_BRICKS).randomTicks().strength(100F, 1200F).lightLevel(state -> state.getValue(BlockStateProperties.OPEN) ? 2 : 0)), false);
-    public static final RegistryObject<Block> TOMB_SUMMON_TRAP = registryBlock("tomb_summon_trap", () -> new BlockTombSummonTrap(BlockBehaviour.Properties
-            .copy(Blocks.DEEPSLATE_BRICKS).randomTicks().strength(100F, 1200F).lightLevel(state -> state.getValue(BlockStateProperties.OPEN) ? 2 : 0)), false);
-    public static final RegistryObject<Block> TOMB_ARROWS_TRAP = registryBlock("tomb_arrows_trap", () -> new BlockTomeArrowsTarp(BlockBehaviour.Properties
-            .copy(Blocks.DEEPSLATE_BRICKS).strength(100F, 1200F).isValidSpawn((pState, pLevel, pPos, type) -> true)), false);
+    public static final RegistryObject<Block> REDSTONE_POISON_DART_TRAP = registryBlock("redstone_poison_dart_trap", () -> new BlockTomeArrowsTarp(BlockBehaviour.Properties
+            .copy(Blocks.DEEPSLATE_BRICKS).strength(100F, 1200F).isValidSpawn(BlockInit::always)), false);
     public static final RegistryObject<Block> UNCARVED_BOUNDARY_STONE = registryBlock("uncarved_boundary_stone", () -> new Block(BlockBehaviour.Properties
             .copy(Blocks.REINFORCED_DEEPSLATE).strength(-1.0F, 3600000.0F).noLootTable().lightLevel(value -> 3)), false);
     public static final RegistryObject<Block> RUNIC_BOUNDARY_STONE = registryBlock("runic_boundary_stone", () -> new BlockGalacticAlphabet(BlockBehaviour.Properties
@@ -209,6 +229,26 @@ public class BlockInit {
             .copy(BLIGHTED_OAK_PLANKS.get()), BlockSetType.OAK), false);
     public static final RegistryObject<Block> BLIGHTED_OAK_BUTTON = registryBlock("blighted_oak_button", () -> new ButtonBlock(BlockBehaviour.Properties
             .copy(BLIGHTED_OAK_PLANKS.get()), BlockSetType.OAK, 30, true), false);
+    public static final RegistryObject<Block> STEPPING_POISON_TRAP = registryBlock("stepping_poison_trap", () -> new BlockSteppingPoisonTrap(BlockBehaviour.Properties
+            .copy(Blocks.DEEPSLATE_BRICKS).randomTicks().strength(100F, 1200F).lightLevel(state -> state.getValue(BlockStateProperties.OPEN) ? 2 : 0)), false);
+    public static final RegistryObject<Block> STEPPING_SKELETON_TRAP = registryBlock("stepping_skeleton_trap", () -> new BlockSteppingSkeletonTrap(BlockBehaviour.Properties
+            .copy(Blocks.DEEPSLATE_BRICKS).randomTicks().strength(100F, 1200F).lightLevel(state -> state.getValue(BlockStateProperties.OPEN) ? 2 : 0)), false);
+
+    private static boolean always(BlockState state, BlockGetter getter, BlockPos pos) {
+        return true;
+    }
+
+    private static boolean always(BlockState state, BlockGetter getter, BlockPos pos, EntityType<?> entityType) {
+        return true;
+    }
+
+    private static Boolean never(BlockState state, BlockGetter getter, BlockPos pos, EntityType<?> entityType) {
+        return false;
+    }
+
+    private static boolean never(BlockState state, BlockGetter getter, BlockPos pos) {
+        return false;
+    }
 
     private static <T extends Block> RegistryObject<T> registryBlock(String name, Supplier<T> block, boolean isEntity) {
         RegistryObject<T> register = BLOCKS.register(name, block);

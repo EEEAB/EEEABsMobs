@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/orientable_vertical",
+  "textures": {
+    "front": "eeeabsmobs:block/redstone_poison_dart_trap_front_off",
+    "side": "eeeabsmobs:block/redstone_poison_dart_trap_side"
+  }
+}

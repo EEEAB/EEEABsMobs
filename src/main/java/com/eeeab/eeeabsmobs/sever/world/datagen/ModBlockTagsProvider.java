@@ -28,9 +28,9 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 BlockInit.POLISHED_BOUNDARY_BRICKS.get(),
                 BlockInit.CRACKED_POLISHED_BOUNDARY_BRICKS.get(),
                 BlockInit.CHISELED_POLISHED_BOUNDARY_BRICKS.get(),
-                BlockInit.TOMB_ARROWS_TRAP.get(),
-                BlockInit.TOMB_GAS_TRAP.get(),
-                BlockInit.TOMB_SUMMON_TRAP.get(),
+                BlockInit.REDSTONE_POISON_DART_TRAP.get(),
+                BlockInit.STEPPING_POISON_TRAP.get(),
+                BlockInit.STEPPING_SKELETON_TRAP.get(),
                 BlockInit.IMMORTAL_BLOCK.get(),
                 BlockInit.GHOST_STEEL_BLOCK.get(),
                 BlockInit.CUT_GHOST_STEEL_BLOCK.get(),
@@ -79,9 +79,9 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 BlockInit.CUT_GHOST_STEEL_BLOCK.get(),
                 BlockInit.CUT_GHOST_STEEL_BLOCK_STAIRS.get(),
                 BlockInit.CUT_GHOST_STEEL_BLOCK_SLAB.get(),
-                BlockInit.TOMB_ARROWS_TRAP.get(),
-                BlockInit.TOMB_GAS_TRAP.get(),
-                BlockInit.TOMB_SUMMON_TRAP.get());
+                BlockInit.REDSTONE_POISON_DART_TRAP.get(),
+                BlockInit.STEPPING_POISON_TRAP.get(),
+                BlockInit.STEPPING_SKELETON_TRAP.get());
         tag(BlockTags.MINEABLE_WITH_AXE).add(
                 BlockInit.EROSION_OAK_LOG.get(),
                 BlockInit.EROSION_OAK_WOOD.get(),

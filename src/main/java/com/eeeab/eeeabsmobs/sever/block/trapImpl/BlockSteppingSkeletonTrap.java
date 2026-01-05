@@ -12,8 +12,8 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class BlockTombSummonTrap extends BlockStepOnTrap {
-    public BlockTombSummonTrap(Properties pProperties) {
+public class BlockSteppingSkeletonTrap extends BlockStepOnTrap {
+    public BlockSteppingSkeletonTrap(Properties pProperties) {
         super(pProperties);
     }
 

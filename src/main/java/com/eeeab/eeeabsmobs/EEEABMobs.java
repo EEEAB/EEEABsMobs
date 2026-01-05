@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs;
 
-import com.eeeab.eeeabsmobs.client.ClientProxy;
 import com.eeeab.animate.client.gui.AnimationControllerScreen;
+import com.eeeab.eeeabsmobs.client.ClientProxy;
 import com.eeeab.eeeabsmobs.client.gui.BossBarRegistry;
 import com.eeeab.eeeabsmobs.client.gui.PromptNotificationHandler;
 import com.eeeab.eeeabsmobs.sever.ServerProxy;
@@ -19,7 +19,6 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
@@ -76,7 +75,6 @@ public class EEEABMobs {
         PROXY.initNetwork();
         event.enqueueWork(() -> {
             CuriosRegistry.init();
-            ComposterBlock.COMPOSTABLES.put(BlockInit.SOUL_LIGHT.get().asItem(), 1.0F);
             ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.BONE_BUSH.getId(), BlockInit.POTTED_BONE_BUSH);
             BrewingRecipeRegistry.addRecipe(new ModBrewingRecipe(Potions.STRONG_STRENGTH, ItemInit.HEART_OF_PAGAN.get(), PotionInit.FRENZY_POTION.get()));
         });

@@ -8,6 +8,8 @@ import com.eeeab.eeeabsmobs.sever.init.BlockInit;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -54,27 +56,24 @@ public class ModBlockStateProvider extends BlockStateProvider {
         cubeAll(BlockInit.DARK_EROSION_ROCK_BRICKS);
         cubeAll(BlockInit.CRACKED_DARK_EROSION_ROCK_BRICKS);
         //cubeAll(BlockInit.TOMBSTONE);
+        cubeAllWithRenderType(BlockInit.IRON_GRATE, "cutout");
 
         alphabets((BlockGalacticAlphabet) BlockInit.RUNIC_BOUNDARY_STONE.get());
-        logBlock((RotatedPillarBlock) BlockInit.EROSION_OAK_LOG.get());
-        blockItem(BlockInit.EROSION_OAK_LOG);
-        axisBlock((RotatedPillarBlock) BlockInit.EROSION_OAK_WOOD.get(), blockTexture(BlockInit.EROSION_OAK_LOG.get()), blockTexture(BlockInit.EROSION_OAK_LOG.get()));
-        blockItem(BlockInit.EROSION_OAK_WOOD);
-        axisBlock((RotatedPillarBlock) BlockInit.STRIPPED_EROSION_OAK_LOG.get(), blockTexture(BlockInit.STRIPPED_EROSION_OAK_LOG.get()), extend(blockTexture(BlockInit.STRIPPED_EROSION_OAK_LOG.get()), "_top"));
-        blockItem(BlockInit.STRIPPED_EROSION_OAK_LOG);
-        axisBlock((RotatedPillarBlock) BlockInit.STRIPPED_EROSION_OAK_WOOD.get(), blockTexture(BlockInit.STRIPPED_EROSION_OAK_LOG.get()), blockTexture(BlockInit.STRIPPED_EROSION_OAK_LOG.get()));
-        blockItem(BlockInit.STRIPPED_EROSION_OAK_WOOD);
-        logBlock((RotatedPillarBlock) BlockInit.BLIGHTED_OAK_LOG.get());
-        blockItem(BlockInit.BLIGHTED_OAK_LOG);
-        axisBlock((RotatedPillarBlock) BlockInit.BLIGHTED_OAK_WOOD.get(), blockTexture(BlockInit.BLIGHTED_OAK_LOG.get()), blockTexture(BlockInit.BLIGHTED_OAK_LOG.get()));
-        blockItem(BlockInit.BLIGHTED_OAK_WOOD);
-        axisBlock((RotatedPillarBlock) BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get(), blockTexture(BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get()), extend(blockTexture(BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get()), "_top"));
-        blockItem(BlockInit.STRIPPED_BLIGHTED_OAK_LOG);
-        axisBlock((RotatedPillarBlock) BlockInit.STRIPPED_BLIGHTED_OAK_WOOD.get(), blockTexture(BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get()), blockTexture(BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get()));
-        blockItem(BlockInit.STRIPPED_BLIGHTED_OAK_WOOD);
 
-        axisBlock((RotatedPillarBlock) BlockInit.DARK_EROSION_ROCK_PILLAR.get(), blockTexture(BlockInit.DARK_EROSION_ROCK_PILLAR.get()), extend(blockTexture(BlockInit.DARK_EROSION_ROCK_PILLAR.get()), "_top"));
-        blockItem(BlockInit.DARK_EROSION_ROCK_PILLAR);
+        variantBlock(BlockInit.STEPPING_POISON_TRAP, BlockStateProperties.OPEN, "_on", "_off");
+        simpleBlockItem(BlockInit.STEPPING_POISON_TRAP.get(), new ModelFile.UncheckedModelFile(blockTexture(BlockInit.STEPPING_POISON_TRAP.get(), "_off")));
+        variantBlock(BlockInit.STEPPING_SKELETON_TRAP, BlockStateProperties.OPEN, "_on", "_off");
+        simpleBlockItem(BlockInit.STEPPING_SKELETON_TRAP.get(), new ModelFile.UncheckedModelFile(blockTexture(BlockInit.STEPPING_SKELETON_TRAP.get(), "_off")));
+
+        axisBlock(BlockInit.DARK_EROSION_ROCK_PILLAR, blockTexture(BlockInit.DARK_EROSION_ROCK_PILLAR.get()), extend(blockTexture(BlockInit.DARK_EROSION_ROCK_PILLAR.get()), "_top"));
+        logBlock(BlockInit.EROSION_OAK_LOG);
+        axisBlock(BlockInit.EROSION_OAK_WOOD, blockTexture(BlockInit.EROSION_OAK_LOG.get()), blockTexture(BlockInit.EROSION_OAK_LOG.get()));
+        axisBlock(BlockInit.STRIPPED_EROSION_OAK_LOG, blockTexture(BlockInit.STRIPPED_EROSION_OAK_LOG.get()), extend(blockTexture(BlockInit.STRIPPED_EROSION_OAK_LOG.get()), "_top"));
+        axisBlock(BlockInit.STRIPPED_EROSION_OAK_WOOD, blockTexture(BlockInit.STRIPPED_EROSION_OAK_LOG.get()), blockTexture(BlockInit.STRIPPED_EROSION_OAK_LOG.get()));
+        logBlock(BlockInit.BLIGHTED_OAK_LOG);
+        axisBlock(BlockInit.BLIGHTED_OAK_WOOD, blockTexture(BlockInit.BLIGHTED_OAK_LOG.get()), blockTexture(BlockInit.BLIGHTED_OAK_LOG.get()));
+        axisBlock(BlockInit.STRIPPED_BLIGHTED_OAK_LOG, blockTexture(BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get()), extend(blockTexture(BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get()), "_top"));
+        axisBlock(BlockInit.STRIPPED_BLIGHTED_OAK_WOOD, blockTexture(BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get()), blockTexture(BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get()));
 
         stairsBlock((StairBlock) BlockInit.EROSION_OAK_STAIRS.get(), blockTexture(BlockInit.EROSION_OAK_PLANKS.get()));
         blockItem(BlockInit.EROSION_OAK_STAIRS);
@@ -149,6 +148,16 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockWithItem(BlockInit.POTTED_BONE_BUSH.get(), models().singleTexture("potted_bone_bush", new ResourceLocation("flower_pot_cross"), "plant", boneBushRL).renderType("cutout"));
     }
 
+    public void logBlock(RegistryObject<Block> rob) {
+        super.logBlock((RotatedPillarBlock) rob.get());
+        blockItem(rob);
+    }
+
+    public void axisBlock(RegistryObject<Block> rob, ResourceLocation side, ResourceLocation end) {
+        super.axisBlock((RotatedPillarBlock) rob.get(), side, end);
+        blockItem(rob);
+    }
+
     private ResourceLocation extend(ResourceLocation rl, String suffix) {
         return new ResourceLocation(rl.getNamespace(), rl.getPath() + suffix);
     }
@@ -179,6 +188,15 @@ public class ModBlockStateProvider extends BlockStateProvider {
     }
 
     /**
+     * 生成同一面方块(指定渲染类型)
+     */
+    private void cubeAllWithRenderType(RegistryObject<Block> rob, String renderType) {
+        Block block = rob.get();
+        ResourceLocation name = ForgeRegistries.BLOCKS.getKey(block);
+        simpleBlockWithItem(block, models().cubeAll(name.getPath(), blockTexture(block)).renderType(renderType));
+    }
+
+    /**
      * 镜像纹理(需单独提供镜像贴图)
      */
     private void mirrored(RegistryObject<Block> rob, String renderType) {
@@ -187,6 +205,23 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 .modelForState().modelFile(models().cross(blockTexture(rob.get()).getPath(), blockTexture(rob.get())).renderType(renderType)).addModel()
                 .partialState().with(BlockMirroredFlower.MIRRORED, true)
                 .modelForState().modelFile(models().cross(blockTexture(rob.get()).getPath() + "_mirrored", blockTexture(rob.get(), "_mirrored")).renderType(renderType)).addModel();
+    }
+
+    private void variantBlock(RegistryObject<Block> block, BooleanProperty property, String trueSuffix, String falseSuffix) {
+        Block targetBlock = block.get();
+        ResourceLocation baseTexture = blockTexture(targetBlock);
+        String basePath = baseTexture.getPath();
+        VariantBlockStateBuilder builder = getVariantBuilder(targetBlock);
+        builder.partialState().with(property, false).modelForState()
+                .modelFile(models().cubeAll(
+                        basePath + falseSuffix,
+                        blockTexture(targetBlock, falseSuffix)))
+                .addModel();
+        builder.partialState().with(property, true).modelForState()
+                .modelFile(models().cubeAll(
+                        basePath + trueSuffix,
+                        blockTexture(targetBlock, trueSuffix)))
+                .addModel();
     }
 
     /**

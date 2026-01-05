@@ -1,7 +1,0 @@
-{
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "eeeabsmobs:block/tomb_gas_trap_on",
-    "particle": "eeeabsmobs:block/tomb_gas_trap_on"
-  }
-}

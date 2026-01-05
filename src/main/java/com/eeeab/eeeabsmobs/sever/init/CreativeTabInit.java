@@ -22,17 +22,16 @@ public class CreativeTabInit {
 
                 /* Guling Structure Series */
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.DUNGEON_BRICK));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.IRON_GRATE));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.ANCIENT_BOUNDARY_STONE));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.BOUNDARY_LAMP));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.ROUGH_BOUNDARY_BRICKS));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.CRACKED_ROUGH_BOUNDARY_BRICKS));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.CHISELED_ROUGH_BOUNDARY_BRICKS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.REDSTONE_POISON_DART_TRAP));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.POLISHED_BOUNDARY_BRICKS));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.CRACKED_POLISHED_BOUNDARY_BRICKS));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.CHISELED_POLISHED_BOUNDARY_BRICKS));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.TOMB_GAS_TRAP));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.TOMB_SUMMON_TRAP));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.TOMB_ARROWS_TRAP));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.UNCARVED_BOUNDARY_STONE));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.RUNIC_BOUNDARY_STONE));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_DEEPSLATE_BRICKS));
@@ -131,6 +130,8 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.DARK_EROSION_ROCK_BRICKS_SLAB));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.DARK_EROSION_ROCK_BRICKS_WALL));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.CHISELED_DARK_EROSION_ROCK));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.STEPPING_POISON_TRAP));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.STEPPING_SKELETON_TRAP));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.IMMORTAL_BLOCK));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.GHOST_STEEL_BLOCK));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.CUT_GHOST_STEEL_BLOCK));
