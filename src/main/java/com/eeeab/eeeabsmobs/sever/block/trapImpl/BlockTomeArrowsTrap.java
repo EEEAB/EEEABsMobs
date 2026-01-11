@@ -10,8 +10,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class BlockTomeArrowsTarp extends BlockSignalTarp {
-    public BlockTomeArrowsTarp(Properties properties) {
+public class BlockTomeArrowsTrap extends BlockSignalTarp {
+    public BlockTomeArrowsTrap(Properties properties) {
         super(properties, 20);
     }
 

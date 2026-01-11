@@ -5,7 +5,7 @@ import com.eeeab.eeeabsmobs.client.ClientProxy;
 import com.eeeab.eeeabsmobs.client.gui.BossBarRegistry;
 import com.eeeab.eeeabsmobs.client.gui.PromptNotificationHandler;
 import com.eeeab.eeeabsmobs.sever.ServerProxy;
-import com.eeeab.eeeabsmobs.sever.advancements.ModCriteriaTriggers;
+import com.eeeab.eeeabsmobs.sever.advancement.ModCriteriaTriggers;
 import com.eeeab.eeeabsmobs.sever.handler.CapabilityHandler;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.handler.ServerEventHandler;
@@ -18,8 +18,6 @@ import com.eeeab.eeeabsmobs.sever.util.TranslateUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -75,7 +73,6 @@ public class EEEABMobs {
         PROXY.initNetwork();
         event.enqueueWork(() -> {
             CuriosRegistry.init();
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.BONE_BUSH.getId(), BlockInit.POTTED_BONE_BUSH);
             BrewingRecipeRegistry.addRecipe(new ModBrewingRecipe(Potions.STRONG_STRENGTH, ItemInit.HEART_OF_PAGAN.get(), PotionInit.FRENZY_POTION.get()));
         });
     }

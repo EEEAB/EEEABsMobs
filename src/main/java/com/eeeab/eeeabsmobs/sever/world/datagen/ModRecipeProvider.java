@@ -27,8 +27,6 @@ public class ModRecipeProvider extends VanillaRecipeProvider {
         ghostWarriorSmithing(recipeConsumer, Items.NETHERITE_LEGGINGS, RecipeCategory.COMBAT, ItemInit.GHOST_WARRIOR_LEGGINGS.get());
         ghostWarriorSmithing(recipeConsumer, Items.NETHERITE_HELMET, RecipeCategory.COMBAT, ItemInit.GHOST_WARRIOR_HELMET.get());
         ghostWarriorSmithing(recipeConsumer, Items.NETHERITE_BOOTS, RecipeCategory.COMBAT, ItemInit.GHOST_WARRIOR_BOOTS.get());
-        woodFromLogs(recipeConsumer, BlockInit.EROSION_OAK_WOOD.get().asItem(), BlockInit.EROSION_OAK_LOG.get().asItem());
-        woodFromLogs(recipeConsumer, BlockInit.STRIPPED_EROSION_OAK_WOOD.get().asItem(), BlockInit.STRIPPED_EROSION_OAK_LOG.get().asItem());
         woodFromLogs(recipeConsumer, BlockInit.BLIGHTED_OAK_WOOD.get().asItem(), BlockInit.BLIGHTED_OAK_LOG.get().asItem());
         woodFromLogs(recipeConsumer, BlockInit.STRIPPED_BLIGHTED_OAK_WOOD.get().asItem(), BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get().asItem());
     }

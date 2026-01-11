@@ -29,8 +29,6 @@ public class ModBiomesProvider {
         biomeBuilder.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, ModResourceKey.DARKENED_COAL_ORE_CHECKED);
         biomeBuilder.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, ModResourceKey.DARKENED_IRON_ORE_CHECKED);
         //BiomeDefaultFeatures.addExtraGold(biomeBuilder);
-        biomeBuilder.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModResourceKey.EROSION_OAK_CHECKED);
-        biomeBuilder.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModResourceKey.MEGA_EROSION_OAK_CHECKED);
         biomeBuilder.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModResourceKey.SPARSE_BLIGHTED_OAK_CHECKED);
         //BiomeDefaultFeatures.addDefaultMushrooms(biomeBuilder);
         //BiomeDefaultFeatures.addDefaultExtraVegetation(biomeBuilder);

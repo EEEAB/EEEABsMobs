@@ -29,15 +29,11 @@ public class ModResourceKey {
     public static final ResourceKey<DamageType> IGNORE_ARMOR_ATTACK = registerResourceKey(Registries.DAMAGE_TYPE, "ignore_armor_attack");
     public static final ResourceKey<DamageType> CRIT_HEAL = registerResourceKey(Registries.DAMAGE_TYPE, "crit_heal");
 
-    public static final ResourceKey<ConfiguredFeature<?, ?>> EROSION_OAK = registerResourceKey(Registries.CONFIGURED_FEATURE, "erosion_oak");
-    public static final ResourceKey<ConfiguredFeature<?, ?>> MEGA_EROSION_OAK = registerResourceKey(Registries.CONFIGURED_FEATURE, "mega_erosion_oak");
     public static final ResourceKey<ConfiguredFeature<?, ?>> BLIGHTED_OAK = registerResourceKey(Registries.CONFIGURED_FEATURE, "blighted_oak");
     public static final ResourceKey<ConfiguredFeature<?, ?>> DARKENED_COAL_ORE = registerResourceKey(Registries.CONFIGURED_FEATURE, "darkened_coal_ore");
     public static final ResourceKey<ConfiguredFeature<?, ?>> DARKENED_IRON_ORE = registerResourceKey(Registries.CONFIGURED_FEATURE, "darkened_iron_ore");
     public static final ResourceKey<ConfiguredFeature<?, ?>> VOIDSHARD = registerResourceKey(Registries.CONFIGURED_FEATURE, "voidshard");
 
-    public static final ResourceKey<PlacedFeature> EROSION_OAK_CHECKED = registerResourceKey(Registries.PLACED_FEATURE, "erosion_oak_checked");
-    public static final ResourceKey<PlacedFeature> MEGA_EROSION_OAK_CHECKED = registerResourceKey(Registries.PLACED_FEATURE, "mega_erosion_oak_checked");
     public static final ResourceKey<PlacedFeature> SPARSE_BLIGHTED_OAK_CHECKED = registerResourceKey(Registries.PLACED_FEATURE, "blighted_oak_checked");
     public static final ResourceKey<PlacedFeature> DARKENED_COAL_ORE_CHECKED = registerResourceKey(Registries.PLACED_FEATURE, "darkened_coal_ore_checked");
     public static final ResourceKey<PlacedFeature> DARKENED_IRON_ORE_CHECKED = registerResourceKey(Registries.PLACED_FEATURE, "darkened_iron_ore_checked");

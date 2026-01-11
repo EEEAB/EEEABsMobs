@@ -58,6 +58,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         //材料
         simpleItem(ItemInit.HEART_OF_PAGAN);
         simpleItem(ItemInit.ANCIENT_DRIVE_CRYSTAL);
+        simpleItem(ItemInit.BOUNDARY_BRICK);
         simpleItem(ItemInit.IMMORTAL_INGOT);
         simpleItem(ItemInit.GHOST_STEEL_INGOT);
         handheldItem(ItemInit.IMMORTAL_BONE);
@@ -72,19 +73,14 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ItemInit.GHOST_WARRIOR_LEGGINGS);
         simpleItem(ItemInit.GHOST_WARRIOR_BOOTS);
         //方块
-        simpleBlockItemBlockTexture(BlockInit.BONE_BUSH);
-        simpleBlockItemBlockTexture(BlockInit.EROSION_OAK_SAPLING);
-        simpleBlockItem(BlockInit.EROSION_OAK_BERRY);
         simpleBlockItemBlockTexture(BlockInit.BLIGHTED_OAK_SAPLING);
-        fenceItem(BlockInit.EROSION_OAK_FENCE, BlockInit.EROSION_OAK_PLANKS);
-        simpleBlockItem(BlockInit.EROSION_OAK_DOOR);
-        trapdoorItem(BlockInit.EROSION_OAK_TRAPDOOR);
-        buttonItem(BlockInit.EROSION_OAK_BUTTON, BlockInit.EROSION_OAK_PLANKS);
         fenceItem(BlockInit.BLIGHTED_OAK_FENCE, BlockInit.BLIGHTED_OAK_PLANKS);
         simpleBlockItem(BlockInit.BLIGHTED_OAK_DOOR);
         trapdoorItem(BlockInit.BLIGHTED_OAK_TRAPDOOR);
         buttonItem(BlockInit.BLIGHTED_OAK_BUTTON, BlockInit.BLIGHTED_OAK_PLANKS);
         buttonItem(BlockInit.BLIGHTED_STONE_BUTTON, BlockInit.BLIGHTED_STONE);
+        wallItem(BlockInit.ROUGH_BOUNDARY_BRICK_WALL, BlockInit.ROUGH_BOUNDARY_BRICKS);
+        wallItem(BlockInit.POLISHED_BOUNDARY_BRICK_WALL, BlockInit.POLISHED_BOUNDARY_BRICKS);
         wallItem(BlockInit.BLIGHTED_COBBLESTONE_WALL, BlockInit.BLIGHTED_COBBLESTONE);
         wallItem(BlockInit.VOIDSHARD_WALL, BlockInit.VOIDSHARD);
         wallItem(BlockInit.POLISHED_DARK_EROSION_ROCK_WALL, BlockInit.POLISHED_DARK_EROSION_ROCK);

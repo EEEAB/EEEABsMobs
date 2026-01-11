@@ -1,8 +1,8 @@
 {
   "parent": "minecraft:block/orientable",
   "textures": {
-    "front": "eeeabsmobs:block/redstone_poison_dart_trap_front_off",
+    "front": "eeeabsmobs:block/redstone_poison_dart_trap_off",
     "side": "eeeabsmobs:block/redstone_poison_dart_trap_side",
-    "top": "eeeabsmobs:block/redstone_poison_dart_trap_side"
+    "top": "eeeabsmobs:block/redstone_poison_dart_trap_top"
   }
 }

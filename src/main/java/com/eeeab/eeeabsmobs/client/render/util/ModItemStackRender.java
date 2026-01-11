@@ -63,8 +63,8 @@ public class ModItemStackRender extends BlockEntityWithoutLevelRenderer {
             matrixStackIn.popPose();
         } else if (itemStackIn.is(ItemInit.DEMOLISHER.get())) {
             matrixStackIn.pushPose();
-            matrixStackIn.translate(0.5F, 0.85F, 0.5F);
-            matrixStackIn.scale(-0.5F, -0.45F, 0.5F);
+            matrixStackIn.translate(0.5F, 1F, 0.5F);
+            matrixStackIn.scale(-0.5F, -0.5F, 0.5F);
             float ageInTicks = Minecraft.getInstance().player == null ? 0F : Minecraft.getInstance().player.tickCount + partialTick;
             THE_DEMOLISHER.setupAnim(itemStackIn, ageInTicks);
             VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(bufferIn, RenderType.armorCutoutNoCull(DEMOLISHER_TEX), false, itemStackIn.hasFoil());

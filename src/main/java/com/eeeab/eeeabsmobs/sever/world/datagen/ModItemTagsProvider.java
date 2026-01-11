@@ -27,17 +27,7 @@ public class ModItemTagsProvider extends ItemTagsProvider {
                 ItemInit.GUARDIANS_MUSIC_DISC.get(),
                 ItemInit.THE_ARMY_OF_MINOTAUR_MUSIC_DISC.get()
         );
-        tag(ModTagKey.DEMOLISHER_SUPPORTED_PROJECTILES)
-                .addTag(Tags.Items.STONE)
-                .add(Items.COBBLESTONE)
-                .add(Items.MOSSY_COBBLESTONE)
-                .add(Items.COBBLED_DEEPSLATE)
-                .add(Items.BLACKSTONE)
-                .remove(Items.INFESTED_STONE);
         tag(ItemTags.LOGS_THAT_BURN).add(
-                BlockInit.EROSION_OAK_LOG.get().asItem(),
-                BlockInit.STRIPPED_EROSION_OAK_LOG.get().asItem(),
-                BlockInit.STRIPPED_EROSION_OAK_WOOD.get().asItem(),
                 BlockInit.BLIGHTED_OAK_LOG.get().asItem(),
                 BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get().asItem(),
                 BlockInit.STRIPPED_BLIGHTED_OAK_WOOD.get().asItem()

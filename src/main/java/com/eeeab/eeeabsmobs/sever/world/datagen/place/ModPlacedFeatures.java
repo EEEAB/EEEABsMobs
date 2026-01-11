@@ -18,12 +18,12 @@ public class ModPlacedFeatures {
     public static void bootstrap(BootstapContext<PlacedFeature> context) {
         var configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
         /* Tree Placed Features */
-        register(context, ModResourceKey.EROSION_OAK_CHECKED, configuredFeatures.getOrThrow(ModResourceKey.EROSION_OAK),
-                VegetationPlacements.treePlacement(PlacementUtils.countExtra(1, 0.05f, 1),
-                        BlockInit.EROSION_OAK_SAPLING.get()));
-        register(context, ModResourceKey.MEGA_EROSION_OAK_CHECKED, configuredFeatures.getOrThrow(ModResourceKey.MEGA_EROSION_OAK),
-                VegetationPlacements.treePlacement(PlacementUtils.countExtra(1, 0.025f, 1),
-                        BlockInit.EROSION_OAK_SAPLING.get()));
+        //register(context, ModResourceKey.EROSION_OAK_CHECKED, configuredFeatures.getOrThrow(ModResourceKey.EROSION_OAK),
+        //        VegetationPlacements.treePlacement(PlacementUtils.countExtra(1, 0.05f, 1),
+        //                BlockInit.EROSION_OAK_SAPLING.get()));
+        //register(context, ModResourceKey.MEGA_EROSION_OAK_CHECKED, configuredFeatures.getOrThrow(ModResourceKey.MEGA_EROSION_OAK),
+        //        VegetationPlacements.treePlacement(PlacementUtils.countExtra(1, 0.025f, 1),
+        //                BlockInit.EROSION_OAK_SAPLING.get()));
         register(context, ModResourceKey.SPARSE_BLIGHTED_OAK_CHECKED,
                 configuredFeatures.getOrThrow(ModResourceKey.BLIGHTED_OAK),
                 VegetationPlacements.treePlacement(PlacementUtils.countExtra(0, 0.125f, 1), BlockInit.BLIGHTED_OAK_SAPLING.get()));

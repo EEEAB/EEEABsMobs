@@ -23,21 +23,38 @@ public class CreativeTabInit {
                 /* Guling Structure Series */
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.DUNGEON_BRICK));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.IRON_GRATE));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.ANCIENT_BOUNDARY_STONE));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.BOUNDARY_LAMP));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.ANCIENT_BOUNDARY_STONE));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.POLISHED_ROUGH_BOUNDARY_STONE));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.POLISHED_ROUGH_BOUNDARY_STONE_STAIRS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.POLISHED_ROUGH_BOUNDARY_STONE_SLAB));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.ROUGH_BOUNDARY_BRICKS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.ROUGH_BOUNDARY_BRICK_STAIRS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.ROUGH_BOUNDARY_BRICK_SLAB));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.ROUGH_BOUNDARY_BRICK_WALL));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.CRACKED_ROUGH_BOUNDARY_BRICKS));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.CHISELED_ROUGH_BOUNDARY_BRICKS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.ROUGH_BOUNDARY_STONE_PILLAR));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.STEPPING_SHOCK_TRAP));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.REDSTONE_POISON_DART_TRAP));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.POLISHED_BOUNDARY_STONE));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.POLISHED_BOUNDARY_STONE_STAIRS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.POLISHED_BOUNDARY_STONE_SLAB));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.POLISHED_BOUNDARY_BRICKS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.POLISHED_BOUNDARY_BRICK_STAIRS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.POLISHED_BOUNDARY_BRICK_SLAB));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.POLISHED_BOUNDARY_BRICK_WALL));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.CRACKED_POLISHED_BOUNDARY_BRICKS));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.CHISELED_POLISHED_BOUNDARY_BRICKS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.POLISHED_BOUNDARY_STONE_PILLAR));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.STEPPING_FLAME_TRAP));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.UNCARVED_BOUNDARY_STONE));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.RUNIC_BOUNDARY_STONE));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_DEEPSLATE_BRICKS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.BOUNDARY_CORE));
 
                 /* Misc Item */
                 entries.accept(ItemInit.HEART_OF_PAGAN.get());
+                entries.accept(ItemInit.BOUNDARY_BRICK.get());
                 entries.accept(ItemInit.ANCIENT_DRIVE_CRYSTAL.get());
                 entries.accept(ItemInit.BLOODY_ALTAR_EYE.get());
                 entries.accept(ItemInit.CORE_BASTION_EYE.get());
@@ -65,25 +82,7 @@ public class CreativeTabInit {
             .icon(() -> ItemInit.LOGO_ITEM.get().getDefaultInstance())
             .displayItems((enabledFeatures, entries) -> {
                 /* Void Crack Series */
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.BONE_BUSH));
-
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_OAK_SAPLING));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_OAK_BERRY));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_OAK_LOG));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_OAK_WOOD));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_OAK_LEAVES));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.STRIPPED_EROSION_OAK_LOG));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.STRIPPED_EROSION_OAK_WOOD));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_OAK_PLANKS));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_OAK_STAIRS));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_OAK_SLAB));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_OAK_FENCE));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_OAK_FENCE_GATE));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_OAK_DOOR));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_OAK_TRAPDOOR));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_OAK_PRESSURE_PLATE));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_OAK_BUTTON));
-
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_DEEPSLATE_BRICKS));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.BLIGHTED_OAK_SAPLING));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.BLIGHTED_OAK_LOG));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.BLIGHTED_OAK_WOOD));

@@ -2,7 +2,6 @@ package com.eeeab.eeeabsmobs.sever.world.datagen;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.block.BlockGalacticAlphabet;
-import com.eeeab.eeeabsmobs.sever.block.BlockMirroredFlower;
 import com.eeeab.eeeabsmobs.sever.block.properties.SGACharacter;
 import com.eeeab.eeeabsmobs.sever.init.BlockInit;
 import net.minecraft.data.PackOutput;
@@ -15,6 +14,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,20 +28,23 @@ public class ModBlockStateProvider extends BlockStateProvider {
     protected void registerStatesAndModels() {
         cubeAll(BlockInit.DUNGEON_BRICK);
         cubeAll(BlockInit.ANCIENT_BOUNDARY_STONE);
+        cubeAll(BlockInit.POLISHED_ROUGH_BOUNDARY_STONE);
         cubeAll(BlockInit.ROUGH_BOUNDARY_BRICKS);
         cubeAll(BlockInit.CRACKED_ROUGH_BOUNDARY_BRICKS);
         cubeAll(BlockInit.CHISELED_ROUGH_BOUNDARY_BRICKS);
+        cubeAll(BlockInit.STEPPING_SHOCK_TRAP);
+        cubeAll(BlockInit.POLISHED_BOUNDARY_STONE);
         cubeAll(BlockInit.POLISHED_BOUNDARY_BRICKS);
         cubeAll(BlockInit.CRACKED_POLISHED_BOUNDARY_BRICKS);
         cubeAll(BlockInit.CHISELED_POLISHED_BOUNDARY_BRICKS);
         cubeAll(BlockInit.UNCARVED_BOUNDARY_STONE);
+        cubeAll(BlockInit.BOUNDARY_CORE);
         cubeAll(BlockInit.IMMORTAL_BLOCK);
         cubeAll(BlockInit.GHOST_STEEL_BLOCK);
         cubeAll(BlockInit.CUT_GHOST_STEEL_BLOCK);
         cubeAll(BlockInit.EROSION_DEEPSLATE_BRICKS);
         cubeAll(BlockInit.BOUNDARY_LAMP);
         cubeAll(BlockInit.EROSION_ROCK_BRICKS);
-        cubeAll(BlockInit.EROSION_OAK_PLANKS);
         cubeAll(BlockInit.BLIGHTED_OAK_PLANKS);
         cubeAll(BlockInit.ERODED_SOIL);
         cubeAll(BlockInit.DARKENED_COAL_ORE);
@@ -60,36 +63,36 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
         alphabets((BlockGalacticAlphabet) BlockInit.RUNIC_BOUNDARY_STONE.get());
 
-        variantBlock(BlockInit.STEPPING_POISON_TRAP, BlockStateProperties.OPEN, "_on", "_off");
+        variantCubeBottomTop(BlockInit.STEPPING_FLAME_TRAP.get(), BlockInit.POLISHED_BOUNDARY_STONE.get(), BlockStateProperties.OPEN, "_on", "_off");
+        simpleBlockItem(BlockInit.STEPPING_FLAME_TRAP.get(), new ModelFile.UncheckedModelFile(blockTexture(BlockInit.STEPPING_FLAME_TRAP.get(), "_off")));
+        variantCubeBottomTop(BlockInit.STEPPING_POISON_TRAP.get(), BlockInit.DARK_EROSION_ROCK_BRICKS.get(), BlockStateProperties.OPEN, "_on", "_off");
         simpleBlockItem(BlockInit.STEPPING_POISON_TRAP.get(), new ModelFile.UncheckedModelFile(blockTexture(BlockInit.STEPPING_POISON_TRAP.get(), "_off")));
-        variantBlock(BlockInit.STEPPING_SKELETON_TRAP, BlockStateProperties.OPEN, "_on", "_off");
+        variantCubeBottomTop(BlockInit.STEPPING_SKELETON_TRAP.get(), null, BlockStateProperties.OPEN, "_on", "_off");
         simpleBlockItem(BlockInit.STEPPING_SKELETON_TRAP.get(), new ModelFile.UncheckedModelFile(blockTexture(BlockInit.STEPPING_SKELETON_TRAP.get(), "_off")));
 
+        axisBlock(BlockInit.ROUGH_BOUNDARY_STONE_PILLAR, blockTexture(BlockInit.ROUGH_BOUNDARY_STONE_PILLAR.get()), extend(blockTexture(BlockInit.ROUGH_BOUNDARY_STONE_PILLAR.get()), "_top"));
+        axisBlock(BlockInit.POLISHED_BOUNDARY_STONE_PILLAR, blockTexture(BlockInit.POLISHED_BOUNDARY_STONE_PILLAR.get()), extend(blockTexture(BlockInit.POLISHED_BOUNDARY_STONE_PILLAR.get()), "_top"));
         axisBlock(BlockInit.DARK_EROSION_ROCK_PILLAR, blockTexture(BlockInit.DARK_EROSION_ROCK_PILLAR.get()), extend(blockTexture(BlockInit.DARK_EROSION_ROCK_PILLAR.get()), "_top"));
-        logBlock(BlockInit.EROSION_OAK_LOG);
-        axisBlock(BlockInit.EROSION_OAK_WOOD, blockTexture(BlockInit.EROSION_OAK_LOG.get()), blockTexture(BlockInit.EROSION_OAK_LOG.get()));
-        axisBlock(BlockInit.STRIPPED_EROSION_OAK_LOG, blockTexture(BlockInit.STRIPPED_EROSION_OAK_LOG.get()), extend(blockTexture(BlockInit.STRIPPED_EROSION_OAK_LOG.get()), "_top"));
-        axisBlock(BlockInit.STRIPPED_EROSION_OAK_WOOD, blockTexture(BlockInit.STRIPPED_EROSION_OAK_LOG.get()), blockTexture(BlockInit.STRIPPED_EROSION_OAK_LOG.get()));
+
         logBlock(BlockInit.BLIGHTED_OAK_LOG);
         axisBlock(BlockInit.BLIGHTED_OAK_WOOD, blockTexture(BlockInit.BLIGHTED_OAK_LOG.get()), blockTexture(BlockInit.BLIGHTED_OAK_LOG.get()));
         axisBlock(BlockInit.STRIPPED_BLIGHTED_OAK_LOG, blockTexture(BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get()), extend(blockTexture(BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get()), "_top"));
         axisBlock(BlockInit.STRIPPED_BLIGHTED_OAK_WOOD, blockTexture(BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get()), blockTexture(BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get()));
 
-        stairsBlock((StairBlock) BlockInit.EROSION_OAK_STAIRS.get(), blockTexture(BlockInit.EROSION_OAK_PLANKS.get()));
-        blockItem(BlockInit.EROSION_OAK_STAIRS);
-        slabBlock((SlabBlock) BlockInit.EROSION_OAK_SLAB.get(), blockTexture(BlockInit.EROSION_OAK_PLANKS.get()), blockTexture(BlockInit.EROSION_OAK_PLANKS.get()));
-        blockItem(BlockInit.EROSION_OAK_SLAB);
-        pressurePlateBlock((PressurePlateBlock) BlockInit.EROSION_OAK_PRESSURE_PLATE.get(), blockTexture(BlockInit.EROSION_OAK_PLANKS.get()));
-        blockItem(BlockInit.EROSION_OAK_PRESSURE_PLATE);
-        buttonBlock((ButtonBlock) BlockInit.EROSION_OAK_BUTTON.get(), blockTexture(BlockInit.EROSION_OAK_PLANKS.get()));
-        fenceBlock((FenceBlock) BlockInit.EROSION_OAK_FENCE.get(), blockTexture(BlockInit.EROSION_OAK_PLANKS.get()));
-        fenceGateBlock((FenceGateBlock) BlockInit.EROSION_OAK_FENCE_GATE.get(), blockTexture(BlockInit.EROSION_OAK_PLANKS.get()));
-        blockItem(BlockInit.EROSION_OAK_FENCE_GATE);
+        stairsBlock(BlockInit.POLISHED_ROUGH_BOUNDARY_STONE_STAIRS, blockTexture(BlockInit.POLISHED_ROUGH_BOUNDARY_STONE.get()));
+        slabBlock(BlockInit.POLISHED_ROUGH_BOUNDARY_STONE_SLAB, blockTexture(BlockInit.POLISHED_ROUGH_BOUNDARY_STONE.get()), blockTexture(BlockInit.POLISHED_ROUGH_BOUNDARY_STONE.get()));
+        stairsBlock(BlockInit.ROUGH_BOUNDARY_BRICK_STAIRS, blockTexture(BlockInit.ROUGH_BOUNDARY_BRICKS.get()));
+        slabBlock(BlockInit.ROUGH_BOUNDARY_BRICK_SLAB, blockTexture(BlockInit.ROUGH_BOUNDARY_BRICKS.get()), blockTexture(BlockInit.ROUGH_BOUNDARY_BRICKS.get()));
+        wallBlock(BlockInit.ROUGH_BOUNDARY_BRICK_WALL, blockTexture(BlockInit.ROUGH_BOUNDARY_BRICKS.get()));
 
-        stairsBlock((StairBlock) BlockInit.BLIGHTED_OAK_STAIRS.get(), blockTexture(BlockInit.BLIGHTED_OAK_PLANKS.get()));
-        blockItem(BlockInit.BLIGHTED_OAK_STAIRS);
-        slabBlock((SlabBlock) BlockInit.BLIGHTED_OAK_SLAB.get(), blockTexture(BlockInit.BLIGHTED_OAK_PLANKS.get()), blockTexture(BlockInit.BLIGHTED_OAK_PLANKS.get()));
-        blockItem(BlockInit.BLIGHTED_OAK_SLAB);
+        stairsBlock(BlockInit.POLISHED_BOUNDARY_STONE_STAIRS, blockTexture(BlockInit.POLISHED_BOUNDARY_STONE.get()));
+        slabBlock(BlockInit.POLISHED_BOUNDARY_STONE_SLAB, blockTexture(BlockInit.POLISHED_BOUNDARY_STONE.get()), blockTexture(BlockInit.POLISHED_BOUNDARY_STONE.get()));
+        stairsBlock(BlockInit.POLISHED_BOUNDARY_BRICK_STAIRS, blockTexture(BlockInit.POLISHED_BOUNDARY_BRICKS.get()));
+        slabBlock(BlockInit.POLISHED_BOUNDARY_BRICK_SLAB, blockTexture(BlockInit.POLISHED_BOUNDARY_BRICKS.get()), blockTexture(BlockInit.POLISHED_BOUNDARY_BRICKS.get()));
+        wallBlock(BlockInit.POLISHED_BOUNDARY_BRICK_WALL, blockTexture(BlockInit.POLISHED_BOUNDARY_BRICKS.get()));
+
+        stairsBlock(BlockInit.BLIGHTED_OAK_STAIRS, blockTexture(BlockInit.BLIGHTED_OAK_PLANKS.get()));
+        slabBlock(BlockInit.BLIGHTED_OAK_SLAB, blockTexture(BlockInit.BLIGHTED_OAK_PLANKS.get()), blockTexture(BlockInit.BLIGHTED_OAK_PLANKS.get()));
         pressurePlateBlock((PressurePlateBlock) BlockInit.BLIGHTED_OAK_PRESSURE_PLATE.get(), blockTexture(BlockInit.BLIGHTED_OAK_PLANKS.get()));
         blockItem(BlockInit.BLIGHTED_OAK_PRESSURE_PLATE);
         buttonBlock((ButtonBlock) BlockInit.BLIGHTED_OAK_BUTTON.get(), blockTexture(BlockInit.BLIGHTED_OAK_PLANKS.get()));
@@ -97,65 +100,55 @@ public class ModBlockStateProvider extends BlockStateProvider {
         fenceGateBlock((FenceGateBlock) BlockInit.BLIGHTED_OAK_FENCE_GATE.get(), blockTexture(BlockInit.BLIGHTED_OAK_PLANKS.get()));
         blockItem(BlockInit.BLIGHTED_OAK_FENCE_GATE);
 
-        stairsBlock((StairBlock) BlockInit.BLIGHTED_STONE_STAIRS.get(), blockTexture(BlockInit.BLIGHTED_STONE.get()));
-        blockItem(BlockInit.BLIGHTED_STONE_STAIRS);
-        slabBlock((SlabBlock) BlockInit.BLIGHTED_STONE_SLAB.get(), blockTexture(BlockInit.BLIGHTED_STONE.get()), blockTexture(BlockInit.BLIGHTED_STONE.get()));
-        blockItem(BlockInit.BLIGHTED_STONE_SLAB);
+        stairsBlock(BlockInit.BLIGHTED_STONE_STAIRS, blockTexture(BlockInit.BLIGHTED_STONE.get()));
+        slabBlock(BlockInit.BLIGHTED_STONE_SLAB, blockTexture(BlockInit.BLIGHTED_STONE.get()), blockTexture(BlockInit.BLIGHTED_STONE.get()));
         pressurePlateBlock((PressurePlateBlock) BlockInit.BLIGHTED_STONE_PRESSURE_PLATE.get(), blockTexture(BlockInit.BLIGHTED_STONE.get()));
         blockItem(BlockInit.BLIGHTED_STONE_PRESSURE_PLATE);
         buttonBlock((ButtonBlock) BlockInit.BLIGHTED_STONE_BUTTON.get(), blockTexture(BlockInit.BLIGHTED_STONE.get()));
-        stairsBlock((StairBlock) BlockInit.BLIGHTED_COBBLESTONE_STAIRS.get(), blockTexture(BlockInit.BLIGHTED_COBBLESTONE.get()));
-        blockItem(BlockInit.BLIGHTED_COBBLESTONE_STAIRS);
-        slabBlock((SlabBlock) BlockInit.BLIGHTED_COBBLESTONE_SLAB.get(), blockTexture(BlockInit.BLIGHTED_COBBLESTONE.get()), blockTexture(BlockInit.BLIGHTED_COBBLESTONE.get()));
-        blockItem(BlockInit.BLIGHTED_COBBLESTONE_SLAB);
-        wallBlock((WallBlock) BlockInit.BLIGHTED_COBBLESTONE_WALL.get(), blockTexture(BlockInit.BLIGHTED_COBBLESTONE.get()));
-        stairsBlock((StairBlock) BlockInit.POLISHED_DARK_EROSION_ROCK_STAIRS.get(), blockTexture(BlockInit.POLISHED_DARK_EROSION_ROCK.get()));
-        blockItem(BlockInit.POLISHED_DARK_EROSION_ROCK_STAIRS);
-        slabBlock((SlabBlock) BlockInit.POLISHED_DARK_EROSION_ROCK_SLAB.get(), blockTexture(BlockInit.POLISHED_DARK_EROSION_ROCK.get()), blockTexture(BlockInit.POLISHED_DARK_EROSION_ROCK.get()));
-        blockItem(BlockInit.POLISHED_DARK_EROSION_ROCK_SLAB);
-        wallBlock((WallBlock) BlockInit.POLISHED_DARK_EROSION_ROCK_WALL.get(), blockTexture(BlockInit.POLISHED_DARK_EROSION_ROCK.get()));
-        stairsBlock((StairBlock) BlockInit.DARK_EROSION_ROCK_BRICKS_STAIRS.get(), blockTexture(BlockInit.DARK_EROSION_ROCK_BRICKS.get()));
-        blockItem(BlockInit.DARK_EROSION_ROCK_BRICKS_STAIRS);
-        slabBlock((SlabBlock) BlockInit.DARK_EROSION_ROCK_BRICKS_SLAB.get(), blockTexture(BlockInit.DARK_EROSION_ROCK_BRICKS.get()), blockTexture(BlockInit.DARK_EROSION_ROCK_BRICKS.get()));
-        blockItem(BlockInit.DARK_EROSION_ROCK_BRICKS_SLAB);
-        wallBlock((WallBlock) BlockInit.DARK_EROSION_ROCK_BRICKS_WALL.get(), blockTexture(BlockInit.DARK_EROSION_ROCK_BRICKS.get()));
-        slabBlock((SlabBlock) BlockInit.VOIDSHARD_SLAB.get(), blockTexture(BlockInit.VOIDSHARD.get()), blockTexture(BlockInit.VOIDSHARD.get()));
-        blockItem(BlockInit.VOIDSHARD_SLAB);
-        stairsBlock((StairBlock) BlockInit.VOIDSHARD_STAIRS.get(), blockTexture(BlockInit.VOIDSHARD.get()));
-        blockItem(BlockInit.VOIDSHARD_STAIRS);
-        wallBlock((WallBlock) BlockInit.VOIDSHARD_WALL.get(), blockTexture(BlockInit.VOIDSHARD.get()));
-        stairsBlock((StairBlock) BlockInit.POLISHED_VOIDSHARD_STAIRS.get(), blockTexture(BlockInit.POLISHED_VOIDSHARD.get()));
-        blockItem(BlockInit.POLISHED_VOIDSHARD_STAIRS);
-        slabBlock((SlabBlock) BlockInit.POLISHED_VOIDSHARD_SLAB.get(), blockTexture(BlockInit.POLISHED_VOIDSHARD.get()), blockTexture(BlockInit.POLISHED_VOIDSHARD.get()));
-        blockItem(BlockInit.POLISHED_VOIDSHARD_SLAB);
-        stairsBlock((StairBlock) BlockInit.CUT_GHOST_STEEL_BLOCK_STAIRS.get(), blockTexture(BlockInit.CUT_GHOST_STEEL_BLOCK.get()));
-        blockItem(BlockInit.CUT_GHOST_STEEL_BLOCK_STAIRS);
-        slabBlock((SlabBlock) BlockInit.CUT_GHOST_STEEL_BLOCK_SLAB.get(), blockTexture(BlockInit.CUT_GHOST_STEEL_BLOCK.get()), blockTexture(BlockInit.CUT_GHOST_STEEL_BLOCK.get()));
-        blockItem(BlockInit.CUT_GHOST_STEEL_BLOCK_SLAB);
+        stairsBlock(BlockInit.BLIGHTED_COBBLESTONE_STAIRS, blockTexture(BlockInit.BLIGHTED_COBBLESTONE.get()));
+        slabBlock(BlockInit.BLIGHTED_COBBLESTONE_SLAB, blockTexture(BlockInit.BLIGHTED_COBBLESTONE.get()), blockTexture(BlockInit.BLIGHTED_COBBLESTONE.get()));
+        wallBlock(BlockInit.BLIGHTED_COBBLESTONE_WALL, blockTexture(BlockInit.BLIGHTED_COBBLESTONE.get()));
+        stairsBlock(BlockInit.POLISHED_DARK_EROSION_ROCK_STAIRS, blockTexture(BlockInit.POLISHED_DARK_EROSION_ROCK.get()));
+        slabBlock(BlockInit.POLISHED_DARK_EROSION_ROCK_SLAB, blockTexture(BlockInit.POLISHED_DARK_EROSION_ROCK.get()), blockTexture(BlockInit.POLISHED_DARK_EROSION_ROCK.get()));
+        wallBlock(BlockInit.POLISHED_DARK_EROSION_ROCK_WALL, blockTexture(BlockInit.POLISHED_DARK_EROSION_ROCK.get()));
+        stairsBlock(BlockInit.DARK_EROSION_ROCK_BRICKS_STAIRS, blockTexture(BlockInit.DARK_EROSION_ROCK_BRICKS.get()));
+        slabBlock(BlockInit.DARK_EROSION_ROCK_BRICKS_SLAB, blockTexture(BlockInit.DARK_EROSION_ROCK_BRICKS.get()), blockTexture(BlockInit.DARK_EROSION_ROCK_BRICKS.get()));
+        wallBlock(BlockInit.DARK_EROSION_ROCK_BRICKS_WALL, blockTexture(BlockInit.DARK_EROSION_ROCK_BRICKS.get()));
+        slabBlock(BlockInit.VOIDSHARD_SLAB, blockTexture(BlockInit.VOIDSHARD.get()), blockTexture(BlockInit.VOIDSHARD.get()));
+        stairsBlock(BlockInit.VOIDSHARD_STAIRS, blockTexture(BlockInit.VOIDSHARD.get()));
+        wallBlock(BlockInit.VOIDSHARD_WALL, blockTexture(BlockInit.VOIDSHARD.get()));
+        stairsBlock(BlockInit.POLISHED_VOIDSHARD_STAIRS, blockTexture(BlockInit.POLISHED_VOIDSHARD.get()));
+        slabBlock(BlockInit.POLISHED_VOIDSHARD_SLAB, blockTexture(BlockInit.POLISHED_VOIDSHARD.get()), blockTexture(BlockInit.POLISHED_VOIDSHARD.get()));
+        stairsBlock(BlockInit.CUT_GHOST_STEEL_BLOCK_STAIRS, blockTexture(BlockInit.CUT_GHOST_STEEL_BLOCK.get()));
+        slabBlock(BlockInit.CUT_GHOST_STEEL_BLOCK_SLAB, blockTexture(BlockInit.CUT_GHOST_STEEL_BLOCK.get()), blockTexture(BlockInit.CUT_GHOST_STEEL_BLOCK.get()));
 
-        doorBlock((DoorBlock) BlockInit.EROSION_OAK_DOOR.get(), extend(blockTexture(BlockInit.EROSION_OAK_DOOR.get()), "_bottom"), extend(blockTexture(BlockInit.EROSION_OAK_DOOR.get()), "_top"));
         doorBlockWithRenderType((DoorBlock) BlockInit.BLIGHTED_OAK_DOOR.get(), extend(blockTexture(BlockInit.BLIGHTED_OAK_DOOR.get()), "_bottom"), extend(blockTexture(BlockInit.BLIGHTED_OAK_DOOR.get()), "_top"), "cutout");
-        trapdoorBlock((TrapDoorBlock) BlockInit.EROSION_OAK_TRAPDOOR.get(), blockTexture(BlockInit.EROSION_OAK_TRAPDOOR.get()), true);
         trapdoorBlockWithRenderType((TrapDoorBlock) BlockInit.BLIGHTED_OAK_TRAPDOOR.get(), blockTexture(BlockInit.BLIGHTED_OAK_TRAPDOOR.get()), true, "cutout");
-        leavesBlock(BlockInit.EROSION_OAK_LEAVES);
-        saplingBlock(BlockInit.EROSION_OAK_SAPLING);
-        saplingBlock(BlockInit.EROSION_OAK_BERRY);
         saplingBlock(BlockInit.BLIGHTED_OAK_SAPLING);
-
-        mirrored(BlockInit.BONE_BUSH, "cutout");
-        ResourceLocation boneBushRL = blockTexture(BlockInit.BONE_BUSH.get());
-        simpleBlockItem(BlockInit.BONE_BUSH.get(), models().cross(boneBushRL.getPath(), boneBushRL));
-        simpleBlockWithItem(BlockInit.POTTED_BONE_BUSH.get(), models().singleTexture("potted_bone_bush", new ResourceLocation("flower_pot_cross"), "plant", boneBushRL).renderType("cutout"));
     }
 
-    public void logBlock(RegistryObject<Block> rob) {
+    private void logBlock(RegistryObject<Block> rob) {
         super.logBlock((RotatedPillarBlock) rob.get());
         blockItem(rob);
     }
 
-    public void axisBlock(RegistryObject<Block> rob, ResourceLocation side, ResourceLocation end) {
+    private void axisBlock(RegistryObject<Block> rob, ResourceLocation side, ResourceLocation end) {
         super.axisBlock((RotatedPillarBlock) rob.get(), side, end);
         blockItem(rob);
+    }
+
+    private void stairsBlock(RegistryObject<Block> rob, ResourceLocation texture) {
+        super.stairsBlock((StairBlock) rob.get(), texture);
+        blockItem(rob);
+    }
+
+    private void slabBlock(RegistryObject<Block> rob, ResourceLocation doubleslab, ResourceLocation texture) {
+        super.slabBlock((SlabBlock) rob.get(), doubleslab, texture);
+        blockItem(rob);
+    }
+
+    private void wallBlock(RegistryObject<Block> rob, ResourceLocation texture) {
+        super.wallBlock((WallBlock) rob.get(), texture);
     }
 
     private ResourceLocation extend(ResourceLocation rl, String suffix) {
@@ -196,32 +189,26 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockWithItem(block, models().cubeAll(name.getPath(), blockTexture(block)).renderType(renderType));
     }
 
-    /**
-     * 镜像纹理(需单独提供镜像贴图)
-     */
-    private void mirrored(RegistryObject<Block> rob, String renderType) {
-        getVariantBuilder(rob.get())
-                .partialState().with(BlockMirroredFlower.MIRRORED, false)
-                .modelForState().modelFile(models().cross(blockTexture(rob.get()).getPath(), blockTexture(rob.get())).renderType(renderType)).addModel()
-                .partialState().with(BlockMirroredFlower.MIRRORED, true)
-                .modelForState().modelFile(models().cross(blockTexture(rob.get()).getPath() + "_mirrored", blockTexture(rob.get(), "_mirrored")).renderType(renderType)).addModel();
-    }
-
-    private void variantBlock(RegistryObject<Block> block, BooleanProperty property, String trueSuffix, String falseSuffix) {
-        Block targetBlock = block.get();
-        ResourceLocation baseTexture = blockTexture(targetBlock);
+    private void variantCubeBottomTop(Block top, @Nullable Block other, BooleanProperty property, String trueSuffix, String falseSuffix) {
+        ResourceLocation baseTexture = blockTexture(top);
         String basePath = baseTexture.getPath();
-        VariantBlockStateBuilder builder = getVariantBuilder(targetBlock);
+        VariantBlockStateBuilder builder = getVariantBuilder(top);
         builder.partialState().with(property, false).modelForState()
-                .modelFile(models().cubeAll(
-                        basePath + falseSuffix,
-                        blockTexture(targetBlock, falseSuffix)))
+                .modelFile(getModel(falseSuffix, basePath, top, other))
                 .addModel();
         builder.partialState().with(property, true).modelForState()
-                .modelFile(models().cubeAll(
-                        basePath + trueSuffix,
-                        blockTexture(targetBlock, trueSuffix)))
+                .modelFile(getModel(trueSuffix, basePath, top, other))
                 .addModel();
+    }
+
+    private BlockModelBuilder getModel(String suffix, String basePath, Block b1, Block b2) {
+        boolean reference = b2 == null;
+        Block b0 = reference ? b1 : b2;
+        return models().cubeBottomTop(
+                basePath + suffix,
+                blockTexture(b0, reference ? "_side" : ""),
+                blockTexture(b0, reference ? "_bottom" : ""),
+                blockTexture(b1, reference ? "_top" + suffix : suffix));
     }
 
     /**

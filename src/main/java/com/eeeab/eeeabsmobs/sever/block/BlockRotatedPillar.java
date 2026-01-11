@@ -60,8 +60,6 @@ public class BlockRotatedPillar extends RotatedPillarBlock {
         if (ToolActions.AXE_STRIP == toolAction) {
             if (STRIPPABLES == null) {
                 STRIPPABLES = new ImmutableMap.Builder<Block, Block>()
-                        .put(BlockInit.EROSION_OAK_LOG.get(), BlockInit.STRIPPED_EROSION_OAK_LOG.get())
-                        .put(BlockInit.EROSION_OAK_WOOD.get(), BlockInit.STRIPPED_EROSION_OAK_WOOD.get())
                         .put(BlockInit.BLIGHTED_OAK_LOG.get(), BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get())
                         .put(BlockInit.BLIGHTED_OAK_WOOD.get(), BlockInit.STRIPPED_BLIGHTED_OAK_WOOD.get())
                         .build();
