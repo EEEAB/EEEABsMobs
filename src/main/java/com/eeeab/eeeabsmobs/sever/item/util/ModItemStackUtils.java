@@ -3,8 +3,8 @@ package com.eeeab.eeeabsmobs.sever.item.util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
-public class EMItemStackUtils {
-    private EMItemStackUtils() {
+public class ModItemStackUtils {
+    private ModItemStackUtils() {
     }
 
     /**

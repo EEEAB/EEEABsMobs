@@ -4,14 +4,14 @@ import com.eeeab.eeeabsmobs.sever.entity.EEEABMobEntity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 
-public class EMLookAtGoal extends LookAtPlayerGoal {
+public class ModLookAtGoal extends LookAtPlayerGoal {
     private final EEEABMobEntity mobEntity;
 
-    public EMLookAtGoal(EEEABMobEntity mob, Class<? extends LivingEntity> aClass, float distance) {
+    public ModLookAtGoal(EEEABMobEntity mob, Class<? extends LivingEntity> aClass, float distance) {
         this(mob, aClass, distance, false);
     }
 
-    public EMLookAtGoal(EEEABMobEntity mob, Class<? extends LivingEntity> aClass, float distance, boolean stare) {
+    public ModLookAtGoal(EEEABMobEntity mob, Class<? extends LivingEntity> aClass, float distance, boolean stare) {
         super(mob, aClass, distance, stare ? 1F : 0.02F);
         this.mobEntity = mob;
     }

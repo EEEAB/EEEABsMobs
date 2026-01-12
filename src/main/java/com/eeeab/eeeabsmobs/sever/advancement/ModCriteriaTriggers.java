@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.advancements;
+package com.eeeab.eeeabsmobs.sever.advancement;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import net.minecraft.advancements.CriteriaTriggers;

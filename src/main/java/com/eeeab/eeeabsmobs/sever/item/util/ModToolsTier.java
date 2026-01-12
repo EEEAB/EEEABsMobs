@@ -10,7 +10,7 @@ import net.minecraftforge.common.Tags;
 import java.util.function.Supplier;
 
 //工具级别
-public enum EMToolsTier implements Tier {
+public enum ModToolsTier implements Tier {
     IMMORTAL_TIER(2, 500, 6.0F, 2.0F, 14, () -> Ingredient.of(ItemInit.IMMORTAL_INGOT.get())),
     NETHERWORLD_KATANA_TIER(4, 3000, 9.0F, 5.0F, 20, () -> Ingredient.of(ItemInit.GHOST_STEEL_INGOT.get())),
     GUARDIAN_AXE_TIER(4, 3000, 9.0F, 4.0F, 15, () -> Ingredient.of(Tags.Items.INGOTS_IRON)),
@@ -23,7 +23,7 @@ public enum EMToolsTier implements Tier {
     private final int enchantability;//附魔亲和力
     private final LazyLoadedValue<Ingredient> repairMaterial;//修复材料
 
-    EMToolsTier(int harvestLevelIn, int maxUsesIn, float efficiencyIn, float attackDamageIn, int enchantabilityIn, Supplier<Ingredient> repairMaterialIn) {
+    ModToolsTier(int harvestLevelIn, int maxUsesIn, float efficiencyIn, float attackDamageIn, int enchantabilityIn, Supplier<Ingredient> repairMaterialIn) {
         this.harvestLevel = harvestLevelIn;
         this.maxUses = maxUsesIn;
         this.efficiency = efficiencyIn;

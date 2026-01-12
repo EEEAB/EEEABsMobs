@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.navigate;
 
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobEntity;
-import com.eeeab.eeeabsmobs.sever.entity.ai.pathfinder.EMPathFinder;
+import com.eeeab.eeeabsmobs.sever.entity.ai.pathfinder.ModPathFinder;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
@@ -15,10 +15,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 //基于自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/server/ai/MMPathNavigateGround.java
-public class EMPathNavigateGround extends GroundPathNavigation {
+public class ModPathNavigateGround extends GroundPathNavigation {
     private static final float EPSILON = 1.0E-8F;
 
-    public EMPathNavigateGround(EEEABMobEntity entity, Level world) {
+    public ModPathNavigateGround(EEEABMobEntity entity, Level world) {
         super(entity, world);
     }
 
@@ -26,7 +26,7 @@ public class EMPathNavigateGround extends GroundPathNavigation {
     protected @NotNull PathFinder createPathFinder(int maxVisitedNodes) {
         this.nodeEvaluator = new WalkNodeEvaluator();
         this.nodeEvaluator.setCanPassDoors(true);
-        return new EMPathFinder(this.nodeEvaluator, maxVisitedNodes);
+        return new ModPathFinder(this.nodeEvaluator, maxVisitedNodes);
     }
 
     @Override

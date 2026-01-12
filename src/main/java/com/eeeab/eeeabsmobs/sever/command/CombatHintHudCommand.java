@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.commands;
+package com.eeeab.eeeabsmobs.sever.command;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.message.PopupNotificationMessage;
