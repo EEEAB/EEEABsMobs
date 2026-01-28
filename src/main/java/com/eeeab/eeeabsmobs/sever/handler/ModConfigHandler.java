@@ -260,13 +260,13 @@ public final class ModConfigHandler {
         public Immortal(final ForgeConfigSpec.Builder builder) {
             builder.push("Immortal");
             combatConfig = new AttributeConfig();
-            bossConfig = new BossCommonConfig(25D, 16D);
+            bossConfig = new BossConfig(25D, 16D, 0.75D);
             adaptConfig = new DamageSourceAdaptConfig(100, 30, 0.1125D, 0.9D, true, true);
             builder.pop();
         }
 
         public final AttributeConfig combatConfig;
-        public final BossCommonConfig bossConfig;
+        public final BossConfig bossConfig;
         public final DamageSourceAdaptConfig adaptConfig;
     }
 
@@ -402,10 +402,10 @@ public final class ModConfigHandler {
         public RelicAnnihilator(final ForgeConfigSpec.Builder builder) {
             builder.push("Relic Annihilator");
             combatConfig = new AttributeConfig();
-            bossConfig = new BossCommonConfig(20D, 18D);
+            bossConfig = new BossConfig(20D, 18D, 0.5D);
             {
                 builder.push("Guardian Laser");
-                guardianLaser = new AttributeConfig(10F);
+                guardianLaser = new AttributeConfig(7.5F);
                 builder.pop();
             }
             {
@@ -417,7 +417,7 @@ public final class ModConfigHandler {
         }
 
         public final AttributeConfig combatConfig;
-        public final BossCommonConfig bossConfig;
+        public final BossConfig bossConfig;
         public final AttributeConfig guardianLaser;
         public final AttributeConfig annihilatorMissile;
     }
@@ -433,7 +433,7 @@ public final class ModConfigHandler {
             challengeMode = builder.comment("Be careful! It's going to get tricky!")
                     .translation(getTranslationKey("challenge_mode")).define("Challenge Mode", false);
             combatConfig = new AttributeConfig();
-            bossConfig = new BossCommonConfig(20D, 18D);
+            bossConfig = new BossConfig(20D, 18D, 0.5D);
             {
                 builder.push("Guardian Laser");
                 guardianLaser = new AttributeConfig(5F);
@@ -454,7 +454,7 @@ public final class ModConfigHandler {
         //挑战模式
         public final ForgeConfigSpec.BooleanValue challengeMode;
         public final AttributeConfig combatConfig;
-        public final BossCommonConfig bossConfig;
+        public final BossConfig bossConfig;
         public final AttributeConfig guardianLaser;
         public final AttributeConfig guardianBlade;
     }
@@ -555,18 +555,22 @@ public final class ModConfigHandler {
         public final ForgeConfigSpec.DoubleValue damage;
     }
 
-    //Boss通用限制
-    public static class BossCommonConfig {
-        public BossCommonConfig(double d0, double d1) {
-            damageCap = COMMON_BUILDER.comment("Set this mob damage cap")
+    //Boss通用配置
+    public static class BossConfig {
+        public BossConfig(double damageCap, double damageDist, double damageReductDur) {
+            this.damageCap = COMMON_BUILDER.comment("Set this mob damage cap")
                     .translation(getTranslationKey("damage_cap"))
-                    .defineInRange("Damage Cap", d0, 0D, Float.MAX_VALUE);
-            maxDamageDistance = COMMON_BUILDER.comment("Set this mob max effective damage range")
-                    .translation(getTranslationKey("damage_range")).defineInRange("Effective Damage Distance", d1, 1D, 64D);
+                    .defineInRange("Damage Cap", damageCap, 0D, Float.MAX_VALUE);
+            this.canDamageDist = COMMON_BUILDER.comment("Set this mob max effective damage distance")
+                    .translation(getTranslationKey("max_damage_dist")).defineInRange("Effective Damage Distance", damageDist, 1D, 64D);
+            this.damageReductDur = COMMON_BUILDER.comment("Set this mob's damage reduction duration after being damaged (seconds)")
+                    .translation(getTranslationKey("damage_reduction_duration"))
+                    .defineInRange("Damage Reduction Duration", damageReductDur, 0D, 5D);
         }
 
         public final ForgeConfigSpec.DoubleValue damageCap;
-        public final ForgeConfigSpec.DoubleValue maxDamageDistance;
+        public final ForgeConfigSpec.DoubleValue canDamageDist;
+        public final ForgeConfigSpec.DoubleValue damageReductDur;
     }
 
     //通用伤害源适应

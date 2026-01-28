@@ -56,6 +56,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
     public DamageSource lastDamageSource;//受到的伤害源
     public Player killDataAttackingPlayer;
     private final ModBossInfoServer bossInfo = new ModBossInfoServer(this);
+    private long lastHurtTime = -1;
 
     public EEEABMobEntity(EntityType<? extends EEEABMobEntity> type, Level level) {
         super(type, level);
@@ -110,16 +111,30 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (!this.level().isClientSide) {
-            ModConfigHandler.BossCommonConfig config = this.getBossConfig();
+            int currentTick = this.tickCount;
+            long interval = currentTick - this.lastHurtTime;
+            ModConfigHandler.BossConfig config = this.getBossConfig();
             if (config != null) {
-                if (!source.is(ModTagKey.BYPASSES_DAMAGE_CAP)) amount = Math.min(amount, config.damageCap.get().floatValue() * this.getVulnMultiplier());
                 Entity entity = source.getEntity();
-                double distSqr = config.maxDamageDistance.get() * config.maxDamageDistance.get();
-                if ((ModEntityUtils.isProjectileSource(source) || !ModEntityUtils.checkDirectEntityConsistency(source))
-                        && entity != null && this.distanceToSqr(entity) >= distSqr) {
-                    return false;
+                if (entity != null) {
+                    double distSqr = config.canDamageDist.get() * config.canDamageDist.get();
+                    if ((ModEntityUtils.isProjectileSource(source) || !ModEntityUtils.checkDirectEntityConsistency(source))
+                            && this.distanceToSqr(entity) >= distSqr) {
+                        return false;
+                    }
                 }
+                if (currentTick == this.lastHurtTime) {
+                    amount *= 0.001F;
+                } else {
+                    float damageReductDur = config.damageReductDur.get().floatValue() * 20F;
+                    if (damageReductDur > 0) {
+                        float reduction = (float) Math.sqrt(1F - Mth.clamp(interval / damageReductDur, 0F, 1F));
+                        amount *= (1 - reduction);
+                    }
+                }
+                if (!source.is(ModTagKey.BYPASSES_DAMAGE_CAP)) amount = Math.min(amount, config.damageCap.get().floatValue() * this.getVulnMultiplier());
             }
+            this.lastHurtTime = currentTick;
         }
         return super.hurt(source, amount);
     }
@@ -417,7 +432,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
         return null;
     }
 
-    protected ModConfigHandler.BossCommonConfig getBossConfig() {
+    protected ModConfigHandler.BossConfig getBossConfig() {
         return null;
     }
 
