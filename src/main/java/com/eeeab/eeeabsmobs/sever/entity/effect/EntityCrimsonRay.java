@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.effect;
 
 import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.sever.entity.util.damage.ModDamageSource;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.mob.IMob;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
@@ -62,7 +63,7 @@ public class EntityCrimsonRay extends EntityAbsBeam {
                     if (target == this.caster) continue;
                     float finalDamage = this.getDamage();
                     if (this.caster instanceof IMob mob) finalDamage += mob.getDamageAmountByTargetHealthPct(target);
-                    target.hurt(this.damageSources().indirectMagic(this, caster), finalDamage);
+                    target.hurt(ModDamageSource.laserAttack(this, this.caster, true, true), finalDamage);
                 }
             }
         }

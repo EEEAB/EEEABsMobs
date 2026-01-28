@@ -68,7 +68,6 @@
   "block.eeeabsmobs.stepping_poison_trap": "Stepping Poison Trap",
   "block.eeeabsmobs.stepping_skeleton_trap": "Stepping Skeleton Trap",
   "block.eeeabsmobs.erosion_deepslate_bricks": "浸食された深層岩レンガ",
-  "block.eeeabsmobs.erosion_portal": "浸食のポータル",
 
   "_comment": "スポーンエッグ",
   "item.eeeabsmobs.immortal_skeleton_egg": "不滅のスケルトンのスポーンエッグ",
@@ -109,7 +108,6 @@
   "item.eeeabsmobs.demolisher.tip_1": "このモードでは近接攻撃でダメージを与えることができない。右クリックすると手榴弾が発射され、プレイヤーのバックパックの「石」タイプのアイテムを消費して最大 %1$s の爆発ダメージを与える。",
   "item.eeeabsmobs.demolisher.tip_2": "このモードでは手榴弾を発射できない。",
   "item.eeeabsmobs.demolisher.tip_3": "Shiftキーを押しながら右クリックすると、近接モードと遠距離モードを切り替えることができる。",
-  "item.other.eeeabsmobs.demolisher.tip": "もっと石が必要だ…",
   "item.eeeabsmobs.heart_of_pagan.tip": "狂乱のポーションを作るのに使う",
   "item.eeeabsmobs.soul_summoning_necklace.tip": "ダメージを受けると%1$sの死体を召喚するまで蓄積される",
   "other.eeeabsmobs.cooling.tip": "冷却中...",
@@ -125,7 +123,6 @@
   "_comment": "ダメージソースメッセージ",
   "death.attack.eeeabsmobs.shaman_bomb": "%1$s はシャーマンの爆弾によって粉々に吹き飛ばされた",
   "death.attack.eeeabsmobs.guardian_robust_attack": "%1$s は %2$s によって粉砕された",
-  "death.attack.eeeabsmobs.guardian_laser_attack":"%1$s は %2$s からのレーザーによって焼却された",
 
   "_comment": "レコード",
   "item.eeeabsmobs.guardians_music_disc.desc": "Guardians - Evan King",

@@ -3,6 +3,7 @@ package com.eeeab.eeeabsmobs.sever.entity.effect;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalBoss;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.entity.util.damage.ModDamageSource;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
@@ -66,15 +67,15 @@ public class EntityImmortalLaser extends EntityAbsBeam {
             if (!this.level().isClientSide) {
                 for (LivingEntity target : entities) {
                     boolean hurtFlag = false;
-                    DamageSource indirectMagic = this.damageSources().indirectMagic(this, caster);
+                    DamageSource source = ModDamageSource.laserAttack(this, this.caster, true, true);
                     //TODO 待完善
                     if (this.caster instanceof EntityImmortalBoss immortal) {
                         float damageMultiplier = 0F;
                         MobEffectInstance instance = target.getEffect(EffectInit.ERODE_EFFECT.get());
                         if (instance != null) damageMultiplier += (instance.getAmplifier() + 1) * 0.08F;
-                        hurtFlag = immortal.doHurtTarget(indirectMagic, target, false, false, false, 0.375F, 1F + damageMultiplier);
+                        hurtFlag = immortal.doHurtTarget(source, target, false, false, false, 0.375F, 1F + damageMultiplier);
                     } else if (this.caster != null) {
-                        hurtFlag = target.hurt(indirectMagic, 5F + target.getMaxHealth() * 0.01F);
+                        hurtFlag = target.hurt(source, 5F + target.getMaxHealth() * 0.01F);
                     }
                     if (hurtFlag) ModEntityUtils.addEffectStackingAmplifier(this, target, EffectInit.ERODE_EFFECT.get(), 300, 5, true, true, true, true, true);
                 }

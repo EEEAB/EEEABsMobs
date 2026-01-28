@@ -151,7 +151,6 @@
   "_comment": "Источник урона",
   "death.attack.eeeabsmobs.shaman_bomb": "%1$s разорван(а) на куски бомбой Шамана",
   "death.attack.eeeabsmobs.guardian_robust_attack": "%1$s был(а) раздавлен(а) %2$s",
-  "death.attack.eeeabsmobs.guardian_laser_attack": "%1$s поджарен(а) лазером %2$s",
   "death.attack.eeeabsmobs.immortal_magic": "%1$s убит(а) магией Бессмертного, использованной %2$s",
 
   "_comment": "Описание музыки",

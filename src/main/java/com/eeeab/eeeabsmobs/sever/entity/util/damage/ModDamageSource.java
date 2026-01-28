@@ -5,6 +5,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 public class ModDamageSource {
     public static DamageSource shamanBombing(Entity bomb, Entity caster) {
@@ -17,9 +18,10 @@ public class ModDamageSource {
                 getHolderOrThrow(ModResourceKey.ROBUST_ATTACK), troll);
     }
 
-    public static DamageSource guardianLaserAttack(Entity laser, Entity caster) {
-        return new DamageSource(laser.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).
-                getHolderOrThrow(ModResourceKey.GUARDIAN_LASER), laser, caster);
+    public static DamageSource laserAttack(Entity laser, Entity caster, boolean ignoreShield, boolean ignoreArmor) {
+        return new DamageSource(laser.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(
+                ignoreArmor ? ModResourceKey.IGNORE_ARMOR_ATTACK : ignoreShield ? ModResourceKey.IGNORE_SHIELD_ATTACK :
+                        caster instanceof Player ? DamageTypes.PLAYER_ATTACK : DamageTypes.MOB_ATTACK), laser, caster);
     }
 
     public static DamageSource overloadExplode(Entity causingEntity, Entity directEntity) {

@@ -23,10 +23,10 @@ public class ModResourceKey {
 
     public static final ResourceKey<DamageType> SHAMAN_BOMBING = registerResourceKey(Registries.DAMAGE_TYPE, "shaman_bomb");
     public static final ResourceKey<DamageType> ROBUST_ATTACK = registerResourceKey(Registries.DAMAGE_TYPE, "guardian_robust_attack");
-    public static final ResourceKey<DamageType> GUARDIAN_LASER = registerResourceKey(Registries.DAMAGE_TYPE, "guardian_laser_attack");
     public static final ResourceKey<DamageType> OVERLOAD_EXPLODE = registerResourceKey(Registries.DAMAGE_TYPE, "overload_explode");
     public static final ResourceKey<DamageType> IMMORTAL_MAGIC = registerResourceKey(Registries.DAMAGE_TYPE, "immortal_magic");
     public static final ResourceKey<DamageType> IGNORE_ARMOR_ATTACK = registerResourceKey(Registries.DAMAGE_TYPE, "ignore_armor_attack");
+    public static final ResourceKey<DamageType> IGNORE_SHIELD_ATTACK = registerResourceKey(Registries.DAMAGE_TYPE, "ignore_shield_attack");
     public static final ResourceKey<DamageType> CRIT_HEAL = registerResourceKey(Registries.DAMAGE_TYPE, "crit_heal");
 
     public static final ResourceKey<ConfiguredFeature<?, ?>> BLIGHTED_OAK = registerResourceKey(Registries.CONFIGURED_FEATURE, "blighted_oak");

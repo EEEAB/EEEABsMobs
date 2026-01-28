@@ -119,11 +119,11 @@ public class EntityGuardianLaser extends EntityAbsBeam {
                 for (LivingEntity target : hit) {
                     target.setSecondsOnFire(type.fireDuration);
                     if (this.caster instanceof EntityNamelessGuardian guardian) {
-                        guardian.guardianHurtTarget(ModDamageSource.guardianLaserAttack(this, guardian), guardian, target, 0.22F, 1F, guardian.isChallengeMode(), false, false);
-                    } else if (this.caster != null) {
+                        guardian.guardianHurtTarget(ModDamageSource.laserAttack(this, guardian, true, true), guardian, target, 0.22F, 1F, guardian.isChallengeMode(), false, false);
+                    } else if (target != this.caster) {
                         float finalDamage = this.getDamage();
                         if (this.caster instanceof IMob mob) finalDamage += mob.getDamageAmountByTargetHealthPct(target);
-                        target.hurt(this.damageSources().mobAttack(this.caster), finalDamage);
+                        target.hurt(ModDamageSource.laserAttack(this, this.caster, getUserType().id > 0, false), finalDamage);
                     }
                 }
             } else this.spawnExplosionParticles();
