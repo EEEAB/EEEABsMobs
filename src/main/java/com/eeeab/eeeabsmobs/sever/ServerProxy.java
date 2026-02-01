@@ -4,13 +4,13 @@ import com.eeeab.animate.server.message.MessageAnimation;
 import com.eeeab.animate.server.message.MessagePlayAnimation;
 import com.eeeab.animate.server.message.MessageStopAnimation;
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.commands.CombatHintHudCommand;
+import com.eeeab.eeeabsmobs.sever.command.CombatHintHudCommand;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityImmortalLaser;
 import com.eeeab.eeeabsmobs.sever.handler.CapabilityHandler;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.AttributeInit;
 import com.eeeab.eeeabsmobs.sever.message.*;
-import com.eeeab.eeeabsmobs.sever.world.portal.VoidCrackTeleporter;
+import com.eeeab.eeeabsmobs.sever.world.portal.PortalStructureHelper;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -32,7 +32,7 @@ public class ServerProxy {
 
     public void initMod(IEventBus bus) {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ModConfigHandler.COMMON_SPEC);
-        bus.addListener(VoidCrackTeleporter::onRegisterPointOfInterest);
+        bus.addListener(PortalStructureHelper::onRegisterPointOfInterest);
         bus.addListener(CapabilityHandler::registerCapabilities);
         bus.addListener(this::onEntityAttributeModification);
     }
@@ -85,7 +85,6 @@ public class ServerProxy {
         EEEABMobs.NETWORK.messageBuilder(ICapabilityMessage.class, ID++).encoder(ICapabilityMessage::serialize).decoder(ICapabilityMessage::deserialize).consumerNetworkThread(new ICapabilityMessage.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(UseAbilityMessage.class, ID++).encoder(UseAbilityMessage::serialize).decoder(UseAbilityMessage::deserialize).consumerNetworkThread(new UseAbilityMessage.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(PlayerUseAbilityMessage.class, ID++).encoder(PlayerUseAbilityMessage::serialize).decoder(PlayerUseAbilityMessage::deserialize).consumerNetworkThread(new PlayerUseAbilityMessage.Handler()).add();
-        EEEABMobs.NETWORK.messageBuilder(SyncMuzzlePosMessage.class, ID++).encoder(SyncMuzzlePosMessage::serialize).decoder(SyncMuzzlePosMessage::deserialize).consumerNetworkThread(new SyncMuzzlePosMessage.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(UpdateBossBarMessage.class, ID++).encoder(UpdateBossBarMessage::serialize).decoder(UpdateBossBarMessage::deserialize).consumerNetworkThread(new UpdateBossBarMessage.Handler()).add();
         EEEABMobs.NETWORK.messageBuilder(PopupNotificationMessage.class, ID++).encoder(PopupNotificationMessage::serialize).decoder(PopupNotificationMessage::deserialize).consumerMainThread(PopupNotificationMessage::handle).add();
         EEEABMobs.NETWORK.messageBuilder(MessageAnimation.class, ID++).encoder(MessageAnimation::serialize).decoder(MessageAnimation::deserialize).consumerNetworkThread(new MessageAnimation.Handler()).add();

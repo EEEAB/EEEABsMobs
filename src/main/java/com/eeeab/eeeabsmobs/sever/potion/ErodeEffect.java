@@ -35,10 +35,5 @@ public class ErodeEffect extends ModEffect {
     //    if (stack.is(EMTagKey.EROSION_IMMUNE_ITEMS)) return;
     //    stack.hurtAndBreak(amplified, entity, e -> e.broadcastBreakEvent(slot));
     //}
-
-    @Override
-    public boolean isBeneficial() {
-        return false;
-    }
 }
 

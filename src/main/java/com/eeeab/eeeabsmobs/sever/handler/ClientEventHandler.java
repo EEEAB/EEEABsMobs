@@ -7,24 +7,29 @@ import com.eeeab.eeeabsmobs.client.gui.BossBarHandler;
 import com.eeeab.eeeabsmobs.client.gui.BossBarRegistry;
 import com.eeeab.eeeabsmobs.client.gui.PromptNotificationHandler;
 import com.eeeab.eeeabsmobs.sever.capability.FrenzyCapability;
-import com.eeeab.eeeabsmobs.sever.capability.StunCapability;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.renderer.ItemInHandRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -85,30 +90,49 @@ public class ClientEventHandler {
     }
 
     //在渲染实体前触发
+    //@SubscribeEvent
+    //public void onRenderLiving(RenderLivingEvent.Pre<LivingEntity, EntityModel<LivingEntity>> event) {
+    //    LivingEntity entity = event.getEntity();
+    //    StunCapability.IStunCapability capability = CapabilityHandler.getCapability(entity, CapabilityHandler.STUN_CAPABILITY);
+    //    if (capability != null && capability.flag()) {
+    //        entity.yHeadRot = entity.yHeadRotO = capability.getYawHead();
+    //        entity.yBodyRot = entity.yBodyRotO = capability.getCRenderYawOffset();
+    //        entity.attackAnim = entity.oAttackAnim = capability.getCSwingProgress();
+    //        entity.walkAnimation.speed(capability.getCLimbSwingAmount());
+    //        entity.setYRot(entity.yRotO = capability.getYaw());
+    //        entity.setXRot(entity.xRotO = capability.getPitch());
+    //    }
+    //}
+
     @SubscribeEvent
-    public void onRenderLiving(RenderLivingEvent.Pre<LivingEntity, EntityModel<LivingEntity>> event) {
-        LivingEntity entity = event.getEntity();
-        StunCapability.IStunCapability capability = CapabilityHandler.getCapability(entity, CapabilityHandler.STUN_CAPABILITY);
-        if (capability != null && capability.flag()) {
-            entity.yHeadRot = entity.yHeadRotO = capability.getYawHead();
-            entity.yBodyRot = entity.yBodyRotO = capability.getCRenderYawOffset();
-            entity.attackAnim = entity.oAttackAnim = capability.getCSwingProgress();
-            entity.walkAnimation.speed(capability.getCLimbSwingAmount());
-            entity.setYRot(entity.yRotO = capability.getYaw());
-            entity.setXRot(entity.xRotO = capability.getPitch());
+    public void onRenderHand(RenderHandEvent event) {
+        Minecraft minecraft = Minecraft.getInstance();
+        Player player = minecraft.player;
+        if (player == null) return;
+        ItemStack useItem = player.getUseItem();
+        InteractionHand hand = event.getHand();
+        if (useItem.is(ItemInit.GUARDIAN_CORE.get()) && player.isUsingItem()) {
+            event.setCanceled(true);
+            renderChargedGuardianCore(event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight(), player, hand);
         }
     }
 
-    //渲染玩家
-    @SubscribeEvent
-    public void onRenderPlayer(RenderPlayerEvent event) {
-        Player player = event.getEntity();
-        ItemStack itemStack = player.getUseItem();
-        if (event.isCancelable() && itemStack.is(ItemInit.GUARDIAN_CORE.get())) {
-            PlayerRenderer renderer = event.getRenderer();
-            renderer.getModel().leftArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
-            renderer.getModel().rightArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
-        }
+    private static void renderChargedGuardianCore(PoseStack poseStack, MultiBufferSource buffer,
+                                                  int combinedLight, Player player, InteractionHand hand) {
+        Minecraft minecraft = Minecraft.getInstance();
+        ItemInHandRenderer itemRenderer = minecraft.getEntityRenderDispatcher().getItemInHandRenderer();
+        ItemStack stack = player.getItemInHand(hand);
+        boolean isMainHand = hand == InteractionHand.MAIN_HAND;
+        HumanoidArm arm = isMainHand ? player.getMainArm() : player.getMainArm().getOpposite();
+        boolean rightHand = arm == HumanoidArm.RIGHT;
+        int direction = rightHand ? 1 : -1;
+        poseStack.pushPose();
+        poseStack.translate(direction * 0.5F, -0.52F, -0.72F);
+        poseStack.translate(direction * -0.5F, 0F, 0.1F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(45F));
+        ItemDisplayContext transformType = isMainHand ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
+        itemRenderer.renderItem(player, stack, transformType, !isMainHand, poseStack, buffer, combinedLight);
+        poseStack.popPose();
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

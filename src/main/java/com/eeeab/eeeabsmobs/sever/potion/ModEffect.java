@@ -12,20 +12,12 @@ public class ModEffect extends MobEffect {
         this.instant = isInstant;
     }
 
-    public boolean isInstantenous() {
-        return instant;
-    }
-
     @Override
     public boolean isDurationEffectTick(int remainingTicks, int level) {
         if (isInstantenous()) {
             return true;
         }
         return canApplyEffect(remainingTicks, level);
-    }
-
-    protected boolean canApplyEffect(int remainingTicks, int level) {
-        return false;
     }
 
     @Override
@@ -35,6 +27,13 @@ public class ModEffect extends MobEffect {
         }
     }
 
+    public boolean isInstantenous() {
+        return instant;
+    }
+
+    protected boolean canApplyEffect(int remainingTicks, int level) {
+        return false;
+    }
 }
 
 

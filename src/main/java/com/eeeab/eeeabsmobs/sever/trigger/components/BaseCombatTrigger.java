@@ -3,7 +3,6 @@ package com.eeeab.eeeabsmobs.sever.trigger.components;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.message.PopupNotificationMessage;
 import com.eeeab.eeeabsmobs.sever.trigger.CombatTrigger;
-import com.eeeab.eeeabsmobs.sever.trigger.CooldownManager;
 import com.eeeab.eeeabsmobs.sever.trigger.TriggerContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,7 +37,7 @@ public abstract class BaseCombatTrigger implements CombatTrigger {
                 player.connection.connection,
                 NetworkDirection.PLAY_TO_CLIENT
         );
-        if (!oncePerEncounter) CooldownManager.setCooldown(player.getUUID(), getTriggerKey());
+        //if (!oncePerEncounter) CooldownManager.setCooldown(player.getUUID(), getTriggerKey());
     }
 
     @Override

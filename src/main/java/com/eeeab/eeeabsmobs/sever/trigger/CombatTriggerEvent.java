@@ -10,7 +10,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -58,16 +57,16 @@ public final class CombatTriggerEvent {
         }
     }
 
-    @SubscribeEvent
-    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (!ModConfigHandler.COMMON.others.enableCombatPrompts.get()) return;
-        if (event.phase != TickEvent.Phase.END) return;
-        if (event.player.level().isClientSide()) return;
-        ServerPlayer player = (ServerPlayer) event.player;
-        if (player.tickCount % 1200 == 0) {
-            CooldownManager.cleanup();
-        }
-    }
+    //@SubscribeEvent
+    //public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+    //    if (!ModConfigHandler.COMMON.others.enableCombatPrompts.get()) return;
+    //    if (event.phase != TickEvent.Phase.END) return;
+    //    if (event.player.level().isClientSide()) return;
+    //    ServerPlayer player = (ServerPlayer) event.player;
+    //    if (player.tickCount % 1200 == 0) {
+    //        CooldownManager.cleanup();
+    //    }
+    //}
 
     @SubscribeEvent
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {

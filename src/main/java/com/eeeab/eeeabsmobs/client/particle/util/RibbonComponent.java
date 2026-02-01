@@ -1,9 +1,6 @@
 package com.eeeab.eeeabsmobs.client.particle.util;
 
-import com.eeeab.animate.client.util.ModelPartUtils;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
 //参考自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/client/particle/util/RibbonComponent.java
@@ -139,43 +136,6 @@ public class RibbonComponent extends ParticleComponent {
                 float t = (startOffset + time * speed) % 1.0f;
                 ribbon.texPanOffset = (ribbon.getMaxUPublic() - ribbon.getMinUPublic()) / 2 * t;
             }
-        }
-    }
-
-    /**
-     * 跟踪实体模型部件坐标组件
-     */
-    public static class PinLocationWithModelPart extends ParticleComponent {
-        private final Entity entity;
-        private final ModelPart modelPart;
-        private final String[] modelPartName;
-
-        /**
-         * PinLocationWithModelPart
-         *
-         * @param entity        实体
-         * @param modelPart     模型部件
-         * @param modelPartName 模型部件名称路径
-         */
-        public PinLocationWithModelPart(Entity entity, ModelPart modelPart, String[] modelPartName) {
-            this.entity = entity;
-            this.modelPart = modelPart;
-            this.modelPartName = modelPartName;
-        }
-
-        @Override
-        public void init(AdvancedParticleBase particle) {
-            updatePosition(particle);
-        }
-
-        @Override
-        public void preUpdate(AdvancedParticleBase particle) {
-            updatePosition(particle);
-        }
-
-        private void updatePosition(AdvancedParticleBase particle) {
-            Vec3 worldPos = ModelPartUtils.getWorldPosition(entity, entity.getVisualRotationYInDegrees(), modelPart, modelPartName);
-            particle.setPos(worldPos.x, worldPos.y, worldPos.z);
         }
     }
 }
