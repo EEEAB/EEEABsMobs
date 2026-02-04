@@ -10,7 +10,7 @@ public class FirstEncounterTrigger extends BaseCombatTrigger {
     }
 
     @Override
-    protected boolean checkSpecificConditions(ServerPlayer player, TriggerContext context) {
+    public boolean shouldTrigger(ServerPlayer player, ResourceLocation entityId, TriggerContext context) {
         return context.isFirstEncounter();
     }
 }

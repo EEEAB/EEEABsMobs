@@ -1,6 +1,5 @@
 package com.eeeab.eeeabsmobs.sever.trigger;
 
-import com.eeeab.eeeabsmobs.EEEABMobs;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -11,8 +10,7 @@ public class CombatTriggerHandler {
     private static final Map<UUID, Set<ResourceLocation>> PLAYER_TRIGGERED = new HashMap<>();
 
     public static void init() {
-        TriggerRegister.vanillaRegister();
-        TriggerRegister.modRegister();
+        TriggerRegister.register();
     }
 
     // 注册触发规则
@@ -58,6 +56,5 @@ public class CombatTriggerHandler {
     //重置玩家的触发记录
     public static void resetPlayerTriggers(ServerPlayer player) {
         PLAYER_TRIGGERED.remove(player.getUUID());
-        EEEABMobs.LOGGER.debug("Reset all duplicate triggers for player: {}", player.getUUID());
     }
 }
