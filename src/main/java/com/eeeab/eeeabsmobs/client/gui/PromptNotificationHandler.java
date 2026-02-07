@@ -1,8 +1,8 @@
 package com.eeeab.eeeabsmobs.client.gui;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
-import com.eeeab.eeeabsmobs.client.util.MultiLineTextRenderer;
+import com.eeeab.eeeabsmobs.client.ControlledAnimation;
+import com.eeeab.eeeabsmobs.client.render.util.MultiLineTextRenderer;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.util.TranslateUtils;
 import com.mojang.blaze3d.platform.Window;

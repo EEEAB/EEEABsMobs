@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.client.util;
+package com.eeeab.eeeabsmobs.client.render.util;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
