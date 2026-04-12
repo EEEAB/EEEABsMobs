@@ -38,6 +38,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         spawnEgg(ItemInit.RELIC_EARTHSHAKER_EGG);
         spawnEgg(ItemInit.RELIC_ANNIHILATOR_EGG);
         spawnEgg(ItemInit.NAMELESS_GUARDIAN_EGG);
+        spawnEgg(ItemInit.REALM_WARDEN_EGG);
         spawnEgg(ItemInit.IMMORTAL_GOLEM_EGG);
         spawnEgg(ItemInit.IMMORTAL_SKELETON_EGG);
         spawnEgg(ItemInit.IMMORTAL_ARCHER_EGG);
@@ -51,7 +52,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ItemInit.LOGO_ITEM);
         simpleItem(ItemInit.REMOVE_MOB);
         simpleItem(ItemInit.ANIMATION_CONTROLLER);
-        simpleItem(ItemInit.CORE_BASTION_EYE);
+        simpleItem(ItemInit.COREFORGE_RUINS_EYE);
         simpleItem(ItemInit.BLOODY_ALTAR_EYE);
         simpleItem(ItemInit.GUARDIANS_MUSIC_DISC);
         simpleItem(ItemInit.THE_ARMY_OF_MINOTAUR_MUSIC_DISC);
@@ -59,12 +60,15 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ItemInit.HEART_OF_PAGAN);
         simpleItem(ItemInit.ANCIENT_DRIVE_CRYSTAL);
         simpleItem(ItemInit.BOUNDARY_BRICK);
+        simpleItem(ItemInit.CHAIN_GEAR);
+        simpleItem(ItemInit.GUARDIAN_CUBE);
         simpleItem(ItemInit.IMMORTAL_INGOT);
         simpleItem(ItemInit.GHOST_STEEL_INGOT);
         handheldItem(ItemInit.IMMORTAL_BONE);
+        simpleItem(ItemInit.RELICRON_UPGRADE_SMITHING_TEMPLATE);
         simpleItem(ItemInit.GHOST_WARRIOR_UPGRADE_SMITHING_TEMPLATE);
         //战斗
-        simpleItem(ItemInit.SOUL_SUMMONING_NECKLACE);
+        simpleItem(ItemInit.SOUL_SUMMON_NECKLACE);
         simpleItem(ItemInit.IMMORTAL_DEBRIS);
         handheldItem(ItemInit.IMMORTAL_AXE);
         handheldItem(ItemInit.IMMORTAL_SWORD);

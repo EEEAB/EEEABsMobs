@@ -4,7 +4,9 @@ import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.block.BlockGalacticAlphabet;
 import com.eeeab.eeeabsmobs.sever.block.properties.SGACharacter;
 import com.eeeab.eeeabsmobs.sever.init.BlockInit;
+import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.models.model.TexturedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -37,8 +39,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
         cubeAll(BlockInit.POLISHED_BOUNDARY_BRICKS);
         cubeAll(BlockInit.CRACKED_POLISHED_BOUNDARY_BRICKS);
         cubeAll(BlockInit.CHISELED_POLISHED_BOUNDARY_BRICKS);
-        cubeAll(BlockInit.UNCARVED_BOUNDARY_STONE);
-        cubeAll(BlockInit.BOUNDARY_CORE);
         cubeAll(BlockInit.IMMORTAL_BLOCK);
         cubeAll(BlockInit.GHOST_STEEL_BLOCK);
         cubeAll(BlockInit.CUT_GHOST_STEEL_BLOCK);
@@ -61,6 +61,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
         //cubeAll(BlockInit.TOMBSTONE);
         cubeAllWithRenderType(BlockInit.IRON_GRATE, "cutout");
 
+        createHorizontallyRotatedBlock((HorizontalDirectionalBlock) BlockInit.UNCARVED_BOUNDARY_STONE.get());
+        createHorizontallyRotatedBlock((HorizontalDirectionalBlock) BlockInit.BOUNDARY_CORE.get());
         alphabets((BlockGalacticAlphabet) BlockInit.RUNIC_BOUNDARY_STONE.get());
 
         variantCubeBottomTop(BlockInit.STEPPING_FLAME_TRAP.get(), BlockInit.POLISHED_BOUNDARY_STONE.get(), BlockStateProperties.OPEN, "_on", "_off");
@@ -211,6 +213,18 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 blockTexture(b1, reference ? "_top" + suffix : suffix));
     }
 
+    private void createHorizontallyRotatedBlock(HorizontalDirectionalBlock block) {
+        VariantBlockStateBuilder builder = getVariantBuilder(block);
+        Direction[] horizontalDirections = Direction.Plane.HORIZONTAL.stream().toArray(Direction[]::new);
+        ModelFile model = cubeAll(block);
+        for (Direction facing : horizontalDirections) {
+            int rotationY = (int) facing.toYRot();
+            builder.partialState().with(BlockGalacticAlphabet.FACING, facing)
+                    .setModels(new ConfiguredModel(model, 0, rotationY, false));
+        }
+        simpleBlockItem(block, model);
+    }
+
     /**
      * 标准银河字母(SGA)纹理
      */
@@ -228,16 +242,16 @@ public class ModBlockStateProvider extends BlockStateProvider {
             modelCache.put(character, model);
         }
         ModelFile defaultModel = modelCache.get(defaultChar);
+        Direction[] horizontalDirections = Direction.Plane.HORIZONTAL.stream().toArray(Direction[]::new);
         for (SGACharacter character : SGACharacter.values()) {
-            ModelFile modelToUse;
-            if (supportedChars.contains(character)) {
-                modelToUse = modelCache.get(character);
-            } else {
-                modelToUse = defaultModel;
+            ModelFile modelToUse = supportedChars.contains(character) ? modelCache.get(character) : defaultModel;
+            for (Direction facing : horizontalDirections) {
+                int rotationY = (int) facing.toYRot();
+                builder.partialState()
+                        .with(BlockGalacticAlphabet.CHARACTER, character)
+                        .with(BlockGalacticAlphabet.FACING, facing)
+                        .setModels(new ConfiguredModel(modelToUse, 0, rotationY, false));
             }
-            builder.partialState()
-                    .with(BlockGalacticAlphabet.CHARACTER, character)
-                    .setModels(new ConfiguredModel(modelToUse));
         }
         simpleBlockItem(block, defaultModel);
     }

@@ -16,28 +16,33 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraftforge.common.world.BiomeModifier;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class ModResourceKey {
-    public static ResourceKey<Structure> GULING = registerResourceKey(Registries.STRUCTURE, "guling");
+    public static ResourceKey<Structure> COREFORGE_RUINS = registerResourceKey(Registries.STRUCTURE, "coreforge_ruins");
     public static ResourceKey<Structure> BLOODY_ALTAR = registerResourceKey(Registries.STRUCTURE, "bloody_altar");
 
-    public static final ResourceKey<DamageType> SHAMAN_BOMBING = registerResourceKey(Registries.DAMAGE_TYPE, "shaman_bomb");
     public static final ResourceKey<DamageType> ROBUST_ATTACK = registerResourceKey(Registries.DAMAGE_TYPE, "guardian_robust_attack");
     public static final ResourceKey<DamageType> OVERLOAD_EXPLODE = registerResourceKey(Registries.DAMAGE_TYPE, "overload_explode");
     public static final ResourceKey<DamageType> IMMORTAL_MAGIC = registerResourceKey(Registries.DAMAGE_TYPE, "immortal_magic");
-    public static final ResourceKey<DamageType> IGNORE_ARMOR_ATTACK = registerResourceKey(Registries.DAMAGE_TYPE, "ignore_armor_attack");
-    public static final ResourceKey<DamageType> IGNORE_SHIELD_ATTACK = registerResourceKey(Registries.DAMAGE_TYPE, "ignore_shield_attack");
-    public static final ResourceKey<DamageType> CRIT_HEAL = registerResourceKey(Registries.DAMAGE_TYPE, "crit_heal");
+    public static final ResourceKey<DamageType> BYPASS_ARMOR = registerResourceKey(Registries.DAMAGE_TYPE, "bypass_armor");
+    public static final ResourceKey<DamageType> BYPASS_SHIELD = registerResourceKey(Registries.DAMAGE_TYPE, "bypass_shield");
+    public static final ResourceKey<DamageType> BYPASS_IFRAME = registerResourceKey(Registries.DAMAGE_TYPE, "bypass_iframe");
 
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_ANCIENT_BOUNDARY_STONE = registerResourceKey(Registries.CONFIGURED_FEATURE, "ore_ancient_boundary_stone");
     public static final ResourceKey<ConfiguredFeature<?, ?>> BLIGHTED_OAK = registerResourceKey(Registries.CONFIGURED_FEATURE, "blighted_oak");
-    public static final ResourceKey<ConfiguredFeature<?, ?>> DARKENED_COAL_ORE = registerResourceKey(Registries.CONFIGURED_FEATURE, "darkened_coal_ore");
-    public static final ResourceKey<ConfiguredFeature<?, ?>> DARKENED_IRON_ORE = registerResourceKey(Registries.CONFIGURED_FEATURE, "darkened_iron_ore");
-    public static final ResourceKey<ConfiguredFeature<?, ?>> VOIDSHARD = registerResourceKey(Registries.CONFIGURED_FEATURE, "voidshard");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_DARKENED_COAL = registerResourceKey(Registries.CONFIGURED_FEATURE, "ore_darkened_coal");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_DARKENED_IRON = registerResourceKey(Registries.CONFIGURED_FEATURE, "ore_darkened_iron");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_VOIDSHARD = registerResourceKey(Registries.CONFIGURED_FEATURE, "ore_voidshard");
 
+    public static final ResourceKey<PlacedFeature> ANCIENT_BOUNDARY_STONE_CHECKED = registerResourceKey(Registries.PLACED_FEATURE, "ancient_boundary_stone_checked");
     public static final ResourceKey<PlacedFeature> SPARSE_BLIGHTED_OAK_CHECKED = registerResourceKey(Registries.PLACED_FEATURE, "blighted_oak_checked");
     public static final ResourceKey<PlacedFeature> DARKENED_COAL_ORE_CHECKED = registerResourceKey(Registries.PLACED_FEATURE, "darkened_coal_ore_checked");
     public static final ResourceKey<PlacedFeature> DARKENED_IRON_ORE_CHECKED = registerResourceKey(Registries.PLACED_FEATURE, "darkened_iron_ore_checked");
     public static final ResourceKey<PlacedFeature> VOIDSHARD_CHECKED = registerResourceKey(Registries.PLACED_FEATURE, "voidshard_checked");
+
+    public static final ResourceKey<BiomeModifier> ADD_ANCIENT_BOUNDARY_STONE = registerResourceKey(ForgeRegistries.Keys.BIOME_MODIFIERS, "add_ancient_boundary_stone");
 
     public static final ResourceKey<PoiType> EROSION_PORTAL = registerResourceKey(Registries.POINT_OF_INTEREST_TYPE, "erosion_portal");
     public static final ResourceKey<Biome> PRINCIPAL_ISLAND_BIOME = registerResourceKey(Registries.BIOME, "principal_island_biome");

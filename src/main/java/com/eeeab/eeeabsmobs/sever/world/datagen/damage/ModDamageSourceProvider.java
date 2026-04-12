@@ -8,21 +8,19 @@ import net.minecraft.world.damagesource.DamageType;
 
 public class ModDamageSourceProvider {
     public static void boostrap(BootstapContext<DamageType> context) {
-        ResourceKey<DamageType> shamanBombing = ModResourceKey.SHAMAN_BOMBING;
         ResourceKey<DamageType> robustAttack = ModResourceKey.ROBUST_ATTACK;
         ResourceKey<DamageType> overloadExplode = ModResourceKey.OVERLOAD_EXPLODE;
         ResourceKey<DamageType> immortalMagic = ModResourceKey.IMMORTAL_MAGIC;
-        ResourceKey<DamageType> ignoreArmorAttack = ModResourceKey.IGNORE_ARMOR_ATTACK;
-        ResourceKey<DamageType> ignoreShieldAttack = ModResourceKey.IGNORE_SHIELD_ATTACK;
-        ResourceKey<DamageType> critHeal = ModResourceKey.CRIT_HEAL;
+        ResourceKey<DamageType> bypassArmor = ModResourceKey.BYPASS_ARMOR;
+        ResourceKey<DamageType> bypassShield = ModResourceKey.BYPASS_SHIELD;
+        ResourceKey<DamageType> bypassIframe = ModResourceKey.BYPASS_IFRAME;
 
-        context.register(shamanBombing, new DamageType(getMsgId(shamanBombing), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.1F));
         context.register(robustAttack, new DamageType(getMsgId(robustAttack), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.1F));
         context.register(overloadExplode, new DamageType(getMsgId(overloadExplode), DamageScaling.ALWAYS, 0.1F));
         context.register(immortalMagic, new DamageType(getMsgId(immortalMagic), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0F));
-        context.register(ignoreArmorAttack, new DamageType(getMsgId(ignoreArmorAttack), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.1F));
-        context.register(ignoreShieldAttack, new DamageType(getMsgId(ignoreShieldAttack), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.1F));
-        context.register(critHeal, new DamageType(getMsgId(critHeal), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.1F));
+        context.register(bypassArmor, new DamageType(getMsgId(bypassArmor), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.1F));
+        context.register(bypassShield, new DamageType(getMsgId(bypassShield), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.1F));
+        context.register(bypassIframe, new DamageType(getMsgId(bypassIframe), DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.1F));
     }
 
     private static String getMsgId(ResourceKey<DamageType> key) {

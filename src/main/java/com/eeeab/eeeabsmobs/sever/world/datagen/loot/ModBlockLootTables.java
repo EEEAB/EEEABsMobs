@@ -1,10 +1,17 @@
 package com.eeeab.eeeabsmobs.sever.world.datagen.loot;
 
 import com.eeeab.eeeabsmobs.sever.init.BlockInit;
+import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Set;
@@ -18,7 +25,6 @@ public class ModBlockLootTables extends BlockLootSubProvider {
     protected void generate() {
         this.dropSelf(BlockInit.BOUNDARY_LAMP.get());
         this.dropSelf(BlockInit.IRON_GRATE.get());
-        this.dropSelf(BlockInit.ANCIENT_BOUNDARY_STONE.get());
         this.dropSelf(BlockInit.POLISHED_ROUGH_BOUNDARY_STONE.get());
         this.dropSelf(BlockInit.POLISHED_ROUGH_BOUNDARY_STONE_STAIRS.get());
         this.dropSelf(BlockInit.POLISHED_ROUGH_BOUNDARY_STONE_SLAB.get());
@@ -93,6 +99,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         this.dropSelf(BlockInit.DARK_EROSION_ROCK_BRICKS_WALL.get());
         this.add(BlockInit.BLIGHTED_OAK_DOOR.get(), this::createDoorTable);
         this.add(BlockInit.BLIGHTED_STONE.get(), (builder) -> this.createSingleItemTableWithSilkTouch(builder, BlockInit.BLIGHTED_COBBLESTONE.get()));
+        this.add(BlockInit.ANCIENT_BOUNDARY_STONE.get(), (builder) -> this.createOreDrop(builder, ItemInit.BOUNDARY_BRICK.get()));
         this.add(BlockInit.DARKENED_COAL_ORE.get(), (builder) -> this.createOreDrop(builder, Items.COAL));
         this.add(BlockInit.DARKENED_IRON_ORE.get(), (builder) -> this.createOreDrop(builder, Items.RAW_IRON));
     }

@@ -9,7 +9,7 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 
 public class ModBiomesProvider {
     public static void boostrap(BootstapContext<Biome> context) {
-        context.register(ModResourceKey.PRINCIPAL_ISLAND_BIOME, landBiome(context));
+        //context.register(ModResourceKey.PRINCIPAL_ISLAND_BIOME, landBiome(context));
     }
 
     public static Biome landBiome(BootstapContext<Biome> context) {
@@ -25,9 +25,11 @@ public class ModBiomesProvider {
         //BiomeDefaultFeatures.addForestFlowers(biomeBuilder);
         //BiomeDefaultFeatures.addFerns(biomeBuilder);
         //BiomeDefaultFeatures.addDefaultOres(biomeBuilder);
-        biomeBuilder.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, ModResourceKey.VOIDSHARD_CHECKED);
-        biomeBuilder.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, ModResourceKey.DARKENED_COAL_ORE_CHECKED);
-        biomeBuilder.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, ModResourceKey.DARKENED_IRON_ORE_CHECKED);
+
+        //biomeBuilder.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, ModResourceKey.VOIDSHARD_CHECKED);
+        //biomeBuilder.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, ModResourceKey.DARKENED_COAL_ORE_CHECKED);
+        //biomeBuilder.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, ModResourceKey.DARKENED_IRON_ORE_CHECKED);
+
         //BiomeDefaultFeatures.addExtraGold(biomeBuilder);
         biomeBuilder.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ModResourceKey.SPARSE_BLIGHTED_OAK_CHECKED);
         //BiomeDefaultFeatures.addDefaultMushrooms(biomeBuilder);

@@ -8,6 +8,7 @@ import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.data.worldgen.placement.VegetationPlacements;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.*;
@@ -24,14 +25,17 @@ public class ModPlacedFeatures {
         //register(context, ModResourceKey.MEGA_EROSION_OAK_CHECKED, configuredFeatures.getOrThrow(ModResourceKey.MEGA_EROSION_OAK),
         //        VegetationPlacements.treePlacement(PlacementUtils.countExtra(1, 0.025f, 1),
         //                BlockInit.EROSION_OAK_SAPLING.get()));
+        register(context, ModResourceKey.ANCIENT_BOUNDARY_STONE_CHECKED, configuredFeatures.getOrThrow(ModResourceKey.ORE_ANCIENT_BOUNDARY_STONE),
+                orePlacement(CountPlacement.of(UniformInt.of(0, 1)), HeightRangePlacement.uniform(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(-48))));
+
         register(context, ModResourceKey.SPARSE_BLIGHTED_OAK_CHECKED,
                 configuredFeatures.getOrThrow(ModResourceKey.BLIGHTED_OAK),
                 VegetationPlacements.treePlacement(PlacementUtils.countExtra(0, 0.125f, 1), BlockInit.BLIGHTED_OAK_SAPLING.get()));
         /* Ores Placed Features */
-        HeightRangePlacement crackCommonPlacement = HeightRangePlacement.triangle(VerticalAnchor.absolute(32), VerticalAnchor.absolute(96));
-        register(context, ModResourceKey.VOIDSHARD_CHECKED, configuredFeatures.getOrThrow(ModResourceKey.VOIDSHARD), commonOrePlacement(30, HeightRangePlacement.uniform(VerticalAnchor.bottom(), VerticalAnchor.top())));
-        register(context, ModResourceKey.DARKENED_COAL_ORE_CHECKED, configuredFeatures.getOrThrow(ModResourceKey.DARKENED_COAL_ORE), commonOrePlacement(18, crackCommonPlacement));
-        register(context, ModResourceKey.DARKENED_IRON_ORE_CHECKED, configuredFeatures.getOrThrow(ModResourceKey.DARKENED_IRON_ORE), commonOrePlacement(8, crackCommonPlacement));
+        //HeightRangePlacement crackCommonPlacement = HeightRangePlacement.triangle(VerticalAnchor.absolute(32), VerticalAnchor.absolute(96));
+        //register(context, ModResourceKey.VOIDSHARD_CHECKED, configuredFeatures.getOrThrow(ModResourceKey.VOIDSHARD), commonOrePlacement(30, HeightRangePlacement.uniform(VerticalAnchor.bottom(), VerticalAnchor.top())));
+        //register(context, ModResourceKey.DARKENED_COAL_ORE_CHECKED, configuredFeatures.getOrThrow(ModResourceKey.DARKENED_COAL_ORE), commonOrePlacement(18, crackCommonPlacement));
+        //register(context, ModResourceKey.DARKENED_IRON_ORE_CHECKED, configuredFeatures.getOrThrow(ModResourceKey.DARKENED_IRON_ORE), commonOrePlacement(8, crackCommonPlacement));
     }
 
     private static List<PlacementModifier> orePlacement(PlacementModifier modifier, PlacementModifier modifier1) {

@@ -21,8 +21,19 @@ public class ModEntityTypeTagsProvider extends EntityTypeTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
+        tag(EntityTypeTags.FALL_DAMAGE_IMMUNE)
+                .add(EntityInit.CORPSE_WARLOCK.get())
+                .add(EntityInit.RELIC_OBSERVER.get())
+                .add(EntityInit.RELIC_EARTHSHAKER.get())
+                .add(EntityInit.RELIC_ANNIHILATOR.get())
+                .add(EntityInit.NAMELESS_GUARDIAN.get())
+                .add(EntityInit.REALM_WARDEN.get())
+                .add(EntityInit.IMMORTAL_EXECUTIONER.get())
+                .add(EntityInit.IMMORTAL_BOSS.get());
         tag(Tags.EntityTypes.BOSSES)
                 .add(EntityInit.NAMELESS_GUARDIAN.get())
+                .add(EntityInit.RELIC_ANNIHILATOR.get())
+                .add(EntityInit.REALM_WARDEN.get())
                 .add(EntityInit.IMMORTAL_BOSS.get());
         tag(EntityTypeTags.ARROWS)
                 .add(EntityInit.POISON_ARROW.get());
@@ -39,13 +50,16 @@ public class ModEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(EntityInit.RELIC_RIPPER.get())
                 .add(EntityInit.RELIC_EARTHSHAKER.get())
                 .add(EntityInit.RELIC_ANNIHILATOR.get())
+                .add(EntityInit.REALM_WARDEN.get())
                 .add(EntityInit.NAMELESS_GUARDIAN.get())
                 .add(EntityInit.IMMORTAL_BOSS.get());
         //免疫强制切换目标
         tag(ModTagKey.RESISTS_FORCED_CHANGE_TARGET)
+                .addTag(Tags.EntityTypes.BOSSES)
                 .add(EntityInit.CORPSE_WARLOCK.get())
-                .add(EntityInit.RELIC_ANNIHILATOR.get())
                 .add(EntityInit.NAMELESS_GUARDIAN.get())
+                .add(EntityInit.RELIC_ANNIHILATOR.get())
+                .add(EntityInit.REALM_WARDEN.get())
                 .add(EntityInit.IMMORTAL_BOSS.get());
         //不朽军团
         tag(ModTagKey.IMMORTAL_ARMY)
@@ -63,9 +77,13 @@ public class ModEntityTypeTagsProvider extends EntityTypeTagsProvider {
         //Ice And Fire 免疫蛇发女妖石化
         tag(ModTagKey.BLINDED)
                 .add(EntityInit.NAMELESS_GUARDIAN.get())
+                .add(EntityInit.RELIC_ANNIHILATOR.get())
+                .add(EntityInit.REALM_WARDEN.get())
                 .add(EntityInit.IMMORTAL_BOSS.get());
         tag(ModTagKey.IMMUNE_TO_GORGON_STONE)
                 .add(EntityInit.NAMELESS_GUARDIAN.get())
+                .add(EntityInit.RELIC_ANNIHILATOR.get())
+                .add(EntityInit.REALM_WARDEN.get())
                 .add(EntityInit.IMMORTAL_BOSS.get());
         //Alex's Caves 免疫撼地龙咆哮
         tag(ModTagKey.RESISTS_TREMORSAURUS_ROAR)
@@ -76,18 +94,23 @@ public class ModEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(EntityInit.RELIC_OBSERVER.get())
                 .add(EntityInit.RELIC_RIPPER.get())
                 .add(EntityInit.RELIC_EARTHSHAKER.get())
-                .add(EntityInit.RELIC_ANNIHILATOR.get())
                 .add(EntityInit.NAMELESS_GUARDIAN.get())
+                .add(EntityInit.RELIC_ANNIHILATOR.get())
+                .add(EntityInit.REALM_WARDEN.get())
                 .addTag(ModTagKey.IMMORTAL_ARMY);
         //免疫占有图腾
         tag(ModTagKey.RESISTS_TOTEM_OF_POSSESSION)
                 .add(EntityInit.CORPSE_WARLOCK.get())
                 .add(EntityInit.NAMELESS_GUARDIAN.get())
+                .add(EntityInit.RELIC_ANNIHILATOR.get())
+                .add(EntityInit.REALM_WARDEN.get())
                 .add(EntityInit.IMMORTAL_BOSS.get());
         //免疫辐射
         tag(ModTagKey.RESISTS_RADIATION)
                 .add(EntityInit.CORPSE_WARLOCK.get())
                 .add(EntityInit.NAMELESS_GUARDIAN.get())
+                .add(EntityInit.RELIC_ANNIHILATOR.get())
+                .add(EntityInit.REALM_WARDEN.get())
                 .add(EntityInit.IMMORTAL_BOSS.get());
     }
 }

@@ -5,6 +5,7 @@ import com.eeeab.eeeabsmobs.sever.world.datagen.damage.ModDamageTypeProvider;
 import com.eeeab.eeeabsmobs.sever.world.datagen.entity.ModEntityTypeTagsProvider;
 import com.eeeab.eeeabsmobs.sever.world.datagen.entity.ModMobEffectProvider;
 import com.eeeab.eeeabsmobs.sever.world.datagen.loot.ModBlockLootTables;
+import com.eeeab.eeeabsmobs.sever.world.datagen.loot.ModEntityLootTables;
 import com.eeeab.eeeabsmobs.sever.world.datagen.world.ModBiomeTagsProvider;
 import com.eeeab.eeeabsmobs.sever.world.datagen.world.ModStructureTagsProvider;
 import net.minecraft.core.HolderLookup;
@@ -48,7 +49,8 @@ public class DataGenerators {
 
     private static LootTableProvider createLootProvider(PackOutput output) {
         return new LootTableProvider(output, Set.of(), List.of(
-                new LootTableProvider.SubProviderEntry(ModBlockLootTables::new, LootContextParamSets.BLOCK)
+                new LootTableProvider.SubProviderEntry(ModBlockLootTables::new, LootContextParamSets.BLOCK),
+                new LootTableProvider.SubProviderEntry(ModEntityLootTables::new, LootContextParamSets.ENTITY)
         ));
     }
 }

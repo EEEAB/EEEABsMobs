@@ -18,7 +18,7 @@ public class ModStructureTagsProvider extends StructureTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        tag(ModTagKey.EYE_OF_CORE_BASTION).add(ModResourceKey.GULING);
+        tag(ModTagKey.EYE_OF_COREFORGE_RUINS).add(ModResourceKey.COREFORGE_RUINS);
         tag(ModTagKey.EYE_OF_BLOODY_ALTAR).add(ModResourceKey.BLOODY_ALTAR);
     }
 }

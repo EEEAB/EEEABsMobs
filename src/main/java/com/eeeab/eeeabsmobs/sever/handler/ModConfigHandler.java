@@ -53,13 +53,26 @@ public final class ModConfigHandler {
                 eyeOfStructureConfig2 = itemCD(4D);
                 builder.pop();
             }
+
+            builder.push("Weapon");
             {
-                builder.push("Guardian Battleaxe");
-                guardianBattleaxeConfig1 = builder.comment("The increase in damage should refer to the Sweeping Edge enchantment")
-                        .translation(getTranslationKey("guardian_axe"))
-                        .defineInRange("Set Sweep Attack Level", 1, 0, 4);
-                guardianBattleaxeConfig2 = itemCD(5D);
-                guardianBattleaxe = new ToolConfig(15D, 0.9D);
+                builder.push("Doombolt Battleaxe");
+                doomboltAxeConfig = itemCD(3D);
+                doomboltAxe = new ToolConfig(15D, 0.9D);
+                builder.push("Surge");
+                surge = new AttributeConfig(7.5F);
+                builder.pop();
+                builder.pop();
+            }
+            {
+                builder.push("Annihilator Sawblade");
+                chainsword = new ToolConfig(9D, 1.6D);
+                chainswordConfig1 = builder.comment("Set the percentage of damage increase per stack")
+                        .translation(getTranslationKey("chainsword1"))
+                        .defineInRange("Set Damage Bonus Per Stack", 5D, 1D, 10D);
+                chainswordConfig2 = builder.comment("Set the maximum number of stacks for the damage buff")
+                        .translation(getTranslationKey("chainsword2"))
+                        .defineInRange("Set Max Buff Stacks", 5, 0, 10);
                 builder.pop();
             }
             {
@@ -74,31 +87,33 @@ public final class ModConfigHandler {
                 builder.pop();
             }
             {
-                builder.push("Ghost Warrior Series");
-                ghostWarriorSeriesConfig1 = builder.comment("If set to 'True' armor or weapon will be depleted")
-                        .translation(getTranslationKey("series_depleted"))
-                        .define("Enable Armor Or Weapon Can Be Depleted", false);
-                netherworldKatana = new ToolConfig(14D, 1.4D);
-                builder.pop();
-            }
-            {
-                builder.push("Howitzer");
-                howitzerConfig1 = builder.translation(getTranslationKey("projectile_damage"))
+                builder.push("Buster Gauntlet");
+                busterGauntletConfig1 = builder.translation(getTranslationKey("projectile_damage"))
                         .defineInRange("Set Projectile Damage", 10D, 1D, Float.MAX_VALUE);
-                howitzerConfig2 = builder.comment("Set Grenade explosion radius")
+                busterGauntletConfig2 = builder.comment("Set Grenade explosion radius")
                         .translation(getTranslationKey("attack_radius"))
-                        .defineInRange("Set Attack Radius", 2.5D, 1D, 10D);
-                howitzerConfig3 = itemCD(2D);
-                howitzer = new ToolConfig(8D, 1.6D);
+                        .defineInRange("Set Attack Radius", 2.5D, 1D, 5D);
+                busterGauntletConfig3 = itemCD(4D);
+                busterGauntlet = new ToolConfig(8D, 1.6D);
                 builder.pop();
             }
-            {
-                builder.push("Immortal Staff");
-                immortalStaffConfig1 = itemCD(1.5D);
-                immortalStaffConfig2 = builder.translation(getTranslationKey("projectile_damage"))
-                        .defineInRange("Set Projectile Damage", 8D, 1D, Float.MAX_VALUE);
-                builder.pop();
-            }
+            //{
+            //    builder.push("Ghost Warrior Series");
+            //    ghostWarriorSeriesConfig1 = builder.comment("If set to 'True' armor or weapon will be depleted")
+            //            .translation(getTranslationKey("series_depleted"))
+            //            .define("Enable Armor Or Weapon Can Be Depleted", false);
+            //    netherworldKatana = new ToolConfig(14D, 1.4D);
+            //    builder.pop();
+            //}
+            //{
+            //    builder.push("Immortal Staff");
+            //    immortalStaffConfig1 = itemCD(3D);
+            //    immortalStaffConfig2 = builder.translation(getTranslationKey("projectile_damage"))
+            //            .defineInRange("Set Projectile Damage", 8D, 1D, Float.MAX_VALUE);
+            //    builder.pop();
+            //}
+            builder.pop();
+            builder.push("Accessories");
             {
                 builder.push("Summoning Soul Necklace");
                 summoningSoulNecklaceConfig1 = builder.comment("Set maximum amount of damage a player can take while holding this item")
@@ -108,26 +123,30 @@ public final class ModConfigHandler {
                 builder.pop();
             }
             builder.pop();
+            builder.pop();
         }
 
         public final ForgeConfigSpec.BooleanValue eyeOfStructureConfig1;
         public final ForgeConfigSpec.DoubleValue eyeOfStructureConfig2;
         public final ForgeConfigSpec.DoubleValue summoningSoulNecklaceConfig1;
         public final ForgeConfigSpec.DoubleValue summoningSoulNecklaceConfig2;
-        public final ForgeConfigSpec.DoubleValue howitzerConfig1;
-        public final ForgeConfigSpec.DoubleValue howitzerConfig2;
-        public final ForgeConfigSpec.DoubleValue howitzerConfig3;
-        public final ToolConfig howitzer;
-        public final ForgeConfigSpec.IntValue guardianBattleaxeConfig1;
-        public final ForgeConfigSpec.DoubleValue guardianBattleaxeConfig2;
-        public final ToolConfig guardianBattleaxe;
-        public final ForgeConfigSpec.DoubleValue immortalStaffConfig1;
-        public final ForgeConfigSpec.DoubleValue immortalStaffConfig2;
+        public final ForgeConfigSpec.DoubleValue busterGauntletConfig1;
+        public final ForgeConfigSpec.DoubleValue busterGauntletConfig2;
+        public final ForgeConfigSpec.DoubleValue busterGauntletConfig3;
+        public final ToolConfig busterGauntlet;
+        public final ForgeConfigSpec.DoubleValue doomboltAxeConfig;
+        public final ToolConfig doomboltAxe;
+        public final AttributeConfig surge;
+        public final ToolConfig chainsword;
+        public final ForgeConfigSpec.IntValue chainswordConfig2;
+        public final ForgeConfigSpec.DoubleValue chainswordConfig1;
         public final ForgeConfigSpec.DoubleValue guardianCoreConfig1;
         public final ForgeConfigSpec.BooleanValue guardianCoreConfig2;
         public final AttributeConfig guardianLaser;
-        public final ForgeConfigSpec.BooleanValue ghostWarriorSeriesConfig1;
-        public final ToolConfig netherworldKatana;
+        //public final ForgeConfigSpec.DoubleValue immortalStaffConfig1;
+        //public final ForgeConfigSpec.DoubleValue immortalStaffConfig2;
+        //public final ForgeConfigSpec.BooleanValue ghostWarriorSeriesConfig1;
+        //public final ToolConfig netherworldKatana;
 
         private static ForgeConfigSpec.DoubleValue itemCD(double defaultCD) {
             String CDComment = "Set item cool down time after player on use (in seconds)";
@@ -258,14 +277,26 @@ public final class ModConfigHandler {
     //不朽
     public static class Immortal {
         public Immortal(final ForgeConfigSpec.Builder builder) {
-            builder.push("Immortal");
+            builder.push("The Immortal");
+            {
+                builder.push("Immortal Shuriken");
+                immortalShuriken = new AttributeConfig(5);
+                builder.pop();
+            }
+            {
+                builder.push("Immortal Laser");
+                immortalLaser = new AttributeConfig(5);
+                builder.pop();
+            }
             combatConfig = new AttributeConfig();
-            bossConfig = new BossConfig(25D, 16D, 0.75D);
-            adaptConfig = new DamageSourceAdaptConfig(100, 30, 0.1125D, 0.9D, true, true);
+            bossConfig = new BossConfig(30D, 16D, 0D);
+            adaptConfig = new DamageSourceAdaptConfig(10, 30, 1.5D, 2D, 0.9D);
             builder.pop();
         }
 
         public final AttributeConfig combatConfig;
+        public final AttributeConfig immortalShuriken;
+        public final AttributeConfig immortalLaser;
         public final BossConfig bossConfig;
         public final DamageSourceAdaptConfig adaptConfig;
     }
@@ -332,9 +363,10 @@ public final class ModConfigHandler {
             relicRipper = new RelicRipper(builder);
             relicEarthshaker = new RelicEarthshaker(builder);
             relicAnnihilator = new RelicAnnihilator(builder);
+            realmwarden = new Realmwarden(builder);
             namelessGuardian = new NamelessGuardian(builder);
-            enableNonCombatHeal = builder.comment("If set to 'False' disable out-of-combat heal")
-                    .translation(getTranslationKey("out_of_combat")).define("Enable Out-of-combat Healing", true);
+            outOfBattleHeal = builder.comment("If set to 'False' disable healing while not active")
+                    .translation(getTranslationKey("out_of_battle")).define("Enable healing while not active", true);
             builder.pop();
         }
 
@@ -342,8 +374,9 @@ public final class ModConfigHandler {
         public final RelicRipper relicRipper;
         public final RelicEarthshaker relicEarthshaker;
         public final RelicAnnihilator relicAnnihilator;
+        public final Realmwarden realmwarden;
         public final NamelessGuardian namelessGuardian;
-        public final ForgeConfigSpec.BooleanValue enableNonCombatHeal;
+        public final ForgeConfigSpec.BooleanValue outOfBattleHeal;
     }
 
     //遗迹观察者
@@ -353,7 +386,7 @@ public final class ModConfigHandler {
             combatConfig = new AttributeConfig();
             {
                 builder.push("Guardian Laser");
-                guardianLaser = new AttributeConfig(5F);
+                guardianLaser = new AttributeConfig(6F);
                 builder.pop();
             }
             builder.pop();
@@ -381,12 +414,12 @@ public final class ModConfigHandler {
             combatConfig = new AttributeConfig();
             {
                 builder.push("Electromagnetic");
-                electromagnetic = new AttributeConfig(10F);
+                electromagnetic = new AttributeConfig(8F);
                 builder.pop();
             }
             {
                 builder.push("Pulsed Grenade");
-                pulsedGrenade = new AttributeConfig(8F);
+                pulsedGrenade = new AttributeConfig(6F);
                 builder.pop();
             }
             builder.pop();
@@ -402,15 +435,20 @@ public final class ModConfigHandler {
         public RelicAnnihilator(final ForgeConfigSpec.Builder builder) {
             builder.push("Relic Annihilator");
             combatConfig = new AttributeConfig();
-            bossConfig = new BossConfig(20D, 18D, 0.5D);
+            bossConfig = new BossConfig(20D, 14D, 0.75D);
             {
                 builder.push("Guardian Laser");
-                guardianLaser = new AttributeConfig(7.5F);
+                guardianLaser = new AttributeConfig(8F);
                 builder.pop();
             }
             {
                 builder.push("Annihilator Missile");
                 annihilatorMissile = new AttributeConfig(8F);
+                builder.pop();
+            }
+            {
+                builder.push("Electromagnetic");
+                electromagnetic = new AttributeConfig(10F);
                 builder.pop();
             }
             builder.pop();
@@ -420,6 +458,31 @@ public final class ModConfigHandler {
         public final BossConfig bossConfig;
         public final AttributeConfig guardianLaser;
         public final AttributeConfig annihilatorMissile;
+        public final AttributeConfig electromagnetic;
+    }
+
+    public static class Realmwarden {
+        public Realmwarden(final ForgeConfigSpec.Builder builder) {
+            builder.push("Realmwarden");
+            combatConfig = new AttributeConfig();
+            bossConfig = new BossConfig(20D, 14D, 1D);
+            {
+                builder.push("Annihilator Missile");
+                annihilatorMissile = new AttributeConfig(15F);
+                builder.pop();
+            }
+            {
+                builder.push("Surge");
+                surge = new AttributeConfig(10F);
+                builder.pop();
+            }
+            builder.pop();
+        }
+
+        public final AttributeConfig combatConfig;
+        public final BossConfig bossConfig;
+        public final AttributeConfig annihilatorMissile;
+        public final AttributeConfig surge;
     }
 
     //无名守卫者
@@ -495,14 +558,12 @@ public final class ModConfigHandler {
                         .translation(getTranslationKey("boss_bar_2")).define("Enable Custom Boss Health Bars", true);
                 bossBarMaxDist = builder.comment("Set maximum render distance for boss health bar")
                         .translation(getTranslationKey("boss_bar_3")).defineInRange("Set Render Distance For Boss Bars", 48D, 32D, 128D);
-                enableBossCanBreakingBlockDropItem = builder.comment("If set to 'False' disable bosses breaking blocks drop items")
-                        .translation(getTranslationKey("break_block_drop")).define("Enable Bosses Breaking Blocks Drop Items", false);
                 builder.pop();
             }
+            enableMobsCanBreakingBlockDropItem = builder.comment("If set to 'False' disable mobs breaking blocks drop items")
+                    .translation(getTranslationKey("break_block_drop")).define("Enable Mobs Breaking Blocks Drop Items", false);
             enableSameMobsTypeInjury = builder.comment("If set to 'False' able inflict damage between mobs of the same team")
                     .translation(getTranslationKey("team_damage")).define("Enable Allied Damage Protection", true);
-            enableFrenzyDestroyBlock = builder.comment("If set to 'False' disable frenzy potion destroy block")
-                    .translation(getTranslationKey("frenzy_destroy_block")).define("Enable Frenzy Potion Destroy Block", false);
             enableShowItemCD = builder.comment("If set to 'False' disable showing cooldown time in tooltip")
                     .translation(getTranslationKey("show_item_cd")).define("Enable Show Item Cd", false);
             enableCombatPrompts = builder.comment("If set to 'False' disable all combat encounter prompts")
@@ -516,18 +577,15 @@ public final class ModConfigHandler {
         public final ForgeConfigSpec.BooleanValue enableCustomBossBars;
         //boss血条显示距离
         public final ForgeConfigSpec.DoubleValue bossBarMaxDist;
-        //启用boss破坏方块掉落对应方块物品
-        public final ForgeConfigSpec.BooleanValue enableBossCanBreakingBlockDropItem;
+        //启用生物破坏方块掉落对应方块物品
+        public final ForgeConfigSpec.BooleanValue enableMobsCanBreakingBlockDropItem;
         //启用同类型生物之间无法造成伤害
         public final ForgeConfigSpec.BooleanValue enableSameMobsTypeInjury;
-        //启用狂暴药水冲刺时破坏方块效果
-        public final ForgeConfigSpec.BooleanValue enableFrenzyDestroyBlock;
         //启用显示物品冷却时间
         public final ForgeConfigSpec.BooleanValue enableShowItemCD;
         //启用战斗提示
         public final ForgeConfigSpec.BooleanValue enableCombatPrompts;
     }
-
 
     //通用属性倍率
     public static class AttributeConfig {
@@ -562,7 +620,7 @@ public final class ModConfigHandler {
                     .translation(getTranslationKey("damage_cap"))
                     .defineInRange("Damage Cap", damageCap, 0D, Float.MAX_VALUE);
             this.canDamageDist = COMMON_BUILDER.comment("Set this mob max effective damage distance")
-                    .translation(getTranslationKey("max_damage_dist")).defineInRange("Effective Damage Distance", damageDist, 1D, 64D);
+                    .translation(getTranslationKey("max_damage_dist")).defineInRange("Effective Damage Distance", damageDist, 0D, 64D);
             this.damageReductDur = COMMON_BUILDER.comment("Set this mob's damage reduction duration after being damaged (seconds)")
                     .translation(getTranslationKey("damage_reduction_duration"))
                     .defineInRange("Damage Reduction Duration", damageReductDur, 0D, 5D);
@@ -573,30 +631,34 @@ public final class ModConfigHandler {
         public final ForgeConfigSpec.DoubleValue damageReductDur;
     }
 
-    //通用伤害源适应
+    //伤害源适应
     public static class DamageSourceAdaptConfig {
-        public DamageSourceAdaptConfig(int maxDamageSourceAdaptCount, int resetCountdown, double singleAdaptFactor, double maxAdaptFactor, boolean adaptsSameTypeMobs, boolean adaptBypassesDamage) {
+        public DamageSourceAdaptConfig(int attenuatedDuration, int fullAdaptDuration, double singleAdaptFactor, double playerSingleAdaptFactor, double maxAdaptFactor) {
             COMMON_BUILDER.push("Damage Adapt");
-            this.maxDamageSourceAdaptCount = COMMON_BUILDER.comment("Set max adaptable damage sources for this mob")
-                    .translation(getTranslationKey("damage_adapt_1")).defineInRange("Max Supported Damage Types Amount", maxDamageSourceAdaptCount, 10, 1024);
-            this.resetCountdown = COMMON_BUILDER.comment("Set the effective duration for a single adaptation damage source (in seconds)")
-                    .translation(getTranslationKey("damage_adapt_2")).defineInRange("Adaptation Duration", resetCountdown, 10, 1024);
-            this.singleAdaptFactor = COMMON_BUILDER.comment("Set the reduction factor for each instance of the same damage source")
-                    .translation(getTranslationKey("damage_adapt_3")).defineInRange("Single Hurt Adaptation Factor", singleAdaptFactor, 0D, 1D);
+            this.enabled = COMMON_BUILDER.comment("If set to 'False' disable Damage Adaptation")
+                    .translation(getTranslationKey("damage_adapt_enabled")).define("Enabled", true);
+            this.debug = COMMON_BUILDER.comment("If set to 'False' disable print logs")
+                    .translation(getTranslationKey("damage_adapt_debug")).define("Enabled Debug Mode", false);
+            this.attenuatedDuration = COMMON_BUILDER.comment("Duration for adaptation to decay to zero when not fully adapted (in seconds)")
+                    .translation(getTranslationKey("damage_adapt_0")).defineInRange("Decay Duration", attenuatedDuration, 1, 300);
+            this.fullAdaptDuration = COMMON_BUILDER.comment("Set the effective duration for a single adaptation damage source (in seconds)")
+                    .translation(getTranslationKey("damage_adapt_1")).defineInRange("Adaptation Duration", fullAdaptDuration, 1, 300);
+            this.singleAdaptFactor = COMMON_BUILDER.comment("Adaptation increment per hit for mob-caused damage, scaled by damage/maxHealth. Higher = faster buildup")
+                    .translation(getTranslationKey("damage_adapt_2")).defineInRange("Mob Damage Adaptation Factor", singleAdaptFactor, 1D, 10D);
+            this.playerSingleAdaptFactor = COMMON_BUILDER.comment("Adaptation increment per hit for player-caused damage, scaled by damage/maxHealth. Higher = faster buildup")
+                    .translation(getTranslationKey("damage_adapt_2_player")).defineInRange("Player-Caused Damage Adaptation Factor", playerSingleAdaptFactor, 1D, 10D);
             this.maxAdaptFactor = COMMON_BUILDER.comment("Set the maximum damage reduction factor")
-                    .translation(getTranslationKey("damage_adapt_4")).defineInRange("Same Damage Max Adaptation Factor", maxAdaptFactor, 0D, 1D);
-            this.adaptsSameTypeMobs = adaptsSameTypeMobs;
-            this.adaptBypassesDamage = COMMON_BUILDER.comment("If set to 'False' disable adaptation to bypasses invulnerability damage source")
-                    .translation(getTranslationKey("damage_adapt_5")).define("Adaptation Bypasses Invulnerability Damage Source", adaptBypassesDamage);
+                    .translation(getTranslationKey("damage_adapt_3")).defineInRange("Same Damage Max Adaptation Factor", maxAdaptFactor, 0.1D, 1D);
             COMMON_BUILDER.pop();
         }
 
-        public final ForgeConfigSpec.IntValue maxDamageSourceAdaptCount;
-        public final ForgeConfigSpec.IntValue resetCountdown;
+        public final ForgeConfigSpec.BooleanValue enabled;
+        public final ForgeConfigSpec.BooleanValue debug;
+        public final ForgeConfigSpec.IntValue fullAdaptDuration;
+        public final ForgeConfigSpec.IntValue attenuatedDuration;
+        public final ForgeConfigSpec.DoubleValue playerSingleAdaptFactor;
         public final ForgeConfigSpec.DoubleValue singleAdaptFactor;
         public final ForgeConfigSpec.DoubleValue maxAdaptFactor;
-        public final ForgeConfigSpec.BooleanValue adaptBypassesDamage;
-        public final boolean adaptsSameTypeMobs;
     }
 
     //通用物品配置
@@ -604,9 +666,9 @@ public final class ModConfigHandler {
         ToolConfig(double d0, double d1) {
             attackSpeedValue = d1;
             attackDamageValue = d0;
-            this.attackDamage = COMMON_BUILDER.comment("Set tool attack damage")
+            this.attackDamage = COMMON_BUILDER.comment("Set tool attack damage(Restart required)")
                     .translation(getTranslationKey("tool_damage")).defineInRange("Attack Damage", d0, 0D, Float.MAX_VALUE);
-            this.attackSpeed = COMMON_BUILDER.comment("Set tool attack speed")
+            this.attackSpeed = COMMON_BUILDER.comment("Set tool attack speed(Restart required)")
                     .translation(getTranslationKey("tool_speed")).defineInRange("Attack Speed", d1, 0D, Float.MAX_VALUE);
         }
 
@@ -621,7 +683,7 @@ public final class ModConfigHandler {
 
     public static class Client {
         public Client(final ForgeConfigSpec.Builder builder) {
-            popupNotification = new PopupNotification(builder);
+            tipNotification = new TipNotification(builder);
             enableCameraShake = builder.comment("If set to 'False' disable camera shake")
                     .translation(getTranslationKey("camera_shake")).define("Enable Camera Shake", true);
             enablePlayBossMusic = builder.comment("If set to 'False' disable play boss music")
@@ -630,14 +692,14 @@ public final class ModConfigHandler {
                     .translation(getTranslationKey("falling_block_render")).define("Enable Falling Block Render", true);
         }
 
-        public final PopupNotification popupNotification;
+        public final TipNotification tipNotification;
         public final ForgeConfigSpec.BooleanValue enableCameraShake;
         public final ForgeConfigSpec.BooleanValue enablePlayBossMusic;
         public final ForgeConfigSpec.BooleanValue enableFallingBlockRender;
     }
 
-    public static class PopupNotification {
-        public PopupNotification(final ForgeConfigSpec.Builder builder) {
+    public static class TipNotification {
+        public TipNotification(final ForgeConfigSpec.Builder builder) {
             builder.push("Popup Notification");
             enabled = builder.comment("If set to 'False' disable popup notification")
                     .translation(getTranslationKey("notification_enabled")).define("Enabled", true);
@@ -646,10 +708,10 @@ public final class ModConfigHandler {
                     .translation(getTranslationKey("notification_display_mode")).defineEnum("Display Mode", DisplayMode.FADE_IN_OUT);
             displayDuration = builder
                     .comment("HUD display duration in ticks").translation(getTranslationKey("notification_display_duration"))
-                    .defineInRange("Display Duration", 100, 20, 200);
+                    .defineInRange("Display Duration", 120, 20, 1200);
             backgroundOpacity = builder
                     .comment("HUD background opacity").translation(getTranslationKey("notification_background_opacity"))
-                    .defineInRange("Background Opacity", 0.08D, 0.0D, 1.0D);
+                    .defineInRange("Background Opacity", 0.25D, 0.0D, 1.0D);
             textMaxWidth = builder
                     .comment("Maximum width for text lines in pixels").translation(getTranslationKey("notification_text_max_width"))
                     .defineInRange("Text Max Width", 300, 100, 400);

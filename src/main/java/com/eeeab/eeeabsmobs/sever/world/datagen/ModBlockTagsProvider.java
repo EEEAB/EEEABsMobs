@@ -128,16 +128,16 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 BlockInit.DARK_EROSION_ROCK.get()
         );
         tag(BlockTags.STONE_ORE_REPLACEABLES).add(BlockInit.BLIGHTED_STONE.get());
-        tag(Tags.Blocks.ORES_IN_GROUND_STONE).add(
-                BlockInit.DARKENED_COAL_ORE.get(),
-                BlockInit.DARKENED_IRON_ORE.get()
-        );
-        tag(Tags.Blocks.ORES).add(
-                BlockInit.DARKENED_COAL_ORE.get(),
-                BlockInit.DARKENED_IRON_ORE.get()
-        );
-        tag(Tags.Blocks.ORES_COAL).add(BlockInit.DARKENED_COAL_ORE.get());
-        tag(Tags.Blocks.ORES_IRON).add(BlockInit.DARKENED_IRON_ORE.get());
+        //tag(Tags.Blocks.ORES_IN_GROUND_STONE).add(
+        //        BlockInit.DARKENED_COAL_ORE.get(),
+        //        BlockInit.DARKENED_IRON_ORE.get()
+        //);
+        //tag(Tags.Blocks.ORES).add(
+        //        BlockInit.DARKENED_COAL_ORE.get(),
+        //        BlockInit.DARKENED_IRON_ORE.get()
+        //);
+        //tag(Tags.Blocks.ORES_COAL).add(BlockInit.DARKENED_COAL_ORE.get());
+        //tag(Tags.Blocks.ORES_IRON).add(BlockInit.DARKENED_IRON_ORE.get());
         tag(BlockTags.LOGS_THAT_BURN).add(
                 BlockInit.BLIGHTED_OAK_LOG.get(),
                 BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get(),

@@ -15,7 +15,10 @@ import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguratio
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.featuresize.TwoLayersFeatureSize;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
+
+import java.util.List;
 
 public class ModConfiguredFeatures {
     public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
@@ -43,6 +46,9 @@ public class ModConfiguredFeatures {
         //                ))
         //                .build());
 
+        RuleTest deepslateReplaceables = new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
+        register(context, ModResourceKey.ORE_ANCIENT_BOUNDARY_STONE, Feature.ORE, new OreConfiguration(List.of(OreConfiguration.target(deepslateReplaceables, BlockInit.ANCIENT_BOUNDARY_STONE.get().defaultBlockState())), 24));
+
         register(context, ModResourceKey.BLIGHTED_OAK, Feature.TREE, new TreeConfiguration.TreeConfigurationBuilder(
                 BlockStateProvider.simple(BlockInit.BLIGHTED_OAK_LOG.get()),
                 new WitheredTrunkPlacer(6, 3, 2, 0.8F, 4, 3, 2, 3),
@@ -51,10 +57,10 @@ public class ModConfiguredFeatures {
                 new TwoLayersFeatureSize(0, 0, 0))
                 .build());
         /* Ore Configured */
-        TagMatchTest rule1 = new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES);
-        register(context, ModResourceKey.VOIDSHARD, Feature.ORE, new OreConfiguration(rule1, BlockInit.VOIDSHARD.get().defaultBlockState(), 33));
-        register(context, ModResourceKey.DARKENED_COAL_ORE, Feature.ORE, new OreConfiguration(rule1, BlockInit.DARKENED_COAL_ORE.get().defaultBlockState(), 17));
-        register(context, ModResourceKey.DARKENED_IRON_ORE, Feature.ORE, new OreConfiguration(rule1, BlockInit.DARKENED_IRON_ORE.get().defaultBlockState(), 9));
+        //TagMatchTest rule1 = new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES);
+        //register(context, ModResourceKey.ORE_VOIDSHARD, Feature.ORE, new OreConfiguration(rule1, BlockInit.VOIDSHARD.get().defaultBlockState(), 33));
+        //register(context, ModResourceKey.ORE_DARKENED_COAL, Feature.ORE, new OreConfiguration(rule1, BlockInit.DARKENED_COAL_ORE.get().defaultBlockState(), 17));
+        //register(context, ModResourceKey.ORE_DARKENED_IRON, Feature.ORE, new OreConfiguration(rule1, BlockInit.DARKENED_IRON_ORE.get().defaultBlockState(), 9));
     }
 
     private static <FC extends FeatureConfiguration, F extends Feature<FC>> void register(BootstapContext<ConfiguredFeature<?, ?>> context,
