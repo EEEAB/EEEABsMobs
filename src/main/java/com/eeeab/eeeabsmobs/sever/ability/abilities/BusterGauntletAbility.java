@@ -11,9 +11,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
-public class HowitzerAbility extends Ability<Player> {
+public class BusterGauntletAbility extends Ability<Player> {
 
-    public HowitzerAbility(AbilityType<Player, ? extends Ability<Player>> abilityType, Player user) {
+    public BusterGauntletAbility(AbilityType<Player, ? extends Ability<Player>> abilityType, Player user) {
         super(abilityType, user, new AbilityPeriod[]{
                 new AbilityPeriod.AbilityPeriodInstant(AbilityPeriod.AbilityPeriodType.ACTIVE)
         }, 0);
@@ -28,13 +28,13 @@ public class HowitzerAbility extends Ability<Player> {
             double yBodyRadians = Math.toRadians(user.yHeadRot + (180 * (user.getUsedItemHand() == InteractionHand.MAIN_HAND ? 1 : 2)));
             float width = user.getBbWidth();
             EntityPulsedGrenade grenade = new EntityPulsedGrenade(level, user, true);
-            grenade.setRadius(ModConfigHandler.COMMON.items.howitzerConfig2.get().floatValue());
+            grenade.setRadius(ModConfigHandler.COMMON.items.busterGauntletConfig2.get().floatValue());
             Vec3 lookPos = user.getLookAngle();
             Vec3 playerPos = user.position();
             grenade.shoot(lookPos.x, lookPos.y, lookPos.z, 0.7F, 1F);
             grenade.setPos(playerPos.x + width * 0.7F * Math.cos(yBodyRadians), user.getY(0.6D), playerPos.z + width * 0.7F * Math.sin(yBodyRadians));
             level.addFreshEntity(grenade);
         }
-        user.playSound(SoundInit.DEMOLISHER_LAUNCH.get());
+        user.playSound(SoundInit.PULSED_GRENADE_LAUNCH.get());
     }
 }

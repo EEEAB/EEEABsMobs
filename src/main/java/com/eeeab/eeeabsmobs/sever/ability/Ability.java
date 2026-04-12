@@ -9,7 +9,7 @@ public abstract class Ability<T extends LivingEntity> {
     private final AbilityPeriod[] abilityPeriods;
     private final AbilityCapability.IAbilityCapability abilityCapability;
     private final AbilityType<T, ? extends Ability<?>> abilityType;
-    private final int maxCoolingTick;
+    private int maxCoolingTick;
     private int sectionTick;
     private int sectionIndex;
     private int coolingTimer;
@@ -27,6 +27,7 @@ public abstract class Ability<T extends LivingEntity> {
     }
 
     public void start() {
+        if (isPassive()) return;
         abilityCapability.setAbility(this);
         tick = 0;
         sectionTick = 0;
@@ -55,12 +56,17 @@ public abstract class Ability<T extends LivingEntity> {
     }
 
     public void end() {
+        if (isPassive()) return;
         coolingTimer = getMaxCoolingTick();
         inUse = false;
         tick = 0;
         sectionTick = 0;
         sectionIndex = 0;
         abilityCapability.setAbility(null);
+    }
+
+    public boolean isPassive() {
+        return getAbilityType().isPassive();
     }
 
     public AbilityType<T, ? extends Ability<?>> getAbilityType() {
@@ -76,26 +82,30 @@ public abstract class Ability<T extends LivingEntity> {
     }
 
     public boolean isUsing() {
-        return inUse;
+        return !isPassive() && inUse;
     }
 
     public boolean isCooling() {
-        return coolingTimer > 0;
+        return !isPassive() && coolingTimer > 0;
     }
 
     public boolean canUse() {
         return !isUsing() && !isCooling() && abilityCapability.getAbility() == null;
     }
 
-    private int getMaxCoolingTick() {
+    public int getMaxCoolingTick() {
         return maxCoolingTick;
     }
 
-    private void nextPeriod() {
+    public void setMaxCoolingTick(int maxCoolingTick) {
+        this.maxCoolingTick = maxCoolingTick;
+    }
+
+    public void nextPeriod() {
         jumpPeriod(sectionIndex + 1);
     }
 
-    private void jumpPeriod(int index) {
+    public void jumpPeriod(int index) {
         sectionIndex = index;
         sectionTick = 0;
         if (sectionIndex >= abilityPeriods.length) {
@@ -112,10 +122,10 @@ public abstract class Ability<T extends LivingEntity> {
         CompoundTag compoundTag = new CompoundTag();
         if (isUsing()) {
             compoundTag.putInt("tick", tick);
-            compoundTag.putInt("section_index", sectionIndex);
-            compoundTag.putInt("section_tick", sectionTick);
+            compoundTag.putInt("sectionIndex", sectionIndex);
+            compoundTag.putInt("sectionTick", sectionTick);
         } else if (coolingTimer > 0) {
-            compoundTag.putInt("cooling_tick", coolingTimer);
+            compoundTag.putInt("coolingTick", coolingTimer);
         }
         return compoundTag;
     }
@@ -125,10 +135,10 @@ public abstract class Ability<T extends LivingEntity> {
         boolean inUse = compoundTag.contains("tick");
         if (inUse) {
             tick = compoundTag.getInt("tick");
-            sectionIndex = compoundTag.getInt("section_index");
-            sectionTick = compoundTag.getInt("section_tick");
+            sectionIndex = compoundTag.getInt("sectionIndex");
+            sectionTick = compoundTag.getInt("sectionTick");
         } else {
-            coolingTimer = compoundTag.getInt("cooling_tick");
+            coolingTimer = compoundTag.getInt("coolingTick");
         }
     }
 }

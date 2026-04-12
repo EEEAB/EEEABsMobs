@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.client.sound;
+package com.eeeab.eeeabsmobs.client.sound.ability;
 
 import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
@@ -14,11 +14,11 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class AbilitySoundInstance extends AbstractTickableSoundInstance {
+public class AbsAbilityTickableSound extends AbstractTickableSoundInstance {
     public final Player user;
     public final Ability<?> ability;
 
-    public AbilitySoundInstance(Player user, SoundEvent soundEvent, AbilityType<Player, ?> ability) {
+    public AbsAbilityTickableSound(Player user, SoundEvent soundEvent, AbilityType<Player, ?> ability) {
         super(soundEvent, SoundSource.PLAYERS, SoundInstance.createUnseededRandom());
         this.user = user;
         this.x = this.user.getX();
@@ -30,7 +30,6 @@ public class AbilitySoundInstance extends AbstractTickableSoundInstance {
         } else {
             this.ability = null;
         }
-
     }
 
     @Override
@@ -46,6 +45,6 @@ public class AbilitySoundInstance extends AbstractTickableSoundInstance {
 
     @Override
     public boolean canPlaySound() {
-        return !this.user.isSilent() && !this.user.isRemoved() && this.ability != null && this.ability.isUsing() && AbilityPeriod.AbilityPeriodType.STARTUP != ability.getSection().periodType;
+        return !this.user.isSilent() && this.user.isAlive() && this.ability != null && this.ability.isUsing() && AbilityPeriod.AbilityPeriodType.STARTUP != ability.getSection().periodType;
     }
 }

@@ -1,15 +1,15 @@
 package com.eeeab.eeeabsmobs.sever.ability.abilities;
 
-import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityPeriod;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityType;
 import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityShamanBomb;
+import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.item.ItemImmortalStaff;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 
@@ -37,6 +37,7 @@ public class ImmortalStaffAbility extends Ability<Player> {
             serverLevel.addFreshEntity(shamanBomb);
         }
         user.playSound(SoundEvents.BLAZE_SHOOT);
-        ModParticleUtils.randomAnnularParticleOutburst(user.level(), 10, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleTypes.LARGE_SMOKE}, user.getX(), user.getY(), user.getZ(), 0.16F);
+        ModParticleUtils.annularParticleOutburst(user.level(), 5, ParticleTypes.SOUL_FIRE_FLAME, user.getX(), user.getY(), user.getZ(), 0.18, 0.15, 360F, 0F, Mth.PI);
+        ModParticleUtils.annularParticleOutburst(user.level(), 5, ParticleTypes.LARGE_SMOKE, user.getX(), user.getY(), user.getZ(), 0.16, 0.1, 360F, 0F, -Mth.PI);
     }
 }

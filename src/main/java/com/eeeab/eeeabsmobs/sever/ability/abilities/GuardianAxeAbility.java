@@ -1,12 +1,11 @@
 package com.eeeab.eeeabsmobs.sever.ability.abilities;
 
-import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityPeriod;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityType;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityGuardianBlade;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -42,7 +41,7 @@ public class GuardianAxeAbility extends Ability<Player> {
             y = blockPos.getY();
             z = blockPos.getZ();
         }
-        ModParticleUtils.roundParticleOutburst(user.level(), 40, new ParticleOptions[]{ParticleInit.GUARDIAN_SPARK.get(), ParticleTypes.SOUL_FIRE_FLAME}, x, y, z, 0.3F);
+        ModParticleUtils.roundParticleOutburst(user.level(), 40, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME}, x, y, z, 0.3F);
         if (!user.level().isClientSide) {
             Vec3 lookAngle = user.getLookAngle();
             Vec3[] vec3s = new Vec3[]{lookAngle.yRot(0.5F), lookAngle, lookAngle.yRot(-0.5F)};

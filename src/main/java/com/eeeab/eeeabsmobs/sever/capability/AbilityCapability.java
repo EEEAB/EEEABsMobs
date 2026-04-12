@@ -65,7 +65,7 @@ public class AbilityCapability {
         @Override
         public void onActive(LivingEntity entity, AbilityType<?, ?> type) {
             Ability<?> ability = abilitiesInstances.get(type);
-            if (ability != null) {
+            if (ability != null && !ability.isPassive()) {
                 ability.start();
             }
         }

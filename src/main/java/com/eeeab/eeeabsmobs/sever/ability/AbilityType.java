@@ -6,10 +6,16 @@ import org.jetbrains.annotations.NotNull;
 public class AbilityType<ENTITY extends LivingEntity, ABILITY extends Ability<ENTITY>> implements Comparable<AbilityType<ENTITY, ABILITY>> {
     private final EEFactory<ENTITY, ABILITY> factory;
     private final String name;
+    private final boolean passive;
 
     public AbilityType(EEFactory<ENTITY, ABILITY> factory, String name) {
+        this(factory, name, false);
+    }
+
+    public AbilityType(EEFactory<ENTITY, ABILITY> factory, String name, boolean passive) {
         this.factory = factory;
         this.name = name;
+        this.passive = passive;
     }
 
     public ABILITY getInstance(LivingEntity user) {
@@ -18,6 +24,10 @@ public class AbilityType<ENTITY extends LivingEntity, ABILITY extends Ability<EN
 
     public String getName() {
         return name;
+    }
+
+    public boolean isPassive() {
+        return passive;
     }
 
     @Override

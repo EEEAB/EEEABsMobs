@@ -6,7 +6,6 @@ import com.eeeab.eeeabsmobs.sever.ability.AbilityPeriod;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityType;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityGuardianLaser;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -28,11 +27,12 @@ public class GuardianLaserAbility extends Ability<Player> {
     public void start() {
         super.start();
         Player player = getUser();
-        if (player.level() instanceof ServerLevel level) {
+        Level level = player.level();
+        if (!level.isClientSide) {
             double px = player.getX();
             double py = player.getY() + player.getBbHeight() * 0.6F;
             double pz = player.getZ();
-            EntityGuardianLaser guardianLaser = new EntityGuardianLaser(player.level(), player, px, py, pz, 100);
+            EntityGuardianLaser guardianLaser = new EntityGuardianLaser(level, player, px, py, pz, 100);
             level.addFreshEntity(guardianLaser);
             player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 2, false, false));
             this.guardianLaser = guardianLaser;
@@ -42,9 +42,7 @@ public class GuardianLaserAbility extends Ability<Player> {
 
     @Override
     protected void tickUsing() {
-        Player player = this.getUser();
-        Level level = player.level();
-        if (level.isClientSide) EEEABMobs.PROXY.playGuardianLaserSound(player);
+        EEEABMobs.PROXY.playTickableSound(this.getUser(), 0);
     }
 
     @Override
@@ -52,11 +50,10 @@ public class GuardianLaserAbility extends Ability<Player> {
         super.end();
         Player player = this.getUser();
         player.playSound(SoundInit.NAMELESS_GUARDIAN_ACCUMULATING_END.get(), 1.5F, (player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.2F + 1.5F);
-        Level level = player.level();
         if (guardianLaser != null) {
             guardianLaser.discard();
         }
         player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
-        if (level.isClientSide) EEEABMobs.PROXY.stopGuardianLaserSound(player);
+        if (player.level().isClientSide) EEEABMobs.PROXY.stopTickableSound(player);
     }
 }
