@@ -42,8 +42,20 @@
       "eeeabsmobs:effect/magic_matrix2"
     ]
   },
-  "demolisher.launch": {
-    "subtitle": "subtitles.eeeabsmobs.demolisher.launch",
+  "surge": {
+    "subtitle": "subtitles.eeeabsmobs.surge",
+    "sounds": [
+      "eeeabsmobs:effect/fire"
+    ]
+  },
+  "man": {
+    "subtitle": "subtitles.eeeabsmobs.man",
+    "sounds": [
+      "eeeabsmobs:effect/man"
+    ]
+  },
+  "pulsed_grenade.launch": {
+    "subtitle": "subtitles.eeeabsmobs.pulsed_grenade.launch",
     "sounds": [
       "eeeabsmobs:entity/relic_earthshaker/spark1",
       "eeeabsmobs:entity/relic_earthshaker/spark2",
@@ -62,22 +74,69 @@
       "eeeabsmobs:effect/immortal_shuriken2"
     ]
   },
-  "immortal_skeleton.hurt": {
-    "subtitle": "subtitles.eeeabsmobs.immortal_skeleton.hurt",
+  "item.chainsword.cut_hit": {
+    "subtitle": "subtitles.eeeabsmobs.item.chainsword.cut_hit",
+    "sounds": [
+      "eeeabsmobs:item/chainsword/hit_cut1",
+      "eeeabsmobs:item/chainsword/hit_cut2",
+      "eeeabsmobs:item/chainsword/hit_cut3"
+    ]
+  },
+  "item.doomboltaxe.throw": {
+    "subtitle": "subtitles.eeeabsmobs.item.doomboltaxe.throw",
+    "sounds": [
+      "eeeabsmobs:item/doomboltaxe/throw1",
+      "eeeabsmobs:item/doomboltaxe/throw2"
+    ]
+  },
+  "item.doomboltaxe.hit": {
+    "subtitle": "subtitles.eeeabsmobs.item.doomboltaxe.hit",
+    "sounds": [
+      "eeeabsmobs:item/doomboltaxe/pierce1",
+      "eeeabsmobs:item/doomboltaxe/pierce2",
+      "eeeabsmobs:item/doomboltaxe/pierce3"
+    ]
+  },
+  "item.doomboltaxe.thunder": {
+    "subtitle": "subtitles.eeeabsmobs.item.doomboltaxe.thunder",
+    "sounds": [
+      "eeeabsmobs:item/doomboltaxe/thunder1",
+      "eeeabsmobs:item/doomboltaxe/thunder2"
+    ]
+  },
+  "item.doomboltaxe.return": {
+    "subtitle": "subtitles.eeeabsmobs.item.doomboltaxe.return",
+    "sounds": [
+      "eeeabsmobs:item/doomboltaxe/return1",
+      "eeeabsmobs:item/doomboltaxe/return2",
+      "eeeabsmobs:item/doomboltaxe/return3"
+    ]
+  },
+  "item.doomboltaxe.hit_ground": {
+    "subtitle": "subtitles.eeeabsmobs.item.doomboltaxe.hit_ground",
+    "sounds": [
+      "eeeabsmobs:item/doomboltaxe/ground_impact1",
+      "eeeabsmobs:item/doomboltaxe/ground_impact2",
+      "eeeabsmobs:item/doomboltaxe/ground_impact3",
+      "eeeabsmobs:item/doomboltaxe/ground_impact4"
+    ]
+  },
+  "entity.immortal_skeleton.hurt": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal_skeleton.hurt",
     "sounds": [
       "eeeabsmobs:generic/entity/skeleton_hurt1",
       "eeeabsmobs:generic/entity/skeleton_hurt2",
       "eeeabsmobs:generic/entity/skeleton_hurt3"
     ]
   },
-  "immortal_skeleton.death": {
-    "subtitle": "subtitles.eeeabsmobs.immortal_skeleton.death",
+  "entity.immortal_skeleton.death": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal_skeleton.death",
     "sounds": [
       "eeeabsmobs:generic/entity/skeleton_death"
     ]
   },
-  "immortal_shaman.shoot": {
-    "subtitle": "subtitles.eeeabsmobs.immortal_shaman.shoot",
+  "entity.immortal_shaman.shoot": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal_shaman.shoot",
     "sounds": [
       "eeeabsmobs:entity/immortal_shaman/shoot1",
       "eeeabsmobs:entity/immortal_shaman/shoot2",
@@ -85,536 +144,657 @@
       "eeeabsmobs:entity/immortal_shaman/shoot4"
     ]
   },
-  "immortal_shaman.hurt": {
-    "subtitle": "subtitles.eeeabsmobs.immortal_shaman.hurt",
+  "entity.immortal_shaman.hurt": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal_shaman.hurt",
     "sounds": [
       "eeeabsmobs:generic/entity/skeleton_hurt1",
       "eeeabsmobs:generic/entity/skeleton_hurt2",
       "eeeabsmobs:generic/entity/skeleton_hurt3"
     ]
   },
-  "immortal_shaman.spell_casting": {
-    "subtitle": "subtitles.eeeabsmobs.immortal_shaman.spell_casting",
+  "entity.immortal_shaman.spell_casting": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal_shaman.spell_casting",
     "sounds": [
       "eeeabsmobs:entity/immortal_shaman/spell_casting"
     ]
   },
-  "immortal_shaman.death": {
-    "subtitle": "subtitles.eeeabsmobs.immortal_shaman.death",
+  "entity.immortal_shaman.death": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal_shaman.death",
     "sounds": [
       "eeeabsmobs:generic/entity/skeleton_death"
     ]
   },
-  "immortal_golem.hurt": {
-    "subtitle": "subtitles.eeeabsmobs.immortal_golem.hurt",
+  "entity.immortal_golem.hurt": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal_golem.hurt",
     "sounds": [
       "eeeabsmobs:generic/entity/skeleton_hurt1",
       "eeeabsmobs:generic/entity/skeleton_hurt2",
       "eeeabsmobs:generic/entity/skeleton_hurt3"
     ]
   },
-  "immortal_golem.death": {
-    "subtitle": "subtitles.eeeabsmobs.immortal_golem.death",
+  "entity.immortal_golem.death": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal_golem.death",
     "sounds": [
       "eeeabsmobs:generic/entity/skeleton_death"
     ]
   },
-  "immortal_executioner.hurt": {
-    "subtitle": "subtitles.eeeabsmobs.immortal_executioner.hurt",
+  "entity.immortal_executioner.hurt": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal_executioner.hurt",
     "sounds": [
       "eeeabsmobs:entity/immortal_executioner/hurt1",
       "eeeabsmobs:entity/immortal_executioner/hurt2",
       "eeeabsmobs:entity/immortal_executioner/hurt3"
     ]
   },
-  "immortal_executioner.death": {
-    "subtitle": "subtitles.eeeabsmobs.immortal_executioner.death",
+  "entity.immortal_executioner.death": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal_executioner.death",
     "sounds": [
       "eeeabsmobs:entity/immortal_executioner/death"
     ]
   },
-  "immortal_executioner.dash": {
-    "subtitle": "subtitles.eeeabsmobs.immortal_executioner.dash",
+  "entity.immortal_executioner.dash": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal_executioner.dash",
     "sounds": [
       "eeeabsmobs:entity/immortal_executioner/dash"
     ]
   },
-  "immortal_executioner.burn": {
-    "subtitle": "subtitles.eeeabsmobs.immortal_executioner.burn",
+  "entity.immortal_executioner.burn": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal_executioner.burn",
     "sounds": [
-      "eeeabsmobs:effect/fire"
+      "eeeabsmobs:effect/burn"
     ]
   },
-  "immortal_executioner.block": {
-    "subtitle": "subtitles.eeeabsmobs.immortal_executioner.block",
+  "entity.immortal_executioner.block": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal_executioner.block",
     "sounds": [
       "eeeabsmobs:entity/immortal_executioner/block1",
       "eeeabsmobs:entity/immortal_executioner/block2"
     ]
   },
-  "immortal_executioner.detonation": {
-    "subtitle": "subtitles.eeeabsmobs.immortal_executioner.detonation",
+  "entity.immortal_executioner.detonation": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal_executioner.detonation",
     "sounds": [
       "eeeabsmobs:entity/immortal_executioner/detonation1",
       "eeeabsmobs:entity/immortal_executioner/detonation2"
     ]
   },
-  "immortal_executioner.scratch": {
-    "subtitle": "subtitles.eeeabsmobs.immortal_executioner.scratch",
+  "entity.immortal_executioner.scratch": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal_executioner.scratch",
     "sounds": [
       "eeeabsmobs:entity/immortal_executioner/scratch1",
       "eeeabsmobs:entity/immortal_executioner/scratch2",
       "eeeabsmobs:entity/immortal_executioner/scratch3"
     ]
   },
-  "immortal.accumulating": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.accumulating",
+  "entity.immortal.accumulating": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.accumulating",
     "sounds": [
       "eeeabsmobs:entity/immortal/accumulating"
     ]
   },
-  "immortal.accumulating_end": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.accumulating_end",
+  "entity.immortal.accumulating_end": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.accumulating_end",
     "sounds": [
       "eeeabsmobs:entity/immortal/accumulating_end"
     ]
   },
-  "immortal.attack": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.attack",
+  "entity.immortal.attack": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.attack",
     "sounds": [
       "eeeabsmobs:entity/immortal/attack1"
     ]
   },
-  "immortal.attack2": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.attack",
+  "entity.immortal.attack2": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.attack",
     "sounds": [
       "eeeabsmobs:entity/immortal/attack2",
       "eeeabsmobs:entity/immortal/attack3"
     ]
   },
-  "immortal.attract": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.attract",
+  "entity.immortal.attract": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.attract",
     "sounds": [
       "eeeabsmobs:entity/immortal/attract"
     ]
   },
-  "immortal.blocking": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.blocking",
+  "entity.immortal.blocking": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.blocking",
     "sounds": [
       "eeeabsmobs:entity/immortal/block"
     ]
   },
-  "immortal.blocking_counter": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.blocking_counter",
+  "entity.immortal.blocking_counter": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.blocking_counter",
     "sounds": [
       "eeeabsmobs:entity/immortal/block_counter"
     ]
   },
-  "immortal.death": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.death",
+  "entity.immortal.death": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.death",
     "sounds": [
       "eeeabsmobs:entity/immortal/death"
     ]
   },
-  "immortal.hurt": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.hurt",
+  "entity.immortal.hurt": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.hurt",
     "sounds": [
       "eeeabsmobs:entity/immortal/hurt"
     ]
   },
-  "immortal.idle": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.idle",
+  "entity.immortal.idle": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.idle",
     "sounds": [
       "eeeabsmobs:entity/immortal/idle1",
       "eeeabsmobs:entity/immortal/idle2"
     ]
   },
-  "immortal.punch_hit": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.punch_hit",
+  "entity.immortal.punch_hit": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.punch_hit",
     "sounds": [
       "eeeabsmobs:entity/immortal/punch_hit1",
       "eeeabsmobs:entity/immortal/punch_hit2",
       "eeeabsmobs:entity/immortal/punch_hit3"
     ]
   },
-  "immortal.punch_hard_hit": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.punch_hard_hit",
+  "entity.immortal.punch_hard_hit": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.punch_hard_hit",
     "sounds": [
       "eeeabsmobs:entity/immortal/punch_hard_hit"
     ]
   },
-  "immortal.shoryuken": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.shoryuken",
+  "entity.immortal.shoryuken": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.shoryuken",
     "sounds": [
       "eeeabsmobs:entity/immortal/shoryuken"
     ]
   },
-  "immortal.subsonic": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.subsonic",
+  "entity.immortal.subsonic": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.subsonic",
     "sounds": [
       "eeeabsmobs:entity/immortal/subsonic"
     ]
   },
-  "immortal.stone_crack": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.stone_crack",
+  "entity.immortal.stone_crack": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.stone_crack",
     "sounds": [
       "eeeabsmobs:entity/immortal/stone_crack1",
       "eeeabsmobs:entity/immortal/stone_crack2"
     ]
   },
-  "immortal.shake_ground": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.shake_ground",
+  "entity.immortal.shake_ground": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.shake_ground",
     "sounds": [
       "eeeabsmobs:entity/immortal/stone_crack1",
       "eeeabsmobs:entity/immortal/stone_crack2"
     ]
   },
-  "immortal.teleport": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.teleport",
+  "entity.immortal.teleport": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.teleport",
     "sounds": [
       "eeeabsmobs:entity/immortal/teleport1",
       "eeeabsmobs:entity/immortal/teleport2"
     ]
   },
-  "immortal.adapt": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.adapt",
+  "entity.immortal.adapt": {
+    "subtitle": "subtitles.eeeabsmobs.entity.immortal.adapt",
     "sounds": [
       "eeeabsmobs:entity/immortal/adapt"
     ]
   },
-  "relic_observer.hurt": {
-    "subtitle": "subtitles.eeeabsmobs.relic_observer.hurt",
+  "entity.relic_observer.hurt": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_observer.hurt",
     "sounds": [
       "eeeabsmobs:entity/relic_observer/hurt1",
       "eeeabsmobs:entity/relic_observer/hurt2",
       "eeeabsmobs:entity/relic_observer/hurt3"
     ]
   },
-  "relic_observer.death": {
-    "subtitle": "subtitles.eeeabsmobs.relic_observer.death",
+  "entity.relic_observer.death": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_observer.death",
     "sounds": [
       "eeeabsmobs:entity/relic_observer/death"
     ]
   },
-  "relic_observer.electromagnetic": {
-    "subtitle": "subtitles.eeeabsmobs.relic_observer.electromagnetic",
+  "entity.relic_observer.electromagnetic": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_observer.electromagnetic",
     "sounds": [
       "eeeabsmobs:entity/relic_observer/electromagnetic"
     ]
   },
-  "relic_observer.electric_pulse": {
-    "subtitle": "subtitles.eeeabsmobs.relic_observer.electric_pulse",
+  "entity.relic_observer.electric_pulse": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_observer.electric_pulse",
     "sounds": [
       "eeeabsmobs:entity/relic_observer/electric_pulse1",
       "eeeabsmobs:entity/relic_observer/electric_pulse2",
       "eeeabsmobs:entity/relic_observer/electric_pulse3"
     ]
   },
-  "relic_ripper.step": {
-    "subtitle": "subtitles.eeeabsmobs.relic_ripper.step",
+  "entity.relic_ripper.step": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_ripper.step",
     "sounds": [
       "eeeabsmobs:entity/relic_ripper/step1",
       "eeeabsmobs:entity/relic_ripper/step2",
       "eeeabsmobs:entity/relic_ripper/step3"
     ]
   },
-  "relic_ripper.hurt": {
-    "subtitle": "subtitles.eeeabsmobs.relic_ripper.hurt",
+  "entity.relic_ripper.hurt": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_ripper.hurt",
     "sounds": [
       "eeeabsmobs:entity/relic_ripper/hurt1",
       "eeeabsmobs:entity/relic_ripper/hurt2"
     ]
   },
-  "relic_ripper.death": {
-    "subtitle": "subtitles.eeeabsmobs.relic_ripper.death",
+  "entity.relic_ripper.death": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_ripper.death",
     "sounds": [
       "eeeabsmobs:entity/relic_ripper/death"
     ]
   },
-  "relic_ripper.shake_ground": {
-    "subtitle": "subtitles.eeeabsmobs.relic_ripper.shake_ground",
+  "entity.relic_ripper.shake_ground": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_ripper.shake_ground",
     "sounds": [
       "eeeabsmobs:entity/relic_ripper/shake_ground1",
       "eeeabsmobs:entity/relic_ripper/shake_ground2"
     ]
   },
-  "relic_ripper.saw": {
-    "subtitle": "subtitles.eeeabsmobs.relic_ripper.saw",
+  "entity.relic_ripper.saw": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_ripper.saw",
     "sounds": [
       "eeeabsmobs:entity/relic_ripper/saw"
     ]
   },
-  "relic_ripper.whoosh": {
-    "subtitle": "subtitles.eeeabsmobs.relic_ripper.whoosh",
+  "entity.relic_ripper.whoosh": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_ripper.whoosh",
     "sounds": [
       "eeeabsmobs:entity/relic_ripper/whoosh"
     ]
   },
-  "relic_annihilator.pre_attack": {
-    "subtitle": "subtitles.eeeabsmobs.relic_annihilator.pre_attack",
+  "entity.relic_annihilator.idle": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_annihilator.idle",
+    "sounds": [
+      "eeeabsmobs:entity/relic_annihilator/idle1",
+      "eeeabsmobs:entity/relic_annihilator/idle2",
+      "eeeabsmobs:entity/relic_earthshaker/idle1",
+      "eeeabsmobs:entity/relic_earthshaker/idle2",
+      "eeeabsmobs:entity/relic_earthshaker/idle3"
+    ]
+  },
+  "entity.relic_annihilator.pre_attack": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_annihilator.pre_attack",
     "sounds": [
       "eeeabsmobs:entity/relic_annihilator/pre_attack"
     ]
   },
-  "relic_annihilator.attack": {
-    "subtitle": "subtitles.eeeabsmobs.relic_annihilator.attack",
+  "entity.relic_annihilator.attack": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_annihilator.attack",
     "sounds": [
       "eeeabsmobs:entity/relic_annihilator/attack1",
       "eeeabsmobs:entity/relic_annihilator/attack2",
       "eeeabsmobs:entity/relic_annihilator/attack3"
     ]
   },
-  "relic_annihilator.hurt": {
-    "subtitle": "subtitles.eeeabsmobs.relic_annihilator.hurt",
+  "entity.relic_annihilator.hurt": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_annihilator.hurt",
     "sounds": [
       "eeeabsmobs:entity/relic_ripper/hurt1",
       "eeeabsmobs:entity/relic_ripper/hurt2"
     ]
   },
-  "relic_annihilator.stun": {
-    "subtitle": "subtitles.eeeabsmobs.relic_annihilator.stun",
+  "entity.relic_annihilator.stun": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_annihilator.stun",
     "sounds": [
       "eeeabsmobs:entity/relic_annihilator/stun"
     ]
   },
-  "relic_annihilator.death": {
-    "subtitle": "subtitles.eeeabsmobs.relic_annihilator.death",
+  "entity.relic_annihilator.death": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_annihilator.death",
     "sounds": [
       "eeeabsmobs:entity/relic_earthshaker/death1",
       "eeeabsmobs:entity/relic_earthshaker/death2",
       "eeeabsmobs:entity/relic_earthshaker/death3"
     ]
   },
-  "relic_annihilator.saw": {
-    "subtitle": "subtitles.eeeabsmobs.relic_annihilator.saw",
+  "entity.relic_annihilator.saw": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_annihilator.saw",
     "sounds": [
       "eeeabsmobs:entity/relic_ripper/saw"
     ]
   },
-  "relic_annihilator.whoosh": {
-    "subtitle": "subtitles.eeeabsmobs.relic_annihilator.whoosh",
+  "entity.relic_annihilator.whoosh": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_annihilator.whoosh",
     "sounds": [
       "eeeabsmobs:entity/relic_ripper/whoosh"
     ]
   },
-  "relic_annihilator.smash": {
-    "subtitle": "subtitles.eeeabsmobs.relic_annihilator.smash",
+  "entity.relic_annihilator.smash": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_annihilator.smash",
     "sounds": [
       "eeeabsmobs:entity/relic_annihilator/smash1",
       "eeeabsmobs:entity/relic_annihilator/smash2"
     ]
   },
-  "relic_annihilator.jump": {
-    "subtitle": "subtitles.eeeabsmobs.relic_annihilator.jump",
+  "entity.relic_annihilator.jump": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_annihilator.jump",
     "sounds": [
       "eeeabsmobs:entity/relic_annihilator/jump"
     ]
   },
-  "relic_annihilator.active_scope": {
-    "subtitle": "subtitles.eeeabsmobs.relic_annihilator.active_scope",
+  "entity.relic_annihilator.active_scope": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_annihilator.active_scope",
     "sounds": [
       "eeeabsmobs:entity/relic_annihilator/active_scope1",
       "eeeabsmobs:entity/relic_annihilator/active_scope2"
     ]
   },
-  "relic_annihilator.launch": {
-    "subtitle": "subtitles.eeeabsmobs.relic_annihilator.launch",
+  "entity.relic_annihilator.launch": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_annihilator.launch",
     "sounds": [
       "eeeabsmobs:entity/relic_annihilator/launch1",
       "eeeabsmobs:entity/relic_annihilator/launch2"
     ]
   },
-  "relic_annihilator.shoot_laser": {
-    "subtitle": "subtitles.eeeabsmobs.relic_annihilator.shoot_laser",
+  "entity.relic_annihilator.shoot_laser": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_annihilator.shoot_laser",
     "sounds": [
       "eeeabsmobs:entity/relic_annihilator/shoot_laser"
     ]
   },
-  "relic_earthshaker.step": {
-    "subtitle": "subtitles.eeeabsmobs.relic_earthshaker.step",
+  "entity.relic_annihilator.active": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relicron.active",
+    "sounds": [
+      "eeeabsmobs:entity/relic_annihilator/active1",
+      "eeeabsmobs:entity/relic_annihilator/active2"
+    ]
+  },
+  "entity.relic_earthshaker.step": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_earthshaker.step",
     "sounds": [
       "eeeabsmobs:entity/relic_earthshaker/step1",
       "eeeabsmobs:entity/relic_earthshaker/step2",
       "eeeabsmobs:entity/relic_earthshaker/step3"
     ]
   },
-  "relic_earthshaker.idle": {
-    "subtitle": "subtitles.eeeabsmobs.relic_earthshaker.idle",
+  "entity.relic_earthshaker.idle": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_earthshaker.idle",
     "sounds": [
       "eeeabsmobs:entity/relic_earthshaker/idle1",
       "eeeabsmobs:entity/relic_earthshaker/idle2",
       "eeeabsmobs:entity/relic_earthshaker/idle3"
     ]
   },
-  "relic_earthshaker.pre_attack": {
-    "subtitle": "subtitles.eeeabsmobs.relic_earthshaker.pre_attack",
+  "entity.relic_earthshaker.pre_attack": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_earthshaker.pre_attack",
     "sounds": [
       "eeeabsmobs:entity/relic_earthshaker/pre_attack1",
       "eeeabsmobs:entity/relic_earthshaker/pre_attack2"
     ]
   },
-  "relic_earthshaker.attack": {
-    "subtitle": "subtitles.eeeabsmobs.relic_earthshaker.attack",
+  "entity.relic_earthshaker.attack": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_earthshaker.attack",
     "sounds": [
       "eeeabsmobs:entity/relic_earthshaker/attack1",
       "eeeabsmobs:entity/relic_earthshaker/attack2",
       "eeeabsmobs:entity/relic_earthshaker/attack3"
     ]
   },
-  "relic_earthshaker.launch_grenade": {
-    "subtitle": "subtitles.eeeabsmobs.relic_earthshaker.launch_grenade",
+  "entity.relic_earthshaker.launch_grenade": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_earthshaker.launch_grenade",
     "sounds": [
       "eeeabsmobs:entity/relic_earthshaker/spark1",
       "eeeabsmobs:entity/relic_earthshaker/spark2",
       "eeeabsmobs:entity/relic_earthshaker/spark3"
     ]
   },
-  "relic_earthshaker.hurt": {
-    "subtitle": "subtitles.eeeabsmobs.relic_earthshaker.hurt",
+  "entity.relic_earthshaker.hurt": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_earthshaker.hurt",
     "sounds": [
       "eeeabsmobs:entity/relic_earthshaker/hurt1",
       "eeeabsmobs:entity/relic_earthshaker/hurt2",
       "eeeabsmobs:entity/relic_earthshaker/hurt3"
     ]
   },
-  "relic_earthshaker.death": {
-    "subtitle": "subtitles.eeeabsmobs.relic_earthshaker.death",
+  "entity.relic_earthshaker.death": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_earthshaker.death",
     "sounds": [
       "eeeabsmobs:entity/relic_earthshaker/death1",
       "eeeabsmobs:entity/relic_earthshaker/death2",
       "eeeabsmobs:entity/relic_earthshaker/death3"
     ]
   },
-  "relic_sentinel.friction": {
-    "subtitle": "subtitles.eeeabsmobs.relic_sentinel.friction",
+  "entity.relicron.active": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relicron.active",
     "sounds": [
-      "eeeabsmobs:entity/relic_earthshaker/friction"
+      "eeeabsmobs:entity/relic_earthshaker/active"
     ]
   },
-  "relic_earthshaker.electromagnetic": {
-    "subtitle": "subtitles.eeeabsmobs.relic_earthshaker.electromagnetic",
+  "entity.relic_earthshaker.electromagnetic": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_earthshaker.electromagnetic",
     "sounds": [
       "eeeabsmobs:entity/relic_earthshaker/electromagnetic"
     ]
   },
-  "nameless_guardian.step": {
-    "subtitle": "subtitles.eeeabsmobs.nameless_guardian.step",
+  "entity.relic_earthshaker.fall": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_earthshaker.fall",
+    "sounds": [
+      "eeeabsmobs:effect/fall"
+    ]
+  },
+  "entity.nameless_guardian.step": {
+    "subtitle": "subtitles.eeeabsmobs.entity.nameless_guardian.step",
     "sounds": [
       "eeeabsmobs:entity/nameless_guardian/step1",
       "eeeabsmobs:entity/nameless_guardian/step2"
     ]
   },
-  "nameless_guardian.accumulating": {
-    "subtitle": "subtitles.eeeabsmobs.nameless_guardian.accumulating",
+  "entity.nameless_guardian.accumulating": {
+    "subtitle": "subtitles.eeeabsmobs.entity.nameless_guardian.accumulating",
     "sounds": [
       "eeeabsmobs:entity/nameless_guardian/accumulating"
     ]
   },
-  "nameless_guardian.accumulating_end": {
-    "subtitle": "subtitles.eeeabsmobs.nameless_guardian.accumulating_end",
+  "entity.nameless_guardian.accumulating_end": {
+    "subtitle": "subtitles.eeeabsmobs.entity.nameless_guardian.accumulating_end",
     "sounds": [
       "eeeabsmobs:entity/nameless_guardian/accumulating_end"
     ]
   },
-  "nameless_guardian.whoosh": {
-    "subtitle": "subtitles.eeeabsmobs.nameless_guardian.whoosh",
+  "entity.nameless_guardian.whoosh": {
+    "subtitle": "subtitles.eeeabsmobs.entity.nameless_guardian.whoosh",
     "sounds": [
       "eeeabsmobs:entity/nameless_guardian/whoosh"
     ]
   },
-  "nameless_guardian.pre_pounce": {
-    "subtitle": "subtitles.eeeabsmobs.nameless_guardian.pre_pounce",
+  "entity.nameless_guardian.pre_pounce": {
+    "subtitle": "subtitles.eeeabsmobs.entity.nameless_guardian.pre_pounce",
     "sounds": [
       "eeeabsmobs:entity/nameless_guardian/pre_pounce"
     ]
   },
-  "nameless_guardian.madness": {
-    "subtitle": "subtitles.eeeabsmobs.nameless_guardian.madness",
+  "entity.nameless_guardian.madness": {
+    "subtitle": "subtitles.eeeabsmobs.entity.nameless_guardian.madness",
     "sounds": [
       "eeeabsmobs:entity/nameless_guardian/madness1",
       "eeeabsmobs:entity/nameless_guardian/madness2"
     ]
   },
-  "nameless_guardian.idle": {
-    "subtitle": "subtitles.eeeabsmobs.nameless_guardian.idle",
+  "entity.nameless_guardian.idle": {
+    "subtitle": "subtitles.eeeabsmobs.entity.nameless_guardian.idle",
     "sounds": [
       "eeeabsmobs:entity/nameless_guardian/idle1",
       "eeeabsmobs:entity/nameless_guardian/idle2"
     ]
   },
-  "nameless_guardian.hurt": {
-    "subtitle": "subtitles.eeeabsmobs.nameless_guardian.hurt",
+  "entity.nameless_guardian.hurt": {
+    "subtitle": "subtitles.eeeabsmobs.entity.nameless_guardian.hurt",
     "sounds": [
       "eeeabsmobs:entity/nameless_guardian/hurt1",
       "eeeabsmobs:entity/nameless_guardian/hurt2"
     ]
   },
-  "nameless_guardian.death": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.guardian.death",
+  "entity.nameless_guardian.death": {
+    "subtitle": "subtitles.eeeabsmobs.entity.nameless_guardian.death",
     "sounds": [
       "eeeabsmobs:entity/nameless_guardian/death"
     ]
   },
-  "nameless_guardian.creak": {
-    "subtitle": "subtitles.eeeabsmobs.immortal.guardian.creak",
+  "entity.nameless_guardian.creak": {
+    "subtitle": "subtitles.eeeabsmobs.entity.nameless_guardian.creak",
     "sounds": [
       "eeeabsmobs:entity/nameless_guardian/creak"
     ]
   },
-  "corpse.hurt": {
-    "subtitle": "subtitles.eeeabsmobs.corpse.hurt",
+  "entity.realm_warden.idle": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.idle",
+    "sounds": [
+      "eeeabsmobs:entity/realm_warden/idle",
+      "eeeabsmobs:entity/realm_warden/short_hum1",
+      "eeeabsmobs:entity/realm_warden/hum1",
+      "eeeabsmobs:entity/realm_warden/hum2"
+    ]
+  },
+  "entity.realm_warden.step": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.step",
+    "sounds": [
+      "eeeabsmobs:entity/nameless_guardian/step1",
+      "eeeabsmobs:entity/nameless_guardian/step2"
+    ]
+  },
+  "entity.realm_warden.hurt": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.hurt",
+    "sounds": [
+      "eeeabsmobs:entity/realm_warden/hurt1",
+      "eeeabsmobs:entity/realm_warden/hurt2",
+      "eeeabsmobs:entity/realm_warden/hurt3"
+    ]
+  },
+  "entity.realm_warden.death": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.death",
+    "sounds": [
+      "eeeabsmobs:entity/realm_warden/death1",
+      "eeeabsmobs:entity/realm_warden/death2",
+      "eeeabsmobs:entity/realm_warden/death3"
+    ]
+  },
+  "entity.realm_warden.launch": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.launch",
+    "sounds": [
+      "eeeabsmobs:entity/realm_warden/launch",
+      "eeeabsmobs:entity/relic_annihilator/launch1",
+      "eeeabsmobs:entity/relic_annihilator/launch2"
+    ]
+  },
+  "entity.realm_warden.blast": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.blast",
+    "sounds": [
+      "eeeabsmobs:entity/realm_warden/blast"
+    ]
+  },
+  "entity.realm_warden.whoosh": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.whoosh",
+    "sounds": [
+      "eeeabsmobs:entity/nameless_guardian/whoosh"
+    ]
+  },
+  "entity.realm_warden.shake_ground": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.shake_ground",
+    "sounds": [
+      "eeeabsmobs:entity/immortal/stone_crack1",
+      "eeeabsmobs:entity/immortal/stone_crack2"
+    ]
+  },
+  "entity.realm_warden.shock": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.shock",
+    "sounds": [
+      "eeeabsmobs:effect/shock1",
+      "eeeabsmobs:effect/shock2",
+      "eeeabsmobs:effect/shock3"
+    ]
+  },
+  "entity.realm_warden.leap": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.leap",
+    "sounds": [
+      "eeeabsmobs:entity/realm_warden/leap"
+    ]
+  },
+  "entity.realm_warden.landing": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.landing",
+    "sounds": [
+      "eeeabsmobs:entity/realm_warden/landing"
+    ]
+  },
+  "entity.realm_warden.hum": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.hum",
+    "sounds": [
+      "eeeabsmobs:entity/realm_warden/hum1",
+      "eeeabsmobs:entity/realm_warden/hum2"
+    ]
+  },
+  "entity.realm_warden.short_hum": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.hum",
+    "sounds": [
+      "eeeabsmobs:entity/realm_warden/short_hum1",
+      "eeeabsmobs:entity/realm_warden/short_hum2"
+    ]
+  },
+  "entity.realm_warden.attack": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.attack",
+    "sounds": [
+      "eeeabsmobs:entity/realm_warden/attack1",
+      "eeeabsmobs:entity/realm_warden/attack2"
+    ]
+  },
+  "entity.realm_warden.airflow": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.airflow",
+    "sounds": [
+      "eeeabsmobs:entity/realm_warden/airflow1",
+      "eeeabsmobs:entity/realm_warden/airflow2",
+      "eeeabsmobs:entity/realm_warden/airflow3"
+    ]
+  },
+  "entity.realm_warden.voice1": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.voice1",
+    "sounds": [
+      "eeeabsmobs:entity/realm_warden/voice1"
+    ]
+  },
+  "entity.realm_warden.voice2": {
+    "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.voice2",
+    "sounds": [
+      "eeeabsmobs:entity/realm_warden/voice2"
+    ]
+  },
+  "entity.corpse.hurt": {
+    "subtitle": "subtitles.eeeabsmobs.entity.corpse.hurt",
     "sounds": [
       "eeeabsmobs:entity/corpse/hurt1",
       "eeeabsmobs:entity/corpse/hurt2"
     ]
   },
-  "corpse.death": {
-    "subtitle": "subtitles.eeeabsmobs.corpse.death",
+  "entity.corpse.death": {
+    "subtitle": "subtitles.eeeabsmobs.entity.corpse.death",
     "sounds": [
       "eeeabsmobs:entity/corpse/death"
     ]
   },
-  "corpse.idle": {
-    "subtitle": "subtitles.eeeabsmobs.corpse.idle",
+  "entity.corpse.idle": {
+    "subtitle": "subtitles.eeeabsmobs.entity.corpse.idle",
     "sounds": [
       "eeeabsmobs:entity/corpse/idle1",
       "eeeabsmobs:entity/corpse/idle2"
     ]
   },
-  "corpse_warlock.hurt": {
-    "subtitle": "subtitles.eeeabsmobs.corpse_warlock.hurt",
+  "entity.corpse_warlock.hurt": {
+    "subtitle": "subtitles.eeeabsmobs.entity.corpse_warlock.hurt",
     "sounds": [
       "eeeabsmobs:entity/corpse_warlock/hurt"
     ]
   },
-  "corpse_warlock_tear": {
-    "subtitle": "subtitles.eeeabsmobs.corpse_warlock.tear",
+  "entity.corpse_warlock.tear": {
+    "subtitle": "subtitles.eeeabsmobs.entity.corpse_warlock.tear",
     "sounds": [
       "eeeabsmobs:entity/corpse_warlock/tear1",
       "eeeabsmobs:entity/corpse_warlock/tear2"
     ]
-  },
-  "music.nameless_guardian_theme_1": {
-    "category": "record",
-    "sounds": [
-      {
-        "name": "eeeabsmobs:music/guardians/guardians_prelude",
-        "stream": true,
-        "volume": 1.0
-      }
-    ],
-    "subtitle": "subtitles.eeeabsmobs.nameless_guardian_theme_prelude"
-  },
-  "music.nameless_guardian_theme_2": {
-    "category": "record",
-    "sounds": [
-      {
-        "name": "eeeabsmobs:music/guardians/guardians_climax",
-        "stream": true,
-        "volume": 1.0
-      }
-    ],
-    "subtitle": "subtitles.eeeabsmobs.nameless_guardian_theme_climax"
   },
   "music.guardians": {
     "category": "record",

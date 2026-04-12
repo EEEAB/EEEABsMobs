@@ -1,5 +1,5 @@
 {
-  "parent": "eeeabsmobs:eeeabsmobs/core_bastion",
+  "parent": "eeeabsmobs:eeeabsmobs/root",
   "display": {
     "icon": {
       "item": "eeeabsmobs:guardian_axe"
@@ -13,7 +13,7 @@
     "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,
-    "hidden": false
+    "hidden": true
   },
   "criteria": {
     "requirement": {
@@ -32,6 +32,6 @@
     }
   },
   "rewards": {
-    "experience": 20
+    "experience": 100
   }
 }

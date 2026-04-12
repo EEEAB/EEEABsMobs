@@ -1,5 +1,5 @@
 {
-	"credit": "Made with Blockbench",
+	"credit": "Created by EEEAB",
 	"texture_size": [64, 64],
 	"textures": {
 		"0": "eeeabsmobs:item/guardian_core"
@@ -8,6 +8,7 @@
 		{
 			"from": [3, 0, 3],
 			"to": [13, 10, 13],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 5, 8]},
 			"faces": {
 				"north": {"uv": [0, 0, 16, 16], "texture": "#0"},
 				"east": {"uv": [0, 0, 16, 16], "texture": "#0"},
@@ -28,18 +29,16 @@
 			"scale": [0.5, 0.5, 0.5]
 		},
 		"firstperson_righthand": {
-			"rotation": [0, -9, 0],
-			"translation": [1.25, 2, 0],
+			"translation": [0, 2.5, 0],
 			"scale": [0.5, 0.5, 0.5]
 		},
 		"firstperson_lefthand": {
-			"rotation": [0, -9, 0],
-			"translation": [1.25, 2, 0],
+			"translation": [0, 2.5, 0],
 			"scale": [0.5, 0.5, 0.5]
 		},
 		"ground": {
 			"translation": [0, 2, 0],
-			"scale": [0.4, 0.4, 0.4]
+			"scale": [0.5, 0.5, 0.5]
 		},
 		"gui": {
 			"rotation": [30, -45, 0],
@@ -56,10 +55,9 @@
 	},
 	"groups": [
 		{
-			"name": "GuardianCore",
+			"name": "core",
 			"origin": [0.5, 33.93174, 0.2181],
 			"color": 0,
-			"nbt": "{}",
 			"children": [0]
 		}
 	]
