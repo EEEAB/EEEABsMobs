@@ -52,37 +52,37 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
 
     @Override
     protected boolean test(Animation animation) {
-        return animation == entity.pounceAttackAnimation1 || animation == entity.pounceAttackAnimation2 || animation == entity.pounceAttackAnimation3;
+        return animation == EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION1 || animation == EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION2 || animation == EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION3;
     }
 
     @Override
     public void tick() {
         LivingEntity target = entity.getTarget();
         float baseDamageMultiplier = isPowered ? 0.8F : 0.6F;
-        if (entity.getAnimation() == entity.pounceAttackAnimation1) {
+        if (entity.getAnimation() == EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION1) {
             entity.anchorToGround();
             int tick = entity.getAnimationTick();
             if (tick == 1) {
                 entity.playSound(SoundInit.NAMELESS_GUARDIAN_PRE_POUNCE.get(), 1.5F, entity.getVoicePitch());
-            } else if (tick >= entity.pounceAttackAnimation1.getDuration() - 1) {
+            } else if (tick >= EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION1.getDuration() - 1) {
                 if (target != null) {
                     double radians = Math.toRadians(entity.getYRot() + 90);
                     pounceVec = new Vec3(Math.cos(radians), 0, Math.sin(radians));
-                    entity.playAnimation(entity.pounceAttackAnimation2);
+                    entity.playAnimation(EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION2);
                 } else {
-                    entity.playAnimation(entity.pounceAttackAnimation3);
+                    entity.playAnimation(EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION3);
                 }
             }
             if (target != null) {
                 entity.getLookControl().setLookAt(target, 30F, 30F);
                 entity.lookAt(target, 30F, 30F);
             }
-        } else if (entity.getAnimation() == entity.pounceAttackAnimation2) {
+        } else if (entity.getAnimation() == EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION2) {
             int tick = entity.getAnimationTick();
             int keyFrame = isPowered ? 24 : 28;
             if (tick < keyFrame && pounceVec.length() != 0) {
                 entity.setDeltaMovement(pounceVec.x * moveSpeed * madnessSpeedMultiplier, -entity.getAttributeValue(ForgeMod.ENTITY_GRAVITY.get()) * 5.0F, pounceVec.z * moveSpeed * speedMultiplier);
-                ModEntityUtils.breakBlocksByEntityAABB(entity, 2F, 0.75F, 0F, 0.15F, entity.checkCanDropItems(), tick % 3 == 0);
+                ModEntityUtils.breakBlocksByEntityAABB(entity, 2F, 0.75F, 0F, 0.15F, tick % 3 == 0);
                 if (tick % 2 == 0) {
                     double width = entity.getBbWidth() * 1.2;
                     entity.rangeAttack(width, 5F, width, width, 120F, 120F, hitEntity -> {
@@ -96,15 +96,15 @@ public class GuardianPounceAttackGoal extends AnimationAI<EntityNamelessGuardian
                     });
                 }
             } else {
-                entity.playAnimation(entity.pounceAttackAnimation3);
+                entity.playAnimation(EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION3);
             }
-        } else if (entity.getAnimation() == entity.pounceAttackAnimation3) {
+        } else if (entity.getAnimation() == EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION3) {
             entity.setDeltaMovement(0, entity.getDeltaMovement().y(), 0);
             int maxExtraConsecutive = 2;
             if (consecutive < maxExtraConsecutive && entity.getTarget() != null && entity.getAnimationTick() <= 6 && entity.getAnimationTick() > 1 && checkModeOrPreventTimeouts() && entity.targetDistance < 16 && entity.targetDistance > 4
                     && ((entity.hasEffect(EffectInit.STUN_EFFECT.get()) && entity.getRandom().nextInt(3 - consecutive) == 0) || entity.getRandom().nextInt(10) == 0)) {
                 consecutive++;
-                entity.playAnimation(entity.pounceAttackAnimation1);
+                entity.playAnimation(EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION1);
             }
         }
     }

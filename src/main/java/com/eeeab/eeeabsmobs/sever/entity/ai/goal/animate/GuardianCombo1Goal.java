@@ -30,14 +30,14 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
 
     @Override
     protected boolean test(Animation animation) {
-        return animation == entity.attackAnimation1 || animation == entity.attackAnimation2 || animation == entity.attackAnimation3;
+        return animation == EntityNamelessGuardian.ATTACK_ANIMATION1 || animation == EntityNamelessGuardian.ATTACK_ANIMATION2 || animation == EntityNamelessGuardian.ATTACK_ANIMATION3;
     }
 
     @Override
     public void tick() {
         LivingEntity target = entity.getTarget();
         entity.anchorToGround();
-        if (entity.getAnimation() == entity.attackAnimation1) {
+        if (entity.getAnimation() == EntityNamelessGuardian.ATTACK_ANIMATION1) {
             int tick = entity.getAnimationTick();
             float baseDamageMultiplier = isPowered ? 1.0F : 0.8F;
             if (tick < 9 && target != null) {
@@ -59,10 +59,10 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
                     ModEntityUtils.forceKnockBack(entity, hitEntity, 0.6F, ratioX, ratioZ, !isPowered);
                 });
             } else if (tick == 20 && entity.checkCanAttackRange(1.5, range) && canToggleAnimation(0.9F)) {
-                entity.playAnimation(entity.attackAnimation2);
+                entity.playAnimation(EntityNamelessGuardian.ATTACK_ANIMATION2);
             }
 
-        } else if (entity.getAnimation() == entity.attackAnimation2) {
+        } else if (entity.getAnimation() == EntityNamelessGuardian.ATTACK_ANIMATION2) {
             int tick = entity.getAnimationTick();
             float baseDamageMultiplier = isPowered ? 1.0F : 0.8F;
             if (tick < 11 && target != null) {
@@ -84,10 +84,10 @@ public class GuardianCombo1Goal extends AnimationAI<EntityNamelessGuardian> {
                 });
             } else if (tick == 25) {
                 if (entity.checkCanAttackRange(1.5, range) && canToggleAnimation(0.8F)) {
-                    entity.playAnimation(entity.attackAnimation3);
+                    entity.playAnimation(EntityNamelessGuardian.ATTACK_ANIMATION3);
                 }
             }
-        } else if (entity.getAnimation() == entity.attackAnimation3) {
+        } else if (entity.getAnimation() == EntityNamelessGuardian.ATTACK_ANIMATION3) {
             int tick = entity.getAnimationTick();
             float baseDamageMultiplier = isPowered ? 1.2F : 1.0F;
             if (tick < 9 && target != null) {

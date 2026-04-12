@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal;
 
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobEntity;
+import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 
@@ -18,9 +19,15 @@ public class ModLookAtGoal extends LookAtPlayerGoal {
 
     @Override
     public boolean canUse() {
-        return super.canUse() && this.mobEntity.isAlive() && this.mobEntity.active;
+        return super.canUse() && this.test();
     }
 
     @Override
-    public boolean canContinueToUse() {return super.canContinueToUse() && this.mobEntity.isAlive() && this.mobEntity.active;}
+    public boolean canContinueToUse() {
+        return this.test() && super.canContinueToUse();
+    }
+
+    private boolean test() {
+        return this.mobEntity.isAlive() && this.mobEntity.active && !this.mobEntity.hasEffect(EffectInit.STUN_EFFECT.get());
+    }
 }

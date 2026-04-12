@@ -6,8 +6,11 @@ import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 //未知模型 作为占位符使用
+@OnlyIn(Dist.CLIENT)
 public class ModelUnKnown<T extends EEEABMobLibrary & AnimatedEntity> extends ModHierarchicalModel<T> {
     private final ModelPart root;
     private final ModelPart head;
@@ -57,9 +60,7 @@ public class ModelUnKnown<T extends EEEABMobLibrary & AnimatedEntity> extends Mo
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
-        //LookAt
-        lookAtAnimation(netHeadYaw, headPitch, 1.0F, this.head);
-        //Idle & Walk
+        lookAtTarget(netHeadYaw, headPitch, 1.0F, this.head);
         if (entity.isAlive()) {
             float cycle = 0.8F;
             this.walk(this.leftArm, cycle, cycle * 1.15F, true, 0, 0, limbSwing, limbSwingAmount);

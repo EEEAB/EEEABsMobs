@@ -1,8 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.item;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
-import com.eeeab.eeeabsmobs.sever.item.util.EMArmorMaterial;
+import com.eeeab.eeeabsmobs.sever.item.util.ModArmorMaterial;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -14,12 +13,13 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.function.Consumer;
 
+//TODO 未完成
 public class ItemGhostWarriorArmor extends ArmorItem implements IUnbreakableItem {
     public static final ResourceLocation LOCATION = new ResourceLocation(EEEABMobs.MOD_ID, "textures/armor/ghost_warrior_armor.png");
     public static final ResourceLocation LEGS_LOCATION = new ResourceLocation(EEEABMobs.MOD_ID, "textures/armor/ghost_warrior_armor_legs.png");
 
     public ItemGhostWarriorArmor(Type type) {
-        super(EMArmorMaterial.GHOST_WARRIOR_MATERIAL, type, new Item.Properties().rarity(Rarity.EPIC).fireResistant());
+        super(ModArmorMaterial.GHOST_WARRIOR_MATERIAL, type, new Item.Properties().rarity(Rarity.EPIC).fireResistant());
     }
 
     @Override
@@ -37,6 +37,7 @@ public class ItemGhostWarriorArmor extends ArmorItem implements IUnbreakableItem
 
     @Override
     public boolean canBreakItem() {
-        return ModConfigHandler.COMMON.items.ghostWarriorSeriesConfig1.get();
+        //return ModConfigHandler.COMMON.items.ghostWarriorSeriesConfig1.get();
+        return false;
     }
 }

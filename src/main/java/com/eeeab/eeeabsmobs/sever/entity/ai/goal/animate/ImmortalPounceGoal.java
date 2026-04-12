@@ -42,14 +42,14 @@ public class ImmortalPounceGoal extends AnimationAI<EntityImmortalBoss> {
 
     @Override
     protected boolean test(Animation animation) {
-        return animation == entity.pouncePreAnimation || animation == entity.pounceHoldAnimation || animation == entity.pounceEndAnimation || animation == entity.pounceSmashAnimation || animation == entity.pouncePickAnimation;
+        return animation == EntityImmortalBoss.POUNCE_PRE_ANIMATION || animation == EntityImmortalBoss.POUNCE_HOLD_ANIMATION || animation == EntityImmortalBoss.POUNCE_END_ANIMATION || animation == EntityImmortalBoss.POUNCE_SMASH_ANIMATION || animation == EntityImmortalBoss.POUNCE_PICK_ANIMATION;
     }
 
     @Override
     public void tick() {
         Animation animation = entity.getAnimation();
         int tick = entity.getAnimationTick();
-        if (animation == entity.pouncePreAnimation) {
+        if (animation == EntityImmortalBoss.POUNCE_PRE_ANIMATION) {
             if (tick < 10) {
                 if (targetCache != null && !targetCache.isRemoved()) {
                     entity.lookAt(targetCache, 90F, 30F);
@@ -60,14 +60,14 @@ public class ImmortalPounceGoal extends AnimationAI<EntityImmortalBoss> {
                     if (tick == 5) EntityImmortalMagicCircle.spawn(entity.level(), entity, entity.position().add(0, 0.25, 0), 3F, -1F, (int) (20 + (90 * distanceFactor)), entity.getYRot(), EntityImmortalMagicCircle.MagicCircleType.SPEED, false);
                 } else if (entity.getTarget() != null) targetCache = entity.getTarget();
             } else {
-                if (pounceVec.length() == 0) entity.playAnimation(entity.pounceEndAnimation);
+                if (pounceVec.length() == 0) entity.playAnimation(EntityImmortalBoss.POUNCE_END_ANIMATION);
                 else {
                     entity.shakeGround(0F, MAX_DISTANCE, 0.125F, 2, 4);
-                    entity.playAnimation(entity.pounceHoldAnimation);
+                    entity.playAnimation(EntityImmortalBoss.POUNCE_HOLD_ANIMATION);
                 }
             }
-        } else if (animation == entity.pounceHoldAnimation) {
-            if (pounceVec.length() == 0 || distanceFactor == 0) entity.playAnimation(entity.pounceEndAnimation);
+        } else if (animation == EntityImmortalBoss.POUNCE_HOLD_ANIMATION) {
+            if (pounceVec.length() == 0 || distanceFactor == 0) entity.playAnimation(EntityImmortalBoss.POUNCE_END_ANIMATION);
             else {
                 if (tick < 40) {
                     boolean flag = targetCache != null;
@@ -82,14 +82,14 @@ public class ImmortalPounceGoal extends AnimationAI<EntityImmortalBoss> {
                         speedMultiplier *= 0.5F;
                         distanceFactor = Math.min(getDistanceFactor(targetCache, MAX_DISTANCE / 2, true), 0.8F);
                         double heightDifference = Math.abs(entity.getY() - targetCache.getY());
-                        if (heightDifference >= 6 || entity.getRandom().nextFloat() < 0.4F) entity.playAnimation(entity.pouncePickAnimation);
-                        else entity.playAnimation(entity.pounceSmashAnimation);
-                    } else if (speedMultiplier < 0.45F) this.entity.playAnimation(entity.pounceEndAnimation);
+                        if (heightDifference >= 6 || entity.getRandom().nextFloat() < 0.4F) entity.playAnimation(EntityImmortalBoss.POUNCE_PICK_ANIMATION);
+                        else entity.playAnimation(EntityImmortalBoss.POUNCE_SMASH_ANIMATION);
+                    } else if (speedMultiplier < 0.45F) this.entity.playAnimation(EntityImmortalBoss.POUNCE_END_ANIMATION);
                     entity.setDeltaMovement(pounceVec.x * moveSpeed * speedMultiplier, entity.getDeltaMovement().y, pounceVec.z * moveSpeed * speedMultiplier);
-                    ModEntityUtils.breakBlocksByEntityAABB(entity, 50F, 1.2F, 0F, 0.15F, entity.checkCanDropItems(), tick % 2 == 1);
-                } else this.entity.playAnimation(entity.pounceEndAnimation);
+                    ModEntityUtils.breakBlocksByEntityAABB(entity, 50F, 1.2F, 0F, 0.15F, tick % 2 == 1);
+                } else this.entity.playAnimation(EntityImmortalBoss.POUNCE_END_ANIMATION);
             }
-        } else if (animation == entity.pounceSmashAnimation) {
+        } else if (animation == EntityImmortalBoss.POUNCE_SMASH_ANIMATION) {
             if (tick < 9) {
                 lookAtTarget();
                 if (tick == 5) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.6F, entity.getVoicePitch());
@@ -99,8 +99,8 @@ public class ImmortalPounceGoal extends AnimationAI<EntityImmortalBoss> {
                 if (tick == 9) entity.playSound(SoundInit.IMMORTAL_SHAKE_GROUND.get());
                 else if (tick == 10) {
                     Vec3 pos = entity.getPosOffset(false, 3.5F, 0.5F, -1F);
-                    for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity, pos, 3.4D, -0.035F, false, 10)) {
-                        entity.doHurtTarget(entityHit, false, false, true, false, 1.0F, 0.9F);
+                    for (LivingEntity entityHit : ShockWaveUtils.doRingShockWave(entity, pos, 3.4D, 0F, false, 10)) {
+                        entity.doHurtTarget(entityHit, false, false, false, 1.0F, 0.9F);
                         entity.disableShield(entityHit, 50);
                         entity.knockBack(entityHit, 0.2, 0.5, false, false);
                     }
@@ -108,7 +108,7 @@ public class ImmortalPounceGoal extends AnimationAI<EntityImmortalBoss> {
                 else if (tick == 12) entity.level().playSound(null, entity.blockPosition(), SoundInit.IMMORTAL_STONE_CRACK.get(), entity.getSoundSource(), 1F, 1F);
                 else if (tick > 30 && targetCache != null) entity.getLookControl().setLookAt(targetCache, 10F, 30F);
             }
-        } else if (animation == entity.pouncePickAnimation) {
+        } else if (animation == EntityImmortalBoss.POUNCE_PICK_ANIMATION) {
             if (tick < 12) {
                 lookAtTarget();
                 if (tick >= 5 && distanceFactor > 0) {
@@ -127,7 +127,7 @@ public class ImmortalPounceGoal extends AnimationAI<EntityImmortalBoss> {
                 if (tick > 15 && targetCache != null) entity.getLookControl().setLookAt(targetCache, 15F, 30F);
                 entity.setYRot(entity.yRotO);
             }
-        } else if (animation == entity.pounceEndAnimation) {
+        } else if (animation == EntityImmortalBoss.POUNCE_END_ANIMATION) {
             if (targetCache != null && targetCache.isAlive()) entity.getLookControl().setLookAt(targetCache, 10F, 30F);
         }
     }
@@ -140,7 +140,7 @@ public class ImmortalPounceGoal extends AnimationAI<EntityImmortalBoss> {
             float entityHitDistance = (float) Math.sqrt((entityHit.getZ() - entity.getZ()) * (entityHit.getZ() - entity.getZ()) + (entityHit.getX() - entity.getX()) * (entityHit.getX() - entity.getX())) - entityHit.getBbWidth() / 2f;
             if (entityHitDistance < 0.75 || (entityHitDistance <= hitDistance && ((entityRelativeAngle >= -attackArc / 2 && entityRelativeAngle <= attackArc / 2) || (entityRelativeAngle >= 360 - attackArc / 2F || entityRelativeAngle <= -360 + attackArc / 2F)))) {
                 if (stun) entity.stun(null, entityHit, 40, false);
-                entity.doHurtTarget(entityHit, true, heal && entityHit.hasEffect(EffectInit.ERODE_EFFECT.get()), heal, false, 1.0F, damageMultiplier);
+                entity.doHurtTarget(entityHit, true, heal && entityHit.hasEffect(EffectInit.ERODE_EFFECT.get()), false, 1.0F, damageMultiplier);
                 if (!hitFlag) {
                     hitFlag = true;
                     entity.playSound(SoundInit.IMMORTAL_PUNCH_HIT.get(), 1F, 1.1F);

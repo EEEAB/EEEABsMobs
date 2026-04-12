@@ -9,20 +9,21 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
 public class ModTagKey {
-    public static final TagKey<Structure> EYE_OF_CORE_BASTION = registerTagKey(Registries.STRUCTURE, "eye_of_core_bastion");
+    public static final TagKey<Structure> EYE_OF_COREFORGE_RUINS = registerTagKey(Registries.STRUCTURE, "eye_of_coreforge_ruins");
     public static final TagKey<Structure> EYE_OF_BLOODY_ALTAR = registerTagKey(Registries.STRUCTURE, "eye_of_bloody_altar");
-    public static final TagKey<Biome> HAS_GULING = registerTagKey(Registries.BIOME, "has_structure/guling");
+    public static final TagKey<Biome> HAS_GULING = registerTagKey(Registries.BIOME, "has_structure/coreforge_ruins");
     public static final TagKey<Biome> HAS_BLOODY_ALTAR = registerTagKey(Registries.BIOME, "has_structure/bloody_altar");
     public static final TagKey<Block> MOB_IMMUNE = registerTagKey(Registries.BLOCK, "mob_immune");
     public static final TagKey<DamageType> BYPASSES_DAMAGE_CAP = registerTagKey(Registries.DAMAGE_TYPE, "bypasses_damage_cap");
+    public static final TagKey<DamageType> BYPASSES_HURT_REDUCTION = registerTagKey(Registries.DAMAGE_TYPE, "bypasses_hurt_reduction");
+    public static final TagKey<DamageType> BYPASSES_DAMAGE_ADAPT = registerTagKey(Registries.DAMAGE_TYPE, "bypasses_damage_adapt");
     public static final TagKey<DamageType> MAGIC_RESISTANT_TO = registerTagKey(Registries.DAMAGE_TYPE, "magic_resistant_to");
-    public static final TagKey<DamageType> CAN_CRIT_HEAL = registerTagKey(Registries.DAMAGE_TYPE, "can_crit_heal");
+    //public static final TagKey<DamageType> CAN_CRIT_HEAL = registerTagKey(Registries.DAMAGE_TYPE, "can_crit_heal");
     public static final TagKey<EntityType<?>> TRAP_WHITELIST = registerTagKey(Registries.ENTITY_TYPE, "trap_whitelist");
     public static final TagKey<EntityType<?>> RESISTS_FORCED_CHANGE_TARGET = registerTagKey(Registries.ENTITY_TYPE, "resists_forced_change_target");
     public static final TagKey<EntityType<?>> IMMORTAL_ARMY = registerTagKey(Registries.ENTITY_TYPE, "immortal_army");

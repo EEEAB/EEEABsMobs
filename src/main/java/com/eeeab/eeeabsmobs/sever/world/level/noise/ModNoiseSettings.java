@@ -15,7 +15,8 @@ public class ModNoiseSettings {
     public static NoiseGeneratorSettings voidCrack(BootstapContext<?> context) {
         HolderGetter<DensityFunction> densityFunction = context.lookup(Registries.DENSITY_FUNCTION);
         DensityFunction densityFunction1 = DensityFunctions.cache2d(new CrackIslandDensity(0L));
-        DensityFunction densityFunction2 = postProcess(slideEndLike(new DensityFunctions.HolderHolder(densityFunction.getOrThrow(ModResourceKey.SLOPED_CHEESE_VOID_CRACK)), 0, 128));
+        //DensityFunction densityFunction2 = postProcess(slideEndLike(new DensityFunctions.HolderHolder(densityFunction.getOrThrow(ModResourceKey.SLOPED_CHEESE_VOID_CRACK)), 0, 128));
+        DensityFunction densityFunction2 = null;
         NoiseRouter router = new NoiseRouter(
                 DensityFunctions.zero(), DensityFunctions.zero(),
                 DensityFunctions.zero(), DensityFunctions.zero(),

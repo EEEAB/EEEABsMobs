@@ -12,11 +12,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
-import java.util.function.Supplier;
 
 public class GuardianLeapGoal extends AnimationSimpleAI<EntityNamelessGuardian> {
-    public GuardianLeapGoal(EntityNamelessGuardian entity, Supplier<Animation> animationSupplier) {
-        super(entity, animationSupplier);
+    public GuardianLeapGoal(EntityNamelessGuardian entity, Animation animation) {
+        super(entity, animation);
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
 
@@ -46,9 +45,9 @@ public class GuardianLeapGoal extends AnimationSimpleAI<EntityNamelessGuardian> 
         }
 
         if (tick >= 12) {
-            ModEntityUtils.breakBlocksInRect(this.entity.level(), this.entity, 2F, 3, 5, 3, 0, 2F, entity.checkCanDropItems(), tick % 4 == 0);
+            ModEntityUtils.breakBlocksInRect(this.entity.level(), this.entity, 2F, 3, 5, 3, 0, 2F, tick % 4 == 0);
             if (tick > 12 && entity.onGround()) {
-                this.entity.playAnimation(this.entity.smashDownAnimation);
+                this.entity.playAnimation(EntityNamelessGuardian.SMASH_DOWN_ANIMATION);
             }
         }
     }
@@ -56,7 +55,7 @@ public class GuardianLeapGoal extends AnimationSimpleAI<EntityNamelessGuardian> 
     private void doLeapEffect() {
         Vec3 position = entity.position();
         EntityCameraShake.cameraShake(entity.level(), position, 12F, 0.125F, 5, 0);
-        ShockWaveUtils.doRingShockWave(entity, position, 2.4D, -0.04F, false, 10);
+        ShockWaveUtils.doRingShockWave(entity, position, 2.4D, 0F, false, 10);
     }
 
     public static Vec3 findTargetPoint(LivingEntity attacker, LivingEntity target) {

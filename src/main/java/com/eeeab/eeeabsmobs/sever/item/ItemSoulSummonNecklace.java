@@ -10,8 +10,8 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-public class ItemSoulSummoningNecklace extends Item implements ICuriosItem {
-    public ItemSoulSummoningNecklace(Properties properties) {
+public class ItemSoulSummonNecklace extends Item implements ICuriosItem {
+    public ItemSoulSummonNecklace(Properties properties) {
         super(properties);
     }
 

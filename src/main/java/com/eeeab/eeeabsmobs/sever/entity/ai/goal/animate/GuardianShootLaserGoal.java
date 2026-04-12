@@ -1,19 +1,18 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 
+import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityGuardianLaser;
 import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
 import java.util.EnumSet;
-import java.util.function.Supplier;
 
 public class GuardianShootLaserGoal extends AnimationSimpleAI<EntityNamelessGuardian> {
-    public GuardianShootLaserGoal(EntityNamelessGuardian entity, Supplier<Animation> animationSupplier) {
-        super(entity, animationSupplier);
+    public GuardianShootLaserGoal(EntityNamelessGuardian entity, Animation animation) {
+        super(entity, animation);
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
     }
 

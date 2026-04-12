@@ -17,7 +17,7 @@ public class ImmortalSpecialGoal extends AnimationAI<EntityImmortalBoss> {
 
     @Override
     protected boolean test(Animation animation) {
-        return animation == entity.attractAnimation;
+        return animation == EntityImmortalBoss.ATTRACT_ANIMATION;
     }
 
     @Override
@@ -29,14 +29,14 @@ public class ImmortalSpecialGoal extends AnimationAI<EntityImmortalBoss> {
     public void tick() {
         int tick = entity.getAnimationTick();
         Animation animation = entity.getAnimation();
-        if (animation == entity.attractAnimation) {
+        if (animation == EntityImmortalBoss.ATTRACT_ANIMATION) {
             if (tick < 40) {
                 if (tick < 38) entity.anchorToGround();
                 this.slowlyLookAtTarget();
                 if (tick == 29) EntityImmortalMagicCircle.spawn(entity.level(), entity, entity.position().add(0, 0.25, 0), 2.5F, 0F, 30, entity.yHeadRot, EntityImmortalMagicCircle.MagicCircleType.POWER, true);
                 else if (tick == 36) entity.playSound(SoundInit.IMMORTAL_ATTACK.get(), 1.6F, entity.getVoicePitch());
                 else if (tick == 39) {
-                    entity.pursuit(8F, 0, 0.5);
+                    entity.pounce(8F, 0, 0.5);
                     entity.level().broadcastEntityEvent(entity, (byte) 9);
                 }
             } else {
@@ -55,7 +55,7 @@ public class ImmortalSpecialGoal extends AnimationAI<EntityImmortalBoss> {
                                     int preInvulnerableTime = entityHit.invulnerableTime;
                                     entityHit.invulnerableTime = 0;
                                     entity.stun(null, livingHit, 40, false);
-                                    if (!entity.doHurtTarget(livingHit, true, livingHit.hasEffect(EffectInit.ERODE_EFFECT.get()), false, false, 1.0F, 1.2F)) entityHit.invulnerableTime = preInvulnerableTime;
+                                    if (!entity.doHurtTarget(livingHit, true, livingHit.hasEffect(EffectInit.ERODE_EFFECT.get()), false, 1.0F, 1.2F)) entityHit.invulnerableTime = preInvulnerableTime;
                                     if (!hitFlag) {
                                         hitFlag = true;
                                         entity.playSound(SoundInit.IMMORTAL_PUNCH_HARD_HIT.get(), 1.2F, 1.1F);
@@ -69,7 +69,7 @@ public class ImmortalSpecialGoal extends AnimationAI<EntityImmortalBoss> {
                         if (entityHit instanceof LivingEntity livingHit) entity.knockBack(livingHit, 1, 0.2, true, tick > 40);
                     }
                     int offset = (int) (attackDistance / 2);
-                    if (tick == 41 && ModEntityUtils.breakBlocksInRect(entity.level(), entity, 50, offset, (int) attackDistance, offset, 0, offset, entity.checkCanDropItems(), true)) {
+                    if (tick == 41 && ModEntityUtils.breakBlocksInRect(entity.level(), entity, 50, offset, (int) attackDistance, offset, 0, offset, true)) {
                         entity.level().broadcastEntityEvent(entity, (byte) 10);
                     }
                 }

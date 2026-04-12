@@ -27,15 +27,19 @@ public class LayerBreath<T extends LivingEntity & GlowEntity, M extends EntityMo
         this(renderLayerParent, location, brightness, GlowEntity::isGlow, speed);
     }
 
-    public LayerBreath(RenderLayerParent<T, M> renderLayerParent, ResourceLocation location, float brightness, GlowPredicate<T> predicate, float speed) {
-        super(renderLayerParent, location, brightness, predicate);
+    public LayerBreath(RenderLayerParent<T, M> renderLayerParent, ResourceLocation location, float brightness, ConditionPredicate<T> predicate, float speed) {
+        this(renderLayerParent, location, predicate, (entity, partialTicks) -> brightness, speed);
+    }
+
+    public LayerBreath(RenderLayerParent<T, M> renderLayerParent, ResourceLocation location, ConditionPredicate<T> predicate, GlowAmountSupplier<T> supplier, float speed) {
+        super(renderLayerParent, location, predicate, supplier);
         this.speed = speed;
     }
 
     @Override
     public void render(PoseStack stack, MultiBufferSource bufferSource, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (predicate.glow(entity)) {
-            float alpha = Mth.clamp((Mth.cos(ageInTicks * speed) * 2.0F) - 1.0F, 0, 1.0F);
+        if (predicate.test(entity)) {
+            float alpha = Mth.clamp((Mth.cos(ageInTicks * speed) * 2.0F) - 1.0F, 0, supplier.get(entity, partialTicks));
             renderLayer(entity, stack, bufferSource.getBuffer(RenderType.eyes(this.location)), packedLightIn, alpha, alpha, alpha, 1.0F);
         }
     }

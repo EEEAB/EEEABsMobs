@@ -5,7 +5,7 @@ import com.eeeab.eeeabsmobs.client.ClientProxy;
 import com.eeeab.eeeabsmobs.client.gui.BossBarConfig;
 import com.eeeab.eeeabsmobs.client.gui.BossBarHandler;
 import com.eeeab.eeeabsmobs.client.gui.BossBarRegistry;
-import com.eeeab.eeeabsmobs.client.gui.PromptNotificationHandler;
+import com.eeeab.eeeabsmobs.client.gui.TipNotificationHandler;
 import com.eeeab.eeeabsmobs.sever.capability.FrenzyCapability;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
@@ -24,12 +24,10 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.ViewportEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -39,6 +37,18 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 @OnlyIn(Dist.CLIENT)
 public class ClientEventHandler {
     private static final ResourceLocation FRENZY_OUTLINE_LOCATION = new ResourceLocation(EEEABMobs.MOD_ID, "textures/misc/frenzy_outline.png");
+
+    @SubscribeEvent
+    public void onRenderLevel(RenderLevelStageEvent event) {
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_ENTITIES) {
+            PoseStack poseStack = event.getPoseStack();
+            poseStack.pushPose();
+            Vec3 camera = event.getCamera().getPosition();
+            poseStack.translate(-camera.x, -camera.y, -camera.z);
+            ClientProxy.LIGHTNING_RENDER.render(event.getPartialTick(), poseStack, Minecraft.getInstance().renderBuffers().bufferSource());
+            poseStack.popPose();
+        }
+    }
 
     //改变玩家相机角度
     @SubscribeEvent
@@ -77,7 +87,7 @@ public class ClientEventHandler {
             }
         }
         if (event.getOverlay().overlay() == VanillaGuiOverlay.PLAYER_LIST.type().overlay()) {
-            PromptNotificationHandler.renderOverlay(event.getGuiGraphics(), event.getPartialTick());
+            TipNotificationHandler.renderOverlay(event.getGuiGraphics(), event.getPartialTick());
         }
     }
 
@@ -85,7 +95,7 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void onRenderTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            PromptNotificationHandler.clientTick();
+            TipNotificationHandler.clientTick();
         }
     }
 
@@ -109,18 +119,19 @@ public class ClientEventHandler {
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
         if (player == null) return;
+        ItemInHandRenderer itemRenderer = minecraft.getEntityRenderDispatcher().getItemInHandRenderer();
+        MultiBufferSource buffer = event.getMultiBufferSource();
+        PoseStack poseStack = event.getPoseStack();
+        int packedLight = event.getPackedLight();
         ItemStack useItem = player.getUseItem();
-        InteractionHand hand = event.getHand();
-        if (useItem.is(ItemInit.GUARDIAN_CORE.get()) && player.isUsingItem()) {
+        if (useItem.is(ItemInit.GUARDIAN_CORE.get()) && useItem.is(player.getItemInHand(event.getHand()).getItem())) {
             event.setCanceled(true);
-            renderChargedGuardianCore(event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight(), player, hand);
+            renderChargedGuardianCore(itemRenderer, poseStack, buffer, packedLight, player, event.getHand());
         }
     }
 
-    private static void renderChargedGuardianCore(PoseStack poseStack, MultiBufferSource buffer,
+    private static void renderChargedGuardianCore(ItemInHandRenderer itemRenderer, PoseStack poseStack, MultiBufferSource buffer,
                                                   int combinedLight, Player player, InteractionHand hand) {
-        Minecraft minecraft = Minecraft.getInstance();
-        ItemInHandRenderer itemRenderer = minecraft.getEntityRenderDispatcher().getItemInHandRenderer();
         ItemStack stack = player.getItemInHand(hand);
         boolean isMainHand = hand == InteractionHand.MAIN_HAND;
         HumanoidArm arm = isMainHand ? player.getMainArm() : player.getMainArm().getOpposite();
@@ -138,7 +149,7 @@ public class ClientEventHandler {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onRenderBossBar(CustomizeGuiOverlayEvent.BossEventProgress event) {
         if (!ModConfigHandler.COMMON.others.enableCustomBossBars.get()) return;
-        ResourceLocation bossRegistryName = ClientProxy.bossBarRegistryNames.getOrDefault(event.getBossEvent().getId(), null);
+        ResourceLocation bossRegistryName = ClientProxy.BOSS_BAR_REGISTRY_NAMES.getOrDefault(event.getBossEvent().getId(), null);
         if (bossRegistryName == null) return;
         BossBarConfig config = BossBarRegistry.getBarForEntity(bossRegistryName);
         event.setCanceled(true);

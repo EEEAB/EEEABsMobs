@@ -34,6 +34,8 @@ public class TranslateUtils {
     //item
     public static final String ITEM_PREFIX = "item.";
 
+    public static final String BLOCK_PREFIX = "block.";
+
     public static final String ITEM_ARMOR_PREFIX = ITEM_PREFIX + "armor.";
 
     public static final String ITEM_OTHER_PREFIX = ITEM_PREFIX + OTHER_PREFIX;
@@ -62,7 +64,7 @@ public class TranslateUtils {
     }
 
     public static Component itemCoolTime(double args) {
-        return simpleText(ITEM_OTHER_PREFIX, args == 0 ? "no_cd" : "cd", ChatFormatting.GREEN, args);
+        return simpleText(ITEM_OTHER_PREFIX, args == 0 ? "no_cd" : "cd", ChatFormatting.DARK_GREEN, args);
     }
 
     public static Component simpleItemText(String key, @Nullable Object... args) {

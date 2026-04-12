@@ -42,6 +42,6 @@ public final class CuriosRegistry {
     }
 
     private void clientRegisterImpl() {
-        CuriosRendererRegistry.register(ItemInit.SOUL_SUMMONING_NECKLACE.get(), RenderSoulSummoningNecklace::new);
+        CuriosRendererRegistry.register(ItemInit.SOUL_SUMMON_NECKLACE.get(), RenderSoulSummoningNecklace::new);
     }
 }

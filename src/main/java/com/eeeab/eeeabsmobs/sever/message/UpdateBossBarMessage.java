@@ -50,8 +50,8 @@ public class UpdateBossBarMessage {
         public void accept(final UpdateBossBarMessage message, final Supplier<NetworkEvent.Context> contextSupplier) {
             final NetworkEvent.Context context = contextSupplier.get();
             context.enqueueWork(() -> {
-                if (message.registryName == null) ClientProxy.bossBarRegistryNames.remove(message.bossID);
-                else ClientProxy.bossBarRegistryNames.put(message.bossID, message.registryName);
+                if (message.registryName == null) ClientProxy.BOSS_BAR_REGISTRY_NAMES.remove(message.bossID);
+                else ClientProxy.BOSS_BAR_REGISTRY_NAMES.put(message.bossID, message.registryName);
             });
             context.setPacketHandled(true);
         }

@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.sever.item;
 
 import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.animate.server.inventory.AnimationControllerMenu;
-import com.eeeab.eeeabsmobs.sever.item.util.EMItemStackUtils;
+import com.eeeab.eeeabsmobs.sever.item.util.ModItemStackUtils;
 import com.eeeab.eeeabsmobs.sever.util.TranslateUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -38,7 +38,7 @@ public class ItemAnimationController extends Item {
         if (entity instanceof AnimatedEntity) {
             CompoundTag tag = new CompoundTag();
             tag.putUUID(NBT_ENTITY_UUID, entity.getUUID());
-            EMItemStackUtils.putNBT(stack, NBT_ENTITY_UUID, tag);
+            ModItemStackUtils.putNBT(stack, NBT_ENTITY_UUID, tag);
             if (player.level().isClientSide) {
                 player.displayClientMessage(TranslateUtils.simpleOtherText(this.getDescriptionId(), null, entity.getName().getString()), true);
             }
@@ -48,7 +48,7 @@ public class ItemAnimationController extends Item {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return EMItemStackUtils.hasNBT(stack, NBT_ENTITY_UUID) || super.isFoil(stack);
+        return ModItemStackUtils.hasNBT(stack, NBT_ENTITY_UUID) || super.isFoil(stack);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class ItemAnimationController extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         ItemStack itemStack = player.getItemInHand(usedHand);
         if (level instanceof ServerLevel serverLevel && itemStack.hasTag()) {
-            Entity entity = serverLevel.getEntity(EMItemStackUtils.getNBT(itemStack, NBT_ENTITY_UUID).getUUID(NBT_ENTITY_UUID));
+            Entity entity = serverLevel.getEntity(ModItemStackUtils.getNBT(itemStack, NBT_ENTITY_UUID).getUUID(NBT_ENTITY_UUID));
             if (player instanceof ServerPlayer serverPlayer && entity instanceof LivingEntity livingEntity && entity instanceof AnimatedEntity && entity.isAlive()) {
                 NetworkHooks.openScreen(serverPlayer, new MenuProvider() {
                     @Override
@@ -76,7 +76,7 @@ public class ItemAnimationController extends Item {
                 }, buf -> buf.writeInt(livingEntity.getId()));
             }
             if (entity == null || !entity.isAlive()) {
-                EMItemStackUtils.removeNbt(itemStack, NBT_ENTITY_UUID);
+                ModItemStackUtils.removeNbt(itemStack, NBT_ENTITY_UUID);
                 return InteractionResultHolder.fail(itemStack);
             } else {
                 player.getCooldowns().addCooldown(this, 20);

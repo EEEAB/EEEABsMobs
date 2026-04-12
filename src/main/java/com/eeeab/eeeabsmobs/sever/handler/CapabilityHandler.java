@@ -22,19 +22,15 @@ public class CapabilityHandler {
     });
     public static final Capability<AbilityCapability.IAbilityCapability> ABILITY_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
     });
-    public static final Capability<PlayerCapability.IPlayerCapability> PLAYER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
-    });
     public static final Capability<?>[] CAPABILITIES = new Capability[]{
             STUN_CAPABILITY,
             FRENZY_CAPABILITY,
             ELECTRICITY_CAPABILITY,
             ABILITY_CAPABILITY,
-            PLAYER_CAPABILITY,
     };
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.register(AbilityCapability.IAbilityCapability.class);
-        event.register(PlayerCapability.IPlayerCapability.class);
         event.register(ElectricityCapability.IElectricityCapabilityImpl.class);
         event.register(StunCapability.IStunCapability.class);
         event.register(FrenzyCapability.IFrenzyCapability.class);
@@ -55,7 +51,6 @@ public class CapabilityHandler {
             event.addCapability(ElectricityCapability.ID, new ElectricityCapability.ElectricityCapabilityProvider());
             if (entity instanceof Player) {
                 event.addCapability(AbilityCapability.ID, new AbilityCapability.AbilityCapabilityProvider());
-                event.addCapability(PlayerCapability.ID, new PlayerCapability.PlayerCapabilityProvider());
             }
         }
     }

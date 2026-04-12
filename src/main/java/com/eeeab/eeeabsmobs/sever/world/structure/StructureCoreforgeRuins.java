@@ -31,10 +31,10 @@ import java.util.Optional;
 
 public class StructureCoreforgeRuins extends Structure {
     public static final Codec<StructureCoreforgeRuins> CODEC = simpleCodec(StructureCoreforgeRuins::new);
-    private static final ResourceLocation ANCIENT_TOMB_1 = new ResourceLocation(EEEABMobs.MOD_ID, "guling_1");
-    private static final ResourceLocation ANCIENT_TOMB_2 = new ResourceLocation(EEEABMobs.MOD_ID, "guling_2");
-    private static final ResourceLocation ANCIENT_TOMB_3 = new ResourceLocation(EEEABMobs.MOD_ID, "guling_3");
-    private static final ResourceLocation ANCIENT_TOMB_4 = new ResourceLocation(EEEABMobs.MOD_ID, "guling_4");
+    private static final ResourceLocation ANCIENT_TOMB_1 = new ResourceLocation(EEEABMobs.MOD_ID, "coreforge_ruins1");
+    private static final ResourceLocation ANCIENT_TOMB_2 = new ResourceLocation(EEEABMobs.MOD_ID, "coreforge_ruins2");
+    private static final ResourceLocation ANCIENT_TOMB_3 = new ResourceLocation(EEEABMobs.MOD_ID, "coreforge_ruins3");
+    private static final ResourceLocation ANCIENT_TOMB_4 = new ResourceLocation(EEEABMobs.MOD_ID, "coreforge_ruins4");
     private static final Map<ResourceLocation, BlockPos> OFFSET = new ImmutableMap.Builder<ResourceLocation, BlockPos>()
             .put(ANCIENT_TOMB_1, new BlockPos(0, 1, 0))
             .put(ANCIENT_TOMB_2, new BlockPos(0, 1, 0))
@@ -42,14 +42,13 @@ public class StructureCoreforgeRuins extends Structure {
             .put(ANCIENT_TOMB_4, new BlockPos(0, 1, 0))
             .build();
 
-
     protected StructureCoreforgeRuins(StructureSettings settings) {
         super(settings);
     }
 
     @Override
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
-        BlockPos blockPos = new BlockPos(context.chunkPos().getMinBlockX(), -32, context.chunkPos().getMinBlockZ());
+        BlockPos blockPos = new BlockPos(context.chunkPos().getMinBlockX(), -20, context.chunkPos().getMinBlockZ());
         return Optional.of(new GenerationStub(blockPos, (value) -> {
             generatePieces(value, context, blockPos);
         }));
@@ -64,11 +63,11 @@ public class StructureCoreforgeRuins extends Structure {
     private static void start(StructureTemplateManager manager, BlockPos pos, Rotation rotation, StructurePiecesBuilder builder, WorldgenRandom random) {
         int x = pos.getX();
         int z = pos.getZ();
-        BlockPos rotationOffset = (new BlockPos(27, 1, 27)).rotate(rotation);
+        BlockPos rotationOffset = (new BlockPos(1, 49, 1)).rotate(rotation);
         BlockPos blockPos = rotationOffset.offset(x, pos.getY(), z);
         builder.addPiece(new Piece(manager, ANCIENT_TOMB_1, rotation, blockPos));
 
-        rotationOffset = new BlockPos(1, 1, 27).rotate(rotation);
+        rotationOffset = new BlockPos(1, 1, -47).rotate(rotation);
         blockPos = rotationOffset.offset(x, pos.getY(), z);
         builder.addPiece(new Piece(manager, ANCIENT_TOMB_2, rotation, blockPos));
 
@@ -76,7 +75,7 @@ public class StructureCoreforgeRuins extends Structure {
         blockPos = rotationOffset.offset(x, pos.getY(), z);
         builder.addPiece(new Piece(manager, ANCIENT_TOMB_3, rotation, blockPos));
 
-        rotationOffset = new BlockPos(27, 1, 1).rotate(rotation);
+        rotationOffset = new BlockPos(1, 1, 49).rotate(rotation);
         blockPos = rotationOffset.offset(x, pos.getY(), z);
         builder.addPiece(new Piece(manager, ANCIENT_TOMB_4, rotation, blockPos));
     }
@@ -105,7 +104,6 @@ public class StructureCoreforgeRuins extends Structure {
             this(context.structureTemplateManager(), tag);
         }
 
-
         private static StructurePlaceSettings makeSettings(Rotation rotation) {
             BlockIgnoreProcessor blockignoreprocessor = BlockIgnoreProcessor.STRUCTURE_BLOCK;
             return (new StructurePlaceSettings()).setRotation(rotation).setMirror(Mirror.NONE).addProcessor(blockignoreprocessor).addProcessor(new ProtectedBlockProcessor(BlockTags.FEATURES_CANNOT_REPLACE)).setKeepLiquids(false);
@@ -121,18 +119,25 @@ public class StructureCoreforgeRuins extends Structure {
             compoundTag.putString("Rot", this.placeSettings.getRotation().name());
         }
 
-
         @Override
         protected void handleDataMarker(String function, BlockPos blockPos, ServerLevelAccessor levelAccessor, RandomSource source, BoundingBox box) {
-            if ("boss_spawn".equals(function)) {
-                spawnGulingEntity(EntityInit.NAMELESS_GUARDIAN.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
+            if ("domain_warder_spawn".equals(function)) {
+                spawnGulingEntity(EntityInit.REALM_WARDEN.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
             }
 
-            if ("elite_spawn".equals(function)) {
+            if ("annihilator_spawn".equals(function)) {
+                spawnGulingEntity(EntityInit.RELIC_ANNIHILATOR.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
+            }
+
+            if ("earthshaker_spawn".equals(function)) {
                 spawnGulingEntity(EntityInit.RELIC_EARTHSHAKER.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
             }
 
-            if ("normal_spawn".equals(function)) {
+            if ("ripper_spawn".equals(function)) {
+                spawnGulingEntity(EntityInit.RELIC_RIPPER.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
+            }
+
+            if ("observer_spawn".equals(function)) {
                 spawnGulingEntity(EntityInit.RELIC_OBSERVER.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
             }
         }

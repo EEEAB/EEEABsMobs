@@ -27,6 +27,12 @@ public class ModRenderType extends RenderType {
         return create("glow_effect", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true, rendertype$state);
     }
 
+    public static RenderType getGlowingTranslucentEffect(ResourceLocation location) {
+        RenderStateShard.TextureStateShard shard = new RenderStateShard.TextureStateShard(location, false, false);
+        RenderType.CompositeState rendertype$state = RenderType.CompositeState.builder().setTextureState(shard).setShaderState(RENDERTYPE_BEACON_BEAM_SHADER).setTransparencyState(TRANSLUCENT_TRANSPARENCY).setCullState(NO_CULL).setOverlayState(OVERLAY).setWriteMaskState(COLOR_WRITE).setDepthTestState(LEQUAL_DEPTH_TEST).setOutputState(RenderStateShard.TRANSLUCENT_TARGET).createCompositeState(true);
+        return RenderType.create("glow_translucent_effect", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true, rendertype$state);
+    }
+
     @Deprecated
     public static RenderType getStrongGlowingEffect(ResourceLocation location) {
         RenderStateShard.TextureStateShard shard = new RenderStateShard.TextureStateShard(location, false, false);

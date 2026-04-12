@@ -3,10 +3,10 @@ package com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate;
 import com.eeeab.animate.server.ai.AnimationAI;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityImmortalMagicCircle;
+import com.eeeab.eeeabsmobs.sever.entity.mob.ModMobType;
 import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalBoss;
 import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.ImmortalMagic;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.eeeab.eeeabsmobs.sever.entity.mob.ModMobType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -26,7 +26,7 @@ public class ImmortalMagicGoal extends AnimationAI<EntityImmortalBoss> {
 
     @Override
     protected boolean test(Animation animation) {
-        return animation == entity.trackingShurikenAnimation || animation == entity.unleashEnergyAnimation;
+        return animation == EntityImmortalBoss.TRACKING_SHURIKEN_ANIMATION || animation == EntityImmortalBoss.UNLEASH_ENERGY_ANIMATION;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class ImmortalMagicGoal extends AnimationAI<EntityImmortalBoss> {
         int tick = entity.getAnimationTick();
         LivingEntity target = entity.getTarget();
         entity.setDeltaMovement(0, entity.onGround() ? -0.01 : entity.getDeltaMovement().y, 0);
-        if (animation == entity.trackingShurikenAnimation) {
+        if (animation == EntityImmortalBoss.TRACKING_SHURIKEN_ANIMATION) {
             lookAtTarget(target);
             if (tick == 10) {
                 EntityImmortalMagicCircle.spawn(entity.level(), entity, entity.position().add(0, 0.25, 0), 3F, 2F, 100, entity.getYRot(), EntityImmortalMagicCircle.MagicCircleType.HARMFUL, true);
@@ -44,7 +44,7 @@ public class ImmortalMagicGoal extends AnimationAI<EntityImmortalBoss> {
                 if (size >= 6) ImmortalMagic.spawnShurikenWithTargets(entity, Math.min(size, 10), entities, 5, 360, true);
                 else ImmortalMagic.spawnShurikenWithTargets(entity, Math.min(size + 2, 5), entities, 1.5, 160, false);
             }
-        } else if (animation == entity.unleashEnergyAnimation) {
+        } else if (animation == EntityImmortalBoss.UNLEASH_ENERGY_ANIMATION) {
             if (tick == 29) ImmortalMagic.spawnImmortalLaser(entity, 7, 1.85F, 31, entity.getPosOffset(false, 2F, 0F, entity.getBbHeight() * 1.4F));
             else if (tick == 49) ImmortalMagic.spawnImmortalLaser(entity, 8, 2F, 29, entity.getPosOffset(false, 2F, 0F, entity.getBbHeight() * 1.4F));
             else if (tick < 29 || tick > 40 && tick < 49) lookAtTarget(target);

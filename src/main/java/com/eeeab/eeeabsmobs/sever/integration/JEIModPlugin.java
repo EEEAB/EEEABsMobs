@@ -22,7 +22,7 @@ public class JEIModPlugin implements IModPlugin {
         IModPlugin.super.registerRecipes(registration);
         //物品描述
         registration.addItemStackInfo(List.of(
-                        ItemInit.CORE_BASTION_EYE.get().getDefaultInstance(),
+                        ItemInit.COREFORGE_RUINS_EYE.get().getDefaultInstance(),
                         ItemInit.BLOODY_ALTAR_EYE.get().getDefaultInstance()
                 ), TranslateUtils.simpleText("jei.", "eye_of_structure", null));
     }

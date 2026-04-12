@@ -4,9 +4,9 @@ import com.eeeab.animate.server.ai.animation.AnimationActivate;
 import com.eeeab.animate.server.ai.animation.AnimationDeactivate;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.AnimationHandler;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.ModLookAtGoal;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -32,11 +32,11 @@ import java.util.Optional;
 
 //伤害测试单位 仅用于测试
 public class EntityTester extends EEEABMobLibrary {
-    public final Animation yesAnimation = Animation.create(5);
-    public final Animation noAnimation = Animation.create(5);
-    public final Animation[] animations = new Animation[]{
-            yesAnimation,
-            noAnimation,
+    public static final Animation YES_ANIMATION = Animation.create(5);
+    public static final Animation NO_ANIMATION = Animation.create(5);
+    private static final Animation[] ANIMATIONS = new Animation[]{
+            YES_ANIMATION,
+            NO_ANIMATION,
     };
     private static final EntityDataAccessor<Boolean> ACTIVE = SynchedEntityData.defineId(EntityTester.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Optional<Component>> DAMAGE = SynchedEntityData.defineId(EntityTester.class, EntityDataSerializers.OPTIONAL_COMPONENT);
@@ -59,20 +59,20 @@ public class EntityTester extends EEEABMobLibrary {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 6.0F, true));
-        goalSelector.addGoal(8, new EMLookAtGoal(this, Mob.class, 8.0F));
+        goalSelector.addGoal(7, new ModLookAtGoal(this, Player.class, 6.0F, true));
+        goalSelector.addGoal(8, new ModLookAtGoal(this, Mob.class, 8.0F));
     }
 
     @Override
     protected void registerCustomGoals() {
-        goalSelector.addGoal(0, new AnimationActivate<>(this, () -> yesAnimation) {
+        goalSelector.addGoal(0, new AnimationActivate<>(this, YES_ANIMATION) {
             @Override
             public void start() {
                 super.start();
                 this.entity.playSound(SoundEvents.VILLAGER_YES);
             }
         });
-        goalSelector.addGoal(0, new AnimationDeactivate<>(this, () -> noAnimation) {
+        goalSelector.addGoal(0, new AnimationDeactivate<>(this, NO_ANIMATION) {
             @Override
             public void start() {
                 super.start();
@@ -158,7 +158,7 @@ public class EntityTester extends EEEABMobLibrary {
         }
         if (this.isNoAnimation()) {
             setActive(!isActive());
-            this.playAnimation(isActive() ? this.noAnimation : this.yesAnimation);
+            this.playAnimation(isActive() ? NO_ANIMATION : YES_ANIMATION);
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
@@ -166,7 +166,7 @@ public class EntityTester extends EEEABMobLibrary {
 
     @Override
     public Animation[] getAnimations() {
-        return this.animations;
+        return ANIMATIONS;
     }
 
     @Override

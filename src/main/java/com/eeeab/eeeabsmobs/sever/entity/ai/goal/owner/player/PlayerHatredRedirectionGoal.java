@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player;
 
 import com.eeeab.eeeabsmobs.sever.entity.mob.SummoningEntity;
+import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpseWarlock;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -28,7 +29,7 @@ public class PlayerHatredRedirectionGoal<T extends Mob & SummoningEntity<Player>
             if (!owner.isAlive()) return false;
             if (this.venerable.tickCount % randomCooling == 0) return false;
             this.mandatoryTargets = this.venerable.getNearByEntitiesByClass(Mob.class, this.venerable.level(), owner, searchRange, searchRange, searchRange, searchRange)
-                    .stream().filter(mob -> mob.getTarget() == owner)
+                    .stream().filter(mob -> mob.getTarget() == owner && !(mob instanceof EntityCorpseWarlock))
                     .limit(Mth.floor(searchRange * 2))//查找上限
                     .toList();
         }

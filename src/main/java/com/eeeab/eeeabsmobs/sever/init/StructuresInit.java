@@ -17,9 +17,9 @@ public class StructuresInit {
     private static final DeferredRegister<StructureType<?>> STRUCTURES = DeferredRegister.create(Registries.STRUCTURE_TYPE, EEEABMobs.MOD_ID);
     private static final DeferredRegister<StructurePieceType> PIECE_TYPE = DeferredRegister.create(Registries.STRUCTURE_PIECE, EEEABMobs.MOD_ID);
     public static final RegistryObject<StructureType<StructureEMCustom>> CONFIG_STRUCTURES = STRUCTURES.register("em_config", () -> explicitStructureTypeTyping(StructureEMCustom.CODEC));
-    public static final RegistryObject<StructureType<StructureCoreforgeRuins>> GULING_STRUCTURE = STRUCTURES.register("guling", () -> explicitStructureTypeTyping(StructureCoreforgeRuins.CODEC));
+    public static final RegistryObject<StructureType<StructureCoreforgeRuins>> GULING_STRUCTURE = STRUCTURES.register("coreforge_ruins", () -> explicitStructureTypeTyping(StructureCoreforgeRuins.CODEC));
     public static final RegistryObject<StructureType<StructureBloodyAltar>> BLOODY_ALTAR_STRUCTURE = STRUCTURES.register("bloody_altar", () -> explicitStructureTypeTyping(StructureBloodyAltar.CODEC));
-    public static final RegistryObject<StructurePieceType> GUL = PIECE_TYPE.register("guling", () -> StructureCoreforgeRuins.Piece::new);
+    public static final RegistryObject<StructurePieceType> GUL = PIECE_TYPE.register("coreforge_ruins", () -> StructureCoreforgeRuins.Piece::new);
     public static final RegistryObject<StructurePieceType> BA = PIECE_TYPE.register("bloody_altar", () -> StructureBloodyAltar.Piece::new);
 
     /**

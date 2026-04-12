@@ -30,8 +30,9 @@ public class ItemImmortalStaff extends Item {
             if (player.getCooldowns().isOnCooldown(this)) {
                 return;
             } else if (capability != null) {
-                player.getCooldowns().addCooldown(this, (int) (ModConfigHandler.COMMON.items.immortalStaffConfig1.get() * 20));
-                if (!level.isClientSide) AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.IMMORTAL_STAFF_ABILITY_TYPE);
+                //player.getCooldowns().addCooldown(this, (int) (ModConfigHandler.COMMON.items.immortalStaffConfig1.get() * 20));
+                player.getCooldowns().addCooldown(this, 60);
+                if (!level.isClientSide) AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.IMMORTAL_STAFF_ABILITY);
             }
             player.swing(hand, true);
         }
@@ -60,8 +61,9 @@ public class ItemImmortalStaff extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, level, tooltip, flagIn);
-        ModConfigHandler.Item item = ModConfigHandler.COMMON.items;
-        if (TranslateUtils.SHOW_ITEM_CD) tooltip.add(TranslateUtils.itemCoolTime(item.immortalStaffConfig1.get()));
+        //ModConfigHandler.Item item = ModConfigHandler.COMMON.items;
+        //if (TranslateUtils.SHOW_ITEM_CD) tooltip.add(TranslateUtils.itemCoolTime(item.immortalStaffConfig1.get()));
+        if (TranslateUtils.SHOW_ITEM_CD) tooltip.add(TranslateUtils.itemCoolTime(3));
         tooltip.add(TranslateUtils.simpleItemText(this.getDescriptionId()));
     }
 

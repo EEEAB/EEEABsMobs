@@ -49,6 +49,6 @@ public class CombatHintHudCommand {
     }
 
     private static void sendHint(ServerPlayer player, ResourceLocation location, int level) {
-        EEEABMobs.NETWORK.sendTo(new PopupNotificationMessage(location, level, true), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+        EEEABMobs.NETWORK.sendTo(new PopupNotificationMessage(location, level), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 }

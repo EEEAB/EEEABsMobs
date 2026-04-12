@@ -19,13 +19,13 @@ public interface CrackinessEntity<T extends LivingEntity> {
                 .collect(ImmutableList.toImmutableList());
         private final float fraction;
 
-        CrackinessType(float pFraction) {
-            this.fraction = pFraction;
+        CrackinessType(float fraction) {
+            this.fraction = fraction;
         }
 
-        public static CrackinessType byFraction(float pFraction) {
+        public static CrackinessType byFraction(float fraction) {
             for (CrackinessType crackiness : BY_DAMAGE) {
-                if (pFraction < crackiness.fraction) {
+                if (fraction <= crackiness.fraction) {
                     return crackiness;
                 }
             }

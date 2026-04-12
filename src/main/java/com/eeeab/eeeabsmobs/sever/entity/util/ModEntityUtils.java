@@ -1,10 +1,12 @@
 package com.eeeab.eeeabsmobs.sever.entity.util;
 
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.CombatRules;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
@@ -51,16 +53,6 @@ public class ModEntityUtils {
     public static boolean isProjectileSource(DamageSource source) {
         Entity entity = source.getDirectEntity();
         return entity instanceof Projectile || source.is(DamageTypeTags.IS_PROJECTILE);
-    }
-
-    /**
-     * 检查实际伤害实体与直接伤害实体是否一致
-     *
-     * @param source 伤害源
-     * @return 布尔值
-     */
-    public static boolean checkDirectEntityConsistency(DamageSource source) {
-        return source.getEntity() == source.getDirectEntity();
     }
 
     /**
@@ -116,12 +108,17 @@ public class ModEntityUtils {
      *
      * @param referEntity  参照实体
      * @param targetEntity 目标实体
-     * @param tolerance    容差角度
+     * @param angle        容差角度
      */
-    public static boolean isTargetFacingAway(Entity referEntity, Entity targetEntity, double tolerance) {
+    public static boolean isTargetFacingAway(Entity referEntity, Entity targetEntity, double angle) {
         Vec3 lookVec = targetEntity.getLookAngle();
         Vec3 toOtherVec = referEntity.position().subtract(targetEntity.position()).normalize();
-        return Math.acos(lookVec.dot(toOtherVec)) > -Math.cos(Math.toRadians(tolerance));
+        double dot = lookVec.dot(toOtherVec);
+        return dot > Math.cos(Math.toRadians(angle));
+    }
+
+    public static Vec3 offsetRandomVec(Vec3 pos, RandomSource random, float widthScale, float heightScale, float yOffset) {
+        return pos.add((random.nextFloat() - 0.5F) * widthScale, yOffset + (random.nextFloat() - 0.5F) * heightScale, (random.nextFloat() - 0.5F) * widthScale);
     }
 
     /**
@@ -167,18 +164,24 @@ public class ModEntityUtils {
      * @return 坐标
      */
     public static Vec3 checkSummonEntityPoint(LivingEntity summoner, double pX, double pZ, double pMinY, double pMaxY) {
+        Vec3 vec3 = checkSummonEntityPointNullable(summoner.level(), pX, pZ, pMinY, pMaxY);
+        return vec3 == null ? new Vec3(pX, pMinY, pZ) : vec3;
+    }
+
+    public static @Nullable Vec3 checkSummonEntityPointNullable(Level level, double pX, double pZ, double pMinY, double pMaxY) {
+        if (level.isClientSide) return null;
         BlockPos blockpos = BlockPos.containing(pX, pMaxY, pZ);
         boolean flag = false;
         double d0 = 0.0D;
-        ServerLevel level = (ServerLevel) summoner.level();
+        ServerLevel serverLevel = (ServerLevel) level;
 
         do {
             BlockPos blockpos1 = blockpos.below();
-            BlockState blockstate = level.getBlockState(blockpos1);
-            if (blockstate.isFaceSturdy(level, blockpos1, Direction.UP)) {
-                if (!level.isEmptyBlock(blockpos)) {
-                    BlockState blockstate1 = level.getBlockState(blockpos);
-                    VoxelShape voxelshape = blockstate1.getCollisionShape(level, blockpos);
+            BlockState blockstate = serverLevel.getBlockState(blockpos1);
+            if (blockstate.isFaceSturdy(serverLevel, blockpos1, Direction.UP)) {
+                if (!serverLevel.isEmptyBlock(blockpos)) {
+                    BlockState blockstate1 = serverLevel.getBlockState(blockpos);
+                    VoxelShape voxelshape = blockstate1.getCollisionShape(serverLevel, blockpos);
                     if (!voxelshape.isEmpty()) {
                         d0 = voxelshape.max(Direction.Axis.Y);
                     }
@@ -193,7 +196,7 @@ public class ModEntityUtils {
         if (flag) {
             return new Vec3(pX, blockpos.getY() + d0, pZ);
         }
-        return new Vec3(pX, pMinY, pZ);
+        return null;
     }
 
     /**
@@ -227,6 +230,10 @@ public class ModEntityUtils {
             entityAttackingAngle += 360;
         }
         return entityHitAngle - entityAttackingAngle;
+    }
+
+    public static void forceKnockBack(LivingEntity attacker, LivingEntity target, float strength, boolean optional) {
+        forceKnockBack(attacker, target, strength, attacker.getX() - target.getX(), attacker.getZ() - target.getZ(), optional);
     }
 
     /**
@@ -263,9 +270,9 @@ public class ModEntityUtils {
      * @param refreshDuration 是否刷新持续时间
      * @param force           是否强制添加药水效果
      */
-    public static void addEffectStackingAmplifier(@Nullable Entity entity, LivingEntity target, MobEffect mobEffect, int duration, int maxLevel, boolean ambient, boolean visible, boolean showIcon, boolean refreshDuration, boolean force) {
+    public static void addEffectStackingAmplifier(@Nullable Entity entity, LivingEntity target, MobEffect mobEffect, int duration, int maxLevel, boolean visible, boolean showIcon, boolean refreshDuration, boolean force) {
         if (!target.hasEffect(mobEffect)) {
-            target.addEffect(new MobEffectInstance(mobEffect, duration, 0, ambient, visible, showIcon));
+            target.addEffect(new MobEffectInstance(mobEffect, duration, 0, false, visible, showIcon));
         } else {
             MobEffectInstance instance = target.getEffect(mobEffect);
             if (instance != null) {
@@ -276,8 +283,8 @@ public class ModEntityUtils {
                     当原先的药水效果时长为-1时:则会在基础上提升1级的同时使用duration添加的时长,在失效时会自动恢复到原先等级的药水效果且时效依旧永久
                  */
                 duration = refreshDuration ? duration : Math.max(instance.getDuration() / 2, duration);
-                if (force) target.forceAddEffect(new MobEffectInstance(mobEffect, duration, level, ambient, visible, showIcon), entity);
-                else target.addEffect(new MobEffectInstance(mobEffect, duration, level, ambient, visible, showIcon), entity);
+                if (force) target.forceAddEffect(new MobEffectInstance(mobEffect, duration, level, false, visible, showIcon), entity);
+                else target.addEffect(new MobEffectInstance(mobEffect, duration, level, false, visible, showIcon), entity);
             }
         }
     }
@@ -292,11 +299,10 @@ public class ModEntityUtils {
      * @param destroyRangeY    破坏范围y轴
      * @param destroyRangeZ    破坏范围z轴
      * @param offset           前后偏移量
-     * @param dropBlock        是否掉落方块
      * @param playSound        是否播放破坏方块的音效
      * @return 是否破坏成功
      */
-    public static boolean breakBlocksInRect(Level level, LivingEntity entity, float maxBlockHardness, int destroyRangeX, int destroyRangeY, int destroyRangeZ, int offsetY, float offset, boolean dropBlock, boolean playSound) {
+    public static boolean breakBlocksInRect(Level level, LivingEntity entity, float maxBlockHardness, int destroyRangeX, int destroyRangeY, int destroyRangeZ, int offsetY, float offset, boolean playSound) {
         if (entity.level().isClientSide || !canMobDestroy(entity)) return false;
         double radians = Math.toRadians(entity.getYRot() + 90);
         int j1 = Mth.floor(entity.getY());
@@ -312,7 +318,7 @@ public class ModEntityUtils {
                     BlockPos blockpos = new BlockPos(l2, l, i1);
                     BlockState blockstate = level.getBlockState(blockpos);
                     if (blockstate.canEntityDestroy(level, blockpos, entity) && canDestroyBlock(level, blockpos, entity, maxBlockHardness)) {
-                        flag = level.destroyBlock(blockpos, dropBlock, entity) || flag;
+                        flag = level.destroyBlock(blockpos, ModConfigHandler.COMMON.others.enableMobsCanBreakingBlockDropItem.get(), entity) || flag;
                     }
                 }
             }
@@ -331,10 +337,9 @@ public class ModEntityUtils {
      * @param extraWidth       额外碰撞宽度
      * @param minExtraHeight   最小额外碰撞高度
      * @param maxExtraHeight   最大额外碰撞高度
-     * @param dropBlock        是否掉落方块
      * @param playSound        是否播放破坏方块的音效
      */
-    public static void breakBlocksByEntityAABB(LivingEntity entity, float maxBlockHardness, float extraWidth, float minExtraHeight, float maxExtraHeight, boolean dropBlock, boolean playSound) {
+    public static void breakBlocksByEntityAABB(LivingEntity entity, float maxBlockHardness, float extraWidth, float minExtraHeight, float maxExtraHeight, boolean playSound) {
         if (entity.level().isClientSide || !canMobDestroy(entity)) return;
         AABB bb = entity.getBoundingBox();
         BlockPos min = new BlockPos(Mth.floor(bb.minX - extraWidth), Mth.floor(bb.minY + minExtraHeight), Mth.floor(bb.minZ - extraWidth));
@@ -342,8 +347,8 @@ public class ModEntityUtils {
         boolean flag = false;
         if (entity.level().hasChunksAt(min, max)) {
             for (BlockPos pos : BlockPos.betweenClosed(min, max)) {
-                if (canDestroyBlock(entity.level(), pos, entity, maxBlockHardness)){
-                    entity.level().destroyBlock(pos, dropBlock);
+                if (canDestroyBlock(entity.level(), pos, entity, maxBlockHardness)) {
+                    entity.level().destroyBlock(pos, ModConfigHandler.COMMON.others.enableMobsCanBreakingBlockDropItem.get());
                     flag = true;
                 }
             }

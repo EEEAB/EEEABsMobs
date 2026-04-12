@@ -20,7 +20,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
 
     @Override
     protected boolean test(Animation animation) {
-        return animation == this.entity.shakeGroundAttackAnimation1 || animation == this.entity.shakeGroundAttackAnimation2 || animation == this.entity.shakeGroundAttackAnimation3;
+        return EntityNamelessGuardian.SHAKEGROUND_ATTACK_ANIMATION1 == animation || EntityNamelessGuardian.SHAKEGROUND_ATTACK_ANIMATION2 == animation || EntityNamelessGuardian.SHAKEGROUND_ATTACK_ANIMATION3 == animation;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
         LivingEntity target = this.entity.getTarget();
         Animation animation = this.entity.getAnimation();
         entity.setDeltaMovement(0, entity.onGround() ? 0 : entity.getDeltaMovement().y, 0);
-        if (animation == this.entity.shakeGroundAttackAnimation1) {
+        if (EntityNamelessGuardian.SHAKEGROUND_ATTACK_ANIMATION1 == animation) {
             if (tick < 23 && target != null) {
                 entity.getLookControl().setLookAt(target, 30F, 30F);
                 this.entity.lookAt(target, 30F, 30F);
@@ -47,9 +47,9 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
                 this.entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                 EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.125F, 5, 10);
             } else if (tick == 35) {
-                this.entity.playAnimation(this.entity.shakeGroundAttackAnimation2);
+                this.entity.playAnimation(EntityNamelessGuardian.SHAKEGROUND_ATTACK_ANIMATION2);
             }
-        } else if (animation == this.entity.shakeGroundAttackAnimation2) {
+        } else if (EntityNamelessGuardian.SHAKEGROUND_ATTACK_ANIMATION2 == animation) {
             tick = this.entity.getAnimationTick();
             if (tick < 17 && target != null) {
                 entity.getLookControl().setLookAt(target, 30F, 30F);
@@ -68,9 +68,9 @@ public class GuardianShakeGroundAttackGoal extends AnimationAI<EntityNamelessGua
                 this.entity.playSound(SoundInit.GIANT_AXE_HIT.get(), 1.5F, 0.2F);
                 EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.125F, 5, 10);
             } else if (tick == 30 && this.entity.isPowered()) {
-                this.entity.playAnimation(this.entity.shakeGroundAttackAnimation3);
+                this.entity.playAnimation(EntityNamelessGuardian.SHAKEGROUND_ATTACK_ANIMATION3);
             }
-        } else if (animation == this.entity.shakeGroundAttackAnimation3) {
+        } else if (EntityNamelessGuardian.SHAKEGROUND_ATTACK_ANIMATION3 == animation) {
             tick = this.entity.getAnimationTick();
             if (tick < 23 && target != null) {
                 entity.getLookControl().setLookAt(target, 25F, 30F);

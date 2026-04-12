@@ -5,14 +5,17 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.SmithingTemplateItem;
 
 import java.util.List;
 
-public class ModSmithingTemplate {
+public class ModSmithingTemplate /*extends SmithingTemplateItem*/ {
     private static final ChatFormatting TITLE_FORMAT = ChatFormatting.GRAY;
     private static final ChatFormatting DESCRIPTION_FORMAT = ChatFormatting.BLUE;
     private static final ResourceLocation EMPTY_SLOT_INGOT = new ResourceLocation("item/empty_slot_ingot");
+    private static final ResourceLocation EMPTY_SLOT_DIAMOND = new ResourceLocation("item/empty_slot_diamond");
     private static final ResourceLocation EMPTY_SLOT_HELMET = new ResourceLocation("item/empty_armor_slot_helmet");
     private static final ResourceLocation EMPTY_SLOT_CHESTPLATE = new ResourceLocation("item/empty_armor_slot_chestplate");
     private static final ResourceLocation EMPTY_SLOT_LEGGINGS = new ResourceLocation("item/empty_armor_slot_leggings");
@@ -22,18 +25,38 @@ public class ModSmithingTemplate {
     private static final ResourceLocation EMPTY_SLOT_SWORD = new ResourceLocation("item/empty_slot_sword");
     private static final ResourceLocation EMPTY_SLOT_SHOVEL = new ResourceLocation("item/empty_slot_shovel");
     private static final ResourceLocation EMPTY_SLOT_PICKAXE = new ResourceLocation("item/empty_slot_pickaxe");
-    private static final Component GHOST_WARRIOR_UPGRADE = Component.translatable(Util.makeDescriptionId("upgrade", new ResourceLocation(EEEABMobs.MOD_ID, "ghost_warrior_upgrade"))).withStyle(TITLE_FORMAT);
-    private static final Component GHOST_WARRIOR_UPGRADE_APPLIES_TO = Component.translatable(Util.makeDescriptionId("item", new ResourceLocation(EEEABMobs.MOD_ID, "smithing_template.ghost_warrior_upgrade.applies_to"))).withStyle(DESCRIPTION_FORMAT);
-    private static final Component GHOST_WARRIOR_UPGRADE_INGREDIENTS = Component.translatable(Util.makeDescriptionId("item", new ResourceLocation(EEEABMobs.MOD_ID, "smithing_template.ghost_warrior_upgrade.ingredients"))).withStyle(DESCRIPTION_FORMAT);
-    private static final Component GHOST_WARRIOR_UPGRADE_BASE_SLOT_DESCRIPTION = Component.translatable(Util.makeDescriptionId("item", new ResourceLocation(EEEABMobs.MOD_ID, "smithing_template.ghost_warrior_upgrade.base_slot_description")));
-    private static final Component GHOST_WARRIOR_UPGRADE_ADDITIONS_SLOT_DESCRIPTION = Component.translatable(Util.makeDescriptionId("item", new ResourceLocation(EEEABMobs.MOD_ID, "smithing_template.ghost_warrior_upgrade.additions_slot_description")));
+    private static final Component NETHERITE_UPGRADE_APPLIES_TO = Component.translatable(Util.makeDescriptionId("item", new ResourceLocation(EEEABMobs.MOD_ID, "smithing_template.netherite_upgrade.applies_to"))).withStyle(DESCRIPTION_FORMAT);
 
+    private static final Component RELICRON_UPGRADE_UPGRADE = Component.translatable(Util.makeDescriptionId("upgrade", new ResourceLocation(EEEABMobs.MOD_ID, "relicron"))).withStyle(TITLE_FORMAT);
+    private static final Component RELICRON_UPGRADE_INGREDIENTS = Component.translatable(Util.makeDescriptionId("item", new ResourceLocation(EEEABMobs.MOD_ID, "smithing_template.relicron.ingredients"))).withStyle(DESCRIPTION_FORMAT);
+    private static final Component RELICRON_UPGRADE_BASE_SLOT_DESCRIPTION = Component.translatable(Util.makeDescriptionId("item", new ResourceLocation(EEEABMobs.MOD_ID, "smithing_template.relicron.base_slot_description")));
+    private static final Component RELICRON_UPGRADE_ADDITIONS_SLOT_DESCRIPTION = Component.translatable(Util.makeDescriptionId("item", new ResourceLocation(EEEABMobs.MOD_ID, "smithing_template.relicron.additions_slot_description")));
+
+    private static final Component GHOST_WARRIOR_UPGRADE = Component.translatable(Util.makeDescriptionId("upgrade", new ResourceLocation(EEEABMobs.MOD_ID, "ghost_warrior"))).withStyle(TITLE_FORMAT);
+    private static final Component GHOST_WARRIOR_UPGRADE_INGREDIENTS = Component.translatable(Util.makeDescriptionId("item", new ResourceLocation(EEEABMobs.MOD_ID, "smithing_template.ghost_warrior.ingredients"))).withStyle(DESCRIPTION_FORMAT);
+    private static final Component GHOST_WARRIOR_UPGRADE_BASE_SLOT_DESCRIPTION = Component.translatable(Util.makeDescriptionId("item", new ResourceLocation(EEEABMobs.MOD_ID, "smithing_template.ghost_warrior.base_slot_description")));
+    private static final Component GHOST_WARRIOR_UPGRADE_ADDITIONS_SLOT_DESCRIPTION = Component.translatable(Util.makeDescriptionId("item", new ResourceLocation(EEEABMobs.MOD_ID, "smithing_template.ghost_warrior.additions_slot_description")));
+
+    /*
+    public ModSmithingTemplate(Component pAppliesTo, Component pIngredients, Component pUpdradeDescription, Component pBaseSlotDescription, Component pAdditionsSlotDescription, List<ResourceLocation> pBaseSlotEmptyIcons, List<ResourceLocation> pAdditonalSlotEmptyIcons) {
+        super(pAppliesTo, pIngredients, pUpdradeDescription, pBaseSlotDescription, pAdditionsSlotDescription, pBaseSlotEmptyIcons, pAdditonalSlotEmptyIcons);
+    }
+    */
+
+    public static SmithingTemplateItem createRelicronUpgradeTemplate() {
+        return new SmithingTemplateItem(NETHERITE_UPGRADE_APPLIES_TO, RELICRON_UPGRADE_INGREDIENTS, RELICRON_UPGRADE_UPGRADE,
+                RELICRON_UPGRADE_BASE_SLOT_DESCRIPTION, RELICRON_UPGRADE_ADDITIONS_SLOT_DESCRIPTION,
+                List.of(EMPTY_SLOT_AXE, EMPTY_SLOT_SWORD), List.of(EMPTY_SLOT_DIAMOND));
+    }
 
     public static SmithingTemplateItem createGhostWarriorUpgradeTemplate() {
-        return new SmithingTemplateItem(GHOST_WARRIOR_UPGRADE_APPLIES_TO, GHOST_WARRIOR_UPGRADE_INGREDIENTS, GHOST_WARRIOR_UPGRADE, GHOST_WARRIOR_UPGRADE_BASE_SLOT_DESCRIPTION, GHOST_WARRIOR_UPGRADE_ADDITIONS_SLOT_DESCRIPTION, createGhostWarriorUpgradeIconList(), List.of(EMPTY_SLOT_INGOT));
+        return new SmithingTemplateItem(NETHERITE_UPGRADE_APPLIES_TO, GHOST_WARRIOR_UPGRADE_INGREDIENTS,
+                GHOST_WARRIOR_UPGRADE, GHOST_WARRIOR_UPGRADE_BASE_SLOT_DESCRIPTION, GHOST_WARRIOR_UPGRADE_ADDITIONS_SLOT_DESCRIPTION,
+                List.of(EMPTY_SLOT_HELMET, EMPTY_SLOT_CHESTPLATE, EMPTY_SLOT_LEGGINGS, EMPTY_SLOT_BOOTS), List.of(EMPTY_SLOT_INGOT));
     }
 
-    private static List<ResourceLocation> createGhostWarriorUpgradeIconList() {
-        return List.of(EMPTY_SLOT_HELMET, EMPTY_SLOT_CHESTPLATE, EMPTY_SLOT_LEGGINGS, EMPTY_SLOT_BOOTS);
-    }
+/*    @Override
+    public boolean canBeHurtBy(DamageSource pDamageSource) {
+        return !pDamageSource.is(DamageTypeTags.IS_FIRE) && super.canBeHurtBy(pDamageSource);
+    }*/
 }

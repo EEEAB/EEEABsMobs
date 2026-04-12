@@ -14,7 +14,7 @@ public class CreativeTabInit {
 
     public static final RegistryObject<CreativeModeTab> ITEMS_TAB = TABS.register(EEEABMobs.MOD_ID + "_tab1", () -> CreativeModeTab.builder()
             .title(Component.translatable("item_group." + EEEABMobs.MOD_ID + ".creative_tab"))
-            .icon(() -> new ItemStack(ItemInit.GUARDIAN_AXE.get()))
+            .icon(() -> new ItemStack(ItemInit.CHAINSWORD.get()))
             .displayItems((enabledFeatures, entries) -> {
                 /* OP Item */
                 entries.accept(ItemInit.REMOVE_MOB.get());
@@ -48,21 +48,23 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.CHISELED_POLISHED_BOUNDARY_BRICKS));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.POLISHED_BOUNDARY_STONE_PILLAR));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.STEPPING_FLAME_TRAP));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.UNCARVED_BOUNDARY_STONE));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.RUNIC_BOUNDARY_STONE));
-                entries.accept(ItemInit.findBlockItemToStack(BlockInit.BOUNDARY_CORE));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.SLIDING_DOOR));
 
                 /* Misc Item */
                 entries.accept(ItemInit.HEART_OF_PAGAN.get());
                 entries.accept(ItemInit.BOUNDARY_BRICK.get());
                 entries.accept(ItemInit.ANCIENT_DRIVE_CRYSTAL.get());
+                entries.accept(ItemInit.CHAIN_GEAR.get());
+                entries.accept(ItemInit.GUARDIAN_CUBE.get());
                 entries.accept(ItemInit.BLOODY_ALTAR_EYE.get());
-                entries.accept(ItemInit.CORE_BASTION_EYE.get());
-                entries.accept(ItemInit.SOUL_SUMMONING_NECKLACE.get());
+                entries.accept(ItemInit.COREFORGE_RUINS_EYE.get());
+                entries.accept(ItemInit.SOUL_SUMMON_NECKLACE.get());
                 /* Fight Item */
-                entries.accept(ItemInit.DEMOLISHER.get());
-                entries.accept(ItemInit.GUARDIAN_CORE.get());
-                entries.accept(ItemInit.GUARDIAN_AXE.get());
+                entries.accept(ItemInit.BUSTER_GAUNTLET.get());
+                entries.accept(ItemInit.CHAINSWORD.get());
+                entries.accept(ItemInit.DOOMBOLT_AXE.get());
+                /*  Smithing Template */
+                entries.accept(ItemInit.RELICRON_UPGRADE_SMITHING_TEMPLATE.get());
                 /* Disc Item */
                 entries.accept(ItemInit.GUARDIANS_MUSIC_DISC.get());
                 /* Spawn Egg */
@@ -74,15 +76,18 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.RELIC_RIPPER_EGG.get());
                 entries.accept(ItemInit.RELIC_EARTHSHAKER_EGG.get());
                 entries.accept(ItemInit.RELIC_ANNIHILATOR_EGG.get());
-                entries.accept(ItemInit.NAMELESS_GUARDIAN_EGG.get());
+                entries.accept(ItemInit.REALM_WARDEN_EGG.get());
             }).build());
 
     public static final RegistryObject<CreativeModeTab> DEV_TAB = TABS.register(EEEABMobs.MOD_ID + "_tab2", () -> CreativeModeTab.builder()
             .title(Component.translatable("dev_group." + EEEABMobs.MOD_ID + ".creative_tab"))
-            .icon(() -> ItemInit.LOGO_ITEM.get().getDefaultInstance())
+            .icon(() -> new ItemStack(BlockInit.EROSION_DEEPSLATE_BRICKS.get()))
             .displayItems((enabledFeatures, entries) -> {
-                /* Void Crack Series */
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.EROSION_DEEPSLATE_BRICKS));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.UNCARVED_BOUNDARY_STONE));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.RUNIC_BOUNDARY_STONE));
+                entries.accept(ItemInit.findBlockItemToStack(BlockInit.BOUNDARY_CORE));
+                /* Void Crack Series */
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.BLIGHTED_OAK_SAPLING));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.BLIGHTED_OAK_LOG));
                 entries.accept(ItemInit.findBlockItemToStack(BlockInit.BLIGHTED_OAK_WOOD));
@@ -143,6 +148,7 @@ public class CreativeTabInit {
                 entries.accept(ItemInit.IMMORTAL_INGOT.get());
                 entries.accept(ItemInit.GHOST_STEEL_INGOT.get());
                 /* Fight Item */
+                entries.accept(ItemInit.SKYFALL_HAMMER.get());
                 entries.accept(ItemInit.IMMORTAL_AXE.get());
                 entries.accept(ItemInit.IMMORTAL_SWORD.get());
                 entries.accept(ItemInit.IMMORTAL_STAFF.get());

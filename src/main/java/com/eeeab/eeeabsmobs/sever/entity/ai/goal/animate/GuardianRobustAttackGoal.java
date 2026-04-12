@@ -11,11 +11,10 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.EnumSet;
-import java.util.function.Supplier;
 
 public class GuardianRobustAttackGoal extends AnimationSimpleAI<EntityNamelessGuardian> {
-    public GuardianRobustAttackGoal(EntityNamelessGuardian entity, Supplier<Animation> animationSupplier) {
-        super(entity, animationSupplier);
+    public GuardianRobustAttackGoal(EntityNamelessGuardian entity, Animation animation) {
+        super(entity, animation);
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
     }
 
@@ -57,7 +56,7 @@ public class GuardianRobustAttackGoal extends AnimationSimpleAI<EntityNamelessGu
                     return;
                 }
                 entity.setExecuteWeak(true);
-                entity.playAnimation(this.entity.weakAnimation1);
+                entity.playAnimation(EntityNamelessGuardian.WEAK_ANIMATION1);
             }
         }
     }

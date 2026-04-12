@@ -25,34 +25,42 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class LayerGlow<T extends LivingEntity & GlowEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
     protected final ResourceLocation location;
-    protected final GlowPredicate<T> predicate;
-    protected final float brightness;
+    protected final ConditionPredicate<T> predicate;
+    protected final GlowAmountSupplier<T> supplier;
     protected final boolean overlayTexture;
 
     public LayerGlow(RenderLayerParent<T, M> renderLayerParent, ResourceLocation location) {
-        this(renderLayerParent, location, 1.0F, GlowEntity::isGlow, false);
+        this(renderLayerParent, location, GlowEntity::isGlow, (entity, partialTicks) -> 1, false);
     }
 
     public LayerGlow(RenderLayerParent<T, M> renderLayerParent, ResourceLocation location, float brightness) {
-        this(renderLayerParent, location, brightness, GlowEntity::isGlow, false);
+        this(renderLayerParent, location, GlowEntity::isGlow, (entity, partialTicks) -> brightness, false);
     }
 
-    public LayerGlow(RenderLayerParent<T, M> renderLayerParent, ResourceLocation location, float brightness, GlowPredicate<T> predicate) {
-        this(renderLayerParent, location, brightness, predicate, false);
+    public LayerGlow(RenderLayerParent<T, M> renderLayerParent, ResourceLocation location, float brightness, ConditionPredicate<T> predicate) {
+        this(renderLayerParent, location, predicate, (entity, partialTicks) -> brightness, false);
     }
 
-    public LayerGlow(RenderLayerParent<T, M> renderLayerParent, ResourceLocation location, float brightness, GlowPredicate<T> predicate, boolean overlayTexture) {
+    public LayerGlow(RenderLayerParent<T, M> renderLayerParent, ResourceLocation location, GlowAmountSupplier<T> supplier) {
+        this(renderLayerParent, location, GlowEntity::isGlow, supplier, false);
+    }
+
+    public LayerGlow(RenderLayerParent<T, M> renderLayerParent, ResourceLocation location, ConditionPredicate<T> predicate, GlowAmountSupplier<T> supplier) {
+        this(renderLayerParent, location, predicate, supplier, false);
+    }
+
+    public LayerGlow(RenderLayerParent<T, M> renderLayerParent, ResourceLocation location, ConditionPredicate<T> predicate, GlowAmountSupplier<T> supplier, boolean overlayTexture) {
         super(renderLayerParent);
         this.location = location;
-        this.brightness = brightness;
         this.predicate = predicate;
         this.overlayTexture = overlayTexture;
+        this.supplier = supplier;
     }
 
     @Override
     public void render(PoseStack stack, MultiBufferSource bufferSource, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (predicate.glow(entity)) {
-            float brightness = getBrightness(entity, partialTicks);
+        if (predicate.test(entity)) {
+            float brightness = this.supplier.get(entity, partialTicks);
             this.renderLayer(entity, stack, bufferSource.getBuffer(getRenderType(entity)), packedLightIn, brightness, brightness, brightness, brightness);
         }
     }
@@ -72,22 +80,19 @@ public class LayerGlow<T extends LivingEntity & GlowEntity, M extends EntityMode
         return RenderType.eyes(this.location);
     }
 
-    /**
-     * 获取渲染图层的亮度
-     *
-     * @param entity 实体
-     * @return 亮度值
-     */
-    protected float getBrightness(T entity, float partialTicks) {
-        return this.brightness;
-    }
-
-
     @FunctionalInterface
-    public interface GlowPredicate<T> {
+    public interface ConditionPredicate<T> {
         /**
          * 渲染发光图层条件
          */
-        boolean glow(T t);
+        boolean test(T t);
+    }
+
+    @FunctionalInterface
+    public interface GlowAmountSupplier<T> {
+        /**
+         * 渲染亮度提供
+         */
+        float get(T t, float partialTicks);
     }
 }
