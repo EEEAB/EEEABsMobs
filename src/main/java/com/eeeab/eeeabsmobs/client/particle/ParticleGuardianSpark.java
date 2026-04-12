@@ -20,7 +20,7 @@ public class ParticleGuardianSpark extends TextureSheetParticle {
         this.yd = speed.y;
         this.zd = speed.z;
         this.quadSize *= 2.0F;
-        this.lifetime = (int)(8.0 / (Math.random() * 0.5 + 0.95));
+        this.lifetime = 5 + level.random.nextInt(3);
         this.setSpriteFromAge(sprite);
         this.roll = this.oRoll = (float) (random.nextInt(4) * Math.PI / 2);
     }

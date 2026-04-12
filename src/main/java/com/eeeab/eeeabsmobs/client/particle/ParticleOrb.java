@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.client.particle.base;
+package com.eeeab.eeeabsmobs.client.particle;
 
 import com.eeeab.eeeabsmobs.client.render.ModRenderType;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;

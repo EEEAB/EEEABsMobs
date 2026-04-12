@@ -145,9 +145,12 @@ public class ParticleDust extends TextureSheetParticle {
             this.emissive = emissive;
         }
 
-
         public DustData(ParticleType<DustData> type, float r, float g, float b, float scale, int duration, EnumDustBehavior behavior, float airDiffusionSpeed) {
             this(type, r, g, b, scale, duration, behavior, airDiffusionSpeed, false);
+        }
+
+        public DustData(ParticleType<DustData> type, float scale, int duration, EnumDustBehavior behavior, float airDiffusionSpeed) {
+            this(type, 0.22F, 0.22F, 0.3F, scale, duration, behavior, airDiffusionSpeed);
         }
 
         @Override

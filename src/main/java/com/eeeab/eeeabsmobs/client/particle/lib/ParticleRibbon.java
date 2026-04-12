@@ -1,5 +1,8 @@
-package com.eeeab.eeeabsmobs.client.particle.util;
+package com.eeeab.eeeabsmobs.client.particle.lib;
 
+import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent;
+import com.eeeab.eeeabsmobs.client.particle.lib.component.RibbonComponent;
+import com.eeeab.eeeabsmobs.client.particle.lib.data.RibbonParticleData;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -46,7 +49,7 @@ public class ParticleRibbon extends AdvancedParticleBase {
         particleScale = prevScale + (scale - prevScale) * partialTicks;
 
         for (ParticleComponent component : components) {
-            component.preRender(this, partialTicks);
+            component.preRender(this, renderInfo, partialTicks);
         }
 
         int j = this.getLightColor(partialTicks);

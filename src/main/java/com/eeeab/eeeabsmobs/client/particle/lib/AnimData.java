@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.client.particle.util;
+package com.eeeab.eeeabsmobs.client.particle.lib;
 
 public abstract class AnimData {
     public float evaluate(float t) {

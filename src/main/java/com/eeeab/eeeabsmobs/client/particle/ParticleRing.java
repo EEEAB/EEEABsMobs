@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.client.particle.base;
+package com.eeeab.eeeabsmobs.client.particle;
 
 import com.eeeab.eeeabsmobs.client.render.ModRenderType;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
@@ -174,14 +174,15 @@ public class ParticleRing extends TextureSheetParticle {
                 int duration = reader.readInt();
                 reader.expect(' ');
                 boolean facesCamera = reader.readBoolean();
-                return new RingData(yaw, pitch, duration, r, g, b, a, scale, facesCamera, EnumRingBehavior.GROW);
+                return new RingData(particleTypeIn, yaw, pitch, duration, r, g, b, a, scale, facesCamera, EnumRingBehavior.GROW);
             }
 
             public RingData fromNetwork(ParticleType<RingData> particleTypeIn, FriendlyByteBuf buffer) {
-                return new RingData(buffer.readFloat(), buffer.readFloat(), buffer.readInt(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readBoolean(), EnumRingBehavior.GROW);
+                return new RingData(particleTypeIn, buffer.readFloat(), buffer.readFloat(), buffer.readInt(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readBoolean(), EnumRingBehavior.GROW);
             }
         };
 
+        private final ParticleType<? extends RingData> type;
         private final float yRot;
         private final float xRot;
         private final float red;
@@ -194,6 +195,11 @@ public class ParticleRing extends TextureSheetParticle {
         private final EnumRingBehavior behavior;
 
         public RingData(float yRot, float pitch, int duration, float red, float g, float blue, float alpha, float scale, boolean facesCamera, EnumRingBehavior behavior) {
+            this(ParticleInit.RING.get(), yRot, pitch, duration, red, g, blue, alpha, scale, facesCamera, behavior);
+        }
+
+        public RingData(ParticleType<? extends RingData> type, float yRot, float pitch, int duration, float red, float g, float blue, float alpha, float scale, boolean facesCamera, EnumRingBehavior behavior) {
+            this.type = type;
             this.yRot = yRot;
             this.xRot = pitch;
             this.red = red;
@@ -224,7 +230,7 @@ public class ParticleRing extends TextureSheetParticle {
 
         @Override
         public ParticleType<? extends RingData> getType() {
-            return ParticleInit.RING.get();
+            return this.type;
         }
 
         @OnlyIn(Dist.CLIENT)
@@ -290,7 +296,7 @@ public class ParticleRing extends TextureSheetParticle {
                             Codec.BOOL.fieldOf("facesCamera").forGetter(RingData::getFacesCamera),
                             Codec.STRING.fieldOf("behavior").forGetter((ringData) -> ringData.getBehavior().toString())
                     ).apply(codecBuilder, (yRot, xRot, red, green, blue, alpha, scale, duration, facesCamera, behavior) ->
-                            new RingData(yRot, xRot, duration, red, green, blue, alpha, scale, facesCamera, EnumRingBehavior.valueOf(behavior)))
+                            new RingData(particleType, yRot, xRot, duration, red, green, blue, alpha, scale, facesCamera, EnumRingBehavior.valueOf(behavior)))
             );
         }
     }

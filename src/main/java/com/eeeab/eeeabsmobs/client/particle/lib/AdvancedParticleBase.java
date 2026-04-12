@@ -1,5 +1,7 @@
-package com.eeeab.eeeabsmobs.client.particle.util;
+package com.eeeab.eeeabsmobs.client.particle.lib;
 
+import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent;
+import com.eeeab.eeeabsmobs.client.particle.lib.data.AdvancedParticleData;
 import com.eeeab.eeeabsmobs.client.render.ModRenderType;
 import com.eeeab.eeeabsmobs.sever.util.ModMathUtils;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -141,7 +143,6 @@ public class AdvancedParticleBase extends TextureSheetParticle {
     }
 
     protected void updatePosition() {
-        //this.motionY -= 0.04D * (double)this.particleGravity;
         this.move(this.xd, this.yd, this.zd);
 
         if (this.onGround && hasPhysics) {
@@ -164,7 +165,7 @@ public class AdvancedParticleBase extends TextureSheetParticle {
         particleScale = prevScale + (scale - prevScale) * partialTicks;
 
         for (ParticleComponent component : components) {
-            component.preRender(this, partialTicks);
+            component.preRender(this, renderInfo, partialTicks);
         }
 
         Vec3 Vector3d = renderInfo.getPosition();
@@ -204,6 +205,12 @@ public class AdvancedParticleBase extends TextureSheetParticle {
             Quaternionf quatY = ModMathUtils.rotationXYZ(0, yaw, 0, false);
             quaternion.mul(quatY);
             quaternion.mul(quatX);
+        } else if (rotation instanceof ParticleRotation.FaceCameraVertical vertical) {
+            double px = Mth.lerp(partialTicks, this.xo, this.x);
+            double py = Mth.lerp(partialTicks, this.yo, this.y);
+            double pz = Mth.lerp(partialTicks, this.zo, this.z);
+            Vec3 vec3 = new Vec3(px, py, pz);
+            quaternion = vertical.getRotation(renderInfo, vec3);
         }
 
         Vector3f[] avector3f = new Vector3f[]{new Vector3f(-1.0F, -1.0F, 0.0F), new Vector3f(-1.0F, 1.0F, 0.0F), new Vector3f(1.0F, 1.0F, 0.0F), new Vector3f(1.0F, -1.0F, 0.0F)};
@@ -304,6 +311,14 @@ public class AdvancedParticleBase extends TextureSheetParticle {
         return level;
     }
 
+    public float getGravity() {
+        return gravity;
+    }
+
+    public void setGravity(float gravity) {
+        this.gravity = gravity;
+    }
+
     @OnlyIn(Dist.CLIENT)
     public static class Factory implements ParticleProvider<AdvancedParticleData> {
         private final SpriteSet spriteSet;
@@ -324,16 +339,27 @@ public class AdvancedParticleBase extends TextureSheetParticle {
         }
     }
 
-    public static void spawnParticle(Level level, ParticleType<AdvancedParticleData> particle, double x, double y, double z, double motionX, double motionY, double motionZ, boolean faceCamera, double yaw, double pitch, double roll, double faceCameraAngle, double scale, double r, double g, double b, double a, double airDiffusionSpeed, double duration, boolean emissive, boolean canCollide, boolean isAnimation, ParticleComponent[] components) {
-        ParticleRotation rotation = faceCamera ? new ParticleRotation.FaceCamera((float) faceCameraAngle) : new ParticleRotation.EulerAngles((float) yaw, (float) pitch, (float) roll);
-        level.addParticle(new AdvancedParticleData(particle, rotation, scale, r, g, b, a, airDiffusionSpeed, duration, emissive, canCollide, components, isAnimation), x, y, z, motionX, motionY, motionZ);
+    public static AdvancedParticleData createParticleData(ParticleType<AdvancedParticleData> particle, ParticleRotation rotation,
+                                                          double scale, double r, double g, double b, double a, double airDiffusionSpeed,
+                                                          double duration, boolean emissive, boolean canCollide, ParticleComponent[] components, boolean isAnimation) {
+        return new AdvancedParticleData(particle, rotation, scale, r, g, b, a, airDiffusionSpeed, duration, emissive, canCollide, components, isAnimation);
     }
 
-    public static void spawnEmptyComponentParticle(Level level, ParticleType<AdvancedParticleData> particle, double x, double y, double z, double motionX, double motionY, double motionZ, boolean faceCamera, double yaw, double pitch, double roll, double faceCameraAngle, double scale, double r, double g, double b, double a, double airDiffusionSpeed, double duration, boolean emissive, boolean canCollide, boolean isAnimation) {
-        spawnParticle(level, particle, x, y, z, motionX, motionY, motionZ, faceCamera, yaw, pitch, roll, faceCameraAngle, scale, r, g, b, a, airDiffusionSpeed, duration, emissive, canCollide, isAnimation, new ParticleComponent[]{});
+    public static void spawnParticle(Level level, ParticleType<AdvancedParticleData> particle, double x, double y, double z, double motionX, double motionY, double motionZ, boolean faceCamera, double yaw, double pitch, double roll, double faceCameraAngle, double scale, double r, double g, double b, double a, double airDiffusionSpeed, double duration, boolean emissive, boolean canCollide, boolean isAnimation, ParticleComponent[] components) {
+        ParticleRotation rotation = faceCamera ? new ParticleRotation.FaceCamera((float) faceCameraAngle) : new ParticleRotation.EulerAngles((float) yaw, (float) pitch, (float) roll);
+        AdvancedParticleData data = createParticleData(particle, rotation, scale, r, g, b, a, airDiffusionSpeed, duration,
+                emissive, canCollide, components, isAnimation);
+        level.addParticle(data, x, y, z, motionX, motionY, motionZ);
     }
 
     public static void spawnCustomRotationParticle(Level level, ParticleType<AdvancedParticleData> particle, double x, double y, double z, double motionX, double motionY, double motionZ, ParticleRotation rotation, double scale, double r, double g, double b, double a, double airDiffusionSpeed, double duration, boolean emissive, boolean canCollide, ParticleComponent[] components, boolean isAnimation) {
-        level.addParticle(new AdvancedParticleData(particle, rotation, scale, r, g, b, a, airDiffusionSpeed, duration, emissive, canCollide, components, isAnimation), x, y, z, motionX, motionY, motionZ);
+        AdvancedParticleData data = createParticleData(particle, rotation, scale, r, g, b, a, airDiffusionSpeed, duration,
+                emissive, canCollide, components, isAnimation);
+        level.addParticle(data, x, y, z, motionX, motionY, motionZ);
+    }
+
+    public static void spawnEmptyComponentParticle(Level level, ParticleType<AdvancedParticleData> particle, double x, double y, double z, double motionX, double motionY, double motionZ, boolean faceCamera, double yaw, double pitch, double roll, double faceCameraAngle, double scale, double r, double g, double b, double a, double airDiffusionSpeed, double duration, boolean emissive, boolean canCollide, boolean isAnimation) {
+        spawnParticle(level, particle, x, y, z, motionX, motionY, motionZ, faceCamera, yaw, pitch, roll, faceCameraAngle, scale, r, g, b, a,
+                airDiffusionSpeed, duration, emissive, canCollide, isAnimation, new ParticleComponent[]{});
     }
 }

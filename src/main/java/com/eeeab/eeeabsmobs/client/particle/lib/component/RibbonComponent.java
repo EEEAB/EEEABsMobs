@@ -1,5 +1,10 @@
-package com.eeeab.eeeabsmobs.client.particle.util;
+package com.eeeab.eeeabsmobs.client.particle.lib.component;
 
+import com.eeeab.eeeabsmobs.client.particle.lib.AdvancedParticleBase;
+import com.eeeab.eeeabsmobs.client.particle.lib.AnimData;
+import com.eeeab.eeeabsmobs.client.particle.lib.ParticleRibbon;
+import com.eeeab.eeeabsmobs.client.particle.lib.data.RibbonParticleData;
+import net.minecraft.client.Camera;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.world.phys.Vec3;
 
@@ -130,7 +135,7 @@ public class RibbonComponent extends ParticleComponent {
         }
 
         @Override
-        public void preRender(AdvancedParticleBase particle, float partialTicks) {
+        public void preRender(AdvancedParticleBase particle, Camera renderInfo, float partialTicks) {
             if (particle instanceof ParticleRibbon ribbon) {
                 float time = (ribbon.getAge() - 1 + partialTicks) / (ribbon.getLifetime());
                 float t = (startOffset + time * speed) % 1.0f;

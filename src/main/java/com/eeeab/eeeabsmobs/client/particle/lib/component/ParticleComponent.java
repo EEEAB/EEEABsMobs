@@ -1,6 +1,9 @@
-package com.eeeab.eeeabsmobs.client.particle.util;
+package com.eeeab.eeeabsmobs.client.particle.lib.component;
 
-import com.eeeab.eeeabsmobs.sever.util.FractalPathProvider;
+import com.eeeab.eeeabsmobs.client.particle.lib.AdvancedParticleBase;
+import com.eeeab.eeeabsmobs.client.particle.lib.AnimData;
+import com.eeeab.eeeabsmobs.client.particle.lib.ParticleRotation;
+import com.eeeab.eeeabsmobs.client.render.util.LightningPathProvider;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -9,9 +12,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 //参考自: https://github.com/BobMowzie/MowziesMobs/blob/master/src/main/java/com/bobmowzie/mowziesmobs/client/particle/util/ParticleComponent.java
 public abstract class ParticleComponent {
@@ -31,7 +32,7 @@ public abstract class ParticleComponent {
 
     }
 
-    public void preRender(AdvancedParticleBase particle, float partialTicks) {
+    public void preRender(AdvancedParticleBase particle, Camera renderInfo, float partialTicks) {
 
     }
 
@@ -50,7 +51,7 @@ public abstract class ParticleComponent {
             AIR_DIFFUSION_SPEED,
             /* Render particle */
             RED, GREEN, BLUE, ALPHA,
-            SCALE,
+            SCALE, GRAVITY,
             YAW, PITCH, ROLL, // For not facing camera
             PARTICLE_ANGLE // For facing camera
         }
@@ -73,7 +74,7 @@ public abstract class ParticleComponent {
         }
 
         @Override
-        public void preRender(AdvancedParticleBase particle, float partialTicks) {
+        public void preRender(AdvancedParticleBase particle, Camera renderInfo, float partialTicks) {
             float ageFrac = (particle.getAge() + partialTicks) / particle.getLifetime();
             float value = animData.evaluate(ageFrac);
             applyRender(particle, value);
@@ -108,6 +109,9 @@ public abstract class ParticleComponent {
             } else if (property == EnumParticleProperty.AIR_DIFFUSION_SPEED) {
                 if (additive) particle.airDiffusionSpeed += value;
                 else particle.airDiffusionSpeed = value;
+            } else {
+                if (additive) particle.setGravity(particle.getGravity() + value);
+                else particle.setGravity(value);
             }
         }
 
@@ -155,7 +159,7 @@ public abstract class ParticleComponent {
      * 固定坐标组件
      */
     public static class PinLocation extends ParticleComponent {
-        private final Vec3[] location;
+        protected final Vec3[] location;
 
         /**
          * PinLocation
@@ -182,13 +186,12 @@ public abstract class ParticleComponent {
     }
 
     /**
-     * 跟踪实体坐标组件
+     * 基于实体坐标组件
      *
      * @author EEEAB
      */
-    public static class PinLocationWithEntity extends ParticleComponent {
+    public static class PinLocationWithEntity extends PinLocation {
         private final Entity entity;
-        private final Vec3 offset;
 
         /**
          * PinLocationWithEntity
@@ -197,25 +200,30 @@ public abstract class ParticleComponent {
          * @param offset 坐标偏移量
          */
         public PinLocationWithEntity(Entity entity, Vec3 offset) {
+            super(new Vec3[]{offset});
             this.entity = entity;
-            this.offset = offset;
         }
 
         @Override
         public void init(AdvancedParticleBase particle) {
-            if (entity != null && offset != null) {
-                particle.setPos(entity.getX() + offset.x, entity.getY() + offset.y, entity.getZ() + offset.z);
+            if (entity != null && location != null && location.length > 0) {
+                particle.setPos(entity.getX() + location[0].x, entity.getY() + location[0].y, entity.getZ() + location[0].z);
             }
         }
 
         @Override
         public void preUpdate(AdvancedParticleBase particle) {
-            if (entity != null && offset != null) {
-                particle.setPos(entity.getX() + offset.x, entity.getY() + offset.y, entity.getZ() + offset.z);
+            if (entity != null) {
+                if (!entity.isAlive()) {
+                    particle.remove();
+                    return;
+                }
+                if (location != null && location.length > 0) {
+                    particle.setPos(entity.getX() + location[0].x, entity.getY() + location[0].y, entity.getZ() + location[0].z);
+                }
             }
         }
     }
-
 
     /**
      * 吸引组件
@@ -360,7 +368,7 @@ public abstract class ParticleComponent {
         }
 
         @Override
-        public void preRender(AdvancedParticleBase particle, float partialTicks) {
+        public void preRender(AdvancedParticleBase particle, Camera renderInfo, float partialTicks) {
             double dx = particle.getPosX() - particle.getPrevPosX();
             double dy = particle.getPosY() - particle.getPrevPosY();
             double dz = particle.getPosZ() - particle.getPrevPosZ();
@@ -381,19 +389,19 @@ public abstract class ParticleComponent {
     }
 
     /**
-     * 按照路径顺序移动的组件
+     * 闪电路径专用组件
      */
-    public static class FollowPath extends ParticleComponent {
-        private final List<Vec3> path;
+    public static class LightningBoltPath extends ParticleComponent {
+        private final List<LightningPathProvider.PathPoint> path;
         private final AnimData speedData;
 
         /**
-         * FollowPath - 使用固定路径
+         * LightningBoltPath
          *
          * @param path      移动路径列表
          * @param speedData 移动速度控制（0-1的进度）
          */
-        public FollowPath(List<Vec3> path, AnimData speedData) {
+        public LightningBoltPath(List<LightningPathProvider.PathPoint> path, AnimData speedData) {
             this.path = path;
             this.speedData = speedData;
         }
@@ -413,8 +421,31 @@ public abstract class ParticleComponent {
             float progress = speedData.evaluate(t);
             int index = (int) (progress * (path.size() - 1));
             index = Math.min(index, path.size() - 1);
-            Vec3 targetPos = path.get(index);
-            particle.setPos(targetPos.x, targetPos.y, targetPos.z);
+            LightningPathProvider.PathPoint targetPos = path.get(index);
+            particle.setPos(targetPos.point().x, targetPos.point().y, targetPos.point().z);
+        }
+    }
+
+    /**
+     * 原版粒子下坠组件
+     */
+    public static class FreeFallSimulator extends ParticleComponent {
+        private final float gravity;
+
+        public FreeFallSimulator(float gravity) {
+            this.gravity = gravity;
+        }
+
+        @Override
+        public void init(AdvancedParticleBase particle) {
+            particle.setGravity(gravity);
+        }
+
+        @Override
+        public void preUpdate(AdvancedParticleBase particle) {
+            if (particle.getAge() < particle.getLifetime()) {
+                particle.setMotionY(particle.getMotionY() - 0.04D * particle.getGravity());
+            }
         }
     }
 }

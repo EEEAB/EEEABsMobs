@@ -1,6 +1,10 @@
-package com.eeeab.eeeabsmobs.client.util;
+package com.eeeab.eeeabsmobs.client.particle.util;
 
-import com.eeeab.eeeabsmobs.client.particle.util.*;
+import com.eeeab.eeeabsmobs.client.particle.lib.AdvancedParticleBase;
+import com.eeeab.eeeabsmobs.client.particle.lib.AnimData;
+import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent;
+import com.eeeab.eeeabsmobs.client.particle.lib.component.RibbonComponent;
+import com.eeeab.eeeabsmobs.client.particle.lib.data.AdvancedParticleData;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -15,20 +19,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
+import java.util.Arrays;
+import java.util.function.Predicate;
 
-/**
- * 粒子效果工具类
- *
- * @author EEEAB
- */
 public class ModParticleUtils {
     private static final RandomSource random = RandomSource.createNewThreadLocalInstance();
 
     private ModParticleUtils() {
     }
-
 
     /**
      * 自定义形状粒子效果
@@ -36,10 +36,9 @@ public class ModParticleUtils {
      * @param points         生成数量
      * @param speedModifiers 速度乘数
      */
-    public static void particleOutburst(Level world, int points, ParticleOptions[] particles,
-                                        double x, double y, double z,
-                                        float[][] speedModifiers) {
-        particleOutburst(world, points, particles, x, y, z, speedModifiers, 1);
+    public static void particleOutburst(Level level, int points, ParticleOptions[] particles,
+                                        double x, double y, double z, float[][] speedModifiers) {
+        particleOutburst(level, points, particles, x, y, z, speedModifiers, 1);
     }
 
     /**
@@ -49,9 +48,8 @@ public class ModParticleUtils {
      * @param velDividers   移动速度
      * @param speedModifier 速度乘数
      */
-    public static void particleOutburst(Level world, int points, ParticleOptions[] particles,
-                                        double x, double y, double z,
-                                        float[][] velDividers, double speedModifier) {
+    public static void particleOutburst(Level level, int points, ParticleOptions[] particles,
+                                        double x, double y, double z, float[][] velDividers, double speedModifier) {
         double d = random.nextGaussian() * 0.05D;
         double e = random.nextGaussian() * 0.05D;
         for (int j = 0; j < points; ++j) {
@@ -59,7 +57,7 @@ public class ModParticleUtils {
             double newZ = (random.nextDouble() - 0.5D + random.nextGaussian() * 0.15D + e) * speedModifier;
             double newY = random.nextDouble() - 0.5D + random.nextDouble() * 0.5D;
             for (int i = 0; i < particles.length; i++) {
-                world.addParticle(particles[i], x, y, z, newX / velDividers[i][0], newY / velDividers[i][1], newZ / velDividers[i][2]);
+                level.addParticle(particles[i], x, y, z, newX / velDividers[i][0], newY / velDividers[i][1], newZ / velDividers[i][2]);
             }
         }
     }
@@ -70,8 +68,7 @@ public class ModParticleUtils {
      * @param points       生成数量
      * @param sizeModifier 效果大小
      */
-    public static void roundParticleOutburst(Level world, double points, ParticleOptions[] particles,
-                                             double x, double y, double z, float sizeModifier) {
+    public static void roundParticleOutburst(Level level, double points, ParticleOptions[] particles, double x, double y, double z, float sizeModifier) {
         double phi = Math.PI * (3. - Math.sqrt(5.));
         for (int i = 0; i < points; i++) {
             double velocityY = 1 - (i / (points - 1)) * 2;
@@ -81,7 +78,7 @@ public class ModParticleUtils {
             double velocityZ = Math.sin(theta) * radius;
             float sideOffset = (float) (random.nextGaussian() * 0.2D) * (random.nextBoolean() ? 1 : -1);
             for (ParticleOptions particle : particles) {
-                world.addParticle(particle, true, x, y, z, velocityX * (sizeModifier + sideOffset), velocityY * sizeModifier, velocityZ * (sizeModifier + sideOffset));
+                level.addParticle(particle, true, x, y, z, velocityX * (sizeModifier + sideOffset), velocityY * sizeModifier, velocityZ * (sizeModifier + sideOffset));
             }
         }
     }
@@ -94,10 +91,9 @@ public class ModParticleUtils {
      * @param speedModifier 速度乘数
      * @param yOffSet       y轴偏移
      */
-    public static void annularParticleOutburst(Level world, double points, ParticleOptions particle,
-                                               double x, double y, double z,
-                                               double speedModifier, double yOffSet) {
-        annularParticleOutburst(world, points, particle, x, y, z, speedModifier, yOffSet, 360F, 0F, 0F);
+    public static void annularParticleOutburst(Level level, double points, ParticleOptions particle,
+                                               double x, double y, double z, double speedModifier, double yOffSet) {
+        annularParticleOutburst(level, points, particle, x, y, z, speedModifier, yOffSet, 360F, 0F, 0F);
     }
 
 
@@ -111,16 +107,16 @@ public class ModParticleUtils {
      * @param yMoveModifier y轴移动乘数
      * @param entityYaw     实体yaw
      */
-    public static void annularParticleOutburst(Level world, double points, ParticleOptions particle,
+    public static void annularParticleOutburst(Level level, double points, ParticleOptions particle,
                                                double x, double y, double z, double speedModifier,
-                                               double yOffset, float angle,
-                                               float yMoveModifier, float entityYaw) {
+                                               double yOffset, float angle, float yMoveModifier, float entityYaw) {
         for (int i = 0; i < points; i++) {
             double currentAngle = entityYaw - (angle / 2) + (i * angle) / (points - 1);
             double radians = Math.toRadians(currentAngle);
             double xSpeed = -speedModifier * Math.sin(radians);
             double zSpeed = speedModifier * Math.cos(radians);
-            world.addParticle(particle, x, y + yOffset, z, xSpeed, (random.nextFloat() - random.nextFloat()) * 0.1F * yMoveModifier, zSpeed);
+            float sideOffset = (float) (random.nextGaussian() * 0.1D * speedModifier) * (random.nextBoolean() ? 1 : -1);
+            level.addParticle(particle, x, y + yOffset, z, xSpeed + sideOffset, (random.nextFloat() - random.nextFloat()) * 0.1F * yMoveModifier, zSpeed + sideOffset);
         }
     }
 
@@ -134,8 +130,7 @@ public class ModParticleUtils {
      * @param speedModifier 速度乘数
      */
     public static void sphericalParticleOutburst(Level level, float points, ParticleOptions[] particles, LivingEntity entity,
-                                                 float yOffset, double inFrontOffset,
-                                                 double sideOffset, double speedModifier) {
+                                                 float yOffset, double inFrontOffset, double sideOffset, double speedModifier) {
         double perpFacing = entity.yBodyRot * (Math.PI / 180);
         double facingAngle = perpFacing + Math.PI / 2;
         double vx = Math.cos(facingAngle) * inFrontOffset;
@@ -165,90 +160,35 @@ public class ModParticleUtils {
     }
 
     /**
-     * 环形粒子在地面爆发
-     *
-     * @param quantity       生成最少数量
-     * @param randomQuantity 生成最大随机值
-     * @param sizeModifier   效果大小
-     * @param inFrontOffset  前后偏移
-     * @param sideOffset     左右偏移
-     * @param speedModifier  速度乘数
-     */
-    public static void annularParticleOutburstOnGround(Level level, ParticleOptions particle, LivingEntity entity, int quantity,
-                                                       int randomQuantity, double sizeModifier, double inFrontOffset,
-                                                       double sideOffset, double speedModifier) {
-        if (particle instanceof BlockParticleOption blockPO) {
-            if (blockPO.getState().getRenderShape() == RenderShape.INVISIBLE) {
-                return;
-            }
-        }
-        double perpFacing = entity.yBodyRot * (Math.PI / 180);
-        double facingAngle = perpFacing + Math.PI / 2;
-        double vx = Math.cos(facingAngle) * inFrontOffset;
-        double vz = Math.sin(facingAngle) * inFrontOffset;
-        double perpX = Math.cos(perpFacing);
-        double perpZ = Math.sin(perpFacing);
-        double fx = entity.getX() + vx + perpX * sideOffset;
-        double fy = entity.getBoundingBox().minY + 0.1;
-        double fz = entity.getZ() + vz + perpZ * sideOffset;
-        int amount = quantity + random.nextInt(randomQuantity);
-
-        while (amount-- > 0) {
-            double theta = random.nextDouble() * Math.PI * 2;
-            double dist = random.nextDouble() * 0.1 + sizeModifier;
-            double sx = Math.cos(theta);
-            double sz = Math.sin(theta);
-            double px = fx + sx * dist;
-            double py = fy + random.nextDouble() * 0.1;
-            double pz = fz + sz * dist;
-            level.addParticle(particle, px, py, pz, sx * speedModifier, 0, sz * speedModifier);
-        }
-    }
-
-    /**
-     * 随机偏移环形粒子爆发
-     *
-     * @param points        生成数量
-     * @param speedModifier 速度乘数
-     */
-    public static void randomAnnularParticleOutburst(Level world, double points, ParticleOptions[] particles,
-                                                     double x, double y, double z, float speedModifier) {
-        for (int i = 0; i < points; i++) {
-            double yaw = i * ((2 * Math.PI) / points);
-            double vy = random.nextFloat() * 0.1F - 0.05F;
-            double vx = speedModifier * Mth.cos((float) yaw);
-            double vz = speedModifier * Mth.sin((float) yaw);
-            for (ParticleOptions particle : particles) {
-                world.addParticle(particle, x, y, z, vx, vy, vz);
-            }
-        }
-    }
-
-    /**
      * 生成方向性方块粒子效果
      *
      * @param theta              旋转角度（弧度）
      * @param points             生成数量
-     * @param blockOffsetOffsets 块的偏移量数组，用于计算粒子的产生位置
-     * @param blockStateProvider 提供块状态的函数，用于决定粒子类型
+     * @param blockOffsetOffsets 块的偏移量数组
      * @param lengthFactor       大小系数
      */
     public static void blockParticleDirectionality(Level level, double x, double y, double z,
+                                                   double theta, int points, float[][] blockOffsetOffsets, double lengthFactor) {
+        blockParticleDirectionality(level, x, y, z, -0.2F, theta, points, blockOffsetOffsets, lengthFactor, (hardness) -> true
+                , (pos, state) -> new BlockParticleOption(ParticleTypes.BLOCK, state));
+    }
+
+    public static void blockParticleDirectionality(Level level, double x, double y, double z, float yOffset,
                                                    double theta, int points, float[][] blockOffsetOffsets,
-                                                   Function<BlockPos, BlockState> blockStateProvider, double lengthFactor) {
+                                                   double lengthFactor, Predicate<Float> predicate, BlockParticleTypeGetter getter) {
         double perpX = Math.cos(theta);
         double perpZ = Math.sin(theta);
         theta += Math.PI / 2;
         double vecX = Math.cos(theta);
         double vecZ = Math.sin(theta);
-        int hitY = Mth.floor(y - 0.2);
+        int hitY = Mth.floor(y + yOffset);
         for (float[] offset : blockOffsetOffsets) {
             float ox = offset[0], oy = offset[1];
             int hitX = Mth.floor(x + ox);
             int hitZ = Mth.floor(z + oy);
-            BlockPos hit = new BlockPos(hitX, hitY, hitZ);
-            BlockState block = blockStateProvider.apply(hit);
-            if (block.getRenderShape() != RenderShape.INVISIBLE) {
+            BlockPos pos = new BlockPos(hitX, hitY, hitZ);
+            BlockState blockState = level.getBlockState(pos);
+            if (blockState.getRenderShape() != RenderShape.INVISIBLE && predicate.test(blockState.getDestroySpeed(level, pos))) {
                 for (int n = 0; n < points; n++) {
                     double pa = Math.random() * 2 * Math.PI;
                     double pd = Math.random() * (0.6 * lengthFactor) - (0.1 * lengthFactor);
@@ -262,7 +202,10 @@ public class ModParticleUtils {
                         velX = -velX;
                         velZ = -velZ;
                     }
-                    level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, block), px, y, pz, velX, velY, velZ);
+                    ParticleOptions data = getter.get(pos, blockState);
+                    if (data != null) {
+                        level.addParticle(data, px, y, pz, velX, velY, velZ);
+                    }
                 }
             }
         }
@@ -284,7 +227,14 @@ public class ModParticleUtils {
                                             double minRadius, double maxRadius, double minOutwardSpeed,
                                             double maxOutwardSpeed, double minYSpeed, double maxYSpeed,
                                             double yOffset, double particleYOffset) {
+        blockParticlesAround(level, x, y, z, points, minRadius, maxRadius, minOutwardSpeed, maxOutwardSpeed
+                , minYSpeed, maxYSpeed, yOffset, particleYOffset, (pos, state) -> new BlockParticleOption(ParticleTypes.BLOCK, state));
+    }
 
+    public static void blockParticlesAround(Level level, double x, double y, double z, int points,
+                                            double minRadius, double maxRadius, double minOutwardSpeed,
+                                            double maxOutwardSpeed, double minYSpeed, double maxYSpeed,
+                                            double yOffset, double particleYOffset, BlockParticleTypeGetter getter) {
         for (int i = 0; i < points; i++) {
             double angle = i * ((2 * Math.PI) / points);
             double radius = minRadius + random.nextDouble() * (maxRadius - minRadius);
@@ -297,25 +247,33 @@ public class ModParticleUtils {
             BlockPos pos = new BlockPos(Mth.floor(posX), Mth.floor(y + yOffset), Mth.floor(posZ));
             BlockState state = level.getBlockState(pos);
             if (state.getRenderShape() != RenderShape.INVISIBLE) {
-                level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, state), posX, y + particleYOffset, posZ, xSpeed, ySpeed, zSpeed);
+                level.addParticle(getter.get(pos, state), posX, y + particleYOffset, posZ, xSpeed, ySpeed, zSpeed);
             }
         }
     }
 
+    @FunctionalInterface
+    public interface BlockParticleTypeGetter {
+        ParticleOptions get(BlockPos pos, BlockState state);
+    }
+
     /**
-     * 在指定坐标围绕圆心生成多层碗装粒子爆发
+     * 在指定坐标围绕圆心生成多层碗装线状粒子爆发 标*代表需要与radii长度一致
      *
      * @param centerPos 圆心坐标
      * @param duration  持续时间
-     * @param particles 每层粒子数量
-     * @param radii     每层环行大小
-     * @param speeds    每层运动速度
-     * @param angles    每层运动角度
+     * @param particles *每层粒子数量
+     * @param radii     *每层环行大小
+     * @param speeds    *每层运动速度
+     * @param angles    *每层运动角度
+     * @param scales    *每层线段粗细
      * @param color     粒子颜色 数组长度必须≥4
+     * @param friction  空气阻力
      */
     public static void multiLayerBowlParticles(Level level, Vec3 centerPos, int duration, int[] particles, double[] radii,
-                                               double[] speeds, double[] angles, double[] color) {
+                                               double[] speeds, double[] angles, double[] color, double @Nullable [] scales, float friction) {
         duration = duration + random.nextInt(duration);
+        if (scales == null) Arrays.fill(new double[radii.length], 0.08);
         for (int layer = 0; layer < radii.length; layer++) {
             for (int i = 0; i < particles[layer]; i++) {
                 double angle = random.nextDouble() * 2 * Math.PI;
@@ -335,12 +293,12 @@ public class ModParticleUtils {
                 double horizontalSpeed = speed * Math.cos(angleRad);
                 double verticalSpeed = speed * Math.sin(angleRad);
                 AdvancedParticleBase.spawnParticle(level, ParticleInit.ADV_ORB.get(), startX, startY, startZ, toParticleX * horizontalSpeed, verticalSpeed, toParticleZ * horizontalSpeed,
-                        true, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0.95F, duration,
+                        true, 0, 0, 0, 0, 0, 1, 1, 1, 0, friction, duration,
                         true, true, false, new ParticleComponent[]{
                                 new RibbonComponent(ParticleInit.FLAT_RIBBON.get(), 4, 0, 0, 0, 0.08F, color[0], color[1], color[2], color[3], true, true,
                                         new ParticleComponent[]{
                                                 new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.ALPHA,
-                                                        AnimData.KeyTrack.startAndEnd(0.5F, 0F)),
+                                                        AnimData.KeyTrack.startAndEnd((float) color[3], 0F)),
                                                 new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.SCALE,
                                                         AnimData.KeyTrack.startAndEnd(0.1F, 1F)),
                                         }, false),
