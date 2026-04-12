@@ -1,9 +1,9 @@
 package com.eeeab.eeeabsmobs.client.model.animation;
 
-import net.minecraft.client.animation.AnimationChannel;
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.animation.Keyframe;
-import net.minecraft.client.animation.KeyframeAnimations;
+import com.eeeab.animate.client.animation.AnimationChannel;
+import com.eeeab.animate.client.animation.AnimationDefinition;
+import com.eeeab.animate.client.animation.Keyframe;
+import com.eeeab.animate.client.animation.KeyframeAnimations;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
