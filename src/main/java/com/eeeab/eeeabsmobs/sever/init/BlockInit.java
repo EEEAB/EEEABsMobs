@@ -5,17 +5,19 @@ import com.eeeab.eeeabsmobs.sever.block.*;
 import com.eeeab.eeeabsmobs.sever.block.grower.BlightedOakGrower;
 import com.eeeab.eeeabsmobs.sever.block.properties.SGACharacter;
 import com.eeeab.eeeabsmobs.sever.block.trapImpl.*;
-import com.eeeab.eeeabsmobs.sever.item.util.EMBlockEntityItemRender;
+import com.eeeab.eeeabsmobs.sever.item.util.ModBlockEntityItemRender;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.WoodType;
@@ -40,8 +42,8 @@ public class BlockInit {
     ), false);
     public static final RegistryObject<Block> BOUNDARY_LAMP = registryBlock("boundary_lamp", () -> new Block(BlockBehaviour.Properties
             .copy(Blocks.REDSTONE_LAMP).lightLevel((blockState) -> 15)), false);
-    public static final RegistryObject<Block> ANCIENT_BOUNDARY_STONE = registryBlock("ancient_boundary_stone", () -> new Block(BlockBehaviour.Properties
-            .copy(Blocks.COBBLED_DEEPSLATE).strength(4F, 6.0F)), false);
+    public static final RegistryObject<Block> ANCIENT_BOUNDARY_STONE = registryBlock("ancient_boundary_stone", () -> new DropExperienceBlock(BlockBehaviour.Properties
+            .copy(Blocks.COBBLED_DEEPSLATE).strength(4F, 6F).requiresCorrectToolForDrops(), UniformInt.of(1, 2)), false);
 
     public static final RegistryObject<Block> POLISHED_ROUGH_BOUNDARY_STONE = registryBlock("polished_rough_boundary_stone", () -> new Block(BlockBehaviour.Properties
             .copy(BlockInit.ANCIENT_BOUNDARY_STONE.get()).strength(4F, 6.0F).sound(SoundType.DEEPSLATE_BRICKS)), false);
@@ -66,7 +68,7 @@ public class BlockInit {
             .copy(ROUGH_BOUNDARY_BRICKS.get())), false);
 
     public static final RegistryObject<Block> POLISHED_BOUNDARY_STONE = registryBlock("polished_boundary_stone", () -> new Block(BlockBehaviour.Properties
-            .copy(BlockInit.ROUGH_BOUNDARY_BRICKS.get()).strength(3.0F, 5.0F)), false);
+            .copy(BlockInit.ROUGH_BOUNDARY_BRICKS.get()).strength(4.0F, 6.0F)), false);
     public static final RegistryObject<Block> POLISHED_BOUNDARY_STONE_STAIRS = registryBlock("polished_boundary_stone_stairs", () -> new StairBlock(() -> ROUGH_BOUNDARY_BRICKS.get().defaultBlockState(), BlockBehaviour.Properties
             .copy(POLISHED_BOUNDARY_STONE.get())), false);
     public static final RegistryObject<Block> POLISHED_BOUNDARY_STONE_SLAB = registryBlock("polished_boundary_stone_slab", () -> new SlabBlock(BlockBehaviour.Properties
@@ -93,8 +95,18 @@ public class BlockInit {
             .copy(Blocks.DEEPSLATE_BRICKS).strength(50.0F, 1200.0F).randomTicks().lightLevel(state -> state.getValue(BlockStateProperties.OPEN) ? 7 : 0)), false);
     public static final RegistryObject<Block> STEPPING_SHOCK_TRAP = registryBlock("stepping_shock_trap", () -> new BlockSteppingShockTrap(BlockBehaviour.Properties
             .copy(Blocks.DEEPSLATE_BRICKS).strength(50.0F, 1200.0F).randomTicks().lightLevel(state -> state.getValue(BlockStateProperties.OPEN) ? 2 : 0)), false);
-    public static final RegistryObject<Block> UNCARVED_BOUNDARY_STONE = registryBlock("uncarved_boundary_stone", () -> new Block(BlockBehaviour.Properties
-            .copy(Blocks.REINFORCED_DEEPSLATE).strength(-1.0F, 3600000.0F).noLootTable().lightLevel(value -> 3).sound(SoundType.STONE)), false);
+    public static final RegistryObject<Block> UNCARVED_BOUNDARY_STONE = registryBlock("uncarved_boundary_stone", () -> new HorizontalDirectionalBlock(BlockBehaviour.Properties
+            .copy(Blocks.REINFORCED_DEEPSLATE).strength(-1.0F, 3600000.0F).noLootTable().lightLevel(value -> 3).sound(SoundType.STONE)) {
+        @Override
+        public BlockState getStateForPlacement(BlockPlaceContext pContext) {
+            return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
+        }
+
+        @Override
+        protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
+            pBuilder.add(FACING);
+        }
+    }, false);
     public static final RegistryObject<Block> RUNIC_BOUNDARY_STONE = registryBlock("runic_boundary_stone", () -> new BlockGalacticAlphabet(BlockBehaviour.Properties
             .copy(BlockInit.UNCARVED_BOUNDARY_STONE.get()).noLootTable(), EnumSet.of(SGACharacter.V, SGACharacter.O, SGACharacter.I, SGACharacter.D)), false);
     public static final RegistryObject<Block> BOUNDARY_CORE = registryBlock("boundary_core", () -> new BlockVoidCrackPortalLock(BlockBehaviour.Properties.of()
@@ -102,22 +114,22 @@ public class BlockInit {
     public static final RegistryObject<Block> VOID_CRACK_PORTAL = registryBlock("void_crack_portal", () -> new BlockVoidCrackPortal(BlockBehaviour.Properties.of()
             .noCollission().randomTicks().pushReaction(PushReaction.BLOCK).strength(-1.0F).isValidSpawn(BlockInit::never).sound(SoundType.GLASS).lightLevel(s -> 11).noLootTable()), false);
     public static final RegistryObject<Block> EROSION_DEEPSLATE_BRICKS = registryBlock("erosion_deepslate_bricks", () -> new Block(BlockBehaviour.Properties
-            .copy(Blocks.REINFORCED_DEEPSLATE).strength(-1.0F, 3600000.0F).noLootTable()), false);
+            .copy(Blocks.DEEPSLATE_BRICKS).lightLevel(s -> 7).noLootTable()), false);
 
-
+    public static final RegistryObject<Block> SLIDING_DOOR = registryBlock("sliding_door", BlockSlidingDoor::new, true);
     public static final RegistryObject<Block> TOMBSTONE = registryBlock("tombstone", BlockTombstone::new, true);
     public static final RegistryObject<Block> EROSION_ROCK_BRICKS = registryBlock("erosion_rock_bricks", () -> new Block(BlockBehaviour.Properties
             .copy(Blocks.DEEPSLATE_BRICKS).strength(10.0F, 1200.0F)), false);
     public static final RegistryObject<Block> IMMORTAL_BLOCK = registryBlock("immortal_block", () -> new Block(BlockBehaviour.Properties
             .copy(Blocks.IRON_BLOCK).sound(SoundType.METAL)), false);
     public static final RegistryObject<Block> GHOST_STEEL_BLOCK = registryBlock("ghost_steel_block", () -> new Block(BlockBehaviour.Properties
-            .copy(Blocks.NETHERITE_BLOCK).sound(SoundType.METAL)), false, new Item.Properties().rarity(Rarity.RARE).fireResistant());
+            .copy(Blocks.NETHERITE_BLOCK).sound(SoundType.METAL)), false, new Item.Properties().rarity(Rarity.EPIC).fireResistant());
     public static final RegistryObject<Block> CUT_GHOST_STEEL_BLOCK = registryBlock("cut_ghost_steel", () -> new Block(BlockBehaviour.Properties
-            .copy(BlockInit.GHOST_STEEL_BLOCK.get())), false, new Item.Properties().rarity(Rarity.RARE).fireResistant());
+            .copy(BlockInit.GHOST_STEEL_BLOCK.get())), false, new Item.Properties().rarity(Rarity.EPIC).fireResistant());
     public static final RegistryObject<Block> CUT_GHOST_STEEL_BLOCK_STAIRS = registryBlock("cut_ghost_steel_stairs", () -> new StairBlock(() -> CUT_GHOST_STEEL_BLOCK.get().defaultBlockState(), BlockBehaviour.Properties
-            .copy(CUT_GHOST_STEEL_BLOCK.get())), false, new Item.Properties().rarity(Rarity.RARE).fireResistant());
+            .copy(CUT_GHOST_STEEL_BLOCK.get())), false, new Item.Properties().rarity(Rarity.EPIC).fireResistant());
     public static final RegistryObject<Block> CUT_GHOST_STEEL_BLOCK_SLAB = registryBlock("cut_ghost_steel_slab", () -> new SlabBlock(BlockBehaviour.Properties
-            .copy(CUT_GHOST_STEEL_BLOCK.get())), false, new Item.Properties().rarity(Rarity.RARE).fireResistant());
+            .copy(CUT_GHOST_STEEL_BLOCK.get())), false, new Item.Properties().rarity(Rarity.EPIC).fireResistant());
     public static final RegistryObject<Block> ERODED_SOIL = registryBlock("eroded_soil", () -> new Block(BlockBehaviour.Properties
             .copy(Blocks.MUD).sound(SoundType.MUD)), false);
     public static final RegistryObject<Block> DARKENED_COAL_ORE = registryBlock("darkened_coal_ore", () -> new DropExperienceBlock(BlockBehaviour.Properties
@@ -237,7 +249,7 @@ public class BlockInit {
     }
 
     private static <T extends Block> void registerBlockItem(String name, RegistryObject<T> block, Item.Properties properties, boolean isEntityBlock) {
-        ItemInit.ITEMS.register(name, () -> isEntityBlock ? new EMBlockEntityItemRender(block.get(), properties) : new BlockItem(block.get(), properties));
+        ItemInit.ITEMS.register(name, () -> isEntityBlock ? new ModBlockEntityItemRender(block.get(), properties) : new BlockItem(block.get(), properties));
     }
 
     public static void register(IEventBus bus) {

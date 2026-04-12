@@ -16,8 +16,10 @@ public class BlockSteppingFlameTrap extends BlockStepOnTrap {
     @Override
     public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
         super.stepOn(level, pos, state, entity);
-        if (state.getValue(OPEN) && !entity.getType().fireImmune()) {
-            entity.setSecondsOnFire(8);
+        if (state.getValue(OPEN) && !entity.getType().fireImmune() && entity.isAttackable()) {
+            if (entity.hurt(level.damageSources().hotFloor(), 1F)) {
+                entity.setSecondsOnFire(3);
+            }
         }
     }
 
