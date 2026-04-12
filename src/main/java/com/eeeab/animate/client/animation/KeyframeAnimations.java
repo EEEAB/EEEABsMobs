@@ -1,8 +1,6 @@
-package com.eeeab.animate.client.model;
+package com.eeeab.animate.client.animation;
 
-import net.minecraft.client.animation.AnimationChannel;
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.animation.Keyframe;
+import com.eeeab.animate.client.model.ModHierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
@@ -15,7 +13,7 @@ import java.util.Optional;
 
 //参考自: 1.20.1 KeyframeAnimations
 @OnlyIn(Dist.CLIENT)
-public class ModKeyframeAnimations {
+public class KeyframeAnimations {
     public static void animate(ModHierarchicalModel<?> model, AnimationDefinition animationDefinition, long accumulatedTime, float scale, Vector3f animationVecCache) {
         float f = getElapsedSeconds(animationDefinition, accumulatedTime);
         for (Map.Entry<String, List<AnimationChannel>> entry : animationDefinition.boneAnimations().entrySet()) {

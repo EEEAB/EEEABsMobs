@@ -1,8 +1,8 @@
 package com.eeeab.animate.server.ai;
 
+import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
-import com.eeeab.animate.server.animation.AnimatedEntity;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -45,7 +45,7 @@ public abstract class AnimationSpellAI<T extends EEEABMobLibrary & AnimatedEntit
         if (soundevent != null) {
             this.spellCaster.playSound(soundevent, 1.0F, 1.0F);
         }
-        this.spellCaster.playAnimation(getEMAnimation());
+        this.spellCaster.playAnimation(getEntityAnimation());
     }
 
     @Override
@@ -71,7 +71,7 @@ public abstract class AnimationSpellAI<T extends EEEABMobLibrary & AnimatedEntit
     protected abstract SoundEvent getSpellCastingSound();
 
     //实体动画
-    protected Animation getEMAnimation() {
+    protected Animation getEntityAnimation() {
         return null;
     }
 }

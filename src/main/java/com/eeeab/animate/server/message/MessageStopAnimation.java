@@ -1,10 +1,9 @@
 package com.eeeab.animate.server.message;
 
-import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.animation.AnimatedEntity;
+import com.eeeab.animate.server.animation.Animation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -19,26 +18,25 @@ import java.util.stream.Stream;
 public class MessageStopAnimation {
     private int entityID;
     //是否只停止叠加动画
-    private boolean onlyStopSuperposition;
+    private boolean onlyStopOverlapAnimation;
 
     public MessageStopAnimation() {
-
     }
 
-    public MessageStopAnimation(int entityID, boolean onlyStopSuperposition) {
+    public MessageStopAnimation(int entityID, boolean onlyStopOverlapAnimation) {
         this.entityID = entityID;
-        this.onlyStopSuperposition = onlyStopSuperposition;
+        this.onlyStopOverlapAnimation = onlyStopOverlapAnimation;
     }
 
     public static void serialize(final MessageStopAnimation message, final FriendlyByteBuf buf) {
         buf.writeVarInt(message.entityID);
-        buf.writeBoolean(message.onlyStopSuperposition);
+        buf.writeBoolean(message.onlyStopOverlapAnimation);
     }
 
     public static MessageStopAnimation deserialize(final FriendlyByteBuf buf) {
         final MessageStopAnimation message = new MessageStopAnimation();
         message.entityID = buf.readVarInt();
-        message.onlyStopSuperposition = buf.readBoolean();
+        message.onlyStopOverlapAnimation = buf.readBoolean();
         return message;
     }
 
@@ -51,11 +49,10 @@ public class MessageStopAnimation {
                     Entity entity = Minecraft.getInstance().level.getEntity(message.entityID);
                     if (entity instanceof AnimatedEntity animationEntity && animationEntity.getAnimations() != null) {
                         Stream<Animation> stream = Arrays.stream(animationEntity.getAnimations());
-                        if (message.onlyStopSuperposition) {
-                            stream.filter(Animation::isOverlap).forEach(AnimationState::stop);
-                        } else {
-                            stream.forEach(AnimationState::stop);
+                        if (!message.onlyStopOverlapAnimation) {
+                            animationEntity.getAnimationState(AnimatedEntity.NO_ANIMATION).stop();
                         }
+                        stream.filter(Animation::isOverlap).forEach(a -> animationEntity.getAnimationState(a).stop());
                     }
                 }
             });

@@ -1,9 +1,13 @@
 package com.eeeab.animate.client.model;
 
+import com.eeeab.animate.client.animation.AnimationDefinition;
+import com.eeeab.animate.client.animation.KeyframeAnimations;
+import com.eeeab.animate.server.animation.AnimatedEntity;
+import com.eeeab.animate.server.animation.Animation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.AnimationState;
@@ -16,7 +20,7 @@ import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
 public abstract class ModHierarchicalModel<E extends Entity> extends EntityModel<E> {
-    private static final Vector3f ANIMATION_VECTOR_CACHE = new Vector3f();
+    public static final Vector3f ANIMATION_VECTOR_CACHE = new Vector3f();
     private float movementScale = 1.0F;
 
     public abstract ModelPart root();
@@ -40,7 +44,7 @@ public abstract class ModHierarchicalModel<E extends Entity> extends EntityModel
     /**
      * 看向目标动画
      */
-    public static void lookAtAnimation(float yaw, float pitch, float rotationDivisor, ModelPart... boxes) {
+    public static void lookAtTarget(float yaw, float pitch, float rotationDivisor, ModelPart... boxes) {
         int length = boxes.length;
         float actualRotationDivisor = rotationDivisor * (float) length;
         float yawAmount = yaw / 57.295776F / actualRotationDivisor;
@@ -106,6 +110,15 @@ public abstract class ModHierarchicalModel<E extends Entity> extends EntityModel
 
     /**
      * 计算旋转
+     *
+     * @param speed  动画速度
+     * @param degree 旋转幅度
+     * @param invert 是否反转
+     * @param offset 相位偏移
+     * @param weight 静态权重（偏移量）
+     * @param frame  当前动画帧
+     * @param scale  全局缩放因子
+     * @return 旋转弧度
      */
     private float calculateRotation(float speed, float degree, boolean invert, float offset, float weight, float frame, float scale) {
         float movementScale = this.getMovementScale();
@@ -176,23 +189,28 @@ public abstract class ModHierarchicalModel<E extends Entity> extends EntityModel
         return name.equals("root") ? Optional.of(this.root()) : this.root().getAllParts().filter((part) -> part.hasChild(name)).findFirst().map((part) -> part.getChild(name));
     }
 
-    protected void animate(AnimationState animationState, AnimationDefinition animationDefinition, float ageInTicks) {
-        this.animate(animationState, animationDefinition, ageInTicks, 1.0F);
+    public static <E extends Entity & AnimatedEntity> void playAnimation(ModHierarchicalModel<E> model, E entity, Animation animation, AnimationDefinition definition, float ageInTicks) {
+        if (entity.getAnimation() != animation) return;
+        AnimationState state = entity.getAnimationState(animation);
+        state.updateTime(ageInTicks, entity.getAnimationSpeed(animation));
+        state.ifStarted((s) -> KeyframeAnimations.animate(model, definition, s.getAccumulatedTime(), entity.getAnimationScale(animation), ANIMATION_VECTOR_CACHE));
     }
 
-    protected void animate(AnimationState animationState, AnimationDefinition animationDefinition, float ageInTicks, float speed) {
-        animationState.updateTime(ageInTicks, speed);
-        animationState.ifStarted((state) -> ModKeyframeAnimations.animate(this, animationDefinition, state.getAccumulatedTime(), 1.0F, ANIMATION_VECTOR_CACHE));
-    }
-
-    protected void animate(AnimationState animationState, AnimationDefinition animationDefinition, float ageInTicks, float speed, float scale) {
-        animationState.updateTime(ageInTicks, speed);
-        animationState.ifStarted((state) -> ModKeyframeAnimations.animate(this, animationDefinition, state.getAccumulatedTime(), scale, ANIMATION_VECTOR_CACHE));
+    public static <E extends Entity & AnimatedEntity> void playOverlapAnimation(ModHierarchicalModel<E> model, E entity, Animation animation, AnimationDefinition definition, float ageInTicks) {
+        AnimationState overlapState = entity.getOverlapAnimationState(animation);
+        if (overlapState == null) return;
+        overlapState.updateTime(ageInTicks, entity.getAnimationSpeed(animation));
+        overlapState.ifStarted((state) -> KeyframeAnimations.animate(model, definition, state.getAccumulatedTime(), entity.getAnimationScale(animation), ANIMATION_VECTOR_CACHE));
     }
 
     protected void animateWalk(AnimationDefinition animationDefinition, float limbSwing, float limbSwingAmount, float maxAnimationSpeed, float animationScaleFactor) {
         long i = (long) (limbSwing * 50.0F * maxAnimationSpeed);
         float f = Math.min(limbSwingAmount * animationScaleFactor, 1.0F);
-        ModKeyframeAnimations.animate(this, animationDefinition, i, f, ANIMATION_VECTOR_CACHE);
+        KeyframeAnimations.animate(this, animationDefinition, i, f, ANIMATION_VECTOR_CACHE);
+    }
+
+    public static <T extends Entity> void animate(ModHierarchicalModel<T> model, AnimationState animationState, AnimationDefinition definition, float ageInTicks) {
+        animationState.updateTime(ageInTicks, 1F);
+        animationState.ifStarted((state) -> KeyframeAnimations.animate(model, definition, state.getAccumulatedTime(), 1F, ANIMATION_VECTOR_CACHE));
     }
 }

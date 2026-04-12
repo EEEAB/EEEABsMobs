@@ -1,7 +1,8 @@
 package com.eeeab.animate.client.model;
 
+import com.eeeab.animate.client.animation.KeyframeAnimations;
 import com.eeeab.animate.client.util.ItemAnimationUtils;
-import net.minecraft.client.animation.AnimationDefinition;
+import com.eeeab.animate.client.animation.AnimationDefinition;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -28,7 +29,7 @@ public abstract class AnimatedItemModel extends ModHierarchicalModel<Entity> {
                 ItemAnimationUtils.stop(itemStackIn);
                 return;
             }
-            ModKeyframeAnimations.animate(this, animationDefinition, accumulatedTime, scale, ITEM_ANIMATION_VECTOR_CACHE);
+            KeyframeAnimations.animate(this, animationDefinition, accumulatedTime, scale, ITEM_ANIMATION_VECTOR_CACHE);
         }
     }
 }

@@ -1,17 +1,11 @@
 package com.eeeab.animate.server.animation;
 
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.AnimationState;
-
 /**
- * 动画对象
- * <br>
+ * 动画定义
  *
  * @author EEEAB
- * @说明: 该类不能使用static修饰(会使播放动画出现意想不到的问题)，需要注意加载顺序问题，避免在使用该对象时出现空值问题，
- * 比如Mob.registerGoals()优先级是要高于实体类的实例代码块，所以建议使用懒加载或提供初始化方法
  */
-public class Animation extends AnimationState {
+public class Animation {
     /**
      * 动画时长
      */
@@ -28,34 +22,17 @@ public class Animation extends AnimationState {
     private boolean overlap;
 
     /**
-     * 在动画开始时弹出提示框
-     * 为空默认不显示
+     * 动画基础速度
      */
-    private String hintId;
+    private float speed = 1.0F;
 
-    private Animation(int duration) {
+    /**
+     * 动画基础幅度
+     */
+    private float scale = 1.0F;
+
+    protected Animation(int duration) {
         this.duration = duration;
-    }
-
-    @Override
-    public void updateTime(float ageInTicks, float speed) {
-        super.updateTime(ageInTicks, speed);
-        if (this.isOverlap() && this.isStarted()) {
-            int accumulateTick = Mth.floor(this.getAccumulatedTime() / 1000F * 20F);
-            if (accumulateTick >= this.duration) {
-                this.stop();
-            }
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "Animation{" +
-                "duration=" + duration +
-                ", looping=" + looping +
-                ", overlap=" + overlap +
-                ", hintId='" + hintId + '\'' +
-                '}';
     }
 
     public Animation doesLoop() {
@@ -68,8 +45,13 @@ public class Animation extends AnimationState {
         return this;
     }
 
-    public Animation sendHint(String hintId) {
-        this.hintId = hintId;
+    public Animation setSpeed(float speed) {
+        this.speed = speed;
+        return this;
+    }
+
+    public Animation setScale(float scale) {
+        this.scale = scale;
         return this;
     }
 
@@ -85,8 +67,12 @@ public class Animation extends AnimationState {
         return looping;
     }
 
-    public String getHintId() {
-        return hintId;
+    public float getSpeed() {
+        return speed;
+    }
+
+    public float getScale() {
+        return scale;
     }
 
     public static Animation create(int duration) {

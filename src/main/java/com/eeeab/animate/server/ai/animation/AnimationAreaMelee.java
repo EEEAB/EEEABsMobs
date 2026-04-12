@@ -1,14 +1,13 @@
 package com.eeeab.animate.server.ai.animation;
 
-import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.animation.AnimatedEntity;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class AnimationAreaMelee<T extends EEEABMobLibrary & AnimatedEntity> extends AnimationMelee<T> {
     private final float leftAttackArc;
@@ -17,16 +16,16 @@ public class AnimationAreaMelee<T extends EEEABMobLibrary & AnimatedEntity> exte
     private final boolean faceTarget;
     private Consumer<LivingEntity> consumer = null;
 
-    public AnimationAreaMelee(T entity, Supplier<Animation> animationSupplier, int damageKeyframes, float attackDistance, float applyDamage, float applyKnockBack, float attackArc, float attackHeight, boolean faceTarget) {
-        this(entity, animationSupplier, damageKeyframes, attackDistance, applyDamage, applyKnockBack, attackArc, attackArc, attackHeight, faceTarget);
+    public AnimationAreaMelee(T entity, Animation animation, int damageKeyframes, float attackDistance, float applyDamage, float applyKnockBack, float attackArc, float attackHeight, boolean faceTarget) {
+        this(entity, animation, damageKeyframes, attackDistance, applyDamage, applyKnockBack, attackArc, attackArc, attackHeight, faceTarget);
     }
 
-    public AnimationAreaMelee(T entity, Supplier<Animation> animationSupplier, int damageKeyframes, float attackDistance, float applyDamage, float applyKnockBack, float leftAttackArc, float rightAttackArc, float attackHeight, boolean faceTarget) {
-        this(entity, animationSupplier, damageKeyframes, attackDistance, applyDamage, applyKnockBack, leftAttackArc, rightAttackArc, attackHeight, faceTarget, false);
+    public AnimationAreaMelee(T entity, Animation animation, int damageKeyframes, float attackDistance, float applyDamage, float applyKnockBack, float leftAttackArc, float rightAttackArc, float attackHeight, boolean faceTarget) {
+        this(entity, animation, damageKeyframes, attackDistance, applyDamage, applyKnockBack, leftAttackArc, rightAttackArc, attackHeight, faceTarget, false);
     }
 
-    public AnimationAreaMelee(T entity, Supplier<Animation> animationSupplier, int damageKeyframes, float attackDistance, float applyDamage, float applyKnockBack, float leftAttackArc, float rightAttackArc, float attackHeight, boolean faceTarget, boolean canDisableShield) {
-        super(entity, animationSupplier, damageKeyframes, attackDistance, applyDamage, applyKnockBack);
+    public AnimationAreaMelee(T entity, Animation animation, int damageKeyframes, float attackDistance, float applyDamage, float applyKnockBack, float leftAttackArc, float rightAttackArc, float attackHeight, boolean faceTarget, boolean canDisableShield) {
+        super(entity, animation, damageKeyframes, attackDistance, applyDamage, applyKnockBack);
         this.canDisableShield = canDisableShield;
         this.rightAttackArc = rightAttackArc;
         this.leftAttackArc = leftAttackArc;

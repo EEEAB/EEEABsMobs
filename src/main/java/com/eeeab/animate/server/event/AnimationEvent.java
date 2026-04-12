@@ -1,7 +1,7 @@
 package com.eeeab.animate.server.event;
 
-import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.animation.AnimatedEntity;
+import com.eeeab.animate.server.animation.Animation;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;

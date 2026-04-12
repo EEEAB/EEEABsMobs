@@ -1,8 +1,8 @@
 package com.eeeab.animate.server.ai.animation;
 
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
-import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.animation.AnimatedEntity;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,18 +10,16 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ProjectileWeaponItem;
 
-import java.util.function.Supplier;
-
 public class AnimationRange<T extends EEEABMobLibrary & AnimatedEntity & RangedAttackMob> extends AnimationSimpleAI<T> {
     private final int attackFrame;
     private final SoundEvent attackSound;
 
-    public AnimationRange(T entity, Supplier<Animation> animationSupplier, int attackFrame, SoundEvent attackSound) {
-        this(entity, animationSupplier, attackFrame, attackSound, true, false);
+    public AnimationRange(T entity, Animation animation, int attackFrame, SoundEvent attackSound) {
+        this(entity, animation, attackFrame, attackSound, true, false);
     }
 
-    public AnimationRange(T entity, Supplier<Animation> animationSupplier, int attackFrame, SoundEvent attackSound, boolean canStopGoal, boolean hurtInterruptsAnimation) {
-        super(entity, animationSupplier, canStopGoal, hurtInterruptsAnimation);
+    public AnimationRange(T entity, Animation animation, int attackFrame, SoundEvent attackSound, boolean canStopGoal, boolean hurtInterruptsAnimation) {
+        super(entity, animation, canStopGoal, hurtInterruptsAnimation);
         this.attackFrame = attackFrame;
         this.attackSound = attackSound;
     }

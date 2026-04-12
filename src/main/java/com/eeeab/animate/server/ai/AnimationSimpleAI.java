@@ -1,40 +1,39 @@
 package com.eeeab.animate.server.ai;
 
+import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
-import com.eeeab.animate.server.animation.AnimatedEntity;
 
 import java.util.EnumSet;
-import java.util.function.Supplier;
 
 public class AnimationSimpleAI<T extends EEEABMobLibrary & AnimatedEntity> extends AnimationAI<T> {
-    protected final Supplier<Animation> animationSupplier;
+    protected final Animation animation;
 
-    public AnimationSimpleAI(T entity, Supplier<Animation> animationSupplier) {
+    public AnimationSimpleAI(T entity, Animation animationSupplier) {
         super(entity);
-        this.animationSupplier = animationSupplier;
+        this.animation = animationSupplier;
     }
 
-    public AnimationSimpleAI(T entity, Supplier<Animation> animationSupplier, boolean canStopGoal) {
+    public AnimationSimpleAI(T entity, Animation animationSupplier, boolean canStopGoal) {
         super(entity, canStopGoal);
-        this.animationSupplier = animationSupplier;
+        this.animation = animationSupplier;
     }
 
-    public AnimationSimpleAI(T entity, Supplier<Animation> animationSupplier, boolean canStopGoal, boolean hurtInterruptsAnimation) {
+    public AnimationSimpleAI(T entity, Animation animationSupplier, boolean canStopGoal, boolean hurtInterruptsAnimation) {
         super(entity, canStopGoal, hurtInterruptsAnimation);
-        this.animationSupplier = animationSupplier;
+        this.animation = animationSupplier;
     }
 
     //指定Flag构造器
-    public AnimationSimpleAI(T entity, Supplier<Animation> animationSupplier, EnumSet<Flag> interruptFlagTypes) {
+    public AnimationSimpleAI(T entity, Animation animationSupplier, EnumSet<Flag> interruptFlagTypes) {
         super(entity);
-        this.animationSupplier = animationSupplier;
+        this.animation = animationSupplier;
         setFlags(interruptFlagTypes);
     }
 
     //获取实体当前动画与传入动画进行对比
     @Override
     protected boolean test(Animation animation) {
-        return animation == animationSupplier.get();
+        return animation == this.animation;
     }
 }

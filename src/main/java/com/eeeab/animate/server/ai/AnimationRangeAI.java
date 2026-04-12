@@ -1,7 +1,7 @@
 package com.eeeab.animate.server.ai;
 
-import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.animation.AnimatedEntity;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,7 +11,6 @@ import net.minecraft.world.item.Item;
 
 import java.util.EnumSet;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class AnimationRangeAI<T extends EEEABMobLibrary & AnimatedEntity> extends Goal {
     protected T attacker;
@@ -19,7 +18,7 @@ public class AnimationRangeAI<T extends EEEABMobLibrary & AnimatedEntity> extend
     protected double speed;
     protected Item holdWeapon;
     protected int attackInterval;
-    protected Supplier<Animation> emAnimationSupplier;
+    protected Animation animation;
     protected int attackTime = -1;
     protected int strafingTime = -1;
     protected float attackRadiusSqr;
@@ -28,11 +27,11 @@ public class AnimationRangeAI<T extends EEEABMobLibrary & AnimatedEntity> extend
     protected boolean strafingBackwards;
     protected boolean ignoreWeaponCheck = false;
 
-    public AnimationRangeAI(T mob, double speedModifier, int attackIntervalMin, float attackRadius, Item weapon, Predicate<T> customFlag, Supplier<Animation> animationSupplier) {
+    public AnimationRangeAI(T mob, double speedModifier, int attackIntervalMin, float attackRadius, Item weapon, Predicate<T> customFlag, Animation animation) {
         this.attacker = mob;
         this.holdWeapon = weapon;
         this.speed = speedModifier;
-        this.emAnimationSupplier = animationSupplier;
+        this.animation = animation;
         this.customFlag = customFlag;
         this.attackInterval = attackIntervalMin;
         this.attackRadiusSqr = attackRadius * attackRadius;
@@ -124,7 +123,7 @@ public class AnimationRangeAI<T extends EEEABMobLibrary & AnimatedEntity> extend
 
             if (--this.attackTime <= 0 && this.seeTime >= -60) {
                 this.attackTime = this.attackInterval;
-                this.attacker.playAnimation(this.emAnimationSupplier.get());
+                this.attacker.playAnimation(this.animation);
             }
         }
     }

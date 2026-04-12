@@ -1,37 +1,39 @@
 package com.eeeab.animate.server.ai;
 
-import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.animation.AnimatedEntity;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.function.Supplier;
+import java.util.EnumSet;
 
 public class AnimationGroupAI<T extends EEEABMobLibrary & AnimatedEntity> extends AnimationAI<T> {
-    protected final Supplier<Animation>[] animations;
+    protected final Animation[] animations;
 
-    @SafeVarargs
-    public AnimationGroupAI(T entity, @NotNull Supplier<Animation>... animations) {
+    public AnimationGroupAI(T entity, Animation... animations) {
         super(entity);
         this.animations = animations;
     }
 
-    @SafeVarargs
-    public AnimationGroupAI(T entity, boolean canStopGoal, @NotNull Supplier<Animation>... animations) {
+    public AnimationGroupAI(T entity, boolean canStopGoal, Animation... animations) {
         super(entity, canStopGoal);
         this.animations = animations;
     }
 
-    @SafeVarargs
-    public AnimationGroupAI(T entity, boolean canStopGoal, boolean hurtInterruptsAnimation, @NotNull Supplier<Animation>... animations) {
+    public AnimationGroupAI(T entity, boolean canStopGoal, boolean hurtInterruptsAnimation, Animation... animations) {
         super(entity, canStopGoal, hurtInterruptsAnimation);
         this.animations = animations;
     }
 
+    public AnimationGroupAI(T entity, EnumSet<Flag> interruptFlagTypes, Animation... animations) {
+        super(entity, false, false);
+        this.animations = animations;
+        this.setFlags(interruptFlagTypes);
+    }
+
     @Override
     protected boolean test(Animation animation) {
-        return Arrays.stream(this.animations).anyMatch(animationSupplier -> animation == animationSupplier.get());
+        return Arrays.stream(this.animations).anyMatch(definition -> animation == definition);
     }
 
     protected void nextAnimation(Animation now, Animation next) {

@@ -1,21 +1,20 @@
 package com.eeeab.animate.server.handler;
 
-import com.eeeab.animate.server.message.MessageStopAnimation;
-import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.event.AnimationEvent;
 import com.eeeab.animate.server.message.MessageAnimation;
+import com.eeeab.animate.server.message.MessageStopAnimation;
+import com.eeeab.eeeabsmobs.EEEABMobs;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.PacketDistributor;
 import org.apache.commons.lang3.ArrayUtils;
-import org.jetbrains.annotations.NotNull;
 
 public enum AnimationHandler {
     INSTANCE;
 
-    public <T extends Entity & AnimatedEntity> void sendEMAnimationMessage(T entity, @NotNull(value = "animation cannot be null", exception = IllegalArgumentException.class) Animation animation) {
+    public <T extends Entity & AnimatedEntity> void sendAnimationMessage(T entity, Animation animation) {
         if (!entity.level().isClientSide) {
             entity.setAnimation(animation);
             entity.setAnimationTick(0);
@@ -23,13 +22,9 @@ public enum AnimationHandler {
         }
     }
 
-    public <T extends Entity & AnimatedEntity> void sendEMAnimationMessage(T entity, boolean onlyStopSuperposition) {
+    public <T extends Entity & AnimatedEntity> void sendAnimationMessage(T entity, boolean onlyStopOverlapAnimation) {
         if (!entity.level().isClientSide) {
-            if (entity.getAnimations() == null || entity.getAnimations().length == 0) {
-                System.out.println(entity.getName().getString() + " animations cannot be null");
-                return;
-            }
-            EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new MessageStopAnimation(entity.getId(), onlyStopSuperposition));
+            EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new MessageStopAnimation(entity.getId(), onlyStopOverlapAnimation));
         }
     }
 
@@ -39,20 +34,29 @@ public enum AnimationHandler {
             entity.setAnimation(AnimatedEntity.NO_ANIMATION);
         } else {
             if (animation != AnimatedEntity.NO_ANIMATION) {
-                if (entity.getAnimationTick() == 0) {
+                int tick = entity.getAnimationTick();
+                if (tick == 0) {
+                    //可以通过事件影响播放动画
                     AnimationEvent<T> event = new AnimationEvent.Start<>(entity, animation);
-                    if (!MinecraftForge.EVENT_BUS.post(event)) {
-                        this.sendEMAnimationMessage(entity, event.getAnimation());
+                    if (MinecraftForge.EVENT_BUS.post(event)) {
+                        entity.getAnimationState(animation).stop();
+                        entity.setAnimation(AnimatedEntity.NO_ANIMATION);
+                        return;
+                    } else {
+                        sendAnimationMessage(entity, animation);
                     }
                 }
-                if (entity.getAnimationTick() < animation.getDuration()) {
-                    entity.setAnimationTick(entity.getAnimationTick() + 1);
+                if (tick < animation.getDuration()) {
+                    entity.setAnimationTick(tick + 1);
                     MinecraftForge.EVENT_BUS.post(new AnimationEvent.Tick<>(entity, animation, entity.getAnimationTick()));
+                    if (entity.getKeyframeManager() != null) {
+                        entity.getKeyframeManager().tick(entity);
+                    }
                 }
-                if (entity.getAnimationTick() == animation.getDuration()) {
+                if (entity.getAnimationTick() >= animation.getDuration()) {
                     if (!animation.isLooping()) {
-                        animation.stop();
                         entity.setAnimation(AnimatedEntity.NO_ANIMATION);
+                        entity.getAnimationState(animation).stop();
                     }
                     entity.setAnimationTick(0);
                 }

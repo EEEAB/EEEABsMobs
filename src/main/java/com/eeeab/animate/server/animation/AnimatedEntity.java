@@ -1,5 +1,9 @@
 package com.eeeab.animate.server.animation;
 
+import com.eeeab.animate.server.animation.keyframe.KeyframeManager;
+import net.minecraft.world.entity.AnimationState;
+import net.minecraft.world.entity.Entity;
+
 /**
  * 动画实体
  *
@@ -43,4 +47,43 @@ public interface AnimatedEntity {
      * @return 动画集合
      */
     Animation[] getAnimations();
+
+    /**
+     * 获取动画状态
+     *
+     * @return 当前动画状态
+     */
+    AnimationState getAnimationState(Animation animation);
+
+    /**
+     * 可选-获取叠加动画状态
+     */
+    default AnimationState getOverlapAnimationState(Animation animation) {
+        return null;
+    }
+
+    /**
+     * 获取该动画播放速度
+     *
+     * @return 动画速度
+     */
+    default float getAnimationSpeed(Animation animation) {
+        return animation.getSpeed();
+    }
+
+    /**
+     * 获取该动画播放幅度
+     *
+     * @return 动画幅度
+     */
+    default float getAnimationScale(Animation animation) {
+        return animation.getScale();
+    }
+
+    /**
+     * 可选-获取关键帧触发器
+     */
+    default <T extends Entity & AnimatedEntity> KeyframeManager<T> getKeyframeManager() {
+        return null;
+    }
 }

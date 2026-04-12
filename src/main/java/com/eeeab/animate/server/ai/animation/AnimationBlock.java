@@ -5,11 +5,9 @@ import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 
-import java.util.function.Supplier;
-
 public class AnimationBlock<T extends EEEABMobLibrary & AnimatedEntity> extends AnimationSimpleAI<T> {
-    public AnimationBlock(T entity, Supplier<Animation> animationSupplier) {
-        super(entity, animationSupplier);
+    public AnimationBlock(T entity, Animation animation) {
+        super(entity, animation);
     }
 
     @Override

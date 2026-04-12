@@ -1,10 +1,12 @@
 package com.eeeab.eeeabsmobs.sever.entity;
 
-import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.animation.AnimatedEntity;
+import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.animate.server.animation.release.cooldown.CooldownManager;
 import com.eeeab.animate.server.handler.AnimationHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
@@ -16,6 +18,8 @@ import org.apache.commons.lang3.ArrayUtils;
 public abstract class EEEABMobLibrary extends EEEABMobEntity implements AnimatedEntity, IEntityAdditionalSpawnData {
     private int animationTick;
     private Animation animation = NO_ANIMATION;
+    private final AnimationState animationState = new AnimationState();
+    private final CooldownManager cooldownManager = new CooldownManager();
     /**
      * 可以播放受伤动画
      */
@@ -33,12 +37,12 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements Animated
         super(type, level);
     }
 
-    public Animation getDeathAnimation() {
-        return null;
-    }
-
-    public Animation getHurtAnimation() {
-        return null;
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (!this.level().isClientSide) {
+            this.cooldownManager.tick();
+        }
     }
 
     @Override
@@ -48,6 +52,12 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements Animated
             this.playAnimation(this.getHurtAnimation());
         }
         return attack;
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        super.die(source);
+        this.cooldownManager.clear();
     }
 
     @Override
@@ -63,10 +73,6 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements Animated
         Animation death;
         if ((death = getDeathAnimation()) != null) return death.getDuration();
         return 20;
-    }
-
-    public void playAnimation(Animation animation) {
-        if (animation != null) AnimationHandler.INSTANCE.sendEMAnimationMessage(this, animation);
     }
 
     @Override
@@ -94,18 +100,11 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements Animated
         this.animation = animation;
     }
 
-    public boolean isNoAnimation() {
-        return this.animation == NO_ANIMATION;
-    }
-
-    public void stopAllSuperpositionAnimation() {
-        AnimationHandler.INSTANCE.sendEMAnimationMessage(this, true);
-    }
-
-    protected void onAnimationStart(Animation animation) {
-    }
-
-    protected void onAnimationFinish(Animation animation) {
+    @Override
+    public AnimationState getAnimationState(Animation animation) {
+        AnimationState state = this.getOverlapAnimationState(animation);
+        if (state != null) return state;
+        return this.animationState;
     }
 
     //用于在生成时需要在服务器和客户端之间进行通信的额外信息的实体的接口
@@ -125,5 +124,35 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements Animated
         int animTick = additionalData.readInt();
         this.setAnimation(animOrdinal == -1 ? NO_ANIMATION : this.getAnimations()[animOrdinal]);
         this.setAnimationTick(animTick);
+    }
+
+    public CooldownManager getCooldownManager() {
+        return this.cooldownManager;
+    }
+
+    public void playAnimation(Animation animation) {
+        if (animation != null) AnimationHandler.INSTANCE.sendAnimationMessage(this, animation);
+    }
+
+    public boolean isNoAnimation() {
+        return NO_ANIMATION == this.animation;
+    }
+
+    public void stopAllSuperpositionAnimation() {
+        AnimationHandler.INSTANCE.sendAnimationMessage(this, true);
+    }
+
+    protected void onAnimationStart(Animation animation) {
+    }
+
+    protected void onAnimationFinish(Animation animation) {
+    }
+
+    public Animation getDeathAnimation() {
+        return null;
+    }
+
+    public Animation getHurtAnimation() {
+        return null;
     }
 }

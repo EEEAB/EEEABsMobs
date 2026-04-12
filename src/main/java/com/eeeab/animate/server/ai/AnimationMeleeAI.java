@@ -1,42 +1,37 @@
 package com.eeeab.animate.server.ai;
 
-import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.animation.AnimatedEntity;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class AnimationMeleeAI<T extends EEEABMobLibrary & AnimatedEntity> extends MeleeAttackGoal {
     protected T attacker;
     protected final double speed;
     protected int ticksUntilNextAttack;
-    protected final Supplier<Animation>[] animations;
+    protected final Animation[] animations;
     protected final Predicate<T> customFlag;
     protected int attackInterval = 10;
 
-    @SafeVarargs
-    public AnimationMeleeAI(T attacker, double speed, Supplier<Animation>... animations) {
+    public AnimationMeleeAI(T attacker, double speed, Animation... animations) {
         this(attacker, speed, e -> e.active, animations);
     }
 
-    @SafeVarargs
-    public AnimationMeleeAI(T attacker, double speed, int attackInterval, Supplier<Animation>... animations) {
+    public AnimationMeleeAI(T attacker, double speed, int attackInterval, Animation... animations) {
         this(attacker, speed, e -> e.active, animations);
         this.attackInterval = attackInterval;
     }
 
-    @SafeVarargs
-    public AnimationMeleeAI(T attacker, double speed, int attackInterval, Predicate<T> customFlag, Supplier<Animation>... animations) {
+    public AnimationMeleeAI(T attacker, double speed, int attackInterval, Predicate<T> customFlag, Animation... animations) {
         this(attacker, speed, customFlag, animations);
         this.attackInterval = attackInterval;
     }
 
-    @SafeVarargs
-    public AnimationMeleeAI(T attacker, double speed, Predicate<T> customFlag, Supplier<Animation>... animations) {
+    public AnimationMeleeAI(T attacker, double speed, Predicate<T> customFlag, Animation... animations) {
         super(attacker, speed, true);
         this.attacker = attacker;
         this.speed = speed;
@@ -86,6 +81,6 @@ public class AnimationMeleeAI<T extends EEEABMobLibrary & AnimatedEntity> extend
     //随机获得动画
     private Animation getAnimationByRandom() {
         if (animations == null || animations.length == 0) return AnimatedEntity.NO_ANIMATION;
-        return animations[this.attacker.getRandom().nextInt(animations.length)].get();
+        return animations[this.attacker.getRandom().nextInt(animations.length)];
     }
 }

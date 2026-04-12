@@ -1,7 +1,7 @@
 package com.eeeab.animate.server.message;
 
-import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.animation.AnimatedEntity;
+import com.eeeab.animate.server.animation.Animation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
@@ -18,7 +18,6 @@ public class MessageAnimation {
     private int animationsIndex;
 
     public MessageAnimation() {
-
     }
 
     public MessageAnimation(int entityID, int animationsIndex) {
@@ -46,15 +45,14 @@ public class MessageAnimation {
                 if (Minecraft.getInstance().level != null) {
                     Entity entity = Minecraft.getInstance().level.getEntity(message.entityID);
                     if (entity instanceof AnimatedEntity animatedEntity) {
-                        //判断当前动画是否是可堆叠的 是可堆叠则由客户端单独计算结束时间并停止动画
-                        if (!animatedEntity.getAnimation().isOverlap()) animatedEntity.getAnimation().stop();
+                        //可堆叠则由客户端单独计算结束时间并停止动画
+                        animatedEntity.getAnimationState(AnimatedEntity.NO_ANIMATION).stop();
                         if (message.animationsIndex == -1) {
                             animatedEntity.setAnimation(AnimatedEntity.NO_ANIMATION);
                         } else {
                             Animation animation = animatedEntity.getAnimations()[message.animationsIndex];
+                            animatedEntity.getAnimationState(animation).start(entity.tickCount);
                             animatedEntity.setAnimation(animation);
-                            //会覆盖可叠加动画
-                            animation.start(entity.tickCount);
                         }
                         animatedEntity.setAnimationTick(0);
                     }

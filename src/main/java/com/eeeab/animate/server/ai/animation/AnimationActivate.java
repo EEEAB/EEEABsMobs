@@ -1,15 +1,13 @@
 package com.eeeab.animate.server.ai.animation;
 
-import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.animate.server.animation.Animation;
-
-import java.util.function.Supplier;
+import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 
 public class AnimationActivate<T extends EEEABMobLibrary & AnimatedEntity> extends AnimationSimpleAI<T> {
-    public AnimationActivate(T entity, Supplier<Animation> animationSupplier) {
-        super(entity, animationSupplier);
+    public AnimationActivate(T entity, Animation animation) {
+        super(entity, animation);
     }
 
     @Override

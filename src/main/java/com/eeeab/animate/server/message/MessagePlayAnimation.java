@@ -19,7 +19,6 @@ public class MessagePlayAnimation {
     private int animationsIndex;
 
     public MessagePlayAnimation() {
-
     }
 
     public MessagePlayAnimation(int entityID, int animationsIndex) {
@@ -49,7 +48,7 @@ public class MessagePlayAnimation {
                     Level level = sender.level();
                     T entity = (T) level.getEntity(message.entityID);
                     if (entity != null && message.animationsIndex != -1) {
-                        AnimationHandler.INSTANCE.sendEMAnimationMessage(entity, entity.getAnimations()[message.animationsIndex]);
+                        AnimationHandler.INSTANCE.sendAnimationMessage(entity, entity.getAnimations()[message.animationsIndex]);
                     }
                 }
             });

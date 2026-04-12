@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.client.util;
+package com.eeeab.eeeabsmobs.client;
 
 import net.minecraft.util.Mth;
 
