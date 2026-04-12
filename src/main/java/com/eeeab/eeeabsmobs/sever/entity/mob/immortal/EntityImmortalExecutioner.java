@@ -7,20 +7,21 @@ import com.eeeab.animate.server.ai.animation.AnimationBlock;
 import com.eeeab.animate.server.ai.animation.AnimationDie;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.AnimationHandler;
-import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
-import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
-import com.eeeab.eeeabsmobs.client.particle.util.RibbonComponent;
-import com.eeeab.eeeabsmobs.client.particle.util.AnimData;
-import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
+import com.eeeab.eeeabsmobs.client.particle.lib.AdvancedParticleBase;
+import com.eeeab.eeeabsmobs.client.particle.lib.AnimData;
+import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent;
+import com.eeeab.eeeabsmobs.client.particle.lib.component.RibbonComponent;
+import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.sever.entity.ai.control.ModBodyRotationControl;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.ModLookAtGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.ModPathNavigateGround;
 import com.eeeab.eeeabsmobs.sever.entity.mob.IMob;
-import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -47,6 +48,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -54,6 +56,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeMod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,40 +64,39 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class EntityImmortalExecutioner extends EntityAbsImmortal {
-    public final Animation dieAnimation = Animation.create(35);
-    public final Animation avoidAnimation = Animation.create(15);
-    public final Animation blockAnimation = Animation.create(15);
-    public final Animation counterAnimation = Animation.create(15);
-    public final Animation attackAnimationLeft = Animation.create(17);
-    public final Animation attackAnimationRight = Animation.create(17);
-    public final Animation sidesWayAnimationLeft = Animation.create(10);
-    public final Animation sidesWayAnimationRight = Animation.create(10);
-    public final Animation impactStorageAnimation = Animation.create(60);
-    public final Animation impactHoldAnimation = Animation.create(20);
-    public final Animation impactStopAnimation = Animation.create(10);
-    public final Animation cullStorageAnimation = Animation.create(20);
-    public final Animation cullHoldAnimation = Animation.create(15);
-    public final Animation cullStopAnimation = Animation.create(10);
-    public final Animation detonationAnimation = Animation.create(40);
-    private final Animation[] animations = new Animation[]{
-            this.dieAnimation,
-            this.avoidAnimation,
-            this.blockAnimation,
-            this.counterAnimation,
-            this.attackAnimationLeft,
-            this.attackAnimationRight,
-            this.sidesWayAnimationLeft,
-            this.sidesWayAnimationRight,
-            this.impactStorageAnimation,
-            this.impactHoldAnimation,
-            this.impactStopAnimation,
-            this.cullStorageAnimation,
-            this.cullHoldAnimation,
-            this.cullStopAnimation,
-            this.detonationAnimation
+    public static final Animation DIE_ANIMATION = Animation.create(35);
+    public static final Animation AVOID_ANIMATION = Animation.create(15);
+    public static final Animation BLOCK_ANIMATION = Animation.create(15);
+    public static final Animation COUNTER_ANIMATION = Animation.create(15);
+    public static final Animation ATTACK_LEFT_ANIMATION = Animation.create(17);
+    public static final Animation ATTACK_RIGHT_ANIMATION = Animation.create(17);
+    public static final Animation SIDESWAY_LEFT_ANIMATION = Animation.create(10);
+    public static final Animation SIDESWAY_RIGHT_ANIMATION = Animation.create(10);
+    public static final Animation IMPACT_STORAGE_ANIMATION = Animation.create(60);
+    public static final Animation IMPACT_HOLD_ANIMATION = Animation.create(20);
+    public static final Animation IMPACT_STOP_ANIMATION = Animation.create(10);
+    public static final Animation CULL_STORAGE_ANIMATION = Animation.create(20);
+    public static final Animation CULL_HOLD_ANIMATION = Animation.create(15);
+    public static final Animation CULL_STOP_ANIMATION = Animation.create(10);
+    public static final Animation DETONATION_ANIMATION = Animation.create(40);
+    private static final Animation[] ANIMATIONS = new Animation[]{
+            DIE_ANIMATION,
+            AVOID_ANIMATION,
+            BLOCK_ANIMATION,
+            COUNTER_ANIMATION,
+            ATTACK_LEFT_ANIMATION,
+            ATTACK_RIGHT_ANIMATION,
+            SIDESWAY_LEFT_ANIMATION,
+            SIDESWAY_RIGHT_ANIMATION,
+            IMPACT_STORAGE_ANIMATION,
+            IMPACT_HOLD_ANIMATION,
+            IMPACT_STOP_ANIMATION,
+            CULL_STORAGE_ANIMATION,
+            CULL_HOLD_ANIMATION,
+            CULL_STOP_ANIMATION,
+            DETONATION_ANIMATION
     };
     private static final int MAX_HURT_COUNT = 6;
     private static final UniformInt AVOID_INTERVAL = TimeUtil.rangeOfSeconds(5, 12);
@@ -133,11 +135,6 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
     }
 
     @Override
-    public float getStepHeight() {
-        return 2F;
-    }
-
-    @Override
     protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
         return size.height * 1.1F;
     }
@@ -157,11 +154,6 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
         return air;
     }
 
-    @Override//是否免疫摔伤
-    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource damageSource) {
-        return false;
-    }
-
     @Override
     public boolean isOnFire() {
         return this.getRemainingFireTicks() > 0 || this.level().isClientSide && this.getSharedFlag(0);
@@ -170,22 +162,22 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
     @Override
     @NotNull
     protected BodyRotationControl createBodyControl() {
-        return new EMBodyRotationControl(this);
+        return new ModBodyRotationControl(this);
     }
 
     @Override
     @NotNull
     protected PathNavigation createNavigation(Level level) {
-        return new EMPathNavigateGround(this, level);
+        return new ModPathNavigateGround(this, level);
     }
 
     @Override
     protected void onAnimationFinish(Animation animation) {
         super.onAnimationFinish(animation);
         if (!this.level().isClientSide) {
-            if (animation == this.cullStopAnimation) {
+            if (CULL_STOP_ANIMATION == animation) {
                 this.timeUntilCull = this.getCoolingDuration(CULL_INTERVAL);
-            } else if (animation == this.detonationAnimation) {
+            } else if (DETONATION_ANIMATION == animation) {
                 this.detonationCount++;
                 this.setFlameStrength(this.getFlameStrength() + 0.2F);
             }
@@ -198,8 +190,8 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true, false));
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this).setAlertOthers());
         this.goalSelector.addGoal(6, new RandomStrollGoal(this, 0.75F, 100));
-        this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(8, new EMLookAtGoal(this, Mob.class, 6.0F));
+        this.goalSelector.addGoal(7, new ModLookAtGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new ModLookAtGoal(this, Mob.class, 6.0F));
     }
 
     @Override
@@ -209,31 +201,31 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
         this.goalSelector.addGoal(1, new AnimationDie<>(this));
         this.goalSelector.addGoal(1, new ExecutionerCullGoal(this));
         this.goalSelector.addGoal(1, new ExecutionerSharpImpactGoal(this));
-        this.goalSelector.addGoal(1, new AnimationBlock<>(this, () -> this.blockAnimation) {
+        this.goalSelector.addGoal(1, new AnimationBlock<>(this, BLOCK_ANIMATION) {
             @Override
             public void tick() {
                 super.tick();
                 if (this.entity.getAnimationTick() == 10) {
                     if (this.entity.getTarget() != null && this.entity.getTarget().isAlive() && this.entity.targetDistance < 5F
                             && (this.entity.blockEntity != null || this.entity.getRandom().nextBoolean())) {
-                        this.entity.playAnimation(this.entity.counterAnimation);
+                        this.entity.playAnimation(COUNTER_ANIMATION);
                     }
                 }
             }
         });
-        this.goalSelector.addGoal(1, new AnimationAreaMelee<>(this, () -> this.attackAnimationLeft, 8, 3F,
+        this.goalSelector.addGoal(1, new AnimationAreaMelee<>(this, ATTACK_LEFT_ANIMATION, 8, 3F,
                 1F, 1F, 80F, 40F, 3.5F, true).setCustomHitMethod(consumer));
-        this.goalSelector.addGoal(1, new AnimationAreaMelee<>(this, () -> this.attackAnimationRight, 8, 3F,
+        this.goalSelector.addGoal(1, new AnimationAreaMelee<>(this, ATTACK_RIGHT_ANIMATION, 8, 3F,
                 1F, 1F, 40F, 80F, 3.5F, true).setCustomHitMethod(consumer));
         this.goalSelector.addGoal(1, new ExecutionerGroupAI(this, true,
-                () -> this.avoidAnimation,
-                () -> this.sidesWayAnimationRight,
-                () -> this.sidesWayAnimationLeft,
-                () -> this.detonationAnimation
+                AVOID_ANIMATION,
+                SIDESWAY_RIGHT_ANIMATION,
+                SIDESWAY_LEFT_ANIMATION,
+                DETONATION_ANIMATION
         ));
         this.goalSelector.addGoal(3, new AnimationMeleePlusAI<>(this, 1.0, 10, 1,
-                () -> this.attackAnimationRight,
-                () -> this.attackAnimationLeft
+                ATTACK_RIGHT_ANIMATION,
+                ATTACK_LEFT_ANIMATION
         ));
     }
 
@@ -242,30 +234,30 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
         super.tick();
         LivingEntity target = this.getTarget();
         if (!this.level().isClientSide) {
-            if (target != null && !target.isAlive()) this.setTarget(null);
             boolean isClose = target != null && (this.targetDistance < 6F || ModEntityUtils.checkTargetComingCloser(this, target) && this.targetDistance < 5F);
             if (!this.isNoAi() && !this.isStunned()) {
                 if (this.isNoAnimation() && isClose && this.timeUntilAvoid <= 0 && (this.hurtCount == 0 && this.random.nextInt(100) == 0 || this.hurtCount != 0 && this.hurtCount < MAX_HURT_COUNT)) {
                     this.timeUntilAvoid = this.getCoolingDuration(AVOID_INTERVAL);
-                    this.checkAndPlayComboAnimations(true, this.avoidAnimation, this.sidesWayAnimationLeft, this.sidesWayAnimationRight);
+                    this.checkAndPlayComboAnimations(true, AVOID_ANIMATION, SIDESWAY_LEFT_ANIMATION, SIDESWAY_RIGHT_ANIMATION);
                 }
                 if (target != null) {
                     if (this.isNoAnimation() && this.timeUntilDetonation <= 0 && this.detonationCount < ModConfigHandler.COMMON.mobs.immortals.immortalExecutioner.maximumDetonationCount.get()) {
                         this.timeUntilDetonation = DETONATION_INTERVAL.sample(this.random);
-                        this.playAnimation(this.detonationAnimation);
+                        this.playAnimation(DETONATION_ANIMATION);
                     }
                     if (this.isNoAnimation() && this.targetDistance < 10 && this.timeUntilCull <= 0) {
-                        this.playAnimation(this.cullStorageAnimation);
+                        this.playAnimation(CULL_STORAGE_ANIMATION);
                     }
                 }
                 if (this.isNoAnimation() && !isClose && target != null && this.targetDistance < 18 && this.timeUntilStamp <= 0) {
                     this.timeUntilStamp = this.getCoolingDuration(STAMP_INTERVAL);
-                    this.playAnimation(this.impactStorageAnimation);
+                    this.playAnimation(IMPACT_STORAGE_ANIMATION);
                 }
             }
         }
         int tick = this.getAnimationTick();
-        if (this.getAnimation() == this.avoidAnimation) {
+        Animation animation = this.getAnimation();
+        if (animation == AVOID_ANIMATION) {
             boolean flag = target != null && target.isAlive();
             double angle = flag ? this.getAngleBetweenEntities(this, target) : this.yBodyRot;
             float avoidYaw = flag ? (float) Math.toRadians(angle + 90) : (float) Math.toRadians(angle + 270);
@@ -278,13 +270,13 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
                 this.checkAndPlayComboAnimations((this.onGround() || this.isInLava() || this.isInWater())
                                 && (this.random.nextFloat() > this.getHealth() / this.getMaxHealth()
                                 || this.random.nextFloat() < Math.max(this.getFlameStrength() - 1F, 0F)),
-                        this.sidesWayAnimationLeft,
-                        this.sidesWayAnimationRight,
-                        this.cullStorageAnimation
+                        SIDESWAY_LEFT_ANIMATION,
+                        SIDESWAY_RIGHT_ANIMATION,
+                        CULL_STORAGE_ANIMATION
                 );
             }
-        } else if (this.getAnimation() == this.sidesWayAnimationLeft || this.getAnimation() == this.sidesWayAnimationRight) {
-            boolean isLeft = this.getAnimation() == this.sidesWayAnimationLeft;
+        } else if (animation == SIDESWAY_LEFT_ANIMATION || animation == SIDESWAY_RIGHT_ANIMATION) {
+            boolean isLeft = animation == SIDESWAY_LEFT_ANIMATION;
             if (tick == 1) {
                 double angle = this.yBodyRot;
                 float speed = 2F + 0.5F * this.random.nextFloat();
@@ -293,19 +285,19 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
                 float sideAvoidYaw = isLeft ? (float) Math.toRadians(angle + randomAngle) : (float) Math.toRadians(angle + 180 + randomAngle);
                 this.fastMove(speed, sideAvoidYaw);
             } else if (tick > 8) {
-                this.checkAndPlayComboAnimations(this.random.nextFloat() < 0.6F && target != null && this.targetDistance < 10, this.cullStorageAnimation);
+                this.checkAndPlayComboAnimations(this.random.nextFloat() < 0.6F && target != null && this.targetDistance < 10, CULL_STORAGE_ANIMATION);
             }
-        } else if (this.getAnimation() == this.cullHoldAnimation) {
+        } else if (animation == CULL_HOLD_ANIMATION) {
             if (tick == 3) this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundInit.IMMORTAL_EXECUTIONER_DASH.get(), this.getSoundSource(), 1F, 1F, false);
             if (tick == 4) {
                 this.doRibbonEffect();
                 this.playSound(SoundInit.IMMORTAL_EXECUTIONER_SCRATCH.get(), 0.8F, this.getVoicePitch());
             }
-        } else if (this.getAnimation() == this.attackAnimationRight || this.getAnimation() == this.attackAnimationLeft) {
+        } else if (animation == ATTACK_RIGHT_ANIMATION || animation == ATTACK_LEFT_ANIMATION) {
             if (tick == 7) this.playSound(SoundInit.IMMORTAL_EXECUTIONER_SCRATCH.get(), 1.5F, this.getVoicePitch() + 0.5F);
-        } else if (this.getAnimation() == this.counterAnimation) {
+        } else if (animation == COUNTER_ANIMATION) {
             if (tick == 5) this.playSound(SoundInit.IMMORTAL_EXECUTIONER_SCRATCH.get(), 1.2F, this.getVoicePitch() + 0.2F);
-        } else if (this.getAnimation() == this.detonationAnimation) {
+        } else if (animation == DETONATION_ANIMATION) {
             this.setDeltaMovement(0, this.onGround() ? 0 : this.getDeltaMovement().y, 0);
             if (tick >= 18 && tick <= 24 && tick % 2 == 0) {
                 if (tick == 18) this.doSoulFireGlowEffect();
@@ -319,12 +311,12 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
                     }
                 }
             }
-        } else if (this.getAnimation() == this.blockAnimation) this.setDeltaMovement(0, 0, 0);
+        } else if (animation == BLOCK_ANIMATION) this.setDeltaMovement(0, 0, 0);
         if (this.level().isClientSide && this.fire != null && this.fire.length != 0) {
             float power = this.getFirePower();
             boolean isPower = power > 1F;
             if (this.isAlive() && this.active) {
-                if (this.getAnimation() != this.impactHoldAnimation) {
+                if (animation != IMPACT_HOLD_ANIMATION) {
                     int duration = Mth.clamp((int) (9 / Math.max(power, 0.1)), 6, 9);
                     if (this.tickCount % duration == 1) {
                         this.doSoulFireEffect(power, duration);
@@ -407,16 +399,16 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
             if (hitFlag && (projectileFlag || this.random.nextFloat() < 0.45F) && this.isNoAnimation() && !this.isStunned()) {
                 if (source.getEntity() instanceof LivingEntity block) this.blockEntity = block;
                 if (noPierce) this.playSound(SoundInit.IMMORTAL_EXECUTIONER_BLOCK.get());
-                this.playAnimation(this.blockAnimation);
+                this.playAnimation(BLOCK_ANIMATION);
                 if (projectileFlag && noPierce) return false;
                 else damage *= 0.5F + Math.min(pierceLevel * 0.125F, 0.5F);
             }
             if (this.getTarget() != null && this.isNoAnimation() && this.hurtCount >= MAX_HURT_COUNT) {
                 this.hurtCount = 0;
                 this.timeUntilAvoid = AVOID_INTERVAL.sample(this.random);
-                this.checkAndPlayComboAnimations(true, this.avoidAnimation, this.sidesWayAnimationLeft, this.sidesWayAnimationRight);
+                this.checkAndPlayComboAnimations(true, AVOID_ANIMATION, SIDESWAY_LEFT_ANIMATION, SIDESWAY_RIGHT_ANIMATION);
             }
-            if (this.getAnimation() == this.detonationAnimation || this.getAnimation() == this.impactStorageAnimation)
+            if (this.getAnimation() == DETONATION_ANIMATION || this.getAnimation() == IMPACT_STORAGE_ANIMATION)
                 damage *= 0.5F;
             if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) damage = preDamage;
         }
@@ -455,12 +447,12 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
 
     @Override
     public Animation getDeathAnimation() {
-        return this.dieAnimation;
+        return DIE_ANIMATION;
     }
 
     @Override
     public Animation[] getAnimations() {
-        return this.animations;
+        return ANIMATIONS;
     }
 
     @Override
@@ -480,8 +472,19 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
         return SoundInit.IMMORTAL_EXECUTIONER_DEATH.get();
     }
 
+    @Override
+    protected void playStepSound(BlockPos blockPos, BlockState blockState) {
+    }
+
     public static AttributeSupplier.Builder setAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 120.0D).add(Attributes.ATTACK_DAMAGE, 8.0D).add(Attributes.ARMOR, 6.0D).add(Attributes.MOVEMENT_SPEED, 0.34D).add(Attributes.FOLLOW_RANGE, 48.0D).add(Attributes.KNOCKBACK_RESISTANCE, 0.85D).add(Attributes.ATTACK_KNOCKBACK, 0.15D);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 120.0D)
+                .add(Attributes.ATTACK_DAMAGE, 8.0D)
+                .add(Attributes.ARMOR, 6.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.34D)
+                .add(Attributes.FOLLOW_RANGE, 48.0D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.85D)
+                .add(Attributes.ATTACK_KNOCKBACK, 0.15D)
+                .add(ForgeMod.STEP_HEIGHT_ADDITION.get(), 2D);
     }
 
     /**
@@ -523,7 +526,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
     }
 
     public boolean inBlocking() {
-        return !this.level().isClientSide && this.getAnimation() == this.blockAnimation && this.getAnimationTick() > 1;
+        return !this.level().isClientSide && this.getAnimation() == BLOCK_ANIMATION && this.getAnimationTick() > 1;
     }
 
     private int getCoolingDuration(UniformInt uniformInt) {
@@ -609,8 +612,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
     static class ExecutionerGroupAI extends AnimationGroupAI<EntityImmortalExecutioner> {
         private final boolean lookAtTarget;
 
-        @SafeVarargs
-        public ExecutionerGroupAI(EntityImmortalExecutioner entity, boolean lookAtTarget, Supplier<Animation>... animations) {
+        public ExecutionerGroupAI(EntityImmortalExecutioner entity, boolean lookAtTarget, Animation... animations) {
             super(entity, animations);
             this.lookAtTarget = lookAtTarget;
         }
@@ -631,7 +633,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
         private Vec3 preVec3 = Vec3.ZERO;
 
         public ExecutionerSharpImpactGoal(EntityImmortalExecutioner entity) {
-            super(entity, false, () -> entity.impactStorageAnimation, () -> entity.impactHoldAnimation, () -> entity.impactStopAnimation);
+            super(entity, false, IMPACT_STORAGE_ANIMATION, IMPACT_HOLD_ANIMATION, IMPACT_STOP_ANIMATION);
         }
 
         @Override
@@ -651,15 +653,15 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
         public void tick() {
             int tick = this.entity.getAnimationTick();
             Animation animation = this.entity.getAnimation();
-            if (animation == this.entity.impactStorageAnimation) {
+            if (animation == IMPACT_STORAGE_ANIMATION) {
                 this.entity.setDeltaMovement(0, 0.025F, 0);
                 if (this.target != null) {
                     this.entity.getLookControl().setLookAt(this.target, 360F, 30F);
                     this.entity.lookAt(this.target, 360F, 30F);
                 }
                 this.preVec3 = this.entity.position();
-                this.nextAnimation(animation, this.entity.impactHoldAnimation, 25 + this.entity.getRandom().nextInt(animation.getDuration() - 25));
-            } else if (animation == this.entity.impactHoldAnimation) {
+                this.nextAnimation(animation, IMPACT_HOLD_ANIMATION, 25 + this.entity.getRandom().nextInt(animation.getDuration() - 25));
+            } else if (animation == IMPACT_HOLD_ANIMATION) {
                 this.entity.setDeltaMovement(0, 0, 0);
                 double baseMoveMultiplier = 15F;
                 double deltaY = Math.ceil(this.entity.getY() - 0.5F);
@@ -685,14 +687,14 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
                         this.entity.addEffect(new MobEffectInstance(EffectInit.STUN_EFFECT.get(), 50, 0, false, false));
                     }
                 }
-                this.nextAnimation(animation, this.entity.impactStopAnimation);
+                this.nextAnimation(animation, IMPACT_STOP_ANIMATION);
             }
         }
     }
 
     static class ExecutionerCullGoal extends ExecutionerGroupAI {
         public ExecutionerCullGoal(EntityImmortalExecutioner entity) {
-            super(entity, true, () -> entity.cullStorageAnimation, () -> entity.cullHoldAnimation, () -> entity.cullStopAnimation, () -> entity.counterAnimation);
+            super(entity, true, CULL_STORAGE_ANIMATION, CULL_HOLD_ANIMATION, CULL_STOP_ANIMATION, COUNTER_ANIMATION);
         }
 
         @Override
@@ -700,10 +702,10 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
             Animation animation = this.entity.getAnimation();
             LivingEntity target = this.entity.getTarget();
             int tick = this.entity.getAnimationTick();
-            if (animation == this.entity.cullStorageAnimation) {
+            if (animation == CULL_STORAGE_ANIMATION) {
                 super.tick();
-                this.nextAnimation(animation, this.entity.cullHoldAnimation);
-            } else if (animation == this.entity.cullHoldAnimation) {
+                this.nextAnimation(animation, CULL_HOLD_ANIMATION);
+            } else if (animation == CULL_HOLD_ANIMATION) {
                 if (target != null) {
                     if (tick < 4) {
                         super.tick();
@@ -714,11 +716,11 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
                     } else if (tick > 6) {
                         this.entity.setYRot(this.entity.yRotO);
                     }
-                    this.nextAnimation(animation, this.entity.cullStopAnimation);
+                    this.nextAnimation(animation, CULL_STOP_ANIMATION);
                 } else {
-                    this.entity.playAnimation(this.entity.cullStopAnimation);
+                    this.entity.playAnimation(CULL_STOP_ANIMATION);
                 }
-            } else if (animation == this.entity.counterAnimation) {
+            } else if (animation == COUNTER_ANIMATION) {
                 if (tick < 5) {
                     super.tick();
                 } else if (tick == 5) {

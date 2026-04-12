@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.effect;
 
-import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
-import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.client.ControlledAnimation;
+import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.mob.IMob;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
@@ -17,16 +17,10 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class EntityGuardianBlade extends EntityMagicEffects {
+    private static final float[][] BLOCK_OFFSETS = {{-0.5F, -0.5F}, {-0.5F, 0.5F}, {0.5F, 0.5F}, {0.5F, -0.5F},};
     private boolean moveOffset;
     private float damage;
     public final ControlledAnimation controlled = new ControlledAnimation(30);
-    private static final float[][] BLOCK_OFFSETS = {
-            {-0.5F, -0.5F},
-            {-0.5F, 0.5F},
-            {0.5F, 0.5F},
-            {0.5F, -0.5F},
-    };
-
 
     public EntityGuardianBlade(EntityType<?> type, Level level) {
         super(type, level);
@@ -34,14 +28,13 @@ public class EntityGuardianBlade extends EntityMagicEffects {
         this.damage = this.getDamage();
     }
 
-
     public EntityGuardianBlade(Level level, LivingEntity caster, double x, double y, double z, float yRot, boolean moveOffset) {
         this(EntityInit.GUARDIAN_BLADE.get(), level);
         this.damage = caster instanceof Player ? (float) caster.getAttributeValue(Attributes.ATTACK_DAMAGE)
                 + EnchantmentHelper.getDamageBonus(caster.getMainHandItem(), caster.getMobType()) : this.getDamage();
         this.setYRot((yRot * (180F / (float) Math.PI)) - 90F);
         this.moveOffset = moveOffset;
-        this.caster = caster;
+        this.setOwner(caster);
         this.setPos(x, y, z);
     }
 
@@ -87,11 +80,12 @@ public class EntityGuardianBlade extends EntityMagicEffects {
             float progress = 1F - this.controlled.getAnimationFraction();
             List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.2));
             for (LivingEntity target : entities) {
-                if (target == caster) continue;
-                if (caster instanceof IMob mob) damage += mob.getDamageAmountByTargetHealthPct(target);
+                LivingEntity owner = getOwner();
+                if (target == owner) continue;
+                if (owner instanceof IMob mob) damage += mob.getDamageAmountByTargetHealthPct(target);
                 damage = Math.max(1, damage * progress);
                 damage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(damage, target.getArmorValue(), (float) target.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1F);
-                target.hurt(this.damageSources().indirectMagic(this, caster), damage);
+                target.hurt(this.damageSources().indirectMagic(this, owner), damage);
             }
         }
     }
@@ -103,7 +97,7 @@ public class EntityGuardianBlade extends EntityMagicEffects {
             double y = getBoundingBox().minY + 0.1;
             double z = getZ() + Math.sin(theta + Math.PI / 2);
             int count = (int) Math.floor(15 * (Math.max(1F - (this.controlled.getAnimationFraction() + 0.2F), 0F)));
-            ModParticleUtils.blockParticleDirectionality(level(), x, y, z, theta, count, BLOCK_OFFSETS, pos -> level().getBlockState(pos), 1F);
+            ModParticleUtils.blockParticleDirectionality(level(), x, y, z, theta, count, BLOCK_OFFSETS, 1F);
             if (count > 3 && this.controlled.getTimer() % 2 == 0) {
                 Vec3 movement = this.getDeltaMovement();
                 level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), getRandomX(0.25F), getRandomY(), getRandomZ(0.25F), movement.x * 0.25, this.random.nextFloat() * 0.05F, movement.z * 0.25);

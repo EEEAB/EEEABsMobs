@@ -20,7 +20,7 @@ public class EntityInfraredRay extends EntityAbsBeam {
 
     public EntityInfraredRay(Level world, LivingEntity caster, double x, double y, double z, int duration) {
         this(EntityInit.INFRARED_RAY.get(), world);
-        this.caster = caster;
+        this.setOwner(caster);
         this.setYaw((float) Math.toRadians(caster.yHeadRot + 90));
         this.setPitch((float) Math.toRadians(-caster.getXRot()));
         this.setDuration(duration);
@@ -33,11 +33,12 @@ public class EntityInfraredRay extends EntityAbsBeam {
 
     @Override
     protected void beamTick() {
-        if (this.caster instanceof EntityRelicAnnihilator annihilator) {
+        LivingEntity owner = this.getOwner();
+        if (owner instanceof EntityRelicAnnihilator annihilator) {
             if (!this.level().isClientSide) {
                 double radians = Math.toRadians(annihilator.yBodyRot + 90);
                 this.setYaw((float) radians);
-                this.setPitch((float) ((double) (-this.caster.getXRot()) * Math.PI / 180.0));
+                this.setPitch((float) ((double) (-owner.getXRot()) * Math.PI / 180.0));
                 EntityRelicAnnihilatorPart part = annihilator.getPartEntity();
                 this.setPos(part.getX(), part.getY(0.24), part.getZ());
             }
@@ -53,13 +54,8 @@ public class EntityInfraredRay extends EntityAbsBeam {
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compoundTag) {
-        if (this.caster == null) discard();
-    }
-
-    @Override
     protected boolean canBeInterrupted() {
-        return super.canBeInterrupted() || (this.caster instanceof IMob mob && mob.isStunned());
+        return super.canBeInterrupted() || (this.getOwner() instanceof IMob mob && mob.isStunned());
     }
 
     @Override
@@ -85,6 +81,7 @@ public class EntityInfraredRay extends EntityAbsBeam {
         int blinkElapsed = timeSinceStart - blinkStart;
         int remainingTime = this.getDuration() - blinkStart;
         int stageDuration = remainingTime / 3;
+        if (stageDuration == 0) return false;
         int stage = Math.min(blinkElapsed / stageDuration, 2);
         int interval = switch (stage) {
             case 0 -> 10;

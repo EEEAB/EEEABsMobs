@@ -14,7 +14,10 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class RenderGuardianBlade extends EntityRenderer<EntityGuardianBlade> {
     private final ModelGuardianBlade model;
     private static final ResourceLocation[] TEXTURES = new ResourceLocation[6];

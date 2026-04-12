@@ -6,7 +6,10 @@ import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityRelicRipper;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class ModelRelicRipper extends ModHierarchicalModel<EntityRelicRipper> {
     private final ModelPart root;
     private final ModelPart upper;
@@ -45,7 +48,7 @@ public class ModelRelicRipper extends ModHierarchicalModel<EntityRelicRipper> {
         PartDefinition partdefinition = meshdefinition.getRoot();
         PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
         PartDefinition upper = root.addOrReplaceChild("upper", CubeListBuilder.create(), PartPose.offset(0.0F, -28.2992F, -2.9734F));
-        PartDefinition cube_r1 = upper.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(0, 33).addBox(-14.0F, -4.5F, -4.5F, 28.0F, 9.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -11.2461F, -0.0981F, 0.0785F, 0.0F, 0.0F));
+        PartDefinition cube_r1 = upper.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(0, 33).addBox(-14.0F, -4.5F, -4.5F, 28.0F, 9.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -10.7461F, -0.0981F, 0.0785F, 0.0F, 0.0F));
         PartDefinition cube_r2 = upper.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(0, 0).addBox(-6.5F, -8.0F, -8.5F, 13.0F, 16.0F, 17.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -8.7539F, 0.0981F, 0.0785F, 0.0F, 0.0F));
         PartDefinition rightArm = upper.addOrReplaceChild("rightArm", CubeListBuilder.create(), PartPose.offset(-13.0F, -10.7008F, -1.0266F));
         PartDefinition cube_r3 = rightArm.addOrReplaceChild("cube_r3", CubeListBuilder.create().texOffs(0, 11).addBox(-2.5F, -1.5F, -1.5F, 5.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.5F, -0.2265F, 0.1986F, 0.1309F, 0.0F, 0.0F));
@@ -73,24 +76,25 @@ public class ModelRelicRipper extends ModHierarchicalModel<EntityRelicRipper> {
         PartDefinition cube_r17 = blade4.addOrReplaceChild("cube_r17", CubeListBuilder.create().texOffs(80, 73).addBox(-3.7455F, -2.6576F, -3.6642F, 8.0F, 3.0F, 9.0F, new CubeDeformation(-0.5F)), PartPose.offsetAndRotation(-0.9424F, 1.2769F, 0.4607F, 0.0F, -0.7854F, 0.0F));
         PartDefinition lower = root.addOrReplaceChild("lower", CubeListBuilder.create(), PartPose.offset(0.0F, -24.7597F, -4.1693F));
         PartDefinition cube_r18 = lower.addOrReplaceChild("cube_r18", CubeListBuilder.create().texOffs(0, 51).addBox(-3.0F, -1.5F, -1.0F, 7.0F, 9.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, -0.3403F, -4.0307F, -0.0873F, 0.0F, 0.0F));
-        PartDefinition cube_r19 = lower.addOrReplaceChild("cube_r19", CubeListBuilder.create().texOffs(43, 0).addBox(-6.0F, -2.0F, -10.0F, 16.0F, 4.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.0F, 0.2597F, 6.1693F, 0.0349F, 0.0F, 0.0F));
-        PartDefinition cube_r20 = lower.addOrReplaceChild("cube_r20", CubeListBuilder.create().texOffs(33, 51).addBox(-4.0F, -3.0F, -13.0F, 11.0F, 3.0F, 15.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.5F, -1.7403F, 7.6693F, 0.0349F, 0.0F, 0.0F));
-        PartDefinition leftLeg = lower.addOrReplaceChild("leftLeg", CubeListBuilder.create(), PartPose.offsetAndRotation(9.32F, 0.5688F, 5.132F, -0.48F, -0.0436F, 0.0F));
-        PartDefinition cube_r21 = leftLeg.addOrReplaceChild("cube_r21", CubeListBuilder.create().texOffs(0, 51).addBox(-3.5F, -5.2071F, -3.2218F, 7.0F, 7.0F, 19.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.78F, 10.2428F, -5.7874F, 0.9599F, 0.0F, 0.0F));
+        PartDefinition cube_r19 = lower.addOrReplaceChild("cube_r19", CubeListBuilder.create().texOffs(44, 0).addBox(-5.0F, -2.0F, -10.0F, 14.0F, 4.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.0F, 0.2597F, 6.1693F, 0.0349F, 0.0F, 0.0F));
+        PartDefinition cube_r20 = lower.addOrReplaceChild("cube_r20", CubeListBuilder.create().texOffs(61, 16).addBox(-2.0F, -3.0F, -9.0F, 5.0F, 3.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, -4.2403F, 8.6693F, 0.0349F, 0.0F, 0.0F));
+        PartDefinition cube_r21 = lower.addOrReplaceChild("cube_r21", CubeListBuilder.create().texOffs(33, 51).addBox(-4.0F, -3.0F, -13.0F, 11.0F, 3.0F, 15.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.5F, -1.7403F, 7.6693F, 0.0349F, 0.0F, 0.0F));
+        PartDefinition leftLeg = lower.addOrReplaceChild("leftLeg", CubeListBuilder.create(), PartPose.offsetAndRotation(8.32F, 0.5688F, 5.132F, -0.48F, -0.0436F, 0.0F));
+        PartDefinition cube_r22 = leftLeg.addOrReplaceChild("cube_r22", CubeListBuilder.create().texOffs(0, 51).addBox(-3.5F, -5.2071F, -3.2218F, 7.0F, 7.0F, 19.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.78F, 10.2428F, -5.7874F, 0.9599F, 0.0F, 0.0F));
         PartDefinition leftLegJoint1 = leftLeg.addOrReplaceChild("leftLegJoint1", CubeListBuilder.create(), PartPose.offset(1.78F, 9.8558F, -4.8484F));
-        PartDefinition cube_r22 = leftLegJoint1.addOrReplaceChild("cube_r22", CubeListBuilder.create().texOffs(94, 12).addBox(-2.4782F, -6.6886F, -3.2688F, 5.0F, 15.0F, 5.0F, new CubeDeformation(-0.5F)), PartPose.offsetAndRotation(0.0F, -0.3876F, 5.0198F, 1.7017F, 0.0F, 0.0F));
+        PartDefinition cube_r23 = leftLegJoint1.addOrReplaceChild("cube_r23", CubeListBuilder.create().texOffs(94, 12).addBox(-2.4782F, -6.6886F, -3.2688F, 5.0F, 15.0F, 5.0F, new CubeDeformation(-0.5F)), PartPose.offsetAndRotation(0.0F, -0.3876F, 5.0198F, 1.7017F, 0.0F, 0.0F));
         PartDefinition leftLegJoint2 = leftLegJoint1.addOrReplaceChild("leftLegJoint2", CubeListBuilder.create(), PartPose.offsetAndRotation(0.0F, 0.5334F, 11.2075F, 0.0873F, 0.0F, 0.0F));
-        PartDefinition cube_r23 = leftLegJoint2.addOrReplaceChild("cube_r23", CubeListBuilder.create().texOffs(65, 16).addBox(-2.5F, -3.0F, -2.3431F, 5.0F, 5.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.5872F, -6.5038F, 0.7854F, 0.0F, 0.0F));
+        PartDefinition cube_r24 = leftLegJoint2.addOrReplaceChild("cube_r24", CubeListBuilder.create().texOffs(65, 16).addBox(-2.5F, -3.0F, -2.3431F, 5.0F, 5.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.5872F, -6.5038F, 0.7854F, 0.0F, 0.0F));
         PartDefinition leftFoot = leftLegJoint2.addOrReplaceChild("leftFoot", CubeListBuilder.create().texOffs(0, 77).addBox(-4.5F, 3.5F, -3.5F, 9.0F, 3.0F, 9.0F, new CubeDeformation(0.0F)).texOffs(73, 57).addBox(-2.0F, 2.6F, -4.5F, 4.0F, 4.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 9.0872F, -8.0038F, 0.3927F, 0.0F, 0.0F));
-        PartDefinition cube_r24 = leftFoot.addOrReplaceChild("cube_r24", CubeListBuilder.create().texOffs(33, 51).addBox(-1.5F, -2.5F, -1.5F, 3.0F, 5.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.0F, 1.0F, 0.1309F, 0.0F, 0.0F));
-        PartDefinition rightLeg = lower.addOrReplaceChild("rightLeg", CubeListBuilder.create(), PartPose.offsetAndRotation(-9.32F, 0.5688F, 5.132F, -0.48F, 0.0436F, 0.0F));
-        PartDefinition cube_r25 = rightLeg.addOrReplaceChild("cube_r25", CubeListBuilder.create().texOffs(0, 51).mirror().addBox(-3.5F, -5.2071F, -3.2218F, 7.0F, 7.0F, 19.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-1.78F, 10.2428F, -5.7874F, 0.9599F, 0.0F, 0.0F));
+        PartDefinition cube_r25 = leftFoot.addOrReplaceChild("cube_r25", CubeListBuilder.create().texOffs(33, 51).addBox(-1.5F, -2.5F, -1.5F, 3.0F, 5.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.0F, 1.0F, 0.1309F, 0.0F, 0.0F));
+        PartDefinition rightLeg = lower.addOrReplaceChild("rightLeg", CubeListBuilder.create(), PartPose.offsetAndRotation(-8.32F, 0.5688F, 5.132F, -0.48F, 0.0436F, 0.0F));
+        PartDefinition cube_r26 = rightLeg.addOrReplaceChild("cube_r26", CubeListBuilder.create().texOffs(0, 51).addBox(-3.5F, -5.2071F, -3.2218F, 7.0F, 7.0F, 19.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.78F, 10.2428F, -5.7874F, 0.9599F, 0.0F, 0.0F));
         PartDefinition rightLegJoint1 = rightLeg.addOrReplaceChild("rightLegJoint1", CubeListBuilder.create(), PartPose.offset(-1.78F, 9.8558F, -4.8484F));
-        PartDefinition cube_r26 = rightLegJoint1.addOrReplaceChild("cube_r26", CubeListBuilder.create().texOffs(94, 12).mirror().addBox(-2.5218F, -6.6886F, -3.2688F, 5.0F, 15.0F, 5.0F, new CubeDeformation(-0.5F)).mirror(false), PartPose.offsetAndRotation(0.0F, -0.3876F, 5.0198F, 1.7017F, 0.0F, 0.0F));
+        PartDefinition cube_r27 = rightLegJoint1.addOrReplaceChild("cube_r27", CubeListBuilder.create().texOffs(94, 12).addBox(-2.5218F, -6.6886F, -3.2688F, 5.0F, 15.0F, 5.0F, new CubeDeformation(-0.5F)), PartPose.offsetAndRotation(0.0F, -0.3876F, 5.0198F, 1.7017F, 0.0F, 0.0F));
         PartDefinition rightLegJoint2 = rightLegJoint1.addOrReplaceChild("rightLegJoint2", CubeListBuilder.create(), PartPose.offsetAndRotation(0.0F, 0.5334F, 11.2075F, 0.0873F, 0.0F, 0.0F));
-        PartDefinition cube_r27 = rightLegJoint2.addOrReplaceChild("cube_r27", CubeListBuilder.create().texOffs(65, 16).mirror().addBox(-2.5F, -3.0F, -2.3431F, 5.0F, 5.0F, 16.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, 7.5872F, -6.5038F, 0.7854F, 0.0F, 0.0F));
-        PartDefinition rightFoot = rightLegJoint2.addOrReplaceChild("rightFoot", CubeListBuilder.create().texOffs(0, 77).mirror().addBox(-4.5F, 3.5F, -3.5F, 9.0F, 3.0F, 9.0F, new CubeDeformation(0.0F)).mirror(false).texOffs(73, 57).mirror().addBox(-2.0F, 2.6F, -4.5F, 4.0F, 4.0F, 12.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, 9.0872F, -8.0038F, 0.3927F, 0.0F, 0.0F));
-        PartDefinition cube_r28 = rightFoot.addOrReplaceChild("cube_r28", CubeListBuilder.create().texOffs(33, 51).mirror().addBox(-1.5F, -2.5F, -1.5F, 3.0F, 5.0F, 3.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, 1.0F, 1.0F, 0.1309F, 0.0F, 0.0F));
+        PartDefinition cube_r28 = rightLegJoint2.addOrReplaceChild("cube_r28", CubeListBuilder.create().texOffs(65, 16).addBox(-2.5F, -3.0F, -2.3431F, 5.0F, 5.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 7.5872F, -6.5038F, 0.7854F, 0.0F, 0.0F));
+        PartDefinition rightFoot = rightLegJoint2.addOrReplaceChild("rightFoot", CubeListBuilder.create().texOffs(0, 77).addBox(-4.5F, 3.5F, -3.5F, 9.0F, 3.0F, 9.0F, new CubeDeformation(0.0F)).texOffs(73, 57).addBox(-2.0F, 2.6F, -4.5F, 4.0F, 4.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 9.0872F, -8.0038F, 0.3927F, 0.0F, 0.0F));
+        PartDefinition cube_r29 = rightFoot.addOrReplaceChild("cube_r29", CubeListBuilder.create().texOffs(33, 51).addBox(-1.5F, -2.5F, -1.5F, 3.0F, 5.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 1.0F, 1.0F, 0.1309F, 0.0F, 0.0F));
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
 
@@ -102,6 +106,16 @@ public class ModelRelicRipper extends ModHierarchicalModel<EntityRelicRipper> {
     @Override
     public void setupAnim(EntityRelicRipper entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
+        lookAtTarget(netHeadYaw, headPitch, 1.2F, this.upper);
+        playAnimation(this, entity, EntityRelicRipper.DIE_ANIMATION, AnimationRelicRipper.DIE, ageInTicks);
+        playAnimation(this, entity, EntityRelicRipper.ACTIVE_ANIMATION, AnimationRelicRipper.ACTIVE, ageInTicks);
+        playAnimation(this, entity, EntityRelicRipper.DEACTIVATE_ANIMATION, AnimationRelicRipper.DEACTIVATE, ageInTicks);
+        playAnimation(this, entity, EntityRelicRipper.SWEEP_ANIMATION1, AnimationRelicRipper.SWEEP1, ageInTicks);
+        playOverlapAnimation(this, entity, EntityRelicRipper.SWEEP_ANIMATION2, AnimationRelicRipper.SWEEP2, ageInTicks);
+        playAnimation(this, entity, EntityRelicRipper.SMASH_ANIMATION, AnimationRelicRipper.SMASH, ageInTicks);
+        playAnimation(this, entity, EntityRelicRipper.CUTTING_START_ANIMATION, AnimationRelicRipper.CUTTING_START, ageInTicks);
+        playAnimation(this, entity, EntityRelicRipper.CUTTING_KEEP_ANIMATION, AnimationRelicRipper.CUTTING_KEEP, ageInTicks);
+        playOverlapAnimation(this, entity, EntityRelicRipper.CUTTING_END_ANIMATION, AnimationRelicRipper.CUTTING_END, ageInTicks);
         if (entity.isNoAnimation()) {
             if (!entity.isActive()) {
                 setStaticRotationPoint(root, 0F, 6F, 0F);
@@ -118,19 +132,6 @@ public class ModelRelicRipper extends ModHierarchicalModel<EntityRelicRipper> {
                 setStaticRotationAngle(leftFoot, 5, 0F, 0F);
             }
         }
-        //Animation
-        this.animate(entity.dieAnimation, AnimationRelicRipper.DIE, ageInTicks);
-        this.animate(entity.activeAnimation, AnimationRelicRipper.ACTIVE, ageInTicks);
-        this.animate(entity.deactivateAnimation, AnimationRelicRipper.DEACTIVATE, ageInTicks);
-        this.animate(entity.sweep1Animation, AnimationRelicRipper.SWEEP1, ageInTicks);
-        this.animate(entity.sweep2Animation, AnimationRelicRipper.SWEEP2, ageInTicks);
-        this.animate(entity.smashAnimation, AnimationRelicRipper.SMASH, ageInTicks);
-        this.animate(entity.cuttingStartAnimation, AnimationRelicRipper.CUTTING_START, ageInTicks);
-        this.animate(entity.cuttingKeepAnimation, AnimationRelicRipper.CUTTING_KEEP, ageInTicks);
-        this.animate(entity.cuttingEndAnimation, AnimationRelicRipper.CUTTING_END, ageInTicks);
-        //LookAt
-        lookAtAnimation(netHeadYaw, headPitch, 1.2F, this.upper);
-        //Idle & Walk
         float delta = ageInTicks - entity.tickCount;
         float frame = entity.frame + delta;
         if (entity.isActive() && entity.isAlive()) {
@@ -141,6 +142,7 @@ public class ModelRelicRipper extends ModHierarchicalModel<EntityRelicRipper> {
         }
         float progress = entity.sawControlled.getAnimationFraction(delta);
         float timeBasedRotation = (ageInTicks * 50F) % 360F;
+        if (entity.getAnimation() == EntityRelicRipper.CUTTING_KEEP_ANIMATION) timeBasedRotation *= -1;
         this.saw.yRot = (-timeBasedRotation * progress) * ((float) Math.PI / 180F);
         this.rightHand.y = (float) (Math.sin(ageInTicks * 3) * 0.6F + Math.cos(ageInTicks * 3 * 1.7F) * 0.4F) * 0.5F * progress;
         this.animateWalk(AnimationRelicRipper.WALK, limbSwing, limbSwingAmount, 2F, 2F);

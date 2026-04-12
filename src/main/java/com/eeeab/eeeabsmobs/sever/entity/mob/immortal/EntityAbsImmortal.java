@@ -1,11 +1,11 @@
 package com.eeeab.eeeabsmobs.sever.entity.mob.immortal;
 
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.mob.SummoningEntity;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
-import com.eeeab.eeeabsmobs.sever.entity.mob.ModMobType;
 import com.eeeab.eeeabsmobs.sever.entity.mob.GlowEntity;
+import com.eeeab.eeeabsmobs.sever.entity.mob.ModMobType;
+import com.eeeab.eeeabsmobs.sever.entity.mob.SummoningEntity;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
@@ -18,7 +18,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.*;
@@ -210,10 +213,14 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy
     }
 
     //设置该生物初始生成
-    public void setInitSpawn() {
+    public void afterSpawn() {
         this.active = false;
         this.setActive(false);
-        this.playAnimation(getSpawnAnimation());
+        Animation animation = getSpawnAnimation();
+        if (animation != null) {
+            this.invulnerableTime = animation.getDuration();
+            this.playAnimation(animation);
+        }
     }
 
     //设置召唤物存在时长

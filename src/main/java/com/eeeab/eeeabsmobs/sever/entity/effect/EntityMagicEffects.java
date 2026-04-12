@@ -7,6 +7,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -23,10 +24,12 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.UUID;
 
 public abstract class EntityMagicEffects extends Entity implements IEntity, TraceableEntity {
     private static final EntityDataAccessor<Integer> DATA_CASTER_ID = SynchedEntityData.defineId(EntityMagicEffects.class, EntityDataSerializers.INT);
     public LivingEntity caster;
+    public UUID casterUUID;
 
     public EntityMagicEffects(EntityType<?> type, Level level) {
         super(type, level);
@@ -63,7 +66,18 @@ public abstract class EntityMagicEffects extends Entity implements IEntity, Trac
     @Nullable
     @Override
     public LivingEntity getOwner() {
-        return caster;
+        if (this.caster == null && this.casterUUID != null && this.level() instanceof ServerLevel) {
+            Entity entity = ((ServerLevel) this.level()).getEntity(this.casterUUID);
+            if (entity instanceof LivingEntity) {
+                this.caster = (LivingEntity) entity;
+            }
+        }
+        return this.caster;
+    }
+
+    public void setOwner(@Nullable LivingEntity Owner) {
+        this.caster = Owner;
+        this.casterUUID = Owner == null ? null : Owner.getUUID();
     }
 
     @Override
@@ -82,10 +96,16 @@ public abstract class EntityMagicEffects extends Entity implements IEntity, Trac
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compoundTag) {
+        if (compoundTag.hasUUID("owner")) {
+            this.casterUUID = compoundTag.getUUID("owner");
+        }
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compoundTag) {
+        if (this.casterUUID != null) {
+            compoundTag.putUUID("owner", this.casterUUID);
+        }
     }
 
     @Override

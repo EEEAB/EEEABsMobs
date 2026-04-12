@@ -7,7 +7,10 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class ModelImmortalExecutioner extends ModHierarchicalModel<EntityImmortalExecutioner> {
     private final ModelPart root;
     private final ModelPart head;
@@ -94,11 +97,24 @@ public class ModelImmortalExecutioner extends ModHierarchicalModel<EntityImmorta
     @Override
     public void setupAnim(EntityImmortalExecutioner entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
-        //LookAt
-        lookAtAnimation(netHeadYaw, headPitch, 1.0F, this.head);
+        lookAtTarget(netHeadYaw, headPitch, 1.0F, this.head);
+        playAnimation(this, entity,EntityImmortalExecutioner.DIE_ANIMATION, AnimationImmortalExecutioner.DIE, ageInTicks);
+        playAnimation(this, entity,EntityImmortalExecutioner.AVOID_ANIMATION, AnimationImmortalExecutioner.AVOID, ageInTicks);
+        playAnimation(this, entity,EntityImmortalExecutioner.BLOCK_ANIMATION, AnimationImmortalExecutioner.BLOCK, ageInTicks);
+        playAnimation(this, entity,EntityImmortalExecutioner.COUNTER_ANIMATION, AnimationImmortalExecutioner.COUNTER, ageInTicks);
+        playAnimation(this, entity,EntityImmortalExecutioner.ATTACK_LEFT_ANIMATION, AnimationImmortalExecutioner.ATTACK_LEFT, ageInTicks);
+        playAnimation(this, entity,EntityImmortalExecutioner.ATTACK_RIGHT_ANIMATION, AnimationImmortalExecutioner.ATTACK_RIGHT, ageInTicks);
+        playAnimation(this, entity,EntityImmortalExecutioner.SIDESWAY_LEFT_ANIMATION, AnimationImmortalExecutioner.SIDESWAY_LEFT, ageInTicks);
+        playAnimation(this, entity,EntityImmortalExecutioner.SIDESWAY_RIGHT_ANIMATION, AnimationImmortalExecutioner.SIDESWAY_RIGHT, ageInTicks);
+        playAnimation(this, entity,EntityImmortalExecutioner.IMPACT_STORAGE_ANIMATION, AnimationImmortalExecutioner.IMPACT_STORAGE, ageInTicks);
+        playAnimation(this, entity,EntityImmortalExecutioner.IMPACT_HOLD_ANIMATION, AnimationImmortalExecutioner.IMPACT_HOLD, ageInTicks);
+        playAnimation(this, entity,EntityImmortalExecutioner.IMPACT_STOP_ANIMATION, AnimationImmortalExecutioner.IMPACT_STOP, ageInTicks);
+        playAnimation(this, entity,EntityImmortalExecutioner.CULL_STORAGE_ANIMATION, AnimationImmortalExecutioner.CULL_STORAGE, ageInTicks);
+        playAnimation(this, entity,EntityImmortalExecutioner.CULL_HOLD_ANIMATION, AnimationImmortalExecutioner.CULL_HOLD, ageInTicks);
+        playAnimation(this, entity,EntityImmortalExecutioner.CULL_STOP_ANIMATION, AnimationImmortalExecutioner.CULL_STOP, ageInTicks);
+        playAnimation(this, entity,EntityImmortalExecutioner.DETONATION_ANIMATION, AnimationImmortalExecutioner.DETONATION, ageInTicks);
         float delta = ageInTicks - entity.tickCount;
         float frame = entity.frame + delta;
-        //Idle
         float speed = 0.1F;
         float degree = 0.6F;
         this.bob(root, speed, degree, false, frame, 1);
@@ -108,27 +124,11 @@ public class ModelImmortalExecutioner extends ModHierarchicalModel<EntityImmorta
         this.chainSwing(spine, speed, degree * 0.25F, -1.5, frame, 1);
         this.flap(rightArm, speed + 0.05F, degree * 0.08F, true, 0, -0.1F, frame, 1);
         this.flap(leftArm, speed + 0.05F, degree * 0.08F, false, 0, -0.1F, frame, 1);
-        //Walk
         float cycle = 0.2F;
         float idle = (Mth.sin(ageInTicks * cycle * 0.1F) + 1.0F) * (1.0F - limbSwingAmount);
         float dampingFactor = 1.0F - limbSwingAmount * 0.45F; // 引入的衰减因子，根据移动速度调整
         this.root.xRot -= (Mth.cos(limbSwing * cycle) - 2.0F) * limbSwingAmount * 0.1F * dampingFactor - 0.1F * (-idle) * -0.1F;
         this.spine1.xRot -= (Mth.cos(limbSwing * cycle) - 2.0F) * limbSwingAmount * 0.2F * dampingFactor - 0.1F * (-idle) * -0.1F;
         //this.head.xRot += (Mth.cos(limbSwing * cycle) - 2.0F) * limbSwingAmount * 0.1F * dampingFactor - 0.1F * (-idle) * -0.1F;
-        this.animate(entity.dieAnimation, AnimationImmortalExecutioner.DIE, ageInTicks);
-        this.animate(entity.avoidAnimation, AnimationImmortalExecutioner.AVOID, ageInTicks);
-        this.animate(entity.blockAnimation, AnimationImmortalExecutioner.BLOCK, ageInTicks);
-        this.animate(entity.counterAnimation, AnimationImmortalExecutioner.COUNTER, ageInTicks);
-        this.animate(entity.attackAnimationLeft, AnimationImmortalExecutioner.ATTACK_LEFT, ageInTicks);
-        this.animate(entity.attackAnimationRight, AnimationImmortalExecutioner.ATTACK_RIGHT, ageInTicks);
-        this.animate(entity.sidesWayAnimationLeft, AnimationImmortalExecutioner.SIDESWAY_LEFT, ageInTicks);
-        this.animate(entity.sidesWayAnimationRight, AnimationImmortalExecutioner.SIDESWAY_RIGHT, ageInTicks);
-        this.animate(entity.impactStorageAnimation, AnimationImmortalExecutioner.IMPACT_STORAGE, ageInTicks);
-        this.animate(entity.impactHoldAnimation, AnimationImmortalExecutioner.IMPACT_HOLD, ageInTicks);
-        this.animate(entity.impactStopAnimation, AnimationImmortalExecutioner.IMPACT_STOP, ageInTicks);
-        this.animate(entity.cullStorageAnimation, AnimationImmortalExecutioner.CULL_STORAGE, ageInTicks);
-        this.animate(entity.cullHoldAnimation, AnimationImmortalExecutioner.CULL_HOLD, ageInTicks);
-        this.animate(entity.cullStopAnimation, AnimationImmortalExecutioner.CULL_STOP, ageInTicks);
-        this.animate(entity.detonationAnimation, AnimationImmortalExecutioner.DETONATION, ageInTicks);
     }
 }

@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.effect;
 
-import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.client.ControlledAnimation;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -9,6 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
+//TODO 未完成
 public class EntityAlienPortal extends EntityMagicEffects {
     private static final EntityDataAccessor<Boolean> DATA_FLAG = SynchedEntityData.defineId(EntityAlienPortal.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_PHASE = SynchedEntityData.defineId(EntityAlienPortal.class, EntityDataSerializers.INT);
@@ -19,10 +20,10 @@ public class EntityAlienPortal extends EntityMagicEffects {
         this.noCulling = true;
     }
 
-    public EntityAlienPortal(Level level, LivingEntity caster) {
-        this(EntityInit.ALIEN_PORTAL.get(), level);
-        this.caster = caster;
-    }
+    //public EntityAlienPortal(Level level, LivingEntity caster) {
+    //    this(EntityInit.ALIEN_PORTAL.get(), level);
+    //    this.caster = caster;
+    //}
 
 
     @Override

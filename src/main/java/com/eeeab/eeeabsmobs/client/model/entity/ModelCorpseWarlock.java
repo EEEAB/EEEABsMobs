@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
 import com.eeeab.animate.client.model.ModHierarchicalModel;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationCorpseWarlock;
 import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpseWarlock;
 import net.minecraft.client.model.geom.ModelPart;
@@ -61,41 +62,16 @@ public class ModelCorpseWarlock extends ModHierarchicalModel<EntityCorpseWarlock
     @Override
     public void setupAnim(EntityCorpseWarlock entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
-        lookAtAnimation(netHeadYaw, headPitch, 1.0F, this.head);
-        float delta = ageInTicks - entity.tickCount;
-        float frame = entity.frame + delta;
-        //Walk
-        float walkSpeed = 0.7F;
-        float walkDegree = 0.6F;
-        flap(root, walkSpeed, walkDegree * 0.08F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
-        walk(leftLeg, walkSpeed, walkDegree * 1.2F, true, 0.0F, 0.0F, limbSwing, limbSwingAmount);
-        walk(rightLeg, walkSpeed, walkDegree * 1.2F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
-        if (entity.isNoAnimation()) {
-            walk(rightArm, walkSpeed, walkDegree, true, -0.2F, -0.1F, limbSwing, limbSwingAmount);
-            walk(leftArm, walkSpeed, walkDegree, false, -0.2F, 0.1F, limbSwing, limbSwingAmount);
-            walk(cloak, walkSpeed * 0.5F, walkDegree * 0.5F, false, 0F, 0F, limbSwing, limbSwingAmount);
-            flap(rightArm, walkSpeed * 0.2F, walkDegree * 0.2F, true, 0.2F, -0.2F, limbSwing, limbSwingAmount);
-            flap(leftArm, walkSpeed * 0.2F, walkDegree * 0.2F, true, 0.2F, 0.2F, limbSwing, limbSwingAmount);
-        }
-
-        //Idle
-        float speed = 0.12F;
-        float degree = 0.1F;
-        if (entity.isAlive()) {
-            walk(upper, 0.1F, 0.005F, true, 0, -0.005F, frame, 1);
-            walk(rightArm, speed, degree, true, 0, 0, frame, 1);
-            swing(rightArm, speed, degree, true, 0, 0, frame, 1);
-            walk(leftArm, speed, degree, false, 0, 0, frame, 1);
-            swing(leftArm, speed, degree, false, 0, 0, frame, 1);
-        }
-        this.animate(entity.attackAnimation, AnimationCorpseWarlock.ATTACK, ageInTicks, 1.0F);
-        this.animate(entity.tearSpaceAnimation, AnimationCorpseWarlock.TEAR_SPACE, ageInTicks, 1.0F);
-        this.animate(entity.teleportAnimation, AnimationCorpseWarlock.TELEPORT, ageInTicks, 1.0F);
-        this.animate(entity.vampireAnimation, entity.isHeal() ? AnimationCorpseWarlock.VAMPIRE_HEAL : AnimationCorpseWarlock.VAMPIRE_ATTACK, ageInTicks, 1.0F);
-        this.animate(entity.robustAnimation, AnimationCorpseWarlock.ROBUST_ATTACK, ageInTicks, 1.0F);
-        if (entity.getAnimation() == entity.summonAnimation || entity.getAnimation() == entity.frenzyAnimation || entity.getAnimation() == entity.babbleAnimation) {
+        lookAtTarget(netHeadYaw, headPitch, 1.0F, this.head);
+        playAnimation(this, entity,EntityCorpseWarlock.ATTACK_ANIMATION, AnimationCorpseWarlock.ATTACK, ageInTicks);
+        playAnimation(this, entity,EntityCorpseWarlock.TEARSPACE_ANIMATION, AnimationCorpseWarlock.TEAR_SPACE, ageInTicks);
+        playAnimation(this, entity,EntityCorpseWarlock.TELEPORT_ANIMATION, AnimationCorpseWarlock.TELEPORT, ageInTicks);
+        playAnimation(this, entity,EntityCorpseWarlock.ROBUST_ANIMATION, AnimationCorpseWarlock.ROBUST_ATTACK, ageInTicks);
+        playAnimation(this, entity, EntityCorpseWarlock.VAMPIRE_ANIMATION, (entity.isHeal() ? AnimationCorpseWarlock.VAMPIRE_HEAL : AnimationCorpseWarlock.VAMPIRE_ATTACK), ageInTicks);
+        Animation animation = entity.getAnimation();
+        if (EntityCorpseWarlock.SUMMON_ANIMATION == animation || EntityCorpseWarlock.FRENZY_ANIMATION == animation || EntityCorpseWarlock.BABBLE_ANIMATION == animation) {
             float animationSpeed = 1.0F;
-            if (entity.getAnimation() == entity.babbleAnimation) {
+            if (EntityCorpseWarlock.BABBLE_ANIMATION == animation) {
                 head.xRot = -10F * Mth.PI / 180F;
                 animationSpeed = 0.5F;
             }
@@ -109,6 +85,34 @@ public class ModelCorpseWarlock extends ModHierarchicalModel<EntityCorpseWarlock
             leftArm.zRot = -2.3561945F;
             rightArm.yRot = 0.0F;
             leftArm.yRot = 0.0F;
+        }
+        float delta = ageInTicks - entity.tickCount;
+        float frame = entity.frame + delta;
+        float walkSpeed = 0.7F;
+        float walkDegree = 0.6F;
+        flap(root, walkSpeed, walkDegree * 0.08F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
+        walk(leftLeg, walkSpeed, walkDegree * 1.2F, true, 0.0F, 0.0F, limbSwing, limbSwingAmount);
+        walk(rightLeg, walkSpeed, walkDegree * 1.2F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
+        if (entity.isNoAnimation()) {
+            walk(rightArm, walkSpeed, walkDegree, true, -0.2F, -0.1F, limbSwing, limbSwingAmount);
+            walk(leftArm, walkSpeed, walkDegree, false, -0.2F, 0.1F, limbSwing, limbSwingAmount);
+            walk(cloak, walkSpeed * 0.5F, walkDegree * 0.5F, false, 0F, 0F, limbSwing, limbSwingAmount);
+            flap(rightArm, walkSpeed * 0.2F, walkDegree * 0.2F, true, 0.2F, -0.2F, limbSwing, limbSwingAmount);
+            flap(leftArm, walkSpeed * 0.2F, walkDegree * 0.2F, true, 0.2F, 0.2F, limbSwing, limbSwingAmount);
+        }
+        float speed = 0.12F;
+        float degree = 0.1F;
+        if (entity.isAlive()) {
+            if (entity.isStunned()) {
+                this.setStaticRotationAngle(head, 30, 0, 0);
+                this.walk(head, 0.25F, 0.125F, false, 0, 0, frame, 1);
+                this.walk(root, 0.15F, 0.1F, false, 0, 0, frame, 1);
+            }
+            walk(upper, 0.1F, 0.005F, true, 0, -0.005F, frame, 1);
+            walk(rightArm, speed, degree, true, 0, 0, frame, 1);
+            swing(rightArm, speed, degree, true, 0, 0, frame, 1);
+            walk(leftArm, speed, degree, false, 0, 0, frame, 1);
+            swing(leftArm, speed, degree, false, 0, 0, frame, 1);
         }
     }
 }

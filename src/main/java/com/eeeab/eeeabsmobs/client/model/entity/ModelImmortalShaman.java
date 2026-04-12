@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
 import com.eeeab.animate.client.model.ModHierarchicalModel;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationCommon;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationImmortalShaman;
 import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalShaman;
@@ -10,7 +11,10 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class ModelImmortalShaman extends ModHierarchicalModel<EntityImmortalShaman> implements ArmedModel {
     private final ModelPart root;
     private final ModelPart head;
@@ -66,42 +70,19 @@ public class ModelImmortalShaman extends ModHierarchicalModel<EntityImmortalSham
     @Override
     public void setupAnim(EntityImmortalShaman entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
-        //LookAt
-        lookAtAnimation(netHeadYaw, headPitch, 1.0F, this.head);
+        lookAtTarget(netHeadYaw, headPitch, 1.0F, this.head);
+        playAnimation(this, entity, EntityImmortalShaman.DIE_ANIMATION, AnimationCommon.DIE, ageInTicks);
+        playAnimation(this, entity, EntityImmortalShaman.SPELLCASTING_BOMB_ANIMATION, AnimationImmortalShaman.BOMB, ageInTicks);
+        playAnimation(this, entity, EntityImmortalShaman.SPELLCASTING_HEAL_ANIMATION, AnimationImmortalShaman.HEAL, ageInTicks);
+        playAnimation(this, entity, EntityImmortalShaman.SPELLCASTING_FR_ANIMATION, AnimationImmortalShaman.ATTACK, ageInTicks);
+        playAnimation(this, entity, EntityImmortalShaman.SPELLCASTING_SUMMON_ANIMATION, AnimationImmortalShaman.SUMMON, ageInTicks);
+        playAnimation(this, entity, EntityImmortalShaman.SPELLCASTING_WOLOLO_ANIMATION, AnimationImmortalShaman.SUMMON, ageInTicks);
+        playAnimation(this, entity, EntityImmortalShaman.AVOID_ANIMATION, AnimationImmortalShaman.AVOID, ageInTicks);
         float delta = ageInTicks - entity.tickCount;
         float frame = entity.frame + delta;
-        //Walk
-        float walkSpeed = 0.6F;
-        float walkDegree = 0.6F;
-        this.walk(this.leftLeg, walkSpeed, walkDegree * 1.2F, true, 0.0F, 0.0F, limbSwing, limbSwingAmount);
-        this.walk(this.rightLeg, walkSpeed, walkDegree * 1.2F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
-        this.walk(this.leftArm, walkSpeed, walkDegree * 1.2F, false, 0.0F, -0.05F, limbSwing, limbSwingAmount);
-        this.walk(this.rightArm, walkSpeed, walkDegree * 1.2F, true, 0.0F, -0.05F, limbSwing, limbSwingAmount);
-        //Idle
-        float speed = 0.16F;
-        float degree = 0.04F;
-        if (entity.isAlive()){
-            if (entity.isStunned()) {
-                this.setStaticRotationAngle(head, toRadians(1.5), 0, 0);
-                this.walk(head, 0.2F, 0.15F, false, 0, 0, frame, 1);
-                this.walk(root, 0.1F, 0.1F, false, 0, 0, frame, 1);
-            }else {
-                this.walk(head, speed, degree, false, 0.5F, -0.05F, frame, 1);
-                this.flap(rightArm, speed, degree * 0.5F, true, 0, 0, frame, 1);
-                this.swing(rightArm, speed, degree, true, 0, 0, frame, 1);
-                this.flap(leftArm, speed, degree * 0.5F, false, 0, 0, frame, 1);
-                this.swing(leftArm, speed, degree, false, 0, 0, frame, 1);
-            }
-        }
-        this.animate(entity.spellCastingBombAnimation, AnimationImmortalShaman.BOMB, ageInTicks);
-        this.animate(entity.spellCastingHealAnimation, AnimationImmortalShaman.HEAL, ageInTicks);
-        this.animate(entity.spellCastingFRAnimation, AnimationImmortalShaman.ATTACK, ageInTicks);
-        this.animate(entity.spellCastingSummonAnimation, AnimationImmortalShaman.SUMMON, ageInTicks);
-        this.animate(entity.spellCastingWololoAnimation, AnimationImmortalShaman.SUMMON, ageInTicks);
-        this.animate(entity.avoidAnimation, AnimationImmortalShaman.AVOID, ageInTicks);
-        this.animate(entity.dieAnimation, AnimationCommon.DIE, ageInTicks);
+        Animation animation = entity.getAnimation();
         int tick = entity.getAnimationTick();
-        if (entity.getAnimation() == entity.spellCastingHealAnimation) {
+        if (EntityImmortalShaman.SPELLCASTING_HEAL_ANIMATION == animation) {
             if (tick < 50) {
                 this.walk(head, 1.4F, 0.04F, false, 0, 0, frame, 1);
                 this.swing(head, 1.6F, 0.08F, false, 0, 0, frame, 1);
@@ -109,16 +90,36 @@ public class ModelImmortalShaman extends ModHierarchicalModel<EntityImmortalSham
                 this.walk(rightArm, 0.45F, 0.2F, false, 0, 0, frame, 1);
                 this.bob(root, 0.4F, 1.2F, false, frame, 1);
             }
-        } else if (entity.getAnimation() == entity.spellCastingFRAnimation) {
+        } else if (EntityImmortalShaman.SPELLCASTING_FR_ANIMATION == animation) {
             if (tick < 12) {
                 this.walk(root, 2.5F, 0.125F - tick * 0.01F, false, 0, 0, frame, 1);
                 this.flap(root, 1.5F, 0.1F - tick * 0.01F, false, 0, 0, frame, 1);
             }
-        } else if (entity.getAnimation() == entity.spellCastingBombAnimation) {
+        } else if (EntityImmortalShaman.SPELLCASTING_BOMB_ANIMATION == animation) {
             if (tick < 15) {
                 this.walk(head, 1.2F, 0.08F, false, 0, 0, frame, 1);
                 this.swing(head, 1.4F, 0.1F, false, 0, 0, frame, 1);
             }
+        }
+        float walkSpeed = 0.6F;
+        float walkDegree = 0.6F;
+        this.walk(this.leftLeg, walkSpeed, walkDegree * 1.2F, true, 0.0F, 0.0F, limbSwing, limbSwingAmount);
+        this.walk(this.rightLeg, walkSpeed, walkDegree * 1.2F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
+        this.walk(this.leftArm, walkSpeed, walkDegree * 1.2F, false, 0.0F, -0.05F, limbSwing, limbSwingAmount);
+        this.walk(this.rightArm, walkSpeed, walkDegree * 1.2F, true, 0.0F, -0.05F, limbSwing, limbSwingAmount);
+        float speed = 0.16F;
+        float degree = 0.04F;
+        if (entity.isAlive()) {
+            if (entity.isStunned()) {
+                this.setStaticRotationAngle(head, 30, 0, 0);
+                this.walk(head, 0.2F, 0.15F, false, 0, 0, frame, 1);
+                this.walk(root, 0.1F, 0.1F, false, 0, 0, frame, 1);
+            }
+            this.walk(head, speed, degree, false, 0.5F, -0.05F, frame, 1);
+            this.flap(rightArm, speed, degree * 0.5F, true, 0, 0, frame, 1);
+            this.swing(rightArm, speed, degree, true, 0, 0, frame, 1);
+            this.flap(leftArm, speed, degree * 0.5F, false, 0, 0, frame, 1);
+            this.swing(leftArm, speed, degree, false, 0, 0, frame, 1);
         }
     }
 

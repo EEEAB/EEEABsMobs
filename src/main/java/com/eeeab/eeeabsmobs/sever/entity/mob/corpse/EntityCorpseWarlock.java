@@ -6,19 +6,19 @@ import com.eeeab.animate.server.ai.animation.AnimationDie;
 import com.eeeab.animate.server.ai.animation.AnimationRepel;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.AnimationHandler;
-import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
-import com.eeeab.eeeabsmobs.client.particle.util.AnimData;
-import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
-import com.eeeab.eeeabsmobs.client.particle.util.RibbonComponent;
-import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
-import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
+import com.eeeab.eeeabsmobs.client.particle.lib.AdvancedParticleBase;
+import com.eeeab.eeeabsmobs.client.particle.lib.AnimData;
+import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent;
+import com.eeeab.eeeabsmobs.client.particle.lib.component.RibbonComponent;
+import com.eeeab.eeeabsmobs.client.ControlledAnimation;
+import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.KeepDistanceGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.ModLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityCrimsonCrack;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityCrimsonRay;
 import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.*;
 import com.eeeab.eeeabsmobs.sever.util.ModTagKey;
 import net.minecraft.core.BlockPos;
@@ -61,6 +61,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.fluids.FluidType;
@@ -69,31 +70,30 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttackMob {
-    public final Animation dieAnimation = Animation.create(0);
-    public final Animation attackAnimation = Animation.create(15);
-    public final Animation summonAnimation = Animation.create(30);
-    public final Animation frenzyAnimation = Animation.create(30);
-    public final Animation teleportAnimation = Animation.create(30);
-    public final Animation resetPosAnimation = Animation.create(30);
-    public final Animation vampireAnimation = Animation.create(90);
-    public final Animation robustAnimation = Animation.create(100);
-    public final Animation babbleAnimation = Animation.create(666);
-    public final Animation tearSpaceAnimation = Animation.create(30);
-    private final Animation[] animations = new Animation[]{
-            dieAnimation,
-            attackAnimation,
-            summonAnimation,
-            frenzyAnimation,
-            teleportAnimation,
-            resetPosAnimation,
-            vampireAnimation,
-            robustAnimation,
-            babbleAnimation,
-            tearSpaceAnimation,
+    public static final Animation DIE_ANIMATION = Animation.create(0);
+    public static final Animation ATTACK_ANIMATION = Animation.create(15);
+    public static final Animation SUMMON_ANIMATION = Animation.create(30);
+    public static final Animation FRENZY_ANIMATION = Animation.create(30);
+    public static final Animation TELEPORT_ANIMATION = Animation.create(30);
+    public static final Animation RESET_POS_ANIMATION = Animation.create(30);
+    public static final Animation VAMPIRE_ANIMATION = Animation.create(90);
+    public static final Animation ROBUST_ANIMATION = Animation.create(100);
+    public static final Animation BABBLE_ANIMATION = Animation.create(666);
+    public static final Animation TEARSPACE_ANIMATION = Animation.create(30);
+    private static final Animation[] ANIMATIONS = new Animation[]{
+            DIE_ANIMATION,
+            ATTACK_ANIMATION,
+            SUMMON_ANIMATION,
+            FRENZY_ANIMATION,
+            TELEPORT_ANIMATION,
+            RESET_POS_ANIMATION,
+            VAMPIRE_ANIMATION,
+            ROBUST_ANIMATION,
+            BABBLE_ANIMATION,
+            TEARSPACE_ANIMATION,
     };
     private static final int MAX_HURT_COUNT = 3;
     private static final int[] SPAWN_COUNT = new int[]{2, 4, 6};
@@ -128,10 +128,6 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
         return MobLevel.ELITE;
     }
 
-    @Override
-    public float getStepHeight() {
-        return 1F;
-    }
 
     @Override//被方块阻塞
     public void makeStuckInBlock(BlockState state, Vec3 motionMultiplier) {
@@ -147,11 +143,6 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
 
     @Override
     public boolean canDrownInFluidType(FluidType type) {
-        return false;
-    }
-
-    @Override//是否免疫摔伤
-    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource damageSource) {
         return false;
     }
 
@@ -183,7 +174,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
     @Override
     protected void onAnimationFinish(Animation animation) {
         if (!this.level().isClientSide) {
-            if (animation == this.teleportAnimation) {
+            if (animation == TELEPORT_ANIMATION) {
                 this.addEffect(new MobEffectInstance(MobEffects.GLOWING, 50, 0, false, false));
             }
         }
@@ -196,10 +187,15 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
         this.targetSelector.addGoal(1, (new HurtByTargetGoal(this)).setAlertOthers());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true).setUnseenMemoryTicks(300));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Villager.class, false).setUnseenMemoryTicks(300));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this) {
+            @Override
+            public boolean canContinueToUse() {
+                return super.canContinueToUse() && !EntityCorpseWarlock.this.isStunned();
+            }
+        });
         this.goalSelector.addGoal(1, new AnimationDie<>(this));
-        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> summonAnimation, true));
-        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> teleportAnimation, true) {
+        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, SUMMON_ANIMATION, true));
+        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, TELEPORT_ANIMATION, true) {
             @Override
             public void start() {
                 super.start();
@@ -210,27 +206,27 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
                 }
             }
         });
-        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> resetPosAnimation, false) {
+        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, RESET_POS_ANIMATION, false) {
             @Override
             public void start() {
                 super.start();
                 this.entity.tryTeleportToRestPosition();
             }
         });
-        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> frenzyAnimation, true));
-        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> tearSpaceAnimation, true));
-        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> vampireAnimation, false));
-        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> babbleAnimation, false));
-        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, () -> robustAnimation, false));
-        this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> attackAnimation, 4F, 6, 2F, 2F, false));
+        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, FRENZY_ANIMATION, true));
+        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, TEARSPACE_ANIMATION, true));
+        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, VAMPIRE_ANIMATION, false));
+        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, BABBLE_ANIMATION, false));
+        this.goalSelector.addGoal(1, new WarlockAnimationSimpleAI(this, ROBUST_ANIMATION, false));
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, ATTACK_ANIMATION, 3F, 6, 2F, 2F, false));
         this.goalSelector.addGoal(2, new WarlockTeleportGoal(this));
         this.goalSelector.addGoal(3, new WarlockSummonGoal(this));
         this.goalSelector.addGoal(3, new WarlockTearApartGoal(this));
         this.goalSelector.addGoal(4, new WarlockReinforceGoal(this));
         this.goalSelector.addGoal(5, new WarlockRobustGoal(this));
         this.goalSelector.addGoal(6, new KeepDistanceGoal<>(this, 0.96D, 18F, 2F));
-        this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(8, new EMLookAtGoal(this, Mob.class, 6.0F));
+        this.goalSelector.addGoal(7, new ModLookAtGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new ModLookAtGoal(this, Mob.class, 6.0F));
     }
 
     @Override
@@ -240,30 +236,30 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
         AnimationHandler.INSTANCE.updateAnimations(this);
         if (!this.level().isClientSide && !this.isNoAi() && !this.isStunned()) {
             if (this.isNoAnimation() && this.getTarget() == null && this.tickCount % 2 == 0 && this.random.nextInt(400) == 0) {
-                this.playAnimation(babbleAnimation);
+                this.playAnimation(BABBLE_ANIMATION);
             }
             if (this.isNoAnimation() && this.getTarget() == null && this.tickCount % 10 == 0 && this.isNoAtRestPos() && this.nextDPTick <= 0) {
                 this.nextDPTick = 1200;
-                this.playAnimation(resetPosAnimation);
+                this.playAnimation(RESET_POS_ANIMATION);
             }
-            if (this.isNoAnimation() && this.hurtCount >= MAX_HURT_COUNT && this.getTarget() != null && this.tickCount % 2 == 0 && (!this.level().getNearbyEntities(LivingEntity.class, IGNORE_ALLIES, this, this.getBoundingBox().inflate(2)).isEmpty() || targetDistance <= 5.0F && ModEntityUtils.checkTargetComingCloser(this, this.getTarget()) || this.targetDistance < 4.0F)) {
+            if (this.isNoAnimation() && this.hurtCount >= MAX_HURT_COUNT && this.getTarget() != null && this.tickCount % 2 == 0 && (!this.level().getNearbyEntities(LivingEntity.class, IGNORE_ALLIES, this, this.getBoundingBox().inflate(2)).isEmpty() || targetDistance <= 4.0F && ModEntityUtils.checkTargetComingCloser(this, this.getTarget()) || this.targetDistance < 3.5F)) {
                 this.hurtCount = 0;
-                this.playAnimation(attackAnimation);
+                this.playAnimation(ATTACK_ANIMATION);
             }
             if (this.isNoAnimation() && this.tickCount % 40 == 0 && (this.getTarget() != null || this.getHealthPercentage() != 1) && this.nextHealTick <= 0) {
                 this.entities = this.level().getNearbyEntities(EntityCorpse.class, TargetingConditions.forNonCombat().selector(e -> this.getTarget() == null || (e instanceof EntityCorpse c && (!c.hasEffect(EffectInit.FRENZY_EFFECT.get()) || this.getHealthPercentage() < 0.5F) && !c.valuable)), this, this.getBoundingBox().inflate(32, 16, 32))
                         .stream()
-                        .filter(e -> this == e.getOwner())
+                        .filter(e -> this == e.getOwner() || e instanceof EntityCorpseToPlayer)
                         .limit(10)
                         .collect(Collectors.toList());
                 if (!this.entities.isEmpty()) {
                     this.resetHealTick();
-                    this.playAnimation(vampireAnimation);
+                    this.playAnimation(VAMPIRE_ANIMATION);
                 }
             }
         }
         Animation animation = this.getAnimation();
-        if (animation == vampireAnimation) {
+        if (animation == VAMPIRE_ANIMATION) {
             int tick = this.getAnimationTick();
             if (!this.level().isClientSide) {
                 for (EntityCorpse corps : this.entities) {
@@ -297,9 +293,9 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
                     float offsetX = (float) (Math.cos(Math.toRadians(yRot + 90)) * 1.5F);
                     float offsetZ = (float) (Math.sin(Math.toRadians(yRot + 90)) * 1.5F);
                     this.myPos[0] = new Vec3(vec3.x + offsetX, vec3.y + getBbHeight() * 0.6, vec3.z + offsetZ);
-                    AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.CRIMSON.get(), this.getX(), this.getY(), this.getZ(), 0, 0, 0, true, 0, 0, 0, 0, 10F, 1, 1, 1, 1, 1, 30, true, false, false, new ParticleComponent[]{
+                    AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.CRIMSON.get(), this.getX(), this.getY(), this.getZ(), 0, 0, 0, true, 0, 0, 0, 0, 40F, 1, 1, 1, 1, 1, 30, true, false, false, new ParticleComponent[]{
                             new ParticleComponent.PinLocation(this.myPos),
-                            new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, AnimData.oscillate(0.25F, -0.24F, 12), true),
+                            new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, AnimData.oscillate(0F, 30F, 12), false),
                             new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.POS_Y, AnimData.startAndEnd(0, 8F), true),
                             new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.POS_X, AnimData.startAndEnd(0F, -offsetX), true),
                             new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.POS_Z, AnimData.startAndEnd(0F, -offsetZ), true),
@@ -315,7 +311,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
                     this.level().playLocalSound(this.myPos[1].x, this.myPos[1].y, this.myPos[1].z, SoundInit.CORPSE_WARLOCK_TEAR.get(), this.getSoundSource(), this.getSoundVolume(), this.getVoicePitch(), false);
                 }
             }
-        } else if (animation == teleportAnimation || animation == resetPosAnimation) {
+        } else if (animation == TELEPORT_ANIMATION || animation == RESET_POS_ANIMATION) {
             int tick = this.getAnimationTick();
             if (tick == 1) {
                 this.setInvisible(true);
@@ -325,17 +321,17 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
             } else if (tick >= 20) {
                 this.setInvisible(this.hasEffect(MobEffects.INVISIBILITY));
             }
-        } else if (animation == babbleAnimation) {
+        } else if (animation == BABBLE_ANIMATION) {
             if (this.getTarget() != null && this.distanceTo(this.getTarget()) < 12) {
-                this.playAnimation(this.teleportAnimation);//中断施法
+                this.playAnimation(TELEPORT_ANIMATION);//中断施法
             }
             this.doCrimsonEyeEffect(2.5F);
-        } else if (animation == attackAnimation) {
+        } else if (animation == ATTACK_ANIMATION) {
             this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
             if (this.level().isClientSide && this.getAnimationTick() == 5) {
-                ModParticleUtils.randomAnnularParticleOutburst(this.level(), 50, new ParticleOptions[]{ParticleTypes.SMOKE}, this.getX(), this.getY(), this.getZ(), 0.4F);
+                ModParticleUtils.annularParticleOutburst(this.level(), 30, ParticleTypes.SMOKE, this.getX(), this.getY(), this.getZ(), 0.2, 0);
             }
-        } else if (animation == robustAnimation) {
+        } else if (animation == ROBUST_ANIMATION) {
             int tick = this.getAnimationTick();
             if (tick > 35) {
                 this.doCrimsonEyeEffect(-1F);
@@ -411,12 +407,12 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
             return false;
         }
         Animation animation = this.getAnimation();
-        if (animation == teleportAnimation) {
+        if (animation == TELEPORT_ANIMATION) {
             return false;
-        } else if (animation == vampireAnimation || animation == robustAnimation) {
+        } else if (animation == VAMPIRE_ANIMATION || animation == ROBUST_ANIMATION) {
             if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) damage *= 0.2F;
         }
-        if (entity != null && animation == babbleAnimation) this.playAnimation(this.teleportAnimation);
+        if (entity != null && animation == BABBLE_ANIMATION) this.playAnimation(TELEPORT_ANIMATION);
         boolean flag = super.hurt(source, damage);
         if (flag && entity != null && this.random.nextFloat() < 0.6F) this.hurtCount++;
         return flag;
@@ -519,11 +515,11 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
         EntityCorpse entity = entityType.create(this.level());
         if (entity != null && vec3 != null) {
             if (!this.level().isClientSide) {
-                entity.setInitSpawn();
                 entity.finalizeSpawn((ServerLevel) this.level(), this.level().getCurrentDifficultyAt(BlockPos.containing(vec3.x, vec3.y, vec3.z)), MobSpawnType.MOB_SUMMONED, null, null);
                 entity.setOwner(this);
                 entity.moveTo(vec3);
                 this.level().addFreshEntity(entity);
+                entity.afterSpawn();
             }
         }
     }
@@ -534,7 +530,19 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
     public TargetType assessTargetAI() {
         LivingEntity target = this.getTarget();
         if (target != null) {
-            if (target instanceof Player) return TargetType.KNOTTY;
+            if (target instanceof Player) {
+                switch (this.level().getDifficulty()) {
+                    case HARD -> {
+                        return TargetType.HARD;
+                    }
+                    case NORMAL -> {
+                        return TargetType.KNOTTY;
+                    }
+                    default -> {
+                        return TargetType.COMMON;
+                    }
+                }
+            }
             AttributeInstance attribute = target.getAttribute(Attributes.ATTACK_DAMAGE);
             AttributeInstance attribute1 = target.getAttribute(Attributes.ARMOR);
             float health = target.getMaxHealth();
@@ -599,7 +607,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
         super.dropCustomDeathLoot(source, pLooting, pRecentlyHit);
         if (source.getEntity() != null || this.getTarget() != null) {
             ItemEntity itementity = this.spawnAtLocation(ItemInit.HEART_OF_PAGAN.get());
-            ItemEntity itementity2 = this.spawnAtLocation(ItemInit.SOUL_SUMMONING_NECKLACE.get());
+            ItemEntity itementity2 = this.spawnAtLocation(ItemInit.SOUL_SUMMON_NECKLACE.get());
             if (itementity != null && itementity2 != null) {
                 itementity.setExtendedLifetime();
                 itementity.setGlowingTag(true);
@@ -625,7 +633,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
 
     @Override
     public Animation getDeathAnimation() {
-        return this.dieAnimation;
+        return DIE_ANIMATION;
     }
 
     @Override
@@ -645,7 +653,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
     @Override
     public boolean isGlow() {
         Animation animation = this.getAnimation();
-        return this.isAlive() && (animation == vampireAnimation || animation == attackAnimation || animation == tearSpaceAnimation || animation == robustAnimation || animation == babbleAnimation);
+        return this.isAlive() && (animation == VAMPIRE_ANIMATION || animation == ATTACK_ANIMATION || animation == TEARSPACE_ANIMATION || animation == ROBUST_ANIMATION || animation == BABBLE_ANIMATION);
     }
 
     public boolean isHeal() {
@@ -674,12 +682,17 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
     }
 
     public static AttributeSupplier.Builder setAttributes() {
-        return createMobAttributes().add(Attributes.MAX_HEALTH, 150.0D).add(Attributes.MOVEMENT_SPEED, 0.32D).add(Attributes.FOLLOW_RANGE, 36.0D).add(Attributes.ATTACK_DAMAGE, 5.0D).add(Attributes.KNOCKBACK_RESISTANCE, 1D);
+        return createMobAttributes().add(Attributes.MAX_HEALTH, 150.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.32D)
+                .add(Attributes.FOLLOW_RANGE, 36.0D)
+                .add(Attributes.ATTACK_DAMAGE, 5.0D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 1D)
+                .add(ForgeMod.STEP_HEIGHT_ADDITION.get(),1D);
     }
 
     @Override
     public Animation[] getAnimations() {
-        return animations;
+        return ANIMATIONS;
     }
 
     public enum TargetType {
@@ -699,8 +712,8 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
     static class WarlockAnimationSimpleAI extends AnimationSimpleAI<EntityCorpseWarlock> {
         private final boolean lookAtTarget;
 
-        public WarlockAnimationSimpleAI(EntityCorpseWarlock entity, Supplier<Animation> animationSupplier, boolean lookAtTarget) {
-            super(entity, animationSupplier);
+        public WarlockAnimationSimpleAI(EntityCorpseWarlock entity, Animation animation, boolean lookAtTarget) {
+            super(entity, animation);
             this.lookAtTarget = lookAtTarget;
         }
 
@@ -773,13 +786,13 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
         }
 
         @Override
-        protected Animation getEMAnimation() {
-            return this.spellCaster.summonAnimation;
+        protected Animation getEntityAnimation() {
+            return SUMMON_ANIMATION;
         }
     }
 
     static class WarlockReinforceGoal extends AnimationSpellAI<EntityCorpseWarlock> {
-        private final TargetingConditions reinforceConditions = TargetingConditions.forCombat().range(16).selector(e -> e instanceof EntityCorpse c && c.valuable);
+        private final TargetingConditions reinforceConditions = TargetingConditions.forCombat().range(32);
         private List<EntityCorpse> list;
 
         public WarlockReinforceGoal(EntityCorpseWarlock spellCaster) {
@@ -799,11 +812,18 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
         @Override
         protected void inSpellCasting() {
             if (this.list != null && !this.list.isEmpty()) {
-                this.list.stream().filter(c -> c.isAlive() && this.spellCaster == c.getOwner() && !c.hasEffect(EffectInit.FRENZY_EFFECT.get())).forEach(c -> {
-                    int type = this.spellCaster.assessTargetAI().type;
-                    c.addEffect(new MobEffectInstance(EffectInit.FRENZY_EFFECT.get(), 200 + 100 * type, type));
-                    c.valuable = false;
-                });
+                this.list.stream().filter(e -> e.isAlive() && (this.spellCaster == e.getOwner() || e instanceof EntityCorpseToPlayer) && !e.hasEffect(EffectInit.FRENZY_EFFECT.get()))
+                        .forEach(corpse -> {
+                            if (corpse instanceof EntityCorpseToPlayer corpseToPlayer) {
+                                corpseToPlayer.brainwashing();
+                            }
+                            if (corpse.valuable) {
+                                int type = this.spellCaster.assessTargetAI().type;
+                                corpse.addEffect(new MobEffectInstance(EffectInit.FRENZY_EFFECT.get(), 200 + 100 * type, type));
+                                corpse.valuable = false;
+                            }
+                            corpse.setTarget(this.spellCaster.getTarget());
+                        });
             }
         }
 
@@ -819,8 +839,8 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
         }
 
         @Override
-        protected Animation getEMAnimation() {
-            return this.spellCaster.frenzyAnimation;
+        protected Animation getEntityAnimation() {
+            return FRENZY_ANIMATION;
         }
     }
 
@@ -857,8 +877,8 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
         }
 
         @Override
-        protected Animation getEMAnimation() {
-            return this.spellCaster.teleportAnimation;
+        protected Animation getEntityAnimation() {
+            return TELEPORT_ANIMATION;
         }
     }
 
@@ -937,8 +957,8 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
         }
 
         @Override
-        protected Animation getEMAnimation() {
-            return this.spellCaster.tearSpaceAnimation;
+        protected Animation getEntityAnimation() {
+            return TEARSPACE_ANIMATION;
         }
     }
 
@@ -966,7 +986,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
 
         @Override
         public boolean canContinueToUse() {
-            return this.spellCaster.getAnimation() == this.spellCaster.robustAnimation;
+            return this.spellCaster.getAnimation() == ROBUST_ANIMATION;
         }
 
         @Override
@@ -1020,8 +1040,8 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
         }
 
         @Override
-        protected Animation getEMAnimation() {
-            return this.spellCaster.robustAnimation;
+        protected Animation getEntityAnimation() {
+            return ROBUST_ANIMATION;
         }
     }
 }

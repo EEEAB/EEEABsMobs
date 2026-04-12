@@ -1,13 +1,18 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
 import com.eeeab.animate.client.model.ModHierarchicalModel;
+import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationRelicObserver;
 import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityRelicObserver;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.util.Mth;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class ModelRelicObserver extends ModHierarchicalModel<EntityRelicObserver> {
     private final ModelPart root;
     private final ModelPart core;
@@ -69,13 +74,28 @@ public class ModelRelicObserver extends ModHierarchicalModel<EntityRelicObserver
     @Override
     public void setupAnim(EntityRelicObserver entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
-        //LookAt
-        lookAtAnimation(netHeadYaw, headPitch, 1F, this.core);
+        lookAtTarget(netHeadYaw, headPitch, 1F, this.core);
+        playAnimation(this, entity, EntityRelicObserver.DIE_ANIMATION, AnimationRelicObserver.DEACTIVATE, ageInTicks);
+        playAnimation(this, entity, EntityRelicObserver.ACTIVE_ANIMATION, AnimationRelicObserver.ACTIVE, ageInTicks);
+        playAnimation(this, entity, EntityRelicObserver.DEACTIVATE_ANIMATION, AnimationRelicObserver.DEACTIVATE, ageInTicks);
+        playAnimation(this, entity, EntityRelicObserver.LASER_ANIMATION, AnimationRelicObserver.LASER, ageInTicks);
+        playAnimation(this, entity, EntityRelicObserver.STORM_ANIMATION, AnimationRelicObserver.STORM, ageInTicks);
+        Animation animation = entity.getAnimation();
+        float progress = Mth.clamp(entity.hurtTime / 10F, 0F, 1F);
+        if (progress > 0) {
+            float x = (float) (Math.random() - 0.5) * 3F * progress;
+            this.upper.x += x;
+            this.lower.x += x;
+            float y = (float) (Math.random() - 0.5) * 3F * progress;
+            this.upper.y += y;
+            this.lower.y += y;
+            float z = (float) (Math.random() - 0.5) * 3F * progress;
+            this.upper.z += z;
+            this.lower.z += z;
+        }
         float delta = ageInTicks - entity.tickCount;
         float frame = entity.frame + delta;
-        //Idle
-        Animation animation = entity.getAnimation();
-        if (entity.isActive() && (entity.isNoAnimation() || animation == entity.hurtAnimation)) {
+        if (entity.isActive() && (AnimatedEntity.NO_ANIMATION == animation || EntityRelicObserver.HURT_ANIMATION == animation)) {
             setStaticRotationPoint(root, 0F, -12F, 0F);
             setStaticRotationPoint(block1, 2F, -2F, -2F);
             setStaticRotationPoint(block6, -2F, 2F, 2F);
@@ -86,7 +106,7 @@ public class ModelRelicObserver extends ModHierarchicalModel<EntityRelicObserver
             setStaticRotationPoint(block4, 2F, -2F, 2F);
             setStaticRotationPoint(block8, -2F, 2F, -2F);
         }
-        if (entity.isActive() && animation != entity.activeAnimation && animation != entity.deactivateAnimation && animation != entity.getDeathAnimation()) {
+        if (entity.isActive() && EntityRelicObserver.ACTIVE_ANIMATION != animation && EntityRelicObserver.DEACTIVATE_ANIMATION != animation && entity.getDeathAnimation() != animation) {
             float baseSpeed = 0.45F;
             float baseDegree = 0.6F;
             float[] phaseOffsets = {0F, 0.2F, 0.4F, 0.6F, 0.8F, 1.0F, 1.2F, 1.4F};
@@ -99,27 +119,11 @@ public class ModelRelicObserver extends ModHierarchicalModel<EntityRelicObserver
             this.waveBob(block7, baseSpeed, baseDegree * 0.7F, phaseOffsets[5], frame);
             this.waveBob(block4, baseSpeed, baseDegree * 0.6F, phaseOffsets[6], frame);
             this.waveBob(block8, baseSpeed, baseDegree * 0.6F, phaseOffsets[7], frame);
-            float progress = entity.rotControlled.getAnimationFraction(delta);
+            progress = entity.rotControlled.getAnimationFraction(delta);
             float timeBasedRotation = (ageInTicks * 15F) % 360F;
             this.upper.yRot = (-timeBasedRotation * progress) * ((float) Math.PI / 180F);
             this.lower.yRot = (-timeBasedRotation * progress) * ((float) Math.PI / 180F);
         }
-        if (animation == entity.hurtAnimation) {
-            float x = (float) (Math.random() - 0.5) * 1.5F;
-            this.upper.x += x;
-            this.lower.x += x;
-            float y = (float) (Math.random() - 0.5) * 1.5F;
-            this.upper.y += y;
-            this.lower.y += y;
-            float z = (float) (Math.random() - 0.5) * 1.5F;
-            this.upper.z += z;
-            this.lower.z += z;
-        }
-        this.animate(entity.dieAnimation, AnimationRelicObserver.DEACTIVATE, ageInTicks);
-        this.animate(entity.activeAnimation, AnimationRelicObserver.ACTIVE, ageInTicks);
-        this.animate(entity.deactivateAnimation, AnimationRelicObserver.DEACTIVATE, ageInTicks);
-        this.animate(entity.shootLaserAnimation, AnimationRelicObserver.SHOOT_LASER, ageInTicks);
-        this.animate(entity.stormAnimation, AnimationRelicObserver.STORM, ageInTicks);
     }
 
     private void waveBob(ModelPart box, float speed, float degree, float phaseOffset, float frame) {

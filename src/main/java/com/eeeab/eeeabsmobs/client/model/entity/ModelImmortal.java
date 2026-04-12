@@ -1,8 +1,8 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
 import com.eeeab.animate.client.model.ModHierarchicalModel;
-import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.animation.AnimatedEntity;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationImmortal;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationImmortal2;
 import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalBoss;
@@ -11,7 +11,10 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class ModelImmortal extends ModHierarchicalModel<EntityImmortalBoss> {
     private final ModelPart root;
     private final ModelPart upper;
@@ -187,39 +190,36 @@ public class ModelImmortal extends ModHierarchicalModel<EntityImmortalBoss> {
     @Override
     public void setupAnim(EntityImmortalBoss entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
-        //LookAt
-        lookAtAnimation(netHeadYaw, headPitch, 1.65F, this.head);
-        //Animation
-        this.animate(entity.dieAnimation, AnimationImmortal.DIE, ageInTicks);
-        this.animate(entity.spawnAnimation, AnimationImmortal.SPAWN, ageInTicks);
-        this.animate(entity.punchLeftAnimation, AnimationImmortal.PUNCH_LEFT_1, ageInTicks);
-        this.animate(entity.hardPunchLeftAnimation, AnimationImmortal.PUNCH_LEFT_2, ageInTicks);
-        this.animate(entity.punchRightAnimation, AnimationImmortal.PUNCH_RIGHT_1, ageInTicks);
-        this.animate(entity.hardPunchRightAnimation, AnimationImmortal.PUNCH_RIGHT_2, ageInTicks);
-        this.animate(entity.smashGround1Animation, AnimationImmortal.SMASH_GROUND_1, ageInTicks);
-        this.animate(entity.smashGround2Animation, AnimationImmortal.SMASH_GROUND_2, ageInTicks);
-        this.animate(entity.smashGround3Animation, AnimationImmortal.SMASH_GROUND_3, ageInTicks);
-        this.animate(entity.pouncePreAnimation, AnimationImmortal.GRAPPLE_PRE, ageInTicks);
-        this.animate(entity.pounceHoldAnimation, AnimationImmortal.GRAPPLE_HOLD, ageInTicks);
-        this.animate(entity.pounceEndAnimation, AnimationImmortal.GRAPPLE_END, ageInTicks);
-        this.animate(entity.pounceSmashAnimation, AnimationImmortal.GRAPPLE_SMASH, ageInTicks, 1.0F, 1.2F);
-        this.animate(entity.pouncePickAnimation, AnimationImmortal.GRAPPLE_PICK, ageInTicks);
-        this.animate(entity.attractAnimation, AnimationImmortal.ATTRACT, ageInTicks);
-        this.animate(entity.shoryukenAnimation, AnimationImmortal.SHORYUKEN, ageInTicks);
-        this.animate(entity.teleportAnimation, AnimationImmortal2.MAGIC_TELEPORT, ageInTicks);
-        this.animate(entity.trackingShurikenAnimation, AnimationImmortal2.MAGIC_SHURIKEN, ageInTicks);
-        this.animate(entity.unleashEnergyAnimation, AnimationImmortal2.MAGIC_UNLEASH_ENERGY, ageInTicks);
-        this.animate(entity.armBlockAnimation, AnimationImmortal2.ARM_BLOCK, ageInTicks);
-        this.animate(entity.armBlockHoldAnimation, AnimationImmortal2.ARM_BLOCK_HOLD, ageInTicks);
-        this.animate(entity.armBlockEndAnimation, AnimationImmortal2.ARM_BLOCK_END, ageInTicks);
-        this.animate(entity.armBlockCounterattackAnimation, AnimationImmortal2.ARM_BLOCK_COUNTERATTACK, ageInTicks);
-        this.animate(entity.hurt1Animation, AnimationImmortal2.HURT_1, ageInTicks);
-        this.animate(entity.stunAnimation, AnimationImmortal2.STUN, ageInTicks);
-        //Deactivate pose
+        lookAtTarget(netHeadYaw, headPitch, 1.65F, this.head);
+        playAnimation(this, entity, EntityImmortalBoss.DIE_ANIMATION, AnimationImmortal.DIE, ageInTicks);
+        playAnimation(this, entity, EntityImmortalBoss.SPAWN_ANIMATION, AnimationImmortal.SPAWN, ageInTicks);
+        playAnimation(this, entity, EntityImmortalBoss.SMASH_GROUND_ANIMATION1, AnimationImmortal.SMASH_GROUND_1, ageInTicks);
+        playAnimation(this, entity, EntityImmortalBoss.SMASH_GROUND_ANIMATION2, AnimationImmortal.SMASH_GROUND_2, ageInTicks);
+        playAnimation(this, entity, EntityImmortalBoss.SMASH_GROUND_ANIMATION3, AnimationImmortal.SMASH_GROUND_3, ageInTicks);
+        playAnimation(this, entity, EntityImmortalBoss.POUNCE_PRE_ANIMATION, AnimationImmortal.GRAPPLE_PRE, ageInTicks);
+        playAnimation(this, entity, EntityImmortalBoss.POUNCE_HOLD_ANIMATION, AnimationImmortal.GRAPPLE_HOLD, ageInTicks);
+        playAnimation(this, entity, EntityImmortalBoss.POUNCE_END_ANIMATION, AnimationImmortal.GRAPPLE_END, ageInTicks);
+        playAnimation(this, entity, EntityImmortalBoss.POUNCE_SMASH_ANIMATION, AnimationImmortal.GRAPPLE_SMASH, ageInTicks);
+        playAnimation(this, entity, EntityImmortalBoss.POUNCE_PICK_ANIMATION, AnimationImmortal.GRAPPLE_PICK, ageInTicks);
+        playAnimation(this, entity, EntityImmortalBoss.UNLEASH_ENERGY_ANIMATION, AnimationImmortal2.MAGIC_UNLEASH_ENERGY, ageInTicks);
+        playAnimation(this, entity, EntityImmortalBoss.ARMBLOCK_ANIMATION, AnimationImmortal2.ARM_BLOCK_START, ageInTicks);
+        playAnimation(this, entity, EntityImmortalBoss.ARMBLOCK_HOLD_ANIMATION, AnimationImmortal2.ARM_BLOCK_KEEP, ageInTicks);
+        playAnimation(this, entity, EntityImmortalBoss.ARMBLOCK_END_ANIMATION, AnimationImmortal2.ARM_BLOCK_END, ageInTicks);
+        playAnimation(this, entity, EntityImmortalBoss.STUN_ANIMATION, AnimationImmortal2.STUN, ageInTicks);
+        playOverlapAnimation(this, entity, EntityImmortalBoss.ATTRACT_ANIMATION, AnimationImmortal.ATTRACT, ageInTicks);
+        playOverlapAnimation(this, entity, EntityImmortalBoss.HURT_ANIMATION1, AnimationImmortal2.HURT_1, ageInTicks);
+        playOverlapAnimation(this, entity, EntityImmortalBoss.SHORYUKEN_ANIMATION, AnimationImmortal.SHORYUKEN, ageInTicks);
+        playOverlapAnimation(this, entity, EntityImmortalBoss.PUNCH_LEFT_ANIMATION, AnimationImmortal.PUNCH_LEFT_1, ageInTicks);
+        playOverlapAnimation(this, entity, EntityImmortalBoss.HARDPUNCH_LEFT_ANIMATION, AnimationImmortal.PUNCH_LEFT_2, ageInTicks);
+        playOverlapAnimation(this, entity, EntityImmortalBoss.PUNCH_RIGHT_ANIMATION, AnimationImmortal.PUNCH_RIGHT_1, ageInTicks);
+        playOverlapAnimation(this, entity, EntityImmortalBoss.HARDPUNCH_RIGHT_ANIMATION, AnimationImmortal.PUNCH_RIGHT_2, ageInTicks);
+        playOverlapAnimation(this, entity, EntityImmortalBoss.TELEPORT_ANIMATION, AnimationImmortal2.MAGIC_TELEPORT, ageInTicks);
+        playOverlapAnimation(this, entity, EntityImmortalBoss.TRACKING_SHURIKEN_ANIMATION, AnimationImmortal2.MAGIC_SHURIKEN, ageInTicks);
+        playOverlapAnimation(this, entity, EntityImmortalBoss.ARMBLOCK_COUNTERATTACK_ANIMATION, AnimationImmortal2.ARM_BLOCK_COUNTERATTACK, ageInTicks);
         float delta = ageInTicks - entity.tickCount;
         float frame = entity.frame + delta;
         Animation animation = entity.getAnimation();
-        if (animation == AnimatedEntity.NO_ANIMATION && !entity.isActive()) {
+        if (AnimatedEntity.NO_ANIMATION == animation && !entity.isActive()) {
             core.xScale = 0F;
             core.yScale = 0F;
             core.zScale = 0F;
@@ -239,10 +239,8 @@ public class ModelImmortal extends ModHierarchicalModel<EntityImmortalBoss> {
             setStaticRotationAngle(lower, -5F, 0F, 0F);
         }
         if (entity.isActive() && !entity.isDeadOrDying()) {
-            //Walk
             boolean inBlocking = entity.inBlocking();
             this.animateWalk(AnimationImmortal.WALK, limbSwing, limbSwingAmount, inBlocking ? 1F : 0.5F, inBlocking ? -0.5F : 0.5F);
-            //Idle
             float speed = 0.1F;
             float degree = 1F;
             this.bob(root, speed, degree + 0.2F, false, frame, 1);
@@ -262,7 +260,7 @@ public class ModelImmortal extends ModHierarchicalModel<EntityImmortalBoss> {
             }
             this.chainSwing(spine, speed + 0.1F, degree, 3, limbSwing, limbSwingAmount);
             this.chainSwing(spine, speed, degree * 0.25F, 1.5, frame, 1);
-            float baseSpeed = animation == entity.unleashEnergyAnimation ? 0.03F : 0.015F;
+            float baseSpeed = animation == EntityImmortalBoss.UNLEASH_ENERGY_ANIMATION ? 0.03F : 0.015F;
             autorotation(core, frame, baseSpeed, true);
             autorotation(outCore, frame, baseSpeed, false);
             float fraction = entity.coreControlled.getAnimationFraction(ageInTicks);
@@ -272,14 +270,13 @@ public class ModelImmortal extends ModHierarchicalModel<EntityImmortalBoss> {
                 this.core.z += (float) (Math.random() - 0.5) * fraction;
             }
         }
-        //Animation effect
         int tick = entity.getAnimationTick();
-        if (animation == entity.attractAnimation && tick < 37) {
+        if (animation == EntityImmortalBoss.ATTRACT_ANIMATION && tick < 37) {
             float factor = ModMathUtils.getTickFactor(tick, 37, false);
             this.miniRightArm.x += (float) (Math.random() - 0.5) * 1.5F * factor;
             this.miniRightArm.y += (float) (Math.random() - 0.5) * 1.5F * factor;
             this.miniRightArm.z += (float) (Math.random() - 0.5) * 1.5F * factor;
-        } else if (animation == entity.unleashEnergyAnimation) {
+        } else if (animation == EntityImmortalBoss.UNLEASH_ENERGY_ANIMATION) {
             if (tick > 30 && tick < 80) {
                 float scale = (float) (Math.random() * 0.5F);
                 this.core.xScale += scale;

@@ -1,9 +1,9 @@
 package com.eeeab.eeeabsmobs.sever.entity.effect;
 
-import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
-import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
-import com.eeeab.eeeabsmobs.client.particle.util.AnimData;
-import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.client.particle.lib.AdvancedParticleBase;
+import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent;
+import com.eeeab.eeeabsmobs.client.particle.lib.AnimData;
+import com.eeeab.eeeabsmobs.client.ControlledAnimation;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.mob.IMob;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
@@ -33,6 +33,7 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
 
     public EntityCrimsonCrack(EntityType<?> type, Level level) {
         super(type, level);
+        this.noCulling = true;
         if (this.level().isClientSide) {
             myPos = new Vec3[]{new Vec3(0, 0, 0)};
         }
@@ -43,7 +44,7 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
     public EntityCrimsonCrack(Level level, LivingEntity caster, Vec3 pos) {
         this(EntityInit.CRIMSON_CRACK.get(), level);
         this.setPos(pos);
-        this.caster = caster;
+        this.setOwner(caster);
     }
 
     @Override
@@ -79,15 +80,16 @@ public class EntityCrimsonCrack extends EntityMagicEffects {
                 } else {
                     if (!this.level().isClientSide) {
                         for (LivingEntity target : this.getNearByEntities(LivingEntity.class, 5, 5, 5, 5)) {
-                            if (target == this.caster) continue;
+                            if (target == this.getOwner()) continue;
                             target.setDeltaMovement(target.getDeltaMovement().add(this.position().subtract(target.position()).normalize().scale(0.1F)));
                             if (this.distanceTo(target) <= ATTACK_RANGE) {
                                 float finalDamage = this.getDamage();
-                                if (this.caster instanceof IMob mob) finalDamage += mob.getDamageAmountByTargetHealthPct(target);
-                                boolean flag = target.hurt(this.damageSources().indirectMagic(this, caster), finalDamage);
+                                LivingEntity owner = this.getOwner();
+                                if (owner instanceof IMob mob) finalDamage += mob.getDamageAmountByTargetHealthPct(target);
+                                boolean flag = target.hurt(this.damageSources().indirectMagic(this, owner), finalDamage);
                                 if (flag && target.isAlive()) {
-                                    ModEntityUtils.addEffectStackingAmplifier(null, target, EffectInit.ARMOR_LOWER_EFFECT.get(), 300, 5, true, true, true, true, false);
-                                    this.doEnchantDamageEffects(this.caster, target);
+                                    ModEntityUtils.addEffectStackingAmplifier(null, target, EffectInit.ARMOR_LOWER_EFFECT.get(), 300, 5, false, true, true, false);
+                                    if (owner != null) this.doEnchantDamageEffects(owner, target);
                                 }
                             }
                         }

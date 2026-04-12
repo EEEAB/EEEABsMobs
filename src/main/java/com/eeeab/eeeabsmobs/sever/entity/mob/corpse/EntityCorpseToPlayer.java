@@ -6,7 +6,7 @@ import com.eeeab.animate.server.ai.animation.AnimationMelee;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.mob.GlowEntity;
 import com.eeeab.eeeabsmobs.sever.entity.mob.ModMobType;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.ModLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.WhenOwnerDeadGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player.PlayerHatredRedirectionGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.player.ReFindPlayerGoal;
@@ -18,6 +18,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -33,7 +35,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class EntityCorpseToPlayer extends EntityCorpse implements GlowEntity {
+    private static final int MAX_ACTIVE = 400;
+    private final ReFindPlayerGoal reFindPlayerGoal = new ReFindPlayerGoal(this);
+    private final PlayerHatredRedirectionGoal playerHatredRedirectionGoal = new PlayerHatredRedirectionGoal(this, 16F);
+    private final WhenOwnerDeadGoal whenOwnerDeadGoal = new WhenOwnerDeadGoal(this);
+    private final NearestAttackableTargetGoal<Mob> attackEnemyGoal = new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, (entity) -> entity instanceof Enemy && entity.getMobType() != ModMobType.PLAYER_SUMMONS);
     private int countdown = -1;
+
 
     public EntityCorpseToPlayer(EntityType<? extends EntityCorpseToPlayer> type, Level level) {
         super(type, level);
@@ -66,19 +74,19 @@ public class EntityCorpseToPlayer extends EntityCorpse implements GlowEntity {
 
     @Override
     protected void registerCorpseGoals() {
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, (entity) -> entity instanceof Enemy && entity.getMobType() != ModMobType.PLAYER_SUMMONS));
+        //this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, (entity) -> entity instanceof Enemy && entity.getMobType() != ModMobType.PLAYER_SUMMONS));
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Player.class));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(7, new ModLookAtGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(1, new AnimationActivate<>(this, () -> spawnAnimation));
-        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> attackAnimation1, 9, 2F, 1F, 1F));
-        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> attackAnimation2, 9, 2F, 1F, 1F));
-        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> attackAnimation3, 9, 2F, 1.5F, 1.5F));
-        this.goalSelector.addGoal(2, new AnimationMeleeAI<>(this, 1.2D, 5, () -> attackAnimation1, () -> attackAnimation2, () -> attackAnimation3));
-        this.goalSelector.addGoal(2, new ReFindPlayerGoal(this));
-        this.goalSelector.addGoal(3, new PlayerHatredRedirectionGoal(this, 16F));
-        this.goalSelector.addGoal(4, new WhenOwnerDeadGoal(this));
+        this.goalSelector.addGoal(1, new AnimationActivate<>(this, SPAWN_ANIMATION));
+        this.goalSelector.addGoal(1, new AnimationMelee<>(this, ATTACK_ANIMATION1, 9, 2F, 1F, 1F));
+        this.goalSelector.addGoal(1, new AnimationMelee<>(this, ATTACK_ANIMATION2, 9, 2F, 1F, 1F));
+        this.goalSelector.addGoal(1, new AnimationMelee<>(this, ATTACK_ANIMATION3, 9, 2F, 1.5F, 1.5F));
+        this.goalSelector.addGoal(2, new AnimationMeleeAI<>(this, 1.2D, 5, ATTACK_ANIMATION1, ATTACK_ANIMATION2, ATTACK_ANIMATION3));
+        //this.goalSelector.addGoal(2, new ReFindPlayerGoal(this));
+        //this.goalSelector.addGoal(3, new PlayerHatredRedirectionGoal(this, 16F));
+        //this.goalSelector.addGoal(4, new WhenOwnerDeadGoal(this));
     }
 
     @Override
@@ -92,7 +100,7 @@ public class EntityCorpseToPlayer extends EntityCorpse implements GlowEntity {
 
     @Override
     public void die(DamageSource source) {
-        if (!this.level().isClientSide && this.getOwner() != null && source.getEntity() != null) {
+        if (!this.level().isClientSide && this.getOwner() != null) {
             float healAmount = ModConfigHandler.COMMON.mobs.minions.CORPSE_MINION.minionDeathHealAmount.get().floatValue();
             this.getOwner().heal(healAmount);
             if (healAmount > 0 && this.level() instanceof ServerLevel serverLevel) {
@@ -115,10 +123,28 @@ public class EntityCorpseToPlayer extends EntityCorpse implements GlowEntity {
         }
     }
 
+    @Override
+    public void afterSpawn() {
+        super.afterSpawn();
+        this.addEffect(new MobEffectInstance(MobEffects.GLOWING, MAX_ACTIVE, 0, false, false));
+        this.targetSelector.addGoal(3, attackEnemyGoal);
+        this.goalSelector.addGoal(2, reFindPlayerGoal);
+        this.goalSelector.addGoal(3, playerHatredRedirectionGoal);
+        this.goalSelector.addGoal(4, whenOwnerDeadGoal);
+    }
+
+    public void brainwashing() {
+        this.goalSelector.removeGoal(attackEnemyGoal);
+        this.goalSelector.removeGoal(reFindPlayerGoal);
+        this.goalSelector.removeGoal(playerHatredRedirectionGoal);
+        this.goalSelector.removeGoal(whenOwnerDeadGoal);
+        this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, Player.class, true));
+    }
+
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance instance, MobSpawnType spawnType, @Nullable SpawnGroupData groupData, @Nullable CompoundTag tag) {
-        this.countdown = 400;
+        this.countdown = MAX_ACTIVE;
         return groupData;
     }
 

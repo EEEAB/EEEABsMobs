@@ -7,7 +7,10 @@ import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpse;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class ModelCorpse<T extends EntityCorpse> extends ModHierarchicalModel<T> {
     private final ModelPart root;
     private final ModelPart head;
@@ -74,12 +77,15 @@ public class ModelCorpse<T extends EntityCorpse> extends ModHierarchicalModel<T>
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
-        lookAtAnimation(netHeadYaw, headPitch, 1.0F, this.head);
+        lookAtTarget(netHeadYaw, headPitch, 1.0F, this.head);
         setStaticRotationAngle(this.rightArm, -40, 0, 0);
         setStaticRotationAngle(this.leftArm, -40, 0, 0);
+        playAnimation(this, entity, EntityCorpse.ATTACK_ANIMATION1, AnimationCorpse.ATTACK_1, ageInTicks);
+        playAnimation(this, entity, EntityCorpse.ATTACK_ANIMATION2, AnimationCorpse.ATTACK_2, ageInTicks);
+        playAnimation(this, entity, EntityCorpse.ATTACK_ANIMATION3, AnimationCorpse.ATTACK_3, ageInTicks);
+        playAnimation(this, entity, EntityCorpse.SPAWN_ANIMATION, AnimationCommon.SPAWN, ageInTicks);
         float delta = ageInTicks - entity.tickCount;
         float frame = entity.frame + delta;
-        //Walk
         float walkSpeed = 0.85F;
         float walkDegree = 0.8F;
         this.flap(this.root, walkSpeed, walkDegree * 0.08F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
@@ -91,7 +97,6 @@ public class ModelCorpse<T extends EntityCorpse> extends ModHierarchicalModel<T>
             this.flap(this.rightArm, walkSpeed, walkDegree, true, -1, -0.5F, limbSwing, limbSwingAmount);
             this.flap(this.leftArm, walkSpeed, walkDegree, true, -1, 0.5F, limbSwing, limbSwingAmount);
         }
-        //Idle
         float speed = 0.12F;
         float degree = 0.1F;
         if (entity.isAlive()) {
@@ -102,9 +107,5 @@ public class ModelCorpse<T extends EntityCorpse> extends ModHierarchicalModel<T>
             this.walk(leftArm, speed, degree, false, 0, -0.05F, frame, 1);
             this.swing(leftArm, speed, degree, false, 0, 0, frame, 1);
         }
-        this.animate(entity.attackAnimation1, AnimationCorpse.ATTACK_1, ageInTicks);
-        this.animate(entity.attackAnimation2, AnimationCorpse.ATTACK_2, ageInTicks);
-        this.animate(entity.attackAnimation3, AnimationCorpse.ATTACK_3, ageInTicks);
-        this.animate(entity.spawnAnimation, AnimationCommon.SPAWN,ageInTicks);
     }
 }

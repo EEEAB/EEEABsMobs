@@ -6,11 +6,11 @@ import com.eeeab.animate.server.ai.AnimationRangeAI;
 import com.eeeab.animate.server.ai.animation.*;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.AnimationHandler;
-import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
+import com.eeeab.eeeabsmobs.client.particle.ParticleOrb;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.ModLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.CopyOwnerTargetGoal;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.ItemInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.core.particles.ParticleTypes;
@@ -45,36 +45,35 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
 public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implements VariantHolder<EntityAbsImmortalSkeleton.ClassType> {
-    public final Animation swingArmAnimation = Animation.create(15);
-    public final Animation meleeAnimation1 = Animation.create(15);
-    public final Animation meleeAnimation2 = Animation.create(15);
-    public final Animation bowAnimation = Animation.create(30);
-    public final Animation crossBowChangeAnimation = Animation.create(30);
-    public final Animation crossBowHoldAnimation = Animation.create(10);
-    public final Animation castAnimation = Animation.create(35);
-    public final Animation blockAnimation = Animation.create(10);
-    public final Animation spawnAnimation = Animation.create(20);
-    public final Animation putUpAnimation = Animation.create(30);
-    public final Animation dieAnimation = Animation.create(30);
-    private final Animation[] animations = new Animation[]{
-            swingArmAnimation,
-            meleeAnimation1,
-            meleeAnimation2,
-            bowAnimation,
-            crossBowChangeAnimation,
-            crossBowHoldAnimation,
-            castAnimation,
-            blockAnimation,
-            spawnAnimation,
-            putUpAnimation,
-            dieAnimation
+    public static final Animation DIE_ANIMATION = Animation.create(30);
+    public static final Animation SWINGARM_ANIMATION = Animation.create(15);
+    public static final Animation MELEE_ANIMATION1 = Animation.create(15);
+    public static final Animation MELEE_ANIMATION2 = Animation.create(15);
+    public static final Animation BOW_ANIMATION = Animation.create(30);
+    public static final Animation CROSSBOW_CHANGE_ANIMATION = Animation.create(30);
+    public static final Animation CROSSBOW_HOLD_ANIMATION = Animation.create(10);
+    public static final Animation CAST_ANIMATION = Animation.create(35);
+    public static final Animation BLOCK_ANIMATION = Animation.create(10);
+    public static final Animation SPAWN_ANIMATION = Animation.create(20);
+    public static final Animation PUTUP_ANIMATION = Animation.create(30);
+    private static final Animation[] animations = new Animation[]{
+            SWINGARM_ANIMATION,
+            MELEE_ANIMATION1,
+            MELEE_ANIMATION2,
+            BOW_ANIMATION,
+            CROSSBOW_CHANGE_ANIMATION,
+            CROSSBOW_HOLD_ANIMATION,
+            CAST_ANIMATION,
+            BLOCK_ANIMATION,
+            SPAWN_ANIMATION,
+            PUTUP_ANIMATION,
+            DIE_ANIMATION
     };
     protected int timeUntilBlock;
 
     public EntityAbsImmortalSkeleton(EntityType<? extends EntityAbsImmortal> type, Level level) {
         super(type, level);
         this.active = true;
-        this.dropAfterDeathAnim = true;
     }
 
     @Override
@@ -95,28 +94,27 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this, EntityAbsImmortal.class).setAlertOthers());
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(8, new EMLookAtGoal(this, Mob.class, 6.0F));
+        this.goalSelector.addGoal(7, new ModLookAtGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new ModLookAtGoal(this, Mob.class, 6.0F));
     }
 
     @Override
     protected void registerCustomGoals() {
-        this.goalSelector.addGoal(1, new AnimationActivate<>(this, () -> spawnAnimation));
-        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> swingArmAnimation, 8, 2.5F, 1.0F, 1.0F));
-        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> meleeAnimation1, 8, 2.8F, 1.0F, 1.0F));
-        this.goalSelector.addGoal(1, new AnimationAreaMelee<>(this, () -> meleeAnimation2, 7, 2.8F, 1.0F, 1.0F, 90F, 2.8F, true));
-        this.goalSelector.addGoal(1, new AnimationBlock<>(this, () -> blockAnimation));
+        this.goalSelector.addGoal(1, new AnimationActivate<>(this, SPAWN_ANIMATION));
+        this.goalSelector.addGoal(1, new AnimationMelee<>(this, SWINGARM_ANIMATION, 8, 2.5F, 1.0F, 1.0F));
+        this.goalSelector.addGoal(1, new AnimationMelee<>(this, MELEE_ANIMATION1, 8, 2.8F, 1.0F, 1.0F));
+        this.goalSelector.addGoal(1, new AnimationAreaMelee<>(this, MELEE_ANIMATION2, 7, 2.8F, 1.0F, 1.0F, 90F, 2.8F, true));
+        this.goalSelector.addGoal(1, new AnimationBlock<>(this, BLOCK_ANIMATION));
         this.goalSelector.addGoal(2, new AnimationDie<>(this));
         this.targetSelector.addGoal(2, new CopyOwnerTargetGoal<>(this));
-        this.goalSelector.addGoal(5, new AnimationMeleeAI<>(this, 1.05D, 10 + this.random.nextInt(10), EntityAbsImmortalSkeleton::checkConformCareerWeapon, () -> swingArmAnimation));
+        this.goalSelector.addGoal(5, new AnimationMeleeAI<>(this, 1.05D, 10 + this.random.nextInt(10), EntityAbsImmortalSkeleton::checkConformCareerWeapon, SWINGARM_ANIMATION));
     }
 
     @Override
     public void tick() {
         super.tick();
         AnimationHandler.INSTANCE.updateAnimations(this);
-        if (!this.level().isClientSide && this.getTarget() != null && !this.getTarget().isAlive()) this.setTarget(null);
-        if (getAnimation() != NO_ANIMATION) getNavigation().stop();
+        //if (getAnimation() != NO_ANIMATION) getNavigation().stop();
     }
 
     @Override
@@ -141,7 +139,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
             hitFlag = (entityRelativeAngle <= attackArc / 2f && entityRelativeAngle >= -attackArc / 2f) || (entityRelativeAngle >= 360 - attackArc / 2f || entityRelativeAngle <= -attackArc + 90f / 2f);
         }
         if (source.getDirectEntity() instanceof AbstractArrow arrow) pierceLevel = arrow.getPierceLevel();
-        if (hitFlag && this.checkHoldItemCanBlock() && entity instanceof LivingEntity livingEntity && !source.is(DamageTypeTags.BYPASSES_ARMOR) && !source.is(DamageTypeTags.BYPASSES_SHIELD) && (this.isNoAnimation() || this.getAnimation() == this.blockAnimation)) {
+        if (hitFlag && this.checkHoldItemCanBlock() && entity instanceof LivingEntity livingEntity && !source.is(DamageTypeTags.BYPASSES_ARMOR) && !source.is(DamageTypeTags.BYPASSES_SHIELD) && (this.isNoAnimation() || this.getAnimation() == BLOCK_ANIMATION)) {
             this.blockEntity = livingEntity;
             if (livingEntity.canDisableShield() || damage >= this.getMaxHealth()) {
                 this.playSound(SoundEvents.SHIELD_BREAK);
@@ -149,7 +147,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
             } else if (pierceLevel == 0) {
                 this.playSound(SoundEvents.SHIELD_BLOCK);
             }
-            if (this.getAnimation() != this.blockAnimation) this.playAnimation(this.blockAnimation);
+            if (this.getAnimation() != BLOCK_ANIMATION) this.playAnimation(BLOCK_ANIMATION);
             if (pierceLevel > 0) {
                 damage *= 0.6F + Math.min(pierceLevel * 0.1F, 0.4F);
                 return super.hurt(source, damage);
@@ -220,17 +218,17 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
 
     @Override
     public Animation getDeathAnimation() {
-        return this.dieAnimation;
+        return DIE_ANIMATION;
     }
 
     @Override
     public Animation[] getAnimations() {
-        return this.animations;
+        return animations;
     }
 
     @Override
     public Animation getSpawnAnimation() {
-        return this.spawnAnimation;
+        return SPAWN_ANIMATION;
     }
 
     @Override
@@ -286,11 +284,11 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
 
     protected <T extends EntityAbsImmortalSkeleton & RangedAttackMob> void addRangeAI(T entity) {
         this.goalSelector.addGoal(1, new CrossBowAI<>(entity));
-        this.goalSelector.addGoal(1, new AnimationRange<>(entity, () -> bowAnimation, 25, null));
+        this.goalSelector.addGoal(1, new AnimationRange<>(entity, BOW_ANIMATION, 25, null));
         int randomInterval = this.random.nextInt(10);
         Predicate<T> flag = e -> e.active;
-        this.goalSelector.addGoal(3, new AnimationRangeAI<>(entity, 1D, 20 + randomInterval, 10F, Items.CROSSBOW, flag, () -> crossBowChangeAnimation));
-        this.goalSelector.addGoal(3, new AnimationRangeAI<>(entity, 1D, 25 + randomInterval, 12F, Items.BOW, flag, () -> bowAnimation));
+        this.goalSelector.addGoal(3, new AnimationRangeAI<>(entity, 1D, 20 + randomInterval, 10F, Items.CROSSBOW, flag, CROSSBOW_CHANGE_ANIMATION));
+        this.goalSelector.addGoal(3, new AnimationRangeAI<>(entity, 1D, 25 + randomInterval, 12F, Items.BOW, flag, BOW_ANIMATION));
     }
 
     static class CrossBowAI<T extends EntityAbsImmortalSkeleton & RangedAttackMob> extends AnimationAI<T> {
@@ -300,7 +298,7 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
 
         @Override
         protected boolean test(Animation animation) {
-            return animation == this.entity.crossBowChangeAnimation || animation == this.entity.crossBowHoldAnimation;
+            return animation == CROSSBOW_CHANGE_ANIMATION || animation == CROSSBOW_HOLD_ANIMATION;
         }
 
         @Override
@@ -323,15 +321,15 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
             Animation animation = this.entity.getAnimation();
             if (target != null) {
                 this.entity.getLookControl().setLookAt(target, 30F, 30F);
-                if (animation == this.entity.crossBowChangeAnimation) {
+                if (CROSSBOW_CHANGE_ANIMATION == animation) {
                     boolean isLoaded = this.entity.isHolding(is -> is.getItem() instanceof CrossbowItem && CrossbowItem.isCharged(is));
                     if (tick == animation.getDuration() - 1 || isLoaded) {
                         if (!isLoaded && this.entity.isHolding(is -> is.getItem() instanceof CrossbowItem)) {
                             CrossbowItem.setCharged(this.entity.getUseItem(), true);
                         }
-                        this.entity.playAnimation(this.entity.crossBowHoldAnimation);
+                        this.entity.playAnimation(CROSSBOW_HOLD_ANIMATION);
                     }
-                } else if (animation == this.entity.crossBowHoldAnimation) {
+                } else if (CROSSBOW_HOLD_ANIMATION == animation) {
                     if (tick == 9) {
                         this.entity.performRangedAttack(target, 0F);
                         if (this.entity.isHolding(is -> is.getItem() instanceof CrossbowItem)) {

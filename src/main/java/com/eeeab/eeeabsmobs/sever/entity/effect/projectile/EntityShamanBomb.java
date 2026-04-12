@@ -1,12 +1,11 @@
 package com.eeeab.eeeabsmobs.sever.entity.effect.projectile;
 
-import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.mob.IMob;
+import com.eeeab.eeeabsmobs.client.ControlledAnimation;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityCameraShake;
-import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityAbsImmortal;
-import com.eeeab.eeeabsmobs.sever.entity.util.damage.ModDamageSource;
 import com.eeeab.eeeabsmobs.sever.entity.effect.IEntity;
+import com.eeeab.eeeabsmobs.sever.entity.mob.IMob;
+import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityAbsImmortal;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import net.minecraft.core.particles.ParticleOptions;
@@ -73,7 +72,7 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
                 float finalDamage = getDamage();
                 if (isDangerous()) finalDamage *= 1.2F;
                 if (owner instanceof IMob mob) finalDamage += mob.getDamageAmountByTargetHealthPct(target);
-                flag = resultEntity.hurt(ModDamageSource.shamanBombing(this, owner), finalDamage);
+                flag = resultEntity.hurt(ownerEntity.damageSources().mobProjectile(this, owner), finalDamage);
                 if (flag && resultEntity.isAlive()) {
                     this.doEnchantDamageEffects(owner, resultEntity);
                 }
@@ -187,7 +186,8 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
     }
 
     public float getDamage() {
-        if (this.getOwner() instanceof Player) return ModConfigHandler.COMMON.items.immortalStaffConfig2.get().floatValue();
+        //if (this.getOwner() instanceof Player) return ModConfigHandler.COMMON.items.immortalStaffConfig2.get().floatValue();
+        if (this.getOwner() instanceof Player) return 8F;
         return ModConfigHandler.COMMON.mobs.immortals.immortalShaman.shamanBomb.damage.get().floatValue();
     }
 

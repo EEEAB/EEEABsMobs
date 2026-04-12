@@ -1,17 +1,15 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
 import com.eeeab.animate.client.model.ModHierarchicalModel;
+import com.eeeab.eeeabsmobs.client.model.animation.AnimationTester;
 import com.eeeab.eeeabsmobs.sever.entity.mob.EntityTester;
-import net.minecraft.client.animation.AnimationChannel;
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.animation.Keyframe;
-import net.minecraft.client.animation.KeyframeAnimations;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class ModelTester extends ModHierarchicalModel<EntityTester> {
     private final ModelPart root;
     private final ModelPart upper;
@@ -60,11 +58,13 @@ public class ModelTester extends ModHierarchicalModel<EntityTester> {
     @Override
     public void setupAnim(EntityTester entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
+        lookAtTarget(netHeadYaw, headPitch, 1.0F, this.head);
+        playAnimation(this, entity, EntityTester.YES_ANIMATION, AnimationTester.YES, ageInTicks);
+        playAnimation(this, entity, EntityTester.NO_ANIMATION, AnimationTester.NO, ageInTicks);
         float delta = ageInTicks - entity.tickCount;
         float frame = entity.frame + delta;
         float walkSpeed = 0.6F;
         float walkDegree = 0.6F;
-        lookAtAnimation(netHeadYaw, headPitch, 1.0F, this.head);
         this.flap(this.root, walkSpeed, walkDegree * 0.025F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
         this.walk(this.leftLeg, walkSpeed, walkDegree * 1.2F, true, 0.0F, 0.0F, limbSwing, limbSwingAmount);
         this.walk(this.rightLeg, walkSpeed, walkDegree * 1.2F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
@@ -72,50 +72,5 @@ public class ModelTester extends ModHierarchicalModel<EntityTester> {
         this.bob(this.upper, walkSpeed * 0.4F, walkDegree * 0.3F, false, frame, 1);
         this.bob(this.arms, walkSpeed * 0.2F, walkDegree * 0.2F, true, frame, 1);
         this.bob(this.head, walkSpeed * 0.2F, walkDegree * 0.2F, true, frame, 1);
-        this.animate(entity.yesAnimation, AnimationTester.YES, ageInTicks);
-        this.animate(entity.noAnimation, AnimationTester.NO, ageInTicks);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private static class AnimationTester {
-
-        public static final AnimationDefinition YES = AnimationDefinition.Builder.withLength(0.25f)
-                .addAnimation("upper",
-                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.08343333f, KeyframeAnimations.degreeVec(2.5f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.25f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR)))
-                .addAnimation("head",
-                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.08343333f, KeyframeAnimations.degreeVec(15f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR))).build();
-        public static final AnimationDefinition NO = AnimationDefinition.Builder.withLength(0.25f)
-                .addAnimation("upper",
-                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.041676664f, KeyframeAnimations.degreeVec(0f, 5f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(0f, -5f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.20834334f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR)))
-                .addAnimation("head",
-                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                                new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.08343333f, KeyframeAnimations.degreeVec(0f, 20f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.16766666f, KeyframeAnimations.degreeVec(0f, -20f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR),
-                                new Keyframe(0.25f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.LINEAR))).build();
     }
 }

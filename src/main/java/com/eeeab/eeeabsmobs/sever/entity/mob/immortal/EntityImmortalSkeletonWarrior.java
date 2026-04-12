@@ -11,7 +11,7 @@ public class EntityImmortalSkeletonWarrior extends EntityAbsImmortalSkeleton {
 
     @Override
     protected void registerCustomGoals() {
-        this.goalSelector.addGoal(4, new AnimationMeleeAI<>(this, 1D, 10 + this.random.nextInt(10), e -> e.active, () -> meleeAnimation1, () -> meleeAnimation2));
+        this.goalSelector.addGoal(4, new AnimationMeleeAI<>(this, 1D, 10 + this.random.nextInt(10), e -> e.active, MELEE_ANIMATION1, MELEE_ANIMATION2));
         super.registerCustomGoals();
     }
 

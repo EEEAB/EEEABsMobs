@@ -1,8 +1,9 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
 import com.eeeab.animate.client.model.ModHierarchicalModel;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationCommon;
-import com.eeeab.eeeabsmobs.client.model.animation.AnimationImmortalGolem;
+import com.eeeab.eeeabsmobs.client.model.animation.AnimationMagicGolem;
 import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityMagicGolem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.ArmedModel;
@@ -10,7 +11,10 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class ModelMagicGolem extends ModHierarchicalModel<EntityMagicGolem> implements ArmedModel {
     private final ModelPart root;
     private final ModelPart head;
@@ -55,11 +59,12 @@ public class ModelMagicGolem extends ModHierarchicalModel<EntityMagicGolem> impl
     @Override
     public void setupAnim(EntityMagicGolem entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
+        lookAtTarget(netHeadYaw, headPitch, 1.0F, this.head);
+        playAnimation(this, entity, EntityMagicGolem.SPAWN_ANIMATION, AnimationCommon.SPAWN, ageInTicks);
+        playAnimation(this, entity, EntityMagicGolem.HURT_ANIMATION, AnimationMagicGolem.HURT, ageInTicks);
+        playAnimation(this, entity, EntityMagicGolem.ATTACK_ANIMATION, AnimationMagicGolem.ATTACK, ageInTicks);
         float delta = ageInTicks - entity.tickCount;
         float frame = entity.frame + delta;
-        //LookAt
-        lookAtAnimation(netHeadYaw, headPitch, 1.0F, this.head);
-        //Walk
         float walkSpeed = 0.8F;
         float walkDegree = 0.8F;
         this.flap(this.root, walkSpeed, walkDegree * 0.05F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
@@ -67,7 +72,6 @@ public class ModelMagicGolem extends ModHierarchicalModel<EntityMagicGolem> impl
         this.walk(this.rightLeg, walkSpeed, walkDegree * 1.2F, false, 0.0F, 0.0F, limbSwing, limbSwingAmount);
         this.walk(this.leftArm, walkSpeed, walkDegree * 0.2F, false, 0.0F, -0.05F, limbSwing, limbSwingAmount);
         this.walk(this.rightArm, walkSpeed, walkDegree * 0.2F, true, 0.0F, -0.05F, limbSwing, limbSwingAmount);
-        //Idle
         float speed = 0.08F;
         float degree = 0.05F;
         if (entity.isAlive()) {
@@ -77,17 +81,15 @@ public class ModelMagicGolem extends ModHierarchicalModel<EntityMagicGolem> impl
             this.walk(leftArm, speed, degree, false, 0, -0.05F, frame, 1);
             this.swing(leftArm, speed, degree, false, 0, 0, frame, 1);
         }
-        if (entity.getAnimation() == entity.spawnAnimation) {
+        Animation animation = entity.getAnimation();
+        if (EntityMagicGolem.SPAWN_ANIMATION == animation) {
             setStaticRotationAngle(leftArm, 90, 0, 0);
             setStaticRotationAngle(rightArm, 90, 0, 0);
         }
-        if (entity.isDangerous() && entity.getAnimation() != entity.spawnAnimation) {
+        if (entity.isDangerous() && EntityMagicGolem.SPAWN_ANIMATION != animation) {
             setStaticRotationAngle(leftArm, 20, 25, 0);
             setStaticRotationAngle(rightArm, 20, -25, 0);
         }
-        this.animate(entity.spawnAnimation, AnimationCommon.SPAWN, ageInTicks);
-        this.animate(entity.hurtAnimation, AnimationImmortalGolem.HURT, ageInTicks);
-        this.animate(entity.attackAnimation, AnimationImmortalGolem.ATTACK, ageInTicks);
     }
 
     @Override

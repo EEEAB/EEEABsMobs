@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
 import com.eeeab.animate.client.model.ModHierarchicalModel;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationCommon;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationImmortalSkeleton;
 import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityAbsImmortalSkeleton;
@@ -12,7 +13,10 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class ModelAbsImmortalSkeleton extends ModHierarchicalModel<EntityAbsImmortalSkeleton> implements ArmedModel {
     private final ModelPart root;
     private final ModelPart head;
@@ -68,35 +72,9 @@ public class ModelAbsImmortalSkeleton extends ModHierarchicalModel<EntityAbsImmo
     @Override
     public void setupAnim(EntityAbsImmortalSkeleton entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
-        //LookAt
-        lookAtAnimation(netHeadYaw, headPitch, 1.0F, this.head);
-        float delta = ageInTicks - entity.tickCount;
-        float frame = entity.frame + delta;
-        //Idle & Walk
-        if (entity.isAlive()) {
-            float cycle = 0.65F;
-            this.walk(this.upper, 0.1F, 0.005F, true, 0, -0.025F, frame, 1);
-            this.bob(this.upper, cycle * 0.2F, cycle * 0.2F, false, frame, 1);
-            this.bob(this.leftArm, cycle * 0.2F, cycle * 0.2F, false, frame, 1);
-            this.bob(this.rightArm, cycle * 0.2F, cycle * 0.2F, false, frame, 1);
-            this.flap(this.leftArm, cycle, cycle * 0.2F, true, 0, 0.15F, limbSwing, limbSwingAmount);
-            this.flap(this.rightArm, cycle, cycle * 0.2F, true, 0, -0.15F, limbSwing, limbSwingAmount);
-            this.bob(this.head, cycle * -0.2F, cycle * -0.2F, false, frame, 1);
-            this.bob(this.head, cycle, cycle * 0.6F, false, limbSwing, limbSwingAmount);
-            if (entity.getAnimation() != entity.blockAnimation) {
-                this.walk(this.leftArm, 0.15F, 0.05F, true, 0.15F, 0, frame, 1);
-                this.walk(this.rightArm, 0.15F, 0.05F, false, 0.15F, 0, frame, 1);
-            }
-            this.walk(this.leftLeg, cycle, cycle * 1.4F, false, 0, 0, limbSwing, limbSwingAmount);
-            this.walk(this.rightLeg, cycle, cycle * 1.4F, true, 0, 0, limbSwing, limbSwingAmount);
-            if (entity.getVariant() == EntityAbsImmortalSkeleton.ClassType.ARCHER) {
-                this.animateWalk(AnimationImmortalSkeleton.ARCH, limbSwing, limbSwingAmount, 1F, 2F);
-            } else if (entity.isNoAnimation()) {
-                this.walk(this.leftArm, cycle, cycle * 1.2F, false, 0, 0, limbSwing, limbSwingAmount);
-                this.walk(this.rightArm, cycle, cycle * 1.2F, true, 0, 0, limbSwing, limbSwingAmount);
-            }
-        }
-        if (entity.getAnimation() == entity.castAnimation) {
+        lookAtTarget(netHeadYaw, headPitch, 1.0F, this.head);
+        Animation animation = entity.getAnimation();
+        if (EntityAbsImmortalSkeleton.CAST_ANIMATION == animation) {
             this.rightArm.z = 0.0F;
             this.rightArm.x = -6.0F;
             this.leftArm.z = 0.0F;
@@ -107,23 +85,47 @@ public class ModelAbsImmortalSkeleton extends ModHierarchicalModel<EntityAbsImmo
             this.leftArm.zRot = -2.181661565F;
             this.rightArm.yRot = 0.0F;
             this.leftArm.yRot = 0.0F;
-        } else if (entity.getAnimation() == entity.bowAnimation) {
+        } else if (EntityAbsImmortalSkeleton.BOW_ANIMATION == animation) {
             setStaticRotationAngle(rightArm, -85F, -10F, -10F);
             setStaticRotationAngle(leftArm, -75F, 25F, 10F);
-        } else if (entity.getAnimation() == entity.crossBowChangeAnimation) {
+        } else if (EntityAbsImmortalSkeleton.CROSSBOW_CHANGE_ANIMATION == animation) {
             AnimationUtils.animateCrossbowCharge(this.rightArm, this.leftArm, entity, true);
-        } else if (entity.getAnimation() == entity.crossBowHoldAnimation) {
+        } else if (EntityAbsImmortalSkeleton.CROSSBOW_HOLD_ANIMATION == animation) {
             AnimationUtils.animateCrossbowHold(this.rightArm, this.leftArm, this.head, true);
         }
-        this.animate(entity.spawnAnimation, AnimationCommon.SPAWN, ageInTicks);
-        this.animate(entity.swingArmAnimation, entity.getMainHandItem().isEmpty() ? AnimationImmortalSkeleton.SWING : AnimationImmortalSkeleton.MELEE1, ageInTicks);
-        this.animate(entity.meleeAnimation1, AnimationImmortalSkeleton.MELEE1, ageInTicks);
-        this.animate(entity.meleeAnimation2, AnimationImmortalSkeleton.MELEE2, ageInTicks);
-        this.animate(entity.putUpAnimation, AnimationImmortalSkeleton.PUT_UP, ageInTicks);
-        this.animate(entity.blockAnimation, AnimationImmortalSkeleton.BLOCK, ageInTicks);
-        this.animate(entity.dieAnimation, AnimationCommon.DIE, ageInTicks);
-    }
-
+        float delta = ageInTicks - entity.tickCount;
+        float frame = entity.frame + delta;
+        if (entity.isAlive()) {
+            float cycle = 0.65F;
+            this.walk(this.upper, 0.1F, 0.005F, true, 0, -0.025F, frame, 1);
+            this.bob(this.upper, cycle * 0.2F, cycle * 0.2F, false, frame, 1);
+            this.bob(this.leftArm, cycle * 0.2F, cycle * 0.2F, false, frame, 1);
+            this.bob(this.rightArm, cycle * 0.2F, cycle * 0.2F, false, frame, 1);
+            this.flap(this.leftArm, cycle, cycle * 0.2F, true, 0, 0.15F, limbSwing, limbSwingAmount);
+            this.flap(this.rightArm, cycle, cycle * 0.2F, true, 0, -0.15F, limbSwing, limbSwingAmount);
+            this.bob(this.head, cycle * -0.2F, cycle * -0.2F, false, frame, 1);
+            this.bob(this.head, cycle, cycle * 0.6F, false, limbSwing, limbSwingAmount);
+            if (EntityAbsImmortalSkeleton.BLOCK_ANIMATION != animation) {
+                this.walk(this.leftArm, 0.15F, 0.05F, true, 0.15F, 0, frame, 1);
+                this.walk(this.rightArm, 0.15F, 0.05F, false, 0.15F, 0, frame, 1);
+            }
+            this.walk(this.leftLeg, cycle, cycle * 1.4F, false, 0, 0, limbSwing, limbSwingAmount);
+            this.walk(this.rightLeg, cycle, cycle * 1.4F, true, 0, 0, limbSwing, limbSwingAmount);
+            if (EntityAbsImmortalSkeleton.ClassType.ARCHER == entity.getVariant()) {
+                this.animateWalk(AnimationImmortalSkeleton.ARCH, limbSwing, limbSwingAmount, 1F, 2F);
+            } else if (entity.isNoAnimation()) {
+                this.walk(this.leftArm, cycle, cycle * 1.2F, false, 0, 0, limbSwing, limbSwingAmount);
+                this.walk(this.rightArm, cycle, cycle * 1.2F, true, 0, 0, limbSwing, limbSwingAmount);
+            }
+        }
+        playAnimation(this, entity,EntityAbsImmortalSkeleton.DIE_ANIMATION, AnimationCommon.DIE, ageInTicks);
+        playAnimation(this, entity,EntityAbsImmortalSkeleton.SPAWN_ANIMATION, AnimationCommon.SPAWN, ageInTicks);
+        playAnimation(this, entity,EntityAbsImmortalSkeleton.MELEE_ANIMATION1, AnimationImmortalSkeleton.MELEE1, ageInTicks);
+        playAnimation(this, entity,EntityAbsImmortalSkeleton.MELEE_ANIMATION2, AnimationImmortalSkeleton.MELEE2, ageInTicks);
+        playAnimation(this, entity,EntityAbsImmortalSkeleton.PUTUP_ANIMATION, AnimationImmortalSkeleton.PUT_UP, ageInTicks);
+        playAnimation(this, entity,EntityAbsImmortalSkeleton.BLOCK_ANIMATION, AnimationImmortalSkeleton.BLOCK, ageInTicks);
+        playAnimation(this, entity, EntityAbsImmortalSkeleton.SWINGARM_ANIMATION, entity.getMainHandItem().isEmpty() ? AnimationImmortalSkeleton.SWING : AnimationImmortalSkeleton.MELEE1, ageInTicks);
+}
 
     @Override
     public void translateToHand(HumanoidArm humanoidArm, PoseStack poseStack) {

@@ -1,9 +1,11 @@
 package com.eeeab.eeeabsmobs.sever.entity;
 
 import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
+import com.eeeab.eeeabsmobs.sever.capability.StunCapability;
 import com.eeeab.eeeabsmobs.sever.entity.mob.IBoss;
 import com.eeeab.eeeabsmobs.sever.entity.mob.IMob;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.handler.CapabilityHandler;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.util.ModTagKey;
@@ -11,6 +13,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -45,18 +48,18 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
     private static final byte MAKE_POOF_ID = 60;
     private static final byte PLAY_BOSS_MUSIC_ID = 77;
     private static final byte STOP_BOSS_MUSIC_ID = 78;
+    private long lastHurtTime = -1;
     public float targetDistance = -1;//与实体距离
     public float targetAngle = -1;//目标与实体之间的角度
-    public boolean active;
     public int frame;
-    public boolean dropAfterDeathAnim = true;//死亡掉落动画
     public int killDataRecentlyHit;
-    public LivingEntity blockEntity = null;
-    private DamageSource killDataCause;//死亡的伤害源
-    public DamageSource lastDamageSource;//受到的伤害源
+    public boolean active;
+    public boolean dropAfterDeathAnim = true;//死亡掉落动画
     public Player killDataAttackingPlayer;
+    public LivingEntity blockEntity = null;
+    public DamageSource lastDamageSource;//受到的伤害源
+    private DamageSource killDataCause;//死亡的伤害源
     private final ModBossInfoServer bossInfo = new ModBossInfoServer(this);
-    private long lastHurtTime = -1;
 
     public EEEABMobEntity(EntityType<? extends EEEABMobEntity> type, Level level) {
         super(type, level);
@@ -87,11 +90,13 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
     public void tick() {
         super.tick();
         frame++;
-        if (getTarget() != null) {
-            targetDistance = distanceTo(getTarget()) - getTarget().getBbWidth() / 2f;
-            targetAngle = (float) getAngleBetweenEntities(this, getTarget());
+        LivingEntity target = getTarget();
+        if (target != null) {
+            targetDistance = distanceTo(target) - target.getBbWidth() / 2F;
+            targetAngle = (float) getAngleBetweenEntities(this, target);
+            if (!target.isAlive()) setTarget(null);
         }
-        if (!level().isClientSide) {
+        if (!this.level().isClientSide) {
             if (getBossMusic() != null) {
                 if (!canPlayMusic()) {
                     this.level().broadcastEntityEvent(this, STOP_BOSS_MUSIC_ID);
@@ -110,33 +115,36 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (!this.level().isClientSide) {
-            int currentTick = this.tickCount;
-            long interval = currentTick - this.lastHurtTime;
+        if (this.level().isClientSide) return false;
+        int currentTick = this.tickCount;
+        if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             ModConfigHandler.BossConfig config = this.getBossConfig();
             if (config != null) {
                 Entity entity = source.getEntity();
-                if (entity != null) {
-                    double distSqr = config.canDamageDist.get() * config.canDamageDist.get();
-                    if ((ModEntityUtils.isProjectileSource(source) || !ModEntityUtils.checkDirectEntityConsistency(source))
-                            && this.distanceToSqr(entity) >= distSqr) {
-                        return false;
-                    }
+                if (entity != null && checkAttackDistance(source, config.canDamageDist.get() * config.canDamageDist.get(), entity)) {
+                    return false;
                 }
-                if (currentTick == this.lastHurtTime) {
-                    amount *= 0.001F;
-                } else {
+                if (!source.is(ModTagKey.BYPASSES_DAMAGE_CAP)) {
+                    float maxDamageCap = config.damageCap.get().floatValue();
+                    if (maxDamageCap != 0) amount = Math.min(amount, maxDamageCap * this.getVulnMultiplier());
+                }
+                if (!source.is(ModTagKey.BYPASSES_HURT_REDUCTION)) {
+                    long interval = currentTick - this.lastHurtTime;
                     float damageReductDur = config.damageReductDur.get().floatValue() * 20F;
                     if (damageReductDur > 0) {
                         float reduction = (float) Math.sqrt(1F - Mth.clamp(interval / damageReductDur, 0F, 1F));
                         amount *= (1 - reduction);
                     }
                 }
-                if (!source.is(ModTagKey.BYPASSES_DAMAGE_CAP)) amount = Math.min(amount, config.damageCap.get().floatValue() * this.getVulnMultiplier());
             }
-            this.lastHurtTime = currentTick;
         }
-        return super.hurt(source, amount);
+        boolean flag = super.hurt(source, amount);
+        if (flag) this.lastHurtTime = currentTick;
+        return flag;
+    }
+
+    protected boolean checkAttackDistance(DamageSource source, double distSqr, Entity entity) {
+        return (ModEntityUtils.isProjectileSource(source) || source.isIndirect()) && this.distanceToSqr(entity) >= distSqr;
     }
 
     @Override
@@ -184,8 +192,12 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
         return doHurtTarget(entity, damageMultiplier, knockBackMultiplier, false);
     }
 
-    //基于自: net.minecraft.world.entity.Mob.doHurtTarget(Entity entity)
     public boolean doHurtTarget(Entity entity, float damageMultiplier, float knockBackMultiplier, boolean canDisableShield) {
+        return doHurtTarget(this.damageSources().mobAttack(this), entity, damageMultiplier, knockBackMultiplier, canDisableShield);
+    }
+
+    //基于自: net.minecraft.world.entity.Mob.doHurtTarget(Entity entity)
+    public boolean doHurtTarget(DamageSource damageSource, Entity entity, float damageMultiplier, float knockBackMultiplier, boolean canDisableShield) {
         float f = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * damageMultiplier;
         float f1 = (float) this.getAttributeValue(Attributes.ATTACK_KNOCKBACK) * knockBackMultiplier;
         if (entity instanceof LivingEntity livingEntity) {
@@ -199,14 +211,14 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
             entity.setSecondsOnFire(i * 4);
         }
 
-        boolean flag = entity.hurt(this.damageSources().mobAttack(this), f);
+        boolean flag = entity.hurt(damageSource, f);
         if (flag) {
             if (f1 > 0.0F && entity instanceof LivingEntity livingEntity) {
                 livingEntity.knockback(f1 * 0.5F, Mth.sin(this.getYRot() * ((float) Math.PI / 180F)), -Mth.cos(this.getYRot() * ((float) Math.PI / 180F)));
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
             }
 
-            if (canDisableShield && entity instanceof Player player) {
+            if (entity instanceof Player player) {
                 this.maybeDisableShield(player, this.getMainHandItem(), player.isUsingItem() ? player.getUseItem() : ItemStack.EMPTY);
             }
 
@@ -318,8 +330,8 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
      * @return 获取特定范围所有实体
      */
     public <T extends Entity> List<T> getNearByEntities(Class<T> entityClass, double x, double y, double z, double radius) {
-        return level().getEntitiesOfClass(entityClass, getBoundingBox().inflate(x, y, z), targetEntity -> targetEntity != this &&
-                distanceTo(targetEntity) <= radius + targetEntity.getBbWidth() / 2f && (!this.isAlliedTo(targetEntity) || !ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get()));
+        return level().getEntitiesOfClass(entityClass, getBoundingBox().inflate(x, y, z), target -> target != this &&
+                distanceTo(target) <= radius + target.getBbWidth() / 2f && !isAlliedTo(target));
     }
 
     public void rangeAttack(double rangeX, double height, double rangeZ, double radius, @Nullable Consumer<LivingEntity> hitMethodProvider) {
@@ -327,6 +339,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
     }
 
     public void rangeAttack(double rangeX, double height, double rangeZ, double radius, float leftArc, float rightArc, @Nullable Consumer<LivingEntity> hitMethodProvider) {
+        if (this.level().isClientSide) return;
         float attackArc = leftArc + rightArc;
         for (LivingEntity hitEntity : getNearByEntities(LivingEntity.class, rangeX, height, rangeZ, radius)) {
             float entityRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this, hitEntity.position());
@@ -380,7 +393,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
      */
     public void stun(@Nullable LivingEntity source, LivingEntity target, int duration, boolean force) {
         if (target.isBlocking() || this.isAlliedTo(target) || target instanceof Player player && (player.isSpectator() || player.isCreative())) return;
-        ModEntityUtils.addEffectStackingAmplifier(source, target, EffectInit.STUN_EFFECT.get(), duration, 1, false, false, true, true, force);
+        ModEntityUtils.addEffectStackingAmplifier(source, target, EffectInit.STUN_EFFECT.get(), duration, 1, false, true, true, force);
     }
 
     /**
@@ -414,7 +427,8 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
 
     @Override
     public boolean isStunned() {
-        return this.hasEffect(EffectInit.STUN_EFFECT.get());
+        StunCapability.IStunCapability capability = CapabilityHandler.getCapability(this, CapabilityHandler.STUN_CAPABILITY);
+        return capability != null && capability.flag();
     }
 
     protected void dying() {
@@ -438,7 +452,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
 
     @Override
     public MobLevel getMobLevel() {
-        return MobLevel.NORMAL;
+        return MobLevel.GRUNT;
     }
 
     protected boolean setDarkenScreen() {
@@ -462,7 +476,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
     }
 
     protected boolean canPlayMusic() {
-        return !isSilent() && getTarget() instanceof Player;
+        return !isNoAi() && !isSilent() && getTarget() instanceof Player;
     }
 
     protected boolean canHandOffMusic() {

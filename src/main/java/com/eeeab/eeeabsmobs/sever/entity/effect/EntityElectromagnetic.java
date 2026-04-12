@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.effect;
 
+import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityRelicAnnihilator;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.mob.IMob;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
@@ -25,11 +26,11 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityElectromagnetic extends EntityMagicEffects implements TriggerTrapEntity {
+    private static final EntityDataAccessor<Float> DATA_SIZE = SynchedEntityData.defineId(EntityElectromagnetic.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Boolean> DATA_FIRE = SynchedEntityData.defineId(EntityElectromagnetic.class, EntityDataSerializers.BOOLEAN);
     private float shockRange = 10;
     private float shockSpeed = 5;
     private float yaw = 0;
-    private static final EntityDataAccessor<Float> DATA_SIZE = SynchedEntityData.defineId(EntityElectromagnetic.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Boolean> DATA_FIRE = SynchedEntityData.defineId(EntityElectromagnetic.class, EntityDataSerializers.BOOLEAN);
 
     public EntityElectromagnetic(EntityType<? extends EntityElectromagnetic> type, Level world) {
         super(type, world);
@@ -37,7 +38,7 @@ public class EntityElectromagnetic extends EntityMagicEffects implements Trigger
 
     public EntityElectromagnetic(Level world, LivingEntity caster) {
         super(EntityInit.ELECTROMAGNETIC.get(), world);
-        this.caster = caster;
+        this.setOwner(caster);
     }
 
     @Override
@@ -79,16 +80,17 @@ public class EntityElectromagnetic extends EntityMagicEffects implements Trigger
             this.setPos(this.getX() + lookVec.x, this.getY(), this.getZ() + lookVec.z);
             AABB attackRange = ModEntityUtils.makeAABBWithSize(this.getX(), this.getY(), this.getZ(), 0.0, (double) this.entityData.get(DATA_SIZE), 0.6, (double) this.entityData.get(DATA_SIZE));
             for (LivingEntity hitEntity : this.level().getEntitiesOfClass(LivingEntity.class, attackRange)) {
-                if (this.caster == null) {
+                LivingEntity owner = this.getOwner();
+                if (owner == null) {
                     if (hitEntity.hurt(this.damageSources().magic(), this.getDamage())) {
                         this.strongKnockBlock(hitEntity);
                     }
                 } else {
                     float finalDamage = this.getDamage();
-                    if (this.caster instanceof IMob mob) finalDamage += mob.getDamageAmountByTargetHealthPct(hitEntity);
-                    if (hitEntity != this.caster && !hitEntity.isAlliedTo(this.caster) && hitEntity.hurt(this.damageSources().mobAttack(this.caster), finalDamage)) {
-                        if (this.entityData.get(DATA_FIRE)) hitEntity.setSecondsOnFire(5);
-                        else hitEntity.addEffect(new MobEffectInstance(EffectInit.ELECTRIFIED_EFFECT.get(), 300, 0, false, false, true), this);
+                    if (owner instanceof IMob mob) finalDamage += mob.getDamageAmountByTargetHealthPct(hitEntity);
+                    if (hitEntity != owner && !owner.isAlliedTo(hitEntity) && hitEntity.hurt(this.damageSources().mobAttack(owner), finalDamage)) {
+                        if (this.entityData.get(DATA_FIRE) && !hitEntity.fireImmune()) hitEntity.setSecondsOnFire(5);
+                        else hitEntity.addEffect(new MobEffectInstance(EffectInit.ELECTRIFIED_EFFECT.get(), 200, 0, false, false, true), this);
                         this.strongKnockBlock(hitEntity);
                     }
                 }
@@ -115,6 +117,7 @@ public class EntityElectromagnetic extends EntityMagicEffects implements Trigger
 
     @Override
     public float getDamage() {
+        if (this.getOwner() instanceof EntityRelicAnnihilator) return ModConfigHandler.COMMON.mobs.relicrons.relicAnnihilator.electromagnetic.damage.get().floatValue();
         return ModConfigHandler.COMMON.mobs.relicrons.relicEarthshaker.electromagnetic.damage.get().floatValue();
     }
 
@@ -133,9 +136,9 @@ public class EntityElectromagnetic extends EntityMagicEffects implements Trigger
         this.entityData.set(DATA_FIRE, fire);
     }
 
-    public static void shoot(Level world, LivingEntity caster, float size, int range, int speed, float yaw, boolean fire) {
+    public static void shoot(Level world, LivingEntity caster, Vec3 pos, float size, int range, int speed, float yaw, boolean fire) {
         EntityElectromagnetic entity = new EntityElectromagnetic(world, caster);
-        entity.moveTo(caster.getX(), caster.getY(), caster.getZ());
+        entity.moveTo(pos);
         entity.setSize(size);
         entity.setFire(fire);
         entity.shockRange = range;

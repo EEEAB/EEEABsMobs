@@ -3,8 +3,10 @@ package com.eeeab.eeeabsmobs.sever.handler;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.ability.Ability;
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
+import com.eeeab.eeeabsmobs.sever.ability.abilities.ChainswordComboAbility;
+import com.eeeab.eeeabsmobs.sever.ability.abilities.SkyfallHammerAbility;
+import com.eeeab.eeeabsmobs.sever.ability.abilities.SoulSummonNecklaceAbility;
 import com.eeeab.eeeabsmobs.sever.capability.*;
-import com.eeeab.eeeabsmobs.sever.entity.EEEABMobEntity;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityOverloadExplode;
 import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityShamanBomb;
@@ -13,13 +15,9 @@ import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityAbsCorpse;
 import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpseWarlock;
 import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalExecutioner;
-import com.eeeab.eeeabsmobs.sever.init.AttributeInit;
-import com.eeeab.eeeabsmobs.sever.init.EffectInit;
-import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.eeeab.eeeabsmobs.sever.init.*;
 import com.eeeab.eeeabsmobs.sever.item.IUnbreakableItem;
-import com.eeeab.eeeabsmobs.sever.item.ItemDemolisher;
 import com.eeeab.eeeabsmobs.sever.message.ICapabilityMessage;
-import com.eeeab.eeeabsmobs.sever.util.ModTagKey;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.resources.ResourceLocation;
@@ -27,6 +25,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -46,6 +45,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
@@ -55,11 +55,13 @@ import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
+
+import java.util.Optional;
+import java.util.UUID;
 
 //服务端事件处理器
 public final class ServerEventHandler {
@@ -73,7 +75,6 @@ public final class ServerEventHandler {
         }
         if (event.getObject() instanceof Player) {
             event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "ability_processor"), new AbilityCapability.AbilityCapabilityProvider());
-            event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "player_processor"), new PlayerCapability.PlayerCapabilityProvider());
         }
     }
 
@@ -148,7 +149,7 @@ public final class ServerEventHandler {
                 electricityCapability.tick(entity);
             }
 
-            if (!entity.level().isClientSide && entity.getRemainingFireTicks() > 0) tryTriggerOverloadExplosion(entity);
+            //if (!entity.level().isClientSide && entity.getRemainingFireTicks() > 0) tryTriggerOverloadExplosion(entity, null);
         }
     }
 
@@ -158,30 +159,40 @@ public final class ServerEventHandler {
         if (event.phase == TickEvent.Phase.START || event.player == null) {
             return;
         }
-
-        PlayerCapability.IPlayerCapability playerCapability = CapabilityHandler.getCapability(event.player, CapabilityHandler.PLAYER_CAPABILITY);
-        if (playerCapability != null) {
-            playerCapability.tick(event.player);
-        }
-
         updateGuardianCoreStack(event);
     }
 
-    //当实体生命值≤0时触发
+    //当实体跌落时
     @SubscribeEvent
-    public void onLivingDeathEvent(LivingDeathEvent event) {
-        LivingEntity entity = event.getEntity();
-        if (event.isCancelable() && entity instanceof EEEABMobEntity && entity.getHealth() > 0) {
-            event.setCanceled(true);
+    public void onLivingFall(LivingFallEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            if (event.getDistance() <= 3) return;
+            Ability<?> ability = AbilityHandler.INSTANCE.getAbility(player, AbilityHandler.SKYFALL_HAMMER_ABILITY);
+            if (ability != null) {
+                if (ability instanceof SkyfallHammerAbility skyfallAbility) {
+                    if (skyfallAbility.isUsing() && skyfallAbility.isFalling()) {
+                        event.setCanceled(true);
+                    }
+                }
+            }
         }
     }
+
+    ////当实体生命值≤0时触发
+    //@SubscribeEvent
+    //public void onLivingDeathEvent(LivingDeathEvent event) {
+    //    LivingEntity entity = event.getEntity();
+    //    if (event.isCancelable() && entity instanceof EEEABMobEntity && entity.getHealth() > 0) {
+    //        event.setCanceled(true);
+    //    }
+    //}
 
     //新效果或者已存在但是等级更高或时间更长的效果 添加到实体触发
     @SubscribeEvent
     public void onAddPointEffect(MobEffectEvent.Added event) {
         MobEffectInstance effectInstance = event.getEffectInstance();
         if (!event.getEntity().level().isClientSide()) {
-            doCapabilityEffect(effectInstance, event.getEntity(), true);
+            doCapabilityEffect(effectInstance, event.getEntity(), true, false);
         }
     }
 
@@ -190,7 +201,9 @@ public final class ServerEventHandler {
     public void onRemovePotionEffect(MobEffectEvent.Remove event) {
         MobEffectInstance effectInstance = event.getEffectInstance();
         if (!event.getEntity().level().isClientSide() && effectInstance != null) {
-            doCapabilityEffect(effectInstance, event.getEntity(), false);
+            if (doCapabilityEffect(effectInstance, event.getEntity(), false, true)) {
+                event.setCanceled(true);
+            }
         }
     }
 
@@ -199,7 +212,7 @@ public final class ServerEventHandler {
     public void onExpirePotionEffect(MobEffectEvent.Expired event) {
         MobEffectInstance effectInstance = event.getEffectInstance();
         if (!event.getEntity().level().isClientSide() && effectInstance != null) {
-            doCapabilityEffect(effectInstance, event.getEntity(), false);
+            doCapabilityEffect(effectInstance, event.getEntity(), false, false);
         }
     }
 
@@ -224,8 +237,12 @@ public final class ServerEventHandler {
         }
 
         ItemStack itemStack = event.getEntity().getMainHandItem();
-        if (cancelable && itemStack.getItem() instanceof ItemDemolisher && ItemDemolisher.getWeaponState(itemStack) == 1) {
-            event.setCanceled(true);
+        if (itemStack.is(ItemInit.CHAINSWORD.get())) {
+            Ability<?> ability = AbilityHandler.INSTANCE.getAbility(event.getEntity(), AbilityHandler.CHAINSWORD_COMBO_ABILITY);
+            if (ability instanceof ChainswordComboAbility comboAbility) {
+                comboAbility.setPrimary(event.getTarget().getUUID());
+                comboAbility.setPrimaryTick(event.getEntity().tickCount);
+            }
         }
     }
 
@@ -318,19 +335,19 @@ public final class ServerEventHandler {
 
         if (directEntity instanceof EntityShamanBomb shamanBomb) {
             if (shamanBomb.reboundFlag) {
-                hurtEntity.addEffect(new MobEffectInstance(EffectInit.STUN_EFFECT.get(), 100, 0, false, false));
+                hurtEntity.addEffect(new MobEffectInstance(EffectInit.STUN_EFFECT.get(), 100, 0, false, false, true));
             }
         }
 
-        FrenzyCapability.IFrenzyCapability frenzyCapability = CapabilityHandler.getCapability(hurtEntity, CapabilityHandler.FRENZY_CAPABILITY);
-        if (frenzyCapability != null && frenzyCapability.flag() && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !source.is(DamageTypeTags.BYPASSES_ARMOR)) {
-            float damage = event.getAmount();
-            if (hurtEntity.getHealth() > 1F) {
-                //至多减少50%伤害
-                damage -= damage * (Math.min((frenzyCapability.getLevel() + 1F), 5)) * 0.1F;
-            }
-            event.setAmount(damage);
-        }
+        //FrenzyCapability.IFrenzyCapability frenzyCapability = CapabilityHandler.getCapability(hurtEntity, CapabilityHandler.FRENZY_CAPABILITY);
+        //if (frenzyCapability != null && frenzyCapability.flag() && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !source.is(DamageTypeTags.BYPASSES_ARMOR)) {
+        //    float damage = event.getAmount();
+        //    if (hurtEntity.getHealth() > 1F) {
+        //        //至多减少50%伤害
+        //        damage -= damage * (Math.min((frenzyCapability.getLevel() + 1F), 5)) * 0.1F;
+        //    }
+        //    event.setAmount(damage);
+        //}
 
         AttributeInstance attribute = hurtEntity.getAttribute(AttributeInit.CRIT_CHANCE.get());
         Entity attacker = source.getEntity();
@@ -338,10 +355,6 @@ public final class ServerEventHandler {
             double chance = attribute.getValue() - 1D;
             if (chance > 0 && hurtEntity.getRandom().nextFloat() <= chance) {
                 float damage = event.getAmount();
-                if (source.is(ModTagKey.CAN_CRIT_HEAL) && attacker instanceof LivingEntity mob) {
-                    float maxHealth = mob.getMaxHealth();
-                    mob.heal(Math.min(damage * 0.3F + maxHealth * 0.01F, maxHealth * 0.1F));
-                }
                 damage *= 1.5F;
                 event.setAmount(damage);
                 hurtEntity.level().playSound(null, hurtEntity.getX(), hurtEntity.getY(), hurtEntity.getZ(), SoundEvents.PLAYER_ATTACK_CRIT, hurtEntity.getSoundSource(), 1.0F, 1.0F);
@@ -350,13 +363,55 @@ public final class ServerEventHandler {
         }
 
         if (hurtEntity instanceof Player player) {
-            PlayerCapability.IPlayerCapability playerCapability = CapabilityHandler.getCapability(player, CapabilityHandler.PLAYER_CAPABILITY);
-            if (playerCapability != null) {
-                playerCapability.hurt(player, source, event.getAmount());
+            Ability<?> ability = AbilityHandler.INSTANCE.getAbility(player, AbilityHandler.SOUL_SUMMON_NECKLACE_ABILITY);
+            if (ability instanceof SoulSummonNecklaceAbility summonNecklaceAbility) {
+                summonNecklaceAbility.hurt(player, source, event.getAmount());
             }
         }
 
         if (source.is(DamageTypeTags.IS_FIRE)) tryTriggerOverloadExplosion(hurtEntity);
+
+        if (source.getEntity() instanceof Player player) {
+            ItemStack mainHandItem = player.getMainHandItem();
+            if (mainHandItem.is(ItemInit.CHAINSWORD.get())) {
+                Ability<?> ability = AbilityHandler.INSTANCE.getAbility(player, AbilityHandler.CHAINSWORD_COMBO_ABILITY);
+                if (ability instanceof ChainswordComboAbility chainswordAbility) {
+                    UUID primaryUUID = chainswordAbility.getPrimary();
+                    int primaryTick = chainswordAbility.getPrimaryTick();
+                    boolean isPrimary = primaryUUID != null && primaryTick == player.tickCount && hurtEntity.getUUID().equals(primaryUUID);
+                    if (isPrimary) {
+                        chainswordAbility.setPrimaryTick(0);
+                        chainswordAbility.setPrimary(null);
+                    }
+                    boolean shouldUpdate = player.getAttackStrengthScale(0.5F) >= 1 && isPrimary;
+                    chainswordAbility.onAttack(event.getEntity(), shouldUpdate);
+                    int comboCount = chainswordAbility.getComboCount();
+                    if (shouldUpdate && comboCount > 0) {
+                        if (player.level() instanceof ServerLevel serverLevel) {
+                            Vec3 lookVec = player.getLookAngle();
+                            Vec3 eyePos = player.getEyePosition(1.0F);
+                            Vec3 endPos = eyePos.add(lookVec.scale(player.getEntityReach()));
+                            Optional<Vec3> hit = hurtEntity.getBoundingBox().clip(eyePos, endPos);
+                            Vec3 hitPos;
+                            if (hit.isPresent()) {
+                                hitPos = hit.get();
+                            } else {
+                                double radius = hurtEntity.getBbWidth() / 2;
+                                Vec3 toPlayer = player.position().subtract(hurtEntity.position()).normalize();
+                                hitPos = hurtEntity.position()
+                                        .add(0, hurtEntity.getBbHeight() / 2, 0)
+                                        .add(toPlayer.scale(radius + 0.2));
+                            }
+                            double quadSize = 1 + Mth.clamp(hurtEntity.getBbWidth() * 0.1F, 0.1F, 0.5F) * (comboCount - 1);
+                            serverLevel.sendParticles(ParticleInit.HIT_CUT.get(), hitPos.x, hitPos.y, hitPos.z, 0, 1, 1, 1, quadSize);
+                            hurtEntity.playSound(SoundInit.CHAINSWORD_HIT_CUT.get(), 0.5F, 0.9F + (comboCount - 1) * 0.04F);
+                        }
+                    }
+                    float multiplier = chainswordAbility.getExtraDamageMultiplier();
+                    event.setAmount(event.getAmount() * multiplier);
+                }
+            }
+        }
     }
 
     //实体治疗时
@@ -380,24 +435,24 @@ public final class ServerEventHandler {
     }
 
     //实体设置目标时
-    @SubscribeEvent
-    public void onLivingEntityChangeTarget(LivingChangeTargetEvent event) {
-        //LivingEntity entity = event.getEntity();
-        //VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
-        //if (capability != null) {
-        //    if (event.isCancelable() && entity instanceof Mob && capability.isVertigo()) {
-        //        if (event.getOriginalTarget() != null || entity.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET)) {
-        //            event.setCanceled(true);
-        //        }
-        //    }
-        //}
-    }
+    //@SubscribeEvent
+    //public void onLivingEntityChangeTarget(LivingChangeTargetEvent event) {
+    //    LivingEntity entity = event.getEntity();
+    //    VertigoCapability.IVertigoCapability capability = HandlerCapability.getCapability(entity, HandlerCapability.MOVING_CONTROLLER_CAPABILITY);
+    //    if (capability != null) {
+    //        if (event.isCancelable() && entity instanceof Mob && capability.isVertigo()) {
+    //            if (event.getOriginalTarget() != null || entity.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET)) {
+    //                event.setCanceled(true);
+    //            }
+    //        }
+    //    }
+    //}
 
     //玩家攻击产生暴击时
-    @SubscribeEvent
-    public void onCriticalHit(CriticalHitEvent event) {
-
-    }
+    //@SubscribeEvent
+    //public void onCriticalHit(CriticalHitEvent event) {
+    //
+    //}
 
     //当弹射物触及到物体时
     @SubscribeEvent
@@ -406,7 +461,6 @@ public final class ServerEventHandler {
         if (event.getRayTraceResult() instanceof EntityHitResult hitResult) {
             if (projectile instanceof EntityBloodBall bloodBall && !bloodBall.isHeal() && hitResult.getEntity() instanceof EntityCorpseWarlock) {
                 event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
-                return;
             }
             if (projectile instanceof AbstractArrow arrow) {
                 if (arrow.getPierceLevel() == 0 && !arrow.fireImmune() && !arrow.isOnFire() && hitResult.getEntity() instanceof EntityImmortalExecutioner) {
@@ -421,7 +475,7 @@ public final class ServerEventHandler {
 
     private static void updateGuardianCoreStack(TickEvent.PlayerTickEvent event) {
         Player player = event.player;
-        Ability<?> ability = AbilityHandler.INSTANCE.getAbility(player, AbilityHandler.GUARDIAN_LASER_ABILITY_TYPE);
+        Ability<?> ability = AbilityHandler.INSTANCE.getAbility(player, AbilityHandler.GUARDIAN_LASER_ABILITY);
         ItemStack itemStack = player.getUseItem();
         if (ability != null) {
             if (!ability.isUsing()) {
@@ -445,31 +499,35 @@ public final class ServerEventHandler {
         }
     }
 
-    private static void doCapabilityEffect(MobEffectInstance effectInstance, LivingEntity entity, boolean flag) {
+    private static boolean doCapabilityEffect(MobEffectInstance effectInstance, LivingEntity entity, boolean added, boolean remove) {
         Capability<?> capability = null;
+        boolean shouldCancel = false;
         MobEffect effect = effectInstance.getEffect();
         if (effect == EffectInit.STUN_EFFECT.get()) {
             capability = CapabilityHandler.STUN_CAPABILITY;
         } else if (effect == EffectInit.FRENZY_EFFECT.get()) {
+            shouldCancel = remove;
             capability = CapabilityHandler.FRENZY_CAPABILITY;
         } else if (effect == EffectInit.ELECTRIFIED_EFFECT.get()) {
             capability = CapabilityHandler.ELECTRICITY_CAPABILITY;
         }
+        if (shouldCancel) return true;
         if (capability != null) {
-            EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new ICapabilityMessage(entity, flag, capability));
+            EEEABMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new ICapabilityMessage(entity, added, capability));
             GeneralCapability iCapability = (GeneralCapability) CapabilityHandler.getCapability(entity, capability);
             if (iCapability != null) {
-                if (flag) iCapability.onStart(entity);
+                if (added) iCapability.onStart(entity);
                 else iCapability.onEnd(entity);
             }
         }
+        return false;
     }
 
-    private static void tryTriggerOverloadExplosion(LivingEntity target) {
-        if (target.removeEffect(EffectInit.ELECTRIFIED_EFFECT.get())) {
-            double radians = Math.toRadians(target.getYRot() + 90);
-            EntityOverloadExplode.explode(target.level(), target.position().add(Math.cos(radians), target.getBbHeight() * 0.3, Math.sin(radians)), null, 2F, 8F);
-            target.clearFire();
+    private static void tryTriggerOverloadExplosion(LivingEntity entity) {
+        if (entity.removeEffect(EffectInit.ELECTRIFIED_EFFECT.get())) {
+            double radians = Math.toRadians(entity.getYRot() + 90);
+            EntityOverloadExplode.explode(entity.level(), entity.position().add(Math.cos(radians), entity.getBbHeight() * 0.3, Math.sin(radians)), entity, 2F, 8F);
+            entity.clearFire();
         }
     }
 }

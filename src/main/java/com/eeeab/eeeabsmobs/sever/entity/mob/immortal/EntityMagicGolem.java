@@ -6,12 +6,12 @@ import com.eeeab.animate.server.ai.animation.AnimationHurt;
 import com.eeeab.animate.server.ai.animation.AnimationMelee;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.AnimationHandler;
-import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
+import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.CopyOwnerTargetGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.ReFindOwnerGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.WhenOwnerDeadGoal;
 import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityAbsRelicron;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -38,16 +38,16 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import javax.annotation.Nullable;
 
 public class EntityMagicGolem extends EntityAbsImmortal {
-    public final Animation hurtAnimation = Animation.create(5);
-    public final Animation attackAnimation = Animation.create(12);
-    public final Animation spawnAnimation = Animation.create(20);
-    private final Animation[] animations = new Animation[]{
-            hurtAnimation,
-            attackAnimation,
-            spawnAnimation
+    public static final Animation HURT_ANIMATION = Animation.create(5);
+    public static final Animation ATTACK_ANIMATION = Animation.create(12);
+    public static final Animation SPAWN_ANIMATION = Animation.create(20);
+    private final Animation[] ANIMATIONS = new Animation[]{
+            HURT_ANIMATION,
+            ATTACK_ANIMATION,
+            SPAWN_ANIMATION
     };
     private boolean boom;
-    private boolean trapGen;
+    //private boolean trapGen;
 
     public EntityMagicGolem(EntityType<? extends EntityMagicGolem> type, Level level) {
         super(type, level);
@@ -75,10 +75,10 @@ public class EntityMagicGolem extends EntityAbsImmortal {
 
     @Override
     protected void registerCustomGoals() {
-        this.goalSelector.addGoal(1, new AnimationActivate<>(this, () -> spawnAnimation));
-        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> attackAnimation, 7, 1.5f, 1.0f, 1.0f));
+        this.goalSelector.addGoal(1, new AnimationActivate<>(this, SPAWN_ANIMATION));
+        this.goalSelector.addGoal(1, new AnimationMelee<>(this, ATTACK_ANIMATION, 7, 1.5f, 1.0f, 1.0f));
         this.goalSelector.addGoal(1, new AnimationHurt<>(this, false));
-        this.goalSelector.addGoal(2, new AnimationMeleeAI<>(this, 1.0D, () -> attackAnimation));
+        this.goalSelector.addGoal(2, new AnimationMeleeAI<>(this, 1.0D, ATTACK_ANIMATION));
         this.goalSelector.addGoal(1, new ReFindOwnerGoal<>(this, EntityImmortalSkeletonMage.class, 20D));
         this.targetSelector.addGoal(2, new CopyOwnerTargetGoal<>(this));
         this.goalSelector.addGoal(3, new WhenOwnerDeadGoal<>(this));
@@ -98,7 +98,7 @@ public class EntityMagicGolem extends EntityAbsImmortal {
     public void tick() {
         super.tick();
         AnimationHandler.INSTANCE.updateAnimations(this);
-        if (this.isDangerous() && this.getAnimation() == this.attackAnimation) {
+        if (this.isDangerous() && this.getAnimation() == ATTACK_ANIMATION) {
             if (this.getAnimationTick() == 6) this.boom();
         }
         if (this.isDangerous() && this.isOnFire()) this.boom();
@@ -117,13 +117,6 @@ public class EntityMagicGolem extends EntityAbsImmortal {
     @Override
     protected void makePoofParticles() {
         if (!isDangerous()) super.makePoofParticles();
-    }
-
-    @Override
-    public boolean isAlliedTo(Entity entity) {
-        boolean flag = super.isAlliedTo(entity);
-        if (trapGen && entity instanceof EntityAbsRelicron) return ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get() || flag || (this.getTeam() == null && entity.getTeam() == null);
-        return flag;
     }
 
     @Override
@@ -150,7 +143,7 @@ public class EntityMagicGolem extends EntityAbsImmortal {
         RandomSource randomsource = worldIn.getRandom();
         if (MobSpawnType.TRIGGERED == reason) {
             this.setSummonAliveTime(20 * (15 + randomsource.nextInt(15)));
-            this.trapGen = true;
+            //this.trapGen = true;
         }
         this.populateDefaultEquipmentSlots(randomsource, difficultyIn);
         return spawnDataIn;
@@ -179,17 +172,17 @@ public class EntityMagicGolem extends EntityAbsImmortal {
 
     @Override
     public Animation getSpawnAnimation() {
-        return this.spawnAnimation;
+        return SPAWN_ANIMATION;
     }
 
     @Override
     public Animation[] getAnimations() {
-        return this.animations;
+        return this.ANIMATIONS;
     }
 
     @Override
     public Animation getHurtAnimation() {
-        return this.hurtAnimation;
+        return HURT_ANIMATION;
     }
 
     @Override

@@ -2,8 +2,8 @@ package com.eeeab.eeeabsmobs.sever.entity.mob.immortal;
 
 import com.eeeab.animate.server.ai.AnimationMeleeAI;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
-import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
-import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
+import com.eeeab.eeeabsmobs.client.particle.ParticleOrb;
+import com.eeeab.eeeabsmobs.client.particle.ParticleRing;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import net.minecraft.util.RandomSource;
@@ -41,7 +41,7 @@ public class EntityImmortalSkeletonKnight extends EntityAbsImmortalSkeleton impl
     @Override
     protected void registerCustomGoals() {
         this.addRangeAI(this);
-        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, () -> putUpAnimation, EnumSet.of(Goal.Flag.MOVE, Goal.Flag.JUMP)) {
+        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, PUTUP_ANIMATION, EnumSet.of(Goal.Flag.MOVE, Goal.Flag.JUMP)) {
             @Override
             public void tick() {
                 LivingEntity target = getTarget();
@@ -57,7 +57,7 @@ public class EntityImmortalSkeletonKnight extends EntityAbsImmortalSkeleton impl
                 super.stop();
             }
         });
-        this.goalSelector.addGoal(4, new AnimationMeleeAI<>(this, 1D, 10 + this.random.nextInt(10), e -> e.active, () -> meleeAnimation1, () -> meleeAnimation2));
+        this.goalSelector.addGoal(4, new AnimationMeleeAI<>(this, 1D, 10 + this.random.nextInt(10), e -> e.active, MELEE_ANIMATION1, MELEE_ANIMATION2));
         super.registerCustomGoals();
     }
 
@@ -67,15 +67,10 @@ public class EntityImmortalSkeletonKnight extends EntityAbsImmortalSkeleton impl
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource damageSource) {
-        return false;
-    }
-
-    @Override
     public void tick() {
         super.tick();
         if (!this.level().isClientSide && this.timeUntilBoost == 0 && !this.isNoAi() && this.isActive() && this.getTarget() != null && this.isNoAnimation() && this.tickCount % 2 == 0 && this.random.nextFloat() < 0.1F) {
-            this.playAnimation(this.putUpAnimation);
+            this.playAnimation(PUTUP_ANIMATION);
             this.timeUntilBoost = INVIGORATE_INTERVAL.sample(this.random);
         }
     }

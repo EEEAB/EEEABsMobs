@@ -5,7 +5,10 @@ import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityImmortalShurike
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class ModelImmortalShuriken extends ModHierarchicalModel<EntityImmortalShuriken> {
     private final ModelPart root;
     private final ModelPart bladeGroup;
@@ -45,6 +48,7 @@ public class ModelImmortalShuriken extends ModHierarchicalModel<EntityImmortalSh
     public void setupAnim(EntityImmortalShuriken entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.root.yRot = toRadians(netHeadYaw);
         this.root.xRot = toRadians(headPitch);
-        this.bladeGroup.yRot += ageInTicks * (float) Math.max(0.01F, Math.min(entity.getDeltaMovement().length() / 0.55F * 0.1F + 0.01F, 0.15F));
+        float speed = (float) Math.min(entity.getDeltaMovement().length() / 0.55F * 0.1F, 0.15F);
+        if (speed > 0.001F) this.bladeGroup.yRot += speed;
     }
 }

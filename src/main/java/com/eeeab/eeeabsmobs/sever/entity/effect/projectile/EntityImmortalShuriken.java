@@ -1,14 +1,14 @@
 package com.eeeab.eeeabsmobs.sever.entity.effect.projectile;
 
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
-import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
-import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.client.particle.ParticleOrb;
+import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.sever.entity.mob.IMob;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.effect.IEntity;
 import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalBoss;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.eeeab.eeeabsmobs.sever.entity.mob.ModMobType;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
@@ -42,8 +42,8 @@ import java.util.function.Predicate;
 public class EntityImmortalShuriken extends Projectile implements IEntity {
     private static final EntityDataAccessor<Integer> DATA_DURATION = SynchedEntityData.defineId(EntityImmortalShuriken.class, EntityDataSerializers.INT);
     private static final double TRACKING_DISTANCE_THRESHOLD = 2.6D;
-    private static final double RE_FIND_RANGE = 30D;
-    private static final int MAX_ACTIVE = 600;
+    private static final double RE_FIND_RANGE = 15D;
+    private static final int MAX_ACTIVE = 300;
     private LivingEntity target;
     private UUID targetUUID;
     private boolean closeFlag;
@@ -51,7 +51,7 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
     private double preY;
     private double preZ;
     private int difficultyLevel;
-    private final Predicate<LivingEntity> LIVING_ENTITY_SELECTOR = entity -> entity.getMobType() != ModMobType.IMMORTAL && !entity.getType().is(ModTagKey.IMMORTAL_IGNORE_HUNT_TARGETS) && entity.isAttackable()
+    private final Predicate<LivingEntity> LIVING_ENTITY_SELECTOR = entity -> !entity.getType().is(ModTagKey.IMMORTAL_IGNORE_HUNT_TARGETS) && entity.isAttackable()
             && (entity instanceof Enemy || entity instanceof NeutralMob || (entity instanceof Player player && !player.isCreative() && !player.isSpectator())) && (getOwner() == null || !getOwner().isAlliedTo(entity));
 
     public EntityImmortalShuriken(EntityType<EntityImmortalShuriken> type, Level level) {
@@ -105,21 +105,15 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
                     this.target = (LivingEntity) serverLevel.getEntity(this.targetUUID);
                 }
 
-                if (!this.closeFlag && this.tickCount % 5 + this.random.nextInt(3) == 0 && (this.target == null || !this.target.isAlive())) {
-                    LivingEntity entity = this.reFindTarget();
-                    if (entity == null) {
-                        this.target = null;
-                        this.targetUUID = null;
-                        this.closeFlag = false;
-                    } else {
-                        this.target = entity;
-                    }
+                if (this.target == null && !this.closeFlag && this.tickCount % 5 + this.random.nextInt(3) == 0) {
+                    this.target = this.tryFindTarget();
+                }
+
+                if (this.checkCanShoot() && this.getDeltaMovement().horizontalDistanceSqr() > 2.5000003E-7D && this.tickCount % 5 == 0) {
+                    this.playSound(SoundInit.IMMORTAL_SHURIKEN_SPIN.get(), 0.2F, (this.random.nextFloat() - this.random.nextFloat()) * 0.5F + 1F);
                 }
             }
 
-            if (this.checkCanShoot() && this.getDeltaMovement().horizontalDistanceSqr() > 2.5000003E-7D && this.tickCount % 5 == 0) {
-                this.playSound(SoundInit.IMMORTAL_SHURIKEN_SPIN.get(), 0.15F, (this.random.nextFloat() - this.random.nextFloat()) * 0.5F + 1F);
-            }
 
             this.checkInsideBlocks();
 
@@ -191,13 +185,25 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
         super.onHitEntity(result);
         Entity entity = result.getEntity();
         if (entity instanceof LivingEntity hitEntity) {
-            if (this.getOwner() instanceof EntityImmortalBoss immortal) {
+            float damage = 5F;
+            if (this.getOwner() instanceof EntityImmortalBoss) {
+                damage = ModConfigHandler.COMMON.mobs.immortals.immortal.immortalShuriken.damage.get().floatValue();
+            }
+            if (this.getOwner() instanceof IMob iMob) {
+                damage += iMob.getDamageAmountByTargetHealthPct(hitEntity);
+            }
+            MobEffectInstance instance = hitEntity.getEffect(EffectInit.ERODE_EFFECT.get());
+            if (instance != null) damage += instance.getAmplifier() + 1;
+            /*if (this.getOwner() instanceof EntityImmortalBoss immortal) {
                 float damageMultiplier = 0F;
                 MobEffectInstance instance = hitEntity.getEffect(EffectInit.ERODE_EFFECT.get());
                 if (instance != null) damageMultiplier += (instance.getAmplifier() + 1) * 0.08F;
-                immortal.doHurtTarget(ModDamageSource.immortalMagicAttack(this, immortal), hitEntity, false, false, false, 0.3F, 1F + damageMultiplier);
-            } else hitEntity.hurt(ModDamageSource.immortalMagicAttack(this, getOwner()), 2F + hitEntity.getMaxHealth() * 0.025F);
-            ModEntityUtils.addEffectStackingAmplifier(this, hitEntity, EffectInit.ERODE_EFFECT.get(), 300, 5, true, true, true, true, true);
+
+
+                immortal.doHurtTarget(ModDamageSource.immortalMagic(this, immortal), hitEntity, false, false, false, 0.3F, 1F + damageMultiplier);
+            } else */
+            hitEntity.hurt(ModDamageSource.immortalMagic(this, getOwner()), damage);
+            ModEntityUtils.addEffectStackingAmplifier(this, hitEntity, EffectInit.ERODE_EFFECT.get(), 300, 5, true, true, true, true);
         } else {
             entity.hurt(this.damageSources().magic(), 11.4514F);
         }
@@ -246,13 +252,13 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
         return this.tickCount > this.getDuration();
     }
 
-    private @Nullable LivingEntity reFindTarget() {
-        return this.level().getEntitiesOfClass(LivingEntity.class, ModEntityUtils.makeAABBWithSize(this.getX(), this.getY(), this.getZ(), 0, RE_FIND_RANGE, RE_FIND_RANGE, RE_FIND_RANGE), LIVING_ENTITY_SELECTOR).stream().findFirst().orElse(null);
+    private @Nullable LivingEntity tryFindTarget() {
+        return this.level().getEntitiesOfClass(LivingEntity.class, ModEntityUtils.makeAABBWithSize(this.getX(), this.getY(), this.getZ(), 0, RE_FIND_RANGE, RE_FIND_RANGE, RE_FIND_RANGE), LIVING_ENTITY_SELECTOR).stream().findAny().orElse(null);
     }
 
     @Override
     public boolean canHitEntity(Entity entity) {
-        if (!entity.canBeHitByProjectile() || (entity == getOwner()) || (entity instanceof EntityAbsImmortal && ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get())) {
+        if (!entity.canBeHitByProjectile() || (entity == getOwner()) || (getOwner() != null && getOwner().isAlliedTo(entity))) {
             return false;
         } else {
             return getOwner() == null || !getOwner().isPassengerOfSameVehicle(entity);

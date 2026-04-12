@@ -1,9 +1,11 @@
 package com.eeeab.eeeabsmobs.sever.entity.effect;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
+import com.eeeab.eeeabsmobs.sever.entity.mob.IMob;
 import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalBoss;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.entity.util.damage.ModDamageSource;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
@@ -36,7 +38,7 @@ public class EntityImmortalLaser extends EntityAbsBeam {
 
     public EntityImmortalLaser(Level world, LivingEntity caster, double x, double y, double z, float yaw, int duration, boolean canPlaySound) {
         this(EntityInit.IMMORTAL_LASER.get(), world);
-        this.caster = caster;
+        this.setOwner(caster);
         this.setYaw(yaw);
         this.setPitch(-Mth.PI / 2F);
         this.setDuration(duration);
@@ -65,19 +67,25 @@ public class EntityImmortalLaser extends EntityAbsBeam {
             }
             List<LivingEntity> entities = raytraceEntities(level(), new Vec3(getX(), getY(), getZ()), new Vec3(endPosX, endPosY, endPosZ)).getEntities();
             if (!this.level().isClientSide) {
-                for (LivingEntity target : entities) {
-                    boolean hurtFlag = false;
-                    DamageSource source = ModDamageSource.laserAttack(this, this.caster, true, true);
-                    //TODO 待完善
-                    if (this.caster instanceof EntityImmortalBoss immortal) {
-                        float damageMultiplier = 0F;
-                        MobEffectInstance instance = target.getEffect(EffectInit.ERODE_EFFECT.get());
-                        if (instance != null) damageMultiplier += (instance.getAmplifier() + 1) * 0.08F;
-                        hurtFlag = immortal.doHurtTarget(source, target, false, false, false, 0.375F, 1F + damageMultiplier);
-                    } else if (this.caster != null) {
-                        hurtFlag = target.hurt(source, 5F + target.getMaxHealth() * 0.01F);
+                LivingEntity owner = this.getOwner();
+                if (owner instanceof EntityImmortalBoss immortal) {
+                    if (immortal.getAnimation() != EntityImmortalBoss.UNLEASH_ENERGY_ANIMATION) {
+                        discard();
+                        return;
                     }
-                    if (hurtFlag) ModEntityUtils.addEffectStackingAmplifier(this, target, EffectInit.ERODE_EFFECT.get(), 300, 5, true, true, true, true, true);
+                }
+                for (LivingEntity target : entities) {
+                    float damage = 5F;
+                    if (owner instanceof EntityImmortalBoss) {
+                        damage = ModConfigHandler.COMMON.mobs.immortals.immortal.immortalLaser.damage.get().floatValue();
+                    }
+                    MobEffectInstance instance = target.getEffect(EffectInit.ERODE_EFFECT.get());
+                    if (instance != null) damage += instance.getAmplifier() + 1;
+                    if (owner instanceof IMob iMob) {
+                        damage += iMob.getDamageAmountByTargetHealthPct(target);
+                    }
+                    DamageSource source = ModDamageSource.laser(this, owner, true, true);
+                    if (target.hurt(source, damage)) ModEntityUtils.addEffectStackingAmplifier(this, target, EffectInit.ERODE_EFFECT.get(), 300, 5, true, true, true, true);
                 }
             } else if (this.tickCount > this.getCountDown()) {
                 this.spawnExplosionParticles();

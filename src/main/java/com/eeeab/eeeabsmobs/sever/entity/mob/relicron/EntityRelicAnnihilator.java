@@ -4,41 +4,58 @@ import com.eeeab.animate.server.ai.AnimationAI;
 import com.eeeab.animate.server.ai.AnimationGroupAI;
 import com.eeeab.animate.server.ai.AnimationMeleeAI;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
+import com.eeeab.animate.server.ai.animation.AnimationActivate;
+import com.eeeab.animate.server.ai.animation.AnimationDeactivate;
 import com.eeeab.animate.server.ai.animation.AnimationDie;
 import com.eeeab.animate.server.ai.animation.AnimationRepel;
 import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.animate.server.animation.AnimationNotification;
+import com.eeeab.animate.server.animation.OverlapAnimationState;
+import com.eeeab.animate.server.animation.keyframe.CondKeyframe;
+import com.eeeab.animate.server.animation.keyframe.KeyframeManager;
+import com.eeeab.animate.server.animation.release.AnimationCondition;
+import com.eeeab.animate.server.animation.release.AnimationReleaseManager;
+import com.eeeab.animate.server.animation.release.AnimationRule;
+import com.eeeab.animate.server.animation.release.ConditionFactory;
+import com.eeeab.animate.server.animation.release.cooldown.CooldownManager;
+import com.eeeab.animate.server.animation.release.cooldown.FixedRangeCooldown;
+import com.eeeab.animate.server.animation.release.cooldown.HealthScaledCooldown;
 import com.eeeab.animate.server.handler.AnimationHandler;
-import com.eeeab.eeeabsmobs.EEEABMobs;
+import com.eeeab.eeeabsmobs.client.ClientProxy;
+import com.eeeab.eeeabsmobs.client.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
-import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
-import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
-import com.eeeab.eeeabsmobs.client.particle.util.AnimData;
-import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
-import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent.PropertyControl;
-import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent.PropertyControl.EnumParticleProperty;
-import com.eeeab.eeeabsmobs.client.particle.util.RibbonComponent;
-import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
-import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
-import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityAnnihilatorMissile;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
+import com.eeeab.eeeabsmobs.client.particle.ParticleRing;
+import com.eeeab.eeeabsmobs.client.particle.lib.AdvancedParticleBase;
+import com.eeeab.eeeabsmobs.client.particle.lib.AnimData;
+import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent;
+import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent.PropertyControl;
+import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent.PropertyControl.EnumParticleProperty;
+import com.eeeab.eeeabsmobs.client.particle.lib.component.RibbonComponent;
+import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.client.render.LightningBolt;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
-import com.eeeab.eeeabsmobs.sever.entity.effect.EntityCameraShake;
-import com.eeeab.eeeabsmobs.sever.entity.mob.IBoss;
-import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
+import com.eeeab.eeeabsmobs.sever.entity.ai.control.ModBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate.GuardianLeapGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
+import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.ModPathNavigateGround;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityCameraShake;
+import com.eeeab.eeeabsmobs.sever.entity.effect.EntityElectromagnetic;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityGuardianLaser;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityInfraredRay;
+import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityAnnihilatorMissile;
+import com.eeeab.eeeabsmobs.sever.entity.mob.IBoss;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.entity.util.ShockWaveUtils;
+import com.eeeab.eeeabsmobs.sever.entity.util.damage.ModDamageSource;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
-import com.eeeab.eeeabsmobs.sever.message.SyncMuzzlePosMessage;
 import com.eeeab.eeeabsmobs.sever.util.ModMathUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -47,6 +64,7 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
@@ -59,7 +77,7 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -73,54 +91,58 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
-import java.util.function.Supplier;
+import java.util.Optional;
 
 public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, RangedAttackMob {
-    public final Animation dieAnimation = Animation.create(30);
-    public final Animation slashAnimation = Animation.create(50).doesOverlap();
-    public final Animation swingAnimation = Animation.create(50).doesOverlap();
-    public final Animation stabAnimation = Animation.create(60).doesOverlap();
-    public final Animation cycloneAnimation = Animation.create(60);
-    public final Animation shot1Animation = Animation.create(35).sendHint("weak_point");
-    public final Animation shot2Animation = Animation.create(20).doesLoop();
-    public final Animation shot3Animation = Animation.create(15);
-    public final Animation trickshot1Animation = Animation.create(20).sendHint("weak_point");
-    public final Animation trickshot2Animation = Animation.create(20).doesLoop();
-    public final Animation trickshot3Animation = Animation.create(20);
-    public final Animation laserAnimation = Animation.create(90).sendHint("weak_point");
-    public final Animation groundPoundAnimation = Animation.create(50);
-    public final Animation groundsSlam1Animation = Animation.create(15);
-    public final Animation groundsSlam2Animation = Animation.create(100);
-    public final Animation groundsSlam3Animation = Animation.create(40);
-    public final Animation stunAnimation = Animation.create(80);
-    private final Animation[] animations = new Animation[]{
-            dieAnimation,
-            slashAnimation,
-            swingAnimation,
-            stabAnimation,
-            cycloneAnimation,
-            shot1Animation,
-            shot2Animation,
-            shot3Animation,
-            trickshot1Animation,
-            trickshot2Animation,
-            trickshot3Animation,
-            laserAnimation,
-            groundPoundAnimation,
-            groundsSlam1Animation,
-            groundsSlam2Animation,
-            groundsSlam3Animation,
-            stunAnimation
+    public static final Animation DIE_ANIMATION = Animation.create(60);
+    public static final Animation SLASH_ANIMATION = Animation.create(50).doesOverlap();
+    public static final Animation SWING_ANIMATION = Animation.create(50).doesOverlap();
+    public static final Animation STAB_ANIMATION = Animation.create(60).doesOverlap();
+    public static final Animation CYCLONE_ANIMATION = Animation.create(60);
+    public static final Animation SHOT_ANIMATION1 = AnimationNotification.create(35, "weak_point");
+    public static final Animation SHOT_ANIMATION2 = Animation.create(20).doesLoop();
+    public static final Animation SHOT_ANIMATION3 = Animation.create(15);
+    public static final Animation TRICKSHOT_ANIMATION1 = AnimationNotification.create(20, "weak_point");
+    public static final Animation TRICKSHOT_ANIMATION2 = Animation.create(20).doesLoop();
+    public static final Animation TRICKSHOT_ANIMATION3 = Animation.create(20);
+    public static final Animation LASER_ANIMATION = AnimationNotification.create(90, "weak_point");
+    public static final Animation GROUND_POUND_ANIMATION = Animation.create(50);
+    public static final Animation GROUND_POUND_ANIMATION2 = Animation.create(50);
+    public static final Animation GROUND_SLAM_ANIMATION1 = Animation.create(15);
+    public static final Animation GROUND_SLAM_ANIMATION2 = Animation.create(100);
+    public static final Animation GROUND_SLAM_ANIMATION3 = Animation.create(40);
+    public static final Animation STUN_ANIMATION = Animation.create(80);
+    public static final Animation BACKDASH_ANIMATION = Animation.create(10);
+    public static final Animation ACTIVE_ANIMATION = Animation.create(50);
+    public static final Animation DEACTIVATE_ANIMATION = Animation.create(40);
+    private static final Animation[] ANIMATIONS = new Animation[]{
+            SLASH_ANIMATION,
+            SWING_ANIMATION,
+            STAB_ANIMATION,
+            CYCLONE_ANIMATION,
+            LASER_ANIMATION,
+            GROUND_POUND_ANIMATION,
+            GROUND_POUND_ANIMATION2,
+            GROUND_SLAM_ANIMATION1,
+            GROUND_SLAM_ANIMATION2,
+            GROUND_SLAM_ANIMATION3,
+            SHOT_ANIMATION1,
+            SHOT_ANIMATION2,
+            SHOT_ANIMATION3,
+            TRICKSHOT_ANIMATION1,
+            TRICKSHOT_ANIMATION2,
+            TRICKSHOT_ANIMATION3,
+            DIE_ANIMATION,
+            STUN_ANIMATION,
+            BACKDASH_ANIMATION,
+            ACTIVE_ANIMATION,
+            DEACTIVATE_ANIMATION,
     };
+    private static final KeyframeManager<EntityRelicAnnihilator> KEYFRAME_MANAGER;
+    private static final AnimationReleaseManager<EntityRelicAnnihilator> ANIMATION_RELEASE_MANAGER;
     private static final EntityDataAccessor<Boolean> DATA_BLIND = SynchedEntityData.defineId(EntityRelicAnnihilator.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Optional<BlockPos>> DATA_REST_POS = SynchedEntityData.defineId(EntityRelicAnnihilator.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
     private int blindnessDuration;
-    private int timeUntilAttack;
-    private int timeUntilStab;
-    private int timeUntilCyclone;
-    private int timeUntilShot;
-    private int timeUntilSlam;
-    private int timeUntilLaser;
-    private int timeUntilPound;
     private boolean LRFlag;//T:left F:right
     @OnlyIn(Dist.CLIENT)
     public Vec3 muzzle;
@@ -128,16 +150,21 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
     @OnlyIn(Dist.CLIENT)
     public Vec3 saw;
     private Vec3 preSaw = Vec3.ZERO;
-    private int serverLastFireTick = -100;
     private final EntityRelicAnnihilatorPart scope;
     private final EntityRelicAnnihilatorPart[] subEntities;
-    public final ControlledAnimation controlled = new ControlledAnimation(10);
+    private final OverlapAnimationState slashAnimationState = new OverlapAnimationState(SLASH_ANIMATION);
+    private final OverlapAnimationState swingAnimationState = new OverlapAnimationState(SWING_ANIMATION);
+    private final OverlapAnimationState stabAnimationState = new OverlapAnimationState(STAB_ANIMATION);
+    public final ControlledAnimation handControlled = new ControlledAnimation(10);
+    public final ControlledAnimation glowControlled = new ControlledAnimation(10);
     public final ControlledAnimation sawControlled = new ControlledAnimation(10);
 
     public EntityRelicAnnihilator(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
+        this.active = false;
         this.LRFlag = level.random.nextBoolean();
         this.clearRedundantAnimationsOnDeath = true;
+        this.dropAfterDeathAnim = false;
         this.scope = new EntityRelicAnnihilatorPart(this, "scope", 0.825F, 0.75F);
         this.subEntities = new EntityRelicAnnihilatorPart[]{this.scope};
         this.setId(ENTITY_COUNTER.getAndAdd(this.subEntities.length + 1) + 1);
@@ -148,6 +175,11 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
         }
     }
 
+    static {
+        KEYFRAME_MANAGER = setupAnimations();
+        ANIMATION_RELEASE_MANAGER = setupAnimationRules();
+    }
+
     @Override
     public MobLevel getMobLevel() {
         return MobLevel.BOSS;
@@ -155,17 +187,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
 
     @Override
     public boolean isStunned() {
-        return super.isStunned() || this.getAnimation() == this.stunAnimation;
-    }
-
-    @Override
-    public float getStepHeight() {
-        return 1.5F;
-    }
-
-    @Override//是否免疫摔伤
-    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource damageSource) {
-        return false;
+        return super.isStunned() || this.getAnimation() == STUN_ANIMATION;
     }
 
     @Override//是否在实体上渲染着火效果
@@ -190,9 +212,17 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
 
     @Override//被方块阻塞
     public void makeStuckInBlock(BlockState state, Vec3 motionMultiplier) {
-        if (!state.is(Blocks.COBWEB)) {
-            super.makeStuckInBlock(state, motionMultiplier);
-        }
+    }
+
+    @Override
+    protected boolean canRide(Entity vehicle) {
+        return false;
+    }
+
+    @Override
+    public boolean isInvulnerableTo(DamageSource damageSource) {
+        Animation animation = this.getAnimation();
+        return super.isInvulnerableTo(damageSource) || animation == BACKDASH_ANIMATION || animation == ACTIVE_ANIMATION || animation == DEACTIVATE_ANIMATION;
     }
 
     @Override
@@ -215,13 +245,13 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
     @Override
     @NotNull
     protected BodyRotationControl createBodyControl() {
-        return new EMBodyRotationControl(this);
+        return new ModBodyRotationControl(this);
     }
 
     @Override
     @NotNull
     protected PathNavigation createNavigation(Level level) {
-        return new EMPathNavigateGround(this, level);
+        return new ModPathNavigateGround(this, level);
     }
 
     @Override
@@ -230,191 +260,132 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
     }
 
     @Override
-    protected ModConfigHandler.BossCommonConfig getBossConfig() {
+    protected ModConfigHandler.BossConfig getBossConfig() {
         return ModConfigHandler.COMMON.mobs.relicrons.relicAnnihilator.bossConfig;
+    }
+
+    @Override
+    protected float activeRange() {
+        return 7F;
+    }
+
+    @Override
+    protected void updateActivationState() {
+        this.timeUntilDeactivate = 0;
+        super.updateActivationState();
+        if (!this.isAlwaysActive() && this.isNoAnimation() && this.isActive() && this.getTarget() == null && this.zza == 0 && this.isAtRestPos()) {
+            this.playAnimation(this.getDeactivateAnimation());
+            this.setActive(false);
+        }
     }
 
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, EntityAbsRelicron.class));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true, true) {
+            @Override
+            public boolean canUse() {
+                if (this.randomInterval > 0 && this.mob.getRandom().nextInt(this.randomInterval) != 0) {
+                    return false;
+                }
+                this.findTarget();
+                return this.target != null && this.canAttack(this.target, this.targetConditions);
+            }
+        });
+        this.goalSelector.addGoal(5, new RelicronRandomStrollGoal(this, 0.8));
     }
 
     @Override
     protected void registerCustomGoals() {
-        this.goalSelector.addGoal(0, new AnimationSimpleAI<>(this, () -> stunAnimation));
+        this.goalSelector.addGoal(0, new AnimationSimpleAI<>(this, STUN_ANIMATION));
+        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, BACKDASH_ANIMATION) {
+            @Override
+            public void tick() {
+                LivingEntity target = getTarget();
+                if (target != null) {
+                    lookAt(target, 30F, 30F);
+                    getLookControl().setLookAt(target, 30F, 30F);
+                }
+                backOff(target, getRetreatSpeed(3F, getBbWidth() * 3, targetDistance));
+            }
+        });
         this.goalSelector.addGoal(1, new AnimationDie<>(this));
         this.goalSelector.addGoal(1, new RAMeleeAttackGoal(this));
         this.goalSelector.addGoal(1, new RARangeAttackGoal(this));
         this.goalSelector.addGoal(1, new RACycloneAttackGoal(this));
         this.goalSelector.addGoal(1, new RALeapAttackGoal(this));
-        this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> groundsSlam3Animation, 4.75F, 3, 1.25F, 1.2F, true));
-        this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> groundPoundAnimation, 4.5F, 20, 1.25F, 1.2F, true));
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, GROUND_SLAM_ANIMATION3, 3F, 6F, 3, 1.25F, 1.2F, true));
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, GROUND_POUND_ANIMATION, 2.5F, 8F, 20, 1.25F, 1.2F, true));
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, GROUND_POUND_ANIMATION2, 3F, 8F, 20, 1.3F, 1.3F, true) {
+            @Override
+            protected void onHit(LivingEntity entity) {
+                entity.addEffect(new MobEffectInstance(EffectInit.ELECTRIFIED_EFFECT.get(), 200, 0, false, false, true));
+            }
+        });
+        this.goalSelector.addGoal(1, new AnimationActivate<>(this, ACTIVE_ANIMATION));
+        this.goalSelector.addGoal(2, new AnimationDeactivate<>(this, DEACTIVATE_ANIMATION));
         this.goalSelector.addGoal(2, new KeepDistanceGoal(this));
     }
 
     @Override
     public void tick() {
         super.tick();
-        this.controlled.updatePrevTimer();
+        this.handControlled.updatePrevTimer();
+        this.glowControlled.updatePrevTimer();
         this.sawControlled.updatePrevTimer();
         AnimationHandler.INSTANCE.updateAnimations(this);
-        LivingEntity target = this.getTarget();
 
-        if (!this.level().isClientSide && !this.isNoAi() && this.isActive()) {
-            if (target != null) {
-                float HP = this.getHealthPercentage();
-                float targetRelativeAngle = ModEntityUtils.getTargetRelativeAngle(this, target);
-                if (Math.abs(this.getY() - target.getY()) <= this.getBbHeight()) {
-                    if (this.timeUntilAttack <= 0 && this.isNoAnimation() && this.targetDistance < 4.5 && this.random.nextFloat() < 0.7F) {
-                        this.playAnimation(this.LRFlag ? this.swingAnimation : this.slashAnimation);
-                        this.LRFlag = !this.LRFlag;
-                        this.timeUntilAttack = 100 + Mth.randomBetweenInclusive(this.random, 60, 100);//8~10
-                        this.timeUntilAttack = this.getCoolingTimerUtil(this.timeUntilAttack, this.timeUntilAttack - 40, 0.3F);
-                    } else if (this.timeUntilStab <= 0 && this.isNoAnimation() && this.targetDistance > 6 && this.targetDistance <= 18 && targetRelativeAngle <= 60F && targetRelativeAngle >= -60F && (target.isOnFire() || this.random.nextFloat() < 0.4F)) {
-                        this.playAnimation(this.stabAnimation);
-                        this.timeUntilStab = 120 + Mth.randomBetweenInclusive(this.random, 120, 240);//12~18
-                        this.timeUntilStab = this.getCoolingTimerUtil(this.timeUntilStab, this.timeUntilStab - 40, 0.3F);
-                    } else if (HP != 1 && this.timeUntilCyclone <= 0 && this.isNoAnimation() && this.targetDistance > 4 && this.targetDistance < 7 && targetRelativeAngle <= 60F && targetRelativeAngle >= -60F && (target.isOnFire() || this.random.nextFloat() < 0.4F)) {
-                        this.playAnimation(this.cycloneAnimation);
-                        this.timeUntilCyclone = 120 + Mth.randomBetweenInclusive(this.random, 120, 240);//12~18
-                        this.timeUntilCyclone = this.getCoolingTimerUtil(this.timeUntilCyclone, this.timeUntilCyclone - 40, 0.3F);
-                    } else if (this.isNoAnimation() && this.validateGroundPound()) {
-                        this.playAnimation(this.groundPoundAnimation);
-                    }
-                }
-                boolean hasLineOfSight = this.getSensing().hasLineOfSight(target);
-                if (HP <= 0.85F && !this.isBlinded() && this.timeUntilLaser <= 0 && this.isNoAnimation() && this.targetDistance > 9 && this.targetDistance <= 24 && this.random.nextFloat() < 0.6F) {
-                    this.playAnimation(this.laserAnimation);
-                    this.timeUntilLaser = 250 + Mth.randomBetweenInclusive(this.random, 130, 230);//19~24
-                } else if (this.timeUntilShot <= 0 && this.isNoAnimation() && this.targetDistance >= 4.5 && this.targetDistance < 32 && hasLineOfSight && this.random.nextFloat() < 0.5F) {
-                    this.playAnimation(this.targetDistance < 7 ? this.trickshot1Animation : this.shot1Animation);
-                    this.timeUntilShot = 200 + Mth.randomBetweenInclusive(this.random, 140, 240);//17~22
-                    this.timeUntilShot = this.getCoolingTimerUtil(this.timeUntilShot, this.timeUntilShot - 60, 0.5F);
-                } else if (this.timeUntilSlam <= 0 && this.isNoAnimation() && this.targetDistance > 14 && hasLineOfSight && this.random.nextFloat() < 0.5F) {
-                    this.playAnimation(this.groundsSlam1Animation);
-                    this.timeUntilSlam = 200 + Mth.randomBetweenInclusive(this.random, 100, 200);//15~20
-                    this.timeUntilSlam = this.getCoolingTimerUtil(this.timeUntilSlam, this.timeUntilSlam - 50, 0.3F);
-                }
-            }
-            if (target != null && !target.isAlive()) this.setTarget(null);
-        }
-
+        if (!this.isActive()) this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
 
         Animation animation = this.getAnimation();
-        int tick = this.getAnimationTick();
-        if (animation == this.slashAnimation) {
-            this.sawControlled.incrementOrDecreaseTimer(tick >= 10 && tick < 25);
-            if (tick == 15) this.playSound(SoundInit.RELIC_ANNIHILATOR_ATTACK.get(), 1F, this.getVoicePitch());
-            this.doTrailEffect(tick == 17, tick > 17 && tick < 25, false);
-        } else if (animation == this.swingAnimation) {
-            this.sawControlled.decreaseTimer();
-            if (tick == 15) this.playSound(SoundInit.RELIC_ANNIHILATOR_ATTACK.get(), 1F, this.getVoicePitch());
-            this.doTrailEffect(tick == 17, tick > 17 && tick < 25, true);
-        } else if (animation == this.stabAnimation) {
-            if (tick == 5) this.playSound(SoundInit.RELIC_ANNIHILATOR_PRE_ATTACK.get(), 1F, this.getVoicePitch());
-            this.sawControlled.incrementOrDecreaseTimer(tick >= 8 && tick < 45);
-            this.doTrailEffect(tick == 21, tick > 21 && tick < 32, false);
-            if (tick > 31 && tick < 42) this.doFractalEffect();
-        } else if (animation == this.groundPoundAnimation) {
-            this.anchorToGround();
-            this.sawControlled.decreaseTimer();
-            if (tick == 4) this.playSound(SoundInit.RELIC_ANNIHILATOR_PRE_ATTACK.get(), 1F, this.getVoicePitch());
-            if (tick == 5) this.playSound(SoundInit.RELIC_ANNIHILATOR_SMASH.get(), 1F, this.getVoicePitch());
-            if (tick == 20) this.doGroundPoundEffect(2.1F, false);
-            this.doTrailEffect(tick == 18, tick > 18 && tick < 21, true);
-        } else if (animation == this.groundsSlam1Animation) {
-            if (tick == 4) this.playSound(SoundInit.RELIC_ANNIHILATOR_JUMP.get(), 1F, this.getVoicePitch());
-            if (tick == 13) this.doGroundPoundEffect(0F, false);
-        } else if (animation == this.groundsSlam3Animation) {
-            this.anchorToGround();
-            if (tick == 1) this.playSound(SoundInit.RELIC_ANNIHILATOR_SMASH.get(), 1F, this.getVoicePitch() + 1.2F);
-            if (tick == 4) this.doGroundPoundEffect(2.25F, true);
-            this.doTrailEffect(tick == 16, tick > 16 && tick < 21, true);
-        } else if (animation == this.cycloneAnimation) {
-            this.sawControlled.incrementOrDecreaseTimer(tick >= 5 && tick < 40);
-            if (tick == 5) this.playSound(SoundInit.RELIC_ANNIHILATOR_PRE_ATTACK.get(), 1F, this.getVoicePitch());
-            if (tick > 16 && tick < 37 && tick % 5 == 0) this.playSound(SoundInit.RELIC_ANNIHILATOR_WHOOSH.get(), 2.5F, this.getVoicePitch());
-            if (tick > 20 && tick < 39) this.doCycloneEffect();
-            this.doTrailEffect(tick == 22, tick > 22 && tick < 43, false);
-        } else if (animation == this.laserAnimation) {
-            if (tick == 5) this.playSound(SoundInit.RELIC_ANNIHILATOR_ACTIVE_SCOPE.get(), 1F, this.getVoicePitch());
-            this.anchorToGround();
-            this.doShotLaserEffect();
-        } else if (animation == this.dieAnimation || animation == this.stunAnimation) {
-            this.sawControlled.decreaseTimer();
-            if (this.level().isClientSide) {
-                if (tick < 7) {
-                    int count = this.random.nextInt(3) + 1;
-                    Vec3 pos = this.getPosOffset(false, -this.getBbWidth() * 0.2F, this.getBbWidth() * 0.1F, this.getEyeHeight() * 0.9F);
-                    for (int i = 0; i < count; i++) {
-                        Vec3 spawnPos = pos.offsetRandom(this.random, 1.2F);
-                        this.level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), spawnPos.x, spawnPos.y, spawnPos.z, 0, 0, 0);
-                    }
-                }
-                if (animation == this.stunAnimation) {
-                    if (tick == 1) {
-                        Vec3 pos = this.getPosOffset(false, this.getBbWidth() * 0.5F, 0, this.getEyeHeight() * 0.8F);
-                        this.level().addParticle(ParticleTypes.EXPLOSION, pos.x, pos.y, pos.z, 0, 0, 0);
-                    } else if (tick >= 7 && tick % 5 == 1 && tick < 65) {
-                        Vec3 pos = this.getPosOffset(false, this.getBbWidth() * 0.9F, 0, this.getEyeHeight() * 0.6F);
-                        Vec3 spawnPos = pos.offsetRandom(this.random, 0.5F);
-                        this.level().addParticle(ParticleTypes.LARGE_SMOKE, spawnPos.x, spawnPos.y, spawnPos.z, -0.15D + this.random.nextDouble() * 0.15D, -0.15D + this.random.nextDouble() * 0.15D, -0.15D + this.random.nextDouble() * 0.15D);
-                    }
-                }
-            } else if (animation == this.stunAnimation) {
-                if (tick == 1) this.playSound(SoundInit.RELIC_ANNIHILATOR_STUN.get(), 2F, this.getVoicePitch() + 0.2F);
-                if (tick < 10 && target != null) this.backOff(target, 0.6 * ModMathUtils.getTickFactor(tick, 9, true));
-            }
-        } else {
-            if (animation == this.shot2Animation || animation == this.trickshot2Animation) {
-                if (tick == 10) this.doMuzzleFlashEffect();
-            } else {
-                boolean b0 = animation == this.trickshot1Animation;
-                boolean b1 = animation == this.shot1Animation;
-                if (b1 && tick == 15) this.playSound(SoundInit.RELIC_ANNIHILATOR_ACTIVE_SCOPE.get(), 1F, this.getVoicePitch());
-                else if (b0 && tick == 7) this.playSound(SoundInit.RELIC_ANNIHILATOR_ACTIVE_SCOPE.get(), 1F, this.getVoicePitch());
-                this.controlled.incrementOrDecreaseTimer(b1 || b0);
-                this.sawControlled.incrementOrDecreaseTimer(tick >= 12 && b0);
-            }
+
+        if (!this.isAlwaysActive() && !this.isNoAi() && animation == NO_ANIMATION && this.isActive() && this.getTarget() == null
+                && this.getNavigation().isDone() && !this.isAtRestPos()) {
+            this.tryMoveToRestPos();
         }
 
-        if (this.level().isClientSide && !this.isNoAi() && this.isAlive() && this.getDeltaMovement().horizontalDistanceSqr() > 0.005 && animation != this.cycloneAnimation) {
-            float bbWidth = this.getBbWidth();
-            float width = bbWidth * 0.45F;
-            float frontBack = 0;
-            if (animation == this.stabAnimation) width = bbWidth * 0.55F;
-            if (animation == this.trickshot2Animation) {
-                frontBack = bbWidth * -0.3F;
-                this.doWalkEffect(this.getPosOffset(true, frontBack, bbWidth * 1.1F, 0));
+        if (this.level().isClientSide && this.isAlive() && this.isActive() && animation != CYCLONE_ANIMATION) {
+            if (this.isBlinded() && animation == NO_ANIMATION && this.tickCount % 3 == 0) {
+                Vec3 pos = this.scope.position().offsetRandom(this.random, 1.2F);
+                this.level().addParticle(ParticleTypes.LARGE_SMOKE, pos.x, pos.y + 0.2, pos.z, this.random.nextGaussian() * 0.01, 0.007, this.random.nextGaussian() * 0.01);
             }
-            this.doWalkEffect(this.getPosOffset(true, frontBack, width, 0));
-            this.doWalkEffect(this.getPosOffset(false, 0, width, 0));
-        }
-
-        if (this.level().isClientSide && !this.isSilent() && !this.sawControlled.isStop() && this.tickCount % 4 == 1) {
-            this.level().playLocalSound(this.saw.x, this.saw.y, this.saw.z, SoundInit.RELIC_ANNIHILATOR_SAW.get(), this.getSoundSource(),
-                    this.getVoicePitch() * this.sawControlled.getAnimationFraction(), this.getVoicePitch() + 0.2F, false);
+            if (this.saw != null && this.tickCount % 5 == 0 && this.random.nextInt(5) == 0) {
+                Vec3 pos = this.isNoAnimation() ? this.getPosOffset(true, 0F, getBbWidth(), getBbHeight() * 0.25F) : this.saw;
+                pos = pos.offsetRandom(this.random, 0.75F);
+                this.level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), pos.x, pos.y, pos.z, 0.0D, 0.0D, 0.0D);
+            }
+            if (this.getDeltaMovement().horizontalDistanceSqr() > 0.005) {
+                float bbWidth = this.getBbWidth();
+                float width = bbWidth * 0.45F;
+                float frontBack = 0;
+                if (animation == STAB_ANIMATION) width = bbWidth * 0.55F;
+                if (animation == TRICKSHOT_ANIMATION2) {
+                    frontBack = bbWidth * -0.3F;
+                    this.doWalkEffect(this.getPosOffset(true, frontBack, bbWidth * 1.1F, 0));
+                }
+                this.doWalkEffect(this.getPosOffset(true, frontBack, width, 0));
+                this.doWalkEffect(this.getPosOffset(false, 0, width, 0));
+            }
+            if (!this.isSilent() && !this.sawControlled.isStop() && this.tickCount % 4 == 1) {
+                this.level().playLocalSound(this.saw.x, this.saw.y, this.saw.z, SoundInit.RELIC_ANNIHILATOR_SAW.get(), this.getSoundSource(),
+                        this.getVoicePitch() * this.sawControlled.getAnimationFraction(), this.getVoicePitch() + 0.2F, false);
+            }
         }
     }
 
-    public void anchorToGround() {
-        this.setDeltaMovement(0, !this.onGround() && this.getDeltaMovement().y > 0 ? -0.005D : this.getDeltaMovement().y, 0);
+    @Override
+    protected void customServerAiStep() {
+        super.customServerAiStep();
+        ANIMATION_RELEASE_MANAGER.tick(this, this.getCooldownManager());
     }
 
     @Override
     public void aiStep() {
         super.aiStep();
         if (this.isNoAnimation()) this.sawControlled.decreaseTimer();
+        this.glowControlled.incrementOrDecreaseTimer(this.isGlow());
         if (!this.level().isClientSide) {
-            if (this.timeUntilAttack > 0) this.timeUntilAttack--;
-            if (this.timeUntilStab > 0) this.timeUntilStab--;
-            if (this.timeUntilCyclone > 0) this.timeUntilCyclone--;
-            if (this.timeUntilShot > 0) this.timeUntilShot--;
-            if (this.timeUntilSlam > 0) this.timeUntilSlam--;
-            if (this.timeUntilLaser > 0) this.timeUntilLaser--;
-            if (this.timeUntilPound > 0) this.timeUntilPound--;
             if (this.blindnessDuration > 0) this.blindnessDuration--;
             else this.setBlind(false);
         }
@@ -425,14 +396,14 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
             float sides = 0;
             float frontBack = 0.5F;
             Animation animation = this.getAnimation();
-            if (animation == this.shot1Animation || animation == this.shot2Animation) {
+            if (animation == SHOT_ANIMATION1 || animation == SHOT_ANIMATION2) {
                 y *= 0.86F;
                 sides = this.getBbWidth() * 0.18F;
                 frontBack = 0.4F;
-            } else if (animation == this.trickshot1Animation || animation == this.trickshot2Animation) {
+            } else if (animation == TRICKSHOT_ANIMATION1 || animation == TRICKSHOT_ANIMATION2) {
                 y *= 0.77F;
                 frontBack = 0.7F;
-            } else if (animation == this.laserAnimation) {
+            } else if (animation == LASER_ANIMATION) {
                 y *= 0.575F;
                 frontBack = 1.2F;
             }
@@ -460,20 +431,28 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
             float multiplier = 0.8F;
             if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
                 Animation animation = this.getAnimation();
-                if (animation == this.laserAnimation || animation == this.shot2Animation || animation == this.shot3Animation) {
+                if (animation == LASER_ANIMATION || animation == SHOT_ANIMATION2 || animation == TRICKSHOT_ANIMATION2) {
                     multiplier = 0.2F;
                 }
             } else multiplier = 1F;
             if (isCriticalSpot) {
-                damage += this.getMaxHealth() * 0.05F;
+                damage += this.getHealth() * 0.05F;
                 multiplier = 1F;
-            } else if (this.isStunned()) multiplier = 1.1F;
+            }
             return super.hurt(source, damage * multiplier);
         }
     }
 
     @Override
     public void performRangedAttack(LivingEntity target, float velocity) {
+        this.performRangedAttack(this.position().add(0, this.getBbHeight(), 0));
+    }
+
+    @Override
+    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance instance, MobSpawnType spawnType, @Nullable SpawnGroupData groupData, @Nullable CompoundTag tag) {
+        if (spawnType == MobSpawnType.STRUCTURE) this.setYRot(yBodyRot = 180);
+        this.setRestPos(this.blockPosition());
+        return super.finalizeSpawn(level, instance, spawnType, groupData, tag);
     }
 
     @Override
@@ -482,7 +461,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
             double d0 = this.random.nextGaussian() * 0.02D;
             double d1 = this.random.nextGaussian() * 0.02D;
             double d2 = this.random.nextGaussian() * 0.02D;
-            this.level().addParticle(ParticleTypes.LARGE_SMOKE, this.getRandomX(1.5D), this.getY() + (0.1F + (this.getBbHeight() * 0.75) * this.random.nextDouble()), this.getRandomZ(1.5D), d0, d1, d2);
+            this.level().addParticle(this.random.nextFloat() < 0.3F ? ParticleInit.GUARDIAN_SPARK.get() : ParticleTypes.LARGE_SMOKE, this.getRandomX(1.5D), this.getY() + (0.1F + (this.getBbHeight() * 0.75) * this.random.nextDouble()), this.getRandomZ(1.5D), d0, d1, d2);
         }
     }
 
@@ -490,6 +469,21 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_BLIND, false);
+        this.entityData.define(DATA_REST_POS, Optional.empty());
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        if (compound.contains("restPos")) {
+            this.setRestPos(NbtUtils.readBlockPos(compound.getCompound("restPos")));
+        }
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        this.getRestPos().ifPresent(pos -> compound.put("restPos", NbtUtils.writeBlockPos(pos)));
     }
 
     public static AttributeSupplier.Builder setAttributes() {
@@ -497,9 +491,10 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                 add(Attributes.MOVEMENT_SPEED, 0.34D).
                 add(Attributes.FOLLOW_RANGE, 32.0D).
                 add(Attributes.ATTACK_DAMAGE, 12.0D).
-                add(ForgeMod.ENTITY_GRAVITY.get(), 0.125D).
                 add(Attributes.KNOCKBACK_RESISTANCE, 1.0D).
-                add(Attributes.ARMOR, 15.0D);
+                add(Attributes.ARMOR, 12.0D).
+                add(ForgeMod.ENTITY_GRAVITY.get(), 0.125D).
+                add(ForgeMod.STEP_HEIGHT_ADDITION.get(), 4D);
     }
 
     @Override
@@ -522,13 +517,56 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
     }
 
     @Override
+    protected SoundEvent getActiveSound() {
+        return SoundInit.RELIC_ANNIHILATOR_ACTIVE.get();
+    }
+
+    @Override
+    public float getVoicePitch() {
+        return (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.05F;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return SoundInit.RELIC_ANNIHILATOR_IDLE.get();
+    }
+
+    @Override
     public Animation[] getAnimations() {
-        return this.animations;
+        return ANIMATIONS;
     }
 
     @Override
     public Animation getDeathAnimation() {
-        return this.dieAnimation;
+        return DIE_ANIMATION;
+    }
+
+    @Override
+    protected Animation getActiveAnimation() {
+        return ACTIVE_ANIMATION;
+    }
+
+    @Override
+    protected Animation getDeactivateAnimation() {
+        return DEACTIVATE_ANIMATION;
+    }
+
+    @Override
+    public KeyframeManager<EntityRelicAnnihilator> getKeyframeManager() {
+        return KEYFRAME_MANAGER;
+    }
+
+    @Override
+    public AnimationState getOverlapAnimationState(Animation animation) {
+        if (SLASH_ANIMATION == animation) {
+            return this.slashAnimationState;
+        } else if (SWING_ANIMATION == animation) {
+            return this.swingAnimationState;
+        } else if (STAB_ANIMATION == animation) {
+            return this.stabAnimationState;
+        }
+        return null;
     }
 
     @Override
@@ -545,8 +583,339 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
         this.entityData.set(DATA_BLIND, blind);
     }
 
-    public boolean doHurtTarget(LivingEntity entity, float damageMultiplier, float knockBackMultiplier, boolean canDisableShield, boolean charged) {
-        if (this.doHurtTarget(entity, damageMultiplier, knockBackMultiplier, canDisableShield)) {
+    public Optional<BlockPos> getRestPos() {
+        return getEntityData().get(DATA_REST_POS);
+    }
+
+    public void setRestPos(BlockPos pos) {
+        getEntityData().set(DATA_REST_POS, Optional.of(pos));
+    }
+
+    private boolean isAtRestPos() {
+        Optional<BlockPos> restPos = getRestPos();
+        return restPos.filter(pos -> pos.distSqr(blockPosition()) < 9).isPresent();
+    }
+
+    private void tryMoveToRestPos() {
+        boolean unableReach = true;
+        if (getRestPos().isPresent()) {
+            BlockPos pos = getRestPos().get();
+            if (getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), 1)) {
+                unableReach = false;
+            }
+        }
+        if (unableReach) {
+            setRestPos(blockPosition());
+        }
+    }
+
+    private static KeyframeManager<EntityRelicAnnihilator> setupAnimations() {
+        KeyframeManager<EntityRelicAnnihilator> manager = new KeyframeManager<>();
+        KeyframeManager.KeyframeManegerBuilder<EntityRelicAnnihilator> builder = manager.builder();
+        builder.forAnimation(SLASH_ANIMATION)
+                .inRange(10, 35, (entity, animation, tick) -> {
+                    entity.sawControlled.incrementOrDecreaseTimer(tick >= 10 && tick < 25);
+                    if (tick == 15) entity.playSound(SoundInit.RELIC_ANNIHILATOR_ATTACK.get(), 1F, entity.getVoicePitch());
+                    entity.doTrailEffect(tick == 17, tick > 17 && tick < 25, false);
+                });
+        builder.forAnimation(SWING_ANIMATION)
+                .inRange(15, 24, (entity, animation, tick) -> {
+                    if (tick == 15) entity.playSound(SoundInit.RELIC_ANNIHILATOR_ATTACK.get(), 1F, entity.getVoicePitch());
+                    entity.doTrailEffect(tick == 17, tick > 17 && tick < 25, true);
+                });
+        builder.forAnimation(STAB_ANIMATION)
+                .inRange(5, 55, (entity, animation, tick) -> {
+                    if (tick == 5) entity.playSound(SoundInit.RELIC_ANNIHILATOR_PRE_ATTACK.get(), 1F, entity.getVoicePitch());
+                    entity.sawControlled.incrementOrDecreaseTimer(tick >= 8 && tick < 45);
+                    entity.doTrailEffect(tick == 21, tick > 21 && tick < 32, false);
+                    if (tick > 31 && tick < 42) entity.doFractalEffect();
+                });
+        builder.forAnimation(CYCLONE_ANIMATION)
+                .inRange(5, 50, (entity, animation, tick) -> {
+                    entity.sawControlled.incrementOrDecreaseTimer(tick >= 5 && tick < 40);
+                    if (tick == 5) entity.playSound(SoundInit.RELIC_ANNIHILATOR_PRE_ATTACK.get(), 1F, entity.getVoicePitch());
+                    if (tick > 16 && tick < 37 && tick % 5 == 0) entity.playSound(SoundInit.RELIC_ANNIHILATOR_WHOOSH.get(), 2.5F, entity.getVoicePitch());
+                    if (tick > 20 && tick < 39) entity.doCycloneEffect();
+                    entity.doTrailEffect(tick == 22, tick > 22 && tick < 43, false);
+                });
+        builder.forAnimation(LASER_ANIMATION)
+                .inRange(5, 52, (entity, animation, tick) -> {
+                    if (tick == 5) entity.playSound(SoundInit.RELIC_ANNIHILATOR_ACTIVE_SCOPE.get(), 1F, entity.getVoicePitch());
+                    entity.doShotLaserEffect();
+                });
+        builder.forAnimation(GROUND_POUND_ANIMATION)
+                .inRange(1, 20, (entity, animation, tick) -> {
+                    if (tick == 4) entity.playSound(SoundInit.RELIC_ANNIHILATOR_PRE_ATTACK.get(), 1F, entity.getVoicePitch());
+                    if (tick == 5) entity.playSound(SoundInit.RELIC_ANNIHILATOR_SMASH.get(), 1F, entity.getVoicePitch());
+                    if (tick == 20) entity.doGroundPoundEffect(2.25F, false);
+                    entity.doTrailEffect(tick == 18, tick > 18 && tick < 21, true);
+                });
+        builder.forAnimation(GROUND_POUND_ANIMATION2)
+                .inRange(1, 20, (entity, animation, tick) -> {
+                    entity.doTrailEffect(tick == 18, tick > 18 && tick < 21, false);
+                    if (tick == 4) entity.playSound(SoundInit.RELIC_ANNIHILATOR_PRE_ATTACK.get(), 1F, entity.getVoicePitch());
+                    if (tick == 5) entity.playSound(SoundInit.RELIC_ANNIHILATOR_SMASH.get(), 1F, entity.getVoicePitch());
+                    if (tick == 20) entity.doGroundPoundEffect(2.25F, false);
+                }).inRange(20, 24, (entity, animation, tick) -> {
+                            Vec3 pos = entity.getPosOffset(false, 2.25F, 0.2F, 0);
+                            if (entity.level().isClientSide) {
+                                if (tick == 20) {
+                                    AdvancedParticleBase.spawnParticle(entity.level(), ParticleInit.GLOW.get(), pos.x, pos.y, pos.z, 0, 0, 0, true, 0, 0, 0, 0,
+                                            1, BOLT_COLORS[0].x, BOLT_COLORS[0].y, BOLT_COLORS[0].z, BOLT_COLORS[0].w, 1, 5, true, false, false, new ParticleComponent[]{
+                                                    new PropertyControl(EnumParticleProperty.ALPHA, new AnimData.Oscillator(BOLT_COLORS[0].w, 0, 15, 0), false),
+                                                    new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(10, 35), false),
+                                            });
+                                }
+                                for (int i = 0; i < 3; i++) {
+                                    RandomSource source = entity.random;
+                                    ClientProxy.LIGHTNING_RENDER.update(entity, RELICRON_BOLT.color(BOLT_COLORS[source.nextInt(2)]).build(pos, pos.add((source.nextFloat() - 0.5F) * 5, 0.5 + source.nextFloat() * entity.getBbHeight(), (source.nextFloat() - 0.5F) * 5), entity.random));
+                                }
+                            } else if (tick == 20 && entity.getHealthPercentage() <= 0.5F) {
+                                final int count = 6;
+                                float offset = (float) Math.toRadians(entity.getRandom().nextGaussian() * 360 - 180);
+                                for (int i = 0; i < count; ++i) {
+                                    float f1 = (float) (entity.getYRot() + (i + offset) * (float) Math.PI * (2.0 / count));
+                                    pos = ModEntityUtils.checkSummonEntityPoint(entity, pos.x, pos.z, pos.y, pos.y + 1);
+                                    EntityElectromagnetic.shoot(entity.level(), entity, pos, 2.0F, count + 4, 5, (f1 * (180F / (float) Math.PI)) - 90F, false);
+                                }
+                            }
+                        }
+                );
+        builder.forAnimation(GROUND_SLAM_ANIMATION1)
+                .atTick(4, (entity, animation, tick) -> entity.playSound(SoundInit.RELIC_ANNIHILATOR_JUMP.get(), 1F, entity.getVoicePitch()))
+                .atTick(13, (entity, animation, tick) -> entity.doGroundPoundEffect(0F, false));
+        builder.forAnimation(GROUND_SLAM_ANIMATION3)
+                .atTick(1, (entity, animation, tick) -> entity.playSound(SoundInit.RELIC_ANNIHILATOR_SMASH.get(), 1F, entity.getVoicePitch() + 1.2F))
+                .atTick(4, (entity, animation, tick) -> entity.doGroundPoundEffect(2.25F, true))
+                .inRange(16, 20, (entity, animation, tick) -> entity.doTrailEffect(tick == 16, tick > 16 && tick < 21, true));
+        builder.forAnimation(DIE_ANIMATION)
+                .inRange(1, 6, (entity, animation, tick) -> {
+                    if (entity.level().isClientSide) {
+                        int count = entity.random.nextInt(3) + 1;
+                        Vec3 pos = entity.getPosOffset(false, -entity.getBbWidth() * 0.2F, entity.getBbWidth() * 0.1F, entity.getEyeHeight() * 0.9F);
+                        for (int i = 0; i < count; i++) {
+                            Vec3 spawnPos = pos.offsetRandom(entity.random, 1.2F);
+                            entity.level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), spawnPos.x, spawnPos.y, spawnPos.z, 0, 0, 0);
+                        }
+                    }
+                });
+        builder.forAnimation(STUN_ANIMATION)
+                .inRange(1, 10, (entity, animation, tick) -> {
+                    if (entity.level().isClientSide) {
+                        if (tick == 1) {
+                            Vec3 pos = entity.getPosOffset(false, entity.getBbWidth() * 0.5F, 0, entity.getEyeHeight());
+                            entity.level().addParticle(ParticleTypes.EXPLOSION, pos.x, pos.y, pos.z, 0, 0, 0);
+                        }
+                        int count = entity.random.nextInt(3) + 1;
+                        Vec3 pos = entity.getPosOffset(false, -entity.getBbWidth() * 0.2F, entity.getBbWidth() * 0.1F, entity.getEyeHeight() * 0.9F);
+                        for (int i = 0; i < count; i++) {
+                            Vec3 spawnPos = pos.offsetRandom(entity.random, 1.2F);
+                            entity.level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), spawnPos.x, spawnPos.y, spawnPos.z, 0, 0, 0);
+                        }
+                    } else {
+                        LivingEntity target = entity.getTarget();
+                        if (tick == 1) entity.playSound(SoundInit.RELIC_ANNIHILATOR_STUN.get(), 2F, entity.getVoicePitch() + 0.2F);
+                        if (tick < 10 && target != null) entity.backOff(target, 0.6 * ModMathUtils.getTickFactor(tick, 9, true));
+                    }
+                })
+                .everyNTick(7, 64, 5, (entity, animation, tick) -> {
+                    Vec3 pos = entity.getPosOffset(false, entity.getBbWidth() * 0.9F, 0, entity.getEyeHeight() * 0.6F);
+                    Vec3 spawnPos = pos.offsetRandom(entity.random, 0.5F);
+                    entity.level().addParticle(ParticleTypes.LARGE_SMOKE, spawnPos.x, spawnPos.y, spawnPos.z, -0.15D + entity.random.nextDouble() * 0.15D, -0.15D + entity.random.nextDouble() * 0.15D, -0.15D + entity.random.nextDouble() * 0.15D);
+                });
+        builder.conditional(new CondKeyframe<>() {
+            @Override
+            public boolean shouldHandle(EntityRelicAnnihilator entity, Animation animation, int tick) {
+                return (animation == SWING_ANIMATION || animation == GROUND_POUND_ANIMATION || animation == DIE_ANIMATION
+                        || animation == STUN_ANIMATION || animation == GROUND_POUND_ANIMATION2) && !entity.sawControlled.isStop();
+            }
+
+            @Override
+            public void handle(EntityRelicAnnihilator entity, Animation animation, int tick) {
+                entity.sawControlled.decreaseTimer();
+            }
+        });
+        builder.conditional(new CondKeyframe<>() {
+            @Override
+            public boolean shouldHandle(EntityRelicAnnihilator entity, Animation animation, int tick) {
+                return animation == GROUND_POUND_ANIMATION || animation == GROUND_SLAM_ANIMATION3 || animation == LASER_ANIMATION;
+            }
+
+            @Override
+            public void handle(EntityRelicAnnihilator entity, Animation animation, int tick) {
+                entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
+            }
+        });
+        builder.conditional(new CondKeyframe<>() {
+            @Override
+            public boolean shouldHandle(EntityRelicAnnihilator entity, Animation animation, int tick) {
+                return animation == SHOT_ANIMATION1 || animation == SHOT_ANIMATION2 || animation == SHOT_ANIMATION3 ||
+                        animation == TRICKSHOT_ANIMATION1 || animation == TRICKSHOT_ANIMATION2 || animation == TRICKSHOT_ANIMATION3;
+            }
+
+            @Override
+            public void handle(EntityRelicAnnihilator entity, Animation animation, int tick) {
+                if (animation == SHOT_ANIMATION2 || animation == TRICKSHOT_ANIMATION2) {
+                    if (tick == 9) entity.doMuzzleFlashEffect();
+                    else if (tick == 11 && !entity.level().isClientSide) {
+                        Vec3 muzzlePos;
+                        float width = entity.getBbWidth();
+                        float height = entity.getBbHeight();
+                        if (animation == SHOT_ANIMATION2) muzzlePos = entity.getPosOffset(false, width * 2.4F, width * 0.625F, height * 0.96F);
+                        else muzzlePos = entity.getPosOffset(false, width, width, height * 0.42F);
+                        entity.performRangedAttack(muzzlePos);
+                    }
+                } else {
+                    boolean b0 = animation == TRICKSHOT_ANIMATION1;
+                    boolean b1 = animation == SHOT_ANIMATION1;
+                    if (b1 && tick == 15) entity.playSound(SoundInit.RELIC_ANNIHILATOR_ACTIVE_SCOPE.get(), 1F, entity.getVoicePitch());
+                    else if (b0 && tick == 7) entity.playSound(SoundInit.RELIC_ANNIHILATOR_ACTIVE_SCOPE.get(), 1F, entity.getVoicePitch());
+                    entity.handControlled.incrementOrDecreaseTimer(b1 || b0);
+                    entity.sawControlled.incrementOrDecreaseTimer(tick >= 12 && b0);
+                }
+            }
+        });
+        return manager;
+    }
+
+    private static AnimationReleaseManager<EntityRelicAnnihilator> setupAnimationRules() {
+        AnimationReleaseManager<EntityRelicAnnihilator> manager = new AnimationReleaseManager<>();
+        AnimationReleaseManager.Builder<EntityRelicAnnihilator> builder = manager.builder();
+        HealthScaledCooldown baseAttack = new HealthScaledCooldown(180, 20, 40, 0.3F, true);
+        AnimationCondition<EntityRelicAnnihilator> heightDiff = ConditionFactory.heightDiff(5);
+        HealthScaledCooldown groundPound = new HealthScaledCooldown(400, 50, 50, 0.3F, true);
+        AnimationRule<EntityRelicAnnihilator> groundPoundBuild = builder.define(GROUND_POUND_ANIMATION)
+                .priority(2)
+                .cooldown(groundPound)
+                .condition(ConditionFactory.and(
+                                ConditionFactory.hybridDistanceRange(8, 0, 4),
+                                ConditionFactory.randomChanceOnLowHealth(0.1F, 0.7F),
+                                (entity, target) -> entity.LRFlag
+                        )
+                ).onSuccess(e -> {
+                    e.getCooldownManager().setCD(GROUND_POUND_ANIMATION2, groundPound.generate(e));
+                    e.LRFlag = !e.LRFlag;
+                }).build();
+        AnimationRule<EntityRelicAnnihilator> groundPoundBuild2 = builder.define(GROUND_POUND_ANIMATION2)
+                .priority(2)
+                .cooldown(groundPound)
+                .condition(ConditionFactory.and(
+                                ConditionFactory.hybridDistanceRange(8, 0, 4),
+                                ConditionFactory.randomChanceOnLowHealth(0.1F, 0.7F),
+                                (entity, target) -> !entity.LRFlag || target.isOnFire() || entity.getHealthPercentage() <= 0.5
+                        )
+                ).onSuccess(e -> {
+                    e.getCooldownManager().setCD(GROUND_POUND_ANIMATION, groundPound.generate(e));
+                    e.LRFlag = !e.LRFlag;
+                }).build();
+        manager.registerRule(groundPoundBuild);
+        manager.registerRule(groundPoundBuild2);
+        builder.register(builder.define(SWING_ANIMATION)
+                .priority(2)
+                .cooldown(baseAttack)
+                .condition(ConditionFactory.and(
+                        heightDiff,
+                        ConditionFactory.distanceRange(0, 4.5),
+                        ConditionFactory.randomChance(0.5F),
+                        (entity, target) -> entity.LRFlag
+                )).onSuccess(e -> {
+                    e.getCooldownManager().setCD(SLASH_ANIMATION, baseAttack.generate(e));
+                    e.LRFlag = !e.LRFlag;
+                }).triggerAtTick(35).next(groundPoundBuild).next(groundPoundBuild2)
+        );
+        builder.register(builder.define(SLASH_ANIMATION)
+                .priority(2)
+                .cooldown(baseAttack)
+                .condition(ConditionFactory.and(
+                        heightDiff,
+                        ConditionFactory.distanceRange(0, 4.5),
+                        ConditionFactory.randomChance(0.5F),
+                        (entity, target) -> !entity.LRFlag
+                )).onSuccess(e -> {
+                    e.getCooldownManager().setCD(SWING_ANIMATION, baseAttack.generate(e));
+                    e.LRFlag = !e.LRFlag;
+                }).triggerAtTick(40).next(groundPoundBuild).next(groundPoundBuild2)
+        );
+        builder.register(builder.define(LASER_ANIMATION)
+                .priority(2)
+                .cooldown(new FixedRangeCooldown(480, 100, true))
+                .condition(ConditionFactory.and(
+                                ConditionFactory.healthBelow(0.8F),
+                                (entity, target) -> !entity.isBlinded(),
+                                ConditionFactory.distanceRange(9, 24),
+                                ConditionFactory.randomChance(0.4F),
+                                ConditionFactory.hasLineOfSight()
+                        )
+                ));
+        HealthScaledCooldown rangAttack = new HealthScaledCooldown(360, 20, 60, 0.5F, true);
+        builder.register(builder.define(SHOT_ANIMATION1)
+                .priority(1)
+                .cooldown(rangAttack)
+                .condition(ConditionFactory.and(
+                                ConditionFactory.hybridDistanceRange(7, 7, 32),
+                                ConditionFactory.randomChance(0.4F),
+                                ConditionFactory.hasLineOfSight()
+                        )
+                ).onSuccess(entity -> entity.getCooldownManager().setCD(TRICKSHOT_ANIMATION1, rangAttack.generate(entity))));
+        builder.register(builder.define(TRICKSHOT_ANIMATION1)
+                .priority(1)
+                .cooldown(rangAttack)
+                .condition(ConditionFactory.and(
+                                ConditionFactory.hybridDistanceRange(12, 4, 8),
+                                ConditionFactory.randomChance(0.4F)
+                        )
+                ).onSuccess(entity -> entity.getCooldownManager().setCD(SHOT_ANIMATION1, rangAttack.generate(entity))));
+        builder.register(builder.define(STAB_ANIMATION)
+                .priority(1)
+                .cooldown(new HealthScaledCooldown(300, 10, 40, 0.3F, true))
+                .condition(ConditionFactory.and(
+                        heightDiff,
+                        ConditionFactory.distanceRange(4, 16),
+                        ConditionFactory.angleRange(-60F, 60F),
+                        ConditionFactory.or(
+                                ConditionFactory.randomChance(0.4F),
+                                (entity, target) -> entity.getTarget() != null && entity.getTarget().isOnFire()
+                        )
+                )).triggerAtTick(50).next(groundPoundBuild).next(groundPoundBuild2)
+        );
+        builder.register(builder.define(CYCLONE_ANIMATION)
+                .priority(1)
+                .cooldown(new HealthScaledCooldown(300, 25, 25, 0.3F, true))
+                .condition(ConditionFactory.and(
+                        heightDiff,
+                        ConditionFactory.healthBelow(0.8F),
+                        ConditionFactory.distanceRange(3, 8, 9),
+                        ConditionFactory.angleRange(-60F, 60F),
+                        ConditionFactory.or(
+                                ConditionFactory.randomChance(0.4F),
+                                (entity, target) -> entity.getTarget() != null && entity.getTarget().isOnFire()
+                        )
+                )));
+        builder.register(builder.define(GROUND_SLAM_ANIMATION1)
+                .cooldown(new HealthScaledCooldown(350, 50, 50, 0.3F, true))
+                .condition(ConditionFactory.and(
+                                ConditionFactory.distanceRange(12, 22),
+                                ConditionFactory.randomChance(0.4F),
+                                ConditionFactory.hasLineOfSight()
+                        )
+                ));
+        builder.register(builder.define(BACKDASH_ANIMATION)
+                .cooldown(new FixedRangeCooldown(400, 100, true))
+                .condition(ConditionFactory.and(
+                        (entity, target) -> {
+                            CooldownManager cooldownManager = entity.getCooldownManager();
+                            return cooldownManager.isReady(CYCLONE_ANIMATION) || cooldownManager.isReady(STAB_ANIMATION)
+                                    || cooldownManager.isReady(LASER_ANIMATION) || cooldownManager.isReady(SHOT_ANIMATION1);
+                        },
+                        ConditionFactory.hybridDistanceRange(6, 0, 4)
+                ))
+        );
+        builder.condition(EntityAbsRelicron::isActive);
+        return manager;
+    }
+
+    public boolean doHurtTarget(DamageSource damageSource, LivingEntity entity, float damageMultiplier, float knockBackMultiplier, boolean canDisableShield, boolean charged) {
+        if (this.doHurtTarget(damageSource, entity, damageMultiplier, knockBackMultiplier, canDisableShield)) {
             if (canDisableShield) {
                 boolean hard = this.level().getDifficulty() == Difficulty.HARD;
                 if (this.random.nextFloat() < (hard ? 0.75F : 0.25F)) this.stun(null, entity, 30, false);
@@ -590,7 +959,8 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
     }
 
     public static boolean canBeControlled(LivingEntity entity, LivingEntity target) {
-        AABB box1 = entity.getBoundingBox();
+        if (!target.isAlive() && !target.isSpectator() && !target.isMultipartEntity() && !target.isPassenger()) return false;
+        AABB box1 = entity.getBoundingBox().inflate(1.2);
         double length1 = box1.getXsize();
         double width1 = box1.getZsize();
         double height1 = box1.getYsize();
@@ -598,21 +968,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
         double length2 = box2.getXsize();
         double width2 = box2.getZsize();
         double height2 = box2.getYsize();
-        boolean flag = (length1 * width1 * height1) >= (length2 * width2 * height2);
-        return target.isAlive() && !target.isSpectator() && !target.isPassenger() && flag;
-    }
-
-    public boolean validateGroundPound() {
-        float HP = this.getHealth() / this.getMaxHealth();
-        float prob = 0.1F;
-        if (HP <= 0.3F) prob += 0.7F;
-        else prob += 0.7F * (1 - (HP - 0.3F) / 0.7F);
-        if (this.targetDistance <= 3.5 && this.timeUntilPound <= 0 && this.random.nextFloat() > prob) {
-            this.timeUntilPound = 100 + Mth.randomBetweenInclusive(this.random, 150, 250);
-            this.timeUntilPound = this.getCoolingTimerUtil(this.timeUntilPound, this.timeUntilPound - 50, 0.3F);
-            return true;
-        }
-        return false;
+        return (length1 * width1 * height1) >= (length2 * width2 * height2);
     }
 
     private void doGroundPoundEffect(float offset, boolean block) {
@@ -623,12 +979,14 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
             double[] speeds = {1, 0.9, 0.8};
             double[] angles = {35, 25, 15};
             double[] color = {0.8, 0.8, 0.8, 0.5F};
-            ModParticleUtils.multiLayerBowlParticles(this.level(), pos, 2, particles, radii, speeds, angles, color);
-            this.level().addParticle(new ParticleRing.RingData(0F, (float) (Math.PI / 2F), 10, 0.8F, 0.8F, 0.8F, 0.8F, 90F, false, ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y + 0.5F, pos.z, 0, 0, 0);
+            ModParticleUtils.multiLayerBowlParticles(this.level(), pos, 2, particles, radii, speeds, angles, color, null, 0.9F);
+            this.level().addParticle(new ParticleRing.RingData(ParticleInit.BIG_RING.get(), 0F, (float) (Math.PI / 2F), 10, 0.8F, 0.8F, 0.8F, 0.8F, 90F, false, ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y + 0.5F, pos.z, 0, 0, 0);
             ModParticleUtils.blockParticlesAround(this.level(), pos.x, pos.y - 0.2F, pos.z, 40, 0.5, 2.5, block ? 5 : 3, block ? 12 : 6, block ? 8 : 3, block ? 10 : 6, -0.2, 0.1);
+            ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 30F, 30, ParticleDust.EnumDustBehavior.GROW, 0.76F);
+            ModParticleUtils.annularParticleOutburst(this.level(), 20, dustData, pos.x, pos.y, pos.z, 1.55, 0.5);
         }
         if (block) ShockWaveUtils.doRingShockWave(this, pos, 2, 0F, false, 10);
-        EntityCameraShake.cameraShake(level(), pos, 15, 0.125F, 2, 3);
+        EntityCameraShake.cameraShake(level(), pos, 15, 0.15F, 2, 4);
     }
 
     private void doWalkEffect(Vec3 wheelPos) {
@@ -660,12 +1018,12 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
             for (int i = 0; i < count; i++) {
                 float yaw = i % 2 == 0 ? Mth.PI : 0;
                 AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.VORTEX.get(), this.getRandomX(0.1), this.getRandomY() + 0.1F, this.getRandomZ(0.1),
-                        movement.x, movement.y, movement.z, false, 0, (float) (Math.PI / 2F), 0, 0, 1, 0.8F, 0.8F, 0.8F,
+                        movement.x, movement.y, movement.z, false, 0, (float) (Math.PI / 2F), 0, 0, 10, 0.8F, 0.8F, 0.8F,
                         1, 1, 9 + this.random.nextInt(4), true, true, false,
                         new ParticleComponent[]{
-                                new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.4F, 0.0F), false),
                                 new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(10, 40 + this.random.nextInt(20)), false),
                                 new PropertyControl(EnumParticleProperty.YAW, AnimData.startAndEnd(yaw, yaw + (float) Math.toRadians(this.random.nextInt(3) + 1)), true),
+                                new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.4F + this.random.nextInt(5) * 0.01F, 0.0F), false),
                         });
             }
             if (movement.horizontalDistanceSqr() > (double) 2.5000003E-7F) this.doWalkEffect(3);
@@ -688,9 +1046,9 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                             new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(4F, 20F), false),
                             new PropertyControl(EnumParticleProperty.ALPHA, new AnimData.KeyTrack(new float[]{1F, 1F, 0.5F, 0F}, new float[]{0F, 0.5F, 0.75F, 1F}), false)
                     });
-            AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.MUZZLE_FLASH.get(), muzzle.x + forward.x * 0.9, muzzle.y, muzzle.z + forward.z * 0.9
+            AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.CROSS_FLASH.get(), muzzle.x + forward.x * 0.9, muzzle.y, muzzle.z + forward.z * 0.9
                     , 0, 0, 0, true, 0, 0, 0, 0, 1F,
-                    1, 1, 1, 1, 1, 3, true, false, false
+                    1, 0.94, 0.69, 1, 1, 3, true, false, false
                     , new ParticleComponent[]{
                             new PropertyControl(EnumParticleProperty.SCALE, new AnimData.KeyTrack(new float[]{0F, 8F, 0F}, new float[]{0F, 0.5F, 1F}), false)
                     });
@@ -715,34 +1073,27 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                         velocity.x, velocity.y, velocity.z
                 );
             }
-            EEEABMobs.NETWORK.sendToServer(new SyncMuzzlePosMessage(this.getId(), this.muzzle.x, this.muzzle.y, this.muzzle.z));
         }
     }
 
-    //TODO 多人模式下有机率出现发射坐标偏移的情况
-    public boolean serverSideVerified() {
-        if (this.level().isClientSide) return false;
-        return this.tickCount - this.serverLastFireTick >= 5;
-    }
-
     public void performRangedAttack(Vec3 muzzlePos) {
-        this.serverLastFireTick = this.tickCount;
+        if (this.level().isClientSide) return;
         EntityAnnihilatorMissile.ElementType element;
         LivingEntity target = this.getTarget();
-        EntityAnnihilatorMissile missile;
+        Vec3 shootVec;
         if (target != null) {
             element = target.hasEffect(EffectInit.ELECTRIFIED_EFFECT.get()) ? EntityAnnihilatorMissile.ElementType.BLAZE : EntityAnnihilatorMissile.ElementType.VOLT;
             if (this.getHealthPercentage() < 0.5F && this.random.nextFloat() < 0.2F) element = EntityAnnihilatorMissile.ElementType.SPARKFERNO;
             Vec3 targetPos = target.position().add(0, target.getBbHeight() * 0.4, 0);
-            missile = new EntityAnnihilatorMissile(this.level(), this, element);
-            Vec3 projectileMid = muzzlePos.add(0, missile.getBbHeight() / 2.0, 0);
-            Vec3 shootVec = targetPos.subtract(projectileMid).normalize();
-            missile.shoot(shootVec.x, shootVec.y, shootVec.z, 1.6F, this.isBlinded() ? 30F : 0F);
+            Vec3 projectileMid = muzzlePos.add(0, 0.25, 0);
+            shootVec = targetPos.subtract(projectileMid).normalize();
         } else {
-            missile = new EntityAnnihilatorMissile(this.level(), this, EntityAnnihilatorMissile.ElementType.VOLT);
-            missile.shoot(this.getLookAngle().x, this.getLookAngle().y, this.getLookAngle().z, 1.6F, 0F);
+            element = EntityAnnihilatorMissile.ElementType.VOLT;
+            shootVec = this.getLookAngle();
         }
+        EntityAnnihilatorMissile missile = new EntityAnnihilatorMissile(this.level(), this, element);
         missile.setPos(muzzlePos.x, muzzlePos.y, muzzlePos.z);
+        missile.shoot(shootVec.x, shootVec.y, shootVec.z, 1.6F, this.isBlinded() ? 30F : 0F);
         this.level().addFreshEntity(missile);
     }
 
@@ -791,7 +1142,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
             } else if (tick == 52) {
                 for (int i = 0; i < 3; i++) {
                     double d0 = 0.1 + i * 0.2;
-                    AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.BIG_RING.get(), forward.x, forward.y, forward.z
+                    AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.ADV_RING2.get(), forward.x, forward.y, forward.z
                             , x * d0, y * d0, z * d0, false, (float) Math.toRadians(-this.getYRot() + 180), (float) Math.toRadians(-this.getXRot()), 0, 0, 1F,
                             0.8, 0.8, 0.8, 1, 1, 6, true, false, false
                             , new ParticleComponent[]{
@@ -827,7 +1178,10 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
 
     private void doFractalEffect() {
         if (this.level().isClientSide && this.saw != null) {
-            doFractalEffect(this, this.saw, this.saw.offsetRandom(this.random, 2.5F), 3, 1);
+            Vec3 start = this.saw.offsetRandom(this.random, 0.5F);
+            LightningBolt bolt = RELICRON_BOLT.color(BOLT_COLORS[this.random.nextInt(2)]).spreadFactor(0.12F).lifespan(3)
+                    .fadeFunction(LightningBolt.FadeFunction.fade(0.3F)).build(start, start.offsetRandom(this.random, 2F), this.random);
+            ClientProxy.LIGHTNING_RENDER.update(this, bolt);
         }
     }
 
@@ -899,7 +1253,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
 
         @Override
         protected boolean test(Animation animation) {
-            return animation == entity.slashAnimation || animation == entity.swingAnimation || animation == entity.stabAnimation;
+            return animation == SLASH_ANIMATION || animation == SWING_ANIMATION || animation == STAB_ANIMATION;
         }
 
         @Override
@@ -916,20 +1270,19 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
             LivingEntity target = entity.getTarget();
             int tick = entity.getAnimationTick();
             Animation animation = entity.getAnimation();
-            if (animation == entity.slashAnimation) {
+            if (animation == SLASH_ANIMATION) {
                 attack(target, tick, 90F, 200F, false, true);
-                if (tick == 40 && target != null && entity.validateGroundPound()) entity.playAnimation(entity.groundPoundAnimation);
-            } else if (animation == entity.swingAnimation) {
+            } else if (animation == SWING_ANIMATION) {
                 attack(target, tick, 200F, 90F, true, false);
-                if (tick == 35 && target != null && entity.validateGroundPound()) entity.playAnimation(entity.groundPoundAnimation);
             } else {
+                boolean blinded = entity.isBlinded();
                 if ((tick < 21 || tick > 45)) {
                     targetCache = target;
                     if (target == null) {
                         double radians = Math.toRadians(entity.getYRot() + 90F);
                         pounceVec = new Vec3(Math.cos(radians), 0.0, Math.sin(radians)).normalize();
                         distanceFactor = 0.5F;
-                    } else if (!entity.isBlinded() || tick % 5 == 0) {
+                    } else if (!blinded || tick % 5 == 0) {
                         pounceVec = new Vec3(target.getX() - entity.getX(), 0.0, target.getZ() - entity.getZ()).normalize();
                         distanceFactor = ModMathUtils.getTickFactor(Math.min(entity.distanceTo(target), 40F), 20F, false);
                         entity.lookAt(target, 30F, 30F);
@@ -946,22 +1299,23 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                     double baseValue = entity.getAttributeBaseValue(Attributes.MOVEMENT_SPEED);
                     double moveSpeed = Math.min(entity.getAttributeValue(Attributes.MOVEMENT_SPEED), baseValue + baseValue * 0.4);
                     Vec3 motion = new Vec3(pounceVec.x * moveSpeed * speedMultiplier, entity.getDeltaMovement().y, pounceVec.z * moveSpeed * speedMultiplier);
-                    syncRotationWithMotion(entity, motion);
+                    if (tick < 25 || blinded) syncRotationWithMotion(entity, motion);
                     entity.setDeltaMovement(motion);
                 }
                 if (tick >= 25 && tick <= 45) {
-                    if (targetCache != null) entity.getLookControl().setLookAt(targetCache, 4F, 30F);
+                    if (targetCache != null && !blinded) {
+                        entity.lookAt(targetCache, entity.level().getDifficulty() == Difficulty.HARD ? 10F : 5F, 30F);
+                    }
                     if (tick % 4 != 0) return;
-                    float width = entity.getBbWidth() * 2.75F;
                     Vec3 pos = entity.getPosOffset(true, entity.getBbWidth() * 1.7F, entity.getBbWidth() * 0.3F, 1.5F);
-                    entity.rangeAttack(width, entity.getBbHeight(), width, width, 50F, 50F, hitEntity -> {
-                        int time = hitEntity.invulnerableTime;
-                        hitEntity.invulnerableTime = 0;
-                        if (entity.doHurtTarget(hitEntity, 0.4F, 0F, false, true) && canBeControlled(entity, hitEntity)) {
+                    float width = entity.getBbWidth() * 2.75F;
+                    float radius = entity.getBbHeight() * 1.2F;
+                    entity.rangeAttack(width, radius, width, radius, 45F, 45F, hitEntity -> {
+                        if (entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), hitEntity, 0.35F, 0F, false, true) && canBeControlled(entity, hitEntity)) {
                             pullEntityToPosition(hitEntity, pos, 2F);
-                        } else hitEntity.invulnerableTime = time;
+                        }
                     });
-                } else if (tick == 50 && target != null && entity.validateGroundPound()) entity.playAnimation(entity.groundPoundAnimation);
+                }
             }
         }
 
@@ -1003,7 +1357,8 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
             if (tick >= 20 && tick <= 40) {
                 if (tick == 20) {
                     float width = entity.getBbWidth() * 2F;
-                    entity.rangeAttack(width, entity.getBbHeight(), width, width, leftArc, rightArc, e -> entity.doHurtTarget(e, 1F, 1F, canDisableShield, charged));
+                    float radius = entity.getBbHeight() * 1.5F;
+                    entity.rangeAttack(width, radius, width, radius, leftArc, rightArc, e -> entity.doHurtTarget(entity.damageSources().mobAttack(entity), e, 1F, 1F, canDisableShield, charged));
                 } else entity.setYRot(entity.yRotO);
             } else if (target != null) {
                 if (tick <= 10 || !entity.isBlinded()) {
@@ -1024,8 +1379,15 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
         private int loopCount;
 
         public RARangeAttackGoal(EntityRelicAnnihilator entity) {
-            super(entity, () -> entity.laserAnimation, () -> entity.shot1Animation, () -> entity.shot2Animation, () -> entity.shot3Animation,
-                    () -> entity.trickshot1Animation, () -> entity.trickshot2Animation, () -> entity.trickshot3Animation);
+            super(entity, LASER_ANIMATION, SHOT_ANIMATION1, SHOT_ANIMATION2, SHOT_ANIMATION3,
+                    TRICKSHOT_ANIMATION1, TRICKSHOT_ANIMATION2, TRICKSHOT_ANIMATION3);
+        }
+
+        @Override
+        public void start() {
+            super.start();
+            loopCount = Mth.clamp(4 - Math.round(entity.getHealth() / entity.getMaxHealth() * 3), 1, 3);
+            if (entity.level().getDifficulty() == Difficulty.HARD) loopCount += 1;
         }
 
         @Override
@@ -1045,16 +1407,13 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
 
         private void handleLoopCount(Animation animation, int tick) {
             if (tick != 1) return;
-            if (animation == entity.shot1Animation || animation == entity.trickshot1Animation) {
-                loopCount = Mth.clamp(4 - Math.round(entity.getHealth() / entity.getMaxHealth() * 3), 1, 3);
-                if (entity.level().getDifficulty() == Difficulty.HARD) loopCount += 1;
-            } else if ((animation == entity.shot2Animation || animation == entity.trickshot2Animation) && loopCount > 0) {
+            if ((animation == SHOT_ANIMATION2 || animation == TRICKSHOT_ANIMATION2) && loopCount > 0) {
                 loopCount--;
             }
         }
 
         private void handleAnimation(Animation animation, LivingEntity target, int tick) {
-            if (animation == entity.laserAnimation) {
+            if (animation == LASER_ANIMATION) {
                 lootAtTarget(target, 3F, true);
                 if (tick == 9) {
                     double x = entity.scope.getX();
@@ -1066,21 +1425,21 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                     EntityGuardianLaser laser = new EntityGuardianLaser(entity.level(), entity, entity.getX(), entity.getY(), entity.getZ(), 20);
                     laser.setCountDown(1);
                     EntityGuardianLaser.UserType type = EntityGuardianLaser.UserType.RELIC_ANNIHILATOR;
-                    laser.updateWithEntity(type.wOffset, type.hOffset);
+                    laser.updateWithEntity(entity, type.wOffset, type.hOffset);
                     entity.level().addFreshEntity(laser);
                 }
-            } else if (animation == entity.shot1Animation || animation == entity.shot2Animation || animation == entity.shot3Animation) {
-                entity.anchorToGround();
-                lootAtTarget(target, 3F, true);
-                if (animation == entity.shot1Animation) nextAnimation(animation, entity.shot2Animation);
-                else if (animation == entity.shot2Animation) nextAnimation(animation, entity.shot3Animation, tick >= animation.getDuration() - 1 && loopCount <= 0);
-            } else if (animation == entity.trickshot1Animation || animation == entity.trickshot2Animation || animation == entity.trickshot3Animation) {
-                lootAtTarget(target, 2F, animation != entity.trickshot3Animation);
-                float retreatRange = animation == entity.trickshot3Animation ? 0 : 3 + entity.getBbWidth();
+            } else if (animation == SHOT_ANIMATION1 || animation == SHOT_ANIMATION2 || animation == SHOT_ANIMATION3) {
+                entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
+                lootAtTarget(target, 1.5F, true);
+                if (animation == SHOT_ANIMATION1) nextAnimation(animation, SHOT_ANIMATION2);
+                else if (animation == SHOT_ANIMATION2) nextAnimation(animation, SHOT_ANIMATION3, tick >= animation.getDuration() - 1 && loopCount <= 0);
+            } else {
+                lootAtTarget(target, 2F, animation != TRICKSHOT_ANIMATION3);
+                float retreatRange = animation == TRICKSHOT_ANIMATION3 ? 0 : 3 + entity.getBbWidth();
                 entity.backOff(target, getRetreatSpeed(0.7F, retreatRange, entity.targetDistance));
-                if (animation == entity.trickshot1Animation) nextAnimation(animation, entity.trickshot2Animation);
-                else if (animation == entity.trickshot2Animation) {
-                    nextAnimation(animation, entity.trickshot3Animation, tick >= animation.getDuration() - 1 && loopCount <= 0);
+                if (animation == TRICKSHOT_ANIMATION1) nextAnimation(animation, TRICKSHOT_ANIMATION2);
+                else if (animation == TRICKSHOT_ANIMATION2) {
+                    nextAnimation(animation, TRICKSHOT_ANIMATION3, tick >= animation.getDuration() - 1 && loopCount <= 0);
                 }
             }
         }
@@ -1101,26 +1460,23 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
 
         @Override
         protected boolean test(Animation animation) {
-            return animation == entity.cycloneAnimation;
+            return animation == CYCLONE_ANIMATION;
         }
 
         @Override
         public void tick() {
             int tick = entity.getAnimationTick();
-            if (tick < (entity.isBlinded() ? 10 : 15)) {
+            if (tick < (entity.isBlinded() ? 10 : 12)) {
                 lookAtTarget();
             } else if (tick >= 15 && tick <= 40) {
                 double radians = Math.toRadians(this.entity.getYRot() + 90F);
                 Vec3 pounceVec = new Vec3(Math.cos(radians), 0.0, Math.sin(radians)).normalize();
                 if (tick == 20 || tick == 24 || tick == 29 || tick == 32 || tick == 36) {
-                    float width = entity.getBbWidth() * 2.5F;
-                    entity.rangeAttack(width, entity.getBbHeight(), width, width, hitEntity -> {
-                        int time = hitEntity.invulnerableTime;
-                        hitEntity.invulnerableTime = 0;
-                        if (entity.doHurtTarget(hitEntity, 0.75F, 1F, false, true) && canBeControlled(entity, hitEntity)) {
-                            ModEntityUtils.forceKnockBack(entity, hitEntity, 0.7F, -pounceVec.x, -pounceVec.z, false);
-                            if (!hitEntity.onGround()) hitEntity.setDeltaMovement(hitEntity.getDeltaMovement().multiply(1F, 0.8F, 1F));
-                        } else hitEntity.invulnerableTime = time;
+                    entity.rangeAttack(3, 4, 3, 4, hitEntity -> {
+                        if (entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), hitEntity, 0.5F, 1F, false, true) && canBeControlled(entity, hitEntity)) {
+                            ModEntityUtils.forceKnockBack(entity, hitEntity, hitEntity.isBlocking() ? 0.4F : 0.7F, -pounceVec.x, -pounceVec.z, false);
+                            if (!hitEntity.onGround()) hitEntity.setDeltaMovement(hitEntity.getDeltaMovement().multiply(1F, 0.5F, 1F));
+                        }
                     });
                 }
                 float tickFactor = ModMathUtils.getTickFactor(tick - 15, 60F, true);
@@ -1136,8 +1492,8 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
         private void lookAtTarget() {
             LivingEntity target = entity.getTarget();
             if (target != null) {
-                entity.lookAt(target, 90F, 90F);
-                entity.getLookControl().setLookAt(target, 90F, 90F);
+                entity.lookAt(target, 30F, 30F);
+                entity.getLookControl().setLookAt(target, 30F, 30F);
             }
         }
     }
@@ -1150,7 +1506,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
 
         @Override
         protected boolean test(Animation animation) {
-            return animation == entity.groundsSlam1Animation || animation == entity.groundsSlam2Animation;
+            return animation == GROUND_SLAM_ANIMATION1 || animation == GROUND_SLAM_ANIMATION2;
         }
 
         @Override
@@ -1158,7 +1514,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
             LivingEntity target = entity.getTarget();
             int tick = entity.getAnimationTick();
             Animation animation = entity.getAnimation();
-            if (animation == entity.groundsSlam1Animation) {
+            if (animation == GROUND_SLAM_ANIMATION1) {
                 if (tick < 11) {
                     if (target != null) {
                         entity.getLookControl().setLookAt(target, 30F, 30F);
@@ -1175,9 +1531,9 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                         float radians = (float) Math.toRadians(entity.yBodyRot + 90);
                         entity.setDeltaMovement(3.0 * Math.cos(radians), 1, 3.0 * Math.sin(radians));
                     }
-                } else if (tick == 14) entity.playAnimation(entity.groundsSlam2Animation);
-            } else if (animation == entity.groundsSlam2Animation) {
-                if (tick > 5 && entity.onGround()) entity.playAnimation(entity.groundsSlam3Animation);
+                } else if (tick == 14) entity.playAnimation(GROUND_SLAM_ANIMATION2);
+            } else if (animation == GROUND_SLAM_ANIMATION2) {
+                if (tick > 5 && entity.onGround()) entity.playAnimation(GROUND_SLAM_ANIMATION3);
             }
         }
     }
@@ -1189,8 +1545,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
         private int retreatDuration;
         private int delayCounter;
 
-        @SafeVarargs
-        public KeepDistanceGoal(EntityRelicAnnihilator attacker, Supplier<Animation>... animations) {
+        public KeepDistanceGoal(EntityRelicAnnihilator attacker, Animation... animations) {
             super(attacker, 1, 0, EntityAbsRelicron::isActive, animations);
             this.random = attacker.getRandom();
         }

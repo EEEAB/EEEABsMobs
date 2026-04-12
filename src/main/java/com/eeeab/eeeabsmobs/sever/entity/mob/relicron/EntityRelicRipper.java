@@ -1,6 +1,5 @@
 package com.eeeab.eeeabsmobs.sever.entity.mob.relicron;
 
-import com.eeeab.animate.server.ai.AnimationAI;
 import com.eeeab.animate.server.ai.AnimationGroupAI;
 import com.eeeab.animate.server.ai.AnimationMeleePlusAI;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
@@ -8,37 +7,52 @@ import com.eeeab.animate.server.ai.animation.AnimationActivate;
 import com.eeeab.animate.server.ai.animation.AnimationDeactivate;
 import com.eeeab.animate.server.ai.animation.AnimationDie;
 import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.animate.server.animation.OverlapAnimationState;
+import com.eeeab.animate.server.animation.keyframe.CondKeyframe;
+import com.eeeab.animate.server.animation.keyframe.KeyframeManager;
+import com.eeeab.animate.server.animation.release.AnimationCondition;
+import com.eeeab.animate.server.animation.release.AnimationReleaseManager;
+import com.eeeab.animate.server.animation.release.ConditionFactory;
+import com.eeeab.animate.server.animation.release.cooldown.FixedRangeCooldown;
+import com.eeeab.animate.server.animation.release.cooldown.HealthScaledCooldown;
 import com.eeeab.animate.server.handler.AnimationHandler;
+import com.eeeab.eeeabsmobs.client.ClientProxy;
+import com.eeeab.eeeabsmobs.client.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
-import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
-import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
-import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
+import com.eeeab.eeeabsmobs.client.particle.ParticleRing;
+import com.eeeab.eeeabsmobs.client.particle.lib.AdvancedParticleBase;
+import com.eeeab.eeeabsmobs.client.particle.lib.AnimData;
+import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent;
+import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.client.render.LightningBolt;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
-import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
-import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
+import com.eeeab.eeeabsmobs.sever.entity.ai.control.ModBodyRotationControl;
+import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.ModPathNavigateGround;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.sever.entity.util.damage.ModDamageSource;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
+import com.eeeab.eeeabsmobs.sever.util.ModResourceKey;
+import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
-import net.minecraft.util.TimeUtil;
-import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -46,66 +60,70 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class EntityRelicRipper extends EntityAbsRelicron {
-    public Animation activeAnimation = Animation.create(40);
-    public Animation deactivateAnimation = Animation.create(20);
-    public Animation dieAnimation = Animation.create(25);
-    public Animation sweep1Animation = Animation.create(40);
-    public Animation sweep2Animation = Animation.create(70).doesOverlap();
-    public Animation smashAnimation = Animation.create(80);
-    public Animation cuttingStartAnimation = Animation.create(20);
-    public Animation cuttingKeepAnimation = Animation.create(100);
-    public Animation cuttingEndAnimation = Animation.create(20).doesOverlap();
-    private final Animation[] animations = new Animation[]{
-            activeAnimation,
-            deactivateAnimation,
-            dieAnimation,
-            sweep1Animation,
-            sweep2Animation,
-            smashAnimation,
-            cuttingStartAnimation,
-            cuttingKeepAnimation,
-            cuttingEndAnimation,
+    public static final Animation ACTIVE_ANIMATION = Animation.create(40);
+    public static final Animation DEACTIVATE_ANIMATION = Animation.create(20);
+    public static final Animation DIE_ANIMATION = Animation.create(25);
+    public static final Animation SWEEP_ANIMATION1 = Animation.create(40);
+    public static final Animation SWEEP_ANIMATION2 = Animation.create(70).doesOverlap();
+    public static final Animation SMASH_ANIMATION = Animation.create(80);
+    public static final Animation CUTTING_START_ANIMATION = Animation.create(20);
+    public static final Animation CUTTING_KEEP_ANIMATION = Animation.create(100);
+    public static final Animation CUTTING_END_ANIMATION = Animation.create(20).doesOverlap();
+    private static final Animation[] ANIMATIONS = new Animation[]{
+            SWEEP_ANIMATION1,
+            SWEEP_ANIMATION2,
+            SMASH_ANIMATION,
+            CUTTING_START_ANIMATION,
+            CUTTING_KEEP_ANIMATION,
+            CUTTING_END_ANIMATION,
+            ACTIVE_ANIMATION,
+            DEACTIVATE_ANIMATION,
+            DIE_ANIMATION,
     };
-    private static final UniformInt SWEEP_INTERVAL = TimeUtil.rangeOfSeconds(7, 9);
-    private static final UniformInt CUTTING_INTERVAL = TimeUtil.rangeOfSeconds(19, 21);
-    private static final UniformInt DERIVED_SKILL_INTERVAL = TimeUtil.rangeOfSeconds(16, 18);
+    private static final KeyframeManager<EntityRelicRipper> KEYFRAME_MANAGER;
+    private static final AnimationCondition<EntityRelicRipper> DERIVED_SKILL_CHECK;
+    private static final AnimationReleaseManager<EntityRelicRipper> ANIMATION_RELEASE_MANAGER;
     private static final int MIN_FRAME_INTERVAL = 10;
     private static final float[][] BLOCK_OFFSETS = {{-0.25F, -0.25F}, {-0.25F, 0.25F}, {0.25F, 0.25F}, {0.25F, -0.25F},};
-    private int timeUntilSweep;
-    private int timeUntilCutting;
-    private int timeUntilDerivedSkill;
     private boolean derivedSkill;
     private int lastStepFrame;
+    private Vec3 preSaw = Vec3.ZERO;
+    private final OverlapAnimationState sweepAnimationState = new OverlapAnimationState(SWEEP_ANIMATION2);
+    private final OverlapAnimationState cuttingEndAnimationState = new OverlapAnimationState(CUTTING_END_ANIMATION);
     @OnlyIn(Dist.CLIENT)
     public Vec3 saw;
-    private Vec3 preSaw = Vec3.ZERO;
     public final ControlledAnimation sawControlled = new ControlledAnimation(10);
     public final ControlledAnimation glowControlled = new ControlledAnimation(10);
 
     public EntityRelicRipper(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
         this.active = false;
-        this.dropAfterDeathAnim = false;
         if (this.level().isClientSide) {
             this.saw = new Vec3(0, 0, 0);
         }
     }
 
+    static {
+        KEYFRAME_MANAGER = setupAnimations();
+        DERIVED_SKILL_CHECK = ConditionFactory.randomChanceOnLowHealth(0.1F, 0.7F);
+        ANIMATION_RELEASE_MANAGER = setupAnimationRules();
+    }
+
     @Override
     @NotNull
     protected BodyRotationControl createBodyControl() {
-        return new EMBodyRotationControl(this);
+        return new ModBodyRotationControl(this);
     }
 
     @Override
     @NotNull
     protected PathNavigation createNavigation(Level level) {
-        return new EMPathNavigateGround(this, level);
+        return new ModPathNavigateGround(this, level);
     }
 
     @Override
     protected void onAnimationStart(Animation animation) {
-        if (animation == this.dieAnimation) this.sawControlled.setTimer(this.sawControlled.getDuration());
+        if (animation == DIE_ANIMATION) this.sawControlled.setTimer(this.sawControlled.getDuration());
     }
 
     @Override
@@ -116,24 +134,20 @@ public class EntityRelicRipper extends EntityAbsRelicron {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, EntityAbsRelicron.class)).setAlertOthers());
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1D) {
-            @Override
-            public boolean canUse() {
-                return super.canUse() && EntityRelicRipper.this.isActive();
-            }
-        });
+        this.goalSelector.addGoal(5, new RelicronRandomStrollGoal(this, 1));
     }
 
     @Override
     protected void registerCustomGoals() {
         this.goalSelector.addGoal(1, new AnimationDie<>(this));
-        this.goalSelector.addGoal(1, new AnimationActivate<>(this, () -> activeAnimation));
-        this.goalSelector.addGoal(1, new AnimationDeactivate<>(this, () -> deactivateAnimation));
-        this.goalSelector.addGoal(1, new RRSweepAttackGoal(this));
+        this.goalSelector.addGoal(1, new AnimationActivate<>(this, ACTIVE_ANIMATION));
+        this.goalSelector.addGoal(1, new AnimationDeactivate<>(this, DEACTIVATE_ANIMATION));
         this.goalSelector.addGoal(1, new RRCuttingAttackGoal(this));
-        this.goalSelector.addGoal(1, new RRSmashAttackGoal(this));
+        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, SWEEP_ANIMATION1, false));
+        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, SWEEP_ANIMATION2, false));
+        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, SMASH_ANIMATION, false));
         this.goalSelector.addGoal(2, new AnimationMeleePlusAI<>(this, 1.0, 20));
     }
 
@@ -143,101 +157,63 @@ public class EntityRelicRipper extends EntityAbsRelicron {
         this.sawControlled.updatePrevTimer();
         this.glowControlled.updatePrevTimer();
         AnimationHandler.INSTANCE.updateAnimations(this);
-        if (!this.level().isClientSide) {
-            LivingEntity target = this.getTarget();
-            boolean canAttack = !this.isNoAi() && this.isActive() && target != null && this.canAttack(target);
-            float HP = this.getHealth() / this.getMaxHealth();
-            float prob = 0.1F;
-            if (HP <= 0.3F) prob += 0.7F;
-            else prob += 0.7F * (1 - (HP - 0.3F) / 0.7F);
 
-            if (canAttack && this.isNoAnimation() && this.timeUntilCutting <= 0 && this.targetDistance < 5 && this.random.nextFloat() < 0.6F) {
-                this.derivedSkill = prob > this.random.nextFloat() && this.random.nextFloat() < 0.5F;
-                this.playAnimation(this.cuttingStartAnimation);
-                this.timeUntilCutting = CUTTING_INTERVAL.sample(this.random) + (this.derivedSkill ? 150 : 0);
+        this.pushEntitiesAway(1F, getBbHeight(), 1F, 1F);
+
+        if (this.level().isClientSide && this.isActive()) {
+            Animation animation = this.getAnimation();
+            boolean isNoAnimation = NO_ANIMATION == animation;
+            if (isNoAnimation && this.tickCount % 5 == 0 && this.random.nextInt(5) == 0) {
+                Vec3 pos = this.getPosOffset(true, 1.5F, getBbWidth(), getBbHeight() * 0.55F);
+                pos = pos.offsetRandom(this.random, 0.5F);
+                this.level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), pos.x, pos.y, pos.z, 0.0D, 0.0D, 0.0D);
             }
-
-            if (canAttack && this.isNoAnimation() && this.timeUntilSweep <= 0 && this.targetDistance < 3.5 && this.random.nextFloat() < 0.6F) {
-                this.playAnimation(this.sweep1Animation);
-                this.timeUntilSweep = SWEEP_INTERVAL.sample(this.random);
+            if (!this.isSilent() && !this.sawControlled.isStop() && this.tickCount % 4 == 1) {
+                this.level().playLocalSound(this.saw.x, this.saw.y, this.saw.z, SoundInit.RELIC_RIPPER_SAW.get(), this.getSoundSource(),
+                        this.getVoicePitch() * this.sawControlled.getAnimationFraction(), this.getVoicePitch(), false);
             }
-
-            if (canAttack && this.isNoAnimation() && prob > this.random.nextFloat() && this.timeUntilDerivedSkill <= 0 && this.targetDistance < 4) {
-                this.playAnimation(this.random.nextBoolean() ? this.sweep2Animation : this.smashAnimation);
-                this.timeUntilDerivedSkill = DERIVED_SKILL_INTERVAL.sample(this.random);
-            }
-        }
-
-        this.pushEntitiesAway(1.6F, getBbHeight(), 1.6F, 1.6F);
-
-        Animation animation = this.getAnimation();
-        int tick = this.getAnimationTick();
-        if (animation == this.sweep1Animation) {
-            this.sawControlled.incrementOrDecreaseTimer(tick >= 10 && tick <= 25);
-            if (tick == 20) this.playSound(SoundInit.RELIC_RIPPER_WHOOSH.get(), 2.5F, this.getVoicePitch());
-            this.doTrailEffect(tick == 20, tick > 20 && tick <= 25);
-        } else if (animation == this.sweep2Animation) {
-            this.sawControlled.incrementOrDecreaseTimer(tick >= 1 && tick < 60);
-            if (tick == 19 || tick == 36 || tick == 45) this.playSound(SoundInit.RELIC_RIPPER_WHOOSH.get(), 2.5F, this.getVoicePitch());
-            this.doTrailEffect(tick == 20, tick > 20 && tick <= 25);
-            this.doTrailEffect(tick == 35, tick > 35 && tick <= 50);
-        } else if (animation == this.smashAnimation) {
-            this.sawControlled.decreaseTimer();
-            this.doTrailEffect(tick == 18, tick > 18 && tick <= 20);
-            this.doTrailEffect(tick == 36, tick > 36 && tick <= 38);
-            this.doTrailEffect(tick == 62, tick > 62 && tick <= 64);
-            if (tick == 17 || tick == 35 || tick == 60) this.playSound(SoundInit.RELIC_RIPPER_WHOOSH.get(), 2.5F, this.getVoicePitch());
-            if (tick == 18 || tick == 36 || tick == 62) this.playSound(SoundInit.RELIC_RIPPER_SHAKE_GROUND.get(), 1F, this.getVoicePitch());
-            if (this.level().isClientSide && this.saw != null && (tick == 21 || tick == 39 || tick == 65)) {
-                boolean strong = tick == 65;
-                this.spawnGroundSlamParticle(strong);
-            }
-        } else if (animation == this.cuttingStartAnimation) {
-            this.sawControlled.incrementOrDecreaseTimer(tick >= 10);
-        } else if (animation == this.cuttingKeepAnimation) {
-            this.sawControlled.incrementOrDecreaseTimer(tick < 90);
-            if (this.level().isClientSide && this.saw != null) {
-                if (tick == 1 || tick % 5 == 0) this.doFractalEffect(1 + this.random.nextInt(2), 0.6);
-                ModParticleUtils.blockParticleDirectionality(this.level(), this.saw.x, this.saw.y - 0.8, this.saw.z, Math.toRadians(this.getYRot()), 1, BLOCK_OFFSETS, pos -> level().getBlockState(pos), 0.5F);
-            }
-        } else if (animation == this.cuttingEndAnimation) {
-            this.sawControlled.decreaseTimer();
-        }
-
-        float moveX = (float) (this.getX() - this.xo);
-        float moveZ = (float) (this.getZ() - this.zo);
-        float speed = Mth.sqrt(moveX * moveX + moveZ * moveZ);
-        if (this.level().isClientSide && speed > 0.05 && this.isActive() && !this.isSilent()) {
-            if (this.frame - lastStepFrame >= MIN_FRAME_INTERVAL) {
-                int interval = this.isNoAnimation() ? 15 : 19;
+            if (this.isSilent() || !this.isAlive()) return;
+            float moveX = (float) (this.getX() - this.xo);
+            float moveZ = (float) (this.getZ() - this.zo);
+            float speed = Mth.sqrt(moveX * moveX + moveZ * moveZ);
+            if (speed > 0.05 && this.frame - lastStepFrame >= MIN_FRAME_INTERVAL) {
+                int interval = isNoAnimation || animation == SWEEP_ANIMATION2 ? 15 : 19;
                 if (this.frame % interval == 0) {
                     this.level().playLocalSound(getX(), getY(), getZ(), SoundInit.RELIC_RIPPER_STEP.get(), this.getSoundSource(), 1F, this.getVoicePitch(), false);
                     lastStepFrame = this.frame;
                 }
             }
         }
+    }
 
-        if (this.level().isClientSide && !this.isSilent() && !this.sawControlled.isStop() && this.tickCount % 4 == 1) {
-            this.level().playLocalSound(this.saw.x, this.saw.y, this.saw.z, SoundInit.RELIC_RIPPER_SAW.get(), this.getSoundSource(),
-                    this.getVoicePitch() * this.sawControlled.getAnimationFraction(), this.getVoicePitch(), false);
-        }
+    @Override
+    protected void customServerAiStep() {
+        super.customServerAiStep();
+        ANIMATION_RELEASE_MANAGER.tick(this, this.getCooldownManager());
     }
 
     @Override
     public void aiStep() {
         super.aiStep();
         if ((this.getHealth() <= 0F && !this.isRemoved() && this.tickCount % 2 == 0) || this.isNoAnimation()) this.sawControlled.decreaseTimer();
-        if (!this.level().isClientSide) {
-            if (this.timeUntilSweep > 0) this.timeUntilSweep--;
-            if (this.timeUntilCutting > 0) this.timeUntilCutting--;
-            if (this.timeUntilDerivedSkill > 0) this.timeUntilDerivedSkill--;
-        }
         this.glowControlled.incrementOrDecreaseTimer(this.isGlow());
     }
 
     @Override
-    public boolean doHurtTarget(Entity entity, float damageMultiplier, float knockBackMultiplier, boolean canDisableShield) {
-        if (!super.doHurtTarget(entity, damageMultiplier, knockBackMultiplier, canDisableShield)) {
+    public boolean hurt(DamageSource source, float damage) {
+        if (this.level().isClientSide) {
+            return false;
+        } else {
+            if (source.is(ModResourceKey.OVERLOAD_EXPLODE)) {
+                damage *= 2F;
+            }
+            return super.hurt(source, damage);
+        }
+    }
+
+    @Override
+    public boolean doHurtTarget(DamageSource damageSource, Entity entity, float damageMultiplier, float knockBackMultiplier, boolean canDisableShield) {
+        if (!super.doHurtTarget(damageSource, entity, damageMultiplier, knockBackMultiplier, canDisableShield)) {
             return false;
         } else {
             if (entity instanceof LivingEntity target) {
@@ -251,33 +227,44 @@ public class EntityRelicRipper extends EntityAbsRelicron {
     protected void dying() {
         Animation animation = this.getAnimation();
         if (this.getDeathAnimation() != null && animation != this.getDeathAnimation()) {
-            if (animation == this.sweep2Animation) this.stopAllSuperpositionAnimation();
+            if (animation == SWEEP_ANIMATION2) this.stopAllSuperpositionAnimation();
             this.playAnimation(this.getDeathAnimation());
         }
     }
 
-    public static AttributeSupplier.Builder setAttributes() {
-        return createMobAttributes().add(Attributes.MAX_HEALTH, 75.0D).add(Attributes.MOVEMENT_SPEED, 0.28D).add(Attributes.FOLLOW_RANGE, 18.0D).add(Attributes.ATTACK_DAMAGE, 10.0D).add(Attributes.KNOCKBACK_RESISTANCE, 1.0D).add(Attributes.ARMOR, 5.0D);
-    }
-
     @Override
     public Animation[] getAnimations() {
-        return this.animations;
+        return ANIMATIONS;
     }
 
     @Override
     public Animation getDeathAnimation() {
-        return this.dieAnimation;
+        return DIE_ANIMATION;
     }
 
     @Override
     public Animation getActiveAnimation() {
-        return this.activeAnimation;
+        return ACTIVE_ANIMATION;
     }
 
     @Override
     public Animation getDeactivateAnimation() {
-        return this.deactivateAnimation;
+        return DEACTIVATE_ANIMATION;
+    }
+
+    @Override
+    public KeyframeManager<EntityRelicRipper> getKeyframeManager() {
+        return KEYFRAME_MANAGER;
+    }
+
+    @Override
+    public AnimationState getOverlapAnimationState(Animation animation) {
+        if (SWEEP_ANIMATION2 == animation) {
+            return this.sweepAnimationState;
+        } else if (CUTTING_END_ANIMATION == animation) {
+            return this.cuttingEndAnimationState;
+        }
+        return null;
     }
 
     @Override
@@ -298,6 +285,146 @@ public class EntityRelicRipper extends EntityAbsRelicron {
         return SoundInit.RELIC_RIPPER_DEATH.get();
     }
 
+    @Override
+    protected void playStepSound(BlockPos blockPos, BlockState blockState) {
+    }
+
+    public static AttributeSupplier.Builder setAttributes() {
+        return createMobAttributes().add(Attributes.MAX_HEALTH, 75.0D).add(Attributes.MOVEMENT_SPEED, 0.28D).add(Attributes.FOLLOW_RANGE, 16.0D).add(Attributes.ATTACK_DAMAGE, 9.0D).add(Attributes.KNOCKBACK_RESISTANCE, 1.0D).add(Attributes.ARMOR, 8.0D);
+    }
+
+    private static KeyframeManager<EntityRelicRipper> setupAnimations() {
+        KeyframeManager<EntityRelicRipper> manager = new KeyframeManager<>();
+        KeyframeManager.KeyframeManegerBuilder<EntityRelicRipper> builder = manager.builder();
+        builder.forAnimation(SWEEP_ANIMATION1)
+                .inRange(10, 35, (entity, animation, tick) -> {
+                    entity.distractingMovement();
+                    entity.sawControlled.incrementOrDecreaseTimer(tick < 25);
+                    entity.doTrailEffect(tick == 20, tick > 20 && tick <= 25);
+                    if (tick == 20) entity.playSound(SoundInit.RELIC_RIPPER_WHOOSH.get(), 2.5F, entity.getVoicePitch());
+                    if (!entity.level().isClientSide) {
+                        LivingEntity target = entity.getTarget();
+                        if (target != null) entity.lookAt(target, 30F, 30F);
+                        if (tick == 22) entity.rangeAttack(3, entity.getBbHeight() + 0.2, 3, 3, 90F, 220F, null);
+                    }
+                });
+        builder.forAnimation(SWEEP_ANIMATION2)
+                .everyTick((entity, animation, tick) -> {
+                    entity.sawControlled.incrementOrDecreaseTimer(tick < 60);
+                    if (tick == 19 || tick == 36 || tick == 45) entity.playSound(SoundInit.RELIC_RIPPER_WHOOSH.get(), 2.5F, entity.getVoicePitch());
+                    entity.doTrailEffect(tick == 20, tick > 20 && tick <= 25);
+                    entity.doTrailEffect(tick == 35, tick > 35 && tick <= 50);
+                    if (!entity.level().isClientSide) {
+                        LivingEntity target = entity.getTarget();
+                        if (target != null) entity.lookAt(target, 30F, 30F);
+                        if (tick == 22) entity.rangeAttack(3, entity.getBbHeight() + 0.2, 3, 3, 100F, 200F, null);
+                        if (tick == 36 || tick == 45) entity.rangeAttack(3, entity.getBbHeight(), 3, 3, e -> {
+                            entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), e, 1, 0.25F, false);
+                        });
+                        if (tick == 60 && entity.derivedSkill) {
+                            entity.playAnimation(SMASH_ANIMATION);
+                        }
+                    }
+                });
+        builder.forAnimation(SMASH_ANIMATION)
+                .inRange(1, 65, (entity, animation, tick) -> {
+                    entity.derivedSkill = false;
+                    entity.sawControlled.decreaseTimer();
+                    entity.distractingMovement();
+                    entity.doTrailEffect(tick == 18, tick > 18 && tick <= 20);
+                    entity.doTrailEffect(tick == 36, tick > 36 && tick <= 38);
+                    entity.doTrailEffect(tick == 62, tick > 62 && tick <= 64);
+                    if (tick == 17 || tick == 35 || tick == 60) entity.playSound(SoundInit.RELIC_RIPPER_WHOOSH.get(), 2.5F, entity.getVoicePitch());
+                    if (tick == 18 || tick == 36 || tick == 62) entity.playSound(SoundInit.RELIC_RIPPER_SHAKE_GROUND.get(), 1F, entity.getVoicePitch());
+                    if (entity.level().isClientSide && entity.saw != null && (tick == 21 || tick == 39 || tick == 65)) {
+                        boolean strong = tick == 65;
+                        entity.doGroundSlamEffect(strong);
+                    } else {
+                        LivingEntity target = entity.getTarget();
+                        if (target != null) entity.lookAt(target, 30F, 30F);
+                        if (tick == 20 || tick == 38 || tick == 63) {
+                            Vec3 pos = entity.getPosOffset(true, 2F, 1.75F, 0F);
+                            for (Entity targetEntity : entity.level().getEntitiesOfClass(Entity.class, ModEntityUtils.makeAABBWithSize(pos.x, pos.y, pos.z, 0, 3.9, entity.getBbHeight() * 1.2, 3.9), targetEntity -> targetEntity != entity && targetEntity.isAttackable() && !entity.isAlliedTo(targetEntity))) {
+                                entity.doHurtTarget(targetEntity, tick == 38 ? 1F : 1.2F, 1F, tick == 63);
+                            }
+                        }
+                    }
+                });
+        builder.forAnimation(CUTTING_KEEP_ANIMATION)
+                .inRange(1, 89, (entity, animation, tick) -> {
+                    entity.sawControlled.increaseTimer();
+                    if (entity.level().isClientSide && entity.saw != null) {
+                        if (tick == 1 || tick % 5 == 0) entity.doFractalEffect(4 + entity.random.nextInt(2), 0.5);
+                        ModParticleUtils.blockParticleDirectionality(entity.level(), entity.saw.x, entity.saw.y - 0.8, entity.saw.z, Math.toRadians(entity.getYRot()), 1, BLOCK_OFFSETS, 0.5F);
+                    }
+                });
+        builder.conditional(new CondKeyframe<>() {
+            @Override
+            public boolean shouldHandle(EntityRelicRipper entity, Animation animation, int tick) {
+                return CUTTING_START_ANIMATION == animation;
+            }
+
+            @Override
+            public void handle(EntityRelicRipper entity, Animation animation, int tick) {
+                entity.sawControlled.incrementOrDecreaseTimer(tick >= 10);
+            }
+        });
+        builder.conditional(new CondKeyframe<>() {
+            @Override
+            public boolean shouldHandle(EntityRelicRipper entity, Animation animation, int tick) {
+                return CUTTING_END_ANIMATION == animation && !entity.sawControlled.isStop();
+            }
+
+            @Override
+            public void handle(EntityRelicRipper entity, Animation animation, int tick) {
+                entity.sawControlled.decreaseTimer();
+            }
+        });
+        return manager;
+    }
+
+    private static AnimationReleaseManager<EntityRelicRipper> setupAnimationRules() {
+        AnimationReleaseManager<EntityRelicRipper> manager = new AnimationReleaseManager<>();
+        AnimationReleaseManager.Builder<EntityRelicRipper> builder = manager.builder();
+        builder.register(builder.define(CUTTING_START_ANIMATION)
+                .cooldown(new FixedRangeCooldown(400, 20))
+                .condition(ConditionFactory.and(
+                        ConditionFactory.distanceRange(0, 5),
+                        ConditionFactory.randomChance(0.3F)
+                ))
+                .onSuccess(e -> e.derivedSkill = DERIVED_SKILL_CHECK.test(e, null))
+                .priority(2));
+        builder.register(builder.define(SWEEP_ANIMATION1)
+                .cooldown(new FixedRangeCooldown(160, 20))
+                .condition(ConditionFactory.and(
+                        ConditionFactory.distanceRange(0, 3.5),
+                        ConditionFactory.randomChance(0.3F)
+                ))
+                .priority(1));
+        HealthScaledCooldown derivedCD = new HealthScaledCooldown(340, 20, 60, 0.3F);
+        AnimationCondition<EntityRelicRipper> derivedCond = ConditionFactory.and(
+                DERIVED_SKILL_CHECK,
+                ConditionFactory.distanceRange(0, 4),
+                ConditionFactory.randomChance(0.4F)
+        );
+        builder.register(builder.define(SWEEP_ANIMATION2)
+                .cooldown(derivedCD)
+                .condition(derivedCond));
+        builder.register(builder.define(SMASH_ANIMATION)
+                .cooldown(derivedCD)
+                .condition(derivedCond));
+        builder.condition(EntityAbsRelicron::isActive);
+        return manager;
+    }
+
+    public boolean derivedSkillCheck() {
+        float healthPct = this.getHealthPercentage();
+        float prob = 0.1F;
+        if (healthPct <= 0.3F) prob += 0.7F;
+        else prob += 0.7F * (1 - (healthPct - 0.3F) / 0.7F);
+        return prob > this.random.nextFloat();
+    }
+
     private void distractingMovement() {
         Vec3 currentMotion = this.getDeltaMovement();
         this.setDeltaMovement(currentMotion.x * 0.8, currentMotion.y, currentMotion.z * 0.8);
@@ -306,15 +433,17 @@ public class EntityRelicRipper extends EntityAbsRelicron {
     private void doFractalEffect(int count, double scale) {
         for (int i = 0; i < count; i++) {
             double angle = random.nextDouble() * 2 * Math.PI;
-            double minHorizontalOffset = 2;
-            double maxHorizontalOffset = 3.5;
+            double minHorizontalOffset = 1.5;
+            double maxHorizontalOffset = 2;
             double minVerticalOffset = 0.2;
-            double maxVerticalOffset = this.getBbHeight() * 0.6F;
+            double maxVerticalOffset = this.getBbHeight() / 2;
             double horizontalRadius = minHorizontalOffset + (random.nextDouble() * (maxHorizontalOffset - minHorizontalOffset));
             double offsetX = Math.cos(angle) * horizontalRadius * scale;
             double offsetZ = Math.sin(angle) * horizontalRadius * scale;
             double offsetY = minVerticalOffset + (random.nextDouble() * (maxVerticalOffset - minVerticalOffset)) * scale;
-            doFractalEffect(this, this.saw, this.saw.add(offsetX, offsetY, offsetZ), scale >= 1 ? 5 : 2, scale >= 1 ? 3 : 1);
+            LightningBolt bolt = RELICRON_BOLT.color(BOLT_COLORS[this.random.nextInt(2)]).lifespan(4)
+                    .size(0.06F).spreadFactor(0.15F).fadeFunction(LightningBolt.FadeFunction.fade(0.5F)).build(this.saw, this.saw.add(offsetX, offsetY, offsetZ), this.random);
+            ClientProxy.LIGHTNING_RENDER.update(this, bolt);
         }
     }
 
@@ -349,7 +478,7 @@ public class EntityRelicRipper extends EntityAbsRelicron {
                 float zOffset = randomFactor * (2 * this.random.nextFloat() - 1);
                 this.level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), x + xOffset, y + yOffset, z + zOffset, xSpeed, ySpeed, zSpeed);
             }
-            if (this.getAnimation() == this.sweep2Animation && (tick >= 38 && tick < 48)) {
+            if (this.getAnimation() == SWEEP_ANIMATION2 && (tick >= 38 && tick < 48)) {
                 double dx = x - this.getX();
                 double dy = y - this.getY();
                 double dz = z - this.getZ();
@@ -362,15 +491,17 @@ public class EntityRelicRipper extends EntityAbsRelicron {
                     xSpeed += (this.random.nextDouble() - 0.5) * randomFactor * 0.1;
                     zSpeed += (this.random.nextDouble() - 0.5) * randomFactor * 0.1;
                 }
-                ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.28f, 0.26f, 0.24f, 30f, tick > 40 ? 13 : 15, ParticleDust.EnumDustBehavior.GROW, 1F);
+                ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 25f, tick > 40 ? 8 : 10, ParticleDust.EnumDustBehavior.GROW, 0.98F);
                 this.level().addParticle(dustData, x, y - 0.75F, z, xSpeed, ySpeed, zSpeed);
             }
         }
     }
 
-    private void spawnGroundSlamParticle(boolean strong) {
-        this.level().addParticle(new ParticleRing.RingData(0F, (float) (Math.PI / 2F), strong ? 14 : 12, 0.8F, 0.8F, 0.8F, 0.9F, 60f, false, ParticleRing.EnumRingBehavior.GROW), this.saw.x, this.getY() + 0.1, this.saw.z, 0, 0, 0);
-        this.doFractalEffect(strong ? 6 : 3 + this.random.nextInt(3), 1);
+    private void doGroundSlamEffect(boolean strong) {
+        this.level().addParticle(new ParticleRing.RingData(0F, (float) (Math.PI / 2F), strong ? 12 : 10, 0.8F, 0.8F, 0.8F, 0.9F, 70F, false, ParticleRing.EnumRingBehavior.GROW), this.saw.x, this.getY() + 0.1, this.saw.z, 0, 0, 0);
+        this.doFractalEffect(strong ? 8 + this.random.nextInt(3) : 6, strong ? 1.1 : 0.9);
+        ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 22F, strong ? 30 : 25, ParticleDust.EnumDustBehavior.GROW, 0.8F);
+        ModParticleUtils.annularParticleOutburst(this.level(), 20, dustData, this.saw.x, this.getY() + 0.15, this.saw.z, 1.2, 0.5);
         //int length = 4 + this.random.nextInt(3);
         //for (int i = 0; i < length; i++) {
         //    double angle = 2 * Math.PI * i / length;
@@ -385,52 +516,23 @@ public class EntityRelicRipper extends EntityAbsRelicron {
         //    ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24F + light, 0.24F + light, 0.24F + light, scale, duration, ParticleDust.EnumDustBehavior.GROW, 0.95F);
         //    this.level().addParticle(dustData, x, y, z, xSpeed, 0.0007, zSpeed);
         //}
+        AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.GLOW.get(), this.saw.x, this.getY() + 0.15, this.saw.z, 0, 0, 0, true, 0, 0, 0, 0,
+                1, BOLT_COLORS[0].x, BOLT_COLORS[0].y, BOLT_COLORS[0].z, BOLT_COLORS[0].w, 1, 4, true, false, false, new ParticleComponent[]{
+                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, AnimData.startAndEnd(1F, 0F), false),
+                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, AnimData.startAndEnd(10, 35), false),
+                });
         int[] particles = {8, 12};
         double[] radii = {0.8, 1.2};
         double[] speeds = {0.5, 0.4};
         double[] angles = {35, 25};
         double[] color = {0.8, 0.8, 0.8, 0.4};
-        ModParticleUtils.multiLayerBowlParticles(this.level(), new Vec3(this.saw.x, this.getY(), this.saw.z), 2, particles, radii, speeds, angles, color);
+        ModParticleUtils.multiLayerBowlParticles(this.level(), new Vec3(this.saw.x, this.getY(), this.saw.z), 3, particles, radii, speeds, angles, color, null, 0.98F);
         ModParticleUtils.blockParticlesAround(this.level(), this.saw.x, this.getY(), this.saw.z, 20, 0.5, 1.2, 1, 3, 2, strong ? 4 : 3, -0.2, 0.1);
-    }
-
-    static class RRSweepAttackGoal extends AnimationAI<EntityRelicRipper> {
-        public RRSweepAttackGoal(EntityRelicRipper entity) {
-            super(entity, false);
-        }
-
-        @Override
-        protected boolean test(Animation animation) {
-            return animation == entity.sweep1Animation || animation == entity.sweep2Animation;
-        }
-
-        @Override
-        public void tick() {
-            entity.distractingMovement();
-            int tick = entity.getAnimationTick();
-            LivingEntity target = entity.getTarget();
-            if (target != null) entity.lookAt(target, 30F, 30F);
-            if (entity.getAnimation() == entity.sweep1Animation) {
-                if (tick == 22) entity.rangeAttack(3, entity.getBbHeight() + 0.2, 3, 3, 90F, 220F, null);
-            } else {
-                if (tick == 22) entity.rangeAttack(3, entity.getBbHeight() + 0.2, 3, 3, 100F, 200F, null);
-                else if (tick == 36 || tick == 45) entity.rangeAttack(2.75, entity.getBbHeight(), 2.75, 2.75, e -> {
-                    int time = e.invulnerableTime;
-                    e.invulnerableTime = 0;
-                    if (!entity.doHurtTarget(e)) {
-                        e.invulnerableTime = time;
-                    }
-                });
-                if (tick == 60 && entity.derivedSkill) {
-                    entity.playAnimation(entity.smashAnimation);
-                }
-            }
-        }
     }
 
     static class RRCuttingAttackGoal extends AnimationGroupAI<EntityRelicRipper> {
         public RRCuttingAttackGoal(EntityRelicRipper entity) {
-            super(entity, false, () -> entity.cuttingStartAnimation, () -> entity.cuttingKeepAnimation, () -> entity.cuttingEndAnimation);
+            super(entity, false, CUTTING_START_ANIMATION, CUTTING_KEEP_ANIMATION, CUTTING_END_ANIMATION);
         }
 
         @Override
@@ -438,44 +540,27 @@ public class EntityRelicRipper extends EntityAbsRelicron {
             entity.distractingMovement();
             Animation animation = entity.getAnimation();
             int tick = entity.getAnimationTick();
-            if (animation == entity.cuttingStartAnimation) nextAnimation(animation, entity.cuttingKeepAnimation);
-            else if (animation == entity.cuttingKeepAnimation) {
+            if (CUTTING_START_ANIMATION == animation) nextAnimation(animation, CUTTING_KEEP_ANIMATION);
+            else if (CUTTING_KEEP_ANIMATION == animation) {
                 LivingEntity target = entity.getTarget();
                 if (target != null) {
-                    entity.lookAt(target, 15F, 15F);
-                    entity.getLookControl().setLookAt(target, 15F, 15F);
+                    entity.lookAt(target, 30F, 60F);
+                    entity.getLookControl().setLookAt(target, 30F, 60F);
                 }
-                if (tick % 10 == 0) entity.rangeAttack(2.5, 3.5, 2.5, 2.5, 45F, 45F, null);
-                if (entity.derivedSkill) nextAnimation(animation, tick == 41, entity.cuttingEndAnimation);
-                else nextAnimation(animation, entity.cuttingEndAnimation);
-            } else if (animation == entity.cuttingEndAnimation) {
-                if (entity.derivedSkill && tick == 10) entity.playAnimation(entity.sweep2Animation);
-            }
-        }
-    }
-
-    static class RRSmashAttackGoal extends AnimationSimpleAI<EntityRelicRipper> {
-        public RRSmashAttackGoal(EntityRelicRipper entity) {
-            super(entity, () -> entity.smashAnimation, false);
-        }
-
-        @Override
-        public void stop() {
-            super.stop();
-            entity.derivedSkill = false;
-        }
-
-        @Override
-        public void tick() {
-            entity.distractingMovement();
-            int tick = entity.getAnimationTick();
-            LivingEntity target = entity.getTarget();
-            if (target != null) entity.lookAt(target, 30F, 30F);
-            if (tick == 20 || tick == 38 || tick == 63) {
-                Vec3 pos = entity.getPosOffset(true, 2F, 1.75F, 0F);
-                for (Entity targetEntity : entity.level().getEntitiesOfClass(Entity.class, ModEntityUtils.makeAABBWithSize(pos.x, pos.y, pos.z, 0, 5, entity.getBbHeight(), 5), targetEntity -> targetEntity != entity && targetEntity.isAttackable() && (!entity.isAlliedTo(targetEntity) || !ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get()))) {
-                    entity.doHurtTarget(targetEntity, tick == 38 ? 1F : 1.2F, 1F, true);
-                }
+                if (tick % 5 == 0) entity.rangeAttack(2.5, entity.getBbHeight() * 0.75, 2.5, 2.5, 50F, 50F,
+                        hitEntity -> {
+                            if (entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), hitEntity, 0.35F, 0, false)) {
+                                if (EntityRelicAnnihilator.canBeControlled(entity, hitEntity)) {
+                                    double ratioX = -Math.sin(entity.yBodyRot * ((float) Math.PI / 180F));
+                                    double ratioZ = Math.cos(entity.yBodyRot * ((float) Math.PI / 180F));
+                                    ModEntityUtils.forceKnockBack(entity, hitEntity, 0.25F, ratioX, ratioZ, hitEntity instanceof Player);
+                                }
+                            }
+                        });
+                if (entity.derivedSkill) nextAnimation(animation, tick == 41, CUTTING_END_ANIMATION);
+                else nextAnimation(animation, CUTTING_END_ANIMATION);
+            } else if (CUTTING_END_ANIMATION == animation) {
+                if (entity.derivedSkill && tick == 10) entity.playAnimation(SWEEP_ANIMATION2);
             }
         }
     }

@@ -1,8 +1,8 @@
 package com.eeeab.eeeabsmobs.sever.entity.effect;
 
-import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
+import com.eeeab.eeeabsmobs.client.particle.ParticleOrb;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
-import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
@@ -22,7 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 //参考自: net.minecraft.world.entity.EyeOfEnder
-public class EntityEyeOfStructure extends Entity implements ItemSupplier {
+public class EntityEyeOfStructure extends Entity implements ItemSupplier, IEntity {
     private static final EntityDataAccessor<ItemStack> DATA_ITEM_STACK = SynchedEntityData.defineId(EntityEyeOfStructure.class, EntityDataSerializers.ITEM_STACK);
     private static final EntityDataAccessor<Float> R = SynchedEntityData.defineId(EntityEyeOfStructure.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> G = SynchedEntityData.defineId(EntityEyeOfStructure.class, EntityDataSerializers.FLOAT);
@@ -204,7 +204,7 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier {
     public void handleEntityEvent(byte id) {
         if (id == 5) {
             ModParticleUtils.roundParticleOutburst(level(), 30, new ParticleOptions[]{new ParticleOrb.OrbData(getR(), getG(), getB(), 3, 40)}, getX(), getY(), getZ(), 1);
-            ModParticleUtils.randomAnnularParticleOutburst(level(), 10, new ParticleOptions[]{new ItemParticleOption(ParticleTypes.ITEM, getItem())}, getX(), getY(), getZ(), 0.45F);
+            ModParticleUtils.annularParticleOutburst(level(), 10, new ItemParticleOption(ParticleTypes.ITEM, getItem()), getX(), getY(), getZ(), 0.45, 0);
         }
         super.handleEntityEvent(id);
     }

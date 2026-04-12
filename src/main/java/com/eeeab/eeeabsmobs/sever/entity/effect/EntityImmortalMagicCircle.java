@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.sever.entity.effect;
 
-import com.eeeab.eeeabsmobs.client.particle.base.ParticleOrb;
-import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.client.particle.ParticleOrb;
+import com.eeeab.eeeabsmobs.client.ControlledAnimation;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
@@ -79,8 +79,9 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
         super.tick();
         processController.updatePrevTimer();
 
-        if (!level().isClientSide && canFollow && caster != null && !caster.isRemoved() && distanceTo(caster) < getScale() * 2) {
-            if (this.getY() - 0.25 > caster.getY()) this.setPos(getX(), caster.getY() + 0.25, getZ());
+        LivingEntity owner = getOwner();
+        if (!level().isClientSide && canFollow && owner != null && !owner.isRemoved() && distanceTo(owner) < getScale() * 2) {
+            if (this.getY() - 0.25 > owner.getY()) this.setPos(getX(), owner.getY() + 0.25, getZ());
         }
 
         if (NO && processController.increaseTimerChain().isEnd()) {
@@ -100,7 +101,7 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
                                     MobEffectInstance instance = inRange.getEffect(effect);
                                     if (instance != null && instance.getAmplifier() >= 1) continue;
                                 }
-                                ModEntityUtils.addEffectStackingAmplifier(null, inRange, effect, getDuration(), 2, true, true, true, false, false);
+                                ModEntityUtils.addEffectStackingAmplifier(null, inRange, effect, getDuration(), 2, true, true, false, false);
                             }
                         }
                     }
@@ -208,7 +209,7 @@ public class EntityImmortalMagicCircle extends EntityMagicEffects {
     public static void spawn(Level level, LivingEntity caster, Vec3 pos, float scale, float speed, int duration, float yaw, MagicCircleType type, boolean canFollow) {
         if (!level.isClientSide) {
             EntityImmortalMagicCircle entity = new EntityImmortalMagicCircle(level);
-            entity.caster = caster;
+            entity.setOwner(caster);
             entity.canFollow = canFollow;
             entity.setScale(scale);
             entity.setSpeed(speed);

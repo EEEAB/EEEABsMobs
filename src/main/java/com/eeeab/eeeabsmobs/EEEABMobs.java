@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs;
 import com.eeeab.animate.client.gui.AnimationControllerScreen;
 import com.eeeab.eeeabsmobs.client.ClientProxy;
 import com.eeeab.eeeabsmobs.client.gui.BossBarRegistry;
-import com.eeeab.eeeabsmobs.client.gui.PromptNotificationHandler;
+import com.eeeab.eeeabsmobs.client.gui.TipNotificationHandler;
 import com.eeeab.eeeabsmobs.sever.ServerProxy;
 import com.eeeab.eeeabsmobs.sever.advancement.ModCriteriaTriggers;
 import com.eeeab.eeeabsmobs.sever.handler.CapabilityHandler;
@@ -11,8 +11,8 @@ import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.handler.ServerEventHandler;
 import com.eeeab.eeeabsmobs.sever.init.*;
 import com.eeeab.eeeabsmobs.sever.integration.curios.CuriosRegistry;
-import com.eeeab.eeeabsmobs.sever.trigger.CombatTriggerEvent;
-import com.eeeab.eeeabsmobs.sever.trigger.CombatTriggerHandler;
+import com.eeeab.eeeabsmobs.sever.entity.trigger.CombatTriggerEvent;
+import com.eeeab.eeeabsmobs.sever.entity.trigger.CombatTriggerHandler;
 import com.eeeab.eeeabsmobs.sever.util.ModBrewingRecipe;
 import com.eeeab.eeeabsmobs.sever.util.TranslateUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -79,7 +79,7 @@ public class EEEABMobs {
 
     private void clientSetup(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            PromptNotificationHandler.init();
+            TipNotificationHandler.init();
             BossBarRegistry.init();
             CuriosRegistry.initClient();
             MenuScreens.register(MenuInit.ANIMATION_CONTROLLER.get(), AnimationControllerScreen::new);
@@ -99,11 +99,16 @@ public class EEEABMobs {
         ModConfig config = event.getConfig();
         if (config.getSpec() == ModConfigHandler.COMMON_SPEC) {
             ModConfigHandler.Item item = ModConfigHandler.COMMON.items;
-            item.guardianBattleaxe.attackSpeedValue = item.guardianBattleaxe.attackSpeed.get().floatValue();
-            item.guardianBattleaxe.attackDamageValue = item.guardianBattleaxe.attackDamage.get().floatValue();
-            item.netherworldKatana.attackSpeedValue = item.netherworldKatana.attackSpeed.get().floatValue();
-            item.netherworldKatana.attackDamageValue = item.netherworldKatana.attackDamage.get().floatValue();
+            updateItem(item.busterGauntlet);
+            updateItem(item.chainsword);
+            updateItem(item.doomboltAxe);
+            //updateItem(item.netherworldKatana);
             TranslateUtils.SHOW_ITEM_CD = ModConfigHandler.COMMON.others.enableShowItemCD.get();
         }
+    }
+
+    private static void updateItem(ModConfigHandler.ToolConfig toolConfig) {
+        toolConfig.attackDamageValue = toolConfig.attackDamage.get().floatValue();
+        toolConfig.attackSpeedValue = toolConfig.attackSpeed.get().floatValue();
     }
 }

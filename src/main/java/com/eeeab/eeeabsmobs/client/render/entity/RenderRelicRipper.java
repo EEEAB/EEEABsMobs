@@ -11,20 +11,19 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class RenderRelicRipper extends MobRenderer<EntityRelicRipper, ModelRelicRipper> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/relic_ripper.png");
     private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/relic_ripper_glow.png");
     private static final String[] SAW = new String[]{"upper", "rightArm", "rightArmJoint", "rightHand", "sawJoint", "saw"};
 
     public RenderRelicRipper(EntityRendererProvider.Context context) {
-        super(context, new ModelRelicRipper(context.bakeLayer(ModModelLayer.RELIC_RIPPER)), 1.2F);
-        this.addLayer(new LayerGlow<>(this, GLOW_LAYER, 1F, e -> !e.glowControlled.isStop()) {
-            @Override
-            protected float getBrightness(EntityRelicRipper entity, float partialTicks) {
-                return entity.glowControlled.getAnimationFraction(partialTicks);
-            }
-        });
+        super(context, new ModelRelicRipper(context.bakeLayer(ModModelLayer.RELIC_RIPPER)), 1.4F);
+        this.addLayer(new LayerGlow<>(this, GLOW_LAYER, e -> !e.glowControlled.isStop(),
+                (entity, partialTicks) -> entity.glowControlled.getAnimationFraction(partialTicks)));
     }
 
     @Override
@@ -45,6 +44,8 @@ public class RenderRelicRipper extends MobRenderer<EntityRelicRipper, ModelRelic
     @Override
     public void render(EntityRelicRipper entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
         super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
-        if (!entity.isNoAnimation()) entity.saw = ModelPartUtils.getWorldPosition(entity, entity.yBodyRot, this.model.root(), SAW);
+        if (!entity.isNoAnimation()) {
+            entity.saw = ModelPartUtils.getWorldPosition(entity, entity.yBodyRot, this.model.root(), SAW);
+        }
     }
 }

@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.effect;
 
-import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.client.ControlledAnimation;
 import com.eeeab.eeeabsmobs.sever.entity.util.damage.ModDamageSource;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.mob.IMob;
@@ -29,7 +29,7 @@ public class EntityCrimsonRay extends EntityAbsBeam {
 
     public EntityCrimsonRay(Level world, LivingEntity caster, Vec3 pos, int duration, int attackHeight) {
         this(EntityInit.CRIMSON_RAY.get(), world);
-        this.caster = caster;
+        this.setOwner(caster);
         this.setPitch((float) (Math.PI / 2));
         this.setYaw((float) ((this.getYRot() - 90.0F) * Math.PI / 180.0F));
         this.setDuration(duration);
@@ -60,10 +60,11 @@ public class EntityCrimsonRay extends EntityAbsBeam {
             }
             if (!this.level().isClientSide) {
                 for (LivingEntity target : hit) {
-                    if (target == this.caster) continue;
+                    LivingEntity owner = this.getOwner();
+                    if (target == owner) continue;
                     float finalDamage = this.getDamage();
-                    if (this.caster instanceof IMob mob) finalDamage += mob.getDamageAmountByTargetHealthPct(target);
-                    target.hurt(ModDamageSource.laserAttack(this, this.caster, true, true), finalDamage);
+                    if (owner instanceof IMob mob) finalDamage += mob.getDamageAmountByTargetHealthPct(target);
+                    target.hurt(ModDamageSource.laser(this, owner, true, true), finalDamage);
                 }
             }
         }
@@ -117,8 +118,9 @@ public class EntityCrimsonRay extends EntityAbsBeam {
 
         public PreAttack(Level level, Vec3 pos, LivingEntity caster, int attackHeight) {
             this(EntityInit.CRIMSON_RAY_PRE.get(), level);
+            this.setOwner(caster);
+            this.noCulling = true;
             this.pos = pos;
-            this.caster = caster;
             this.attackHeight = attackHeight;
         }
 
@@ -132,7 +134,7 @@ public class EntityCrimsonRay extends EntityAbsBeam {
         public void tick() {
             super.tick();
             if (!this.level().isClientSide) {
-                if (this.pos == null || this.caster == null) {
+                if (this.pos == null || this.getOwner() == null) {
                     this.discard();
                     return;
                 }
@@ -145,8 +147,9 @@ public class EntityCrimsonRay extends EntityAbsBeam {
                         break;
                     case 5:
                         if (this.phaseController.increaseTimerChain().isEnd()) {
-                            EntityCrimsonRay ray = new EntityCrimsonRay(this.level(), this.caster, this.pos, 10, this.attackHeight);
-                            ray.setDamage((float) this.caster.getAttributeValue(Attributes.ATTACK_DAMAGE));
+                            LivingEntity owner = this.getOwner();
+                            EntityCrimsonRay ray = new EntityCrimsonRay(this.level(), owner, this.pos, 10, this.attackHeight);
+                            ray.setDamage((float) owner.getAttributeValue(Attributes.ATTACK_DAMAGE));
                             this.level().addFreshEntity(ray);
                             this.discard();
                         }

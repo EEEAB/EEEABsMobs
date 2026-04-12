@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
 import com.eeeab.animate.client.model.ModHierarchicalModel;
+import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationNamelessGuardian;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationNamelessGuardian2;
 import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityNamelessGuardian;
@@ -8,7 +9,10 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class ModelNamelessGuardian extends ModHierarchicalModel<EntityNamelessGuardian> {
     private final ModelPart root;
     private final ModelPart head;
@@ -98,37 +102,32 @@ public class ModelNamelessGuardian extends ModHierarchicalModel<EntityNamelessGu
     @Override
     public void setupAnim(EntityNamelessGuardian entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
-        float delta = ageInTicks - entity.tickCount;
-        float frame = entity.frame + delta;
-        //LookAt
-        lookAtAnimation(netHeadYaw, headPitch, 1.0F, this.head);
-        //Animation
-        this.animate(entity.dieAnimation, AnimationNamelessGuardian.DIE, ageInTicks);
-        this.animate(entity.concussionAnimation, AnimationNamelessGuardian.CONCUSSION, ageInTicks);
-        this.animate(entity.activateAnimation, AnimationNamelessGuardian.ACTIVE, ageInTicks);
-        this.animate(entity.deactivateAnimation, AnimationNamelessGuardian.DEACTIVATE, ageInTicks);
-        this.animate(entity.attackAnimation1, AnimationNamelessGuardian.ATTACK_1, ageInTicks);
-        this.animate(entity.attackAnimation2, AnimationNamelessGuardian.ATTACK_2, ageInTicks);
-        this.animate(entity.attackAnimation3, AnimationNamelessGuardian.ATTACK_3, ageInTicks);
-        this.animate(entity.attackAnimation4, AnimationNamelessGuardian.ATTACK_4, ageInTicks);
-        this.animate(entity.attackAnimation5, AnimationNamelessGuardian.ATTACK_5, ageInTicks);
-        this.animate(entity.attackAnimation6, AnimationNamelessGuardian.ATTACK_6, ageInTicks);
-        this.animate(entity.pounceAttackAnimation1, AnimationNamelessGuardian.PRE_POUNCE, ageInTicks);
-        this.animate(entity.pounceAttackAnimation2, AnimationNamelessGuardian.POUNCE, ageInTicks, 1.5F);
-        this.animate(entity.pounceAttackAnimation3, AnimationNamelessGuardian.AFTER_POUNCE, ageInTicks);
-        this.animate(entity.roarAnimation, AnimationNamelessGuardian2.ROAR, ageInTicks);
-        this.animate(entity.robustAttackAnimation, AnimationNamelessGuardian2.ROBUST_ATTACK, ageInTicks);
-        this.animate(entity.smashAttackAnimation, AnimationNamelessGuardian2.SMASH_ATTACK, ageInTicks);
-        this.animate(entity.weakAnimation1, AnimationNamelessGuardian2.WEAK_START, ageInTicks);
-        this.animate(entity.weakAnimation2, AnimationNamelessGuardian2.WEAK_HOLD, ageInTicks);
-        this.animate(entity.weakAnimation3, AnimationNamelessGuardian2.WEAK_END, ageInTicks);
-        this.animate(entity.leapAnimation, AnimationNamelessGuardian2.LEAP, ageInTicks);
-        this.animate(entity.smashDownAnimation, AnimationNamelessGuardian2.SMASH_DOWN, ageInTicks);
-        this.animate(entity.laserAnimation, AnimationNamelessGuardian2.SHOOT_BEAM, ageInTicks);
-        this.animate(entity.shakeGroundAttackAnimation1, AnimationNamelessGuardian2.SHAKE_GROUND_1, ageInTicks);
-        this.animate(entity.shakeGroundAttackAnimation2, AnimationNamelessGuardian2.SHAKE_GROUND_2, ageInTicks);
-        this.animate(entity.shakeGroundAttackAnimation3, AnimationNamelessGuardian2.SHAKE_GROUND_3, ageInTicks);
-        //Pose
+        lookAtTarget(netHeadYaw, headPitch, 1.0F, this.head);
+        playAnimation(this, entity, EntityNamelessGuardian.DIE_ANIMATION, AnimationNamelessGuardian.DIE, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.CONCUSSION_ANIMATION, AnimationNamelessGuardian.CONCUSSION, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.ACTIVATE_ANIMATION, AnimationNamelessGuardian.ACTIVE, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.DEACTIVATE_ANIMATION, AnimationNamelessGuardian.DEACTIVATE, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.ATTACK_ANIMATION1, AnimationNamelessGuardian.ATTACK_1, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.ATTACK_ANIMATION2, AnimationNamelessGuardian.ATTACK_2, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.ATTACK_ANIMATION3, AnimationNamelessGuardian.ATTACK_3, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.ATTACK_ANIMATION4, AnimationNamelessGuardian.ATTACK_4, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.ATTACK_ANIMATION5, AnimationNamelessGuardian.ATTACK_5, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.ATTACK_ANIMATION6, AnimationNamelessGuardian.ATTACK_6, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION1, AnimationNamelessGuardian.PRE_POUNCE, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION2, AnimationNamelessGuardian.POUNCE, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION3, AnimationNamelessGuardian.AFTER_POUNCE, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.ROAR_ANIMATION, AnimationNamelessGuardian2.ROAR, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.ROBUSTATTACK_ANIMATION, AnimationNamelessGuardian2.ROBUST_ATTACK, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.SMASHATTACK_ANIMATION, AnimationNamelessGuardian2.SMASH_ATTACK, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.WEAK_ANIMATION1, AnimationNamelessGuardian2.WEAK_START, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.WEAK_ANIMATION2, AnimationNamelessGuardian2.WEAK_HOLD, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.WEAK_ANIMATION3, AnimationNamelessGuardian2.WEAK_END, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.LEAP_ANIMATION, AnimationNamelessGuardian2.LEAP, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.SMASH_DOWN_ANIMATION, AnimationNamelessGuardian2.SMASH_DOWN, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.LASER_ANIMATION, AnimationNamelessGuardian2.SHOOT_BEAM, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.SHAKEGROUND_ATTACK_ANIMATION1, AnimationNamelessGuardian2.SHAKE_GROUND_1, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.SHAKEGROUND_ATTACK_ANIMATION2, AnimationNamelessGuardian2.SHAKE_GROUND_2, ageInTicks);
+        playAnimation(this, entity, EntityNamelessGuardian.SHAKEGROUND_ATTACK_ANIMATION3, AnimationNamelessGuardian2.SHAKE_GROUND_3, ageInTicks);
         if (entity.isNoAnimation()) {
             if (entity.isActive()) {
                 setStaticRotationAngle(axe, -2.5F, -10, 20);
@@ -145,6 +144,8 @@ public class ModelNamelessGuardian extends ModHierarchicalModel<EntityNamelessGu
                 setStaticRotationPoint(axe, 0F, 0, 9.5F);
             }
         }
+        float delta = ageInTicks - entity.tickCount;
+        float frame = entity.frame + delta;
         if (entity.isActive() && entity.isAlive()) {
             //Idle
             this.bob(rightArm, 0.1F, 0.5F, false, frame, 1);
@@ -168,13 +169,13 @@ public class ModelNamelessGuardian extends ModHierarchicalModel<EntityNamelessGu
             this.flap(this.upper, speed, degree * 0.12F, true, 0, 0, limbSwing, limbSwingAmount);
             this.swing(this.upper, speed, degree * 0.12F, false, 0, 0, limbSwing, limbSwingAmount);
         }
-        //Animation effect
+        Animation animation = entity.getAnimation();
         int tick = entity.getAnimationTick();
-        if (entity.getAnimation() == entity.smashAttackAnimation) {
+        if (EntityNamelessGuardian.SMASHATTACK_ANIMATION == animation) {
             if (tick < 20) upper.zRot += (float) (upper.x * 0.01 * Math.cos(2.0F * frame));
-        } else if (entity.getAnimation() == entity.pounceAttackAnimation2) {
+        } else if (EntityNamelessGuardian.POUNCE_ATTACK_ANIMATION2 == animation) {
             upper.zRot += (float) (root.x * 0.01 * Math.sin(frame));
-        } else if (entity.getAnimation() == entity.leapAnimation) {
+        } else if (EntityNamelessGuardian.LEAP_ANIMATION == animation) {
             if (tick > 14) {
                 rightArm.xRot += (float) (root.x * 0.01 * Math.cos(frame));
                 rightLeg.xRot += (float) (root.x * 0.01 * Math.sin(frame));
@@ -182,7 +183,7 @@ public class ModelNamelessGuardian extends ModHierarchicalModel<EntityNamelessGu
                 leftLeg.xRot += (float) (root.x * 0.01 * Math.cos(frame));
                 root.xRot += (float) (root.x * 0.01 * Math.cos(0.5F * frame));
             }
-        } else if (entity.getAnimation() == entity.roarAnimation) {
+        } else if (EntityNamelessGuardian.ROAR_ANIMATION == animation) {
             if (tick <= 24 && tick > 5) {
                 upper.zRot += (float) (upper.x * 0.01 * Math.cos(Mth.clamp(tick * 0.1, 0, 2.5) * frame));
                 upper.xRot += (float) (upper.x * 0.01 * Math.cos(Mth.clamp(tick * 0.1, 0, 2.5) * frame));
@@ -195,7 +196,7 @@ public class ModelNamelessGuardian extends ModHierarchicalModel<EntityNamelessGu
                 head.xRot += (float) (root.x * 0.01 * Math.cos(3F * frame));
                 head.zRot += (float) (root.x * 0.01 * Math.cos(3F * frame));
             }
-        } else if (entity.getAnimation() == entity.laserAnimation) {
+        } else if (EntityNamelessGuardian.LASER_ANIMATION == animation) {
             if (tick > 24 && tick < 100) {
                 rightArm.xRot += (float) (root.x * 0.01 * Math.cos(frame));
                 leftArm.xRot += (float) (root.x * 0.01 * Math.sin(frame));
@@ -203,7 +204,7 @@ public class ModelNamelessGuardian extends ModHierarchicalModel<EntityNamelessGu
                 head.xRot += (float) (root.x * 0.01 * Math.cos(3F * frame));
                 head.zRot += (float) (root.x * 0.01 * Math.cos(3F * frame));
             }
-        } else if (entity.getAnimation() == entity.dieAnimation) {
+        } else if (EntityNamelessGuardian.DIE_ANIMATION == animation) {
             float explodeCoefficient = entity.getExplodeCoefficient(ageInTicks - entity.tickCount);
             rightArm.xRot += (float) (root.x * explodeCoefficient * 0.01 * Math.cos(2 * frame));
             rightLeg.xRot += (float) (root.x * explodeCoefficient * 0.01 * Math.sin(2 * frame));
@@ -212,7 +213,7 @@ public class ModelNamelessGuardian extends ModHierarchicalModel<EntityNamelessGu
             root.xRot += (float) (root.x * explodeCoefficient * 0.01 * Math.cos(4F * frame));
             head.xRot += (float) (root.x * explodeCoefficient * 0.01 * Math.cos(4F * frame));
             head.zRot += (float) (root.x * explodeCoefficient * 0.01 * Math.cos(4F * frame));
-        } else if (entity.getAnimation() == entity.weakAnimation2) {
+        } else if (EntityNamelessGuardian.WEAK_ANIMATION2 == animation) {
             float speed = 0.5F;
             float degree = 0.2F;
             this.walk(this.root, speed * 2F, degree * 0.12F, false, 0, 0, limbSwing, limbSwingAmount);

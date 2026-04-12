@@ -6,17 +6,15 @@ import com.eeeab.animate.server.ai.animation.AnimationDie;
 import com.eeeab.animate.server.ai.animation.AnimationRepel;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.AnimationHandler;
-import com.eeeab.eeeabsmobs.client.particle.util.AnimData;
-import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
-import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
-import com.eeeab.eeeabsmobs.sever.capability.StunCapability;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
+import com.eeeab.eeeabsmobs.client.particle.lib.AnimData;
+import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent;
+import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.KeepDistanceGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.ModLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityShamanBomb;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.eeeab.eeeabsmobs.sever.handler.CapabilityHandler;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.*;
 import com.eeeab.eeeabsmobs.sever.item.ItemImmortalStaff;
 import net.minecraft.core.BlockPos;
@@ -50,29 +48,28 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAttackMob {
-    public final Animation spellCastingFRAnimation = Animation.create(24);
-    public final Animation spellCastingSummonAnimation = Animation.create(40);
-    public final Animation spellCastingBombAnimation = Animation.create(30);
-    public final Animation spellCastingHealAnimation = Animation.create(60);
-    public final Animation spellCastingWololoAnimation = Animation.create(40);
-    public final Animation avoidAnimation = Animation.create(15);
-    public final Animation dieAnimation = Animation.create(30);
-    private final Animation[] animations = new Animation[]{
-            spellCastingFRAnimation,
-            spellCastingSummonAnimation,
-            spellCastingBombAnimation,
-            spellCastingHealAnimation,
-            spellCastingWololoAnimation,
-            avoidAnimation,
-            dieAnimation
+    public static final Animation SPELLCASTING_FR_ANIMATION = Animation.create(24);
+    public static final Animation SPELLCASTING_SUMMON_ANIMATION = Animation.create(40);
+    public static final Animation SPELLCASTING_BOMB_ANIMATION = Animation.create(30);
+    public static final Animation SPELLCASTING_HEAL_ANIMATION = Animation.create(60);
+    public static final Animation SPELLCASTING_WOLOLO_ANIMATION = Animation.create(40);
+    public static final Animation AVOID_ANIMATION = Animation.create(15);
+    public static final Animation DIE_ANIMATION = Animation.create(30);
+    private static final Animation[] ANIMATIONS = new Animation[]{
+            SPELLCASTING_FR_ANIMATION,
+            SPELLCASTING_SUMMON_ANIMATION,
+            SPELLCASTING_BOMB_ANIMATION,
+            SPELLCASTING_HEAL_ANIMATION,
+            SPELLCASTING_WOLOLO_ANIMATION,
+            AVOID_ANIMATION,
+            DIE_ANIMATION
     };
-    private final StunCapability.IStunCapability capability = CapabilityHandler.getCapability(this, CapabilityHandler.STUN_CAPABILITY);
     private int hurtCountBeforeHeal;
     private int timeUntilHeal;
     @Nullable
@@ -91,7 +88,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
 
     @Override
     public MobLevel getMobLevel() {
-        return MobLevel.HARD;
+        return MobLevel.NORMAL;
     }
 
     @Override
@@ -112,23 +109,23 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
         this.targetSelector.addGoal(2, (new NearestAttackableTargetGoal<>(this, Player.class, true)).setUnseenMemoryTicks(300));
         this.targetSelector.addGoal(3, (new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false)).setUnseenMemoryTicks(300));
         this.goalSelector.addGoal(7, new RandomStrollGoal(this, 0.75F));
-        this.goalSelector.addGoal(8, new EMLookAtGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(9, new EMLookAtGoal(this, Mob.class, 6.0F));
+        this.goalSelector.addGoal(8, new ModLookAtGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(9, new ModLookAtGoal(this, Mob.class, 6.0F));
     }
 
 
     @Override
     protected void registerCustomGoals() {
         this.goalSelector.addGoal(1, new AnimationDie<>(this));
-        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> spellCastingHealAnimation));
-        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> spellCastingSummonAnimation));
-        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> spellCastingBombAnimation));
-        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> spellCastingWololoAnimation));
-        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, () -> avoidAnimation));
-        this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> spellCastingFRAnimation, 4.5F, 9, 2F, 0.625F, true) {
+        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, SPELLCASTING_HEAL_ANIMATION));
+        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, SPELLCASTING_SUMMON_ANIMATION));
+        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, SPELLCASTING_BOMB_ANIMATION));
+        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, SPELLCASTING_WOLOLO_ANIMATION));
+        this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, AVOID_ANIMATION));
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, SPELLCASTING_FR_ANIMATION, 2.5F, 9, 2F, 0.625F, true) {
             @Override
             public void onHit(LivingEntity entity) {
-                ModEntityUtils.addEffectStackingAmplifier(null, entity, EffectInit.ERODE_EFFECT.get(), 200, 5, true, true, true, true, false);
+                ModEntityUtils.addEffectStackingAmplifier(null, entity, EffectInit.ERODE_EFFECT.get(), 200, 5, true, true, true, false);
             }
 
             @Override
@@ -144,11 +141,6 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
     }
 
     @Override
-    public float getStepHeight() {
-        return 1.0F;
-    }
-
-    @Override
     public boolean isGlow() {
         return !this.isStunned() && super.isGlow();
     }
@@ -158,21 +150,12 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
         return dimensions.height * 0.8f;
     }
 
-    //如果有该buff 则应该陷入虚弱状态
-    @Override
-    public boolean isStunned() {
-        if (this.capability != null) {
-            return this.capability.flag();
-        }
-        return super.isStunned();
-    }
-
     @Override
     protected void onAnimationFinish(Animation animation) {
         if (!this.level().isClientSide) {
-            if (animation == this.spellCastingFRAnimation) {
+            if (animation == SPELLCASTING_FR_ANIMATION) {
                 this.attackTick = 200;
-            } else if (animation == this.spellCastingHealAnimation) {
+            } else if (animation == SPELLCASTING_HEAL_ANIMATION) {
                 int timer;
                 if (this.hurtCountBeforeHeal < CAN_STOP_HEAL_COUNT && !this.isStunned()) {
                     this.heal((float) (this.getMaxHealth() * ModConfigHandler.COMMON.mobs.immortals.immortalShaman.healPercentage.get()));
@@ -193,60 +176,59 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
         super.tick();
         AnimationHandler.INSTANCE.updateAnimations(this);
 
-        if (!this.level().isClientSide && this.getTarget() != null && !this.getTarget().isAlive()) this.setTarget(null);
-
         if (!this.level().isClientSide && !this.isNoAi() && !this.isStunned()) {
             if (this.getTarget() != null) {
                 LivingEntity target = this.getTarget();
-                if (this.isNoAnimation() && this.attackTick <= 0 && ((targetDistance <= 5.0F && ModEntityUtils.checkTargetComingCloser(this, target)) || this.targetDistance < 4.0F)) {
-                    this.playAnimation(this.spellCastingFRAnimation);
+                if (this.isNoAnimation() && this.attackTick <= 0 && ((targetDistance <= 4.5F && ModEntityUtils.checkTargetComingCloser(this, target)) || this.targetDistance < 3.5F)) {
+                    this.playAnimation(SPELLCASTING_FR_ANIMATION);
                 }
             }
             if (this.isNoAnimation() && this.getHealthPercentage() != 1 && this.timeUntilHeal <= 0) {
                 if ((this.getTarget() != null && this.targetDistance > 8) || this.getTarget() == null) {
-                    this.playAnimation(this.spellCastingHealAnimation);
+                    this.playAnimation(SPELLCASTING_HEAL_ANIMATION);
                 }
             }
         }
 
-        if (this.getAnimation() == this.spellCastingWololoAnimation) {
+        if (this.getAnimation() == SPELLCASTING_WOLOLO_ANIMATION) {
             if (this.level().isClientSide) this.addParticlesAroundHeart(30);
-        } else if (this.getAnimation() == this.spellCastingHealAnimation) {
-            if (!this.level().isClientSide) {
-                if (this.getAnimationTick() == 1) this.playSound(SoundInit.IMMORTAL_SHAMAN_SPELL_CASTING.get());
-                if (this.isStunned()) {
-                    this.playAnimation(NO_ANIMATION);//在治疗过程中被中断,直接结束
-                    this.level().broadcastEntityEvent(this, (byte) 13);
-                } else if (getAnimationTick() > 5 && getAnimationTick() < 40 && this.tickCount % 5 == 0) {
-                    this.level().broadcastEntityEvent(this, (byte) 14);
+        } else {
+            int tick = this.getAnimationTick();
+            if (this.getAnimation() == SPELLCASTING_HEAL_ANIMATION) {
+                if (!this.level().isClientSide) {
+                    if (tick == 1) this.playSound(SoundInit.IMMORTAL_SHAMAN_SPELL_CASTING.get());
+                    if (this.isStunned()) {
+                        this.playAnimation(NO_ANIMATION);//在治疗过程中被中断,直接结束
+                        this.level().broadcastEntityEvent(this, (byte) 13);
+                    } else if (tick > 5 && tick < 40 && this.tickCount % 5 == 0) {
+                        this.level().broadcastEntityEvent(this, (byte) 14);
+                    }
+                } else {
+                    this.addParticlesAroundHeart(55);
                 }
-            } else {
-                this.addParticlesAroundHeart(55);
-            }
-        } else if (this.getAnimation() == this.spellCastingSummonAnimation) {
-            if (this.level().isClientSide) {
-                float speed = 0.08f;
-                float yaw = this.random.nextFloat() * (2 * Mth.PI);
-                float ym = this.random.nextFloat() * 0.01f;
-                float xm = speed * Mth.cos(yaw);
-                float zm = speed * Mth.sin(yaw);
-                this.level().addParticle(ParticleTypes.SOUL, this.getX(), this.getY() + 0.1f, this.getZ(), ym, xm, zm);
-                this.addParticlesAroundHeart(40);
-            }
-        } else if (this.getAnimation() == this.spellCastingBombAnimation) {
-            if (this.getTarget() != null)
-                this.lookAt(this.getTarget(), 30F, 30F);
-            if (this.level().isClientSide && this.getAnimationTick() >= 10 && this.getAnimationTick() <= 12) {
-                this.spawnExplosionParticles(5, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleTypes.LARGE_SMOKE}, 0.15F);
-            }
-            if (!this.level().isClientSide) this.level().broadcastEntityEvent(this, (byte) 4);
-        } else if (this.getAnimation() == this.spellCastingFRAnimation) {
-            this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
-            if (this.level().isClientSide && this.getAnimationTick() == 12) {
-                this.spawnExplosionParticles(50, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME}, 0.4F);
-            }
-            if (this.getAnimationTick() == 18) {
-                EntityCameraShake.cameraShake(level(), position(), 20, 0.02f, 10, 15);
+            } else if (this.getAnimation() == SPELLCASTING_SUMMON_ANIMATION) {
+                if (this.level().isClientSide) {
+                    float speed = 0.08f;
+                    float yaw = this.random.nextFloat() * (2 * Mth.PI);
+                    float ym = this.random.nextFloat() * 0.01f;
+                    float xm = speed * Mth.cos(yaw);
+                    float zm = speed * Mth.sin(yaw);
+                    this.level().addParticle(ParticleTypes.SOUL, this.getX(), this.getY() + 0.1f, this.getZ(), ym, xm, zm);
+                    this.addParticlesAroundHeart(40);
+                }
+            } else if (this.getAnimation() == SPELLCASTING_BOMB_ANIMATION) {
+                if (this.getTarget() != null)
+                    this.lookAt(this.getTarget(), 30F, 30F);
+                if (this.level().isClientSide && tick >= 10 && tick <= 12) {
+                    this.spawnExplosionParticles(5, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME, ParticleTypes.LARGE_SMOKE}, 0.15F);
+                }
+                if (!this.level().isClientSide) this.level().broadcastEntityEvent(this, (byte) 4);
+            } else if (this.getAnimation() == SPELLCASTING_FR_ANIMATION) {
+                this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
+                if (tick == 12) {
+                    if (this.level().isClientSide) this.spawnExplosionParticles(30, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME}, 0.2F);
+                    EntityCameraShake.cameraShake(level(), position(), 20, 0.02f, 5, 10);
+                }
             }
         }
     }
@@ -267,7 +249,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
         if (this.level().isClientSide) {
             return false;
         } else {
-            if ((source.getEntity() != null || source.is(DamageTypes.LAVA)) && this.getAnimation() == this.spellCastingHealAnimation && !(this.hurtTime > 0)) {
+            if ((source.getEntity() != null || source.is(DamageTypes.LAVA)) && this.getAnimation() == SPELLCASTING_HEAL_ANIMATION && !(this.hurtTime > 0)) {
                 this.hurtCountBeforeHeal++;
             }
             if (this.isStunned()) {
@@ -326,11 +308,20 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
     }
 
     public static AttributeSupplier.Builder setAttributes() {
-        return createMobAttributes().add(Attributes.MAX_HEALTH, 80.0D).add(Attributes.ATTACK_DAMAGE, 8.0D).add(Attributes.ARMOR, 2.0D).add(Attributes.MOVEMENT_SPEED, 0.35D).add(Attributes.FOLLOW_RANGE, 32.0D).add(Attributes.LUCK, 1.0D).add(Attributes.KNOCKBACK_RESISTANCE, 0.5D);
+        return createMobAttributes().add(Attributes.MAX_HEALTH, 80.0D)
+                .add(Attributes.ATTACK_DAMAGE, 8.0D)
+                .add(Attributes.ARMOR, 2.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.35D)
+                .add(Attributes.FOLLOW_RANGE, 32.0D)
+                .add(Attributes.LUCK, 1.0D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.5D)
+                .add(ForgeMod.STEP_HEIGHT_ADDITION.get(), 1D);
     }
 
     private void spawnExplosionParticles(int amount, ParticleOptions[] particles, float velocity) {
-        ModParticleUtils.randomAnnularParticleOutburst(this.level(), amount, particles, this.getX(), this.getY(), this.getZ(), velocity);
+        for (ParticleOptions particle : particles) {
+            ModParticleUtils.annularParticleOutburst(this.level(), amount, particle, this.getX(), this.getY(), this.getZ(), velocity, 0.2, 360F, 0, Mth.PI * 2 * this.random.nextFloat());
+        }
     }
 
     private void addParticlesAroundHeart(int duration) {
@@ -364,8 +355,8 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
     }
 
     private class ShamanAnimationCommonGoal extends AnimationSimpleAI<EntityImmortalShaman> {
-        public ShamanAnimationCommonGoal(EntityImmortalShaman entity, Supplier<Animation> animationSupplier) {
-            super(entity, animationSupplier);
+        public ShamanAnimationCommonGoal(EntityImmortalShaman entity, Animation animation) {
+            super(entity, animation);
         }
 
         @Override
@@ -434,11 +425,11 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
                 }
                 if (skeleton != null) {
                     skeleton.setYRot(skeleton.yHeadRot = skeleton.yHeadRotO = skeleton.yRotO = this.spellCaster.getYRot());
-                    skeleton.setInitSpawn();
-                    skeleton.finalizeSpawn((ServerLevel) this.spellCaster.level(), this.spellCaster.level().getCurrentDifficultyAt(BlockPos.containing(vec3.x, vec3.y, vec3.z)), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
+                    skeleton.finalizeSpawn((ServerLevel) this.spellCaster.level(), this.spellCaster.level().getCurrentDifficultyAt(BlockPos.containing(vec3.x, vec3.y, vec3.z)), MobSpawnType.MOB_SUMMONED, null, null);
                     skeleton.setOwner(this.spellCaster);
                     skeleton.setPos(vec3);
                     this.spellCaster.level().addFreshEntity(skeleton);
+                    skeleton.afterSpawn();
                 }
             }
         }
@@ -449,8 +440,8 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
         }
 
         @Override
-        protected Animation getEMAnimation() {
-            return this.spellCaster.spellCastingSummonAnimation;
+        protected Animation getEntityAnimation() {
+            return SPELLCASTING_SUMMON_ANIMATION;
         }
     }
 
@@ -493,8 +484,8 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
         }
 
         @Override
-        protected Animation getEMAnimation() {
-            return this.spellCaster.spellCastingBombAnimation;
+        protected Animation getEntityAnimation() {
+            return SPELLCASTING_BOMB_ANIMATION;
         }
     }
 
@@ -550,8 +541,8 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
         }
 
         @Override
-        protected Animation getEMAnimation() {
-            return this.spellCaster.avoidAnimation;
+        protected Animation getEntityAnimation() {
+            return AVOID_ANIMATION;
         }
     }
 
@@ -614,19 +605,19 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
         }
 
         @Override
-        protected Animation getEMAnimation() {
-            return this.spellCaster.spellCastingWololoAnimation;
+        protected Animation getEntityAnimation() {
+            return SPELLCASTING_WOLOLO_ANIMATION;
         }
     }
 
     @Override
     public Animation getDeathAnimation() {
-        return this.dieAnimation;
+        return DIE_ANIMATION;
     }
 
     @Override
     public Animation[] getAnimations() {
-        return this.animations;
+        return ANIMATIONS;
     }
 
     //受伤音效

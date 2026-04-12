@@ -31,7 +31,7 @@ public class RenderGuardianLaser extends RenderAbsBeam<EntityGuardianLaser> {
 
     @Override
     public void render(EntityGuardianLaser laser, float entityYaw, float delta, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
-        playerView = laser.caster instanceof Player && Minecraft.getInstance().player == laser.caster && Minecraft.getInstance().options.getCameraType() == CameraType.FIRST_PERSON;
+        playerView = laser.getOwner() instanceof Player && Minecraft.getInstance().player == laser.getOwner() && Minecraft.getInstance().options.getCameraType() == CameraType.FIRST_PERSON;
         EntityGuardianLaser.UserType type = laser.getUserType();
         if (type == EntityGuardianLaser.UserType.RELIC_ANNIHILATOR && !laser.scaleControlled.isEnd() && laser.displayControlled.isEnd()) {
             quadRadius = type.radius * 1.75F;

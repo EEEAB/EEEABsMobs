@@ -24,13 +24,14 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 
-public class EntityFallingBlock extends Entity {
-    public static float DROP_FACTORS = 0.1f;
+public class EntityFallingBlock extends Entity implements IEntity {
     private static final EntityDataAccessor<String> MODE = SynchedEntityData.defineId(EntityFallingBlock.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Float> ANIM_V_Y = SynchedEntityData.defineId(EntityFallingBlock.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> DURATION = SynchedEntityData.defineId(EntityFallingBlock.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<BlockState> BLOCK_STATE = SynchedEntityData.defineId(EntityFallingBlock.class, EntityDataSerializers.BLOCK_STATE);
     private static final EntityDataAccessor<Quaternionf> QUATERNION = SynchedEntityData.defineId(EntityFallingBlock.class, EntityDataSerializers.QUATERNION);
+    public static float DROP_FACTORS = 0.1f;
+    public static int MAX_ACTIVE = 600;
     public float animY = 0;
     public float prevAnimY = 0;
 
@@ -83,6 +84,7 @@ public class EntityFallingBlock extends Entity {
     public void tick() {
         if (getMode() != FallingMoveType.OVERALL_MOVE) setDeltaMovement(0, 0, 0);
         super.tick();
+        if (this.tickCount >= MAX_ACTIVE) this.discard();
         if (getMode() == FallingMoveType.OVERALL_MOVE) {
             if (!this.isNoGravity()) {
                 this.setDeltaMovement(this.getDeltaMovement().subtract(0.0D, DROP_FACTORS / 2, 0.0D));

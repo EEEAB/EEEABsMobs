@@ -12,10 +12,10 @@ public class EntityRelicAnnihilatorPart extends ModEntityPart<EntityRelicAnnihil
 
     @Override
     public boolean hurt(DamageSource source, float damage) {
-        if (!this.isInvulnerableTo(source) && (ModEntityUtils.isProjectileSource(source) || ModEntityUtils.checkDirectEntityConsistency(source))) {
+        if (!this.isInvulnerableTo(source) && (ModEntityUtils.isProjectileSource(source) || !source.isIndirect())) {
             if (damage > 1F && this.enabled() && this.entity.hurt(source, damage, true)) {
                 this.entity.setBlind(true);
-                this.entity.playAnimation(this.entity.stunAnimation);
+                this.entity.playAnimation(EntityRelicAnnihilator.STUN_ANIMATION);
                 return true;
             }
         }
@@ -25,9 +25,9 @@ public class EntityRelicAnnihilatorPart extends ModEntityPart<EntityRelicAnnihil
     private boolean enabled() {
         int tick = this.entity.getAnimationTick();
         Animation animation = this.entity.getAnimation();
-        if (animation == this.entity.laserAnimation && tick > 10) return true;
-        if (animation == this.entity.trickshot1Animation && tick >= 15) return true;
-        if (animation == this.entity.shot1Animation && tick >= 20) return true;
-        return animation == this.entity.shot2Animation || animation == this.entity.trickshot2Animation;
+        if (EntityRelicAnnihilator.LASER_ANIMATION == animation && tick > 10) return true;
+        if (EntityRelicAnnihilator.TRICKSHOT_ANIMATION1 == animation && tick >= 15) return true;
+        if (EntityRelicAnnihilator.SHOT_ANIMATION1 == animation && tick >= 20) return true;
+        return EntityRelicAnnihilator.SHOT_ANIMATION2 == animation || EntityRelicAnnihilator.TRICKSHOT_ANIMATION2 == animation;
     }
 }

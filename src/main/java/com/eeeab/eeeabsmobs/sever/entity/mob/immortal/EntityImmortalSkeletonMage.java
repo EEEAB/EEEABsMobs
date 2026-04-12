@@ -1,18 +1,16 @@
 package com.eeeab.eeeabsmobs.sever.entity.mob.immortal;
 
-import com.eeeab.animate.server.ai.AnimationAI;
 import com.eeeab.animate.server.ai.AnimationRangeAI;
+import com.eeeab.animate.server.ai.AnimationAI;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -28,7 +26,7 @@ public class EntityImmortalSkeletonMage extends EntityAbsImmortalSkeleton {
 
             @Override
             protected boolean test(Animation animation) {
-                return animation == this.entity.castAnimation;
+                return animation == CAST_ANIMATION;
             }
 
             @Override
@@ -51,24 +49,24 @@ public class EntityImmortalSkeletonMage extends EntityAbsImmortalSkeleton {
             private void summonEntity(Vec3 vec3) {
                 EntityMagicGolem entity = EntityInit.MAGIC_GOLEM.get().create(this.entity.level());
                 if (!this.entity.level().isClientSide && entity != null && vec3 != null) {
-                    entity.setInitSpawn();
-                    entity.finalizeSpawn((ServerLevel) this.entity.level(), this.entity.level().getCurrentDifficultyAt(BlockPos.containing(vec3.x, vec3.y, vec3.z)), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
+                    entity.finalizeSpawn((ServerLevel) this.entity.level(), this.entity.level().getCurrentDifficultyAt(BlockPos.containing(vec3.x, vec3.y, vec3.z)), MobSpawnType.MOB_SUMMONED, null, null);
                     entity.setOwner(this.entity);
                     entity.setSummonAliveTime(20 * (15 + this.entity.random.nextInt(15)));
                     Difficulty difficulty = this.entity.level().getDifficulty();
                     entity.setDangerous(this.entity.random.nextInt(10 - difficulty.getId()) == 0);
                     entity.setPos(vec3);
                     level().addFreshEntity(entity);
+                    entity.afterSpawn();
                 }
             }
         });
-        this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 400 + this.random.nextInt(100), 16F, null, e -> e.active, () -> castAnimation));
+        this.goalSelector.addGoal(3, new AnimationRangeAI<>(this, 1D, 400 + this.random.nextInt(100), 16F, null, e -> e.active, CAST_ANIMATION));
         super.registerCustomGoals();
     }
 
     @Override
     public Animation getHurtAnimation() {
-        if (!this.level().isClientSide && this.getAnimation() == this.castAnimation) this.level().broadcastEntityEvent(this, (byte) 13);
+        if (!this.level().isClientSide && this.getAnimation() == CAST_ANIMATION) this.level().broadcastEntityEvent(this, (byte) 13);
         return NO_ANIMATION;
     }
 

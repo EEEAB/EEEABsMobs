@@ -28,7 +28,7 @@ public class EntityImmortalSkeletonArcher extends EntityAbsImmortalSkeleton impl
             if (attacking && getSensing().hasLineOfSight(target) && canAttack(target)) {
                 if (targetDistance < 1.5 || targetDistance < 2.5 && ModEntityUtils.checkTargetComingCloser(this, target)) {
                     this.stopUsingItem();
-                    this.playAnimation(this.meleeAnimation1);
+                    this.playAnimation(MELEE_ANIMATION1);
                     attackTick = 20;
                     attacking = false;
                 }

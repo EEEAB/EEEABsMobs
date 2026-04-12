@@ -10,7 +10,10 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class RenderCorpseWarlock extends MobRenderer<EntityCorpseWarlock, ModelCorpseWarlock> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/corpse_warlock.png");
     private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/corpse_warlock_eyes.png");
@@ -19,15 +22,11 @@ public class RenderCorpseWarlock extends MobRenderer<EntityCorpseWarlock, ModelC
     public RenderCorpseWarlock(EntityRendererProvider.Context context) {
         super(context, new ModelCorpseWarlock(context.bakeLayer(ModModelLayer.CORPSE_SLAVERY)), 0.3F);
         this.addLayer(new LayerOuter<>(this, NECKLACE_LAYER, true, e -> !e.isInvisible()));
-        this.addLayer(new LayerGlow<>(this, GLOW_LAYER, 1F, e -> !e.isInvisible() && !e.glowControlled.isStop(), true) {
+        this.addLayer(new LayerGlow<>(this, GLOW_LAYER, e -> !e.isInvisible() && !e.glowControlled.isStop(),
+                (entity, partialTicks) -> entity.glowControlled.getAnimationFraction(partialTicks), true) {
             @Override
             protected RenderType getRenderType(EntityCorpseWarlock entity) {
                 return RenderType.entityTranslucentEmissive(this.location);
-            }
-
-            @Override
-            protected float getBrightness(EntityCorpseWarlock entity, float partialTicks) {
-                return entity.glowControlled.getAnimationFraction(partialTicks);
             }
         });
 

@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.mob.relicron;
 
-import com.eeeab.animate.server.ai.AnimationAI;
+import com.eeeab.animate.server.ai.AnimationGroupAI;
 import com.eeeab.animate.server.ai.AnimationMeleePlusAI;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import com.eeeab.animate.server.ai.animation.AnimationActivate;
@@ -8,45 +8,52 @@ import com.eeeab.animate.server.ai.animation.AnimationDeactivate;
 import com.eeeab.animate.server.ai.animation.AnimationDie;
 import com.eeeab.animate.server.ai.animation.AnimationRepel;
 import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.animate.server.animation.AnimationNotification;
+import com.eeeab.animate.server.animation.keyframe.CondKeyframe;
+import com.eeeab.animate.server.animation.keyframe.Keyframe;
+import com.eeeab.animate.server.animation.keyframe.KeyframeManager;
+import com.eeeab.animate.server.animation.release.AnimationReleaseManager;
+import com.eeeab.animate.server.animation.release.ConditionFactory;
+import com.eeeab.animate.server.animation.release.cooldown.FixedRangeCooldown;
+import com.eeeab.animate.server.animation.release.cooldown.HealthScaledCooldown;
 import com.eeeab.animate.server.handler.AnimationHandler;
+import com.eeeab.eeeabsmobs.client.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
-import com.eeeab.eeeabsmobs.client.particle.base.ParticleRing;
-import com.eeeab.eeeabsmobs.client.particle.util.AdvancedParticleBase;
-import com.eeeab.eeeabsmobs.client.particle.util.AnimData;
-import com.eeeab.eeeabsmobs.client.particle.util.ParticleComponent;
-import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
-import com.eeeab.eeeabsmobs.client.util.ModParticleUtils;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.mob.GlowEntity;
-import com.eeeab.eeeabsmobs.sever.entity.ai.control.EMBodyRotationControl;
-import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMPathNavigateGround;
+import com.eeeab.eeeabsmobs.client.particle.ParticleRing;
+import com.eeeab.eeeabsmobs.client.particle.lib.AdvancedParticleBase;
+import com.eeeab.eeeabsmobs.client.particle.lib.AnimData;
+import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent;
+import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent.PropertyControl;
+import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.sever.entity.ai.control.ModBodyRotationControl;
+import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.ModPathNavigateGround;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityElectromagnetic;
-import com.eeeab.eeeabsmobs.sever.entity.effect.EntityPulsedGrenade;
+import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityPulsedGrenade;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
-import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
+import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
+import com.eeeab.eeeabsmobs.sever.util.ModResourceKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.animal.AbstractGolem;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.RangedAttackMob;
-import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -54,38 +61,35 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class EntityRelicEarthshaker extends EntityAbsRelicron implements GlowEntity, RangedAttackMob {
-    public final Animation dieAnimation = Animation.create(60);
-    public final Animation activeAnimation = Animation.create(30);
-    public final Animation deactivateAnimation = Animation.create(30);
-    public final Animation attackAnimationLeft = Animation.create(40);
-    public final Animation attackAnimationRight = Animation.create(40);
-    public final Animation smashAttackAnimation = Animation.create(35);
-    public final Animation rangeAttackAnimation = Animation.create(100);
-    public final Animation rangeAttackStopAnimation = Animation.create(10);
-    public final Animation electromagneticAnimation = Animation.create(100);
-    private final Animation[] animations = new Animation[]{
-            dieAnimation,
-            activeAnimation,
-            deactivateAnimation,
-            attackAnimationLeft,
-            attackAnimationRight,
-            smashAttackAnimation,
-            rangeAttackAnimation,
-            rangeAttackStopAnimation,
-            electromagneticAnimation
+public class EntityRelicEarthshaker extends EntityAbsRelicron implements RangedAttackMob {
+    public static final Animation DIE_ANIMATION = Animation.create(60);
+    public static final Animation ACTIVE_ANIMATION = Animation.create(30);
+    public static final Animation DEACTIVATE_ANIMATION = Animation.create(30);
+    public static final Animation ATTACK_LEFT_ANIMATION = Animation.create(40);
+    public static final Animation ATTACK_RIGHT_ANIMATION = Animation.create(40);
+    public static final Animation SMASH_ATTACK_ANIMATION = Animation.create(35);
+    public static final Animation RANGE_ATTACK_ANIMATION = Animation.create(100);
+    public static final Animation RANGE_ATTACKSTOP_ANIMATION = Animation.create(10);
+    public static final Animation ELECTROMAGNETIC_ANIMATION = AnimationNotification.create(100, null);
+    private static final Animation[] ANIMATIONS = new Animation[]{
+            SMASH_ATTACK_ANIMATION,
+            RANGE_ATTACK_ANIMATION,
+            ACTIVE_ANIMATION,
+            DEACTIVATE_ANIMATION,
+            DIE_ANIMATION,
+            ELECTROMAGNETIC_ANIMATION,
+            ATTACK_LEFT_ANIMATION,
+            ATTACK_RIGHT_ANIMATION,
+            RANGE_ATTACKSTOP_ANIMATION,
     };
-    private int timeUntilSmash;
-    private int timeUntilShot;
-    private int timeUntilEMP;
-    @OnlyIn(Dist.CLIENT)
-    public Vec3[] hand;//0:left 1:right
+    private static final KeyframeManager<EntityRelicEarthshaker> KEYFRAME_MANAGER;
+    private static final AnimationReleaseManager<EntityRelicEarthshaker> ANIMATION_RELEASE_MANAGER;
+    //0:left 1:right 注：该变量被KeyframeManager引用 必须初始化 避免NoSuchFieldError问题
+    public Vec3[] hand = null;
     public final ControlledAnimation glowControlled = new ControlledAnimation(10);
     public final ControlledAnimation hotControlled = new ControlledAnimation(20);
     public final ControlledAnimation electromagneticControlled = new ControlledAnimation(20);
@@ -100,29 +104,19 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements GlowEnt
         }
     }
 
+    static {
+        KEYFRAME_MANAGER = setupAnimations();
+        ANIMATION_RELEASE_MANAGER = setupAnimationRules();
+    }
+
     @Override
     public MobLevel getMobLevel() {
         return MobLevel.ELITE;
     }
 
-    @Override
-    public float getStepHeight() {
-        return 1.5F;
-    }
-
     @Override//减少实体在水下的空气供应
     protected int decreaseAirSupply(int air) {
         return air;
-    }
-
-    @Override//是否免疫摔伤
-    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource damageSource) {
-        return false;
-    }
-
-    @Override//是否在实体上渲染着火效果
-    public boolean displayFireAnimation() {
-        return false;
     }
 
     @Override
@@ -144,19 +138,19 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements GlowEnt
 
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-        return sizeIn.height * 0.86F;
+        return sizeIn.height * 0.9F;
     }
 
     @Override
     @NotNull
     protected BodyRotationControl createBodyControl() {
-        return new EMBodyRotationControl(this);
+        return new ModBodyRotationControl(this);
     }
 
     @Override
     @NotNull
     protected PathNavigation createNavigation(Level level) {
-        return new EMPathNavigateGround(this, level);
+        return new ModPathNavigateGround(this, level);
     }
 
     @Override
@@ -165,17 +159,11 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements GlowEnt
     }
 
     @Override
-    protected void onAnimationFinish(Animation animation) {
+    protected void onAnimationStart(Animation animation) {
+        super.onAnimationStart(animation);
         if (!this.level().isClientSide) {
-            if (animation == this.smashAttackAnimation) {
-                this.timeUntilSmash = 70 + Mth.randomBetweenInclusive(this.random, 300, 350);
-                this.timeUntilSmash = getCoolingTimerUtil(this.timeUntilSmash, this.timeUntilSmash - 100, 0.3F);
-            } else if (animation == this.rangeAttackAnimation) {
-                this.timeUntilShot = 100 + Mth.randomBetweenInclusive(this.random, 250, 300);
-                this.timeUntilShot = getCoolingTimerUtil(this.timeUntilShot, this.timeUntilShot - 100, 0.3F);
-            } else if (animation == this.electromagneticAnimation) {
-                this.timeUntilEMP = 100 + Mth.randomBetweenInclusive(this.random, 350, 400);
-                this.timeUntilEMP = getCoolingTimerUtil(this.timeUntilEMP, this.timeUntilEMP - 150, 0.3F);
+            if (animation == ELECTROMAGNETIC_ANIMATION) {
+                this.addEffect(new MobEffectInstance(EffectInit.ELECTRIFIED_EFFECT.get(), 170, 0, false, false));
             }
         }
     }
@@ -183,44 +171,41 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements GlowEnt
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, EntityAbsRelicron.class));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractGolem.class, 0, false, false, (golem) -> !(golem instanceof Shulker)));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
-            @Override
-            public boolean canUse() {
-                return super.canUse() && EntityRelicEarthshaker.this.isActive();
-            }
-        });
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.goalSelector.addGoal(5, new RelicronRandomStrollGoal(this, 1));
     }
 
     @Override
     protected void registerCustomGoals() {
         this.goalSelector.addGoal(1, new AnimationDie<>(this));
-        this.goalSelector.addGoal(1, new AnimationActivate<>(this, () -> activeAnimation));
-        this.goalSelector.addGoal(1, new AnimationDeactivate<>(this, () -> deactivateAnimation));
-        this.goalSelector.addGoal(1, new REMeleeAttackGoal(this));
-        this.goalSelector.addGoal(1, new RERangeAttackGoal(this));
-        this.goalSelector.addGoal(1, new REElectromagneticAttackGoal(this));
-        this.goalSelector.addGoal(1, new AnimationRepel<>(this, () -> smashAttackAnimation, 5F, 21, 1.5F, 1.5F, true) {
+        this.goalSelector.addGoal(1, new AnimationActivate<>(this, ACTIVE_ANIMATION));
+        this.goalSelector.addGoal(1, new AnimationDeactivate<>(this, DEACTIVATE_ANIMATION));
+        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, RANGE_ATTACK_ANIMATION));
+        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, ELECTROMAGNETIC_ANIMATION));
+        this.goalSelector.addGoal(1, new AnimationGroupAI<>(this, ATTACK_LEFT_ANIMATION, ATTACK_RIGHT_ANIMATION));
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, SMASH_ATTACK_ANIMATION, 4F, 8F, 21, 1.5F, 1.5F, true) {
             @Override
             public void tick() {
-                this.entity.setDeltaMovement(0F, this.entity.onGround() && !this.entity.isNoGravity() ? -0.01F : this.entity.getDeltaMovement().y, 0F);
+                this.entity.setDeltaMovement(0F, this.entity.getDeltaMovement().y, 0F);
+                int tick = this.entity.getAnimationTick();
+                if (tick == 22) {
+                    ModEntityUtils.breakBlocksInRect(entity.level(), entity, 3, 3, 4, 3, 0, 2, true);
+                }
                 LivingEntity target = this.entity.getTarget();
-                if (target != null) {
-                    if (this.entity.getAnimationTick() < 17) this.entity.getLookControl().setLookAt(target, 30F, 30F);
-                    else this.entity.setYRot(this.entity.yRotO);
+                if (tick < 17 && target != null) {
+                    entity.lookAt(target, 30F, 30F);
+                    this.entity.getLookControl().setLookAt(target, 30F, 30F);
                 }
                 super.tick();
             }
 
             @Override
             protected void onHit(LivingEntity entity) {
-                if (!this.entity.hotControlled.isStop() && !this.entity.isAlliedTo(entity)) entity.setSecondsOnFire(5);
+                if (!this.entity.hotControlled.isStop() && !this.entity.isAlliedTo(entity)) entity.setSecondsOnFire(3);
             }
         });
-        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, () -> rangeAttackAnimation));
-        this.goalSelector.addGoal(2, new AnimationMeleePlusAI<>(this, 1.0, 35, () -> attackAnimationLeft, () -> attackAnimationRight));
+        this.goalSelector.addGoal(2, new AnimationMeleePlusAI<>(this, 1.0, 30, ATTACK_LEFT_ANIMATION, ATTACK_RIGHT_ANIMATION));
     }
 
     @Override
@@ -230,141 +215,40 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements GlowEnt
         this.hotControlled.updatePrevTimer();
         AnimationHandler.INSTANCE.updateAnimations(this);
 
-        if (!this.level().isClientSide) {
-            if (this.getTarget() != null && !this.getTarget().isAlive()) this.setTarget(null);
-            if (this.checkCanAttack() && this.timeUntilSmash <= 0 && ((targetDistance <= 5.5F && ModEntityUtils.checkTargetComingCloser(this, this.getTarget())) || this.targetDistance < 5F) && this.random.nextFloat() < 0.5F) {
-                this.playAnimation(this.smashAttackAnimation);
-            }
-            if (this.checkCanAttack() && this.timeUntilShot <= 0 && Math.pow(this.targetDistance, 2.0) > this.getMeleeAttackRangeSqr(this.getTarget()) + 5 && this.random.nextFloat() < 0.5F) {
-                this.playAnimation(this.rangeAttackAnimation);
-            }
-            if (this.checkCanAttack() && this.timeUntilEMP <= 0 && (this.getHealthPercentage() <= 0.8F || this.tickCount > 1200) && this.targetDistance < 6.5F && this.random.nextFloat() < 0.5F) {
-                this.playAnimation(this.electromagneticAnimation);
-            }
-        }
+        this.pushEntitiesAway(1.2F, getBbHeight(), 1.2F, 1.2F);
 
-        this.pushEntitiesAway(1.8F, getBbHeight(), 1.8F, 1.8F);
-
-        int tick = this.getAnimationTick();
-        Animation animation = this.getAnimation();
-        if (animation == this.activeAnimation) {
-            if (tick <= 3 && this.hand != null) {
-                this.spawnBlockEffect(this.hand[0]);
-                this.spawnBlockEffect(this.hand[1]);
-            }
-        } else if (animation == this.deactivateAnimation) {
-            if (tick > 22 && this.hand != null) {
-                this.spawnBlockEffect(this.hand[0]);
-                this.spawnBlockEffect(this.hand[1]);
-            }
-        } else if (animation == this.smashAttackAnimation) {
-            if (tick == 4) this.playSound(SoundInit.RELIC_EARTHSHAKER_PRE_ATTACK.get(), 0.5F, this.getVoicePitch());
-            else if (tick == 12) this.doFractalEffect(3 + this.random.nextInt(3));
-            else if (tick == 20) {
-                if (this.level().isClientSide) {
-                    Vec3 pos = this.getPosOffset(false, this.getBbWidth(), 0F, 0.1F);
-                    int[] particles = {10, 15, 10};
-                    double[] radii = {1.5, 2, 2.5};
-                    double[] speeds = {0.8, 0.7, 0.6};
-                    double[] angles = {35, 25, 15};
-                    double[] color = {0.8, 0.8, 0.8, 0.5};
-                    ModParticleUtils.multiLayerBowlParticles(this.level(), pos, 2, particles, radii, speeds, angles, color);
-                    this.level().addParticle(new ParticleRing.RingData(0F, (float) (Math.PI / 2F), 8, 0.8F, 0.8F, 0.8F, 0.9F, 80F, false, ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y, pos.z, 0, 0, 0);
-                    if (!this.hotControlled.isStop()) ModParticleUtils.annularParticleOutburstOnGround(level(), ParticleTypes.SOUL_FIRE_FLAME, this, 10, 5, 2.5, this.getBbWidth(), 0, 0.15);
-                    ModParticleUtils.blockParticlesAround(this.level(), pos.x, this.getY(), pos.z, 45, 1, 3, 2, 5, 3, 6, -0.2, 0.1);
-                }
-                this.playSound(SoundEvents.GENERIC_EXPLODE, 1.25F, 1F + this.random.nextFloat() * 0.1F);
-                EntityCameraShake.cameraShake(level(), position(), 15, 0.125F, 2, 3);
-            }
-        } else if (animation == this.rangeAttackAnimation) {
-            if (tick > 10 && tick < 90 && tick % 19 == 1) {
-                this.hotControlled.increaseTimer(5);
-                if (this.timeUntilEMP <= 100) this.timeUntilEMP = 100;
-                if (this.level().isClientSide && this.hand != null && this.hand.length > 0) {
-                    this.doShotEffect(this.hand[0]);
-                    this.doShotEffect(this.hand[1]);
-                }
-            }
-        } else if (animation == this.attackAnimationLeft || animation == this.attackAnimationRight) {
-            if (tick == 10 || tick == 27) this.playSound(SoundInit.RELIC_EARTHSHAKER_ATTACK.get(), this.getSoundVolume(), this.getVoicePitch());
-        } else if (animation == this.dieAnimation) {
-            if (tick < 20) {
-                LivingEntity target = this.getTarget();
-                if (target != null) this.getLookControl().setLookAt(target, 30F, 30F);
-            } else this.setYRot(this.yRotO);
-            if (tick == 36) {
-                if (this.level().isClientSide) {
-                    Vec3 pos = this.getPosOffset(false, this.getBbWidth(), 0F, 0.1F);
-                    ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.24F, 0.24F, 0.24F, 40F, 25, ParticleDust.EnumDustBehavior.GROW, 0.98F);
-                    ModParticleUtils.annularParticleOutburst(level(), 15, dustData, pos.x, pos.y, pos.z, 0.5F, 0.2);
-                    if (!this.hotControlled.isStop()) ModParticleUtils.annularParticleOutburst(level(), 10, ParticleTypes.SOUL_FIRE_FLAME, pos.x, pos.y, pos.z, 0.3F, 0.2);
-                }
-            } else if (tick == 39) {
-                EntityCameraShake.cameraShake(level(), position(), 15, 0.125F, 0, 10);
-            } else if (tick == 40) {
-                this.rangeAttack(4.5, this.getBbHeight() * 0.6, 4.5, 4.5, 120F, 120F, hitEntity -> {
-                    if (this.doHurtTarget(hitEntity, 3F, 0F, true) && this.getHandHeat()) {
-                        hitEntity.setSecondsOnFire(5);
-                    }
-                    double ratioX = Math.sin(this.getYRot() * ((float) Math.PI / 180F));
-                    double ratioZ = (-Math.cos(this.getYRot() * ((float) Math.PI / 180F)));
-                    ModEntityUtils.forceKnockBack(this, hitEntity, 0.5F, ratioX, ratioZ, true);
-                });
-            }
-        } else if (animation == this.electromagneticAnimation) {
-            this.setDeltaMovement(0F, this.onGround() && !this.isNoGravity() ? -0.01F : this.getDeltaMovement().y, 0F);
-            if (tick == 1) this.playSound(SoundInit.RELIC_EARTHSHAKER_PRE_ATTACK.get(), 0.75F, 0.5F);
-            else if (tick > 20 && tick < 90) {
-                this.electromagneticControlled.increaseTimer();
-                if (tick == 42 || tick == 64 || tick == 86) {
-                    this.playSound(SoundInit.RELIC_EARTHSHAKER_ELECTROMAGNETIC.get(), 1F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-                    if (this.timeUntilShot <= 100) this.timeUntilShot = 100;
-                    this.electromagneticControlled.decreaseTimer(10);
-                    this.hotControlled.increaseTimer(7);
-                    if (this.level().isClientSide) {
-                        AdvancedParticleBase.spawnParticle(level(), ParticleInit.BIG_RING.get(), this.getX(), this.getY() + 0.1F, this.getZ(), 0, 0, 0, false, 0, Math.PI / 2F, 0, 0, 1, 0.56, 0.78, 0.86, 0.8, 1, 20, true, true, false, new ParticleComponent[]{new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, AnimData.KeyTrack.startAndEnd(1F, 0F), false), new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, AnimData.KeyTrack.startAndEnd(10F, 60F), false), new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.YAW, AnimData.KeyTrack.startAndEnd(0F, Mth.PI * 2F), true),});
-                    }
-                } else if (tick < 30 && this.hand != null) {
-                    this.spawnBlockEffect(this.hand[0]);
-                    this.spawnBlockEffect(this.hand[1]);
-                }
-                if (this.random.nextFloat() < 0.5F) this.doFractalEffect(1 + this.random.nextInt(2));
-            } else this.electromagneticControlled.decreaseTimer(2);
-        }
-
-        if (!this.isNoAi() && this.isAlive() && this.getDeltaMovement().horizontalDistanceSqr() > (double) 2.5000003E-7F && this.random.nextInt(5) == 0) {
-            this.doWalkEffect(1);
-        }
         if (this.level().isClientSide && this.isActive() && this.isAlive()) {
-            if (this.tickCount % 5 == 0 && this.random.nextInt(20) == 0) {
-                this.level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), this.getRandomX(1.5D), this.getRandomY(), this.getRandomZ(1.5D), 0.0D, 0.07D, 0.0D);
+            if (this.tickCount % 5 == 0 && this.random.nextInt(3) == 0) {
+                Vec3 pos = this.getPosOffset(false, -1.25F, 0F, getBbHeight() * 0.75F).offsetRandom(this.random, 1F);
+                this.level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), pos.x, pos.y, pos.z, 0.0D, 0.0D, 0.0D);
             }
-            if (!this.hotControlled.isStop() && this.hand != null && this.hand.length > 0) {
-                this.spawnHandEffect(this.hand[0], this.random.nextInt(50) == 0);
-                this.spawnHandEffect(this.hand[1], this.random.nextInt(50) == 0);
+            if (!this.hotControlled.isStop() && this.hand != null && this.hand.length > 0 && this.tickCount % 3 == 0) {
+                this.doHandEffect(this.hand[0]);
+                this.doHandEffect(this.hand[1]);
             }
-        }
-
-        float moveX = (float) (this.getX() - this.xo);
-        float moveZ = (float) (this.getZ() - this.zo);
-        float speed = Mth.sqrt(moveX * moveX + moveZ * moveZ);
-        if (this.level().isClientSide && speed > 0.05 && this.isAlive() && !this.isSilent()) {
-            if (this.frame % 10 == 1 && (this.isNoAnimation() || animation == this.rangeAttackAnimation)) {
-                this.level().playLocalSound(getX(), getY(), getZ(), SoundInit.RELIC_EARTHSHAKER_STEP.get(), this.getSoundSource(), 1F, 1F, false);
+            float moveX = (float) (this.getX() - this.xo);
+            float moveZ = (float) (this.getZ() - this.zo);
+            float speed = Mth.sqrt(moveX * moveX + moveZ * moveZ);
+            if (speed > 0.05) {
+                if (this.random.nextInt(5) == 0) this.doWalkEffect(1);
+                if (!this.isSilent() && this.frame % 10 == 1 && (this.isNoAnimation() || this.getAnimation() == RANGE_ATTACK_ANIMATION)) {
+                    this.level().playLocalSound(getX(), getY(), getZ(), SoundInit.RELIC_EARTHSHAKER_STEP.get(), this.getSoundSource(), 0.8F, 1F, false);
+                }
             }
         }
     }
 
     @Override
+    protected void customServerAiStep() {
+        super.customServerAiStep();
+        ANIMATION_RELEASE_MANAGER.tick(this, this.getCooldownManager());
+    }
+
+    @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide) {
-            if (this.timeUntilShot > 0) this.timeUntilShot--;
-            if (this.timeUntilSmash > 0) this.timeUntilSmash--;
-            if (this.timeUntilEMP > 0) this.timeUntilEMP--;
-        }
         this.glowControlled.incrementOrDecreaseTimer(this.isGlow());
-        if (this.getAnimation() != this.rangeAttackAnimation) {
+        if (this.getAnimation() != RANGE_ATTACK_ANIMATION) {
             if (tickCount % 10 == 0) this.hotControlled.decreaseTimer();
         }
     }
@@ -374,10 +258,10 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements GlowEnt
         if (this.level().isClientSide) {
             return false;
         } else {
-            if (!source.is(DamageTypeTags.BYPASSES_ARMOR)) {
-                if (this.getAnimation() == this.electromagneticAnimation) {
-                    damage *= 0.2F;
-                }
+            if (source.is(ModResourceKey.OVERLOAD_EXPLODE)) {
+                damage *= 2F;
+            } else if (source.is(DamageTypeTags.IS_PROJECTILE)) {
+                damage *= 0.5F;
             }
         }
         return super.hurt(source, damage);
@@ -394,44 +278,44 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements GlowEnt
         }
     }
 
-    @Override
-    protected void dropCustomDeathLoot(DamageSource source, int pLooting, boolean pRecentlyHit) {
-        super.dropCustomDeathLoot(source, pLooting, pRecentlyHit);
-        ItemEntity itementity = this.spawnAtLocation(ItemInit.ANCIENT_DRIVE_CRYSTAL.get());
-        if (itementity != null) {
-            itementity.setExtendedLifetime();
-            itementity.setGlowingTag(true);
-        }
-    }
+    //@Override
+    //protected void dropCustomDeathLoot(DamageSource source, int pLooting, boolean pRecentlyHit) {
+    //    super.dropCustomDeathLoot(source, pLooting, pRecentlyHit);
+    //    ItemEntity itementity = this.spawnAtLocation(ItemInit.ANCIENT_DRIVE_CRYSTAL.get());
+    //    if (itementity != null) {
+    //        itementity.setExtendedLifetime();
+    //        itementity.setGlowingTag(true);
+    //    }
+    //}
 
     @Override
     public Animation[] getAnimations() {
-        return this.animations;
+        return ANIMATIONS;
     }
 
     @Override
     public Animation getDeathAnimation() {
-        return this.dieAnimation;
+        return DIE_ANIMATION;
     }
 
     @Override
     public Animation getActiveAnimation() {
-        return this.activeAnimation;
+        return ACTIVE_ANIMATION;
     }
 
     @Override
     public Animation getDeactivateAnimation() {
-        return this.deactivateAnimation;
+        return DEACTIVATE_ANIMATION;
+    }
+
+    @Override
+    public KeyframeManager<EntityRelicEarthshaker> getKeyframeManager() {
+        return KEYFRAME_MANAGER;
     }
 
     @Override
     protected SoundEvent getActiveSound() {
-        return SoundInit.RELICRON_FRICTION.get();
-    }
-
-    @Override
-    protected SoundEvent getDeactivateSound() {
-        return SoundInit.RELICRON_FRICTION.get();
+        return SoundInit.RELICRON_ACTIVE.get();
     }
 
     @Nullable
@@ -453,53 +337,276 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements GlowEnt
     }
 
     @Override
-    public void playAmbientSound() {
-        if (this.isActive() && this.getAnimation() != this.activeAnimation) {
-            super.playAmbientSound();
-        }
-    }
-
-    @Override
     protected void playStepSound(BlockPos blockPos, BlockState blockState) {
-    }
-
-    public static AttributeSupplier.Builder setAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 150.0D).add(Attributes.ARMOR, 15.0D).add(Attributes.ATTACK_DAMAGE, 8.0D).add(Attributes.FOLLOW_RANGE, 32.0D).add(Attributes.MOVEMENT_SPEED, 0.28D).add(ForgeMod.ENTITY_GRAVITY.get(), 0.125D).add(Attributes.KNOCKBACK_RESISTANCE, 1.0D);
     }
 
     @Override
     public void performRangedAttack(LivingEntity target, float velocity) {
-        this.playSound(SoundInit.LAUNCH_GRENADE.get());
-        for (int i = 1; i <= 2; i++) {
-            double d0 = Math.toRadians(this.getYRot() + (180 * (i - 1)));
-            double xOffset = this.getBbWidth() * 0.82F * Math.cos(d0);
-            double zOffset = this.getBbWidth() * 0.82F * Math.sin(d0);
-            double d1 = target.getX() - (this.getX() + this.getBbWidth() * 0.3F * Math.cos(d0));
-            double d2 = target.getY(-0.5F) - this.getY();
-            double d3 = target.getZ() - (this.getZ() + this.getBbWidth() * 0.3F * Math.sin(d0));
-            double d4 = Math.sqrt(d1 * d1 + d3 * d3) * (double) 0.12F;
-            EntityPulsedGrenade grenade = new EntityPulsedGrenade(this.level(), this);
-            grenade.shoot(d1, d2 + d4, d3, velocity, 5F);
-            Vec3 vec3 = this.position().add(this.getLookAngle());
-            grenade.setPos(vec3.x + xOffset, this.getY(0.48D), vec3.z + zOffset);
-            this.level().addFreshEntity(grenade);
-        }
+        this.playSound(SoundInit.RELIC_EARTHSHAKER_LAUNCH_GRENADE.get());
+        this.performRangedAttack(target, velocity, true);
+        this.performRangedAttack(target, velocity, false);
+    }
+
+    private static KeyframeManager<EntityRelicEarthshaker> setupAnimations() {
+        KeyframeManager<EntityRelicEarthshaker> manager = new KeyframeManager<>();
+        KeyframeManager.KeyframeManegerBuilder<EntityRelicEarthshaker> builder = manager.builder();
+        builder.forAnimation(SMASH_ATTACK_ANIMATION)
+                .atTick(4, (entity, animation, tick) -> entity.playSound(SoundInit.RELIC_EARTHSHAKER_PRE_ATTACK.get(), 0.5F, entity.getVoicePitch()))
+                .atTick(20, (entity, animation, tick) -> {
+                    if (entity.level().isClientSide) {
+                        Vec3 pos = entity.getPosOffset(false, entity.getBbWidth(), 0F, 0.1F);
+                        int[] particles = {10, 15, 10};
+                        double[] radii = {1.5, 2, 2.5};
+                        double[] speeds = {0.8, 0.7, 0.6};
+                        double[] angles = {35, 25, 15};
+                        double[] color = {0.8, 0.8, 0.8, 0.5};
+                        ModParticleUtils.multiLayerBowlParticles(entity.level(), pos, 2, particles, radii, speeds, angles, color, null, 0.9F);
+                        entity.level().addParticle(new ParticleRing.RingData(0F, (float) (Math.PI / 2F), 8, 0.8F, 0.8F, 0.8F, 0.9F, 80F, false, ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y, pos.z, 0, 0, 0);
+                        entity.doPoundGroundEffect(pos, 1.4F, 0.87F);
+                        ModParticleUtils.blockParticlesAround(entity.level(), pos.x, entity.getY(), pos.z, 45, 1, 3, 2, 5, 3, 6, -0.2, 0.1);
+                    }
+                    entity.playSound(SoundEvents.GENERIC_EXPLODE, 1.25F, 1F + entity.random.nextFloat() * 0.1F);
+                    EntityCameraShake.cameraShake(entity.level(), entity.position(), 15, 0.125F, 2, 3);
+                });
+        builder.forAnimation(RANGE_ATTACK_ANIMATION)
+                .inRange(5, 89, new Keyframe<>() {
+                    private int lostTargetDelay;
+
+                    @Override
+                    public void handle(EntityRelicEarthshaker entity, Animation animation, int tick) {
+                        LivingEntity target = entity.getTarget();
+                        if (!entity.level().isClientSide) {
+                            if (this.lostTargetDelay > 0) this.lostTargetDelay--;
+                            if (target != null && target.isAlive() && entity.canAttack(target) && this.lostTargetDelay < 60) {
+                                entity.lookAt(target, 30F, 30F);
+                                entity.getLookControl().setLookAt(target, 30F, 30F);
+                                this.moveGoal(entity, target);
+                                if (!entity.getSensing().hasLineOfSight(target)) this.lostTargetDelay += 2;
+                            } else {
+                                entity.playAnimation(RANGE_ATTACKSTOP_ANIMATION);
+                                //entity.getCooldownManager().resetCD(RANGE_ATTACK_ANIMATION);
+                                return;
+                            }
+                        }
+                        if (tick % 19 == 1) {
+                            if (!entity.level().isClientSide) {
+                                if (target != null) entity.performRangedAttack(target, 1F);
+                            } else if (entity.hand != null && entity.hand.length > 0) {
+                                entity.doShotEffect(entity.hand[0]);
+                                entity.doShotEffect(entity.hand[1]);
+                            }
+                            entity.hotControlled.increaseTimer(5);
+                        }
+                    }
+
+                    private void moveGoal(EntityRelicEarthshaker entity, LivingEntity target) {
+                        double moveSpeed = entity.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.75;
+                        double distance = entity.distanceToSqr(target);
+                        if (distance < Math.pow(9, 2)) {
+                            Vec3 vec3 = entity.findTargetPoint(target, entity);
+                            entity.setDeltaMovement(vec3.x * moveSpeed, entity.getDeltaMovement().y, vec3.z * moveSpeed);
+                        } else if (distance > Math.pow(12, 2)) {
+                            Vec3 vec3 = entity.findTargetPoint(entity, target);
+                            entity.setDeltaMovement(vec3.x * moveSpeed, entity.getDeltaMovement().y, vec3.z * moveSpeed);
+                        } else entity.setDeltaMovement(0F, entity.onGround() && !entity.isNoGravity() ? -0.01F : entity.getDeltaMovement().y, 0F);
+                    }
+                });
+        builder.forAnimation(ACTIVE_ANIMATION)
+                .inRange(1, 3, (entity, animation, tick) -> {
+                    if (entity.hand != null) {
+                        entity.spawnBlockEffect(entity.hand[0]);
+                        entity.spawnBlockEffect(entity.hand[1]);
+                    }
+                });
+        builder.forAnimation(DEACTIVATE_ANIMATION)
+                .inRange(21, 24, (entity, animation, tick) -> {
+                    if (entity.hand != null) {
+                        entity.spawnBlockEffect(entity.hand[0]);
+                        entity.spawnBlockEffect(entity.hand[1]);
+                    }
+                });
+        builder.forAnimation(DIE_ANIMATION)
+                .inRange(0, 19, (entity, animation, tick) -> {
+                    LivingEntity target = entity.getTarget();
+                    if (target != null) entity.getLookControl().setLookAt(target, 30F, 30F);
+                })
+                .atTick(36, (entity, animation, tick) -> {
+                    if (entity.level().isClientSide) {
+                        Vec3 pos = entity.getPosOffset(false, entity.getBbWidth(), 0F, 0F);
+                        entity.doPoundGroundEffect(pos, 1.2F, 0.91F);
+                        if (!entity.hotControlled.isStop()) ModParticleUtils.annularParticleOutburst(entity.level(), 10, ParticleTypes.SOUL_FIRE_FLAME, pos.x, pos.y, pos.z, 0.3F, 0.2);
+                    } else entity.playSound(SoundInit.RELIC_EARTHSHAKER_FALL.get());
+                })
+                .atTick(40, (entity, animation, tick) -> {
+                    if (entity.level().isClientSide) return;
+                    EntityCameraShake.cameraShake(entity.level(), entity.position(), 15, 0.125F, 2, 8);
+                    entity.rangeAttack(4.5, entity.getBbHeight() * 0.6, 4.5, 4.5, 120F, 120F, hitEntity -> {
+                        if (entity.doHurtTarget(hitEntity, 2.5F, 0F, true) && entity.getHandHeat()) {
+                            hitEntity.setSecondsOnFire(3);
+                        }
+                        double ratioX = Math.sin(entity.getYRot() * ((float) Math.PI / 180F));
+                        double ratioZ = (-Math.cos(entity.getYRot() * ((float) Math.PI / 180F)));
+                        ModEntityUtils.forceKnockBack(entity, hitEntity, 0.5F, ratioX, ratioZ, true);
+                    });
+                });
+        builder.conditional(new CondKeyframe<>() {
+            @Override
+            public boolean shouldHandle(EntityRelicEarthshaker entity, Animation animation, int tick) {
+                return ATTACK_LEFT_ANIMATION == animation || ATTACK_RIGHT_ANIMATION == animation;
+            }
+
+            @Override
+            public void handle(EntityRelicEarthshaker entity, Animation animation, int tick) {
+                entity.setDeltaMovement(0F, entity.getDeltaMovement().y, 0F);
+                LivingEntity target = entity.getTarget();
+                boolean isServer = !entity.level().isClientSide;
+                if (!(tick < 20 && tick > 7) && target != null) {
+                    entity.lookAt(target, 30F, 30F);
+                    entity.getLookControl().setLookAt(target, 30F, 30F);
+                }
+                if (tick == 11 && isServer) {
+                    entity.rangeAttack(4, 4.25, 4, 4.25, 35F, 35F, hitEntity -> {
+                        if (entity.doHurtTarget(hitEntity, 1F, 0F) && entity.getHandHeat()) {
+                            hitEntity.setSecondsOnFire(3);
+                        }
+                        double ratioX = -Math.sin(entity.yBodyRot * ((float) Math.PI / 180F));
+                        double ratioZ = Math.cos(entity.yBodyRot * ((float) Math.PI / 180F));
+                        ModEntityUtils.forceKnockBack(entity, hitEntity, 0.8F, ratioX, ratioZ, true);
+                    });
+                } else if (tick == 28 && isServer) {
+                    float leftArc = 45F, rightArc = 45F;
+                    if (entity.getAnimation() == ATTACK_RIGHT_ANIMATION) rightArc = 90F;
+                    else leftArc = 90F;
+                    entity.rangeAttack(3.5, 4, 3.5, 4, leftArc, rightArc, hitEntity -> {
+                        if (entity.doHurtTarget(hitEntity, 1.25F, 0F) && entity.getHandHeat()) {
+                            hitEntity.setSecondsOnFire(3);
+                        }
+                        ModEntityUtils.forceKnockBack(entity, hitEntity, 0.5F, entity.getX() - hitEntity.getX(), entity.getZ() - hitEntity.getZ(), true);
+                    });
+                } else if ((tick == 10 || tick == 27)) entity.playSound(SoundInit.RELIC_EARTHSHAKER_ATTACK.get(), entity.getSoundVolume(), entity.getVoicePitch());
+            }
+        });
+        builder.conditional(new CondKeyframe<>() {
+            @Override
+            public boolean shouldHandle(EntityRelicEarthshaker entity, Animation animation, int tick) {
+                return ELECTROMAGNETIC_ANIMATION == animation;
+            }
+
+            @Override
+            public void handle(EntityRelicEarthshaker entity, Animation animation, int tick) {
+                entity.setDeltaMovement(0F, entity.getDeltaMovement().y, 0F);
+                if (tick == 1) entity.playSound(SoundInit.RELIC_EARTHSHAKER_PRE_ATTACK.get(), 0.75F, 0.5F);
+                else if (tick > 20 && tick < 90) {
+                    entity.electromagneticControlled.increaseTimer();
+                    if (tick == 42 || tick == 64 || tick == 86) {
+                        entity.playSound(SoundInit.RELIC_EARTHSHAKER_ELECTROMAGNETIC.get(), 1F, (entity.random.nextFloat() - entity.random.nextFloat()) * 0.2F + 1.0F);
+                        entity.hotControlled.increaseTimer(7);
+                        if (entity.level().isClientSide) {
+                            AdvancedParticleBase.spawnParticle(entity.level(), ParticleInit.ADV_RING2.get(), entity.getX(), entity.getY() + 0.1F, entity.getZ(),
+                                    0, 0, 0, false, 0, Math.PI / 2F, 0,
+                                    0, 1, 0.56, 0.78, 0.86, 0.8, 1, 20,
+                                    true, true, false, new ParticleComponent[]{
+                                            new PropertyControl(PropertyControl.EnumParticleProperty.ALPHA, AnimData.KeyTrack.startAndEnd(1F, 0F), false),
+                                            new PropertyControl(PropertyControl.EnumParticleProperty.SCALE, AnimData.KeyTrack.startAndEnd(10F, 60F), false),
+                                            new PropertyControl(PropertyControl.EnumParticleProperty.YAW, AnimData.KeyTrack.startAndEnd(0F, Mth.PI * 2F), true)
+                                    });
+                        } else {
+                            final int count = 10;
+                            float offset = (float) Math.toRadians(entity.getRandom().nextGaussian() * 360 - 180);
+                            for (int i = 0; i < count; ++i) {
+                                float f1 = (float) (entity.getYRot() + (i + offset) * (float) Math.PI * (2.0 / count));
+                                EntityElectromagnetic.shoot(entity.level(), entity, entity.position(), 2.0F, count + 2, 3, (f1 * (180F / (float) Math.PI)) - 90F, tick == 64);
+                            }
+                        }
+                    } else if (tick < 30 && entity.hand != null) {
+                        entity.spawnBlockEffect(entity.hand[0]);
+                        entity.spawnBlockEffect(entity.hand[1]);
+                    }
+                    if (tick % 3 == 0) entity.doFractalEffect(3 + entity.random.nextInt(3));
+                } else entity.electromagneticControlled.decreaseTimer();
+            }
+        });
+        return manager;
+    }
+
+    private void doPoundGroundEffect(Vec3 pos, float dustSpeed, float airDiffusionSpeed) {
+        ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 35F, 30, ParticleDust.EnumDustBehavior.GROW, airDiffusionSpeed);
+        ModParticleUtils.annularParticleOutburst(this.level(), 20, dustData, pos.x, pos.y, pos.z, dustSpeed, 0.5);
+    }
+
+    private static AnimationReleaseManager<EntityRelicEarthshaker> setupAnimationRules() {
+        AnimationReleaseManager<EntityRelicEarthshaker> manager = new AnimationReleaseManager<>();
+        AnimationReleaseManager.Builder<EntityRelicEarthshaker> builder = manager.builder();
+        builder.register(builder.define(SMASH_ATTACK_ANIMATION)
+                .cooldown(new HealthScaledCooldown(400, 50, 50, 0.3F))
+                .condition(ConditionFactory.and(
+                        ConditionFactory.hybridDistanceRange(8, 0, 4.25),
+                        ConditionFactory.randomChance(0.4F)
+                )).priority(2));
+        builder.register(builder.define(RANGE_ATTACK_ANIMATION)
+                .cooldown(new FixedRangeCooldown(450, 50))
+                .condition(ConditionFactory.and(
+                        ConditionFactory.hasLineOfSight(),
+                        ConditionFactory.hybridDistanceRange(8, 4.5, 14),
+                        ConditionFactory.randomChance(0.4F)
+                )).priority(1));
+        builder.register(builder.define(ELECTROMAGNETIC_ANIMATION)
+                .cooldown(new HealthScaledCooldown(450, 50, 50, 0.3F))
+                .condition(ConditionFactory.and(
+                        (entity, target) -> entity.getHealthPercentage() <= 0.8F,
+                        ConditionFactory.distanceRange(6.5, 12),
+                        ConditionFactory.randomChance(0.4F)
+                )));
+        builder.condition(EntityAbsRelicron::isActive);
+        return manager;
+    }
+
+    private void performRangedAttack(LivingEntity target, float velocity, boolean right) {
+        Vec3 lookVec = this.getLookAngle();
+        Vec3 rightVec = new Vec3(-lookVec.z, 0, lookVec.x).normalize();
+        double sideMultiplier = right ? 1.0 : -1.0;
+        double offsetDistance = this.getBbWidth() * 0.82F;
+        double xOffset = rightVec.x * offsetDistance * sideMultiplier;
+        double zOffset = rightVec.z * offsetDistance * sideMultiplier;
+        Vec3 vec3 = this.position().add(lookVec);
+        EntityPulsedGrenade grenade = new EntityPulsedGrenade(this.level(), this, right);
+        grenade.setRadius(Mth.randomBetween(this.random, 2F, 2.5F));
+        grenade.moveTo(vec3.x + xOffset, this.getY(0.49D), vec3.z + zOffset);
+        double d1 = target.getX() - (this.getX() + xOffset);
+        double d2 = target.getY(-0.5F) - this.getY();
+        double d3 = target.getZ() - (this.getZ() + zOffset);
+        double d4 = Math.sqrt(d1 * d1 + d3 * d3) * 0.12F;
+        grenade.shoot(d1, d2 + d4, d3, velocity, 5F);
+        this.level().addFreshEntity(grenade);
+    }
+
+    public static AttributeSupplier.Builder setAttributes() {
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 150.0D)
+                .add(Attributes.ARMOR, 15.0D)
+                .add(Attributes.ATTACK_DAMAGE, 8.0D)
+                .add(Attributes.FOLLOW_RANGE, 32.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.28D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
+                .add(ForgeMod.ENTITY_GRAVITY.get(), 0.125D)
+                .add(ForgeMod.STEP_HEIGHT_ADDITION.get(), 1.5D);
     }
 
     public boolean getHandHeat() {
         return !this.hotControlled.isStop();
     }
 
-    private boolean checkCanAttack() {
-        return !this.isNoAi() && this.isActive() && this.isNoAnimation() && this.getTarget() != null && this.canAttack(this.getTarget());
+    public Vec3 findTargetPoint(Entity entity, Entity target) {
+        Vec3 vec3 = target.position();
+        return (new Vec3(vec3.x - entity.getX(), 0.0, vec3.z - entity.getZ())).normalize();
     }
 
-    private void spawnHandEffect(Vec3 pos, boolean fire) {
+    private void doHandEffect(Vec3 pos) {
         if (pos != null) {
             double d0 = this.random.nextGaussian() * 0.02D;
             double d1 = this.random.nextGaussian() * 0.02D;
             double d2 = this.random.nextGaussian() * 0.02D;
-            this.level().addParticle(fire ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.SMOKE, pos.x, pos.y, pos.z, d0, d1, d2);
+            ParticleOptions[] options = new ParticleOptions[]{ParticleTypes.LARGE_SMOKE, ParticleTypes.SMOKE, ParticleTypes.SOUL_FIRE_FLAME};
+            this.level().addParticle(options[this.random.nextInt(options.length)], pos.x, pos.y, pos.z, d0, d1, d2);
         }
     }
 
@@ -514,14 +621,14 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements GlowEnt
                 , 0, 0, 0, true, 0, 0, 0, 0, 1F,
                 1, 0.94, 0.69, 1, 1, 4, true, false, false
                 , new ParticleComponent[]{
-                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, AnimData.startAndEnd(4F, 20F), false),
-                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, new AnimData.KeyTrack(new float[]{1F, 1F, 0.5F, 0F}, new float[]{0F, 0.5F, 0.75F, 1F}), false)
+                        new PropertyControl(PropertyControl.EnumParticleProperty.SCALE, AnimData.startAndEnd(4F, 20F), false),
+                        new PropertyControl(PropertyControl.EnumParticleProperty.ALPHA, new AnimData.KeyTrack(new float[]{1F, 1F, 0.5F, 0F}, new float[]{0F, 0.5F, 0.75F, 1F}), false)
                 });
-        AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.MUZZLE_FLASH.get(), pos.x + forward.x * 0.8, pos.y, pos.z + forward.z * 0.8
+        AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.CROSS_FLASH.get(), pos.x + forward.x * 0.8, pos.y, pos.z + forward.z * 0.8
                 , 0, 0, 0, true, 0, 0, 0, 0, 1F,
-                1, 1, 1, 1, 1, 3, true, false, false
+                1, 0.94, 0.69, 1, 1, 3, true, false, false
                 , new ParticleComponent[]{
-                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, new AnimData.KeyTrack(new float[]{0F, 8F, 0F}, new float[]{0F, 0.5F, 1F}), false)
+                        new PropertyControl(PropertyControl.EnumParticleProperty.SCALE, new AnimData.KeyTrack(new float[]{0F, 8F, 0F}, new float[]{0F, 0.5F, 1F}), false)
                 });
     }
 
@@ -542,139 +649,16 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements GlowEnt
     private void doFractalEffect(int count) {
         if (this.level().isClientSide) {
             for (int i = 0; i < count; i++) {
-                double angle = random.nextDouble() * 2 * Math.PI;
+                double angle = Math.toRadians(this.yBodyRot + 270.0F) + random.nextDouble() * 2 * Math.PI;
                 double minHorizontalOffset = 1;
-                double maxHorizontalOffset = 4;
+                double maxHorizontalOffset = 3.5;
                 double minVerticalOffset = 0;
                 double maxVerticalOffset = this.getBbHeight();
                 double horizontalRadius = minHorizontalOffset + (random.nextDouble() * (maxHorizontalOffset - minHorizontalOffset));
                 double offsetX = Math.cos(angle) * horizontalRadius;
                 double offsetZ = Math.sin(angle) * horizontalRadius;
                 double offsetY = minVerticalOffset + (random.nextDouble() * (maxVerticalOffset - minVerticalOffset));
-                this.doFractalEffect(this.position().add(0, this.getBbHeight() * 0.7, 0), this.getPosOffset(false, -1F, 0F, (float) offsetY).add(offsetX, 0, offsetZ));
-            }
-        }
-    }
-
-    static class REMeleeAttackGoal extends AnimationAI<EntityRelicEarthshaker> {
-        protected REMeleeAttackGoal(EntityRelicEarthshaker entity) {
-            super(entity);
-        }
-
-        @Override
-        protected boolean test(Animation animation) {
-            return animation == this.entity.attackAnimationLeft || animation == this.entity.attackAnimationRight;
-        }
-
-        @Override
-        public void tick() {
-            int tick = this.entity.getAnimationTick();
-            LivingEntity target = this.entity.getTarget();
-            this.entity.setDeltaMovement(0F, this.entity.onGround() && !this.entity.isNoGravity() ? -0.01F : this.entity.getDeltaMovement().y, 0F);
-            if (!(tick < 20 && tick > 7) && target != null) {
-                this.entity.getLookControl().setLookAt(target, 30F, 30F);
-            } else this.entity.setYRot(this.entity.yRotO);
-            if (tick == 11) {
-                entity.rangeAttack(6, entity.getBbHeight() * 1.2, 6, 6, 30F, 30F, hitEntity -> {
-                    if (entity.doHurtTarget(hitEntity, 1F, 0F, true) && entity.getHandHeat()) {
-                        hitEntity.setSecondsOnFire(5);
-                    }
-                    double ratioX = -Math.sin(entity.yBodyRot * ((float) Math.PI / 180F));
-                    double ratioZ = Math.cos(entity.yBodyRot * ((float) Math.PI / 180F));
-                    ModEntityUtils.forceKnockBack(entity, hitEntity, 0.8F, ratioX, ratioZ, true);
-                });
-            } else if (tick == 28) {
-                float leftArc = 45F, rightArc = 45F;
-                if (this.entity.getAnimation() == this.entity.attackAnimationRight) rightArc = 90F;
-                else leftArc = 90F;
-                entity.rangeAttack(4.5, 4.5, 4.5, 4.5, leftArc, rightArc, hitEntity -> {
-                    if (entity.doHurtTarget(hitEntity, 1.25F, 0F, false) && entity.getHandHeat()) {
-                        hitEntity.setSecondsOnFire(5);
-                    }
-                    ModEntityUtils.forceKnockBack(entity, hitEntity, 0.5F, this.entity.getX() - hitEntity.getX(), this.entity.getZ() - hitEntity.getZ(), true);
-                });
-            }
-        }
-    }
-
-    static class RERangeAttackGoal extends AnimationAI<EntityRelicEarthshaker> {
-        private int lostTargetDelay;
-
-        public RERangeAttackGoal(EntityRelicEarthshaker entity) {
-            super(entity);
-        }
-
-        @Override
-        public void start() {
-            super.start();
-            this.lostTargetDelay = 0;
-        }
-
-        @Override
-        protected boolean test(Animation animation) {
-            return animation == this.entity.rangeAttackAnimation;
-        }
-
-        @Override
-        public void tick() {
-            LivingEntity target = this.entity.getTarget();
-            //this.entity.setYRot(this.entity.yBodyRot);
-            if (this.lostTargetDelay > 0) this.lostTargetDelay--;
-            if (target != null && target.isAlive() && this.entity.canAttack(target) && this.lostTargetDelay < 10) {
-                if (!this.entity.getSensing().hasLineOfSight(target)) this.lostTargetDelay += 2;
-                this.moveGoal(target);
-                this.entity.getLookControl().setLookAt(target, 30F, 30F);
-                this.entity.lookAt(target, 30F, 30F);
-            } else {
-                this.entity.playAnimation(this.entity.rangeAttackStopAnimation);
-                return;
-            }
-            int tick = this.entity.getAnimationTick();
-            if (tick % 20 == 0 && tick > 10) this.entity.performRangedAttack(target, 1F);
-        }
-
-        private void moveGoal(LivingEntity target) {
-            double moveSpeed = this.entity.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.75;
-            double distance = this.entity.distanceToSqr(target);
-            if (distance < Math.pow(9, 2)) {
-                Vec3 vec3 = findTargetPoint(target, this.entity);
-                this.entity.setDeltaMovement(vec3.x * moveSpeed, this.entity.getDeltaMovement().y, vec3.z * moveSpeed);
-            } else if (distance > Math.pow(12, 2)) {
-                Vec3 vec3 = findTargetPoint(this.entity, target);
-                this.entity.setDeltaMovement(vec3.x * moveSpeed, this.entity.getDeltaMovement().y, vec3.z * moveSpeed);
-            } else this.entity.setDeltaMovement(0F, this.entity.onGround() && !this.entity.isNoGravity() ? -0.01F : this.entity.getDeltaMovement().y, 0F);
-        }
-
-        public static Vec3 findTargetPoint(Entity entity, Entity target) {
-            Vec3 vec3 = target.position();
-            return (new Vec3(vec3.x - entity.getX(), 0.0, vec3.z - entity.getZ())).normalize();
-        }
-    }
-
-    static class REElectromagneticAttackGoal extends AnimationAI<EntityRelicEarthshaker> {
-        public REElectromagneticAttackGoal(EntityRelicEarthshaker entity) {
-            super(entity);
-        }
-
-        @Override
-        protected boolean test(Animation animation) {
-            return animation == this.entity.electromagneticAnimation;
-        }
-
-        @Override
-        public void tick() {
-            int tick = this.entity.getAnimationTick();
-            this.entity.setYRot(this.entity.yRotO);
-            this.entity.setDeltaMovement(0F, this.entity.onGround() && !this.entity.isNoGravity() ? -0.01F : this.entity.getDeltaMovement().y, 0F);
-            if (!this.entity.level().isClientSide) {
-                if (tick == 43 || tick == 65 || tick == 87) {
-                    final int count = 10;
-                    float offset = (float) Math.toRadians(this.entity.getRandom().nextGaussian() * 360 - 180);
-                    for (int i = 0; i < count; ++i) {
-                        float f1 = (float) (this.entity.getYRot() + (i + offset) * (float) Math.PI * (2.0 / count));
-                        EntityElectromagnetic.shoot(this.entity.level(), this.entity, 2.0F, count + 2, 3, (f1 * (180F / (float) Math.PI)) - 90F, tick == 65);
-                    }
-                }
+                doFractalEffect(this, this.position().add(0, this.getBbHeight() * 0.7, 0), this.getPosOffset(false, -1F, 0F, (float) offsetY).add(offsetX, 0, offsetZ), 0.1F, 0.2F);
             }
         }
     }

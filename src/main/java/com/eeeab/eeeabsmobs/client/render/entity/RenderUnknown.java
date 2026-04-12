@@ -9,8 +9,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 //未知模型渲染 作为占位符使用
+@OnlyIn(Dist.CLIENT)
 public class RenderUnknown<T extends EEEABMobLibrary & AnimatedEntity> extends MobRenderer<T, ModelUnKnown<T>> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/unknown.png");
     private final float scale;

@@ -1,10 +1,11 @@
 package com.eeeab.eeeabsmobs.sever.entity.effect.projectile;
 
-import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.effect.IEntity;
+import com.eeeab.eeeabsmobs.client.ControlledAnimation;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityCameraShake;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityExplode;
+import com.eeeab.eeeabsmobs.sever.entity.effect.IEntity;
+import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpseWarlock;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -38,19 +39,18 @@ public class EntityBloodBall extends Projectile implements IEntity {
     private static final EntityDataAccessor<Optional<UUID>> DATA_TARGET_UUID = SynchedEntityData.defineId(EntityBloodBall.class, EntityDataSerializers.OPTIONAL_UUID);
     private static final BlockParticleOption REDSTONE_PARTICLE = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.REDSTONE_BLOCK.defaultBlockState());
     private static final int MAX_ACTIVE = 400;
-    private final boolean isHeal;
+    private boolean isHeal;
     private boolean locating;
-    private int duration;
+    private int warmupDelay;
     public final ControlledAnimation scaleControlled = new ControlledAnimation(20);
 
     public EntityBloodBall(EntityType<? extends EntityBloodBall> entityType, Level level) {
         super(entityType, level);
-        isHeal = false;
     }
 
-    public EntityBloodBall(Level level, int duration, boolean isHeal, int power) {
+    public EntityBloodBall(Level level, int warmupDelay, boolean isHeal, int power) {
         super(EntityInit.BLOOD_BALL.get(), level);
-        this.duration = duration;
+        this.warmupDelay = warmupDelay;
         this.isHeal = isHeal;
         setPower(Mth.clamp(power, 1, 10));
     }
@@ -58,8 +58,8 @@ public class EntityBloodBall extends Projectile implements IEntity {
     @Override
     public void tick() {
         scaleControlled.updatePrevTimer();
-        Entity entity = getOwner();
-        if (level().isClientSide || (entity == null || !entity.isRemoved()) && level().hasChunkAt(blockPosition())) {
+        Entity owner = getOwner();
+        if (level().isClientSide || (owner == null || !owner.isRemoved()) && level().hasChunkAt(blockPosition())) {
             super.tick();
             move(MoverType.SELF, getDeltaMovement());
 
@@ -70,11 +70,11 @@ public class EntityBloodBall extends Projectile implements IEntity {
 
             checkInsideBlocks();
 
-            if (entity != null) {
-                if (!entity.isAlive()) {
+            if (owner != null) {
+                if (!owner.isAlive() || this.level() != owner.level()) {
                     preDestroy(null);
-                } else if (tickCount < duration) {
-                    setPos(entity.position().add(0, 5, 0));
+                } else if (tickCount < warmupDelay) {
+                    setPos(owner.position().add(0, 5, 0));
                 }
             }
 
@@ -90,7 +90,7 @@ public class EntityBloodBall extends Projectile implements IEntity {
             }
             scaleControlled.increaseTimer();
 
-            if (!level().isClientSide && tickCount >= duration && !locating) {
+            if (!level().isClientSide && tickCount >= warmupDelay && !locating) {
                 locating = true;
                 if (getSavedTargetByUUID() != null && getSavedTargetByUUID().isAlive() && !isHeal) {
                     shoot(getSavedTargetByUUID(), -0.1F, 1.5F);
@@ -124,17 +124,16 @@ public class EntityBloodBall extends Projectile implements IEntity {
 
     private void preDestroy(@Nullable Entity entity) {
         if (!level().isClientSide) {
-            if (getOwner() == entity && entity instanceof LivingEntity livingEntity) {
-                if (isHeal) {
-                    livingEntity.heal(Math.min(livingEntity.getMaxHealth() * 0.05F * getPower(), livingEntity.getMaxHealth() * 0.5F));
-                    level().broadcastEntityEvent(livingEntity, (byte) 14);
-                }
+            Entity owner = getOwner();
+            if (isHeal && owner == entity && entity instanceof LivingEntity livingEntity) {
+                livingEntity.heal(Math.min(livingEntity.getMaxHealth() * 0.05F * getPower(), livingEntity.getMaxHealth() * 0.5F));
+                if (owner instanceof EntityCorpseWarlock) level().broadcastEntityEvent(livingEntity, (byte) 14);
             } else {
-                EntityExplode.explode(level(), position(), damageSources().explosion(this, entity), getOwner(), getPower(), getBaseDamage() * getPower());
+                EntityExplode.explode(level(), position(), damageSources().explosion(this, entity), owner, getPower(), getBaseDamage() * getPower());
                 EntityCameraShake.cameraShake(level(), position(), 16F, 0.125F, 5, 15);
             }
+            discard();
         }
-        discard();
     }
 
     public boolean isHeal() {
@@ -169,17 +168,16 @@ public class EntityBloodBall extends Projectile implements IEntity {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (isInvulnerableTo(source)) {
+        if (level().isClientSide) {
             return false;
-        } else if (level().isClientSide) {
-            return false;
-        } else if (locating) {
+        } else if (this.isInvulnerableTo(source) || locating) {
             return false;
         } else {
             markHurt();
             Entity entity = source.getEntity();
             if (entity != null) {
-                if (getOwner() instanceof LivingEntity livingEntity) {
+                Entity owner = getOwner();
+                if (owner instanceof LivingEntity livingEntity && this.distanceTo(owner) <= 6) {
                     livingEntity.addEffect(new MobEffectInstance(EffectInit.STUN_EFFECT.get(), 100, 0, false, false));
                 }
                 preDestroy(null);

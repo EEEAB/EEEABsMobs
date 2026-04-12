@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.effect;
 
-import com.eeeab.eeeabsmobs.client.util.ControlledAnimation;
+import com.eeeab.eeeabsmobs.client.ControlledAnimation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -106,7 +106,7 @@ public class EntityAbsBeam extends EntityMagicEffects {
     }
 
     protected boolean canBeInterrupted() {
-        return this.caster != null && !caster.isAlive();
+        return this.getOwner() != null && !this.getOwner().isAlive();
     }
 
     public HitResult raytraceEntities(Level world, Vec3 from, Vec3 to) {
@@ -126,9 +126,8 @@ public class EntityAbsBeam extends EntityMagicEffects {
         }
         List<LivingEntity> entities = world.getEntitiesOfClass(LivingEntity.class, new AABB(Math.min(getX(), collidePosX), Math.min(getY(), collidePosY), Math.min(getZ(), collidePosZ), Math.max(getX(), collidePosX), Math.max(getY(), collidePosY), Math.max(getZ(), collidePosZ)).inflate(1, 1, 1));
         for (LivingEntity entity : entities) {
-            if (entity == this.caster) {
-                continue;
-            }
+            if (entity == this.getOwner()) continue;
+            if (this.getOwner() != null && this.getOwner().isAlliedTo(entity)) continue;
             float pad = entity.getPickRadius() + getBaseScale();
             AABB aabb = entity.getBoundingBox().inflate(pad, pad, pad);
             Optional<Vec3> hit = aabb.clip(from, to);
@@ -141,13 +140,13 @@ public class EntityAbsBeam extends EntityMagicEffects {
         return result;
     }
 
-    public void updateWithEntity(float wOffset, float hOffset) {
-        double radians = Math.toRadians(this.caster.yHeadRot + 90);
+    public void updateWithEntity(LivingEntity entity, float wOffset, float hOffset) {
+        double radians = Math.toRadians(entity.yHeadRot + 90);
         this.setYaw((float) radians);
-        this.setPitch((float) ((double) (-this.caster.getXRot()) * Math.PI / 180.0));
+        this.setPitch((float) ((double) (-entity.getXRot()) * Math.PI / 180.0));
         double offsetX = Math.cos(radians) * wOffset;
         double offsetZ = Math.sin(radians) * wOffset;
-        this.setPos(this.caster.getX() + offsetX, this.caster.getY(hOffset), this.caster.getZ() + offsetZ);
+        this.setPos(entity.getX() + offsetX, entity.getY(hOffset), entity.getZ() + offsetZ);
     }
 
     public float getBaseScale() {

@@ -14,7 +14,10 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class RenderNamelessGuardian extends MobRenderer<EntityNamelessGuardian, ModelNamelessGuardian> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/nameless_guardian.png");
     private static final ResourceLocation SHOOT_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/nameless_guardian_shoot.png");
@@ -31,20 +34,14 @@ public class RenderNamelessGuardian extends MobRenderer<EntityNamelessGuardian, 
                 }
             }
         });
-        this.addLayer(new LayerGlow<>(this, SHOOT_LAYER) {
-            @Override
-            protected float getBrightness(EntityNamelessGuardian entity, float partialTicks) {
-                float timer = entity.accumulationControlled.getPrevTimer();
-                return timer * 0.1F;
-            }
-        });
-        this.addLayer(new LayerGlow<>(this, GLOW_LAYER, 0.8F, guardian -> !guardian.coreControlled.isStop()) {
-            @Override
-            protected float getBrightness(EntityNamelessGuardian entity, float partialTicks) {
-                float timer = entity.coreControlled.getPrevTimer();
-                return timer * 0.08F;
-            }
-        });
+        this.addLayer(new LayerGlow<>(this, SHOOT_LAYER, (entity, partialTicks) -> {
+            float timer = entity.accumulationControlled.getPrevTimer();
+            return timer * 0.1F;
+        }));
+        this.addLayer(new LayerGlow<>(this, GLOW_LAYER, guardian -> !guardian.coreControlled.isStop(), (entity, partialTicks) -> {
+            float timer = entity.coreControlled.getPrevTimer();
+            return timer * 0.08F;
+        }));
     }
 
     @Override

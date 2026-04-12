@@ -12,7 +12,10 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
-import net.minecraft.world.entity.monster.*;
+import net.minecraft.world.entity.monster.AbstractIllager;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
@@ -44,12 +47,6 @@ public abstract class EntityAbsCorpse extends EEEABMobLibrary implements Enemy, 
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        if (!this.level().isClientSide && this.getTarget() != null && !this.getTarget().isAlive()) setTarget(null);
-    }
-
-    @Override
     public @NotNull MobType getMobType() {
         return MobType.UNDEAD;
     }
@@ -68,11 +65,7 @@ public abstract class EntityAbsCorpse extends EEEABMobLibrary implements Enemy, 
     public boolean isAlliedTo(Entity entity) {
         if (super.isAlliedTo(entity)) {
             return true;
-        } else if (entity instanceof LivingEntity && entity == getOwner()) {
-            return this.getTeam() == null && entity.getTeam() == null;
-        } else {
-            return false;
-        }
+        } else return entity instanceof LivingEntity && entity == getOwner();
     }
 
     @Override
@@ -109,7 +102,7 @@ public abstract class EntityAbsCorpse extends EEEABMobLibrary implements Enemy, 
     }
 
     //设置该生物初始生成
-    public void setInitSpawn() {
+    public void afterSpawn() {
         this.isSummon = true;
         this.valuable = true;
     }

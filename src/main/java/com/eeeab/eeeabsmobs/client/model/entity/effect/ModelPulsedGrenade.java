@@ -5,7 +5,10 @@ import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityPulsedGrenade;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class ModelPulsedGrenade extends ModHierarchicalModel<EntityPulsedGrenade> {
     public final ModelPart ball;
 

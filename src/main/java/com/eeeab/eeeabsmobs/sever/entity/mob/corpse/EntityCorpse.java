@@ -6,14 +6,14 @@ import com.eeeab.animate.server.ai.animation.AnimationMelee;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.AnimationHandler;
 import com.eeeab.eeeabsmobs.sever.capability.FrenzyCapability;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.ai.goal.EMLookAtGoal;
+import com.eeeab.eeeabsmobs.sever.entity.ai.goal.ModLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.CopyOwnerTargetGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.ReFindOwnerGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.RedirectOwnerHatredGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.owner.WhenOwnerDeadGoal;
-import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.EMWallClimberNavigation;
+import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.ModWallClimberNavigation;
 import com.eeeab.eeeabsmobs.sever.handler.CapabilityHandler;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -46,17 +46,17 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class EntityCorpse extends EntityAbsCorpse {
-    public final Animation attackAnimation1 = Animation.create(15);
-    public final Animation attackAnimation2 = Animation.create(15);
-    public final Animation attackAnimation3 = Animation.create(15);
-    public final Animation spawnAnimation = Animation.create(20);
-    private final Animation[] animations = new Animation[]{
-            attackAnimation1,
-            attackAnimation2,
-            attackAnimation3,
-            spawnAnimation
-    };
+    public static final Animation ATTACK_ANIMATION1 = Animation.create(15);
+    public static final Animation ATTACK_ANIMATION2 = Animation.create(15);
+    public static final Animation ATTACK_ANIMATION3 = Animation.create(15);
+    public static final Animation SPAWN_ANIMATION = Animation.create(20);
     private static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(EntityCorpse.class, EntityDataSerializers.BYTE);
+    private static final Animation[] ANIMATIONS = new Animation[]{
+            ATTACK_ANIMATION1,
+            ATTACK_ANIMATION2,
+            ATTACK_ANIMATION3,
+            SPAWN_ANIMATION
+    };
 
     public EntityCorpse(EntityType<? extends EntityAbsCorpse> type, Level level) {
         super(type, level);
@@ -75,17 +75,12 @@ public class EntityCorpse extends EntityAbsCorpse {
 
     @Override
     protected PathNavigation createNavigation(Level level) {
-        return new EMWallClimberNavigation(this, level);
+        return new ModWallClimberNavigation(this, level);
     }
 
     @Override
     public boolean onClimbable() {
         return this.isClimbing();
-    }
-
-    @Override//是否免疫摔伤
-    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource damageSource) {
-        return fallDistance > 10;
     }
 
     @Override//应该禁用和平模式生成
@@ -94,9 +89,9 @@ public class EntityCorpse extends EntityAbsCorpse {
     }
 
     @Override
-    public void setInitSpawn() {
-        super.setInitSpawn();
-        this.playAnimation(spawnAnimation);
+    public void afterSpawn() {
+        super.afterSpawn();
+        this.playAnimation(SPAWN_ANIMATION);
         this.active = false;
         this.setActive(false);
     }
@@ -108,13 +103,13 @@ public class EntityCorpse extends EntityAbsCorpse {
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Villager.class, false));
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this, EntityCorpseWarlock.class));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(1, new AnimationActivate<>(this, () -> spawnAnimation));
-        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> attackAnimation1, 9, 2F, 1F, 1F));
-        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> attackAnimation2, 9, 2F, 1F, 1F));
-        this.goalSelector.addGoal(1, new AnimationMelee<>(this, () -> attackAnimation3, 9, 2F, 1.5F, 1.5F));
-        this.goalSelector.addGoal(2, new AnimationMeleeAI<>(this, 1.2D, 5, () -> attackAnimation1, () -> attackAnimation2, () -> attackAnimation3));
-        this.goalSelector.addGoal(7, new EMLookAtGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(8, new EMLookAtGoal(this, EntityAbsCorpse.class, 6.0F));
+        this.goalSelector.addGoal(1, new AnimationActivate<>(this, SPAWN_ANIMATION));
+        this.goalSelector.addGoal(1, new AnimationMelee<>(this, ATTACK_ANIMATION1, 9, 2F, 1F, 1F));
+        this.goalSelector.addGoal(1, new AnimationMelee<>(this, ATTACK_ANIMATION2, 9, 2F, 1F, 1F));
+        this.goalSelector.addGoal(1, new AnimationMelee<>(this, ATTACK_ANIMATION3, 9, 2F, 1.5F, 1.5F));
+        this.goalSelector.addGoal(2, new AnimationMeleeAI<>(this, 1.2D, 5, ATTACK_ANIMATION1, ATTACK_ANIMATION2, ATTACK_ANIMATION3));
+        this.goalSelector.addGoal(7, new ModLookAtGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new ModLookAtGoal(this, EntityAbsCorpse.class, 6.0F));
         this.goalSelector.addGoal(1, new ReFindOwnerGoal(this, EntityCorpseWarlock.class, 18D));
         this.targetSelector.addGoal(2, new CopyOwnerTargetGoal(this));
         this.goalSelector.addGoal(3, new RedirectOwnerHatredGoal(this, 16F));
@@ -124,7 +119,7 @@ public class EntityCorpse extends EntityAbsCorpse {
     @Override
     public void baseTick() {
         super.baseTick();
-        if (level().isClientSide && getAnimation() == spawnAnimation) {
+        if (level().isClientSide && getAnimation() == SPAWN_ANIMATION) {
             setSpawnParticle(4);
         }
     }
@@ -203,7 +198,7 @@ public class EntityCorpse extends EntityAbsCorpse {
                 level.levelEvent(null, 1026, this.blockPosition(), 0);
             }
             if (this.isSummon() && this.getOwner() != null && this.getOwner().isAlive()) {
-                convertEntity.setInitSpawn();
+                convertEntity.afterSpawn();
                 convertEntity.setOwner(this.getOwner());
             }
             return false;
@@ -212,7 +207,7 @@ public class EntityCorpse extends EntityAbsCorpse {
     }
 
     public static AttributeSupplier.Builder setAttributes() {
-        return createMobAttributes().add(Attributes.MAX_HEALTH, 30.0D).add(Attributes.MOVEMENT_SPEED, 0.25D).add(Attributes.FOLLOW_RANGE, 32.0D).add(Attributes.ATTACK_DAMAGE, 6D);
+        return createMobAttributes().add(Attributes.MAX_HEALTH, 30.0D).add(Attributes.MOVEMENT_SPEED, 0.25D).add(Attributes.FOLLOW_RANGE, 32.0D).add(Attributes.ATTACK_DAMAGE, 5D);
     }
 
     /**
@@ -248,7 +243,7 @@ public class EntityCorpse extends EntityAbsCorpse {
 
     @Override
     public Animation[] getAnimations() {
-        return this.animations;
+        return ANIMATIONS;
     }
 
     @Override

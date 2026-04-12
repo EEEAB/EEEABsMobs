@@ -10,7 +10,10 @@ import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class RenderImmortalMagicCircle extends FlatTextureRenderer<EntityImmortalMagicCircle> {
     private static final ResourceLocation NONE_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/effect/immortal_magic_circle/none.png");
     private static final ResourceLocation SPEED_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/effect/immortal_magic_circle/speed.png");

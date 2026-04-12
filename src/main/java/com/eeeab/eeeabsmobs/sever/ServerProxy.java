@@ -15,9 +15,9 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -52,21 +52,21 @@ public class ServerProxy {
         return null;
     }
 
-    public void playGuardianLaserSound(Player player) {
-    }
-
-    public void stopGuardianLaserSound(Player player) {
-    }
-
     public void playImmortalLaserSound(EntityImmortalLaser laser) {
+    }
+
+    public void playTickableSound(Entity entity, int id) {
+    }
+
+    public void stopTickableSound(Entity entity) {
     }
 
     @SubscribeEvent
     public void onCommandRegister(RegisterCommandsEvent event) {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
         CommandBuildContext context = event.getBuildContext();
-        //TODO 编译jar包时注释这段代码
-        CombatHintHudCommand.register(dispatcher, context);
+        //jar时注释这段代码
+        //CombatHintHudCommand.register(dispatcher, context);
     }
 
     @SubscribeEvent

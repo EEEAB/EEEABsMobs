@@ -22,7 +22,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class RenderImmortal extends MobRenderer<EntityImmortalBoss, ModelImmortal> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal.png");
     private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal_eyes.png");
@@ -33,13 +36,8 @@ public class RenderImmortal extends MobRenderer<EntityImmortalBoss, ModelImmorta
 
     public RenderImmortal(EntityRendererProvider.Context context) {
         super(context, new ModelImmortal(context.bakeLayer(ModModelLayer.IMMORTAL)), 2F);
-        this.addLayer(new LayerGlow<>(this, GLOW_LAYER, 1F, e -> e.isGlow() && !e.isInvisible()) {
-
-            @Override
-            protected float getBrightness(EntityImmortalBoss entity, float partialTicks) {
-                return entity.glowControlled.getAnimationFraction(partialTicks);
-            }
-
+        this.addLayer(new LayerGlow<>(this, GLOW_LAYER, e -> e.isGlow() && !e.isInvisible(),
+                (entity, partialTicks) -> entity.glowControlled.getAnimationFraction(partialTicks)) {
             @Override
             protected RenderType getRenderType(EntityImmortalBoss entity) {
                 return RenderType.entityTranslucentEmissive(this.location);
@@ -48,7 +46,7 @@ public class RenderImmortal extends MobRenderer<EntityImmortalBoss, ModelImmorta
         this.addLayer(new LayerOuter<>(this, CORE_LAYER, true, e -> !e.isInvisible()) {
             @Override
             protected void renderLayer(PoseStack stack, VertexConsumer vertexConsumer, int packedLightIn, float partialTicks, EntityImmortalBoss entity, boolean overlayTexture) {
-                overlayTexture = entity.getAnimation() != entity.unleashEnergyAnimation && entity.hurtControlled.isStop();
+                overlayTexture = entity.getAnimation() != EntityImmortalBoss.UNLEASH_ENERGY_ANIMATION && entity.hurtControlled.isStop();
                 super.renderLayer(stack, vertexConsumer, packedLightIn, partialTicks, entity, overlayTexture);
             }
 
@@ -95,10 +93,10 @@ public class RenderImmortal extends MobRenderer<EntityImmortalBoss, ModelImmorta
             super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
         }
         Animation animation = entity.getAnimation();
-        if (animation == entity.shoryukenAnimation || animation == entity.attractAnimation || animation == entity.punchRightAnimation
-                || animation == entity.smashGround1Animation || animation == entity.smashGround2Animation || animation == entity.smashGround3Animation
-                || animation == entity.punchLeftAnimation || animation == entity.pounceSmashAnimation || animation == entity.pouncePickAnimation
-                || animation == entity.hardPunchLeftAnimation || animation == entity.hardPunchRightAnimation) {
+        if (animation == EntityImmortalBoss.SHORYUKEN_ANIMATION || animation == EntityImmortalBoss.ATTRACT_ANIMATION || animation == EntityImmortalBoss.PUNCH_RIGHT_ANIMATION
+                || animation == EntityImmortalBoss.SMASH_GROUND_ANIMATION1 || animation == EntityImmortalBoss.SMASH_GROUND_ANIMATION2 || animation == EntityImmortalBoss.SMASH_GROUND_ANIMATION3
+                || animation == EntityImmortalBoss.PUNCH_LEFT_ANIMATION || animation == EntityImmortalBoss.POUNCE_SMASH_ANIMATION || animation == EntityImmortalBoss.POUNCE_PICK_ANIMATION
+                || animation == EntityImmortalBoss.HARDPUNCH_LEFT_ANIMATION || animation == EntityImmortalBoss.HARDPUNCH_RIGHT_ANIMATION) {
             entity.hand[0] = ModelPartUtils.getWorldPosition(entity, entity.yBodyRot, this.model.root(), LEFT_FIST);
             entity.hand[1] = ModelPartUtils.getWorldPosition(entity, entity.yBodyRot, this.model.root(), RIGHT_FIST);
         }
@@ -148,7 +146,7 @@ public class RenderImmortal extends MobRenderer<EntityImmortalBoss, ModelImmorta
     @Override
     public Vec3 getRenderOffset(EntityImmortalBoss entity, float partialTicks) {
         RandomSource random = entity.getRandom();
-        if (entity.getAnimation() == entity.teleportAnimation && entity.getAnimationTick() > 10) {
+        if (entity.getAnimation() == EntityImmortalBoss.TELEPORT_ANIMATION && entity.getAnimationTick() > 10) {
             double d0 = 0.05D;
             return new Vec3(random.nextGaussian() * d0, 0.0D, random.nextGaussian() * d0);
         } else if (!entity.hurtControlled.isStop()) {
