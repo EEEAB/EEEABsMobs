@@ -1,8 +1,8 @@
-package com.eeeab.eeeabsmobs.sever.trigger.components;
+package com.eeeab.eeeabsmobs.sever.entity.trigger.components;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
+import com.eeeab.eeeabsmobs.sever.entity.trigger.CombatTrigger;
 import com.eeeab.eeeabsmobs.sever.message.PopupNotificationMessage;
-import com.eeeab.eeeabsmobs.sever.trigger.CombatTrigger;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
@@ -22,11 +22,7 @@ public abstract class BaseCombatTrigger implements CombatTrigger {
 
     @Override
     public void trigger(ServerPlayer player) {
-        EEEABMobs.NETWORK.sendTo(
-                new PopupNotificationMessage(getTriggerKey(), level, false),
-                player.connection.connection,
-                NetworkDirection.PLAY_TO_CLIENT
-        );
+        EEEABMobs.NETWORK.sendTo(new PopupNotificationMessage(getTriggerKey(), level), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
         //if (!oncePerEncounter) CooldownManager.setCooldown(player.getUUID(), getTriggerKey());
     }
 

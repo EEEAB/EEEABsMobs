@@ -14,8 +14,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
-public class PromptNotificationHandler {
-    private static ModConfigHandler.PopupNotification.DisplayMode currentMode = ModConfigHandler.PopupNotification.DisplayMode.FADE_IN_OUT;
+public class TipNotificationHandler {
+    private static ModConfigHandler.TipNotification.DisplayMode currentMode = ModConfigHandler.TipNotification.DisplayMode.FADE_IN_OUT;
     private static ControlledAnimation alphaAControlled;
     private static ResourceLocation icons;
     private static Component current;
@@ -25,21 +25,7 @@ public class PromptNotificationHandler {
 
     public static void init() {
         icons = new ResourceLocation(EEEABMobs.MOD_ID, "textures/gui/msg_levels.png");
-        alphaAControlled = new ControlledAnimation(ModConfigHandler.CLIENT.popupNotification.displayDuration.get());
-    }
-
-    /**
-     * 间接提示使用
-     */
-    public static void showHint(ResourceLocation location, int level) {
-        init("hint.", location, level);
-    }
-
-    /**
-     * 直接提示使用
-     */
-    public static void showPrompt(ResourceLocation location, int level) {
-        init("prompt.", location, level);
+        alphaAControlled = new ControlledAnimation(ModConfigHandler.CLIENT.tipNotification.displayDuration.get());
     }
 
     public static void clientTick() {
@@ -47,7 +33,7 @@ public class PromptNotificationHandler {
 
         alphaAControlled.updatePrevTimer();
 
-        if (!ModConfigHandler.CLIENT.popupNotification.enabled.get() || alphaAControlled.isEnd()) {
+        if (!ModConfigHandler.CLIENT.tipNotification.enabled.get() || alphaAControlled.isEnd()) {
             isShowing = false;
             current = null;
             return;
@@ -57,7 +43,7 @@ public class PromptNotificationHandler {
     }
 
     public static void renderOverlay(GuiGraphics guiGraphics, float partialTick) {
-        if (!ModConfigHandler.CLIENT.popupNotification.enabled.get()) return;
+        if (!ModConfigHandler.CLIENT.tipNotification.enabled.get()) return;
         if (current == null || !isShowing) return;
 
         Minecraft minecraft = Minecraft.getInstance();
@@ -68,9 +54,9 @@ public class PromptNotificationHandler {
         //if (alpha <= 0.001f) return;
 
         //参数
-        int maxTextWidth = ModConfigHandler.CLIENT.popupNotification.textMaxWidth.get();
-        int lineSpacing = ModConfigHandler.CLIENT.popupNotification.lineSpacing.get();
-        float backgroundOpacity = ModConfigHandler.CLIENT.popupNotification.backgroundOpacity.get().floatValue();
+        int maxTextWidth = ModConfigHandler.CLIENT.tipNotification.textMaxWidth.get();
+        int lineSpacing = ModConfigHandler.CLIENT.tipNotification.lineSpacing.get();
+        float backgroundOpacity = ModConfigHandler.CLIENT.tipNotification.backgroundOpacity.get().floatValue();
         int textBlockHeight = MultiLineTextRenderer.calculateTotalHeight(font, current, maxTextWidth, lineSpacing);
         int textBlockWidth = MultiLineTextRenderer.calculateMaxLineWidth(font, current, maxTextWidth);
         int iconSize = 16;
@@ -104,7 +90,7 @@ public class PromptNotificationHandler {
         }
 
         //绘制多行文本
-        if (alpha > 0) {
+        if (alpha > 0 && bgAlpha > 0) {
             int textX = groupX + iconSize + iconSpacing;
             int textY = groupY + (contentHeight - textBlockHeight) / 2;
             int textAlpha = (int) (alpha * 255);
@@ -113,13 +99,13 @@ public class PromptNotificationHandler {
         }
     }
 
-    private static void init(String prefix, ResourceLocation location, int level) {
-        if (!ModConfigHandler.CLIENT.popupNotification.enabled.get()) return;
-        PromptNotificationHandler.level = Mth.clamp(level, 0, 2);
-        current = TranslateUtils.simpleText(location.getNamespace(), prefix, location.getPath(), getTextStyle(), "");
-        currentMode = ModConfigHandler.CLIENT.popupNotification.displayMode.get();
-        targetY = ModConfigHandler.CLIENT.popupNotification.hudPositionY.get();
-        alphaAControlled.setDuration(ModConfigHandler.CLIENT.popupNotification.displayDuration.get());
+    public static void init(ResourceLocation location, int level) {
+        if (!ModConfigHandler.CLIENT.tipNotification.enabled.get()) return;
+        TipNotificationHandler.level = Mth.clamp(level, 0, 2);
+        current = TranslateUtils.simpleText(location.getNamespace(), "tip.", location.getPath(), getTextStyle(), "");
+        currentMode = ModConfigHandler.CLIENT.tipNotification.displayMode.get();
+        targetY = ModConfigHandler.CLIENT.tipNotification.hudPositionY.get();
+        alphaAControlled.setDuration(ModConfigHandler.CLIENT.tipNotification.displayDuration.get());
         alphaAControlled.resetTimer();
         isShowing = true;
     }
@@ -135,7 +121,7 @@ public class PromptNotificationHandler {
     private static float getAlphaByMode(float partialTick) {
         float progress = alphaAControlled.getAnimationFraction(partialTick);
         if (alphaAControlled.isEnd()) return 0.0F;
-        if (currentMode == ModConfigHandler.PopupNotification.DisplayMode.FADE_IN_OUT) {
+        if (currentMode == ModConfigHandler.TipNotification.DisplayMode.FADE_IN_OUT) {
             if (progress < 0.125F) {
                 return Mth.clamp(progress * 8F, 0F, 1F);
             } else if (progress > 0.875f) {

@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.trigger;
+package com.eeeab.eeeabsmobs.sever.entity.trigger;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,7 +13,7 @@ public class CombatTriggerHandler {
         TriggerRegister.register();
     }
 
-    // 注册触发规则
+    //注册触发规则
     public static void registerTrigger(CombatTrigger trigger) {
         TRIGGERS.computeIfAbsent(trigger.getEntityKey(), k -> new HashSet<>()).add(trigger);
     }

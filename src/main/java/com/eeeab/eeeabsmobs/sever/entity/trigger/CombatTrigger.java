@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.trigger;
+package com.eeeab.eeeabsmobs.sever.entity.trigger;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;

@@ -1,4 +1,4 @@
-package com.eeeab.eeeabsmobs.sever.trigger;
+package com.eeeab.eeeabsmobs.sever.entity.trigger;
 
 import com.eeeab.animate.server.animation.Animation;
 import net.minecraft.world.entity.LivingEntity;

@@ -1,6 +1,6 @@
-package com.eeeab.eeeabsmobs.sever.trigger.components;
+package com.eeeab.eeeabsmobs.sever.entity.trigger.components;
 
-import com.eeeab.eeeabsmobs.sever.trigger.TriggerContext;
+import com.eeeab.eeeabsmobs.sever.entity.trigger.TriggerContext;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
