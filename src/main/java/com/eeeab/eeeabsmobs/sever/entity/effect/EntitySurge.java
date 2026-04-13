@@ -12,6 +12,7 @@ import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -111,7 +112,7 @@ public class EntitySurge extends EntityMagicEffects implements IEntity {
             this.level().addParticle(data2, true, getRandomX(1.5), getY() + 0.2 + this.random.nextFloat() * 0.75, getRandomZ(1.5), 0, 0, 0);
         }
         if (!this.isSilent()) {
-            this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundInit.SURGE.get(), this.getSoundSource(), 1.0F, this.random.nextFloat() * 0.2F + 0.85F, false);
+            this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundInit.SURGE.get(), this.getSoundSource(), 0.8F, this.random.nextFloat() * 0.2F + 0.85F, false);
         }
     }
 
