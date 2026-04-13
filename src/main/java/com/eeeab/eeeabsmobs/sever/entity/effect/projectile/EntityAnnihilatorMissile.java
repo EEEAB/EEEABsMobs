@@ -225,7 +225,7 @@ public class EntityAnnihilatorMissile extends Projectile implements IEntity, Var
             double x = this.getX();
             double y = this.getY(0.5);
             double z = this.getZ();
-            this.level().playLocalSound(x, y, z, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 3.0F, (1.0F + (this.level().random.nextFloat() - this.level().random.nextFloat()) * 0.2F) * 0.7F, false);
+            this.level().playLocalSound(x, y, z, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.5F, (1.0F + (this.level().random.nextFloat() - this.level().random.nextFloat()) * 0.2F) * 0.7F, false);
             ElementType variant = this.getVariant();
             if (variant == ElementType.BLAZE) {
                 this.level().addParticle(ParticleInit.BLAZE_EXPLOSION_EMITTER.get(), x, y, z, 2.0D, 2.0D, 0.0D);
