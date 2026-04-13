@@ -161,12 +161,6 @@ public class EntityInit {
                     () -> EntityType.Builder.<EntityCameraShake>of(EntityCameraShake::new, MobCategory.MISC).sized(1.0f, 1.0f)
                             .setUpdateInterval(Integer.MAX_VALUE).build(new ResourceLocation(EEEABMobs.MOD_ID, "camera_shake").toString()));
 
-    //移动控制器
-    public static final RegistryObject<EntityType<EntityMovingController>> MOVING_CONTROLLER =
-            ENTITIES.register("moving_controller",
-                    () -> EntityType.Builder.<EntityMovingController>of(EntityMovingController::new, MobCategory.MISC).
-                            sized(0f, 0f).noSummon().build(new ResourceLocation(EEEABMobs.MOD_ID, "moving_controller").toString()));
-
     //下落的方块
     public static final RegistryObject<EntityType<EntityFallingBlock>> FALLING_BLOCK =
             ENTITIES.register("falling_block",

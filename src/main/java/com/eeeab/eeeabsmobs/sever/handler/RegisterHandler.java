@@ -110,7 +110,6 @@ public class RegisterHandler {
         event.registerEntityRenderer(EntityInit.CAMERA_SHAKE.get(), EmptyRender::new);
         event.registerEntityRenderer(EntityInit.EXPLODE.get(), EmptyRender::new);
         event.registerEntityRenderer(EntityInit.OVERLOAD_EXPLODE.get(), EmptyRender::new);
-        event.registerEntityRenderer(EntityInit.MOVING_CONTROLLER.get(), EmptyRender::new);
         event.registerEntityRenderer(EntityInit.FALLING_BLOCK.get(), RenderFallingBlock::new);
         event.registerEntityRenderer(EntityInit.DOOMBOLT_AXE.get(), RenderDoomboltAxe::new);
         event.registerEntityRenderer(EntityInit.INFRARED_RAY.get(), RenderInfraredRay::new);
