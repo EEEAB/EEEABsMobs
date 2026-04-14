@@ -146,7 +146,7 @@ public class ModelRelicAnnihilator extends ModHierarchicalModel<EntityRelicAnnih
         Animation animation = entity.getAnimation();
         int tick = entity.getAnimationTick();
         if (!entity.isActive() || (animation == EntityRelicAnnihilator.ACTIVE_ANIMATION && tick < 40)) {
-            if (animation == AnimatedEntity.NO_ANIMATION) KeyframeAnimations.animate(this, AnimationRelicAnnihilator.DEACTIVATE_HOLD, (long) (ageInTicks * 1000 / 20), 1F, ModHierarchicalModel.ANIMATION_VECTOR_CACHE);
+            if (animation == AnimatedEntity.NO_ANIMATION) applyStatic(this, AnimationRelicAnnihilator.DEACTIVATE_HOLD);
             return;
         }
         if (!entity.isAlive()) return;

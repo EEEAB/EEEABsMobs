@@ -223,7 +223,7 @@ public class ModelRealmWarden extends ModHierarchicalModel<EntityRealmWarden> {
                 }
                 this.animateWalk(AnimationRealmWarden.WALK, limbSwing, limbSwingAmount * scale, 1.25F, 3F);
             } else if (entity.isNoAnimation()) {
-                KeyframeAnimations.animate(this, AnimationRealmWarden2.DEACTIVATE_HOLD, (long) (ageInTicks * 1000 / 20), 1F, ModHierarchicalModel.ANIMATION_VECTOR_CACHE);
+                applyStatic(this, AnimationRealmWarden2.DEACTIVATE_HOLD);
             }
         }
         exhaust1.visible = exhaust1Visible;

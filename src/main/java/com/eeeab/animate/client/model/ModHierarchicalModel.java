@@ -213,4 +213,8 @@ public abstract class ModHierarchicalModel<E extends Entity> extends EntityModel
         animationState.updateTime(ageInTicks, 1F);
         animationState.ifStarted((state) -> KeyframeAnimations.animate(model, definition, state.getAccumulatedTime(), 1F, ANIMATION_VECTOR_CACHE));
     }
+
+    public static <T extends Entity> void applyStatic(ModHierarchicalModel<T> model, AnimationDefinition definition) {
+        KeyframeAnimations.animate(model, definition, 0L, 1F, ANIMATION_VECTOR_CACHE);
+    }
 }
