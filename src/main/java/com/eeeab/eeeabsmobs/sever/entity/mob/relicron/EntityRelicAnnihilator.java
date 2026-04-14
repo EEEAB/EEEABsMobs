@@ -315,9 +315,9 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
         this.goalSelector.addGoal(1, new RARangeAttackGoal(this));
         this.goalSelector.addGoal(1, new RACycloneAttackGoal(this));
         this.goalSelector.addGoal(1, new RALeapAttackGoal(this));
-        this.goalSelector.addGoal(1, new AnimationRepel<>(this, GROUND_SLAM_ANIMATION3, 3F, 6F, 3, 1.25F, 1.2F, true));
-        this.goalSelector.addGoal(1, new AnimationRepel<>(this, GROUND_POUND_ANIMATION, 2.5F, 8F, 20, 1.25F, 1.2F, true));
-        this.goalSelector.addGoal(1, new AnimationRepel<>(this, GROUND_POUND_ANIMATION2, 3F, 8F, 20, 1.3F, 1.3F, true) {
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, GROUND_SLAM_ANIMATION3, 3F, 6F, 3, 1.2F, 1.2F, true));
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, GROUND_POUND_ANIMATION, 2.5F, 6F, 20, 1.2F, 1.2F, true));
+        this.goalSelector.addGoal(1, new AnimationRepel<>(this, GROUND_POUND_ANIMATION2, 3F, 7F, 20, 1.25F, 1.3F, true) {
             @Override
             protected void onHit(LivingEntity entity) {
                 entity.addEffect(new MobEffectInstance(EffectInit.ELECTRIFIED_EFFECT.get(), 200, 0, false, false, true));
@@ -814,8 +814,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                 .priority(2)
                 .cooldown(baseAttack)
                 .condition(ConditionFactory.and(
-                        heightDiff,
-                        ConditionFactory.distanceRange(0, 4.5),
+                        ConditionFactory.hybridDistanceRange(5, 0, 5),
                         ConditionFactory.randomChance(0.5F),
                         (entity, target) -> entity.LRFlag
                 )).onSuccess(e -> {
@@ -827,8 +826,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                 .priority(2)
                 .cooldown(baseAttack)
                 .condition(ConditionFactory.and(
-                        heightDiff,
-                        ConditionFactory.distanceRange(0, 4.5),
+                        ConditionFactory.hybridDistanceRange(5, 0, 5),
                         ConditionFactory.randomChance(0.5F),
                         (entity, target) -> !entity.LRFlag
                 )).onSuccess(e -> {
@@ -870,7 +868,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                 .cooldown(new HealthScaledCooldown(300, 10, 40, 0.3F, true))
                 .condition(ConditionFactory.and(
                         heightDiff,
-                        ConditionFactory.distanceRange(4, 16),
+                        ConditionFactory.distanceRange(3, 16),
                         ConditionFactory.angleRange(-60F, 60F),
                         ConditionFactory.or(
                                 ConditionFactory.randomChance(0.4F),

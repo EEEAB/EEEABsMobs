@@ -344,7 +344,7 @@ public class EntityRelicRipper extends EntityAbsRelicron {
                         if (target != null) entity.lookAt(target, 30F, 30F);
                         if (tick == 20 || tick == 38 || tick == 63) {
                             Vec3 pos = entity.getPosOffset(true, 2F, 1.75F, 0F);
-                            for (Entity targetEntity : entity.level().getEntitiesOfClass(Entity.class, ModEntityUtils.makeAABBWithSize(pos.x, pos.y, pos.z, 0, 3.9, entity.getBbHeight() * 1.2, 3.9), targetEntity -> targetEntity != entity && targetEntity.isAttackable() && !entity.isAlliedTo(targetEntity))) {
+                            for (Entity targetEntity : entity.level().getEntitiesOfClass(Entity.class, ModEntityUtils.makeAABBWithSize(pos.x, pos.y, pos.z, 0, 4, entity.getBbHeight() * 1.2, 4), targetEntity -> targetEntity != entity && targetEntity.isAttackable() && !entity.isAlliedTo(targetEntity))) {
                                 entity.doHurtTarget(targetEntity, tick == 38 ? 1F : 1.2F, 1F, tick == 63);
                             }
                         }
@@ -547,7 +547,7 @@ public class EntityRelicRipper extends EntityAbsRelicron {
                     entity.lookAt(target, 30F, 60F);
                     entity.getLookControl().setLookAt(target, 30F, 60F);
                 }
-                if (tick % 5 == 0) entity.rangeAttack(2.5, entity.getBbHeight() * 0.75, 2.5, 2.5, 50F, 50F,
+                if (tick % 5 == 0) entity.rangeAttack(2.5, entity.getBbHeight() * 0.75, 2.5, 2.5, 60F, 60F,
                         hitEntity -> {
                             if (entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), hitEntity, 0.35F, 0, false)) {
                                 if (EntityRelicAnnihilator.canBeControlled(entity, hitEntity)) {

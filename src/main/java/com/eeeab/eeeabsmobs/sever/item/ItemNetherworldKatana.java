@@ -18,7 +18,7 @@ public class ItemNetherworldKatana extends SwordItem implements ConfigurableItem
 
     public ItemNetherworldKatana(Tier tier, Properties properties) {
         //super(tier, (int) (-3D + ModConfigHandler.COMMON.items.netherworldKatana.attackDamageValue), (float) (-4D + ModConfigHandler.COMMON.items.netherworldKatana.attackSpeedValue), properties);
-        super(tier, 11, -2.6F, properties);
+        super(tier, 8, -2.6F, properties);
         //this.defaultModifiers = this.creatAttributesFromConfig();
     }
 
