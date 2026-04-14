@@ -959,8 +959,8 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
     }
 
     public static boolean canBeControlled(LivingEntity entity, LivingEntity target) {
-        if (!target.isAlive() && !target.isSpectator() && !target.isMultipartEntity() && !target.isPassenger()) return false;
-        AABB box1 = entity.getBoundingBox().inflate(1.2);
+        if (!target.isAlive() || target.isSpectator() || target.isMultipartEntity() || target.isPassenger()) return false;
+        AABB box1 = entity.getBoundingBox().inflate(0.5);
         double length1 = box1.getXsize();
         double width1 = box1.getZsize();
         double height1 = box1.getYsize();
@@ -1466,7 +1466,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
         @Override
         public void tick() {
             int tick = entity.getAnimationTick();
-            if (tick < (entity.isBlinded() ? 10 : 12)) {
+            if (tick < (entity.isBlinded() ? 5 : 10)) {
                 lookAtTarget();
             } else if (tick >= 15 && tick <= 40) {
                 double radians = Math.toRadians(this.entity.getYRot() + 90F);
