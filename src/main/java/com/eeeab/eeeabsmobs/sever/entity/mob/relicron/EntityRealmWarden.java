@@ -680,10 +680,10 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             if (inServer && tick == 20 && (entity.getTarget() != null && !(entity.getTarget() instanceof EntityAbsRelicron))) {
                 entity.playSound(SoundInit.REALM_WARDEN_VOICE1.get(), 3F, 1F);
             }
-            if (tick == 43 || tick == 53) {
+            if (tick == 45 || tick == 54) {
                 if (inServer) entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 0.6F, 1F);
                 else {
-                    Vec3 pos = entity.getPosOffset(tick == 43, 0F, entity.getBbWidth(), 0);
+                    Vec3 pos = entity.getPosOffset(tick == 45, 0F, entity.getBbWidth(), 0);
                     ModParticleUtils.blockParticlesAround(entity.level(), pos.x, pos.y, pos.z, 12, 0.25, 0.75, 0.1,
                             0.2, 0.1, 0.3, -0.2, 0.1, (pos2, state) -> getBlockParticleData(entity.random, state, pos, 2));
                     ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 28F, 25, ParticleDust.EnumDustBehavior.GROW, 0.74F);
@@ -691,8 +691,10 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 }
             }
             if (tick == 70) {
-                if (inServer) entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 0.8F, 1F);
-                else {
+                if (inServer) {
+                    entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 0.8F, 0.9F);
+                    entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 0.8F, 1.1F);
+                } else {
                     Vec3 pos = entity.position();
                     ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 35F, 30, ParticleDust.EnumDustBehavior.GROW, 0.74F);
                     ModParticleUtils.annularParticleOutburst(entity.level(), 16, dustData, pos.x, pos.y, pos.z, 1.6F, 0.5);
@@ -1036,6 +1038,14 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 )).nextH(doubleFistSlamRule, 0.85)
                 .build();
 
+        AnimationRule<EntityRealmWarden> jumpSmashStartRule = builder.define(JUMP_SMASH_START_ANIMATION)
+                .cooldown(generator)
+                .condition(ConditionFactory.and(
+                        ConditionFactory.distanceRange(10, 24),
+                        ConditionFactory.randomChanceOnLowHealth(0.2F, 0.8F)
+                ))
+                .build();
+
         HealthScaledCooldown groundPound = new HealthScaledCooldown(350, 50, 100, 0.5F, true);//10~15(20
         AnimationRule<EntityRealmWarden> groundPoundRule = builder.define(GROUND_POUND_ANIMATION)
                 .triggerAtTick(33)
@@ -1048,6 +1058,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 .nextW(turnaroundSweepRule, 1.2)
                 .nextW(backStepRule, 1.2)
                 .nextH(derivedHeavySwingRule, 0.5)
+                .nextH(jumpSmashStartRule, 0.5)
                 .nextH(leapRule, 0.25)
                 .next(heavySwingRule, 0.9, 0.75)
                 .build();
@@ -1111,15 +1122,8 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 .nextW(stompRule, 1.1)
                 .nextH(doubleFistSlamRule, 0.75)
                 .nextH(derivedHeavySwingRule, 0.5)
+                .nextH(jumpSmashStartRule, 0.5)
                 .next(heavySwingRule, 0.9, 0.75)
-                .build();
-
-        AnimationRule<EntityRealmWarden> jumpSmashStartRule = builder.define(JUMP_SMASH_START_ANIMATION)
-                .cooldown(generator)
-                .condition(ConditionFactory.and(
-                        ConditionFactory.distanceRange(10, 24),
-                        ConditionFactory.randomChanceOnLowHealth(0.2F, 0.8F)
-                ))
                 .build();
 
         AnimationRule<EntityRealmWarden> backStepLandingRule = builder.define(BACKSTEP_LANDING_ANIMATION)
