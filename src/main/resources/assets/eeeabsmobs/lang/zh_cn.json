@@ -381,8 +381,6 @@
   "advancements.eeeabsmobs.kill_relic_annihilator.description": "击败遗迹歼击者",
   "advancements.eeeabsmobs.kill_realm_warden.title": "铁律的终结",
   "advancements.eeeabsmobs.kill_realm_warden.description": "击败界域戍卫",
-  "advancements.eeeabsmobs.kill_nameless_guardian.title": "谁还记得它？",
-  "advancements.eeeabsmobs.kill_nameless_guardian.description": "击败无名守卫者",
 
   "_comment": "配置",
   "config.eeeabsmobs.item_cd": "设置物品冷却时间",

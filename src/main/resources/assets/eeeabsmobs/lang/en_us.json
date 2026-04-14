@@ -381,8 +381,6 @@
   "advancements.eeeabsmobs.kill_relic_annihilator.description": "Defeat the Relic Annihilator",
   "advancements.eeeabsmobs.kill_realm_warden.title": "End of the Iron Law",
   "advancements.eeeabsmobs.kill_realm_warden.description": "Defeat the Realmwarden",
-  "advancements.eeeabsmobs.kill_nameless_guardian.title": "Who Even Remembers It?",
-  "advancements.eeeabsmobs.kill_nameless_guardian.description": "Defeat the Nameless Guardian",
 
   "_comment": "Config",
   "config.eeeabsmobs.item_cd": "Set Item Cool Down Time",

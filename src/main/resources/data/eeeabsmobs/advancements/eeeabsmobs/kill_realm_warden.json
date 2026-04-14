@@ -1,5 +1,5 @@
 {
-  "parent": "eeeabsmobs:eeeabsmobs/kill_relic_annihilator",
+  "parent": "eeeabsmobs:eeeabsmobs/coreforge_ruins",
   "display": {
     "icon": {
       "item": "eeeabsmobs:doombolt_battleaxe"
@@ -12,8 +12,7 @@
     },
     "frame": "challenge",
     "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": true
+    "announce_to_chat": true
   },
   "criteria": {
     "requirement": {
