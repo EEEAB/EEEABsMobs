@@ -48,12 +48,18 @@ public class ParticleInit {
             return ParticleRing.RingData.CODEC(this);
         }
     });
+    public static final RegistryObject<ParticleType<ParticleRing.RingData>> RADIAL_OPACITY_RING = PARTICLES.register("radial_opacity_ring", () -> new ParticleType<>(false, ParticleRing.RingData.DESERIALIZER) {
+        public Codec<ParticleRing.RingData> codec() {
+            return ParticleRing.RingData.CODEC(this);
+        }
+    });
 
     public static final RegistryObject<ParticleType<AdvancedParticleData>> SPELL_CASTING = ParticleInit.registerAdvancedParticle("spell_casting", AdvancedParticleData.DESERIALIZER);
     public static final RegistryObject<ParticleType<AdvancedParticleData>> ADV_ORB = ParticleInit.registerAdvancedParticle("adv_orb", AdvancedParticleData.DESERIALIZER);
     public static final RegistryObject<ParticleType<AdvancedParticleData>> GLOW = ParticleInit.registerAdvancedParticle("glow", AdvancedParticleData.DESERIALIZER);
     public static final RegistryObject<ParticleType<AdvancedParticleData>> ADV_RING = ParticleInit.registerAdvancedParticle("adv_ring", AdvancedParticleData.DESERIALIZER);
     public static final RegistryObject<ParticleType<AdvancedParticleData>> ADV_RING2 = ParticleInit.registerAdvancedParticle("adv_ring2", AdvancedParticleData.DESERIALIZER);
+    public static final RegistryObject<ParticleType<AdvancedParticleData>> ADV_RING3 = ParticleInit.registerAdvancedParticle("adv_ring3", AdvancedParticleData.DESERIALIZER);
     public static final RegistryObject<ParticleType<AdvancedParticleData>> CRIMSON = ParticleInit.registerAdvancedParticle("crimson", AdvancedParticleData.DESERIALIZER);
     public static final RegistryObject<ParticleType<RibbonParticleData>> FLAT_RIBBON = ParticleInit.registerRibbonParticle("flat_ribbon", RibbonParticleData.DESERIALIZER);
     public static final RegistryObject<ParticleType<AdvancedParticleData>> CRIMSON_EYE = ParticleInit.registerAdvancedParticle("crimson_eye", AdvancedParticleData.DESERIALIZER);

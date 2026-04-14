@@ -140,6 +140,7 @@ public class RegisterHandler {
         event.registerSpriteSet(ParticleInit.GLOW.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.ADV_RING.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.ADV_RING2.get(), AdvancedParticleBase.Factory::new);
+        event.registerSpriteSet(ParticleInit.ADV_RING3.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.CRIMSON.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.CRIMSON_EYE.get(), AdvancedParticleBase.Factory::new);
         event.registerSpriteSet(ParticleInit.STRIP_SOUL_FIRE.get(), AdvancedParticleBase.Factory::new);
@@ -163,6 +164,7 @@ public class RegisterHandler {
         event.registerSpriteSet(ParticleInit.VOLT_EXPLOSION.get(), HugeExplosionParticle.Provider::new);
         event.registerSpriteSet(ParticleInit.RING.get(), ParticleRing.Factory::new);
         event.registerSpriteSet(ParticleInit.BIG_RING.get(), ParticleRing.Factory::new);
+        event.registerSpriteSet(ParticleInit.RADIAL_OPACITY_RING.get(), ParticleRing.Factory::new);
         event.registerSpecial(ParticleInit.BLAZE_EXPLOSION_EMITTER.get(), new ParticleBlazeExplosionSeed.Factory());
         event.registerSpecial(ParticleInit.VOLT_EXPLOSION_EMITTER.get(), new ParticleVoltExplosionSeed.Factory());
     }
