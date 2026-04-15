@@ -2,7 +2,6 @@ package com.eeeab.eeeabsmobs.client.model.entity;
 
 import com.eeeab.animate.client.model.ModHierarchicalModel;
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.eeeabsmobs.client.model.animation.AnimationCommon;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationImmortalShaman;
 import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalShaman;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -71,7 +70,6 @@ public class ModelImmortalShaman extends ModHierarchicalModel<EntityImmortalSham
     public void setupAnim(EntityImmortalShaman entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
         lookAtTarget(netHeadYaw, headPitch, 1.0F, this.head);
-        playAnimation(this, entity, EntityImmortalShaman.DIE_ANIMATION, AnimationCommon.DIE, ageInTicks);
         playAnimation(this, entity, EntityImmortalShaman.SPELLCASTING_BOMB_ANIMATION, AnimationImmortalShaman.BOMB, ageInTicks);
         playAnimation(this, entity, EntityImmortalShaman.SPELLCASTING_HEAL_ANIMATION, AnimationImmortalShaman.HEAL, ageInTicks);
         playAnimation(this, entity, EntityImmortalShaman.SPELLCASTING_FR_ANIMATION, AnimationImmortalShaman.ATTACK, ageInTicks);

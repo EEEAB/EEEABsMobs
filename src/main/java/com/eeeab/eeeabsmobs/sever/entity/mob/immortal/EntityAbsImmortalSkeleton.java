@@ -45,7 +45,6 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
 public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implements VariantHolder<EntityAbsImmortalSkeleton.ClassType> {
-    public static final Animation DIE_ANIMATION = Animation.create(30);
     public static final Animation SWINGARM_ANIMATION = Animation.create(15);
     public static final Animation MELEE_ANIMATION1 = Animation.create(15);
     public static final Animation MELEE_ANIMATION2 = Animation.create(15);
@@ -67,7 +66,6 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
             BLOCK_ANIMATION,
             SPAWN_ANIMATION,
             PUTUP_ANIMATION,
-            DIE_ANIMATION
     };
     protected int timeUntilBlock;
 
@@ -105,7 +103,6 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
         this.goalSelector.addGoal(1, new AnimationMelee<>(this, MELEE_ANIMATION1, 8, 2.8F, 1.0F, 1.0F));
         this.goalSelector.addGoal(1, new AnimationAreaMelee<>(this, MELEE_ANIMATION2, 7, 2.8F, 1.0F, 1.0F, 90F, 2.8F, true));
         this.goalSelector.addGoal(1, new AnimationBlock<>(this, BLOCK_ANIMATION));
-        this.goalSelector.addGoal(2, new AnimationDie<>(this));
         this.targetSelector.addGoal(2, new CopyOwnerTargetGoal<>(this));
         this.goalSelector.addGoal(5, new AnimationMeleeAI<>(this, 1.05D, 10 + this.random.nextInt(10), EntityAbsImmortalSkeleton::checkConformCareerWeapon, SWINGARM_ANIMATION));
     }
@@ -214,11 +211,6 @@ public abstract class EntityAbsImmortalSkeleton extends EntityAbsImmortal implem
     @Override
     protected SoundEvent getDeathSound() {
         return SoundInit.IMMORTAL_SKELETON_DEATH.get();
-    }
-
-    @Override
-    public Animation getDeathAnimation() {
-        return DIE_ANIMATION;
     }
 
     @Override

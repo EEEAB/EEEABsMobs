@@ -2,7 +2,6 @@ package com.eeeab.eeeabsmobs.sever.entity.mob.immortal;
 
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import com.eeeab.animate.server.ai.AnimationSpellAI;
-import com.eeeab.animate.server.ai.animation.AnimationDie;
 import com.eeeab.animate.server.ai.animation.AnimationRepel;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.animate.server.handler.AnimationHandler;
@@ -60,7 +59,6 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
     public static final Animation SPELLCASTING_HEAL_ANIMATION = Animation.create(60);
     public static final Animation SPELLCASTING_WOLOLO_ANIMATION = Animation.create(40);
     public static final Animation AVOID_ANIMATION = Animation.create(15);
-    public static final Animation DIE_ANIMATION = Animation.create(30);
     private static final Animation[] ANIMATIONS = new Animation[]{
             SPELLCASTING_FR_ANIMATION,
             SPELLCASTING_SUMMON_ANIMATION,
@@ -68,7 +66,6 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
             SPELLCASTING_HEAL_ANIMATION,
             SPELLCASTING_WOLOLO_ANIMATION,
             AVOID_ANIMATION,
-            DIE_ANIMATION
     };
     private int hurtCountBeforeHeal;
     private int timeUntilHeal;
@@ -116,7 +113,6 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
 
     @Override
     protected void registerCustomGoals() {
-        this.goalSelector.addGoal(1, new AnimationDie<>(this));
         this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, SPELLCASTING_HEAL_ANIMATION));
         this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, SPELLCASTING_SUMMON_ANIMATION));
         this.goalSelector.addGoal(1, new ShamanAnimationCommonGoal(this, SPELLCASTING_BOMB_ANIMATION));
@@ -176,7 +172,7 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
         super.tick();
         AnimationHandler.INSTANCE.updateAnimations(this);
 
-        if (!this.level().isClientSide && !this.isNoAi() && !this.isStunned()) {
+        if (!this.level().isClientSide && this.isAlive() && !this.isNoAi() && !this.isStunned()) {
             if (this.getTarget() != null) {
                 LivingEntity target = this.getTarget();
                 if (this.isNoAnimation() && this.attackTick <= 0 && ((targetDistance <= 4.5F && ModEntityUtils.checkTargetComingCloser(this, target)) || this.targetDistance < 3.5F)) {
@@ -608,11 +604,6 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
         protected Animation getEntityAnimation() {
             return SPELLCASTING_WOLOLO_ANIMATION;
         }
-    }
-
-    @Override
-    public Animation getDeathAnimation() {
-        return DIE_ANIMATION;
     }
 
     @Override

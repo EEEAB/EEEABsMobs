@@ -118,7 +118,6 @@ public class ModelAbsImmortalSkeleton extends ModHierarchicalModel<EntityAbsImmo
                 this.walk(this.rightArm, cycle, cycle * 1.2F, true, 0, 0, limbSwing, limbSwingAmount);
             }
         }
-        playAnimation(this, entity,EntityAbsImmortalSkeleton.DIE_ANIMATION, AnimationCommon.DIE, ageInTicks);
         playAnimation(this, entity,EntityAbsImmortalSkeleton.SPAWN_ANIMATION, AnimationCommon.SPAWN, ageInTicks);
         playAnimation(this, entity,EntityAbsImmortalSkeleton.MELEE_ANIMATION1, AnimationImmortalSkeleton.MELEE1, ageInTicks);
         playAnimation(this, entity,EntityAbsImmortalSkeleton.MELEE_ANIMATION2, AnimationImmortalSkeleton.MELEE2, ageInTicks);
