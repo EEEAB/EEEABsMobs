@@ -27,6 +27,7 @@ public class AnimationRange<T extends EEEABMobLibrary & AnimatedEntity & RangedA
     @Override
     public void start() {
         super.start();
+        entity.getNavigation().stop();
         entity.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.entity, item -> item instanceof ProjectileWeaponItem));
     }
 
@@ -42,12 +43,13 @@ public class AnimationRange<T extends EEEABMobLibrary & AnimatedEntity & RangedA
         LivingEntity entityTarget = entity.getTarget();
         if (entityTarget != null) {
             if (entity.getAnimationTick() == attackFrame) {
+                entity.stopUsingItem();
                 entity.performRangedAttack(entityTarget, 0);
                 if (attackSound != null) {
                     entity.playSound(attackSound, 1.0F, 1.0F);
                 }
-                entity.stopUsingItem();
             } else {
+                entity.lookAt(entityTarget, 30F, 30F);
                 entity.getLookControl().setLookAt(entityTarget, 30F, 30F);
             }
         }

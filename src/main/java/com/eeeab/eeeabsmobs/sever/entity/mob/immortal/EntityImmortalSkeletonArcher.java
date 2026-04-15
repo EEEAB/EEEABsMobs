@@ -20,7 +20,7 @@ public class EntityImmortalSkeletonArcher extends EntityAbsImmortalSkeleton impl
     @Override
     public void tick() {
         super.tick();
-        if (this.getTarget() != null && !isNoAi() && isActive()) {
+        if (this.getTarget() != null && !isNoAi() && this.isActive() && this.isAlive()) {
             LivingEntity target = getTarget();
             if (attackTick == 0 && getSensing().hasLineOfSight(target)) {
                 attacking = true;
