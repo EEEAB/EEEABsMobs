@@ -166,6 +166,7 @@ public class ModelRealmWarden extends ModHierarchicalModel<EntityRealmWarden> {
         playAnimation(this, entity, EntityRealmWarden.LEAP_ANIMATION, AnimationRealmWarden2.LEAP_START, ageInTicks);
         playAnimation(this, entity, EntityRealmWarden.LEAP_LANDING_ANIMATION, AnimationRealmWarden2.LEAP_LANDING, ageInTicks);
         playAnimation(this, entity, EntityRealmWarden.JUMP_SMASH_ANIMATION, AnimationRealmWarden2.JUMP_SMASH, ageInTicks);
+        playAnimation(this, entity, EntityRealmWarden.DERIVED_JUMP_SMASH_ANIMATION, AnimationRealmWarden2.JUMP_SMASH_DERIVED, ageInTicks);
         playAnimation(this, entity, EntityRealmWarden.JUMP_SMASH_START_ANIMATION, AnimationRealmWarden2.JUMP_SMASH_START, ageInTicks);
         playOverlapAnimation(this, entity, EntityRealmWarden.SWEEP_ANIMATION, AnimationRealmWarden.SWEEP, ageInTicks);
         playOverlapAnimation(this, entity, EntityRealmWarden.GROUND_POUND_ANIMATION, AnimationRealmWarden.GROUND_POUND, ageInTicks);

@@ -110,6 +110,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
     public static final Animation LEAP_LANDING_ANIMATION = Animation.create(80);
     public static final Animation JUMP_SMASH_START_ANIMATION = Animation.create(35);//25
     public static final Animation JUMP_SMASH_ANIMATION = Animation.create(30);
+    public static final Animation DERIVED_JUMP_SMASH_ANIMATION = Animation.create(50);
     public static final Animation DOUBLE_FIST_SLAM_ANIMATION = Animation.create(40).doesOverlap();
     public static final Animation HEAVY_SMASH_ANIMATION = Animation.create(50);
     public static final Animation ACTIVATE_ANIMATION = Animation.create(90);
@@ -129,6 +130,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             LEAP_LANDING_ANIMATION,
             JUMP_SMASH_START_ANIMATION,
             JUMP_SMASH_ANIMATION,
+            DERIVED_JUMP_SMASH_ANIMATION,
             DOUBLE_FIST_SLAM_ANIMATION,
             HEAVY_SMASH_ANIMATION,
             ACTIVATE_ANIMATION,
@@ -893,8 +895,8 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                     entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get());
                     if (entity.isSecondPhase()) entity.playSound(SoundInit.REALM_WARDEN_SHOCK.get(), 1.5F, 1.2F + (entity.random.nextFloat() - 0.5F) * 0.1F);
                     EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.25F, 4, 3);
-                    int radius = entity.isSecondPhase() || !entity.isAlwaysActive() ? 24 : 20;
-                    AABB area = ModEntityUtils.makeAABBWithSize(entity.getX(), entity.getY(), entity.getZ(), 0, radius, radius, radius);
+                    int size = entity.isSecondPhase() || !entity.isAlwaysActive() ? 24 : 20;
+                    AABB area = ModEntityUtils.makeAABBWithSize(entity.getX(), entity.getY(), entity.getZ(), 0, size, size, size);
                     List<LivingEntity> entities = entity.level().getEntitiesOfClass(LivingEntity.class, area, target -> target != entity && !entity.isAlliedTo(target));
                     for (LivingEntity hitEntity : entities) {
                         entity.doHurtTarget(ModDamageSource.bypassArmor(entity), hitEntity, 1.2F, 0, true);
@@ -926,12 +928,25 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 if (tick == 1) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 2.5F, 0.9F + (entity.random.nextFloat() - 0.5F) * 0.1F);
             }
         });
-        builder.forAnimation(JUMP_SMASH_ANIMATION).atTick(5, doPlayAttackSound).atTick(7, (entity, animation, tick) -> {
+        jumpSmashKeyframe(builder, JUMP_SMASH_ANIMATION, doPlayAttackSound);
+        jumpSmashKeyframe(builder, DERIVED_JUMP_SMASH_ANIMATION, doPlayAttackSound).atTick(25, (entity, animation, tick) -> {
             Vec3 pos = entity.getPosOffset(false, 2.4F, 0F, 0F);
-            entity.doGroundPoundEffect(pos, 1.2F, 1.2F, new double[]{70, 60, 50});
-            for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 2.25, -0.015F, false, 20)) {
-                entity.doHurtTarget(hitEntity, 1F, 0F, true);
-                ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, false);
+            entity.doGroundPoundEffect(pos, 1.5F, 1F, null);
+            if (entity.level().isClientSide) {
+                Vector4f color = entity.getColorByPhase();
+                AdvancedParticleBase.spawnParticle(entity.level(), ParticleInit.ADV_RING3.get(), pos.x, pos.y + 0.375F, pos.z, 0, 0, 0, true, 0, 0, 0,
+                        0, 0, color.x, color.y, color.z, 0, 1, 7, true, false, false, new ParticleComponent[]{
+                                new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(10F, 55F), false),
+                                new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.5F, 0.1F), false),
+                        });
+            } else {
+                entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get());
+                AABB area = ModEntityUtils.makeAABBWithSize(pos.x, pos.y, pos.z, 0, 7, 14, 7);
+                List<LivingEntity> entities = entity.level().getEntitiesOfClass(LivingEntity.class, area, target -> target != entity && !entity.isAlliedTo(target));
+                for (LivingEntity hitEntity : entities) {
+                    entity.doHurtTarget(ModDamageSource.bypassArmor(entity), hitEntity, 1F, 0, true);
+                    ModEntityUtils.forceKnockBack(entity, hitEntity, 1F, pos.x - hitEntity.getX(), pos.z - hitEntity.getZ(), false);
+                }
             }
         });
         builder.forAnimation(TURNAROUND_SWEEP_ANIMATION)
@@ -976,6 +991,17 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             }
         });
         return manager;
+    }
+
+    private static KeyframeManager.KeyframeManegerBuilder<EntityRealmWarden> jumpSmashKeyframe(KeyframeManager.KeyframeManegerBuilder<EntityRealmWarden> builder, Animation defineAnimation, Keyframe<EntityRealmWarden> doPlayAttackSound) {
+        return builder.forAnimation(defineAnimation).atTick(5, doPlayAttackSound).atTick(7, (entity, animation, tick) -> {
+            Vec3 pos = entity.getPosOffset(false, 2.4F, 0F, 0F);
+            entity.doGroundPoundEffect(pos, 1.2F, 1.2F, new double[]{70, 60, 50});
+            for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 2.25, -0.015F, false, 20)) {
+                entity.doHurtTarget(hitEntity, 1F, 0F, true);
+                ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, false);
+            }
+        });
     }
 
     private static AnimationReleaseManager<EntityRealmWarden> setupAnimationRules() {
@@ -1301,9 +1327,9 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             Vec3 pos = this.getPosOffset(false, 2.1F, 0F, this.getBbHeight() * 0.5F);
             Vector4f color = this.getColorByPhase();
             this.doFlashingEffect(ParticleInit.THUMP_RING.get(), pos, 45F, 45F, 0, color.x, color.y, color.z);
-            AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.ADV_RING2.get(), pos.x, this.getY() + 0.1, pos.z, 0, 0, 0, false, 0, Math.PI / 2F, 0,
-                    0, 0, 0.98F, 0.98F, 0.98F, 0, 1, 4, true, false, false, new ParticleComponent[]{
-                            new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(0F, 70F), false),
+            AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.ADV_RING3.get(), pos.x, this.getY() + 0.1, pos.z, 0, 0, 0, false, 0, Math.PI / 2F, 0,
+                    0, 0, 0.98F, 0.98F, 0.98F, 0, 1, 4, false, false, false, new ParticleComponent[]{
+                            new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(0F, 40F), false),
                             new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.4F, 0F), false),
                     });
             ModParticleUtils.roundParticleOutburst(this.level(), 15, new ParticleOptions[]{
@@ -1360,7 +1386,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 40F, 35, ParticleDust.EnumDustBehavior.GROW, 0.74F);
             ModParticleUtils.annularParticleOutburst(this.level(), 18, dustData, pos.x, pos.y, pos.z, 1.6F, 0.6);
             Vector4f color = this.getColorByPhase();
-            this.level().addParticle(new ParticleRing.RingData(ParticleInit.BIG_RING.get(), 0F, (float) (Math.PI / 2F), 18, color.x, color.y, color.z, 1F, 80F * scale, false,
+            this.level().addParticle(new ParticleRing.RingData(ParticleInit.RADIAL_OPACITY_RING.get(), 0F, (float) (Math.PI / 2F), 12, color.x, color.y, color.z, 1F, 70F * scale, false,
                     ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y + 0.375F, pos.z, 0, 0, 0);
             ModParticleUtils.blockParticlesAround(this.level(), pos.x, pos.y, pos.z, (int) (8 * scale), 0.5 * scale, 1 * scale, 0.15,
                     0.25, 0.2 * yBlockPtcScale, 0.5 * yBlockPtcScale, -0.2, 0.1, (pos2, state) -> getBlockParticleData(this.random, state, pos, 2.5));
@@ -1785,7 +1811,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
         private double distanceCache;
 
         protected RWJumpSmashGoal(EntityRealmWarden entity) {
-            super(entity, JUMP_SMASH_START_ANIMATION, JUMP_SMASH_ANIMATION);
+            super(entity, JUMP_SMASH_START_ANIMATION, JUMP_SMASH_ANIMATION, DERIVED_JUMP_SMASH_ANIMATION);
         }
 
         @Override
@@ -1831,7 +1857,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                             entity.setYRot((float) (Math.atan2(direction.z, direction.x) * 180 / Math.PI) - 90);
                         }
                     } else if (tick >= 24) flag = true;
-                    nextAnimation(animation, JUMP_SMASH_ANIMATION, flag);
+                    nextAnimation(animation, entity.isSecondPhase() ? DERIVED_JUMP_SMASH_ANIMATION : JUMP_SMASH_ANIMATION, flag);
                 }
             } else entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
         }
