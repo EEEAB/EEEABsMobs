@@ -1170,8 +1170,8 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
 
     public boolean doHurtTarget(DamageSource source, LivingEntity target, boolean disableShield, boolean addEffect, boolean ignoreArmor, float baseDamageMultiplier, float damageMultiplier) {
         double baseATK = this.getAttributeValue(Attributes.ATTACK_DAMAGE);
-        //当目标数量＞1时，根据目标数量增加攻击伤害，每个目标增加0.4基础攻击伤害
-        baseATK += Mth.clamp((targets.size() - 1) * 0.4F, 0F, 2F);
+        //当目标数量＞1时，根据目标数量增加攻击伤害，每个目标增加1基础攻击伤害 TODO 待完善
+        baseATK += Mth.clamp(targets.size() - 1, 0F, 5F);
         boolean flag = target.hurt(source, (float) ((baseATK * baseDamageMultiplier) + getDamageAmountByTargetHealthPct(target)) * damageMultiplier);
         if (flag) {
             this.invalidAttackCount = 0;

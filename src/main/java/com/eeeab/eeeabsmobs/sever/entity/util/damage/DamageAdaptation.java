@@ -99,7 +99,7 @@ public class DamageAdaptation {
 
         long currentTick = entity.tickCount;
         long interval = currentTick - lastHitTick;
-        totalIncrement += (maxAdaptFactor * (isPlayer ? 0.2F : 0.1F)) * (1 - Math.min(interval / FREQUENCY_THRESHOLD, 1));
+        totalIncrement += (maxAdaptFactor * 0.1F) * (1 - Math.min(interval / FREQUENCY_THRESHOLD, 1));
 
         DamageInfo info = adaptMap.get(key);
         if (info != null) {
@@ -127,8 +127,8 @@ public class DamageAdaptation {
         float reduction = (float) Math.pow(info.getAdaptFactor() / maxAdaptFactor, CURVE_EXPONENT);
         reduction = Math.min(reduction, maxAdaptFactor);
         if (reduction == maxAdaptFactor) info.setAdaptFactor(reduction);
-        if (debug) EEEABMobs.LOGGER.info("伤害：{} 累计适应值：{} 总累计适应值：{} 适应减伤系数：{} 间隔适应值：{} 生命值系数：{}",
-                amount, totalIncrement, info.getAdaptFactor(), reduction, totalIncrement - baseIncrement, ratioMultiplier);
+        if (debug) EEEABMobs.LOGGER.info("伤害源：{} 伤害：{} 单次累计：{} 总适应值：{} 减伤系数：{} 间隔适应值：{} 生命值系数：{}",
+                key, amount, totalIncrement, info.getAdaptFactor(), reduction, totalIncrement - baseIncrement, ratioMultiplier);
         return amount * (1F - reduction);
     }
 
