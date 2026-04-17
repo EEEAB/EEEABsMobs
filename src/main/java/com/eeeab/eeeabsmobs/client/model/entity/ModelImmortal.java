@@ -246,7 +246,7 @@ public class ModelImmortal extends ModHierarchicalModel<EntityImmortalBoss> {
             this.bob(root, speed, degree + 0.2F, false, frame, 1);
             this.bob(head, speed, speed, false, frame, 1);
             this.walk(head, speed, degree * 0.1F, true, 0, 0, frame, 1);
-            this.walk(jaw, speed, degree * 0.11F, true, 0, 0, frame, 1);
+            this.walk(jaw, speed, degree * 0.03F, true, 0, 0, frame, 1);
             this.bob(core, speed - 0.02F, degree * 0.1F, false, frame, 1);
             this.bob(rightArm, speed, degree + 0.2F, false, frame, 1);
             this.bob(leftArm, speed, degree + 0.2F, false, frame, 1);
