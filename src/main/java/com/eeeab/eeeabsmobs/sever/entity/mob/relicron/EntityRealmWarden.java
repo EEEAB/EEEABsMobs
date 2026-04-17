@@ -413,7 +413,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 if (speed > 0.05) {
                     if (this.random.nextInt(5) == 0) this.doWalkEffect(2);
                     if (this.isNoAnimation() && !this.isSilent() && this.tickCount % 15 == 1) {
-                        this.level().playLocalSound(getX(), getY(), getZ(), SoundInit.REALM_WARDEN_STEP.get(), this.getSoundSource(), 1F, 1.3F, false);
+                        this.level().playLocalSound(getX(), getY(), getZ(), SoundInit.REALM_WARDEN_STEP.get(), this.getSoundSource(), 1.5F, 1.3F, false);
                     }
                 }
                 if (this.isSecondPhase() && this.tickCount % 2 == 0 && this.random.nextInt(3) == 0) {
@@ -670,10 +670,10 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
         KeyframeManager<EntityRealmWarden> manager = new KeyframeManager<>();
         KeyframeManager.KeyframeManegerBuilder<EntityRealmWarden> builder = manager.builder();
         Keyframe<EntityRealmWarden> doPlayAttackSound = (entity, animation, tick) -> {
-            if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 0.8F, 1F);
+            if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 1.5F, 1F);
         };
         Keyframe<EntityRealmWarden> doPlayShortHumSound = (entity, animation, tick) -> {
-            if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_SHORTHUM.get(), 1.5F, 1F + (entity.random.nextFloat() - 0.5F) * 0.1F);
+            if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_SHORTHUM.get(), 1.2F, 1F + (entity.random.nextFloat() - 0.5F) * 0.1F);
         };
         builder.forAnimation(ACTIVATE_ANIMATION).everyTick((entity, animation, tick) -> {
             if (!entity.isActive()) entity.setActive(true);
@@ -683,7 +683,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 entity.playSound(SoundInit.REALM_WARDEN_VOICE1.get(), 3F, 1F);
             }
             if (tick == 45 || tick == 54) {
-                if (inServer) entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 0.6F, 1F);
+                if (inServer) entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 1F, 1F);
                 else {
                     Vec3 pos = entity.getPosOffset(tick == 45, 0F, entity.getBbWidth(), 0);
                     ModParticleUtils.blockParticlesAround(entity.level(), pos.x, pos.y, pos.z, 12, 0.25, 0.75, 0.1,
@@ -694,8 +694,8 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             }
             if (tick == 70) {
                 if (inServer) {
-                    entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 0.8F, 0.9F);
-                    entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 0.8F, 1.1F);
+                    entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 1F, 0.9F);
+                    entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 1F, 1.1F);
                 } else {
                     Vec3 pos = entity.position();
                     ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 35F, 30, ParticleDust.EnumDustBehavior.GROW, 0.74F);
@@ -733,7 +733,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, false);
         });
         Keyframe<EntityRealmWarden> doPlayWhooshSound = (entity, animation, tick) -> {
-            if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_WHOOSH.get(), 1F, 0.7F);
+            if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_WHOOSH.get(), 1.4F, 0.7F);
         };
         builder.forAnimation(HEAVY_SWING_ANIMATION)
                 .atTick(17, doPlayWhooshSound)
@@ -753,16 +753,16 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                     entity.doTrailEffect(animation, tick == 31, tick > 31, false, new Vec3(0, -1.2, 0));
                     if (entity.level().isClientSide) return;
                     if (tick == 34 || tick == 44) EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.2F, 0, 5);
-                    if (tick == 32 || tick == 39) entity.playSound(SoundInit.REALM_WARDEN_WHOOSH.get(), 1F, tick == 39 ? 0.7F : 0.9F);
+                    if (tick == 32 || tick == 39) entity.playSound(SoundInit.REALM_WARDEN_WHOOSH.get(), 1.4F, tick == 39 ? 0.7F : 0.9F);
                 });
         builder.forAnimation(DERIVED_HEAVY_SWING_ANIMATION)
                 .atTick(1, (entity, animation, tick) -> {
-                    if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 1F, 1.1F + (entity.random.nextFloat() - 0.5F) * 0.1F);
+                    if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 1.4F, 1.1F + (entity.random.nextFloat() - 0.5F) * 0.1F);
                 }).atTick(17, doPlayWhooshSound)
                 .atTick(19, heavySwingKF1)
                 .atTick(35, heavySwingKF2)
                 .atTick(66, (entity, animation, tick) -> {
-                    if (!entity.level().isClientSide) if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_BLAST.get(), 0.8F, 1.5F);
+                    if (!entity.level().isClientSide) if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_BLAST.get(), 1.5F, 1.5F);
                 })
                 .atTick(69, (entity, animation, tick) -> {
                     Vec3 pos = entity.getPosOffset(false, 3F, 0F, 0F);
@@ -778,7 +778,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 .inRange(31, 41, (entity, animation, tick) -> {
                     entity.doTrailEffect(animation, tick == 31, tick > 31, false, new Vec3(0, -1.5, 0));
                     if (entity.level().isClientSide) return;
-                    if (tick == 37) entity.playSound(SoundInit.REALM_WARDEN_WHOOSH.get(), 1F, 0.9F);
+                    if (tick == 37) entity.playSound(SoundInit.REALM_WARDEN_WHOOSH.get(), 1.4F, 0.9F);
                     if (tick == 39) EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.2F, 0, 5);
                 });
         Keyframe<EntityRealmWarden> stompKeyFrame = (entity, animation, tick) -> {
@@ -799,7 +799,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                     if (tick == 18) {
                         if (entity.level().getDifficulty() == Difficulty.EASY && entity.random.nextFloat() <= 0.25F) {
                             entity.playSound(SoundInit.MAN.get(), 2.5F, 1F);
-                        } else entity.playSound(SoundInit.REALM_WARDEN_WHOOSH.get(), 1F, 0.9F);
+                        } else entity.playSound(SoundInit.REALM_WARDEN_WHOOSH.get(), 1.4F, 0.9F);
                     }
                     if (tick == 21) entity.rangeAttack(4.5, entity.getBbHeight(), 4.5, 4.5, 90F, 180F, hitEntity -> {
                         entity.doHurtTarget(hitEntity, 0.8F, 0);
@@ -807,7 +807,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                     });
                 });
         builder.forAnimation(SWEEP_ANIMATION).atTick(1, (entity, animation, tick) -> {
-            if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 1.5F, 1.1F + (entity.random.nextFloat() - 0.5F) * 0.1F);
+            if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 1.4F, 1.1F + (entity.random.nextFloat() - 0.5F) * 0.1F);
         }).inRange(19, 29, (entity, animation, tick) -> {
             entity.doTrailEffect(animation, tick == 19, tick > 19, null, null);
             if (entity.level().isClientSide) return;
@@ -819,9 +819,9 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                     if (flag) ModEntityUtils.forceKnockBack(entity, hitEntity, 0.5F, false);
                 });
             }
-            if (tick == 19 || tick == 23) entity.playSound(SoundInit.REALM_WARDEN_WHOOSH.get(), 1F, tick == 23 ? 0.7F : 0.9F);
+            if (tick == 19 || tick == 23) entity.playSound(SoundInit.REALM_WARDEN_WHOOSH.get(), 1.4F, tick == 23 ? 0.7F : 0.9F);
         }).atTick(46, (entity, animation, tick) -> {
-            if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_BLAST.get(), 0.8F, 1.5F);
+            if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_BLAST.get(), 1.2F, 1.5F);
         }).atTick(49, doPlayAttackSound).atTick(50, (entity, animation, tick) -> {
             Vec3 pos = entity.getPosOffset(true, 3.2F, 1.75F, 0F);
             entity.doGroundPoundEffect(pos, 1F, 1.1F, new double[]{85, 70, 45});
@@ -839,7 +839,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                     } else EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.15F, 2, 4);
                 });
         builder.forAnimation(BACKSTEP_LANDING_ANIMATION).atTick(1, (entity, animation, tick) -> {
-                    if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 2.5F, 1.1F + (entity.random.nextFloat() - 0.5F) * 0.1F);
+                    if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 1.4F, 1.1F + (entity.random.nextFloat() - 0.5F) * 0.1F);
                 })
                 .atTick(4, (entity, animation, tick) -> entity.doGroundPoundEffect(entity.position(), 0.9F, 1.2F, null))
                 .inRange(5, 7, (entity, animation, tick) -> {
@@ -853,7 +853,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             boolean leap = tick == 17;
             entity.doLeapEffect(tick, leap);
             if (leap && !entity.level().isClientSide) {
-                entity.playSound(SoundInit.REALM_WARDEN_LEAP.get(), 0.75F * entity.getSoundVolumeScale(), 1F);
+                entity.playSound(SoundInit.REALM_WARDEN_LEAP.get(), 1.5F * entity.getSoundVolumeScale(), 1F);
                 entity.leapDownTarget = entity.getTarget();
                 entity.cachedLandingPosY = entity.getY();
                 entity.hoverTimer = 0;
@@ -874,7 +874,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                         ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, entity.getX() - hitEntity.getX(), entity.getZ() - hitEntity.getZ(), false);
                     });
                     EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.2F, 2, 4);
-                    entity.playSound(SoundInit.REALM_WARDEN_SHAKE_GROUND.get(), 1F, 1.2F);
+                    entity.playSound(SoundInit.REALM_WARDEN_SHAKE_GROUND.get(), 1.5F, 1.2F);
                 }).atTick(15, (entity, animation, tick) -> EntityTelegraph.spawn(entity.level(), entity.position().add(0, 0.1, 0), 15, entity.isSecondPhase() ? 0xFF0080FF : 0xFFFF2020, entity.isSecondPhase() || !entity.isAlwaysActive() ? 12 : 10))
                 .inRange(16, 39, (entity, animation, tick) -> {
                     List<LivingEntity> entities = entity.getNearByEntities(LivingEntity.class, 16, 16, 16, 16);
@@ -885,14 +885,14 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                         inRangeEntity.setDeltaMovement(inRangeEntity.getDeltaMovement().subtract(diff));
                     }
                     if (entity.level().isClientSide) return;
-                    if (tick == 16) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 1.5F, 0.8F + (entity.random.nextFloat() - 0.5F) * 0.1F);
-                    if (tick == 37) entity.playSound(SoundInit.REALM_WARDEN_BLAST.get(), 1.2F, 1.75F);
+                    if (tick == 16) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 1.4F, 0.8F + (entity.random.nextFloat() - 0.5F) * 0.1F);
+                    if (tick == 37) entity.playSound(SoundInit.REALM_WARDEN_BLAST.get(), 1.5F, 1.75F);
                 }).atTick(40, (entity, animation, tick) -> {
                     entity.doLeapLandingEffect(ParticleInit.GLOW.get(), 120, 100, 1.4F, 2F, new double[]{70, 50}, false);
                     ShockWaveUtils.doRingShockWave(entity, entity.getPosOffset(false, 0F, entity.getBbWidth(), 0), 2, 0.05F, false, 10);
                     ShockWaveUtils.doRingShockWave(entity, entity.getPosOffset(true, 0F, entity.getBbWidth(), 0), 2, 0.05F, false, 10);
                     if (entity.level().isClientSide) return;
-                    entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get());
+                    entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 1.5F, 1F);
                     if (entity.isSecondPhase()) entity.playSound(SoundInit.REALM_WARDEN_SHOCK.get(), 1.5F, 1.2F + (entity.random.nextFloat() - 0.5F) * 0.1F);
                     EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.25F, 4, 3);
                     int size = entity.isSecondPhase() || !entity.isAlwaysActive() ? 24 : 20;
@@ -925,7 +925,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 }
             } else {
                 if (!entity.level().isClientSide && tick % 25 == 1) entity.playSound(SoundInit.REALM_WARDEN_AIRFLOW.get(), 2F, 1.75F);
-                if (tick == 1) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 2.5F, 0.9F + (entity.random.nextFloat() - 0.5F) * 0.1F);
+                if (tick == 1) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 1.4F, 0.9F + (entity.random.nextFloat() - 0.5F) * 0.1F);
             }
         });
         jumpSmashKeyframe(builder, JUMP_SMASH_ANIMATION, doPlayAttackSound);
@@ -940,7 +940,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                                 new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.5F, 0.1F), false),
                         });
             } else {
-                entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get());
+                entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 1.5F, 1F);
                 AABB area = ModEntityUtils.makeAABBWithSize(pos.x, pos.y, pos.z, 0, 7, 14, 7);
                 List<LivingEntity> entities = entity.level().getEntitiesOfClass(LivingEntity.class, area, target -> target != entity && !entity.isAlliedTo(target));
                 for (LivingEntity hitEntity : entities) {
@@ -954,9 +954,9 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                     entity.doTrailEffect(animation, tick == 14, tick < 21, false, new Vec3(0, -0.75, 0));
                     entity.doTrailEffect(animation, tick == 15, tick > 15, true, new Vec3(0, -0.5, 0));
                     if (entity.level().isClientSide) return;
-                    if (tick == 16) entity.playSound(SoundInit.REALM_WARDEN_WHOOSH.get(), 1F, 0.9F);
+                    if (tick == 16) entity.playSound(SoundInit.REALM_WARDEN_WHOOSH.get(), 1.4F, 0.9F);
                     if (tick == 18) {
-                        entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 0.8F, 1F);
+                        entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 1.2F, 1F);
                         entity.rangeAttack(4, entity.getBbHeight(), 4, 4, hitEntity -> {
                             entity.doHurtTarget(hitEntity, 0.7F, 0);
                             ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, false);
@@ -965,7 +965,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                     }
                 });
         builder.forAnimation(DOUBLE_FIST_SLAM_ANIMATION).atTick(12, (entity, animation, tick) -> {
-            if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_BLAST.get(), 0.8F, 1.5F);
+            if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_BLAST.get(), 1.2F, 1.5F);
         }).atTick(14, doPlayAttackSound).atTick(16, (entity, animation, tick) -> {
             entity.doFistSlamEffect();
             if (entity.level().isClientSide) return;
@@ -979,9 +979,9 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             if (entity.isSecondPhase()) entity.playSound(SoundInit.REALM_WARDEN_SHOCK.get(), 1F, 1.2F + (entity.random.nextFloat() - 0.5F) * 0.1F);
         });
         builder.forAnimation(HEAVY_SMASH_ANIMATION).atTick(1, (entity, animation, tick) -> {
-            if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 1.5F, 0.9F + (entity.random.nextFloat() - 0.5F) * 0.1F);
+            if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 1.4F, 0.9F + (entity.random.nextFloat() - 0.5F) * 0.1F);
         }).atTick(24, (entity, animation, tick) -> {
-            if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_BLAST.get(), 1F, 1.5F);
+            if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_BLAST.get(), 1.5F, 1.5F);
         }).atTick(27, (entity, animation, tick) -> {
             Vec3 pos = entity.getPosOffset(false, 3F, 0F, 0F);
             entity.doGroundPoundEffect(pos, 1.4F, 1.5F, null);
@@ -1208,7 +1208,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
         Vec3 leftBase = left.add(up.scale(upWeight)).normalize();
         Vec3 rightBase = right.add(up.scale(upWeight)).normalize();
         for (int side = 0; side < 2; side++) {
-            this.playSound(SoundInit.REALM_WARDEN_LAUNCH.get());
+            this.playSound(SoundInit.REALM_WARDEN_LAUNCH.get(), 1.5F, 1F);
             Vec3 spawn = (side == 0) ? leftSpawn : rightSpawn;
             Vec3 baseDir = (side == 0) ? leftBase : rightBase;
             for (int i = 0; i < sideCount; i++) {
@@ -1236,7 +1236,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
 
     private float getSoundVolumeScale() {
         if (getTarget() instanceof EntityAbsRelicron) return 1F;
-        return triggeredPhashBits == BIT_NONE || triggeredPhashBits == BIT_MEDIUM ? 0.2F : 1F;
+        return triggeredPhashBits == BIT_MEDIUM ? 0.2F : 1F;
     }
 
     private boolean tryTeleportTo(double x, double y, double z) {
@@ -1399,7 +1399,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 }
             }
         } else {
-            this.playSound(SoundInit.REALM_WARDEN_SHAKE_GROUND.get(), 0.8F * volume, 1.2F * volume);
+            this.playSound(SoundInit.REALM_WARDEN_SHAKE_GROUND.get(), 1.2F * volume, 1.2F * volume);
             if (secondPhase) this.playSound(SoundInit.REALM_WARDEN_SHOCK.get(), volume, 1.3F + (this.random.nextFloat() - 0.5F) * 0.1F);
             EntityCameraShake.cameraShake(this.level(), pos, 20, 0.2F * scale, 3, 4);
         }
