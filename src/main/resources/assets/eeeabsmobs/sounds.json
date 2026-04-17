@@ -647,7 +647,7 @@
     "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.idle",
     "sounds": [
       "eeeabsmobs:entity/realm_warden/idle",
-      "eeeabsmobs:entity/realm_warden/short_hum1",
+      "eeeabsmobs:entity/realm_warden/short_hum",
       "eeeabsmobs:entity/realm_warden/hum1",
       "eeeabsmobs:entity/realm_warden/hum2"
     ]
@@ -732,8 +732,7 @@
   "entity.realm_warden.short_hum": {
     "subtitle": "subtitles.eeeabsmobs.entity.realm_warden.hum",
     "sounds": [
-      "eeeabsmobs:entity/realm_warden/short_hum1",
-      "eeeabsmobs:entity/realm_warden/short_hum2"
+      "eeeabsmobs:entity/realm_warden/short_hum"
     ]
   },
   "entity.realm_warden.attack": {
