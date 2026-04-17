@@ -133,7 +133,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
     public static final Animation TRACKING_SHURIKEN_ANIMATION = Animation.create(25).doesOverlap();
     public static final Animation UNLEASH_ENERGY_ANIMATION = Animation.create(100);
     public static final Animation ARMBLOCK_ANIMATION = Animation.create(15);
-    public static final Animation ARMBLOCK_HOLD_ANIMATION = Animation.create(30);
+    public static final Animation ARMBLOCK_HOLD_ANIMATION = Animation.create(50);
     public static final Animation ARMBLOCK_END_ANIMATION = Animation.create(10);
     public static final Animation ARMBLOCK_COUNTERATTACK_ANIMATION = Animation.create(20).doesOverlap();
     public static final Animation HURT_ANIMATION1 = Animation.create(60).doesOverlap();
@@ -170,8 +170,8 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
     private static final AnimationReleaseManager<EntityImmortalBoss> ANIMATION_RELEASE_MANAGER;
     private static final int MAX_BLOCK_HURT_COUNT = 5;
     private static final int TIME_UNTIL_TELEPORT = 450;
-    private static final float MAX_COUNTERATTACK_DAMAGE_AMOUNT_THRESHOLD = 30F;
-    private static final float MAX_CUMULATIVE_COUNTERATTACK_DAMAGE_THRESHOLD = 50F;
+    private final float MAX_COUNTERATTACK_DAMAGE_AMOUNT_THRESHOLD = getMaxHealth() * 0.075F;
+    private final float MAX_CUMULATIVE_COUNTERATTACK_DAMAGE_THRESHOLD = getMaxHealth() * 0.1F;
     private static final Predicate<LivingEntity> TARGET_CONDITIONS = entity -> entity.isAlive() && !entity.getType().is(ModTagKey.IMMORTAL_IGNORE_HUNT_TARGETS) && entity.isAttackable() && (entity instanceof Enemy || entity instanceof NeutralMob || (entity instanceof Player player && !player.isCreative() && !player.isSpectator()));
     private static final float[][] BLOCK_OFFSETS = {{-0.75F, -0.75F}, {-0.75F, 0.75F}, {0.75F, 0.75F}, {0.75F, -0.75F}};
     private static final ParticleComponent[] ATTRACT_COMPONENT = {new PropertyControl(EnumParticleProperty.RED, AnimData.startAndEnd(0.3F, 0.56F), false), new PropertyControl(EnumParticleProperty.GREEN, AnimData.startAndEnd(0.388F, 0.85F), false), new PropertyControl(EnumParticleProperty.BLUE, AnimData.startAndEnd(0.55F, 0.98F), false),};
@@ -499,6 +499,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
         boolean canAttack = target != null && !this.isSwitching() && this.universalCDTime <= 0;
 
         if (canAttack) {
+            if (this.battleTimestamp == 0) this.battleTimestamp = this.tickCount;
             ANIMATION_RELEASE_MANAGER.tick(this, this.getCooldownManager());
             if (this.targetDistance <= 5 && Math.abs(this.getY() - target.getY()) <= 5) {
                 this.closeProximityTickCount++;
@@ -616,7 +617,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
                 } else {
                     this.playAnimation(ARMBLOCK_HOLD_ANIMATION);
                 }
-                this.playSound(SoundInit.IMMORTAL_BLOCKING.get(), 0.9F, this.getVoicePitch() + pitch - 0.2F);
+                this.playSound(SoundInit.IMMORTAL_BLOCKING.get(), 1F, this.getVoicePitch() + pitch - 0.2F);
                 this.level().broadcastEntityEvent(this, (byte) 5);
                 this.invulnerableTime /= 2;
                 super.hurt(source, Math.min(damage * 0.1F, getHealth() * 0.025F));
@@ -952,10 +953,10 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
                 )).onSuccess(addSkillProbOnSuccess)
                 .next(smashGround3Rule)
                 .next(pounceRule)
+                .next(unleashEnergyRule)
+                .next(trackingShurikenRule, 0.5, 0.25)
                 .nextH(smashGround2Rule, 0.6)
-                .nextH(unleashEnergyRule, 0.6)
                 .nextH(blockRule, 0.5)
-                .next(trackingShurikenRule, 0.5, 0.2)
                 .build();
 
         AnimationRule<EntityImmortalBoss> attractRule = builder.define(ATTRACT_ANIMATION)
@@ -967,10 +968,10 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
                         ConditionFactory.distanceRange(0, 9, 10),
                         ConditionFactory.randomChanceOnLowHealth(0.3F, 0.7F)
                 )).onSuccess(addSkillProbOnSuccess)
-                .nextW(smashGround3Rule, 1.5)
-                .nextH(unleashEnergyRule, 0.6)
+                .next(unleashEnergyRule)
                 .next(shoryukenRule)
                 .next(pounceRule)
+                .nextW(smashGround3Rule, 1.5)
                 .nextH(blockRule, 0.5)
                 .build();
 
@@ -999,10 +1000,10 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
                 .next(smashGround3Rule)
                 .next(shoryukenRule)
                 .next(pounceRule)
-                .nextH(unleashEnergyRule, 0.6)
+                .next(unleashEnergyRule)
                 .nextH(smashGround2Rule, 0.6)
                 .nextW(attractRule, 0.5)
-                .next(smashGroundRule, 0.5, 0.9)
+                .nextW(smashGroundRule, 0.5)
                 .build();
 
         AnimationRule<EntityImmortalBoss> hardPunchRightRule = builder.define(HARDPUNCH_RIGHT_ANIMATION)
@@ -1019,8 +1020,8 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
                 .nextW(teleportRule, 1.5F)
                 .next(pounceRule)
                 .next(shoryukenRule)
-                .nextH(attractRule, 0.8)
-                .nextH(unleashEnergyRule, 0.6)
+                .next(attractRule)
+                .next(unleashEnergyRule)
                 .nextH(smashGround2Rule, 0.6)
                 .nextH(blockRule, 0.5)
                 .nextH(trackingShurikenRule, 0.4)
@@ -1038,10 +1039,10 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
                 })
                 .next(smashGround3Rule)
                 .next(shoryukenRule)
-                .nextW(teleportRule, 1.5)
                 .next(pounceRule)
-                .nextH(attractRule, 0.8)
-                .nextH(unleashEnergyRule, 0.6)
+                .next(attractRule)
+                .next(unleashEnergyRule)
+                .nextW(teleportRule, 1.5)
                 .nextH(smashGround2Rule, 0.6)
                 .nextH(blockRule, 0.5)
                 .nextH(trackingShurikenRule, 0.4)
@@ -1644,7 +1645,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
         if (this.getAnimation() != STUN_ANIMATION && this.damageAdaptation.isFullyAdapted(this, damageSource)) {
-            this.playSound(SoundInit.IMMORTAL_ADAPT.get(), 1F, this.getVoicePitch() + 0.1F);
+            this.playSound(SoundInit.IMMORTAL_ADAPT.get(), 1.5F, this.getVoicePitch() + 0.1F);
         } else {
             this.playSound(SoundInit.IMMORTAL_HURT.get(), 1.5F, this.getVoicePitch());
         }
