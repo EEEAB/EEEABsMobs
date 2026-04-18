@@ -790,7 +790,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             }
         };
         builder.forAnimation(STOMP_ANIMATION).atTick(13, doPlayAttackSound).atTick(15, stompKeyFrame);
-        builder.forAnimation(STOMP_ANIMATION2).atTick(12, doPlayAttackSound).atTick(14, stompKeyFrame);
+        builder.forAnimation(STOMP_ANIMATION2).atTick(11, doPlayAttackSound).atTick(13, stompKeyFrame);
         builder.forAnimation(ELBOW_STRIKE_ANIMATION).atTick(1, doPlayShortHumSound)
                 .inRange(13, 21, (entity, animation, tick) -> {
                     entity.doTrailEffect(animation, tick == 19, tick > 19, null, new Vec3(0, -0.5, 0));
@@ -931,7 +931,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
         jumpSmashKeyframe(builder, JUMP_SMASH_ANIMATION, doPlayAttackSound);
         jumpSmashKeyframe(builder, DERIVED_JUMP_SMASH_ANIMATION, doPlayAttackSound).atTick(25, (entity, animation, tick) -> {
             Vec3 pos = entity.getPosOffset(false, 2.4F, 0F, 0F);
-            entity.doGroundPoundEffect(pos, 1.5F, 1F, null);
+            entity.doGroundPoundEffect(pos, 1.5F, 1.5F, 1F, null, entity.isSecondPhase() ? new double[]{0.49F, 0.9F, 1F, 0.72F} : null);
             if (entity.level().isClientSide) {
                 Vector4f color = entity.getColorByPhase();
                 AdvancedParticleBase.spawnParticle(entity.level(), ParticleInit.ADV_RING3.get(), pos.x, pos.y + 0.375F, pos.z, 0, 0, 0, true, 0, 0, 0,
@@ -1130,7 +1130,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                         ConditionFactory.distanceRange(0, 6, 7),
                         ConditionFactory.randomChanceOnLowHealth(0.4F, 0.6F)
                 ))
-                .next(stompRule2, 0.5, 0.75)
+                .nextW(stompRule2, 0.75)
                 .nextW(groundPoundRule, 0.75)
                 .nextW(turnaroundSweepRule, 1)
                 .build();
@@ -1370,17 +1370,17 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
     }
 
     private void doGroundPoundEffect(Vec3 pos, float scale, float yBlockPtcScale, double @Nullable [] angles) {
-        doGroundPoundEffect(pos, scale, scale, yBlockPtcScale, angles);
+        doGroundPoundEffect(pos, scale, scale, yBlockPtcScale, angles, null);
     }
 
-    private void doGroundPoundEffect(Vec3 pos, float scale, float volume, float yBlockPtcScale, double @Nullable [] angles) {
+    private void doGroundPoundEffect(Vec3 pos, float scale, float volume, float yBlockPtcScale, double @Nullable [] angles, double @Nullable [] colors) {
         boolean secondPhase = this.isSecondPhase();
         if (this.level().isClientSide) {
             if (angles == null) angles = new double[]{55, 35, 25};
+            if (colors == null) colors = new double[]{1F, 0.89F, 0.64F, 0.6F};
             int[] particles = {6, 8, 5};
             double[] radii = {0.6 * scale, 1 * scale, 1.2 * scale};
             double[] speeds = {1.8, 2.2, 2.5};
-            double[] colors = {1F, 0.89F, 0.64F, 0.6F};
             double[] scales = {0.08, 0.1, 0.12};
             ModParticleUtils.multiLayerBowlParticles(this.level(), pos, 3, particles, radii, speeds, angles, colors, scales, 0.55F);
             ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 40F, 35, ParticleDust.EnumDustBehavior.GROW, 0.74F);
@@ -1492,7 +1492,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
 
     private void doLeapEffect(int tick, boolean leap) {
         if (leap) {
-            this.doGroundPoundEffect(this.position(), 1.2F, 1.2F * getSoundVolumeScale(), 1.5F, new double[]{85, 80, 75});
+            this.doGroundPoundEffect(this.position(), 1.2F, 1.2F * getSoundVolumeScale(), 1.5F, new double[]{85, 80, 75}, null);
             return;
         }
         if (this.level().isClientSide) {
@@ -1554,8 +1554,8 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
 
     private void doLightBlotEffect(Vec3 start, Vec3 end, int lifespan, float size, float parallelNoise, float spreadFactor, LightningBolt.FadeFunction function) {
         if (!this.level().isClientSide) return;
-        LightningBolt bolt = new LightningBolt.LightningBoltBuilder().color(BOLT_COLORS[this.random.nextInt(2)]).lifespan(lifespan).fadeFunction(function)
-                .size(size).count(1).parallelNoise(parallelNoise).spreadFactor(spreadFactor).build(start, end, this.random);
+        LightningBolt bolt = RELICRON_BOLT.color(BOLT_COLORS[this.random.nextInt(2)]).lifespan(lifespan).fadeFunction(function)
+                .size(size).parallelNoise(parallelNoise).spreadFactor(spreadFactor).build(start, end, this.random);
         ClientProxy.LIGHTNING_RENDER.update(this, bolt);
     }
 
