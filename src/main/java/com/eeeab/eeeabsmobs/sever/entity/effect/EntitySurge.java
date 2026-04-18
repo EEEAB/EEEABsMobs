@@ -12,7 +12,6 @@ import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -102,14 +101,21 @@ public class EntitySurge extends EntityMagicEffects implements IEntity {
     private void doSpawnSurgeParticle() {
         ParticleRotation.FaceCameraVertical vertical = new ParticleRotation.FaceCameraVertical();
         int duration = 10 + this.random.nextInt(7);
-        AdvancedParticleData data = AdvancedParticleBase.createParticleData(ParticleInit.SURGE.get(), vertical, 20F, 1, 1, 1, 1, 1,
-                duration, true, false, COMPONENTS, true);
-        this.level().addParticle(data, true, getX(), getY() + 2, getZ(), 0, 0, 0);
+        this.level().addParticle(AdvancedParticleBase.createParticleData(ParticleInit.SURGE.get(), vertical, 20F, 1, 1, 1, 1, 1,
+                duration, true, false, COMPONENTS, true), true, getX(), getY() + 2, getZ(), 0, 0, 0);
+        this.level().addParticle(AdvancedParticleBase.createParticleData(ParticleInit.GLOW.get(), new ParticleRotation.EulerAngles(0, (float) (Math.PI / 2F), 0), 10F, 1, 1, 1, 0.5, 1,
+                duration - 2, true, false, new ParticleComponent[]{
+                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, AnimData.oscillate(0.1F, 0.4F, 8), false),
+                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, AnimData.oscillate(6F, 10F, 8), false),
+                        COMPONENTS[0],
+                        COMPONENTS[1],
+                        COMPONENTS[2],
+                }, false), getX(), getY() + 0.1, getZ(), 0, 0, 0);
         for (int i = 0; i < 3; i++) {
             duration = 5 + this.random.nextInt(5);
             AdvancedParticleData data2 = AdvancedParticleBase.createParticleData(ParticleInit.SPARK.get(), new ParticleRotation.FaceCamera(0), 3F + (this.random.nextFloat() - 0.5F), 1, 1, 1, 1, 1,
                     duration, true, false, COMPONENTS, true);
-            this.level().addParticle(data2, true, getRandomX(1.5), getY() + 0.2 + this.random.nextFloat() * 0.75, getRandomZ(1.5), 0, 0, 0);
+            this.level().addParticle(data2, getRandomX(1.5), getY() + 0.2 + this.random.nextFloat() * 0.75, getRandomZ(1.5), 0, 0, 0);
         }
         if (!this.isSilent()) {
             this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundInit.SURGE.get(), this.getSoundSource(), 0.8F, this.random.nextFloat() * 0.2F + 0.85F, false);
