@@ -279,12 +279,12 @@ public final class ModConfigHandler {
         public Immortal(final ForgeConfigSpec.Builder builder) {
             builder.push("The Immortal");
             {
-                builder.push("Immortal Shuriken");
+                builder.push("Immortal Shuriken").comment("BASE DAMAGE");
                 immortalShuriken = new AttributeConfig(5);
                 builder.pop();
             }
             {
-                builder.push("Immortal Laser");
+                builder.push("Immortal Laser").comment("BASE DAMAGE");
                 immortalLaser = new AttributeConfig(5);
                 builder.pop();
             }

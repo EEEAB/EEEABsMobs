@@ -6,7 +6,6 @@ import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.sever.entity.mob.IMob;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.entity.effect.IEntity;
-import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalBoss;
 import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
@@ -186,8 +185,9 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
         Entity entity = result.getEntity();
         if (entity instanceof LivingEntity hitEntity) {
             float damage = 5F;
-            if (this.getOwner() instanceof EntityImmortalBoss) {
+            if (this.getOwner() instanceof EntityImmortalBoss immortal) {
                 damage = ModConfigHandler.COMMON.mobs.immortals.immortal.immortalShuriken.damage.get().floatValue();
+                damage *= 1F + (Mth.clamp(immortal.getCacheTargets().size() - 1, 0, 5) * 0.1F);
             }
             if (this.getOwner() instanceof IMob iMob) {
                 damage += iMob.getDamageAmountByTargetHealthPct(hitEntity);
