@@ -496,7 +496,7 @@
   "entity.relic_annihilator.shoot_laser": {
     "subtitle": "subtitles.eeeabsmobs.entity.relic_annihilator.shoot_laser",
     "sounds": [
-      "eeeabsmobs:entity/relic_annihilator/shoot_laser"
+      "eeeabsmobs:entity/relic_observer/electromagnetic"
     ]
   },
   "entity.relic_annihilator.active": {
