@@ -55,9 +55,11 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements Animated
     }
 
     @Override
-    public void die(DamageSource source) {
-        super.die(source);
-        this.cooldownManager.clear();
+    public void remove(RemovalReason reason) {
+        super.remove(reason);
+        if (this.isDeadOrDying()) {
+            this.cooldownManager.clear();
+        }
     }
 
     @Override
