@@ -136,8 +136,9 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             ACTIVATE_ANIMATION,
             DIE_ANIMATION,
     };
-    private final static KeyframeManager<EntityRealmWarden> KEYFRAME_MANAGER;
+    private static final KeyframeManager<EntityRealmWarden> KEYFRAME_MANAGER;
     private static final AnimationReleaseManager<EntityRealmWarden> ANIMATION_RELEASE_MANAGER;
+    private static final LightningBolt.LightningBoltBuilder REALMWARDEN_BOLT = new LightningBolt.LightningBoltBuilder().count(1);
     private static final EntityDataAccessor<Integer> DATA_LEAP_HOLD = SynchedEntityData.defineId(EntityRealmWarden.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_SEC_PHASE = SynchedEntityData.defineId(EntityRealmWarden.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Optional<BlockPos>> DATA_REST_POS = SynchedEntityData.defineId(EntityRealmWarden.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
@@ -1554,7 +1555,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
 
     private void doLightBlotEffect(Vec3 start, Vec3 end, int lifespan, float size, float parallelNoise, float spreadFactor, LightningBolt.FadeFunction function) {
         if (!this.level().isClientSide) return;
-        LightningBolt bolt = RELICRON_BOLT.color(BOLT_COLORS[this.random.nextInt(2)]).lifespan(lifespan).fadeFunction(function)
+        LightningBolt bolt = REALMWARDEN_BOLT.color(BOLT_COLORS[this.random.nextInt(2)]).lifespan(lifespan).fadeFunction(function)
                 .size(size).parallelNoise(parallelNoise).spreadFactor(spreadFactor).build(start, end, this.random);
         ClientProxy.LIGHTNING_RENDER.update(this, bolt);
     }

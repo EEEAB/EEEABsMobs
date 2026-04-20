@@ -12,42 +12,26 @@ import java.util.List;
 
 //参考自: https://github.com/AlexModGuy/Ice_and_Fire/blob/1.20/src/main/java/com/github/alexthe666/iceandfire/client/particle/LightningBoltData.java
 public class LightningBolt {
-    private final RandomSource random;
-    private final Vec3 start;
-    private final Vec3 end;
-    private final int segments;
-    private final int count;
-    private final float size;
-    private final int lifespan;
-    private final boolean consecutive;
-    private final float spawnDelay;
-    private final float parallelNoise;
-    private final float spreadFactor;
-    private final Vector4f color;
-    private final FadeFunction fadeFunction;
+    private RandomSource random;
+    private Vec3 start;
+    private Vec3 end;
+    private int segments;
+    private int count;
+    private float size;
+    private int lifespan;
+    private boolean consecutive;
+    private float spawnDelay;
+    private float parallelNoise;
+    private float spreadFactor;
+    private Vector4f color = new Vector4f(1, 1, 1, 1);
+    private FadeFunction fadeFunction = FadeFunction.NONE;
 
     public static final LightningBoltBuilder DEFAULT = new LightningBoltBuilder()
             .color(new Vector4f(0.45F, 0.45F, 0.5F, 0.8F))
             .count(1).size(0.1F).lifespan(5).parallelNoise(0.1F)
             .spreadFactor(0.1F).fadeFunction(FadeFunction.fade(0.2F));
 
-    public LightningBolt(RandomSource random, Vec3 start, Vec3 end,
-                         int segments, int count, float size, int lifespan,
-                         boolean consecutive, float spawnDelay, float parallelNoise,
-                         float spreadFactor, Vector4f color, FadeFunction fadeFunction) {
-        this.random = random;
-        this.start = start;
-        this.end = end;
-        this.segments = segments;
-        this.count = count;
-        this.size = size;
-        this.lifespan = lifespan;
-        this.consecutive = consecutive;
-        this.spawnDelay = spawnDelay;
-        this.parallelNoise = parallelNoise;
-        this.spreadFactor = spreadFactor;
-        this.color = color;
-        this.fadeFunction = fadeFunction;
+    public LightningBolt() {
     }
 
     public int getLifespan() {
@@ -157,22 +141,17 @@ public class LightningBolt {
     }
 
     public static class LightningBoltBuilder {
-        private int segments;
-        private int count;
-        private float size;
-        private int lifespan;
-        private boolean consecutive;
-        private float spawnDelay;
-        private float parallelNoise;
-        private float spreadFactor;
-        private Vector4f color;
-        private FadeFunction fadeFunction = FadeFunction.NONE;
+        private final LightningBolt boltData;
+
+        public LightningBoltBuilder() {
+            this.boltData = new LightningBolt();
+        }
 
         /**
          * @param segments 分段数（影响弯曲精细度）
          */
         public LightningBoltBuilder segments(int segments) {
-            this.segments = segments;
+            this.boltData.segments = segments;
             return this;
         }
 
@@ -180,7 +159,7 @@ public class LightningBolt {
          * @param count 并行渲染闪电数
          */
         public LightningBoltBuilder count(int count) {
-            this.count = count;
+            this.boltData.count = count;
             return this;
         }
 
@@ -188,7 +167,7 @@ public class LightningBolt {
          * @param lifespan 存在时间 单位tick
          */
         public LightningBoltBuilder lifespan(int lifespan) {
-            this.lifespan = lifespan;
+            this.boltData.lifespan = lifespan;
             return this;
         }
 
@@ -196,7 +175,7 @@ public class LightningBolt {
          * @param size 粗细
          */
         public LightningBoltBuilder size(float size) {
-            this.size = size;
+            this.boltData.size = size;
             return this;
         }
 
@@ -204,7 +183,7 @@ public class LightningBolt {
          * @param spawnDelay 生成延迟 单位tick
          */
         public LightningBoltBuilder spawnDelay(float spawnDelay) {
-            this.spawnDelay = spawnDelay;
+            this.boltData.spawnDelay = spawnDelay;
             return this;
         }
 
@@ -212,7 +191,7 @@ public class LightningBolt {
          * @param parallelNoise 线段长度随机因子[0-1] 0表示均匀分段
          */
         public LightningBoltBuilder parallelNoise(float parallelNoise) {
-            this.parallelNoise = parallelNoise;
+            this.boltData.parallelNoise = parallelNoise;
             return this;
         }
 
@@ -220,7 +199,7 @@ public class LightningBolt {
          * @param spreadFactor 线段扩散弯曲幅度[0-1] 0无弯曲
          */
         public LightningBoltBuilder spreadFactor(float spreadFactor) {
-            this.spreadFactor = spreadFactor;
+            this.boltData.spreadFactor = spreadFactor;
             return this;
         }
 
@@ -228,7 +207,7 @@ public class LightningBolt {
          * @param fadeFunction 渐变函数
          */
         public LightningBoltBuilder fadeFunction(FadeFunction fadeFunction) {
-            this.fadeFunction = fadeFunction;
+            this.boltData.fadeFunction = fadeFunction;
             return this;
         }
 
@@ -236,7 +215,7 @@ public class LightningBolt {
          * @param consecutive 是否连续生成
          */
         public LightningBoltBuilder consecutive(boolean consecutive) {
-            this.consecutive = consecutive;
+            this.boltData.consecutive = consecutive;
             return this;
         }
 
@@ -244,19 +223,18 @@ public class LightningBolt {
          * @param color RGBA 颜色
          */
         public LightningBoltBuilder color(Vector4f color) {
-            this.color = color;
+            this.boltData.color = color;
             return this;
         }
 
         public LightningBolt build(Vec3 start, Vec3 end, RandomSource random) {
-            if (this.segments <= 0) this.segments = (int) Math.sqrt(start.distanceTo(end) * 100);
-            return new LightningBolt(
-                    random, start, end,
-                    segments, count, size,
-                    lifespan, consecutive, spawnDelay,
-                    parallelNoise, spreadFactor, color
-                    , fadeFunction
-            );
+            this.boltData.start = start;
+            this.boltData.end = end;
+            if (this.boltData.segments <= 0) {
+                this.boltData.segments = (int) Math.sqrt(start.distanceTo(end) * 100);
+            }
+            this.boltData.random = random;
+            return this.boltData;
         }
     }
 }

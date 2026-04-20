@@ -42,6 +42,10 @@ import java.util.List;
 
 public class EntityThrownDoomboltAxe extends AbstractArrow implements IEntity {
     private static final EntityDataAccessor<Boolean> ID_FOIL = SynchedEntityData.defineId(EntityThrownDoomboltAxe.class, EntityDataSerializers.BOOLEAN);
+    public static final com.eeeab.eeeabsmobs.client.render.LightningBolt.LightningBoltBuilder DOOMBOLT_AXE_BOLT = new com.eeeab.eeeabsmobs.client.render.LightningBolt.LightningBoltBuilder()
+            .color(new Vector4f(0.73F, 0.92F, 0.96F, 0.8F))
+            .count(1).size(0.2F).lifespan(8).parallelNoise(0.1F)
+            .spreadFactor(0.07F).fadeFunction(com.eeeab.eeeabsmobs.client.render.LightningBolt.FadeFunction.fade(0.4F));
     private ItemStack doomboltAxeItem = new ItemStack(ItemInit.DOOMBOLT_AXE.get());
     public int clientSideReturnTridentTickCount;
     private boolean dealtDamage;
@@ -239,7 +243,6 @@ public class EntityThrownDoomboltAxe extends AbstractArrow implements IEntity {
     public void handleEntityEvent(byte id) {
         super.handleEntityEvent(id);
         if (id == 4) {
-            com.eeeab.eeeabsmobs.client.render.LightningBolt.LightningBoltBuilder builder = com.eeeab.eeeabsmobs.client.render.LightningBolt.DEFAULT;
             double phi = Math.PI * (3 - Math.sqrt(5));
             double count = 6;
             for (int i = 0; i < count; i++) {
@@ -250,8 +253,7 @@ public class EntityThrownDoomboltAxe extends AbstractArrow implements IEntity {
                 double velocityZ = Math.sin(theta) * radius;
                 float sideOffset = (float) (random.nextGaussian() * 0.2D) * (random.nextBoolean() ? 1 : -1);
                 Vec3 pos = this.position().add(0, this.getBbHeight() / 2, 0);
-                ClientProxy.LIGHTNING_RENDER.update(this, builder.color(new Vector4f(0.73F, 0.92F, 0.96F, 0.8F)).size(0.2F).lifespan(8).spreadFactor(0.07F).fadeFunction(com.eeeab.eeeabsmobs.client.render.LightningBolt.FadeFunction.fade(0.4F))
-                        .build(pos, pos.add(velocityX * 5, velocityY * 5, velocityZ * 5).offsetRandom(this.random, sideOffset), this.random));
+                ClientProxy.LIGHTNING_RENDER.update(this, DOOMBOLT_AXE_BOLT.build(pos, pos.add(velocityX * 5, velocityY * 5, velocityZ * 5).offsetRandom(this.random, sideOffset), this.random));
             }
         }
     }
