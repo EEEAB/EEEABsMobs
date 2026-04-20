@@ -66,7 +66,6 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.Mth;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -74,8 +73,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
@@ -209,7 +206,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
     private final OverlapAnimationState hardPunchLeftAnimationState = new OverlapAnimationState(HARDPUNCH_LEFT_ANIMATION);
     private final OverlapAnimationState trackingShurikenAnimationState = new OverlapAnimationState(TRACKING_SHURIKEN_ANIMATION);
     private final OverlapAnimationState armBlockCounterattackAnimationState = new OverlapAnimationState(ARMBLOCK_COUNTERATTACK_ANIMATION);
-    public List<LivingEntity> targets = List.of();
+    private List<LivingEntity> targets = List.of();
     public final ControlledAnimation coreControlled = new ControlledAnimation(10);
     public final ControlledAnimation glowControlled = new ControlledAnimation(10);
     public final ControlledAnimation alphaControlled = new ControlledAnimation(10);
@@ -343,12 +340,6 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
     }
 
     @Override
-    public void die(DamageSource source) {
-        super.die(source);
-        this.damageAdaptation.clearCache();
-    }
-
-    @Override
     public boolean isInvulnerableTo(DamageSource damageSource) {
         Animation animation = this.getAnimation();
         return !this.isActive() || ((animation == SWITCH_STAGE_ANIMATION || animation == TELEPORT_ANIMATION || animation == POUNCE_HOLD_ANIMATION || animation == ARMBLOCK_COUNTERATTACK_ANIMATION) || super.isInvulnerableTo(damageSource));
@@ -390,6 +381,15 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
     }
 
     @Override
+    public void remove(RemovalReason reason) {
+        super.remove(reason);
+        if (this.isDeadOrDying()) {
+            this.targets = List.of();
+            this.damageAdaptation.clearCache();
+        }
+    }
+
+    @Override
     protected void onAnimationStart(Animation animation) {
         if (!this.level().isClientSide) {
             if (animation == ARMBLOCK_COUNTERATTACK_ANIMATION) {
@@ -399,7 +399,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
                 if (this.stunCount > 1) {
                     this.damageAdaptation.clearCache();
                     this.universalCDTime = animation.getDuration();
-                    if (this.level().getDifficulty() == Difficulty.HARD) this.stunCount = 0;
+                    this.stunCount = 0;
                 }
             } else this.unableAttackTickCount = 0;
         }
@@ -526,7 +526,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
                     ModEntityUtils.breakBlocksInRect(this.level(), this, 50F, 2, 5, 2, 0, 0, true);
                 }
             }
-            if (!this.isNoAi() && this.tickCount % 30 == 0 && this.getTarget() != null) {
+            if (this.isAlive() && !this.isNoAi() && this.tickCount % 30 == 0 && this.getTarget() != null) {
                 this.targets = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(32, 6, 32), e -> this.getTarget() == e || TARGET_CONDITIONS.test(e));
             }
         }
@@ -655,7 +655,8 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
             if (this.getAnimation() != STUN_ANIMATION) {
                 float nowHealth = this.getHealth();
                 float damage = nowHealth - health;
-                health = nowHealth - this.damageAdaptation.adaptToDamage(this, this.lastDamageSource, damage);
+                float multiplier = 1 + Mth.clamp(this.targets.size() - 1, 0, 5) * 0.1F;
+                health = nowHealth - this.damageAdaptation.adaptToDamage(this, this.lastDamageSource, damage, multiplier);
                 if (this.damageAdaptation.isFullyAdapted(this, this.lastDamageSource)) this.level().broadcastEntityEvent(this, (byte) 4);
                 this.lastDamageSource = null;
             }
@@ -1139,6 +1140,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
         int tick = this.getAnimationTick();
         flag = (animation == ATTRACT_ANIMATION && tick < 50) || (animation == UNLEASH_ENERGY_ANIMATION && tick > 5 && tick < 95);
         if (!flag) return;
+        if (this.damageAdaptation.isFullyAdapted(this, source)) return;
         this.stopAllSuperpositionAnimation();
         Entity entity = source.getEntity();
         if (entity instanceof LivingEntity livingEntity) this.blockEntity = livingEntity;
@@ -1154,15 +1156,8 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
         return 0;
     }
 
-    public boolean checkComboRange(double range, double checkRange) {
-        LivingEntity target = this.getTarget();
-        if (target == null) {
-            return true;
-        } else if (target.isAlive()) {
-            boolean targetComingCloser = ModEntityUtils.checkTargetComingCloser(this, target);
-            return this.targetDistance < range || (this.targetDistance < range + checkRange && targetComingCloser);
-        }
-        return false;
+    public List<LivingEntity> getCacheTargets() {
+        return this.targets;
     }
 
     public boolean doHurtTarget(LivingEntity target, boolean disableShield, boolean addEffect, boolean ignoreArmor, float baseDamageMultiplier, float damageMultiplier) {
@@ -1170,10 +1165,9 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
     }
 
     public boolean doHurtTarget(DamageSource source, LivingEntity target, boolean disableShield, boolean addEffect, boolean ignoreArmor, float baseDamageMultiplier, float damageMultiplier) {
-        double baseATK = this.getAttributeValue(Attributes.ATTACK_DAMAGE);
-        //当目标数量＞1时，根据目标数量增加攻击伤害，每个目标增加1基础攻击伤害 TODO 待完善
-        baseATK += Mth.clamp(targets.size() - 1, 0F, 5F);
-        boolean flag = target.hurt(source, (float) ((baseATK * baseDamageMultiplier) + getDamageAmountByTargetHealthPct(target)) * damageMultiplier);
+        //当目标数量＞1时，根据目标数量增加攻击伤害，每个目标增加10%基础伤害 TODO 待完善
+        baseDamageMultiplier += Mth.clamp(targets.size() - 1, 0F, 5F) * 0.1F;
+        boolean flag = target.hurt(source, (float) ((this.getAttributeValue(Attributes.ATTACK_DAMAGE) * baseDamageMultiplier) + getDamageAmountByTargetHealthPct(target)) * damageMultiplier);
         if (flag) {
             this.invalidAttackCount = 0;
             if (addEffect) ModEntityUtils.addEffectStackingAmplifier(this, target, EffectInit.ERODE_EFFECT.get(), 300, 5, true, true, true, false);
@@ -1308,35 +1302,9 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
         return flag;
     }
 
-    private int getCoolingTimerUtil(int baseCD, float coolDownReductionPerTarget) {
-        int targetCount = this.targets.size() - 1;
-        if (targetCount <= 0) return baseCD;
-        return (int) (baseCD * (1 - (Math.min(targetCount, 5) * coolDownReductionPerTarget) / 100));
-    }
-
     private void reflectPotionEffect(MobEffectInstance effectInstance, Entity entity) {
         if (entity != this && entity instanceof LivingEntity bouncer && !effectInstance.getEffect().isInstantenous()) {
             bouncer.forceAddEffect(effectInstance, null);
-        }
-    }
-
-    private void nextBossStage() {
-        if (this.getHealth() <= 0) this.setHealth(0.1F);
-        this.stopAllSuperpositionAnimation();
-        this.playAnimation(SWITCH_STAGE_ANIMATION);
-        ImmortalStage stage = ImmortalStage.STAGE2;
-        String stageStr = this.getStage().toString().toLowerCase();
-        addImmortalHAAModifier(this.getAttribute(Attributes.MAX_HEALTH), UUID.fromString("E2F534E6-4A55-4B72-A9D2-3157D084A281"), stageStr, stage.addHealth);
-        addImmortalHAAModifier(this.getAttribute(Attributes.ARMOR), UUID.fromString("FA2FB8E8-FFE8-4D77-B23B-E0110D4A175F"), stageStr, stage.addArmor);
-        addImmortalHAAModifier(this.getAttribute(Attributes.ATTACK_DAMAGE), UUID.fromString("F8DBD65D-3C4A-4851-83D3-4CB22964A196"), stageStr, stage.addAttack);
-        this.entityData.set(DATA_STAGE, stage.id);
-        this.damageAdaptation.clearCache();
-    }
-
-    private static void addImmortalHAAModifier(@Nullable AttributeInstance instance, UUID uuid, String stageStr, float amount) {
-        if (instance != null) {
-            instance.removePermanentModifier(uuid);
-            instance.addPermanentModifier(new AttributeModifier(uuid, "Immortal " + stageStr + " modifier", amount, AttributeModifier.Operation.ADDITION));
         }
     }
 

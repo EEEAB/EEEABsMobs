@@ -3,6 +3,7 @@ package com.eeeab.eeeabsmobs.sever.entity.util.damage;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.util.ModTagKey;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
@@ -52,10 +53,6 @@ public class DamageAdaptation {
      */
     private final float healthRatioPeak;
     /**
-     * 减伤曲线指数
-     */
-    private static final float CURVE_EXPONENT = 1.5F;
-    /**
      * 伤害频率阈值
      */
     private static final int FREQUENCY_THRESHOLD = 20;
@@ -84,7 +81,7 @@ public class DamageAdaptation {
     /**
      * 尝试累计适应值并根据适应值减免伤害
      */
-    public float adaptToDamage(LivingEntity entity, @Nullable DamageSource source, float amount) {
+    public float adaptToDamage(LivingEntity entity, @Nullable DamageSource source, float amount, float multiplier) {
         if (!enabled || amount <= 0) return amount;
         String key = getKey(source);
         if (key == null) return amount;
@@ -110,26 +107,23 @@ public class DamageAdaptation {
                 float adaptFactor = info.getAdaptFactor();
                 if (adaptFactor < maxAdaptFactor) {
                     float decayedAdapt = getDecayedAdapt(adaptFactor, info.getTimestamp(), currentTick);
-                    info.setAdaptFactor(Math.min(decayedAdapt + totalIncrement, maxAdaptFactor));
+                    info.setAdaptFactor(Math.min(decayedAdapt + totalIncrement * multiplier, maxAdaptFactor));
                 }
                 lastHitTick = currentTick;
             }
         }
 
         if (info == null) {
-            info = new DamageInfo(currentTick, Math.min(totalIncrement, maxAdaptFactor));
+            info = new DamageInfo(currentTick, Math.min(totalIncrement * multiplier, maxAdaptFactor));
             lastHitTick = currentTick;
         } else {
             info.setTimestamp(currentTick);
         }
         adaptMap.put(key, info);
 
-        float reduction = (float) Math.pow(info.getAdaptFactor() / maxAdaptFactor, CURVE_EXPONENT);
-        reduction = Math.min(reduction, maxAdaptFactor);
-        if (reduction == maxAdaptFactor) info.setAdaptFactor(reduction);
-        if (debug) EEEABMobs.LOGGER.info("伤害源：{} 伤害：{} 单次累计：{} 总适应值：{} 减伤系数：{} 间隔适应值：{} 生命值系数：{}",
-                key, amount, totalIncrement, info.getAdaptFactor(), reduction, totalIncrement - baseIncrement, ratioMultiplier);
-        return amount * (1F - reduction);
+        if (debug) EEEABMobs.LOGGER.info("伤害源：{} 伤害：{} 适应倍增：{} 单次累计：{} 总适应值：{}  间隔适应值：{} 生命值系数：{}",
+                key, amount, multiplier, totalIncrement, info.getAdaptFactor(), totalIncrement - baseIncrement, ratioMultiplier);
+        return amount * (1F - info.getAdaptFactor());
     }
 
     //不会处理是否存在过期适应值也不会累计新的适应值
@@ -206,6 +200,7 @@ public class DamageAdaptation {
         if (source == null) return "unknown_source";
         if (source.is(ModTagKey.BYPASSES_DAMAGE_ADAPT)) return null;
         if (source.is(DamageTypes.THORNS)) return "thorns";
+        if (source.is(DamageTypeTags.IS_EXPLOSION)) return "explosion";
         Entity entity = source.getEntity();
         if (entity == null) {
             return spliceCharacters(source.type().msgId(), "unknown_entity");
