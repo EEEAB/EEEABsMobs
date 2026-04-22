@@ -201,7 +201,7 @@ public class ModelRealmWarden extends ModHierarchicalModel<EntityRealmWarden> {
                         if (tick >= 35 && tick <= 66) shakingHands(frame);
                     } else if (animation == EntityRealmWarden.SWEEP_ANIMATION) {
                         scale = 0.15F;
-                        exhaust3Visible = tick >= 49 && tick <= 52;
+                        exhaust3Visible = tick >= 47 && tick <= 52;
                     } else if (animation == EntityRealmWarden.HEAVY_SMASH_ANIMATION) {
                         scale = 0.15F;
                         exhaust1Visible = tick >= 25 && tick <= 30;

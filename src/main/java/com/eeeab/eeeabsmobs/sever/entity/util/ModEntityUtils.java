@@ -15,6 +15,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -247,6 +248,7 @@ public class ModEntityUtils {
      * @param optional 是否受到事件/实体击退抗性/举盾的影响
      */
     public static void forceKnockBack(LivingEntity attacker, LivingEntity target, float strength, double ratioX, double ratioZ, boolean optional) {
+        if (target instanceof Player player && player.getAbilities().invulnerable) return;
         LivingKnockBackEvent event = ForgeHooks.onLivingKnockBack(attacker, strength, ratioX, ratioZ);
         if (optional && event.isCanceled()) return;
         strength = optional ? event.getStrength() : strength;

@@ -65,4 +65,9 @@ public class ModEntityPart<T extends LivingEntity> extends PartEntity<T> {
     public boolean shouldBeSaved() {
         return false;
     }
+
+    @Override
+    public boolean isInvulnerableTo(DamageSource source) {
+        return super.isInvulnerableTo(source) || (source.getEntity() != null && entity.isAlliedTo(source.getEntity()));
+    }
 }

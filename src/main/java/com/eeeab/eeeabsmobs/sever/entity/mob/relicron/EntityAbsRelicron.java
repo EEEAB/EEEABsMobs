@@ -22,6 +22,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -115,6 +116,7 @@ public abstract class EntityAbsRelicron extends EEEABMobLibrary implements Enemy
         //        && (!ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get() || !(livingEntity instanceof EntityAbsRelicron))) {
         //    this.setLastHurtByMob(livingEntity);
         //}
+        if (source.is(DamageTypes.IN_WALL)) return false;
         return super.hurt(source, damage);
     }
 

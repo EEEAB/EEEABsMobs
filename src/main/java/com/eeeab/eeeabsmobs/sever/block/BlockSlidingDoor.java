@@ -93,11 +93,6 @@ public class BlockSlidingDoor extends BaseEntityBlock {
     }
 
     @Override
-    public VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return Shapes.empty();
-    }
-
-    @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.ENTITYBLOCK_ANIMATED;
     }
@@ -121,13 +116,12 @@ public class BlockSlidingDoor extends BaseEntityBlock {
 
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (hand == InteractionHand.OFF_HAND) return InteractionResult.PASS;
         BlockPos basePos = getBasePos(state, pos);
         BlockState baseState = world.getBlockState(basePos);
         if (!baseState.is(this)) return InteractionResult.PASS;
 
         if (baseState.getValue(LOCKED)) {
-            ItemStack held = player.getMainHandItem();
+            ItemStack held = player.getItemInHand(hand);
             int level = baseState.getValue(LEVEL);
             if (held.getItem() instanceof SlidingDoorLockKey key) {
                 if (key.getKeyLevel() < level) {

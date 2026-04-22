@@ -27,7 +27,7 @@ public class RenderRelicEarthshaker extends MobRenderer<EntityRelicEarthshaker, 
     private static final String[] LEFT_FINGER = new String[]{"upper", "body", "leftArm", "leftHand", "finger4"};
 
     public RenderRelicEarthshaker(EntityRendererProvider.Context context) {
-        super(context, new ModelRelicEarthshaker(context.bakeLayer(ModModelLayer.RELIC_EARTHSHAKER)), 1.5F);
+        super(context, new ModelRelicEarthshaker(context.bakeLayer(ModModelLayer.RELIC_EARTHSHAKER)), 2F);
         this.addLayer(new LayerBreath<>(this, GLOW_LAYER, 0.5F, e -> e.isGlow() && e.getAnimation() != EntityRelicEarthshaker.ACTIVE_ANIMATION && e.getAnimation() != EntityRelicEarthshaker.ELECTROMAGNETIC_ANIMATION, 0.075F));
         this.addLayer(new LayerGlow<>(this, GLOW_LAYER, e -> !e.glowControlled.isStop(), (entity, partialTicks) -> {
             float timer = entity.glowControlled.getPrevTimer();

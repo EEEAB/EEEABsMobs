@@ -27,7 +27,6 @@ import com.eeeab.eeeabsmobs.client.render.entity.*;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
-import net.minecraft.client.particle.HugeExplosionParticle;
 import net.minecraft.client.particle.SuspendedTownParticle;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -160,8 +159,8 @@ public class RegisterHandler {
         event.registerSpriteSet(ParticleInit.POISON.get(), ParticlePoison.Factory::new);
         event.registerSpriteSet(ParticleInit.WARLOCK_HEAL.get(), SuspendedTownParticle.HappyVillagerProvider::new);
         event.registerSpriteSet(ParticleInit.IMMORTAL_EXPLOSION.get(), ParticleImmortalExplosion.Factory::new);
-        event.registerSpriteSet(ParticleInit.BLAZE_EXPLOSION.get(), HugeExplosionParticle.Provider::new);
-        event.registerSpriteSet(ParticleInit.VOLT_EXPLOSION.get(), HugeExplosionParticle.Provider::new);
+        event.registerSpriteSet(ParticleInit.BLAZE_EXPLOSION.get(), ParticleLastingExplosion.Factory::new);
+        event.registerSpriteSet(ParticleInit.VOLT_EXPLOSION.get(), ParticleLastingExplosion.Factory::new);
         event.registerSpriteSet(ParticleInit.RING.get(), ParticleRing.Factory::new);
         event.registerSpriteSet(ParticleInit.BIG_RING.get(), ParticleRing.Factory::new);
         event.registerSpriteSet(ParticleInit.RADIAL_OPACITY_RING.get(), ParticleRing.Factory::new);

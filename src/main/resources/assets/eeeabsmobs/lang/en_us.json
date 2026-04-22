@@ -192,7 +192,7 @@
   "item.eeeabsmobs.guardian_core.tip": "Attack range: §l[ %1$s §l]",
   "item.eeeabsmobs.buster_gauntlet.tip": "Right-click to fire a grenade, dealing up to %1$s explosive damage",
   "item.eeeabsmobs.chainsword.tip": "When there is no attack cooldown, dealing damage to the same type of target stacks 1 layer of Rend, increasing damage by %1$s per stack, up to %2$s stacks. Decays by 1 stack per second; switching targets resets the stack count",
-  "item.eeeabsmobs.doombolt_battleaxe.tip": "Hold right-click to throw. Upon impact, it releases an area-of-effect surge and automatically returns.\nWhile holding Shift, right-click the ground to release multiple electric surges in a fan-shaped area ahead",
+  "item.eeeabsmobs.doombolt_battleaxe.tip": "Hold right-click to throw. Upon impact, it releases an area-of-effect surge and automatically returns. While crouching, right-click the ground to release multiple electric surges in a fan-shaped area ahead",
   "item.eeeabsmobs.heart_of_pagan.tip": "Used to make frenzy potions",
   "item.eeeabsmobs.soul_summon_necklace.tip": "Take damage accumulates to %1$s summon Corpse. Can counteract the side effects brought on by the Frenzy effect",
   "item.eeeabsmobs.immortal_sword.tip": "Gives the attacker the erosion status",

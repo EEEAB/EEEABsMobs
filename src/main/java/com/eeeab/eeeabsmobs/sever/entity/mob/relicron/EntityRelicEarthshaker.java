@@ -583,7 +583,7 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements RangedA
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 150.0D)
                 .add(Attributes.ARMOR, 15.0D)
-                .add(Attributes.ATTACK_DAMAGE, 8.0D)
+                .add(Attributes.ATTACK_DAMAGE, 9.0D)
                 .add(Attributes.FOLLOW_RANGE, 32.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.28D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)

@@ -492,7 +492,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                 add(Attributes.FOLLOW_RANGE, 32.0D).
                 add(Attributes.ATTACK_DAMAGE, 12.0D).
                 add(Attributes.KNOCKBACK_RESISTANCE, 1.0D).
-                add(Attributes.ARMOR, 12.0D).
+                add(Attributes.ARMOR, 10.0D).
                 add(ForgeMod.ENTITY_GRAVITY.get(), 0.125D).
                 add(ForgeMod.STEP_HEIGHT_ADDITION.get(), 4D);
     }
