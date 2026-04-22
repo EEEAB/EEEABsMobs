@@ -170,7 +170,7 @@ public class ModelRelicAnnihilator extends ModHierarchicalModel<EntityRelicAnnih
         if (leftExhaust) this.leftExhaust.zScale += (float) (Math.random() - 0.5) * 0.5F;
         float pitch = headPitch * 0.017453292F;
         float headYaw = netHeadYaw * 0.017453292F;
-        float cycle = 0.5F;
+        float cycle = 0.75F;
         float idle = ((Mth.sin(ageInTicks * cycle * 0.1F) + 1.0F) * (1.0F - limbSwingAmount)) * 0.75F;
         float rebound = limbSwing * cycle % Mth.PI / Mth.PI;
         float delta = ageInTicks - entity.tickCount;
