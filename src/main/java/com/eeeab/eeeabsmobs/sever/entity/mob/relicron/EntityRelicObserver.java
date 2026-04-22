@@ -1,5 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.mob.relicron;
 
+import com.eeeab.animate.server.ai.AnimationMeleeAI;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import com.eeeab.animate.server.ai.animation.AnimationActivate;
 import com.eeeab.animate.server.ai.animation.AnimationDeactivate;
@@ -25,14 +26,12 @@ import com.eeeab.eeeabsmobs.sever.entity.ai.goal.ModLookAtGoal;
 import com.eeeab.eeeabsmobs.sever.entity.ai.navigate.ModPathNavigateGround;
 import com.eeeab.eeeabsmobs.sever.entity.effect.EntityGuardianLaser;
 import com.eeeab.eeeabsmobs.sever.entity.mob.CrackinessEntity;
-import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.BlockInit;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import com.eeeab.eeeabsmobs.sever.init.SoundInit;
 import com.eeeab.eeeabsmobs.sever.util.ModResourceKey;
-import com.eeeab.eeeabsmobs.sever.util.ModTagKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -52,7 +51,6 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -67,10 +65,12 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
     public static final Animation DIE_ANIMATION = Animation.create(20);
     public static final Animation HURT_ANIMATION = Animation.create(3);
     public static final Animation ACTIVE_ANIMATION = Animation.create(20);
+    public static final Animation ATTACK_ANIMATION = Animation.create(35);
     public static final Animation DEACTIVATE_ANIMATION = Animation.create(20);
     public static final Animation LASER_ANIMATION = Animation.create(50);
     public static final Animation STORM_ANIMATION = AnimationNotification.create(50, null);
     private static final Animation[] animations = new Animation[]{
+            ATTACK_ANIMATION,
             LASER_ANIMATION,
             STORM_ANIMATION,
             ACTIVE_ANIMATION,
@@ -163,7 +163,9 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
         this.goalSelector.addGoal(1, new AnimationDie<>(this));
         this.goalSelector.addGoal(1, new AnimationHurt<>(this, false));
         this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, STORM_ANIMATION, false));
+        this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, ATTACK_ANIMATION, false));
         this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, LASER_ANIMATION));
+        this.goalSelector.addGoal(2, new AnimationMeleeAI<>(this, 1));
         //this.goalSelector.addGoal(7, new ObserverLookAtTargetGoal(this));
     }
 
@@ -171,15 +173,6 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
     public void tick() {
         super.tick();
         this.rotControlled.updatePrevTimer();
-        if (this.isEffectiveAi()) {
-            LivingEntity target = this.getTarget();
-            if (this.isActive() && target != null) {
-                if (this.isNoAnimation()) this.lookAt(target, 60F, 30F);
-                int moveDistance = this.getCooldownManager().isReady(LASER_ANIMATION) ? 8 : 3;
-                if (this.targetDistance <= moveDistance && this.getAnimation() != STORM_ANIMATION) this.getNavigation().stop();
-                else this.getNavigation().moveTo(target, 1D);
-            }
-        }
         this.rotControlled.incrementOrDecreaseTimer(this.getAnimation() == STORM_ANIMATION);
         AnimationHandler.INSTANCE.updateAnimations(this);
     }
@@ -216,10 +209,6 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
                 damage *= 2F;
             } else if (source.is(DamageTypeTags.IS_PROJECTILE)) {
                 damage *= 0.5F;
-            } else if (entity instanceof LivingEntity livingEntity) {
-                if (livingEntity.getMainHandItem().getItem() instanceof PickaxeItem) {
-                    damage *= 1.5F;
-                }
             }
             return super.hurt(source, damage);
         }
@@ -336,10 +325,8 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
                     }
                 })
                 .atTick(26, (entity, animation, tick) -> {
-                    if (entity.level().isClientSide) {
-                        entity.doShotLaserEffect();
-                        entity.doFractalEffect(3 + entity.random.nextInt(3));
-                    }
+                    entity.doShotLaserEffect();
+                    entity.doFractalEffect(3 + entity.random.nextInt(3));
                 })
                 .atTick(28, (entity, animation, tick) -> {
                     if (!entity.level().isClientSide) entity.playSound(SoundInit.RELIC_OBSERVER_ELECTROMAGNETIC.get(), 1F, entity.getVoicePitch());
@@ -408,6 +395,28 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
                 .everyNTick(18, 36, 6, (entity, animation, tick) -> {
                     entity.playSound(SoundInit.RELIC_OBSERVER_ELECTRIC_PULSE.get(), 1F, 1.2F);
                 });
+        builder.forAnimation(ATTACK_ANIMATION).inRange(1, 19, (entity, animation, tick) -> {
+            LivingEntity target = entity.getTarget();
+            if (target != null) {
+                entity.lookAt(target, 30F, 30F);
+                entity.getLookControl().setLookAt(target, 30F, 30F);
+            }
+        }).atTick(20, (entity, animation, tick) -> {
+            if (entity.level().isClientSide) {
+                Vec3 pos = entity.getPosOffset(false, 1F, 0F, entity.getEyeHeight());
+                entity.doAnnularOutburstEffect(pos, (float) Math.toRadians(entity.getYRot()));
+                AdvancedParticleBase.spawnParticle(entity.level(), ParticleInit.CRIT_RING.get(), pos.x, pos.y, pos.z
+                        , 0, 0, 0, false, Math.toRadians(-entity.getYRot() - 90), Math.toRadians(180), 0, 0, 1,
+                        0.9, 0.9, 0.9, 1, 1, 6, false, false, false
+                        , new ParticleComponent[]{
+                                new PropertyControl(PropertyControl.EnumParticleProperty.SCALE, AnimData.startAndEnd(0F, 25F), false),
+                                new PropertyControl(PropertyControl.EnumParticleProperty.ALPHA, AnimData.startAndEnd(1F, 0F), false)
+                        });
+            } else {
+                entity.playSound(SoundInit.RELIC_OBSERVER_ATTACK.get());
+                entity.rangeAttack(2.5, entity.getBbHeight(), 2.5, 2.5, 60F, 60F, null);
+            }
+        });
         return manager;
     }
 
@@ -415,11 +424,18 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
         AnimationReleaseManager<EntityRelicObserver> manager = new AnimationReleaseManager<>();
         AnimationReleaseManager.Builder<EntityRelicObserver> builder = manager.builder();
         builder.register(builder.define(STORM_ANIMATION)
+                .priority(1)
                 .cooldown(new FixedRangeCooldown(200, 50))
                 .condition(ConditionFactory.and(
-                        ConditionFactory.hasLineOfSight(),
+                        ConditionFactory.randomChance(0.4F),
                         ConditionFactory.distanceRange(0, 3.5)
-                )).priority(1));
+                )));
+        builder.register(builder.define(ATTACK_ANIMATION)
+                .cooldown(new FixedRangeCooldown(200, 50))
+                .condition(ConditionFactory.and(
+                        ConditionFactory.randomChance(0.4F),
+                        ConditionFactory.distanceRange(0, 2, 3)
+                )));
         builder.register(builder.define(LASER_ANIMATION)
                 .cooldown(new FixedRangeCooldown(220, 60))
                 .condition(ConditionFactory.and(
@@ -430,18 +446,40 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
         return manager;
     }
 
+    private void doAnnularOutburstEffect(Vec3 pos, float yRot) {
+        if (!this.level().isClientSide) return;
+        int count = 6;
+        double initialRadius = 0.5F;
+        double expansionSpeed = 0.5F;
+        for (int i = 0; i < count; i++) {
+            double currentAngle = (2 * Math.PI * i) / count;
+            double baseOffsetY = initialRadius * Math.cos(currentAngle);
+            double baseOffsetZ = initialRadius * Math.sin(currentAngle);
+            double worldOffsetX = -baseOffsetZ * Math.sin(yRot);
+            double worldOffsetZ = baseOffsetZ * Math.cos(yRot);
+            double particleX = pos.x + worldOffsetX;
+            double particleY = pos.y + baseOffsetY;
+            double particleZ = pos.z + worldOffsetZ;
+            double baseVelY = Math.cos(currentAngle) * expansionSpeed;
+            double baseVelZ = Math.sin(currentAngle) * expansionSpeed;
+            double particleVelX = -baseVelZ * Math.sin(yRot);
+            double particleVelZ = baseVelZ * Math.cos(yRot);
+            this.level().addParticle(ROUGH_BOUNDARY_BRICKS, particleX, particleY, particleZ, particleVelX, baseVelY, particleVelZ);
+        }
+    }
+
     private void doHurtEffect() {
-        if (this.level().isClientSide) {
-            for (int i = 0; i < 5; ++i) {
-                double dx = getRandomX(0.5);
-                double dy = this.getEyeY();
-                double dz = getRandomZ(0.5);
-                level().addParticle(ROUGH_BOUNDARY_BRICKS, dx, dy, dz, -getDeltaMovement().x() * 0.25F, -getDeltaMovement().y() * 0.25F, -getDeltaMovement().z() * 0.25F);
-            }
+        if (!this.level().isClientSide) return;
+        for (int i = 0; i < 5; ++i) {
+            double dx = getRandomX(0.5);
+            double dy = this.getEyeY();
+            double dz = getRandomZ(0.5);
+            level().addParticle(ROUGH_BOUNDARY_BRICKS, dx, dy, dz, -getDeltaMovement().x() * 0.25F, -getDeltaMovement().y() * 0.25F, -getDeltaMovement().z() * 0.25F);
         }
     }
 
     private void doFractalEffect(int count) {
+        if (!this.level().isClientSide) return;
         for (int i = 0; i < count; i++) {
             double angle = random.nextDouble() * 2 * Math.PI;
             double minHorizontalOffset = 1;
@@ -459,6 +497,7 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
     }
 
     private void doShotLaserEffect() {
+        if (!this.level().isClientSide) return;
         float yawRad = (float) Math.toRadians(this.getYRot());
         float pitchRad = (float) Math.toRadians(this.getXRot());
         double x = -Math.sin(yawRad) * Math.cos(pitchRad);
@@ -478,7 +517,12 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
     }
 
     public static AttributeSupplier.Builder setAttributes() {
-        return createMobAttributes().add(Attributes.MAX_HEALTH, 50.0D).add(Attributes.MOVEMENT_SPEED, 0.25D).add(Attributes.FOLLOW_RANGE, 18.0D).add(Attributes.ATTACK_DAMAGE, 6.0D).add(Attributes.KNOCKBACK_RESISTANCE, 1.0D).add(Attributes.ARMOR, 10.0D);
+        return createMobAttributes().add(Attributes.MAX_HEALTH, 50.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.28D)
+                .add(Attributes.FOLLOW_RANGE, 18.0D)
+                .add(Attributes.ATTACK_DAMAGE, 6.0D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
+                .add(Attributes.ARMOR, 10.0D);
     }
 
     //static class NoneRotationControl extends BodyRotationControl {

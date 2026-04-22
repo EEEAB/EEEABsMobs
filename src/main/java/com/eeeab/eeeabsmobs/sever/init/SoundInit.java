@@ -25,6 +25,7 @@ public class SoundInit {
     //Relic Observer
     public static final RegistryObject<SoundEvent> RELIC_OBSERVER_HURT = create("entity.relic_observer.hurt");
     public static final RegistryObject<SoundEvent> RELIC_OBSERVER_DEATH = create("entity.relic_observer.death");
+    public static final RegistryObject<SoundEvent> RELIC_OBSERVER_ATTACK = create("entity.relic_observer.attack");
     public static final RegistryObject<SoundEvent> RELIC_OBSERVER_ELECTROMAGNETIC = create("entity.relic_observer.electromagnetic");
     public static final RegistryObject<SoundEvent> RELIC_OBSERVER_ELECTRIC_PULSE = create("entity.relic_observer.electric_pulse");
 

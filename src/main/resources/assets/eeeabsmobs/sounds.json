@@ -349,6 +349,14 @@
       "eeeabsmobs:entity/relic_observer/hurt3"
     ]
   },
+  "entity.relic_observer.attack": {
+    "subtitle": "subtitles.eeeabsmobs.entity.relic_observer.attack",
+    "sounds": [
+      "eeeabsmobs:entity/relic_observer/hurt1",
+      "eeeabsmobs:entity/relic_observer/hurt2",
+      "eeeabsmobs:entity/relic_observer/hurt3"
+    ]
+  },
   "entity.relic_observer.death": {
     "subtitle": "subtitles.eeeabsmobs.entity.relic_observer.death",
     "sounds": [

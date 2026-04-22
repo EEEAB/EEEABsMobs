@@ -16,30 +16,30 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class ModelRelicObserver extends ModHierarchicalModel<EntityRelicObserver> {
     private final ModelPart root;
     private final ModelPart core;
-    private final ModelPart upper;
-    private final ModelPart block4;
-    private final ModelPart block3;
-    private final ModelPart block2;
-    private final ModelPart block1;
-    private final ModelPart lower;
-    private final ModelPart block8;
-    private final ModelPart block7;
-    private final ModelPart block6;
-    private final ModelPart block5;
+    private final ModelPart blocks;
+    private final ModelPart bone1;
+    private final ModelPart bone2;
+    private final ModelPart bone3;
+    private final ModelPart bone4;
+    private final ModelPart bone5;
+    private final ModelPart bone6;
+    private final ModelPart bone7;
+    private final ModelPart bone8;
 
     public ModelRelicObserver(ModelPart root) {
         this.root = root.getChild("root");
         this.core = this.root.getChild("core");
-        this.upper = this.root.getChild("upper");
-        this.block4 = this.upper.getChild("block4");
-        this.block3 = this.upper.getChild("block3");
-        this.block2 = this.upper.getChild("block2");
-        this.block1 = this.upper.getChild("block1");
-        this.lower = this.root.getChild("lower");
-        this.block8 = this.lower.getChild("block8");
-        this.block7 = this.lower.getChild("block7");
-        this.block6 = this.lower.getChild("block6");
-        this.block5 = this.lower.getChild("block5");
+        this.blocks = this.root.getChild("blocks");
+        ModelPart left = this.blocks.getChild("left");
+        this.bone1 = left.getChild("bone1");
+        this.bone2 = left.getChild("bone2");
+        this.bone3 = left.getChild("bone3");
+        this.bone4 = left.getChild("bone4");
+        ModelPart right = this.blocks.getChild("right");
+        this.bone5 = right.getChild("bone5");
+        this.bone6 = right.getChild("bone6");
+        this.bone7 = right.getChild("bone7");
+        this.bone8 = right.getChild("bone8");
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -47,22 +47,23 @@ public class ModelRelicObserver extends ModHierarchicalModel<EntityRelicObserver
         PartDefinition partdefinition = meshdefinition.getRoot();
         PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 16.0F, 0.0F));
         PartDefinition core = root.addOrReplaceChild("core", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(-1.5F)), PartPose.offset(0.0F, 0.0F, 0.0F));
-        PartDefinition upper = root.addOrReplaceChild("upper", CubeListBuilder.create(), PartPose.offset(0.0F, -4.0F, 0.0F));
-        PartDefinition block4 = upper.addOrReplaceChild("block4", CubeListBuilder.create(), PartPose.offset(-4.0F, 0.0F, 4.0F));
-        PartDefinition cube_r1 = block4.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(8.0F, 0.0F, 0.0F, 0.0F, -3.1416F, 0.0F));
-        PartDefinition block3 = upper.addOrReplaceChild("block3", CubeListBuilder.create(), PartPose.offset(-4.0F, 0.0F, 4.0F));
-        PartDefinition cube_r2 = block3.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(0, 16).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 3.1416F, 0.0F));
-        PartDefinition block2 = upper.addOrReplaceChild("block2", CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-12.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(4.0F, 0.0F, -4.0F));
-        PartDefinition block1 = upper.addOrReplaceChild("block1", CubeListBuilder.create().texOffs(0, 16).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(4.0F, 0.0F, -4.0F));
-        PartDefinition lower = root.addOrReplaceChild("lower", CubeListBuilder.create(), PartPose.offset(0.0F, 4.0F, 0.0F));
-        PartDefinition block8 = lower.addOrReplaceChild("block8", CubeListBuilder.create(), PartPose.offset(-4.0F, 0.0F, -4.0F));
-        PartDefinition cube_r3 = block8.addOrReplaceChild("cube_r3", CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -3.1416F, -1.5708F, 0.0F));
-        PartDefinition block7 = lower.addOrReplaceChild("block7", CubeListBuilder.create(), PartPose.offset(4.0F, 0.0F, -4.0F));
-        PartDefinition cube_r4 = block7.addOrReplaceChild("cube_r4", CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -1.5708F, 1.5708F));
-        PartDefinition block6 = lower.addOrReplaceChild("block6", CubeListBuilder.create(), PartPose.offset(4.0F, 0.0F, 4.0F));
-        PartDefinition cube_r5 = block6.addOrReplaceChild("cube_r5", CubeListBuilder.create().texOffs(0, 16).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-8.0F, 0.0F, 0.0F, 0.0F, -1.5708F, -3.1416F));
-        PartDefinition block5 = lower.addOrReplaceChild("block5", CubeListBuilder.create(), PartPose.offset(4.0F, 0.0F, 4.0F));
-        PartDefinition cube_r6 = block5.addOrReplaceChild("cube_r6", CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 1.5708F, 3.1416F));
+        PartDefinition blocks = root.addOrReplaceChild("blocks", CubeListBuilder.create(), PartPose.offset(0.0F, 8.0F, 0.0F));
+        PartDefinition left = blocks.addOrReplaceChild("left", CubeListBuilder.create(), PartPose.offset(4.0F, -8.0F, 0.0F));
+        PartDefinition bone1 = left.addOrReplaceChild("bone1", CubeListBuilder.create().texOffs(0, 16).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -4.0F, -4.0F));
+        PartDefinition bone2 = left.addOrReplaceChild("bone2", CubeListBuilder.create(), PartPose.offset(0.0F, -4.0F, 4.0F));
+        PartDefinition cube_r1 = bone2.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -3.1416F, 0.0F));
+        PartDefinition bone3 = left.addOrReplaceChild("bone3", CubeListBuilder.create(), PartPose.offset(0.0F, 4.0F, -4.0F));
+        PartDefinition cube_r2 = bone3.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -1.5708F, 1.5708F));
+        PartDefinition bone4 = left.addOrReplaceChild("bone4", CubeListBuilder.create(), PartPose.offset(0.0F, 4.0F, 4.0F));
+        PartDefinition cube_r3 = bone4.addOrReplaceChild("cube_r3", CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 1.5708F, 3.1416F));
+        PartDefinition right = blocks.addOrReplaceChild("right", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition bone5 = right.addOrReplaceChild("bone5", CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(-4.0F, -12.0F, -4.0F));
+        PartDefinition bone6 = right.addOrReplaceChild("bone6", CubeListBuilder.create(), PartPose.offset(-4.0F, -12.0F, 4.0F));
+        PartDefinition cube_r4 = bone6.addOrReplaceChild("cube_r4", CubeListBuilder.create().texOffs(0, 16).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 3.1416F, 0.0F));
+        PartDefinition bone7 = right.addOrReplaceChild("bone7", CubeListBuilder.create(), PartPose.offset(-4.0F, -4.0F, -4.0F));
+        PartDefinition cube_r5 = bone7.addOrReplaceChild("cube_r5", CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -3.1416F, -1.5708F, 0.0F));
+        PartDefinition bone8 = right.addOrReplaceChild("bone8", CubeListBuilder.create(), PartPose.offset(-4.0F, -4.0F, 4.0F));
+        PartDefinition cube_r6 = bone8.addOrReplaceChild("cube_r6", CubeListBuilder.create().texOffs(0, 16).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -1.5708F, -3.1416F));
         return LayerDefinition.create(meshdefinition, 32, 32);
     }
 
@@ -78,51 +79,48 @@ public class ModelRelicObserver extends ModHierarchicalModel<EntityRelicObserver
         playAnimation(this, entity, EntityRelicObserver.DIE_ANIMATION, AnimationRelicObserver.DEACTIVATE, ageInTicks);
         playAnimation(this, entity, EntityRelicObserver.ACTIVE_ANIMATION, AnimationRelicObserver.ACTIVE, ageInTicks);
         playAnimation(this, entity, EntityRelicObserver.DEACTIVATE_ANIMATION, AnimationRelicObserver.DEACTIVATE, ageInTicks);
+        playAnimation(this, entity, EntityRelicObserver.ATTACK_ANIMATION, AnimationRelicObserver.ATTACK, ageInTicks);
         playAnimation(this, entity, EntityRelicObserver.LASER_ANIMATION, AnimationRelicObserver.LASER, ageInTicks);
         playAnimation(this, entity, EntityRelicObserver.STORM_ANIMATION, AnimationRelicObserver.STORM, ageInTicks);
         Animation animation = entity.getAnimation();
         float progress = Mth.clamp(entity.hurtTime / 10F, 0F, 1F);
         if (progress > 0) {
             float x = (float) (Math.random() - 0.5) * 3F * progress;
-            this.upper.x += x;
-            this.lower.x += x;
+            this.blocks.x += x;
             float y = (float) (Math.random() - 0.5) * 3F * progress;
-            this.upper.y += y;
-            this.lower.y += y;
+            this.blocks.y += y;
             float z = (float) (Math.random() - 0.5) * 3F * progress;
-            this.upper.z += z;
-            this.lower.z += z;
+            this.blocks.z += z;
         }
         float delta = ageInTicks - entity.tickCount;
         float frame = entity.frame + delta;
         if (entity.isActive() && (AnimatedEntity.NO_ANIMATION == animation || EntityRelicObserver.HURT_ANIMATION == animation)) {
             setStaticRotationPoint(root, 0F, -12F, 0F);
-            setStaticRotationPoint(block1, 2F, -2F, -2F);
-            setStaticRotationPoint(block6, -2F, 2F, 2F);
-            setStaticRotationPoint(block2, -2F, -2F, -2F);
-            setStaticRotationPoint(block5, 2F, 2F, 2F);
-            setStaticRotationPoint(block3, -2F, -2F, 2F);
-            setStaticRotationPoint(block7, 2F, 2F, -2F);
-            setStaticRotationPoint(block4, 2F, -2F, 2F);
-            setStaticRotationPoint(block8, -2F, 2F, -2F);
+            setStaticRotationPoint(bone1, 2F, -2F, -2F);
+            setStaticRotationPoint(bone2, 2F, -2F, 2F);
+            setStaticRotationPoint(bone3, 2F, 2F, -2F);
+            setStaticRotationPoint(bone4, 2F, 2F, 2F);
+            setStaticRotationPoint(bone5, -2F, -2F, -2F);
+            setStaticRotationPoint(bone6, -2F, -2F, 2F);
+            setStaticRotationPoint(bone7, -2F, 2F, -2F);
+            setStaticRotationPoint(bone8, -2F, 2F, 2F);
         }
         if (entity.isActive() && EntityRelicObserver.ACTIVE_ANIMATION != animation && EntityRelicObserver.DEACTIVATE_ANIMATION != animation && entity.getDeathAnimation() != animation) {
             float baseSpeed = 0.45F;
             float baseDegree = 0.6F;
             float[] phaseOffsets = {0F, 0.2F, 0.4F, 0.6F, 0.8F, 1.0F, 1.2F, 1.4F};
             this.waveBob(root, baseSpeed, baseDegree, 0, frame);
-            this.waveBob(block1, baseSpeed, baseDegree * 0.9F, phaseOffsets[0], frame);
-            this.waveBob(block6, baseSpeed, baseDegree * 0.9F, phaseOffsets[1], frame);
-            this.waveBob(block2, baseSpeed, baseDegree * 0.8F, phaseOffsets[2], frame);
-            this.waveBob(block5, baseSpeed, baseDegree * 0.8F, phaseOffsets[3], frame);
-            this.waveBob(block3, baseSpeed, baseDegree * 0.7F, phaseOffsets[4], frame);
-            this.waveBob(block7, baseSpeed, baseDegree * 0.7F, phaseOffsets[5], frame);
-            this.waveBob(block4, baseSpeed, baseDegree * 0.6F, phaseOffsets[6], frame);
-            this.waveBob(block8, baseSpeed, baseDegree * 0.6F, phaseOffsets[7], frame);
+            this.waveBob(bone1, baseSpeed, baseDegree * 0.9F, phaseOffsets[0], frame);
+            this.waveBob(bone2, baseSpeed, baseDegree * 0.6F, phaseOffsets[6], frame);
+            this.waveBob(bone3, baseSpeed, baseDegree * 0.7F, phaseOffsets[5], frame);
+            this.waveBob(bone4, baseSpeed, baseDegree * 0.8F, phaseOffsets[3], frame);
+            this.waveBob(bone5, baseSpeed, baseDegree * 0.8F, phaseOffsets[2], frame);
+            this.waveBob(bone6, baseSpeed, baseDegree * 0.7F, phaseOffsets[4], frame);
+            this.waveBob(bone7, baseSpeed, baseDegree * 0.6F, phaseOffsets[7], frame);
+            this.waveBob(bone8, baseSpeed, baseDegree * 0.9F, phaseOffsets[1], frame);
             progress = entity.rotControlled.getAnimationFraction(delta);
             float timeBasedRotation = (ageInTicks * 15F) % 360F;
-            this.upper.yRot = (-timeBasedRotation * progress) * ((float) Math.PI / 180F);
-            this.lower.yRot = (-timeBasedRotation * progress) * ((float) Math.PI / 180F);
+            this.blocks.yRot = (-timeBasedRotation * progress) * ((float) Math.PI / 180F);
         }
     }
 
