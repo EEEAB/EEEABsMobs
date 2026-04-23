@@ -8,8 +8,8 @@ public interface IMob {
         //特殊生物:例如NPC、召唤物
         NONE(0, 0F),
         GRUNT(10, 0.01F),
-        NORMAL(50, 0.01F),
-        ELITE(100, 0.02F),
+        NORMAL(50, 0.02F),
+        ELITE(100, 0.025F),
         BOSS(300, 0.03F),
         EPIC_BOSS(500, 0.04F);
 
