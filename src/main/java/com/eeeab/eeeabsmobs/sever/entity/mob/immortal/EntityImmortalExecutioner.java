@@ -126,7 +126,7 @@ public class EntityImmortalExecutioner extends EntityAbsImmortal {
 
     @Override
     public IMob.MobLevel getMobLevel() {
-        return IMob.MobLevel.ELITE;
+        return MobLevel.NORMAL;
     }
 
     @Override

@@ -110,6 +110,11 @@ public class EntityRelicRipper extends EntityAbsRelicron {
     }
 
     @Override
+    public MobLevel getMobLevel() {
+        return MobLevel.NORMAL;
+    }
+
+    @Override
     @NotNull
     protected BodyRotationControl createBodyControl() {
         return new ModBodyRotationControl(this);
