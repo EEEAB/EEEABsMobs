@@ -185,24 +185,23 @@ public class EntityImmortalShuriken extends Projectile implements IEntity {
         Entity entity = result.getEntity();
         if (entity instanceof LivingEntity hitEntity) {
             float damage = 5F;
-            if (this.getOwner() instanceof EntityImmortalBoss immortal) {
+            Entity owner = this.getOwner();
+            if (owner instanceof EntityImmortalBoss immortal) {
                 damage = ModConfigHandler.COMMON.mobs.immortals.immortal.immortalShuriken.damage.get().floatValue();
-                damage *= 1F + (Mth.clamp(immortal.getCacheTargets().size() - 1, 0, 5) * 0.1F);
-            }
-            if (this.getOwner() instanceof IMob iMob) {
-                damage += iMob.getDamageAmountByTargetHealthPct(hitEntity);
+                damage *= 1F + Mth.clamp(immortal.getCacheTargets().size() - 1, 0, 5) * 0.1F;
             }
             MobEffectInstance instance = hitEntity.getEffect(EffectInit.ERODE_EFFECT.get());
-            if (instance != null) damage += instance.getAmplifier() + 1;
+            if (instance != null) damage *= 1F + Mth.clamp(instance.getAmplifier() + 1, 0, 5) * 0.1F;
+            if (owner instanceof IMob iMob) {
+                damage += iMob.getDamageAmountByTargetHealthPct(hitEntity);
+            }
             /*if (this.getOwner() instanceof EntityImmortalBoss immortal) {
                 float damageMultiplier = 0F;
                 MobEffectInstance instance = hitEntity.getEffect(EffectInit.ERODE_EFFECT.get());
                 if (instance != null) damageMultiplier += (instance.getAmplifier() + 1) * 0.08F;
-
-
                 immortal.doHurtTarget(ModDamageSource.immortalMagic(this, immortal), hitEntity, false, false, false, 0.3F, 1F + damageMultiplier);
             } else */
-            hitEntity.hurt(ModDamageSource.immortalMagic(this, getOwner()), damage);
+            hitEntity.hurt(ModDamageSource.immortalMagic(this, owner), damage);
             ModEntityUtils.addEffectStackingAmplifier(this, hitEntity, EffectInit.ERODE_EFFECT.get(), 300, 5, true, true, true, true);
         } else {
             entity.hurt(this.damageSources().magic(), 11.4514F);

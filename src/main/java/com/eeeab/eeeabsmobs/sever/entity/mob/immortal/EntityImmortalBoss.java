@@ -608,7 +608,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
                     this.damageAmountCumulative = 0;
                     this.timeUntilBlock = 150 + (int) Math.min(damage * 3.3333F, 150F);
                     this.playSound(SoundInit.IMMORTAL_BLOCKING_COUNTER.get(), 1.5F, 1.3F - pitch);
-                    this.damageAdaptation.adaptToDamage(this.tickCount, source, 0.25F);
+                    this.damageAdaptation.adaptToDamage(this.tickCount, source, 0.5F);
                     this.playAnimation(ARMBLOCK_COUNTERATTACK_ANIMATION);
                     return false;
                 }
@@ -650,7 +650,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
 
     @Override
     public void setHealth(float health) {
-        if (!this.level().isClientSide && !this.inBlocking() && health < this.getHealth()) {
+        if (!this.level().isClientSide && health < this.getHealth()) {
             if (this.isSwitching()) return;
             if (this.getAnimation() != STUN_ANIMATION) {
                 float nowHealth = this.getHealth();
@@ -1304,7 +1304,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
 
     private void reflectPotionEffect(MobEffectInstance effectInstance, Entity entity) {
         if (entity != this && entity instanceof LivingEntity bouncer && !effectInstance.getEffect().isInstantenous()) {
-            bouncer.forceAddEffect(effectInstance, null);
+            bouncer.addEffect(effectInstance, null);
         }
     }
 
@@ -1569,7 +1569,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
                 .add(Attributes.ATTACK_DAMAGE, 12.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
                 .add(ForgeMod.ENTITY_GRAVITY.get(), 0.09D)
-                .add(ForgeMod.STEP_HEIGHT_ADDITION.get(), 2.5D);
+                .add(ForgeMod.STEP_HEIGHT_ADDITION.get(), 4D);
     }
 
     public int getStunCount() {

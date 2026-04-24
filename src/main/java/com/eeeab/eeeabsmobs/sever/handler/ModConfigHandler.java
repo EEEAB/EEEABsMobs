@@ -289,7 +289,7 @@ public final class ModConfigHandler {
                 builder.pop();
             }
             combatConfig = new AttributeConfig();
-            bossConfig = new BossConfig(30D, 16D, 0D);
+            bossConfig = new BossConfig(30D, 16D, 0.25D);
             adaptConfig = new DamageSourceAdaptConfig(10, 30, 1.5D, 2D, 0.9D);
             builder.pop();
         }
@@ -634,7 +634,7 @@ public final class ModConfigHandler {
     //伤害源适应
     public static class DamageSourceAdaptConfig {
         public DamageSourceAdaptConfig(int attenuatedDuration, int fullAdaptDuration, double singleAdaptFactor, double playerSingleAdaptFactor, double maxAdaptFactor) {
-            COMMON_BUILDER.push("Damage Adapt");
+            COMMON_BUILDER.push("Damage Adapt V1");
             this.enabled = COMMON_BUILDER.comment("If set to 'False' disable Damage Adaptation")
                     .translation(getTranslationKey("damage_adapt_enabled")).define("Enabled", true);
             this.debug = COMMON_BUILDER.comment("If set to 'False' disable print logs")

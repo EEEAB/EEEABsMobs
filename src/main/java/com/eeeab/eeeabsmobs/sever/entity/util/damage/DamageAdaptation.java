@@ -202,22 +202,19 @@ public class DamageAdaptation {
         if (source.is(DamageTypes.THORNS)) return "thorns";
         if (source.is(DamageTypeTags.IS_EXPLOSION)) return "explosion";
         Entity entity = source.getEntity();
-        if (entity == null) {
-            return spliceCharacters(source.type().msgId(), "unknown_entity");
-        }
+        if (entity == null) return "unknown_entity";
         String descId = entity.getType().getDescriptionId();
         if (entity instanceof Player player) {
             Entity directEntity = source.getDirectEntity();
-            return spliceCharacters(descId, getSourceForDamage(player, directEntity));
+            return getPlayerKey(descId, player, directEntity);
         }
         return descId;
         //return adaptBypassesDamage ? spliceCharacters(source.type().msgId(), "bypasses_source") : null;
     }
 
-    private static String getSourceForDamage(Player player, Entity direct) {
-        if (direct == null) return "unknown_entity";
-        if (player == direct) return player.getMainHandItem().getDescriptionId();
-        return direct.getType().getDescriptionId();
+    private static String getPlayerKey(String id, Player player, @Nullable Entity direct) {
+        if (player == direct) return spliceCharacters(id, player.getMainHandItem().getDescriptionId());
+        return spliceCharacters(id, "indirect");
     }
 
     private static String spliceCharacters(String str1, String str2) {

@@ -78,10 +78,10 @@ public class EntityImmortalLaser extends EntityAbsBeam {
                     float damage = 5F;
                     if (owner instanceof EntityImmortalBoss immortal) {
                         damage = ModConfigHandler.COMMON.mobs.immortals.immortal.immortalLaser.damage.get().floatValue();
-                        damage *= 1F + (Mth.clamp(immortal.getCacheTargets().size() - 1, 0, 5) * 0.1F);
+                        damage *= 1F + Mth.clamp(immortal.getCacheTargets().size() - 1, 0, 5) * 0.1F;
                     }
                     MobEffectInstance instance = target.getEffect(EffectInit.ERODE_EFFECT.get());
-                    if (instance != null) damage += instance.getAmplifier() + 1;
+                    if (instance != null) damage *= 1F + Mth.clamp(instance.getAmplifier() + 1, 0, 5) * 0.1F;
                     if (owner instanceof IMob iMob) {
                         damage += iMob.getDamageAmountByTargetHealthPct(target);
                     }
