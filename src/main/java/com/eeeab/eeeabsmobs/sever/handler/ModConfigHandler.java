@@ -553,11 +553,9 @@ public final class ModConfigHandler {
             {
                 builder.push("Bosses");
                 enableShowBossBars = builder.comment("If set to 'False' disable show boss bar")
-                        .translation(getTranslationKey("boss_bar_1")).define("Enable Show Boss Health Bars", true);
-                enableCustomBossBars = builder.comment("If set to 'False' disable custom bosse health bar")
-                        .translation(getTranslationKey("boss_bar_2")).define("Enable Custom Boss Health Bars", true);
+                        .translation(getTranslationKey("show_boss_bar")).define("Enable Show Boss Health Bars", true);
                 bossBarMaxDist = builder.comment("Set maximum render distance for boss health bar")
-                        .translation(getTranslationKey("boss_bar_3")).defineInRange("Set Render Distance For Boss Bars", 48D, 32D, 128D);
+                        .translation(getTranslationKey("boss_bar_render_dist")).defineInRange("Set Render Distance For Boss Bars", 48D, 32D, 128D);
                 builder.pop();
             }
             enableMobsCanBreakingBlockDropItem = builder.comment("If set to 'False' disable mobs breaking blocks drop items")
@@ -573,8 +571,6 @@ public final class ModConfigHandler {
 
         //启用显示boss血条
         public final ForgeConfigSpec.BooleanValue enableShowBossBars;
-        //启用自定义boss血条
-        public final ForgeConfigSpec.BooleanValue enableCustomBossBars;
         //boss血条显示距离
         public final ForgeConfigSpec.DoubleValue bossBarMaxDist;
         //启用生物破坏方块掉落对应方块物品
@@ -686,6 +682,8 @@ public final class ModConfigHandler {
             tipNotification = new TipNotification(builder);
             enableCameraShake = builder.comment("If set to 'False' disable camera shake")
                     .translation(getTranslationKey("camera_shake")).define("Enable Camera Shake", true);
+            enableCustomBossBars = builder.comment("If set to 'False' disable custom bosse health bar")
+                    .translation(getTranslationKey("custom_boss_bar")).define("Enable Custom Boss Health Bars", true);
             enablePlayBossMusic = builder.comment("If set to 'False' disable play boss music")
                     .translation(getTranslationKey("play_boss_music")).define("Enable Play Bosses Musics", true);
             enableFallingBlockRender = builder.comment("If set to 'False' disable falling block rendering")
@@ -696,6 +694,7 @@ public final class ModConfigHandler {
         public final ForgeConfigSpec.BooleanValue enableCameraShake;
         public final ForgeConfigSpec.BooleanValue enablePlayBossMusic;
         public final ForgeConfigSpec.BooleanValue enableFallingBlockRender;
+        public final ForgeConfigSpec.BooleanValue enableCustomBossBars;
     }
 
     public static class TipNotification {

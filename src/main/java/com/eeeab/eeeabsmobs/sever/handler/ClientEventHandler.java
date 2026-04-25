@@ -148,7 +148,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onRenderBossBar(CustomizeGuiOverlayEvent.BossEventProgress event) {
-        if (!ModConfigHandler.COMMON.others.enableCustomBossBars.get()) return;
+        if (!ModConfigHandler.CLIENT.enableCustomBossBars.get()) return;
         ResourceLocation bossRegistryName = ClientProxy.BOSS_BAR_REGISTRY_NAMES.getOrDefault(event.getBossEvent().getId(), null);
         if (bossRegistryName == null) return;
         BossBarConfig config = BossBarRegistry.getBarForEntity(bossRegistryName);
