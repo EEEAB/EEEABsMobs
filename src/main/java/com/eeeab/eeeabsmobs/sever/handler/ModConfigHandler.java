@@ -66,7 +66,7 @@ public final class ModConfigHandler {
             }
             {
                 builder.push("Annihilator Sawblade");
-                chainsword = new ToolConfig(9D, 1.6D);
+                chainsword = new ToolConfig(10D, 1.6D);
                 chainswordConfig1 = builder.comment("Set the percentage of damage increase per stack")
                         .translation(getTranslationKey("chainsword1"))
                         .defineInRange("Set Damage Bonus Per Stack", 5D, 1D, 10D);
