@@ -6,6 +6,8 @@ import com.eeeab.eeeabsmobs.sever.util.TranslateUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,16 +32,10 @@ import java.util.List;
 public abstract class ItemFindStructureEye extends Item {
     private static final int FIND_MAX_HEIGHT = 100;
     private final TagKey<Structure> FIND_STRUCTURE;
-    private final float r;
-    private final float g;
-    private final float b;
 
-    protected ItemFindStructureEye(Properties properties, TagKey<Structure> tagKey, float r, float g, float b) {
+    protected ItemFindStructureEye(Properties properties, TagKey<Structure> tagKey) {
         super(properties);
         this.FIND_STRUCTURE = tagKey;
-        this.r = r;
-        this.g = g;
-        this.b = b;
     }
 
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
@@ -52,9 +48,6 @@ public abstract class ItemFindStructureEye extends Item {
                 EntityEyeOfStructure eye = new EntityEyeOfStructure(level, player.getX(), player.getY(0.5D), player.getZ(), canConsumeItem);
                 eye.setItem(eyeItem);
                 eye.signalTo(blockpos);
-                eye.setR(r);
-                eye.setG(g);
-                eye.setB(b);
                 level.gameEvent(GameEvent.PROJECTILE_SHOOT, eye.position(), GameEvent.Context.of(player));
                 level.addFreshEntity(eye);
                 if (player instanceof ServerPlayer) {
@@ -84,5 +77,9 @@ public abstract class ItemFindStructureEye extends Item {
             tooltip.add(TranslateUtils.itemCoolTime(ModConfigHandler.COMMON.items.eyeOfStructureConfig2.get()));
         }
         tooltip.add(TranslateUtils.simpleText(TranslateUtils.ITEM_STRUCTURE_PREFIX, FIND_STRUCTURE.location().getPath(), ChatFormatting.GRAY));
+    }
+
+    public ParticleOptions getTrailParticle() {
+        return ParticleTypes.PORTAL;
     }
 }

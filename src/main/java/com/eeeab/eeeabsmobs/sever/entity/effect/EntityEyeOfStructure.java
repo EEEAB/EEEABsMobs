@@ -1,8 +1,8 @@
 package com.eeeab.eeeabsmobs.sever.entity.effect;
 
-import com.eeeab.eeeabsmobs.client.particle.ParticleOrb;
-import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.sever.init.EntityInit;
+import com.eeeab.eeeabsmobs.sever.item.eye.ItemFindStructureEye;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
@@ -24,9 +24,6 @@ import net.minecraft.world.phys.Vec3;
 //参考自: net.minecraft.world.entity.EyeOfEnder
 public class EntityEyeOfStructure extends Entity implements ItemSupplier, IEntity {
     private static final EntityDataAccessor<ItemStack> DATA_ITEM_STACK = SynchedEntityData.defineId(EntityEyeOfStructure.class, EntityDataSerializers.ITEM_STACK);
-    private static final EntityDataAccessor<Float> R = SynchedEntityData.defineId(EntityEyeOfStructure.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> G = SynchedEntityData.defineId(EntityEyeOfStructure.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> B = SynchedEntityData.defineId(EntityEyeOfStructure.class, EntityDataSerializers.FLOAT);
     private double tx;
     private double ty;
     private double tz;
@@ -42,36 +39,6 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier, IEntit
         super(EntityInit.EYE_OF_STRUCTURE.get(), level);
         this.setPos(px, py, pz);
         this.canConsumeItem = canConsumeItem;
-    }
-
-    //public void setColor(Color color) {
-    //    setR(color.getRed());
-    //    setG(color.getGreen());
-    //    setB(color.getBlue());
-    //}
-
-    public float getR() {
-        return this.getEntityData().get(R);
-    }
-
-    public void setR(float r) {
-        this.getEntityData().set(R, r);
-    }
-
-    public float getG() {
-        return this.getEntityData().get(G);
-    }
-
-    public void setG(float g) {
-        this.getEntityData().set(G, g);
-    }
-
-    public float getB() {
-        return this.getEntityData().get(B);
-    }
-
-    public void setB(float b) {
-        this.getEntityData().set(B, b);
     }
 
     public void setItem(ItemStack itemStack) {
@@ -96,9 +63,6 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier, IEntit
     @Override
     protected void defineSynchedData() {
         this.getEntityData().define(DATA_ITEM_STACK, ItemStack.EMPTY);
-        this.getEntityData().define(R, 0F);
-        this.getEntityData().define(G, 0F);
-        this.getEntityData().define(B, 0F);
     }
 
     @Override
@@ -107,7 +71,6 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier, IEntit
         if (Double.isNaN(d0)) {
             d0 = 4.0D;
         }
-
         d0 *= 64.0D;
         return distance < d0 * d0;
     }
@@ -128,7 +91,6 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier, IEntit
             this.ty = (double) i;
             this.tz = d1;
         }
-
         this.life = 0;
     }
 
@@ -142,13 +104,13 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier, IEntit
             this.yRotO = this.getYRot();
             this.xRotO = this.getXRot();
         }
-
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (getItem().isEmpty()) {
+        ItemStack item = getItem();
+        if (item.isEmpty()) {
             discard();
         }
         Vec3 vec3 = this.getDeltaMovement();
@@ -180,9 +142,12 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier, IEntit
             for (int i = 0; i < 4; ++i) {
                 this.level().addParticle(ParticleTypes.BUBBLE, d0 - vec3.x * speed, d1 - vec3.y * speed, d2 - vec3.z * speed, vec3.x, vec3.y, vec3.z);
             }
-        } else {
-            ParticleOrb.OrbData orbData = new ParticleOrb.OrbData(getR(), getG(), getB(), 3, 20);
-            this.level().addParticle(orbData, d0 - vec3.x * speed + this.random.nextDouble() * 0.6D - 0.3D, d1 - vec3.y * speed, d2 - vec3.z * speed + this.random.nextDouble() * 0.6D - 0.3D, vec3.x, vec3.y, vec3.z);
+        } else if (this.tickCount % 4 == 0) {
+            ParticleOptions particle = ParticleTypes.PORTAL;
+            if (item.getItem() instanceof ItemFindStructureEye structureEye) {
+                particle = structureEye.getTrailParticle();
+            }
+            this.level().addParticle(particle, d0 - vec3.x * 0.25D + this.random.nextDouble() * 0.6D - 0.3D, d1 - vec3.y * speed, d2 - vec3.z * 0.25D + this.random.nextDouble() * 0.6D - 0.3D, vec3.x, vec3.y, vec3.z);
         }
 
         if (!this.level().isClientSide) {
@@ -192,19 +157,17 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier, IEntit
                 this.playSound(SoundEvents.ENDER_EYE_DEATH, 1.0F, 1.0F);
                 this.level().broadcastEntityEvent(this, (byte) 5);
                 this.discard();
-                if (this.canConsumeItem) this.level().addFreshEntity(new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), this.getItem()));
+                if (this.canConsumeItem) this.level().addFreshEntity(new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), item));
             }
         } else {
             this.setPosRaw(d0, d1, d2);
         }
-
     }
 
     @Override
     public void handleEntityEvent(byte id) {
         if (id == 5) {
-            ModParticleUtils.roundParticleOutburst(level(), 30, new ParticleOptions[]{new ParticleOrb.OrbData(getR(), getG(), getB(), 3, 40)}, getX(), getY(), getZ(), 1);
-            ModParticleUtils.annularParticleOutburst(level(), 10, new ItemParticleOption(ParticleTypes.ITEM, getItem()), getX(), getY(), getZ(), 0.45, 0);
+            ModParticleUtils.roundParticleOutburst(level(), 30, new ParticleOptions[]{new ItemParticleOption(ParticleTypes.ITEM, getItem())}, getX(), getY(), getZ(), 1);
         }
         super.handleEntityEvent(id);
     }
@@ -215,9 +178,6 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier, IEntit
         if (!itemstack.isEmpty()) {
             compoundTag.put("Item", itemstack.save(new CompoundTag()));
         }
-        compoundTag.putFloat("R", getR());
-        compoundTag.putFloat("G", getG());
-        compoundTag.putFloat("B", getB());
         compoundTag.putBoolean("CanConsumeItem", this.canConsumeItem);
     }
 
@@ -225,9 +185,6 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier, IEntit
     public void readAdditionalSaveData(CompoundTag compoundTag) {
         ItemStack itemstack = ItemStack.of(compoundTag.getCompound("Item"));
         this.setItem(itemstack);
-        setR(compoundTag.getFloat("R"));
-        setG(compoundTag.getFloat("G"));
-        setB(compoundTag.getFloat("B"));
         this.canConsumeItem = compoundTag.getBoolean("CanConsumeItem");
     }
 
@@ -241,7 +198,7 @@ public class EntityEyeOfStructure extends Entity implements ItemSupplier, IEntit
         return false;
     }
 
-    protected static float lerpRotation(float f1, float f2) {
+    private static float lerpRotation(float f1, float f2) {
         while (f2 - f1 < -180.0F) {
             f1 -= 360.0F;
         }
