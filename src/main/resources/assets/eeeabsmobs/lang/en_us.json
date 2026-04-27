@@ -78,8 +78,9 @@
   "item.eeeabsmobs.immortal_debris": "Armor Debris",
   "item.eeeabsmobs.immortal_ingot": "Immortal Ingot",
   "item.eeeabsmobs.ghost_steel_ingot": "Ghost Steel Ingot",
-  "item.eeeabsmobs.guardians_music_disc": "Music Disc",
-  "item.eeeabsmobs.the_army_of_minotaur_music_disc": "Music Disc",
+  "item.eeeabsmobs.nameless_guardian_theme_music_disc": "Music Disc",
+  "item.eeeabsmobs.realm_warden_theme_music_disc": "Music Disc",
+  "item.eeeabsmobs.the_immortal_theme_music_disc": "Music Disc",
 
   "_comment": "Smithing Template",
   "upgrade.eeeabsmobs.relicron":"Relicron Upgrade",
@@ -247,8 +248,9 @@
   "death.attack.eeeabsmobs.overload_explode": "%1$s blew up",
 
   "_comment": "Music Desc",
-  "item.eeeabsmobs.guardians_music_disc.desc": "Guardians - Evan King",
-  "item.eeeabsmobs.the_army_of_minotaur_music_disc.desc": "The army of minotaur - Makai Symphony",
+  "item.eeeabsmobs.nameless_guardian_theme_music_disc.desc": "Evan King - Guardians",
+  "item.eeeabsmobs.realm_warden_theme_music_disc.desc": "Steel Psalm",
+  "item.eeeabsmobs.the_immortal_theme_music_disc.desc": "Makai Symphony - The army of minotaur",
 
   "_comment": "Sounds subtitle",
   "subtitles.eeeabsmobs.giant_axe_hit": "Giant Axe hits",
@@ -366,8 +368,9 @@
   "subtitles.eeeabsmobs.entity.corpse.idle": "Corpse roars",
   "subtitles.eeeabsmobs.entity.corpse_warlock.hurt": "Corpse Warlock hurts",
   "subtitles.eeeabsmobs.entity.corpse_warlock.tear": "Corpse Warlock tears",
-  "subtitles.eeeabsmobs.music.guardians": "Guardians - Evan King",
-  "subtitles.eeeabsmobs.music.the_army_of_minotaur": "The army of minotaur - Makai Symphony",
+  "subtitles.eeeabsmobs.music.nameless_guardian_theme": "Nameless Guardian Theme",
+  "subtitles.eeeabsmobs.music.realm_warden_theme": "Realmwarden Theme",
+  "subtitles.eeeabsmobs.music.the_immortal_theme": "The Immortal Theme",
 
   "_comment": "Advancements",
   "advancements.eeeabsmobs.root.title": "EEEAB's Mobs",

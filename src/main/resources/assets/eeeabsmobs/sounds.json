@@ -803,49 +803,49 @@
       "eeeabsmobs:entity/corpse_warlock/tear2"
     ]
   },
-  "music.guardians": {
+  "music.nameless_guardian_theme": {
     "category": "record",
     "sounds": [
       {
-        "name": "eeeabsmobs:music/guardians/guardians",
+        "name": "eeeabsmobs:music/nameless_guardian_theme",
         "stream": true,
         "volume": 1.0
       }
     ],
-    "subtitle": "subtitles.eeeabsmobs.music.guardians"
+    "subtitle": "subtitles.eeeabsmobs.music.nameless_guardian_theme"
   },
-  "music.the_army_of_minotaur": {
+  "music.realm_warden_theme": {
     "category": "record",
     "sounds": [
       {
-        "name": "eeeabsmobs:music/the_army_of_minotaur",
+        "name": "eeeabsmobs:music/realm_warden_theme",
         "stream": true,
-        "volume": 0.5
+        "volume": 0.75
       }
     ],
-    "subtitle": "subtitles.eeeabsmobs.music.the_army_of_minotaur"
+    "subtitle": "subtitles.eeeabsmobs.music.realm_warden_theme"
   },
-  "music.guardians.mono": {
+  "music.realm_warden_theme_disc": {
     "category": "record",
     "sounds": [
       {
-        "name": "eeeabsmobs:music/guardians/guardians_mono",
-        "stream": true,
-        "volume": 1.0
-      }
-    ],
-    "subtitle": "subtitles.eeeabsmobs.music.guardians"
-  },
-  "music.the_army_of_minotaur.mono": {
-    "category": "record",
-    "sounds": [
-      {
-        "name": "eeeabsmobs:music/the_army_of_minotaur_mono",
+        "name": "eeeabsmobs:music/realm_warden_theme",
         "stream": true,
         "volume": 1.0
       }
     ],
-    "subtitle": "subtitles.eeeabsmobs.music.the_army_of_minotaur"
+    "subtitle": "subtitles.eeeabsmobs.music.realm_warden_theme"
+  },
+  "music.the_immortal_theme": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "eeeabsmobs:music/the_immortal_theme",
+        "stream": true,
+        "volume": 1
+      }
+    ],
+    "subtitle": "subtitles.eeeabsmobs.music.the_immortal_theme"
   }
 }
 

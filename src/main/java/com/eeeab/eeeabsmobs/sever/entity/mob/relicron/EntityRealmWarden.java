@@ -138,7 +138,6 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
     };
     private static final KeyframeManager<EntityRealmWarden> KEYFRAME_MANAGER;
     private static final AnimationReleaseManager<EntityRealmWarden> ANIMATION_RELEASE_MANAGER;
-    private static final LightningBolt.LightningBoltBuilder REALMWARDEN_BOLT = new LightningBolt.LightningBoltBuilder().count(1);
     private static final EntityDataAccessor<Integer> DATA_LEAP_HOLD = SynchedEntityData.defineId(EntityRealmWarden.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_SEC_PHASE = SynchedEntityData.defineId(EntityRealmWarden.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Optional<BlockPos>> DATA_REST_POS = SynchedEntityData.defineId(EntityRealmWarden.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
@@ -159,6 +158,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
     private final AnimationState turnaroundSweepAnimationState = new OverlapAnimationState(TURNAROUND_SWEEP_ANIMATION);
     private final AnimationState backstepLandingAnimationState = new OverlapAnimationState(BACKSTEP_LANDING_ANIMATION);
     private final AnimationState doubleFistSlamAnimationState = new OverlapAnimationState(DOUBLE_FIST_SLAM_ANIMATION);
+    private final LightningBolt.LightningBoltBuilder REALMWARDEN_BOLT = new LightningBolt.LightningBoltBuilder().count(1);
     public final ControlledAnimation alphaControlled = new ControlledAnimation(5);
     @OnlyIn(Dist.CLIENT)
     public Vec3[] modelParts;//0:left 1:right
@@ -627,7 +627,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
 
     @Override
     public SoundEvent getBossMusic() {
-        return SoundInit.GUARDIANS.get();
+        return SoundInit.REALM_WARDEN_THEME.get();
     }
 
     @Override

@@ -25,6 +25,7 @@ public class ModItemTagsProvider extends ItemTagsProvider {
     protected void addTags(HolderLookup.Provider provider) {
         tag(ItemTags.MUSIC_DISCS).add(
                 ItemInit.GUARDIANS_MUSIC_DISC.get(),
+                ItemInit.STEEL_PSALM_MUSIC_DISC.get(),
                 ItemInit.THE_ARMY_OF_MINOTAUR_MUSIC_DISC.get()
         );
         tag(ItemTags.LOGS_THAT_BURN).add(

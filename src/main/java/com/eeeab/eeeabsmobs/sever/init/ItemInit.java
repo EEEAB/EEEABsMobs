@@ -78,8 +78,9 @@ public class ItemInit {
     public static final RegistryObject<ItemNetherworldKatana> THE_NETHERWORLD_KATANA = ITEMS.register("netherworld_katana", () -> new ItemNetherworldKatana(ModToolsTier.GHOST_STEEL_TIER, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
 
     //唱片
-    public static final RegistryObject<Item> GUARDIANS_MUSIC_DISC = ITEMS.register("guardians_music_disc", () -> new RecordItem(8, SoundInit.MONO_GUARDIANS, new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant(), 3640));
-    public static final RegistryObject<Item> THE_ARMY_OF_MINOTAUR_MUSIC_DISC = ITEMS.register("the_army_of_minotaur_music_disc", () -> new RecordItem(8, SoundInit.MONO_THE_ARMY_OF_MINOTAUR, new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant(), 3220));
+    public static final RegistryObject<Item> GUARDIANS_MUSIC_DISC = ITEMS.register("nameless_guardian_theme_music_disc", () -> new RecordItem(8, SoundInit.NAMELESS_GUARDIAN_THEME, new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant(), 3640));
+    public static final RegistryObject<Item> STEEL_PSALM_MUSIC_DISC = ITEMS.register("realm_warden_theme_music_disc", () -> new RecordItem(8, SoundInit.REALM_WARDEN_THEME_DISC, new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant(), 3700));
+    public static final RegistryObject<Item> THE_ARMY_OF_MINOTAUR_MUSIC_DISC = ITEMS.register("the_immortal_theme_music_disc", () -> new RecordItem(8, SoundInit.THE_IMMORTAL_THEME, new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant(), 3220));
 
     public static RegistryObject<Item> registerEgg(String name, RegistryObject<? extends EntityType<? extends Mob>> EggObject, int backgroundColor, int highlightColor) {
         return ITEMS.register(name, () -> new ForgeSpawnEggItem(EggObject, backgroundColor, highlightColor, new Item.Properties()));

@@ -54,7 +54,7 @@ public class ModEntityLootTables extends EntityLootSubProvider {
                 .withPool(LootPool.lootPool().add(LootItem.lootTableItem(ItemInit.GUARDIAN_CUBE.get())
                         .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1F)))
                 ))
-                .withPool(LootPool.lootPool().add(LootItem.lootTableItem(ItemInit.GUARDIANS_MUSIC_DISC.get())
+                .withPool(LootPool.lootPool().add(LootItem.lootTableItem(ItemInit.STEEL_PSALM_MUSIC_DISC.get())
                         .when(LootItemRandomChanceWithLootingCondition.randomChanceAndLootingBoost(0.5F, 0.1F))
                 )).withPool(LootPool.lootPool()
                         .add(LootItem.lootTableItem(ItemInit.RELICRON_UPGRADE_SMITHING_TEMPLATE.get()))

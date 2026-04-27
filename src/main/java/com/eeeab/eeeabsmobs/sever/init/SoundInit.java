@@ -161,12 +161,11 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> DOOMBOLTAXE_HIT_GROUND = create("item.doomboltaxe.hit_ground");
 
     //Music
-    public static final RegistryObject<SoundEvent> GUARDIANS = create("music.guardians");
-    public static final RegistryObject<SoundEvent> THE_ARMY_OF_MINOTAUR = create("music.the_army_of_minotaur");
+    public static final RegistryObject<SoundEvent> NAMELESS_GUARDIAN_THEME = create("music.nameless_guardian_theme");
+    public static final RegistryObject<SoundEvent> REALM_WARDEN_THEME = create("music.realm_warden_theme");
+    public static final RegistryObject<SoundEvent> REALM_WARDEN_THEME_DISC = create("music.realm_warden_theme_disc");
+    public static final RegistryObject<SoundEvent> THE_IMMORTAL_THEME = create("music.the_immortal_theme");
 
-    //Record
-    public static final RegistryObject<SoundEvent> MONO_GUARDIANS = create("music.guardians.mono");
-    public static final RegistryObject<SoundEvent> MONO_THE_ARMY_OF_MINOTAUR = create("music.the_army_of_minotaur.mono");
 
     public static void register(IEventBus bus) {
         SOUNDS.register(bus);
