@@ -1654,7 +1654,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
 
     @Override
     public SoundEvent getBossMusic() {
-        return SoundInit.THE_ARMY_OF_MINOTAUR.get();
+        return SoundInit.THE_IMMORTAL_THEME.get();
     }
 
     @Override

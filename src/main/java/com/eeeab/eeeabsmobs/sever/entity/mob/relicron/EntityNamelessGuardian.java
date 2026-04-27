@@ -12,7 +12,6 @@ import com.eeeab.eeeabsmobs.client.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.ParticleRing;
 import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
-import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
 import com.eeeab.eeeabsmobs.sever.entity.ModEntityPart;
 import com.eeeab.eeeabsmobs.sever.entity.ai.control.ModBodyRotationControl;
 import com.eeeab.eeeabsmobs.sever.entity.ai.goal.animate.*;
@@ -1319,7 +1318,7 @@ public class EntityNamelessGuardian extends EntityAbsRelicron implements IBoss, 
     @Override
     public SoundEvent getBossMusic() {
         //return this.isChallengeMode() ? SoundInit.GUARDIANS.get() : !this.isPowered() ? SoundInit.GUARDIANS_PRELUDE.get() : SoundInit.GUARDIANS_CLIMAX.get();
-        return SoundInit.GUARDIANS.get();
+        return SoundInit.NAMELESS_GUARDIAN_THEME.get();
     }
 
     @Override
