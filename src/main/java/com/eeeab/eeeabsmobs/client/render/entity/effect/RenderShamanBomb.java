@@ -21,8 +21,8 @@ import org.joml.Matrix4f;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderShamanBomb extends FlatTextureRenderer<EntityShamanBomb> {
-    private static final ResourceLocation N_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/projectile/shaman_bomb.png");
-    private static final ResourceLocation D_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/projectile/shaman_bomb_dangerous.png");
+    private static final ResourceLocation N_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/effect/shaman_bomb.png");
+    private static final ResourceLocation D_TEXTURE = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/effect/shaman_bomb_dangerous.png");
     private static final float SCALE = 2.0F;
     private final RandomSource random = RandomSource.create();
 
