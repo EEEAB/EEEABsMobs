@@ -240,20 +240,27 @@ public abstract class ParticleComponent {
         private final float killDist;
         private final EnumAttractorBehavior behavior;
         private Vec3 startLocation;
+        private final int delayTicks;
 
         /**
          * Attractor
          *
-         * @param location 目标坐标数组
-         * @param strength 吸引强度
-         * @param killDist 到指定距离消散
-         * @param behavior 吸引类型
+         * @param location   目标坐标数组
+         * @param strength   吸引强度
+         * @param killDist   到指定距离消散
+         * @param behavior   吸引类型
+         * @param delayTicks 延迟刻
          */
-        public Attractor(Vec3[] location, float strength, float killDist, EnumAttractorBehavior behavior) {
+        public Attractor(Vec3[] location, float strength, float killDist, EnumAttractorBehavior behavior, int delayTicks) {
             this.location = location;
             this.strength = strength;
             this.killDist = killDist;
             this.behavior = behavior;
+            this.delayTicks = delayTicks;
+        }
+
+        public Attractor(Vec3[] location, float strength, float killDist, EnumAttractorBehavior behavior) {
+            this(location, strength, killDist, behavior, 0);
         }
 
         @Override
@@ -263,6 +270,8 @@ public abstract class ParticleComponent {
 
         @Override
         public void preUpdate(AdvancedParticleBase particle) {
+            float currentAge = particle.getAge();
+            if (currentAge < delayTicks) return;
             float ageFrac = particle.getAge() / (particle.getLifetime() - 1);
             if (location.length > 0) {
                 Vec3 destinationVec = location[0];
