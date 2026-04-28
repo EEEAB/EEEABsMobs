@@ -158,7 +158,6 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
     private final AnimationState turnaroundSweepAnimationState = new OverlapAnimationState(TURNAROUND_SWEEP_ANIMATION);
     private final AnimationState backstepLandingAnimationState = new OverlapAnimationState(BACKSTEP_LANDING_ANIMATION);
     private final AnimationState doubleFistSlamAnimationState = new OverlapAnimationState(DOUBLE_FIST_SLAM_ANIMATION);
-    private final LightningBolt.LightningBoltBuilder REALMWARDEN_BOLT = new LightningBolt.LightningBoltBuilder().count(1);
     public final ControlledAnimation alphaControlled = new ControlledAnimation(5);
     @OnlyIn(Dist.CLIENT)
     public Vec3[] modelParts;//0:left 1:right
@@ -930,7 +929,35 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             }
         });
         jumpSmashKeyframe(builder, JUMP_SMASH_ANIMATION, doPlayAttackSound);
-        jumpSmashKeyframe(builder, DERIVED_JUMP_SMASH_ANIMATION, doPlayAttackSound).atTick(25, (entity, animation, tick) -> {
+        jumpSmashKeyframe(builder, DERIVED_JUMP_SMASH_ANIMATION, doPlayAttackSound).atTick(8, (entity, animation, tick) -> {
+            if (!entity.level().isClientSide) return;
+            Vec3 pos = entity.getPosOffset(false, 2.4F, 0F, 0F);
+            ModParticleUtils.blockParticlesAround(entity.level(), pos.x, pos.y, pos.z, 12, 0.5, 1, 0.3,
+                    0.5, 0.5, 0.8, -0.2, 0.1, (pos2, state) -> AdvancedBlockParticle.createBlockParticleData(state, null, pos.x, pos.y, pos.z, (entity.random.nextFloat() * 0.5F + 0.5F) * 1.2,
+                            0.6, 0.6, 0.6, 1, 0.98, 17, false, true, new ParticleComponent[]{
+                                    new ParticleComponent.FreeFallSimulator(1F),
+                                    new ParticleComponent.Attractor(new Vec3[]{pos}, 4.25F, 0.5F, ParticleComponent.Attractor.EnumAttractorBehavior.SIMULATED, 8)
+                            }
+                    ));
+        }).inRange(15, 24, (entity, animation, tick) -> {
+            List<LivingEntity> entities = entity.getNearByEntities(LivingEntity.class, 8, 8, 8, 8);
+            for (LivingEntity inRangeEntity : entities) {
+                if (inRangeEntity instanceof Player player && player.getAbilities().invulnerable) continue;
+                Vec3 diff = inRangeEntity.position().subtract(entity.position());
+                diff = diff.normalize().scale(0.07);
+                inRangeEntity.setDeltaMovement(inRangeEntity.getDeltaMovement().subtract(diff));
+            }
+            if (!entity.level().isClientSide) return;
+            if (tick == 17) {
+                Vec3 pos = entity.getPosOffset(false, 2.4F, 0F, 0F);
+                Vector4f color = entity.getColorByPhase();
+                AdvancedParticleBase.spawnParticle(entity.level(), ParticleInit.ADV_RING2.get(), pos.x, entity.getY() + 0.1, pos.z, 0, 0, 0, false, 0, Math.PI / 2F, 0,
+                        0, 0, color.x, color.y, color.z, 1, 1, 7, true, false, false, new ParticleComponent[]{
+                                new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(50F, 0F), false),
+                                new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.4F, 0F), false),
+                        });
+            }
+        }).atTick(25, (entity, animation, tick) -> {
             Vec3 pos = entity.getPosOffset(false, 2.4F, 0F, 0F);
             entity.doGroundPoundEffect(pos, 1.5F, 1.5F, 1F, null, entity.isSecondPhase() ? new double[]{0.49F, 0.9F, 1F, 0.72F} : null);
             if (entity.level().isClientSide) {
@@ -942,7 +969,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                         });
             } else {
                 entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 1.5F, 1F);
-                AABB area = ModEntityUtils.makeAABBWithSize(pos.x, pos.y, pos.z, 0, 7, 14, 7);
+                AABB area = ModEntityUtils.makeAABBWithSize(pos.x, pos.y, pos.z, 0, 7.5, 14, 7.5);
                 List<LivingEntity> entities = entity.level().getEntitiesOfClass(LivingEntity.class, area, target -> target != entity && !entity.isAlliedTo(target));
                 for (LivingEntity hitEntity : entities) {
                     entity.doHurtTarget(ModDamageSource.bypassArmor(entity), hitEntity, 1F, 0, true);
@@ -1557,8 +1584,9 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
 
     private void doLightBlotEffect(Vec3 start, Vec3 end, int lifespan, float size, float parallelNoise, float spreadFactor, LightningBolt.FadeFunction function) {
         if (!this.level().isClientSide) return;
-        LightningBolt bolt = REALMWARDEN_BOLT.color(BOLT_COLORS[this.random.nextInt(2)]).lifespan(lifespan).fadeFunction(function)
-                .size(size).parallelNoise(parallelNoise).spreadFactor(spreadFactor).build(start, end, this.random);
+        LightningBolt.LightningBoltBuilder builder = new LightningBolt.LightningBoltBuilder().count(1).color(BOLT_COLORS[this.random.nextInt(2)]).lifespan(lifespan).fadeFunction(function)
+                .size(size).parallelNoise(parallelNoise).spreadFactor(spreadFactor);
+        LightningBolt bolt = builder.build(start, end, this.random);
         ClientProxy.LIGHTNING_RENDER.update(this, bolt);
     }
 
