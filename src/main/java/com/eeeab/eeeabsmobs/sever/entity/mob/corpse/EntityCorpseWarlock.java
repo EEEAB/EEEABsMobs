@@ -412,7 +412,10 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
         } else if (animation == VAMPIRE_ANIMATION || animation == ROBUST_ANIMATION) {
             if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) damage *= 0.2F;
         }
-        if (entity != null && animation == BABBLE_ANIMATION) this.playAnimation(TELEPORT_ANIMATION);
+        if (entity != null) {
+            if (checkAttackDistance(source, 576D, entity)) return false;
+            if (animation == BABBLE_ANIMATION) this.playAnimation(TELEPORT_ANIMATION);
+        }
         boolean flag = super.hurt(source, damage);
         if (flag && entity != null && this.random.nextFloat() < 0.6F) this.hurtCount++;
         return flag;

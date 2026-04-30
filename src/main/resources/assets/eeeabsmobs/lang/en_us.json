@@ -211,9 +211,9 @@
   "other.eeeabsmobs.cooling.tip": "Cooling...",
   "block.eeeabsmobs.sliding_door_level1.tip": "This door requires a Chain Gear Core or Annihilator Sawblade to open",
   "block.eeeabsmobs.sliding_door_level2.tip": "This door requires a Guardian Core or Doombolt Battleaxe to open",
-  "tip.eeeabsmobs.relic_annihilator_weak_point": "Attack the head's exposed core to incapacitate it and reduce its attack accuracy",
-  "tip.eeeabsmobs.relic_earthshaker": "Electrified targets take bonus explosive damage from fire attacks",
-  "tip.eeeabsmobs.relic_observer": "Electrified targets take bonus explosive damage from fire attacks",
+  "tip.eeeabsmobs.relic_annihilator_weak_point": "Use a projectile attack on the head's exposed core to incapacitate it and reduce its attack accuracy",
+  "tip.eeeabsmobs.relic_earthshaker": "Electrified targets take extra explosive damage from fire",
+  "tip.eeeabsmobs.relic_observer": "Electrified targets take extra explosive damage from fire",
 
   "_comment": "Attributes",
   "eeeabsmobs.crit_chance": "Crit Rate",
@@ -249,7 +249,7 @@
 
   "_comment": "Music Desc",
   "item.eeeabsmobs.nameless_guardian_theme_music_disc.desc": "Evan King - Guardians",
-  "item.eeeabsmobs.realm_warden_theme_music_disc.desc": "Steel Psalm",
+  "item.eeeabsmobs.realm_warden_theme_music_disc.desc": "Realmwarden Theme  - The Only Edict",
   "item.eeeabsmobs.the_immortal_theme_music_disc.desc": "Makai Symphony - The army of minotaur",
 
   "_comment": "Sounds subtitle",

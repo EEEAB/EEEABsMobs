@@ -489,7 +489,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
     public static AttributeSupplier.Builder setAttributes() {
         return createMobAttributes().add(Attributes.MAX_HEALTH, 300.0D).
                 add(Attributes.MOVEMENT_SPEED, 0.34D).
-                add(Attributes.FOLLOW_RANGE, 32.0D).
+                add(Attributes.FOLLOW_RANGE, 48.0D).
                 add(Attributes.ATTACK_DAMAGE, 12.0D).
                 add(Attributes.KNOCKBACK_RESISTANCE, 1.0D).
                 add(Attributes.ARMOR, 10.0D).
@@ -850,7 +850,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                 .priority(1)
                 .cooldown(rangAttack)
                 .condition(ConditionFactory.and(
-                                ConditionFactory.hybridDistanceRange(7, 7, 32),
+                                ConditionFactory.hybridDistanceRange(7, 7, 48),
                                 ConditionFactory.randomChance(0.4F),
                                 ConditionFactory.hasLineOfSight()
                         )

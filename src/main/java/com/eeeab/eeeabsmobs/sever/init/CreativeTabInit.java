@@ -66,7 +66,7 @@ public class CreativeTabInit {
                 /*  Smithing Template */
                 entries.accept(ItemInit.RELICRON_UPGRADE_SMITHING_TEMPLATE.get());
                 /* Disc Item */
-                entries.accept(ItemInit.STEEL_PSALM_MUSIC_DISC.get());
+                entries.accept(ItemInit.THE_ONLY_EDICT_MUSIC_DISC.get());
                 /* Spawn Egg */
                 entries.accept(ItemInit.TESTER_EGG.get());
                 entries.accept(ItemInit.CORPSE_EGG.get());

@@ -290,7 +290,7 @@ public final class ModConfigHandler {
             }
             combatConfig = new AttributeConfig();
             bossConfig = new BossConfig(30D, 16D, 0.25D);
-            adaptConfig = new DamageSourceAdaptConfig(10, 30, 1.5D, 2D, 0.9D);
+            adaptConfig = new DamageSourceAdaptConfig(15, 60, 1.5D, 2D, 0.9D);
             builder.pop();
         }
 

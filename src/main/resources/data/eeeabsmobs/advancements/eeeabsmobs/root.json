@@ -9,7 +9,7 @@
     "description": {
       "translate": "advancements.eeeabsmobs.root.description"
     },
-    "background": "eeeabsmobs:textures/block/ancient_boundary_stone.png",
+    "background": "eeeabsmobs:textures/block/polished_boundary_bricks.png",
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

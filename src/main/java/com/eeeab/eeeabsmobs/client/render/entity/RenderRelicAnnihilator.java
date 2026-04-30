@@ -11,6 +11,7 @@ import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
 import com.eeeab.eeeabsmobs.client.render.util.EntityAfterImageHelper;
 import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityRelicAnnihilator;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -40,6 +41,11 @@ public class RenderRelicAnnihilator extends MobRenderer<EntityRelicAnnihilator, 
             @Override
             protected RenderType getRenderType(EntityRelicAnnihilator entity) {
                 return ModRenderType.getGlowingTranslucentEffect(location);
+            }
+
+            @Override
+            protected void renderLayer(EntityRelicAnnihilator entity, PoseStack stack, VertexConsumer vertexConsumer, int packedLightIn, float r, float g, float b, float alpha) {
+                super.renderLayer(entity, stack, vertexConsumer, packedLightIn, r, g, b, 0.4F);
             }
         });
         afterImageHelper = new EntityAfterImageHelper<>(model.root().getAllParts().collect(Collectors.toList()), model.root(), 2, 1, 2);

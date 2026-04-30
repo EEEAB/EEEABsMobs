@@ -90,6 +90,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -169,6 +171,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
     @Nullable
     private Vec3 cachedLandingPos;
     private boolean shouldPlayLeapAnimation;
+    private boolean isAprilFoolsDay;
     private double cachedLandingPosY;
     private int triggeredPhashBits;
     private int hoverTimer;
@@ -528,6 +531,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
 
     @Override
     public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance instance, MobSpawnType spawnType, @Nullable SpawnGroupData groupData, @Nullable CompoundTag tag) {
+        this.isAprilFoolsDay = LocalDate.now().getMonth() == Month.APRIL && LocalDate.now().getDayOfMonth() == 1;
         this.setRestPos(this.blockPosition());
         return groupData;
     }
@@ -797,8 +801,8 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                     entity.doTrailEffect(animation, tick == 13, tick > 13 && tick < 19, true, null);
                     if (entity.level().isClientSide) return;
                     if (tick == 18) {
-                        if (entity.level().getDifficulty() == Difficulty.EASY && entity.random.nextFloat() <= 0.25F) {
-                            entity.playSound(SoundInit.MAN.get(), 2.5F, 1F);
+                        if (entity.isAprilFoolsDay) {
+                            entity.playSound(SoundInit.MAN.get(), 2.5F, entity.getVoicePitch());
                         } else entity.playSound(SoundInit.REALM_WARDEN_WHOOSH.get(), 1.4F, 0.9F);
                     }
                     if (tick == 21) entity.rangeAttack(4.5, entity.getBbHeight(), 4.5, 4.5, 90F, 180F, hitEntity -> {
@@ -932,11 +936,11 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
         jumpSmashKeyframe(builder, DERIVED_JUMP_SMASH_ANIMATION, doPlayAttackSound).atTick(8, (entity, animation, tick) -> {
             if (!entity.level().isClientSide) return;
             Vec3 pos = entity.getPosOffset(false, 2.4F, 0F, 0F);
-            ModParticleUtils.blockParticlesAround(entity.level(), pos.x, pos.y, pos.z, 12, 0.5, 1, 0.3,
+            ModParticleUtils.blockParticlesAround(entity.level(), pos.x, pos.y, pos.z, 15, 0.5, 1, 0.3,
                     0.5, 0.5, 0.8, -0.2, 0.1, (pos2, state) -> AdvancedBlockParticle.createBlockParticleData(state, null, pos.x, pos.y, pos.z, (entity.random.nextFloat() * 0.5F + 0.5F) * 1.2,
                             0.6, 0.6, 0.6, 1, 0.98, 17, false, true, new ParticleComponent[]{
                                     new ParticleComponent.FreeFallSimulator(1F),
-                                    new ParticleComponent.Attractor(new Vec3[]{pos}, 4.25F, 0.5F, ParticleComponent.Attractor.EnumAttractorBehavior.SIMULATED, 8)
+                                    new ParticleComponent.Attractor(new Vec3[]{pos}, 4.5F, 0.5F, ParticleComponent.Attractor.EnumAttractorBehavior.SIMULATED, 7)
                             }
                     ));
         }).inRange(15, 24, (entity, animation, tick) -> {

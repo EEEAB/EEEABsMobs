@@ -41,6 +41,11 @@ public class RenderRealmWarden extends MobRenderer<EntityRealmWarden, ModelRealm
             protected RenderType getRenderType(EntityRealmWarden entity) {
                 return ModRenderType.getGlowingTranslucentEffect(location);
             }
+
+            @Override
+            protected void renderLayer(EntityRealmWarden entity, PoseStack stack, VertexConsumer vertexConsumer, int packedLightIn, float r, float g, float b, float alpha) {
+                super.renderLayer(entity, stack, vertexConsumer, packedLightIn, r, g, b, 0.4F);
+            }
         });
     }
 

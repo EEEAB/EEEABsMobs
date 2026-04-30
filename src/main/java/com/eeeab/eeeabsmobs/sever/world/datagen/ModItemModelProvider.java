@@ -55,7 +55,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ItemInit.COREFORGE_RUINS_EYE);
         simpleItem(ItemInit.BLOODY_ALTAR_EYE);
         simpleItem(ItemInit.GUARDIANS_MUSIC_DISC);
-        simpleItem(ItemInit.STEEL_PSALM_MUSIC_DISC);
+        simpleItem(ItemInit.THE_ONLY_EDICT_MUSIC_DISC);
         simpleItem(ItemInit.THE_ARMY_OF_MINOTAUR_MUSIC_DISC);
         //材料
         simpleItem(ItemInit.HEART_OF_PAGAN);
