@@ -16,10 +16,10 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class ItemRemoveMob extends Item {
-    private static final double findSize = 16;
+    private static final double FIND_SIZE = 16;
 
     public ItemRemoveMob() {
-        super(new Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
+        super(new Properties().stacksTo(1));
     }
 
     //右键删除16*16*16范围的模组实体
@@ -28,7 +28,7 @@ public class ItemRemoveMob extends Item {
         ItemStack stack = player.getItemInHand(hand);
         player.startUsingItem(hand);
         if (!player.level().isClientSide) {
-            for (Entity entity : getNearByEntities(player, findSize)) {
+            for (Entity entity : getNearByEntities(player)) {
                 if (entity instanceof IEntity || entity instanceof IMob) entity.remove(Entity.RemovalReason.KILLED);
             }
             player.awardStat(Stats.ITEM_USED.get(this));
@@ -57,8 +57,7 @@ public class ItemRemoveMob extends Item {
         tooltip.addAll(TranslateUtils.complexText(TranslateUtils.ITEM_PREFIX, 2, ChatFormatting.GRAY, this.getDescriptionId()));
     }
 
-    private static List<Entity> getNearByEntities(Entity entity, double size) {
-        return entity.level().getEntitiesOfClass(Entity.class, entity.getBoundingBox().inflate(size, size, size), targetEntity -> targetEntity != entity &&
-                entity.distanceTo(targetEntity) <= size + targetEntity.getBbWidth() / 2f && targetEntity.getY() <= entity.getY() + size);
+    private static List<Entity> getNearByEntities(Entity entity) {
+        return entity.level().getEntitiesOfClass(Entity.class, entity.getBoundingBox().inflate(ItemRemoveMob.FIND_SIZE), targetEntity -> targetEntity != entity);
     }
 }

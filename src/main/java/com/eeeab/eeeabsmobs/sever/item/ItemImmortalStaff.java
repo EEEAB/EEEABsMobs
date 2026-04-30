@@ -2,7 +2,6 @@ package com.eeeab.eeeabsmobs.sever.item;
 
 import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
 import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.util.TranslateUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -19,7 +18,7 @@ import java.util.List;
 
 public class ItemImmortalStaff extends Item {
     public ItemImmortalStaff() {
-        super(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant());
+        super(new Item.Properties().stacksTo(1).fireResistant());
     }
 
     @Override

@@ -48,10 +48,10 @@ public class ItemInit {
     public static final RegistryObject<Item> REMOVE_MOB = ITEMS.register("remove_mob", ItemRemoveMob::new);
     public static final RegistryObject<Item> ANIMATION_CONTROLLER = ITEMS.register("animation_controller", ItemAnimationController::new);
     public static final RegistryObject<Item> BLOODY_ALTAR_EYE = ITEMS.register("bloody_altar_eye", ItemBloodyAltarEye::new);
-    public static final RegistryObject<Item> HEART_OF_PAGAN = ITEMS.register("heart_of_pagan", () -> new ItemHeartOfPagan(new Item.Properties().stacksTo(1).fireResistant()));
-    public static final RegistryObject<Item> SOUL_SUMMON_NECKLACE = ITEMS.register("soul_summon_necklace", () -> new ItemSoulSummonNecklace(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
+    public static final RegistryObject<Item> HEART_OF_PAGAN = ITEMS.register("heart_of_pagan", () -> new ItemHeartOfPagan(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON).fireResistant()));
+    public static final RegistryObject<Item> SOUL_SUMMON_NECKLACE = ITEMS.register("soul_summon_necklace", () -> new ItemSoulSummonNecklace(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
     public static final RegistryObject<Item> COREFORGE_RUINS_EYE = ITEMS.register("coreforge_ruins_eye", ItemCoreforgeRuinsEye::new);
-    public static final RegistryObject<Item> ANCIENT_DRIVE_CRYSTAL = ITEMS.register("ancient_drive_crystal", () -> new Item(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
+    public static final RegistryObject<Item> ANCIENT_DRIVE_CRYSTAL = ITEMS.register("ancient_drive_crystal", () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).fireResistant()));
     public static final RegistryObject<Item> BOUNDARY_BRICK = ITEMS.register("boundary_brick", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> CHAIN_GEAR = ITEMS.register("chain_gear", () -> new ItemSlidingDoorKey(new Item.Properties().rarity(Rarity.EPIC).fireResistant(), 1));
     public static final RegistryObject<Item> GUARDIAN_CUBE = ITEMS.register("guardian_cube", () -> new ItemSlidingDoorKey(new Item.Properties().rarity(Rarity.EPIC).fireResistant(), 2));
@@ -79,7 +79,7 @@ public class ItemInit {
 
     //唱片
     public static final RegistryObject<Item> GUARDIANS_MUSIC_DISC = ITEMS.register("nameless_guardian_theme_music_disc", () -> new RecordItem(8, SoundInit.NAMELESS_GUARDIAN_THEME, new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant(), 3640));
-    public static final RegistryObject<Item> STEEL_PSALM_MUSIC_DISC = ITEMS.register("realm_warden_theme_music_disc", () -> new RecordItem(8, SoundInit.REALM_WARDEN_THEME_DISC, new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant(), 3700));
+    public static final RegistryObject<Item> THE_ONLY_EDICT_MUSIC_DISC = ITEMS.register("realm_warden_theme_music_disc", () -> new RecordItem(8, SoundInit.REALM_WARDEN_THEME_DISC, new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant(), 3700));
     public static final RegistryObject<Item> THE_ARMY_OF_MINOTAUR_MUSIC_DISC = ITEMS.register("the_immortal_theme_music_disc", () -> new RecordItem(8, SoundInit.THE_IMMORTAL_THEME, new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant(), 3220));
 
     public static RegistryObject<Item> registerEgg(String name, RegistryObject<? extends EntityType<? extends Mob>> EggObject, int backgroundColor, int highlightColor) {
