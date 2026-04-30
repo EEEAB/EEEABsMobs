@@ -56,7 +56,6 @@ public class ItemInit {
     public static final RegistryObject<Item> CHAIN_GEAR = ITEMS.register("chain_gear", () -> new ItemSlidingDoorKey(new Item.Properties().rarity(Rarity.EPIC).fireResistant(), 1));
     public static final RegistryObject<Item> GUARDIAN_CUBE = ITEMS.register("guardian_cube", () -> new ItemSlidingDoorKey(new Item.Properties().rarity(Rarity.EPIC).fireResistant(), 2));
     public static final RegistryObject<Item> GUARDIAN_CORE = ITEMS.register("guardian_core", ItemGuardianCore::new);
-    public static final RegistryObject<Item> DEMOLISHER = ITEMS.register("demolisher", () -> new ItemDemolisher(ModToolsTier.RELICRON_TIER, new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
     public static final RegistryObject<ItemBusterGauntlet> BUSTER_GAUNTLET = ITEMS.register("buster_gauntlet", () -> new ItemBusterGauntlet(ModToolsTier.RELICRON_TIER, new Item.Properties().rarity(Rarity.RARE).fireResistant()));
     public static final RegistryObject<ItemChainsword> CHAINSWORD = ITEMS.register("chainsword", () -> new ItemChainsword(ModToolsTier.RELICRON_TIER, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
     public static final RegistryObject<ItemSkyfallHammer> SKYFALL_HAMMER = ITEMS.register("skyfall_hammer", () -> new ItemSkyfallHammer(ModToolsTier.RELICRON_TIER, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));

@@ -42,7 +42,6 @@ public class ModModelLayer {
     //物品
     public static final ModelLayerLocation THE_NETHERWORLD_KATANA = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "netherworld_katana"), "main");
     public static final ModelLayerLocation THE_GUARDIAN_BATTLEAXE = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "guardian_axe"), "main");
-    public static final ModelLayerLocation DEMOLISHER = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "demolisher"), "main");
     public static final ModelLayerLocation BUSTER_GAUNTLET = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "buster_gauntlet"), "main");
 
     //方块

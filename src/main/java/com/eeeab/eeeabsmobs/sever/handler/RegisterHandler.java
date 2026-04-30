@@ -6,7 +6,6 @@ import com.eeeab.eeeabsmobs.client.model.block.SlidingDoorModel;
 import com.eeeab.eeeabsmobs.client.model.entity.*;
 import com.eeeab.eeeabsmobs.client.model.entity.effect.*;
 import com.eeeab.eeeabsmobs.client.model.item.ModelBusterGauntlet;
-import com.eeeab.eeeabsmobs.client.model.item.ModelDemolisher;
 import com.eeeab.eeeabsmobs.client.model.item.ModelGuardianBattleaxe;
 import com.eeeab.eeeabsmobs.client.model.item.ModelTheNetherworldKatana;
 import com.eeeab.eeeabsmobs.client.model.util.ModItemModels;
@@ -71,7 +70,6 @@ public class RegisterHandler {
         event.registerLayerDefinition(ModModelLayer.SOUL_SUMMONING_NECKLACE, ModelSoulSummoningNecklace::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.THE_NETHERWORLD_KATANA, ModelTheNetherworldKatana::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.THE_GUARDIAN_BATTLEAXE, ModelGuardianBattleaxe::createBodyLayer);
-        event.registerLayerDefinition(ModModelLayer.DEMOLISHER, ModelDemolisher::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.BUSTER_GAUNTLET, ModelBusterGauntlet::createBodyLayer);
 
         event.registerLayerDefinition(ModModelLayer.SLIDING_DOOR, SlidingDoorModel::createBodyLayer);

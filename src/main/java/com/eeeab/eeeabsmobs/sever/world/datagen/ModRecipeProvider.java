@@ -65,9 +65,6 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("NB ")
                 .unlockedBy(getHasName(ItemInit.GUARDIAN_CUBE.get()), has(ItemInit.GUARDIAN_CUBE.get())).save(recipeConsumer);
 
-        //TODO 在v0.99版本一并与Demolisher一起移除
-        oneToOneConversionRecipe(recipeConsumer, ItemInit.BUSTER_GAUNTLET.get(), ItemInit.DEMOLISHER.get(), null);
-
         //古界岩→磨制粗界岩衍生
         twoByTwoPacker(recipeConsumer, RecipeCategory.BUILDING_BLOCKS, BlockInit.POLISHED_ROUGH_BOUNDARY_STONE.get(), ItemInit.BOUNDARY_BRICK.get(), 2, "from_boundary_brick");
         twoByTwoPacker(recipeConsumer, RecipeCategory.BUILDING_BLOCKS, BlockInit.POLISHED_ROUGH_BOUNDARY_STONE.get(), BlockInit.ANCIENT_BOUNDARY_STONE.get(), 4, "from_ancient_boundary_stone");
@@ -118,7 +115,6 @@ public class ModRecipeProvider extends RecipeProvider {
         woodFromLogs(recipeConsumer, BlockInit.BLIGHTED_OAK_WOOD.get().asItem(), BlockInit.BLIGHTED_OAK_LOG.get().asItem());
         woodFromLogs(recipeConsumer, BlockInit.STRIPPED_BLIGHTED_OAK_WOOD.get().asItem(), BlockInit.STRIPPED_BLIGHTED_OAK_LOG.get().asItem());
     }
-
 
     protected static void oneByTwoPacker(Consumer<FinishedRecipe> finishedRecipeConsumer, RecipeCategory category, ItemLike result, ItemLike material, int count) {
         ShapedRecipeBuilder.shaped(category, result, count)

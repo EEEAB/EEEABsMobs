@@ -2,7 +2,6 @@ package com.eeeab.eeeabsmobs.client.render.util;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.item.ModelBusterGauntlet;
-import com.eeeab.eeeabsmobs.client.model.item.ModelDemolisher;
 import com.eeeab.eeeabsmobs.client.model.item.ModelGuardianBattleaxe;
 import com.eeeab.eeeabsmobs.client.model.item.ModelTheNetherworldKatana;
 import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
@@ -23,12 +22,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class ModItemStackRender extends BlockEntityWithoutLevelRenderer {
     private static boolean init;
-    private static ModelDemolisher THE_DEMOLISHER;
     private static ModelBusterGauntlet BUSTER_GAUNTLET;
     private static ModelGuardianBattleaxe THE_GUARDIAN_BATTLEAXE;
     private static ModelTheNetherworldKatana THE_NETHERWORLD_KATANA;
     private static final ResourceLocation BUSTER_GAUNTLET_TEX = new ResourceLocation(EEEABMobs.MOD_ID, "textures/item/buster_gauntlet.png");
-    private static final ResourceLocation DEMOLISHER_TEX = new ResourceLocation(EEEABMobs.MOD_ID, "textures/item/demolisher.png");
     private static final ResourceLocation THE_GUARDIAN_BATTLEAXE_TEX = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/nameless_guardian.png");
     private static final ResourceLocation THE_NETHERWORLD_KATANA_TEX = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/immortal_netherworld_katana.png");
 
@@ -36,7 +33,6 @@ public class ModItemStackRender extends BlockEntityWithoutLevelRenderer {
         init = true;
         THE_NETHERWORLD_KATANA = new ModelTheNetherworldKatana(Minecraft.getInstance().getEntityModels().bakeLayer(ModModelLayer.THE_NETHERWORLD_KATANA));
         THE_GUARDIAN_BATTLEAXE = new ModelGuardianBattleaxe(Minecraft.getInstance().getEntityModels().bakeLayer(ModModelLayer.THE_GUARDIAN_BATTLEAXE));
-        THE_DEMOLISHER = new ModelDemolisher(Minecraft.getInstance().getEntityModels().bakeLayer(ModModelLayer.DEMOLISHER));
         BUSTER_GAUNTLET = new ModelBusterGauntlet(Minecraft.getInstance().getEntityModels().bakeLayer(ModModelLayer.BUSTER_GAUNTLET));
     }
 
@@ -64,13 +60,6 @@ public class ModItemStackRender extends BlockEntityWithoutLevelRenderer {
             matrixStackIn.scale(0.5F, -0.5F, -0.5F);
             VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(bufferIn, RenderType.armorCutoutNoCull(THE_GUARDIAN_BATTLEAXE_TEX), false, itemStackIn.hasFoil());
             THE_GUARDIAN_BATTLEAXE.renderToBuffer(matrixStackIn, vertexConsumer, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1);
-            matrixStackIn.popPose();
-        } else if (itemStackIn.is(ItemInit.DEMOLISHER.get())) {
-            matrixStackIn.pushPose();
-            matrixStackIn.translate(0.5F, 1F, 0.5F);
-            matrixStackIn.scale(-0.5F, -0.5F, 0.5F);
-            VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(bufferIn, RenderType.armorCutoutNoCull(DEMOLISHER_TEX), false, itemStackIn.hasFoil());
-            THE_DEMOLISHER.renderToBuffer(matrixStackIn, vertexConsumer, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1);
             matrixStackIn.popPose();
         } else if (itemStackIn.is(ItemInit.BUSTER_GAUNTLET.get())) {
             float ageInTicks = Minecraft.getInstance().player == null ? 0F : Minecraft.getInstance().player.tickCount + partialTick;
