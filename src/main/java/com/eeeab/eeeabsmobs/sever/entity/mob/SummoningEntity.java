@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface SummoningEntity<T extends LivingEntity> {
+    TargetingConditions DEFAULT = TargetingConditions.forCombat().ignoreLineOfSight().ignoreInvisibilityTesting();
+
     @Nullable
     T getOwner();
 
@@ -23,7 +25,7 @@ public interface SummoningEntity<T extends LivingEntity> {
 
     boolean isSummon();
 
-    default boolean belongsToMob(){
+    default boolean belongsToMob() {
         return true;
     }
 
@@ -33,9 +35,12 @@ public interface SummoningEntity<T extends LivingEntity> {
     }
 
     default void shiftHatred(T entity, double radius) {
-        entity.level().getNearbyEntities(Mob.class, TargetingConditions.DEFAULT, entity, entity.getBoundingBox().inflate(radius))
-                .stream().filter(mob -> mob != entity && mob != getOwner() && mob.isAlive() && mob.getTarget() == entity && !mob.isAlliedTo(entity))
+        entity.level().getNearbyEntities(Mob.class, DEFAULT, entity, entity.getBoundingBox().inflate(radius))
+                .stream().filter(mob -> mob != entity && mob != getOwner() && mob.isAlive() && mob.getTarget() == entity && !entity.isAlliedTo(mob))
                 .forEach(mob -> {
+                    if (mob instanceof SummoningEntity<?> summoning) {
+                        if (summoning.getOwner() == getOwner()) return;
+                    }
                     mob.setTarget(getOwner());
                     Brain<?> mobBrain = mob.getBrain();
                     if (mobBrain.hasMemoryValue(MemoryModuleType.ATTACK_TARGET)) {
