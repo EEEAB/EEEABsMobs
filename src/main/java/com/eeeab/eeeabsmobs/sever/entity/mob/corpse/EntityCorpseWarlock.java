@@ -98,9 +98,9 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
     private static final int MAX_HURT_COUNT = 3;
     private static final int[] SPAWN_COUNT = new int[]{2, 4, 6};
     private static final UniformInt NEXT_HEAL_TIME = TimeUtil.rangeOfSeconds(15, 25);
-    private static final TargetingConditions IGNORE_ALLIES = TargetingConditions.forCombat().selector(e -> {
-        if (e instanceof EntityAbsCorpse) {
-            return !ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get();
+    private final TargetingConditions IGNORE_ALLIES = TargetingConditions.forCombat().selector(e -> {
+        if (e instanceof EntityAbsCorpse corpse) {
+            return this.isAlliedTo(corpse);
         }
         return true;
     });
@@ -690,7 +690,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
                 .add(Attributes.FOLLOW_RANGE, 36.0D)
                 .add(Attributes.ATTACK_DAMAGE, 5.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1D)
-                .add(ForgeMod.STEP_HEIGHT_ADDITION.get(),1D);
+                .add(ForgeMod.STEP_HEIGHT_ADDITION.get(), 1D);
     }
 
     @Override

@@ -5,7 +5,6 @@ import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.mob.GlowEntity;
 import com.eeeab.eeeabsmobs.sever.entity.mob.ModMobType;
 import com.eeeab.eeeabsmobs.sever.entity.mob.SummoningEntity;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.EffectInit;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
@@ -16,7 +15,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -115,18 +113,6 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy
     }
 
     @Override
-    public boolean hurt(DamageSource source, float damage) {
-        if (level().isClientSide) {
-            return false;
-        } else {
-            if (source.getEntity() instanceof LivingEntity livingEntity && livingEntity.getMobType() == getMobType() && ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get()) {
-                return false;
-            }
-            return super.hurt(source, damage);
-        }
-    }
-
-    @Override
     public @NotNull MobType getMobType() {
         return ModMobType.IMMORTAL;
     }
@@ -168,7 +154,7 @@ public abstract class EntityAbsImmortal extends EEEABMobLibrary implements Enemy
         if (super.isAlliedTo(entity)) {
             return true;
         } else if (entity instanceof LivingEntity && ((LivingEntity) entity).getMobType() == ModMobType.IMMORTAL) {
-            return ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get() || (this.getTeam() == null && entity.getTeam() == null);
+            return this.getTeam() == null && entity.getTeam() == null;
         } else {
             return false;
         }

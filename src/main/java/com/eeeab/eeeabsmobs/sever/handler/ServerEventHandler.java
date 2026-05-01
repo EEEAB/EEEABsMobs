@@ -466,7 +466,7 @@ public final class ServerEventHandler {
                 if (arrow.getPierceLevel() == 0 && !arrow.fireImmune() && !arrow.isOnFire() && hitResult.getEntity() instanceof EntityImmortalExecutioner) {
                     arrow.setSecondsOnFire(100);
                 }
-                if (arrow.getOwner() instanceof EntityAbsImmortal && hitResult.getEntity() instanceof EntityAbsImmortal && ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get()) {
+                if (arrow.getOwner() instanceof EntityAbsImmortal immortal1 && hitResult.getEntity() instanceof EntityAbsImmortal immortal2 && immortal1.isAlliedTo(immortal2)) {
                     event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
                 }
             }

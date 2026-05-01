@@ -560,8 +560,6 @@ public final class ModConfigHandler {
             }
             enableMobsCanBreakingBlockDropItem = builder.comment("If set to 'False' disable mobs breaking blocks drop items")
                     .translation(getTranslationKey("break_block_drop")).define("Enable Mobs Breaking Blocks Drop Items", false);
-            enableSameMobsTypeInjury = builder.comment("If set to 'False' able inflict damage between mobs of the same team")
-                    .translation(getTranslationKey("team_damage")).define("Enable Allied Damage Protection", true);
             enableShowItemCD = builder.comment("If set to 'False' disable showing cooldown time in tooltip")
                     .translation(getTranslationKey("show_item_cd")).define("Enable Show Item Cd", false);
             enableCombatPrompts = builder.comment("If set to 'False' disable all combat encounter prompts")
@@ -575,8 +573,6 @@ public final class ModConfigHandler {
         public final ForgeConfigSpec.DoubleValue bossBarMaxDist;
         //启用生物破坏方块掉落对应方块物品
         public final ForgeConfigSpec.BooleanValue enableMobsCanBreakingBlockDropItem;
-        //启用同类型生物之间无法造成伤害
-        public final ForgeConfigSpec.BooleanValue enableSameMobsTypeInjury;
         //启用显示物品冷却时间
         public final ForgeConfigSpec.BooleanValue enableShowItemCD;
         //启用战斗提示

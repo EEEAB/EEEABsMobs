@@ -418,7 +418,6 @@
   "config.eeeabsmobs.boss_bar_render_dist": "Set Render Distance For Boss Health Bars",
   "config.eeeabsmobs.play_boss_music": "Enable Play Bosses Musics",
   "config.eeeabsmobs.break_block_drop": "Enable Mobs Breaking Blocks Drop Items",
-  "config.eeeabsmobs.team_damage": "Enable Allied Damage Protection",
   "config.eeeabsmobs.show_item_cd": "Enable Show Items Cd",
   "config.eeeabsmobs.combat_prompt": "Enable Combat Prompt Trigger Detection",
   "config.eeeabsmobs.challenge_mode": "Enable Challenge Mode",

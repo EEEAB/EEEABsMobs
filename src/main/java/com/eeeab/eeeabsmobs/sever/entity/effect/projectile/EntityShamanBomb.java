@@ -116,8 +116,8 @@ public class EntityShamanBomb extends AbstractHurtingProjectile implements IEnti
 
     @Override
     protected boolean canHitEntity(Entity entity) {
-        if (entity instanceof EntityAbsImmortal) {
-            return !ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get() || this.isPlayer() || !(this.getOwner() instanceof EntityAbsImmortal);
+        if (entity instanceof EntityAbsImmortal immortal) {
+            return this.isPlayer() || (getOwner() != null && !getOwner().isAlliedTo(immortal));
         } else if (entity instanceof Player) {
             return this.getOwner() != entity;
         } else {

@@ -110,12 +110,6 @@ public abstract class EntityAbsRelicron extends EEEABMobLibrary implements Enemy
 
     @Override
     public boolean hurt(DamageSource source, float damage) {
-        if (source.getEntity() instanceof EntityAbsRelicron && ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get()) return false;
-        //if ((!active || getTarget() == null) && source.getEntity() instanceof LivingEntity livingEntity
-        //        && !(livingEntity instanceof Player player && player.isCreative() || this.level().getDifficulty() == Difficulty.PEACEFUL)
-        //        && (!ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get() || !(livingEntity instanceof EntityAbsRelicron))) {
-        //    this.setLastHurtByMob(livingEntity);
-        //}
         if (source.is(DamageTypes.IN_WALL)) return false;
         return super.hurt(source, damage);
     }
@@ -135,7 +129,7 @@ public abstract class EntityAbsRelicron extends EEEABMobLibrary implements Enemy
         if (super.isAlliedTo(entity)) {
             return true;
         } else if (entity instanceof EntityAbsRelicron) {
-            return ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get() || (this.getTeam() == null && entity.getTeam() == null);
+            return this.getTeam() == null && entity.getTeam() == null;
         } else {
             return false;
         }

@@ -51,7 +51,7 @@ public class AnimationMelee<T extends EEEABMobLibrary & AnimatedEntity> extends 
             entity.setYRot(entity.yRotO);
         }
         if (entity.getAnimationTick() == damageKeyframes) {
-            if (attackTarget != null && entity.targetDistance <= attackDistance) {
+            if (attackTarget != null && !entity.isAlliedTo(attackTarget) && entity.targetDistance <= attackDistance) {
                 entity.doHurtTarget(attackTarget, damageMultiplier, knockBackMultiplier, canDisableShield);
                 onAttack(entity, attackTarget, damageMultiplier, knockBackMultiplier);
             }

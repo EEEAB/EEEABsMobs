@@ -123,11 +123,6 @@ public class EntityImmortalShaman extends EntityAbsImmortal implements RangedAtt
             public void onHit(LivingEntity entity) {
                 ModEntityUtils.addEffectStackingAmplifier(null, entity, EffectInit.ERODE_EFFECT.get(), 200, 5, true, true, true, false);
             }
-
-            @Override
-            protected boolean preHit(LivingEntity entity) {
-                return entity instanceof EntityAbsImmortal && ModConfigHandler.COMMON.others.enableSameMobsTypeInjury.get();
-            }
         });
         this.goalSelector.addGoal(2, new ShamanSummonGoal(this));
         this.goalSelector.addGoal(3, new ShamanAvoidGoal(this));

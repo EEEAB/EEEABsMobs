@@ -418,7 +418,6 @@
   "config.eeeabsmobs.boss_bar_render_dist": "设置boss血条显示距离",
   "config.eeeabsmobs.play_boss_music": "启用boss战斗时播放音乐",
   "config.eeeabsmobs.break_block_drop": "启用生物破坏方块掉落物品",
-  "config.eeeabsmobs.team_damage": "启用同阵营生物友伤保护",
   "config.eeeabsmobs.show_item_cd": "启用物品提示框中显示冷却时间",
   "config.eeeabsmobs.combat_prompt": "启用战斗提示触发检测",
   "config.eeeabsmobs.challenge_mode": "启用挑战模式",
