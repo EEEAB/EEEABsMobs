@@ -7,11 +7,11 @@ public interface IMob {
     enum MobLevel {
         //特殊生物:例如NPC、召唤物
         NONE(0, 0F),
-        GRUNT(10, 0.01F),
+        EASY(10, 0.01F),
         NORMAL(50, 0.02F),
         ELITE(100, 0.025F),
         BOSS(300, 0.03F),
-        EPIC_BOSS(500, 0.04F);
+        LEGENDARY_BOSS(500, 0.04F);
 
         private final int xp;
         private final float damagePct;
@@ -31,7 +31,7 @@ public interface IMob {
     }
 
     /**
-     * @return 获取生物级别
+     * @return 获取生物讨伐难度级别
      */
     MobLevel getMobLevel();
 

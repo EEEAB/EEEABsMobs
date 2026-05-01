@@ -197,7 +197,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
 
     @Override
     public MobLevel getMobLevel() {
-        return MobLevel.EPIC_BOSS;
+        return MobLevel.LEGENDARY_BOSS;
     }
 
     @Override//减少实体在水下的空气供应

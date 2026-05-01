@@ -239,7 +239,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
 
     @Override
     public MobLevel getMobLevel() {
-        return MobLevel.EPIC_BOSS;
+        return MobLevel.LEGENDARY_BOSS;
     }
 
     @Override//可以站立的流体

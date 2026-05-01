@@ -452,7 +452,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
 
     @Override
     public MobLevel getMobLevel() {
-        return MobLevel.GRUNT;
+        return MobLevel.EASY;
     }
 
     protected boolean setDarkenScreen() {
