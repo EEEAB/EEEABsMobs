@@ -175,8 +175,11 @@ public class EntityAnnihilatorMissile extends Projectile implements IEntity, Var
             double z = center.z;
             Entity owner = this.getOwner();
             float range = 5;
+            boolean fire = variant == ElementType.BLAZE || variant == ElementType.SPARKFERNO;
+            boolean volt = variant == ElementType.VOLT || variant == ElementType.SPARKFERNO;
             AABB aabb = ModEntityUtils.makeAABBWithSize(x, y, z, 0, range, range, range);
-            for (Entity target : this.level().getEntities(this, aabb, e -> e != owner && (owner == null || !owner.isAlliedTo(e)) && !e.ignoreExplosion())) {
+            for (Entity target : this.level().getEntities(this, aabb, e -> e != owner && (owner == null || !owner.isAlliedTo(e)) && e.isAttackable())) {
+                if (target.ignoreExplosion()) continue;
                 double dist = Math.sqrt(target.distanceToSqr(center)) / range;
                 if (dist <= 1) {
                     double d0 = target.getX() - x;
@@ -184,13 +187,11 @@ public class EntityAnnihilatorMissile extends Projectile implements IEntity, Var
                     double d2 = target.getZ() - z;
                     double d3 = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
                     if (d3 != 0) {
-                        if (variant == ElementType.VOLT || variant == ElementType.SPARKFERNO) {
-                            if (target instanceof LivingEntity living) living.addEffect(new MobEffectInstance(EffectInit.ELECTRIFIED_EFFECT.get(),
+                        if (volt && target instanceof LivingEntity living) {
+                            living.addEffect(new MobEffectInstance(EffectInit.ELECTRIFIED_EFFECT.get(),
                                     300, 0, false, false, true), this);
                         }
-                        if (variant == ElementType.BLAZE || variant == ElementType.SPARKFERNO) {
-                            if (!target.fireImmune()) target.setSecondsOnFire(5);
-                        }
+                        if (fire && !target.fireImmune()) target.setSecondsOnFire(5);
                         float damage = getDamage();
                         float percent = 1;
                         if (!(owner instanceof EntityRealmWarden)) {

@@ -200,7 +200,7 @@ public class EntityThrownDoomboltAxe extends AbstractArrow implements IEntity {
             AABB aabb = ModEntityUtils.makeAABBWithSize(center.x, center.y, center.z, 0, 6, 6, 6);
             aabb.expandTowards(this.getDeltaMovement());
             Entity owner = this.getOwner();
-            List<Entity> entities = this.level().getEntities(this, aabb, e -> e != owner);
+            List<Entity> entities = this.level().getEntities(this, aabb, e -> e != owner && e.isAttackable());
             for (Entity entity : entities) {
                 float percent = EntityExplode.getSeenPercent(center, entity);
                 if (entity.hurt(this.damageSources().indirectMagic(this, owner == null ? this : owner), damage * percent)) {
