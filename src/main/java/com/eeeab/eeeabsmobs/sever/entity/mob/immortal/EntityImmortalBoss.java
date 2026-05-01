@@ -579,7 +579,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
             boolean inBack = (relativeAngle <= -180F + attackArc / 2F && relativeAngle >= -180F - attackArc / 2F)
                     || (relativeAngle >= 180F - attackArc / 2F && relativeAngle <= 180F + attackArc / 2F);
 
-            if (!this.shouldBlock && this.getHealthPercentage() > 0.5F &&
+            if (!this.shouldBlock && this.getHealthPercentage() < 0.5F &&
                     (this.hurtCount >= MAX_BLOCK_HURT_COUNT || damage > MAX_CUMULATIVE_COUNTERATTACK_DAMAGE_THRESHOLD || fullyAdapted)) {
                 this.shouldBlock = true;
             }
@@ -624,7 +624,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
                 return false;
             }
         }
-        //damage *= 1F - Mth.clamp((this.targets.size() - 1) * 10F, 0F, 50F) / 100F;
+        damage *= 1F - Mth.clamp(this.targets.size() - 1, 0F, 5F) * 0.1F;
         if (entity != null || bypassesInvul) {
             float originalDamage = damage;
             if (this.getAnimation() == UNLEASH_ENERGY_ANIMATION) {
@@ -655,7 +655,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
             if (this.getAnimation() != STUN_ANIMATION) {
                 float nowHealth = this.getHealth();
                 float damage = nowHealth - health;
-                float multiplier = 1 + Mth.clamp(this.targets.size() - 1, 0, 5) * 0.1F;
+                float multiplier = 1 + Mth.clamp(this.targets.size() - 1, 0, 5) * 0.2F;
                 health = nowHealth - this.damageAdaptation.adaptToDamage(this, this.lastDamageSource, damage, multiplier);
                 if (this.damageAdaptation.isFullyAdapted(this, this.lastDamageSource)) this.level().broadcastEntityEvent(this, (byte) 4);
                 this.lastDamageSource = null;
@@ -873,7 +873,10 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
                         (entity, target) -> entity.shouldBlock,
                         ConditionFactory.distanceRange(0, 3.5, 4)
                 ))
-                .onSuccess(entity -> entity.shouldBlock = false)
+                .onSuccess(entity -> {
+                    entity.shouldBlock = false;
+                    if (entity.timeUntilBlock > 0) entity.timeUntilBlock = 0;
+                })
                 .build();
 
         AnimationRule<EntityImmortalBoss> smashGroundRule = builder.define(SMASH_GROUND_ANIMATION1)
@@ -1165,8 +1168,8 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
     }
 
     public boolean doHurtTarget(DamageSource source, LivingEntity target, boolean disableShield, boolean addEffect, boolean ignoreArmor, float baseDamageMultiplier, float damageMultiplier) {
-        //当目标数量＞1时，根据目标数量增加攻击伤害，每个目标增加10%基础伤害 TODO 待完善
-        baseDamageMultiplier += Mth.clamp(targets.size() - 1, 0F, 5F) * 0.1F;
+        //当目标数量＞1时，根据目标数量增加攻击伤害，每个目标增加10%伤害 TODO 待完善
+        damageMultiplier += Mth.clamp(targets.size() - 1, 0F, 5F) * 0.1F;
         boolean flag = target.hurt(source, (float) ((this.getAttributeValue(Attributes.ATTACK_DAMAGE) * baseDamageMultiplier) + getDamageAmountByTargetHealthPct(target)) * damageMultiplier);
         if (flag) {
             this.invalidAttackCount = 0;

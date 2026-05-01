@@ -86,7 +86,7 @@ public class EntityImmortalLaser extends EntityAbsBeam {
                         damage += iMob.getDamageAmountByTargetHealthPct(target);
                     }
                     DamageSource source = ModDamageSource.laser(this, owner, true, true);
-                    if (target.hurt(source, damage)) ModEntityUtils.addEffectStackingAmplifier(this, target, EffectInit.ERODE_EFFECT.get(), 300, 5, true, true, true, true);
+                    if (target.hurt(source, damage)) ModEntityUtils.addEffectStackingAmplifier(this, target, EffectInit.ERODE_EFFECT.get(), 300, 5, true, true, true, false);
                 }
             } else if (this.tickCount > this.getCountDown()) {
                 this.spawnExplosionParticles();
