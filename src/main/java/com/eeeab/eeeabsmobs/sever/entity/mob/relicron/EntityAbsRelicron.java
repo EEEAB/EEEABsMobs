@@ -9,6 +9,7 @@ import com.eeeab.eeeabsmobs.client.render.LightningBolt;
 import com.eeeab.eeeabsmobs.client.render.util.LightningPathProvider;
 import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.sever.entity.mob.GlowEntity;
+import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityAbsImmortal;
 import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.core.BlockPos;
@@ -28,6 +29,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -83,6 +85,12 @@ public abstract class EntityAbsRelicron extends EEEABMobLibrary implements Enemy
     @Override
     protected boolean canShowBossBar() {
         return this.isActive();
+    }
+
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, EntityAbsImmortal.class, true));
     }
 
     @Override
