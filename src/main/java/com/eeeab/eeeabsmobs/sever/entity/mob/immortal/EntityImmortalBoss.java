@@ -383,7 +383,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
     @Override
     public void remove(RemovalReason reason) {
         super.remove(reason);
-        if (this.isDeadOrDying()) {
+        if (reason.shouldDestroy()) {
             this.targets = List.of();
             this.damageAdaptation.clearCache();
         }

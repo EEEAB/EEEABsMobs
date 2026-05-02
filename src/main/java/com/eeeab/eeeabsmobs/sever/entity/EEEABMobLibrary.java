@@ -57,7 +57,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements Animated
     @Override
     public void remove(RemovalReason reason) {
         super.remove(reason);
-        if (this.isDeadOrDying()) {
+        if (reason.shouldDestroy()) {
             this.cooldownManager.clear();
         }
     }
