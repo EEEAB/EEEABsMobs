@@ -273,7 +273,10 @@ public class ModParticleUtils {
     public static void multiLayerBowlParticles(Level level, Vec3 centerPos, int duration, int[] particles, double[] radii,
                                                double[] speeds, double[] angles, double[] color, double @Nullable [] scales, float friction) {
         duration = duration + random.nextInt(duration);
-        if (scales == null) Arrays.fill(new double[radii.length], 0.08);
+        if (scales == null) {
+            scales = new double[radii.length];
+            Arrays.fill(scales, 1);
+        }
         for (int layer = 0; layer < radii.length; layer++) {
             for (int i = 0; i < particles[layer]; i++) {
                 double angle = random.nextDouble() * 2 * Math.PI;
@@ -300,7 +303,7 @@ public class ModParticleUtils {
                                                 new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.ALPHA,
                                                         AnimData.KeyTrack.startAndEnd((float) color[3], 0F)),
                                                 new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.SCALE,
-                                                        AnimData.KeyTrack.startAndEnd(0.1F, 1F)),
+                                                        AnimData.KeyTrack.startAndEnd(0F, (float) scales[layer])),
                                         }, false),
                         });
             }
