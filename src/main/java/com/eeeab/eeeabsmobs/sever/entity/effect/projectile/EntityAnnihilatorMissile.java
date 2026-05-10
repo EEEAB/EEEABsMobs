@@ -122,9 +122,9 @@ public class EntityAnnihilatorMissile extends Projectile implements IEntity, Var
                 AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.ADV_ORB.get(), this.getX(), this.getY(), this.getZ(), 0, 0, 0, true, 0, 0, 0, 0, 0F,
                         1, 1, 1, 1, 1, MAX_ACTIVE - 3, true, false, false, new ParticleComponent[]{
                                 new ParticleComponent.PinLocationWithEntity(this, new Vec3(0, getBbHeight() / 2, 0)),
-                                new RibbonComponent(ParticleInit.FLAT_RIBBON.get(), 4, 0, 0, 0, 0.12F, 1, 1, 1, 0.75, true, true,
+                                new RibbonComponent(ParticleInit.FLAT_RIBBON.get(), 4, 0, 0, 0, 0.12F, 1, 1, 1, 1, true, true,
                                         new ParticleComponent[]{
-                                                new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.ALPHA, AnimData.KeyTrack.startAndEnd(0.5F, 1F)),
+                                                new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.ALPHA, AnimData.KeyTrack.startAndEnd(0.7F, 1F)),
                                                 new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.SCALE, AnimData.KeyTrack.startAndEnd(1F, 0F)),
                                                 new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.RED, AnimData.startAndEnd(variant.startColor.r, variant.endColor.r)),
                                                 new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.GREEN, AnimData.startAndEnd(variant.startColor.g, variant.endColor.g)),

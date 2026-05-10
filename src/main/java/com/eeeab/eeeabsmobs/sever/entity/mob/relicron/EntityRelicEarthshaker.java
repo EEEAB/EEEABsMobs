@@ -355,18 +355,18 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements RangedA
                 .atTick(20, (entity, animation, tick) -> {
                     if (entity.level().isClientSide) {
                         Vec3 pos = entity.getPosOffset(false, entity.getBbWidth(), 0F, 0.1F);
-                        int[] particles = {10, 15, 10};
-                        double[] radii = {1.5, 2, 2.5};
-                        double[] speeds = {0.8, 0.7, 0.6};
-                        double[] angles = {35, 25, 15};
-                        double[] color = {0.8, 0.8, 0.8, 0.5};
-                        ModParticleUtils.multiLayerBowlParticles(entity.level(), pos, 2, particles, radii, speeds, angles, color, null, 0.9F);
-                        entity.level().addParticle(new ParticleRing.RingData(0F, (float) (Math.PI / 2F), 8, 0.8F, 0.8F, 0.8F, 0.9F, 80F, false, ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y, pos.z, 0, 0, 0);
+                        int[] particles = {8, 12, 8};
+                        double[] radii = {0.7, 1.5, 2.2};
+                        double[] speeds = {1.2, 1.3, 1.4};
+                        double[] angles = {25, 15, 7.5};
+                        double[] color = {1, 0.88, 0.48, 1};
+                        ModParticleUtils.multiLayerBowlParticles(entity.level(), pos, 3, particles, radii, speeds, angles, color, null, 0.55F);
+                        entity.level().addParticle(new ParticleRing.RingData(ParticleInit.BIG_RING.get(), 0F, (float) (Math.PI / 2F), 11, 1F, 1F, 1F, 1F, 90F, false, ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y, pos.z, 0, 0, 0);
                         entity.doPoundGroundEffect(pos, 1.4F, 0.87F);
                         ModParticleUtils.blockParticlesAround(entity.level(), pos.x, entity.getY(), pos.z, 45, 1, 3, 2, 5, 3, 6, -0.2, 0.1);
                     }
                     entity.playSound(SoundEvents.GENERIC_EXPLODE, 1.25F, 1F + entity.random.nextFloat() * 0.1F);
-                    EntityCameraShake.cameraShake(entity.level(), entity.position(), 15, 0.125F, 2, 3);
+                    EntityCameraShake.cameraShake(entity.level(), entity.position(), 16, 0.15F, 4, 6);
                 });
         builder.forAnimation(RANGE_ATTACK_ANIMATION)
                 .inRange(5, 89, new Keyframe<>() {
@@ -439,7 +439,7 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements RangedA
                 })
                 .atTick(40, (entity, animation, tick) -> {
                     if (entity.level().isClientSide) return;
-                    EntityCameraShake.cameraShake(entity.level(), entity.position(), 15, 0.125F, 2, 8);
+                    EntityCameraShake.cameraShake(entity.level(), entity.position(), 16, 0.15F, 3, 7);
                     entity.rangeAttack(4.5, entity.getBbHeight() * 0.6, 4.5, 4.5, 120F, 120F, hitEntity -> {
                         if (entity.doHurtTarget(hitEntity, 2.5F, 0F, true) && entity.getHandHeat()) {
                             hitEntity.setSecondsOnFire(3);
@@ -506,7 +506,7 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements RangedA
                                     0, 0, 0, false, 0, Math.PI / 2F, 0,
                                     0, 1, 0.56, 0.78, 0.86, 0.8, 1, 20,
                                     true, true, false, new ParticleComponent[]{
-                                            new PropertyControl(PropertyControl.EnumParticleProperty.ALPHA, AnimData.KeyTrack.startAndEnd(1F, 0F), false),
+                                            new PropertyControl(PropertyControl.EnumParticleProperty.ALPHA, AnimData.KeyTrack.startAndEnd(1F, 0.1F), false),
                                             new PropertyControl(PropertyControl.EnumParticleProperty.SCALE, AnimData.KeyTrack.startAndEnd(10F, 60F), false),
                                             new PropertyControl(PropertyControl.EnumParticleProperty.YAW, AnimData.KeyTrack.startAndEnd(0F, Mth.PI * 2F), true)
                                     });
@@ -622,11 +622,11 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements RangedA
                 1, 0.94, 0.69, 1, 1, 4, true, false, false
                 , new ParticleComponent[]{
                         new PropertyControl(PropertyControl.EnumParticleProperty.SCALE, AnimData.startAndEnd(4F, 20F), false),
-                        new PropertyControl(PropertyControl.EnumParticleProperty.ALPHA, new AnimData.KeyTrack(new float[]{1F, 1F, 0.5F, 0F}, new float[]{0F, 0.5F, 0.75F, 1F}), false)
+                        new PropertyControl(PropertyControl.EnumParticleProperty.ALPHA, new AnimData.KeyTrack(new float[]{1F, 1F, 0.75F, 0F}, new float[]{0F, 0.5F, 0.75F, 1F}), false)
                 });
         AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.CROSS_FLASH.get(), pos.x + forward.x * 0.8, pos.y, pos.z + forward.z * 0.8
                 , 0, 0, 0, true, 0, 0, 0, 0, 1F,
-                1, 0.94, 0.69, 1, 1, 3, true, false, false
+                1, 0.94, 0.69, 1, 1, 5, true, false, false
                 , new ParticleComponent[]{
                         new PropertyControl(PropertyControl.EnumParticleProperty.SCALE, new AnimData.KeyTrack(new float[]{0F, 8F, 0F}, new float[]{0F, 0.5F, 1F}), false)
                 });

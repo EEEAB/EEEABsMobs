@@ -503,7 +503,7 @@ public class EntityRelicRipper extends EntityAbsRelicron {
     }
 
     private void doGroundSlamEffect(boolean strong) {
-        this.level().addParticle(new ParticleRing.RingData(0F, (float) (Math.PI / 2F), strong ? 12 : 10, 0.8F, 0.8F, 0.8F, 0.9F, 70F, false, ParticleRing.EnumRingBehavior.GROW), this.saw.x, this.getY() + 0.1, this.saw.z, 0, 0, 0);
+        this.level().addParticle(new ParticleRing.RingData(ParticleInit.BIG_RING.get(), 0F, (float) (Math.PI / 2F), 11, 0.52F, 0.94F, 1F, 0.9F, 60F, false, ParticleRing.EnumRingBehavior.GROW), this.saw.x, this.getY() + 0.1, this.saw.z, 0, 0, 0);
         this.doFractalEffect(strong ? 8 + this.random.nextInt(3) : 6, strong ? 1.1 : 0.9);
         ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 22F, strong ? 30 : 25, ParticleDust.EnumDustBehavior.GROW, 0.8F);
         ModParticleUtils.annularParticleOutburst(this.level(), 20, dustData, this.saw.x, this.getY() + 0.15, this.saw.z, 1.2, 0.5);
@@ -522,16 +522,16 @@ public class EntityRelicRipper extends EntityAbsRelicron {
         //    this.level().addParticle(dustData, x, y, z, xSpeed, 0.0007, zSpeed);
         //}
         AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.GLOW.get(), this.saw.x, this.getY() + 0.15, this.saw.z, 0, 0, 0, true, 0, 0, 0, 0,
-                1, BOLT_COLORS[0].x, BOLT_COLORS[0].y, BOLT_COLORS[0].z, BOLT_COLORS[0].w, 1, 4, true, false, false, new ParticleComponent[]{
-                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, AnimData.startAndEnd(1F, 0F), false),
-                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, AnimData.startAndEnd(10, 35), false),
+                1, BOLT_COLORS[0].x, BOLT_COLORS[0].y, BOLT_COLORS[0].z, BOLT_COLORS[0].w, 1, 5, true, false, false, new ParticleComponent[]{
+                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, AnimData.startAndEnd(1F, 0.1F), false),
+                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, AnimData.startAndEnd(10, 30), false),
                 });
-        int[] particles = {8, 12};
-        double[] radii = {0.8, 1.2};
-        double[] speeds = {0.5, 0.4};
-        double[] angles = {35, 25};
-        double[] color = {0.8, 0.8, 0.8, 0.4};
-        ModParticleUtils.multiLayerBowlParticles(this.level(), new Vec3(this.saw.x, this.getY(), this.saw.z), 3, particles, radii, speeds, angles, color, null, 0.98F);
+        int[] particles = {6, 8};
+        double[] radii = {0.6, 0.8};
+        double[] speeds = {1, 1.1};
+        double[] angles = {35, 15};
+        double[] color = {0.52, 0.94, 1, 1};
+        ModParticleUtils.multiLayerBowlParticles(this.level(), new Vec3(this.saw.x, this.getY(), this.saw.z), 3, particles, radii, speeds, angles, color, null, 0.55F);
         ModParticleUtils.blockParticlesAround(this.level(), this.saw.x, this.getY(), this.saw.z, 20, 0.5, 1.2, 1, 3, 2, strong ? 4 : 3, -0.2, 0.1);
     }
 

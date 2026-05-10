@@ -144,7 +144,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
     private static final EntityDataAccessor<Boolean> DATA_SEC_PHASE = SynchedEntityData.defineId(EntityRealmWarden.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Optional<BlockPos>> DATA_REST_POS = SynchedEntityData.defineId(EntityRealmWarden.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
     private static final UUID SEC_PHASE_ATTACK_UUID = UUID.fromString("A1B2C3D4-E5F6-7890-1234-567890ABCDEF");
-    private static final Vector4f[] COLORS = new Vector4f[]{new Vector4f(1F, 0.68F, 0.38F, 1F), new Vector4f(0.37F, 0.8F, 0.89F, 1F)};
+    private static final Vector4f[] COLORS = new Vector4f[]{new Vector4f(1F, 0.88F, 0.48F, 1F), new Vector4f(0.52F, 0.94F, 1F, 1F)};
     private static final float[][] BLOCK_OFFSETS = {{-0.5F, -0.5F}, {-0.5F, 0.5F}, {0.5F, 0.5F}, {0.5F, -0.5F}};
     private static final float[][] SHORT_BLOCK_OFFSETS = {{-0.5F, 0.5F}};
     private static final int BIT_NONE = 1;
@@ -374,13 +374,13 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
         if (!this.level().isClientSide) {
             LeapStage stage = this.getLeapStage();
             if (stage == LeapStage.HOLD) {
-                if (this.leapDownTarget == null || this.hoverTimer >= 10) {
+                if (this.leapDownTarget == null || this.hoverTimer >= 20) {
                     this.hoverTimer = 0;
                     this.setLeapStage(LeapStage.DOWN);
                     this.setDeltaMovement(0, -1, 0);
                     return;
                 }
-                if (hoverTimer < 5) {
+                if (hoverTimer < 15) {
                     if (!this.isAlwaysActive() && this.getRestPos().isPresent()) {
                         this.cachedLandingPos = Vec3.atBottomCenterOf(this.getRestPos().get());
                         this.cachedLandingPosY = cachedLandingPos.y;
@@ -392,19 +392,19 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                             this.cachedLandingPos = new Vec3(pos.x, Math.min(this.cachedLandingPosY, pos.y), pos.z);
                         }
                     }
-                } else if (hoverTimer == 5) {
+                } else if (hoverTimer == 15) {
                     Vec3 pos;
                     if (this.cachedLandingPos != null) {
                         pos = this.cachedLandingPos;
                         if (!this.tryTeleportTo(pos.x, pos.y, pos.z)) pos = getDefaultLandingPos();
                     } else pos = getDefaultLandingPos();
-                    EntityTelegraph.spawn(this.level(), pos.add(0, 0.1, 0), 10, 0xFFFF2020, 8F);
+                    EntityTelegraph.spawn(this.level(), pos.add(0, 0.1, 0), 10, 0xFFFF2020, this.isAlwaysActive() ? 8F : 10F);
                     this.cachedLandingPos = null;
                     this.cachedLandingPosY = 0;
                 }
                 this.hoverTimer++;
                 this.setDeltaMovement(Vec3.ZERO);
-            } else if (stage == LeapStage.DOWN && this.onGround()) {
+            } else if (stage == LeapStage.DOWN && (this.onGround() || this.isInWater() || this.isInLava())) {
                 this.setLeapStage(LeapStage.LEAP);
                 this.playAnimation(LEAP_LANDING_ANIMATION);
             }
@@ -691,7 +691,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 else {
                     Vec3 pos = entity.getPosOffset(tick == 45, 0F, entity.getBbWidth(), 0);
                     ModParticleUtils.blockParticlesAround(entity.level(), pos.x, pos.y, pos.z, 12, 0.25, 0.75, 0.1,
-                            0.2, 0.1, 0.3, -0.2, 0.1, (pos2, state) -> getBlockParticleData(entity.random, state, pos, 2));
+                            0.2, 0.25, 0.4, -0.2, 0.1, (pos2, state) -> getBlockParticleData(entity.random, state, pos, 1.5));
                     ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 28F, 25, ParticleDust.EnumDustBehavior.GROW, 0.74F);
                     ModParticleUtils.annularParticleOutburst(entity.level(), 16, dustData, pos.x, pos.y, pos.z, 1.55F, 0.5);
                 }
@@ -706,10 +706,10 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                     ModParticleUtils.annularParticleOutburst(entity.level(), 16, dustData, pos.x, pos.y, pos.z, 1.6F, 0.5);
                     Vec3 rPos = entity.getPosOffset(true, 0F, entity.getBbWidth(), 0);
                     ModParticleUtils.blockParticlesAround(entity.level(), rPos.x, rPos.y, rPos.z, 14, 0.25, 1.25, 0.15,
-                            0.25, 0.15, 0.35, -0.2, 0.1, (pos2, state) -> getBlockParticleData(entity.random, state, rPos, 2));
+                            0.25, 0.2, 0.35, -0.2, 0.1, (pos2, state) -> getBlockParticleData(entity.random, state, rPos, 1.5));
                     Vec3 lPos = entity.getPosOffset(false, 0F, entity.getBbWidth(), 0);
                     ModParticleUtils.blockParticlesAround(entity.level(), lPos.x, lPos.y, lPos.z, 14, 0.25, 1.25, 0.15,
-                            0.25, 0.15, 0.35, -0.2, 0.1, (pos2, state) -> getBlockParticleData(entity.random, state, lPos, 2));
+                            0.25, 0.2, 0.35, -0.2, 0.1, (pos2, state) -> getBlockParticleData(entity.random, state, lPos, 1.5));
                 }
             }
         });
@@ -722,7 +722,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 .atTick(1, doPlayShortHumSound).atTick(15, doPlayAttackSound)
                 .atTick(17, (entity, animation, tick) -> {
                     Vec3 pos = entity.getPosOffset(true, 1.6F, 1F, 0F);
-                    entity.doGroundPoundEffect(pos, 1F, 1F, new double[]{70, 55, 35});
+                    entity.doGroundPoundEffect(pos, 1F, 1F, new double[]{55, 40, 25});
                     for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 2.1, 0, false, 20)) {
                         entity.doHurtTarget(hitEntity, 0.9F, 0F);
                         ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, false);
@@ -752,11 +752,11 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 .inRange(19, 22, (entity, animation, tick) -> {
                     entity.doTrailEffect(animation, tick == 19, tick > 19, true, null);
                     if (entity.level().isClientSide) return;
-                    if (tick == 20) EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.15F, 0, 5);
+                    if (tick == 20) EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.125F, 0, 10);
                 }).inRange(31, 45, (entity, animation, tick) -> {
                     entity.doTrailEffect(animation, tick == 31, tick > 31, false, new Vec3(0, -1.2, 0));
                     if (entity.level().isClientSide) return;
-                    if (tick == 34 || tick == 44) EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.2F, 0, 5);
+                    if (tick == 34 || tick == 44) EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.15F, 0, 10);
                     if (tick == 32 || tick == 39) entity.playSound(SoundInit.REALM_WARDEN_WHOOSH.get(), 1.4F, tick == 39 ? 0.7F : 0.9F);
                 });
         builder.forAnimation(DERIVED_HEAVY_SWING_ANIMATION)
@@ -777,17 +777,17 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                     }
                 }).inRange(18, 22, (entity, animation, tick) -> {
                     entity.doTrailEffect(animation, tick == 20, tick > 20, true, null);
-                    if (tick == 20) EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.15F, 0, 5);
+                    if (tick == 20) EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.125F, 0, 10);
                 })
                 .inRange(31, 41, (entity, animation, tick) -> {
                     entity.doTrailEffect(animation, tick == 31, tick > 31, false, new Vec3(0, -1.5, 0));
                     if (entity.level().isClientSide) return;
                     if (tick == 37) entity.playSound(SoundInit.REALM_WARDEN_WHOOSH.get(), 1.4F, 0.9F);
-                    if (tick == 39) EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.2F, 0, 5);
+                    if (tick == 39) EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.15F, 0, 10);
                 });
         Keyframe<EntityRealmWarden> stompKeyFrame = (entity, animation, tick) -> {
             Vec3 pos = entity.getPosOffset(true, 1.3F, 0.5F, 0F);
-            entity.doGroundPoundEffect(pos, 0.8F, 1.1F, new double[]{75, 55, 45});
+            entity.doGroundPoundEffect(pos, 0.8F, 1.1F, new double[]{65, 45, 25});
             for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 1.75, 0, false, 20)) {
                 boolean flag = entity.doHurtTarget(hitEntity, animation == STOMP_ANIMATION ? 0.7F : 0.8F, 0F);
                 ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, !flag);
@@ -828,7 +828,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_BLAST.get(), 1.2F, 1.5F);
         }).atTick(49, doPlayAttackSound).atTick(50, (entity, animation, tick) -> {
             Vec3 pos = entity.getPosOffset(true, 3.2F, 1.75F, 0F);
-            entity.doGroundPoundEffect(pos, 1F, 1.1F, new double[]{85, 70, 45});
+            entity.doGroundPoundEffect(pos, 1F, 1.1F, new double[]{85, 75, 45});
             for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 2, 0, false, 20)) {
                 entity.doHurtTarget(hitEntity, 1F, 0F, true);
                 ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, false);
@@ -840,12 +840,12 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                         if (entity.modelParts == null || entity.modelParts.length < 2) return;
                         entity.doBackstepEffect(new Vec3(entity.modelParts[0].x, entity.getY() + 0.1, entity.modelParts[0].z));
                         entity.doBackstepEffect(new Vec3(entity.modelParts[1].x, entity.getY() + 0.1, entity.modelParts[1].z));
-                    } else EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.15F, 2, 4);
+                    } else EntityCameraShake.cameraShake(entity.level(), entity.position(), 24, 0.15F, 3, 7);
                 });
         builder.forAnimation(BACKSTEP_LANDING_ANIMATION).atTick(1, (entity, animation, tick) -> {
                     if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 1.4F, 1.1F + (entity.random.nextFloat() - 0.5F) * 0.1F);
                 })
-                .atTick(4, (entity, animation, tick) -> entity.doGroundPoundEffect(entity.position(), 0.9F, 1.2F, null))
+                .atTick(4, (entity, animation, tick) -> entity.doGroundPoundEffect(entity.position(), 1F, 1.2F, null))
                 .inRange(5, 7, (entity, animation, tick) -> {
                     if (entity.level().isClientSide) {
                         if (entity.modelParts == null || entity.modelParts.length < 2) return;
@@ -871,15 +871,16 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
         builder.forAnimation(LEAP_LANDING_ANIMATION).atTick(3, (entity, animation, tick) -> {
                     if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_LANDING.get());
                 }).atTick(5, (entity, animation, tick) -> {
-                    entity.doLeapLandingEffect(ParticleInit.CRIT_RING.get(), 60, 40, 1, 1, new double[]{80, 70}, true);
+                    entity.doLeapLandingEffect(ParticleInit.CRIT_RING.get(), 60, 40, 1, 1, new double[]{45, 25}, true);
                     if (entity.level().isClientSide) return;
-                    entity.rangeAttack(8, 8, 8, 8, hitEntity -> {
+                    double size = entity.isAlwaysActive() ? 8 : 10;
+                    entity.rangeAttack(size, size, size, 8, hitEntity -> {
                         entity.doHurtTarget(hitEntity, 1F, 0, true);
                         ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, entity.getX() - hitEntity.getX(), entity.getZ() - hitEntity.getZ(), false);
                     });
-                    EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.2F, 2, 4);
+                    EntityCameraShake.cameraShake(entity.level(), entity.position(), 24, 0.2F, 2, 8);
                     entity.playSound(SoundInit.REALM_WARDEN_SHAKE_GROUND.get(), 1.5F, 1.2F);
-                }).atTick(15, (entity, animation, tick) -> EntityTelegraph.spawn(entity.level(), entity.position().add(0, 0.1, 0), 15, entity.isSecondPhase() ? 0xFF0080FF : 0xFFFF2020, entity.isSecondPhase() || !entity.isAlwaysActive() ? 12 : 10))
+                }).atTick(15, (entity, animation, tick) -> EntityTelegraph.spawn(entity.level(), entity.position().add(0, 0.1, 0), 15, entity.isSecondPhase() ? 0xFF0080FF : 0xFFFF2020, entity.isSecondPhase() ? entity.isAlwaysActive() ? 12 : 15 : entity.isAlwaysActive() ? 10 : 15))
                 .inRange(16, 39, (entity, animation, tick) -> {
                     List<LivingEntity> entities = entity.getNearByEntities(LivingEntity.class, 16, 16, 16, 16);
                     for (LivingEntity inRangeEntity : entities) {
@@ -892,14 +893,14 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                     if (tick == 16) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 1.4F, 0.8F + (entity.random.nextFloat() - 0.5F) * 0.1F);
                     if (tick == 37) entity.playSound(SoundInit.REALM_WARDEN_BLAST.get(), 1.5F, 1.75F);
                 }).atTick(40, (entity, animation, tick) -> {
-                    entity.doLeapLandingEffect(ParticleInit.GLOW.get(), 120, 100, 1.4F, 2F, new double[]{70, 50}, false);
+                    entity.doLeapLandingEffect(ParticleInit.GLOW.get(), 120, 100, 1.4F, 2F, new double[]{55, 25}, false);
                     ShockWaveUtils.doRingShockWave(entity, entity.getPosOffset(false, 0F, entity.getBbWidth(), 0), 2, 0.05F, false, 10);
                     ShockWaveUtils.doRingShockWave(entity, entity.getPosOffset(true, 0F, entity.getBbWidth(), 0), 2, 0.05F, false, 10);
                     if (entity.level().isClientSide) return;
                     entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 1.5F, 1F);
                     if (entity.isSecondPhase()) entity.playSound(SoundInit.REALM_WARDEN_SHOCK.get(), 1.5F, 1.2F + (entity.random.nextFloat() - 0.5F) * 0.1F);
-                    EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.25F, 5, 3);
-                    int size = entity.isSecondPhase() || !entity.isAlwaysActive() ? 24 : 20;
+                    EntityCameraShake.cameraShake(entity.level(), entity.position(), 24, 0.2F, 3, 7);
+                    int size = entity.isSecondPhase() ? entity.isAlwaysActive() ? 24 : 30 : entity.isAlwaysActive() ? 20 : 30;
                     AABB area = ModEntityUtils.makeAABBWithSize(entity.getX(), entity.getY(), entity.getZ(), 0, size, size, size);
                     List<LivingEntity> entities = entity.level().getEntitiesOfClass(LivingEntity.class, area, target -> target != entity && !entity.isAlliedTo(target));
                     for (LivingEntity hitEntity : entities) {
@@ -924,7 +925,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                     double vy = entity.random.nextDouble() + 0.1;
                     double vz = dirZ * speedBase + (entity.random.nextDouble() - 0.5) * spread;
                     int duration = Mth.randomBetweenInclusive(entity.random, 5, 15);
-                    ParticleOptions dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.55F, 0.56F, 0.59F, 25F, duration, ParticleDust.EnumDustBehavior.SHRINK, 0.85F);
+                    ParticleOptions dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.8F, 0.8F, 0.8F, 25F, duration, ParticleDust.EnumDustBehavior.SHRINK, 0.85F, true);
                     entity.level().addParticle(dustData, pos.x, pos.y, pos.z, vx, vy, vz);
                 }
             } else {
@@ -936,11 +937,11 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
         jumpSmashKeyframe(builder, DERIVED_JUMP_SMASH_ANIMATION, doPlayAttackSound).atTick(8, (entity, animation, tick) -> {
             if (!entity.level().isClientSide) return;
             Vec3 pos = entity.getPosOffset(false, 2.4F, 0F, 0F);
-            ModParticleUtils.blockParticlesAround(entity.level(), pos.x, pos.y, pos.z, 15, 0.5, 1, 0.3,
-                    0.5, 0.5, 0.8, -0.2, 0.1, (pos2, state) -> AdvancedBlockParticle.createBlockParticleData(state, null, pos.x, pos.y, pos.z, (entity.random.nextFloat() * 0.5F + 0.5F) * 1.2,
+            ModParticleUtils.blockParticlesAround(entity.level(), pos.x, pos.y, pos.z, 15, 0.5, 1, 0.4,
+                    0.6, 0.4, 0.7, -0.2, 0.1, (pos2, state) -> AdvancedBlockParticle.createBlockParticleData(state, null, pos.x, pos.y, pos.z, (entity.random.nextFloat() * 0.5F + 0.5F) * 1.5,
                             0.6, 0.6, 0.6, 1, 0.98, 17, false, true, new ParticleComponent[]{
                                     new ParticleComponent.FreeFallSimulator(1F),
-                                    new ParticleComponent.Attractor(new Vec3[]{pos}, 4.5F, 0.5F, ParticleComponent.Attractor.EnumAttractorBehavior.SIMULATED, 7)
+                                    new ParticleComponent.Attractor(new Vec3[]{pos.add(0, 0.5, 0)}, 4.5F, 1F, ParticleComponent.Attractor.EnumAttractorBehavior.SIMULATED, 7)
                             }
                     ));
         }).inRange(15, 24, (entity, animation, tick) -> {
@@ -958,18 +959,18 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 AdvancedParticleBase.spawnParticle(entity.level(), ParticleInit.ADV_RING2.get(), pos.x, entity.getY() + 0.1, pos.z, 0, 0, 0, false, 0, Math.PI / 2F, 0,
                         0, 0, color.x, color.y, color.z, 1, 1, 7, true, false, false, new ParticleComponent[]{
                                 new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(50F, 0F), false),
-                                new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.4F, 0F), false),
+                                new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.6F, 0F), false),
                         });
             }
         }).atTick(25, (entity, animation, tick) -> {
             Vec3 pos = entity.getPosOffset(false, 2.4F, 0F, 0F);
-            entity.doGroundPoundEffect(pos, 1.5F, 1.5F, 1F, null, entity.isSecondPhase() ? new double[]{0.49F, 0.9F, 1F, 0.72F} : null);
+            entity.doGroundPoundEffect(pos, 1.5F, 1.5F, 1F, null, entity.isSecondPhase() ? new double[]{0.49F, 0.9F, 1F, 0.92F} : null);
             if (entity.level().isClientSide) {
                 Vector4f color = entity.getColorByPhase();
                 AdvancedParticleBase.spawnParticle(entity.level(), ParticleInit.ADV_RING3.get(), pos.x, pos.y + 0.375F, pos.z, 0, 0, 0, true, 0, 0, 0,
                         0, 0, color.x, color.y, color.z, 0, 1, 7, true, false, false, new ParticleComponent[]{
                                 new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(10F, 55F), false),
-                                new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.5F, 0.1F), false),
+                                new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.6F, 0.1F), false),
                         });
             } else {
                 entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 1.5F, 1F);
@@ -993,7 +994,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                             entity.doHurtTarget(hitEntity, 0.7F, 0);
                             ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, false);
                         });
-                        EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.15F, 3, 3);
+                        EntityCameraShake.cameraShake(entity.level(), entity.position(), 20, 0.125F, 3, 7);
                     }
                 });
         builder.forAnimation(DOUBLE_FIST_SLAM_ANIMATION).atTick(12, (entity, animation, tick) -> {
@@ -1007,7 +1008,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 }
                 ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, false);
             });
-            EntityCameraShake.cameraShake(entity.level(), entity.position(), 16, 0.25F, 4, 3);
+            EntityCameraShake.cameraShake(entity.level(), entity.position(), 16, 0.2F, 4, 6);
             if (entity.isSecondPhase()) entity.playSound(SoundInit.REALM_WARDEN_SHOCK.get(), 1F, 1.2F + (entity.random.nextFloat() - 0.5F) * 0.1F);
         });
         builder.forAnimation(HEAVY_SMASH_ANIMATION).atTick(1, (entity, animation, tick) -> {
@@ -1028,7 +1029,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
     private static KeyframeManager.KeyframeManegerBuilder<EntityRealmWarden> jumpSmashKeyframe(KeyframeManager.KeyframeManegerBuilder<EntityRealmWarden> builder, Animation defineAnimation, Keyframe<EntityRealmWarden> doPlayAttackSound) {
         return builder.forAnimation(defineAnimation).atTick(5, doPlayAttackSound).atTick(7, (entity, animation, tick) -> {
             Vec3 pos = entity.getPosOffset(false, 2.4F, 0F, 0F);
-            entity.doGroundPoundEffect(pos, 1.2F, 1.2F, new double[]{70, 60, 50});
+            entity.doGroundPoundEffect(pos, 1.2F, 1.2F, new double[]{55, 25, 35});
             for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 2.25, -0.015F, false, 20)) {
                 entity.doHurtTarget(hitEntity, 1F, 0F, true);
                 ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, false);
@@ -1099,7 +1100,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
         AnimationRule<EntityRealmWarden> jumpSmashStartRule = builder.define(JUMP_SMASH_START_ANIMATION)
                 .cooldown(generator)
                 .condition(ConditionFactory.and(
-                        ConditionFactory.distanceRange(10, 24),
+                        ConditionFactory.distanceRange(9, 24),
                         ConditionFactory.randomChanceOnLowHealth(0.2F, 0.8F)
                 ))
                 .build();
@@ -1127,7 +1128,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 .condition(ConditionFactory.and(
                         ConditionFactory.angleRange(-90, 90),
                         ConditionFactory.heightDiff(4.45),
-                        ConditionFactory.distanceRange(2, 7, 8),
+                        ConditionFactory.distanceRange(0, 7, 8),
                         ConditionFactory.randomChanceOnLowHealth(0.3F, 0.7F)
                 )).nextW(backStepRule, 1.2)
                 .next(turnaroundSweepRule)
@@ -1300,21 +1301,23 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 if (this.modelParts == null || this.modelParts.length < 2) return;
                 Vec3 leftStart = this.modelParts[0].add(0, -1, 0);
                 Vec3 rightStart = this.modelParts[1].add(0, -1, 0);
+                int size = this.isAlwaysActive() ? 12 : 15;
                 for (int i = 0; i < 8; i++) {
                     double leftPitch = Math.toRadians(this.yBodyRot) + Math.toRadians((this.random.nextFloat() - 0.5) * 160);
-                    Vec3 leftEnd = leftStart.add(Math.cos(leftPitch) * this.random.nextFloat() * 12, this.random.nextFloat() * getBbHeight() / 2, Math.sin(leftPitch) * this.random.nextFloat() * 12);
+                    Vec3 leftEnd = leftStart.add(Math.cos(leftPitch) * this.random.nextFloat() * size, this.random.nextFloat() * getBbHeight() / 2, Math.sin(leftPitch) * this.random.nextFloat() * size);
                     double rightPitch = Math.toRadians(this.yBodyRot + 180) + Math.toRadians((this.random.nextFloat() - 0.5) * 160);
-                    Vec3 rightEnd = rightStart.add(Math.cos(rightPitch) * this.random.nextFloat() * 12, this.random.nextFloat() * getBbHeight() / 2, Math.sin(rightPitch) * this.random.nextFloat() * 12);
+                    Vec3 rightEnd = rightStart.add(Math.cos(rightPitch) * this.random.nextFloat() * size, this.random.nextFloat() * getBbHeight() / 2, Math.sin(rightPitch) * this.random.nextFloat() * size);
                     boolean flag = i % 3 == 0;
                     float sizeOffset = (this.random.nextFloat() - 0.5F) * 0.05F;
-                    this.doLightBlotEffect(leftStart, leftEnd, flag ? 6 : 5, (flag ? 0.25F : 0.125F) + sizeOffset, 0.12F, 0.08F, flag ? LightningBolt.FadeFunction.NONE : LightningBolt.FadeFunction.fade(0.6F));
-                    this.doLightBlotEffect(rightStart, rightEnd, flag ? 6 : 5, (flag ? 0.25F : 0.125F) + sizeOffset, 0.12F, 0.08F, flag ? LightningBolt.FadeFunction.NONE : LightningBolt.FadeFunction.fade(0.6F));
+                    this.doLightBlotEffect(leftStart, leftEnd, flag ? 7 : 6, (flag ? 0.25F : 0.125F) + sizeOffset, 0.12F, 0.08F, flag ? LightningBolt.FadeFunction.NONE : LightningBolt.FadeFunction.fade(0.6F));
+                    this.doLightBlotEffect(rightStart, rightEnd, flag ? 7 : 6, (flag ? 0.25F : 0.125F) + sizeOffset, 0.12F, 0.08F, flag ? LightningBolt.FadeFunction.NONE : LightningBolt.FadeFunction.fade(0.6F));
                 }
             } else {
-                AdvancedParticleData particleData = EntityRealmWarden.getRibbonParticleData(0.52F, 0.3F, 1F, 0.68F, 0.38F);
-                for (int i = 0; i < 12; i++) {
+                AdvancedParticleData particleData = EntityRealmWarden.getRibbonParticleData(0.52F, 0.3F);
+                int size = this.isAlwaysActive() ? 15 : 30;
+                for (int i = 0; i < 15; i++) {
                     Vec3 centerPos = this.position();
-                    Vec3 randomPos = this.position().offsetRandom(random, 15F);
+                    Vec3 randomPos = this.position().offsetRandom(random, size);
                     double toParticleX = randomPos.x - centerPos.x;
                     double toParticleZ = randomPos.z - centerPos.z;
                     double length = Math.sqrt(toParticleX * toParticleX + toParticleZ * toParticleZ);
@@ -1361,13 +1364,13 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             Vec3 pos = this.getPosOffset(false, 2.1F, 0F, this.getBbHeight() * 0.5F);
             Vector4f color = this.getColorByPhase();
             this.doFlashingEffect(ParticleInit.THUMP_RING.get(), pos, 45F, 45F, 0, color.x, color.y, color.z);
-            AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.ADV_RING3.get(), pos.x, this.getY() + 0.1, pos.z, 0, 0, 0, false, 0, Math.PI / 2F, 0,
-                    0, 0, 0.98F, 0.98F, 0.98F, 0, 1, 4, false, false, false, new ParticleComponent[]{
+            AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.ADV_RING.get(), pos.x, this.getY() + 0.1, pos.z, 0, 0, 0, false, 0, Math.PI / 2F, 0,
+                    0, 0, 0.98F, 0.98F, 0.98F, 0, 1, 5, false, false, false, new ParticleComponent[]{
                             new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(0F, 40F), false),
-                            new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.4F, 0F), false),
+                            new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.5F, 0F), false),
                     });
             ModParticleUtils.roundParticleOutburst(this.level(), 15, new ParticleOptions[]{
-                    getRibbonParticleData(0.5F, 0.1F, 1F, 0.89F, 0.64F)
+                    getRibbonParticleData(0.5F, 0.1F)
             }, pos.x, pos.y, pos.z, 2.5F);
             ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 40F, 25, ParticleDust.EnumDustBehavior.GROW, 0.74F);
             ModParticleUtils.annularParticleOutburst(this.level(), 18, dustData, pos.x, this.getY(), pos.z, 2F, 0.6);
@@ -1375,7 +1378,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 for (int i = 0; i < 6; i++) {
                     Vec3 start = pos.offsetRandom(this.random, 0.5F);
                     Vec3 end = start.add((this.random.nextFloat() - 0.5) * 2.5, (this.random.nextFloat() - 0.5) * 6, (this.random.nextFloat() - 0.5) * 2.5);
-                    this.doLightBlotEffect(start, end, 5, 0.08F, 0.05F, 0.05F, LightningBolt.FadeFunction.fade(0.6F));
+                    this.doLightBlotEffect(start, end, 6, 0.08F, 0.05F, 0.05F, LightningBolt.FadeFunction.fade(0.6F));
                 }
             }
         }
@@ -1386,17 +1389,17 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             scale1 *= 1.2F;
             scale2 *= 1.2F;
         }
-        PropertyControl component0 = new PropertyControl(EnumParticleProperty.RED, new AnimData.KeyTrack(new float[]{1F, finalR}, new float[]{0F, 0.25F}), false);
-        PropertyControl component1 = new PropertyControl(EnumParticleProperty.GREEN, new AnimData.KeyTrack(new float[]{1F, finalG}, new float[]{0F, 0.25F}), false);
-        PropertyControl component2 = new PropertyControl(EnumParticleProperty.BLUE, new AnimData.KeyTrack(new float[]{1F, finalB}, new float[]{0F, 0.25F}), false);
+        PropertyControl component0 = new PropertyControl(EnumParticleProperty.RED, new AnimData.KeyTrack(new float[]{1F, finalR}, new float[]{0F, 0.5F}), false);
+        PropertyControl component1 = new PropertyControl(EnumParticleProperty.GREEN, new AnimData.KeyTrack(new float[]{1F, finalG}, new float[]{0F, 0.5F}), false);
+        PropertyControl component2 = new PropertyControl(EnumParticleProperty.BLUE, new AnimData.KeyTrack(new float[]{1F, finalB}, new float[]{0F, 0.5F}), false);
         AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.GLOW.get(), pos.x, pos.y, pos.z, 0, 0, 0, true, 0, 0, 0,
-                0, 0, 1, 1, 1, 0, 1, 4, true, false, false, new ParticleComponent[]{
+                0, 0, 1, 1, 1, 0, 1, 5, true, false, false, new ParticleComponent[]{
                         new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(15F, scale1), false),
-                        new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(1F, 0F), false),
+                        new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(1F, 0.1F), false),
                         component0, component1, component2,
                 });
         AdvancedParticleBase.spawnParticle(this.level(), type, pos.x, pos.y, pos.z, 0, 0, 0, pitch == 0, 0, pitch, 0,
-                0, 0, 1, 1, 1, 0, 1, 4, true, false, false, new ParticleComponent[]{
+                0, 0, 1, 1, 1, 0, 1, 5, true, false, false, new ParticleComponent[]{
                         new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(15F, scale2), false),
                         new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(1F, 0F), false),
                         component0, component1, component2,
@@ -1410,32 +1413,32 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
     private void doGroundPoundEffect(Vec3 pos, float scale, float volume, float yBlockPtcScale, double @Nullable [] angles, double @Nullable [] colors) {
         boolean secondPhase = this.isSecondPhase();
         if (this.level().isClientSide) {
-            if (angles == null) angles = new double[]{55, 35, 25};
-            if (colors == null) colors = new double[]{1F, 0.89F, 0.64F, 0.6F};
+            if (angles == null) angles = new double[]{40, 30, 20};
+            if (colors == null) colors = new double[]{COLORS[0].x, COLORS[0].y, COLORS[0].z, COLORS[0].w};
             int[] particles = {6, 8, 5};
             double[] radii = {0.6 * scale, 1 * scale, 1.2 * scale};
             double[] speeds = {1.8, 2.2, 2.5};
-            double[] scales = {0.08, 0.1, 0.12};
+            double[] scales = {1, 1.1, 1.2};
             ModParticleUtils.multiLayerBowlParticles(this.level(), pos, 3, particles, radii, speeds, angles, colors, scales, 0.55F);
-            ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 40F, 35, ParticleDust.EnumDustBehavior.GROW, 0.74F);
+            ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 40F, 35, ParticleDust.EnumDustBehavior.GROW, 0.8F);
             ModParticleUtils.annularParticleOutburst(this.level(), 18, dustData, pos.x, pos.y, pos.z, 1.6F, 0.6);
             Vector4f color = this.getColorByPhase();
-            this.level().addParticle(new ParticleRing.RingData(ParticleInit.RADIAL_OPACITY_RING.get(), 0F, (float) (Math.PI / 2F), 12, color.x, color.y, color.z, 1F, 70F * scale, false,
-                    ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y + 0.375F, pos.z, 0, 0, 0);
+            this.level().addParticle(new ParticleRing.RingData(ParticleInit.RADIAL_OPACITY_RING.get(), 0F, (float) (Math.PI / 2F), 15, color.x, color.y, color.z, 1F, 80F * scale, false,
+                    ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y + 0.1F, pos.z, 0, 0, 0);
             ModParticleUtils.blockParticlesAround(this.level(), pos.x, pos.y, pos.z, (int) (8 * scale), 0.5 * scale, 1 * scale, 0.15,
-                    0.25, 0.2 * yBlockPtcScale, 0.5 * yBlockPtcScale, -0.2, 0.1, (pos2, state) -> getBlockParticleData(this.random, state, pos, 2.5));
+                    0.25, 0.3 * yBlockPtcScale, 0.5 * yBlockPtcScale, -0.2, 0.1, (pos2, state) -> getBlockParticleData(this.random, state, pos, 1.5));
             this.doFlashingEffect(ParticleInit.THUMP_RING.get(), pos.add(0, 0.1, 0), 60F * scale, 40F * scale, (float) (Math.PI / 2F), color.x, color.y, color.z);
             if (secondPhase) {
                 for (int i = 0; i < (int) (6 * scale); i++) {
                     Vec3 start = pos.offsetRandom(this.random, 1F);
                     Vec3 end = start.add((this.random.nextFloat() - 0.5) * 6 * scale, 1 + this.random.nextFloat(), (this.random.nextFloat() - 0.5) * 6 * scale);
-                    this.doLightBlotEffect(start, end, 5, 0.08F, 0.08F, 0.1F, LightningBolt.FadeFunction.fade(0.75F));
+                    this.doLightBlotEffect(start, end, 6, 0.08F, 0.08F, 0.1F, LightningBolt.FadeFunction.fade(0.75F));
                 }
             }
         } else {
             this.playSound(SoundInit.REALM_WARDEN_SHAKE_GROUND.get(), 1.2F * volume, 1.2F * volume);
             if (secondPhase) this.playSound(SoundInit.REALM_WARDEN_SHOCK.get(), volume, 1.3F + (this.random.nextFloat() - 0.5F) * 0.1F);
-            EntityCameraShake.cameraShake(this.level(), pos, 20, 0.2F * scale, 3, 4);
+            EntityCameraShake.cameraShake(this.level(), pos, 24, 0.125F * scale, 3, 7);
         }
     }
 
@@ -1478,7 +1481,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 if (isElbowStrike || animation == SWEEP_ANIMATION || animation == TURNAROUND_SWEEP_ANIMATION) {
                     if (i == 0) ModParticleUtils.blockParticleDirectionality(this.level(), x + offset.x, this.getY(), z + offset.z, Math.toRadians(this.getYRot()), numDusts, BLOCK_OFFSETS, 5F);
                     if (i % 2 == 1) {
-                        AdvancedParticleData particleData = getRibbonParticleData(Mth.randomBetween(this.random, 0.2F, 0.25F), 0.07F, 1F, 0.89F, 0.64F);
+                        AdvancedParticleData particleData = getRibbonParticleData(Mth.randomBetween(this.random, 0.2F, 0.25F), 0.07F);
                         ModParticleUtils.blockParticleDirectionality(this.level(), x + offset.x, this.getY(), z + offset.z, -0.2F, Math.toRadians(this.getYRot()), numDusts, SHORT_BLOCK_OFFSETS, 0.14F,
                                 hardness -> hardness > 1 || hardness < 0, (pos, state) -> particleData);
                     }
@@ -1503,12 +1506,12 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
         double[] radii = {0.6, 1};
         double[] speeds = {1.8, 2.2};
         double[] angles = {80, 60};
-        double[] scales = {0.06, 0.06};
-        double[] color = {1F, 0.89F, 0.64F, 0.6F};
+        double[] scales = {1, 1.1};
+        double[] color = {COLORS[0].x, COLORS[0].y, COLORS[0].z, COLORS[0].w};
         ModParticleUtils.blockParticlesAround(this.level(), pos.x, pos.y, pos.z, 8, 1, 1.5, 2, 5, 3, 6, -0.2, 0.1);
         AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.THUMP_RING.get(), pos.x, pos.y, pos.z, 0, 0, 0, false, 0, Math.PI / 2F, 0,
-                0, 0, 1F, 0.68F, 0.38F, 0, 1, 4, true, false, false, new ParticleComponent[]{
-                        new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(1F, 0F), false),
+                0, 0, COLORS[0].x, COLORS[0].y, COLORS[0].z, 0, 1, 4, true, false, false, new ParticleComponent[]{
+                        new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(1F, 0.1F), false),
                         new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(0F, 60F), false)
                 });
         ModParticleUtils.multiLayerBowlParticles(this.level(), pos, 3, particles, radii, speeds, angles, color, scales, 0.55F);
@@ -1526,13 +1529,13 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
 
     private void doLeapEffect(int tick, boolean leap) {
         if (leap) {
-            this.doGroundPoundEffect(this.position(), 1.2F, 1.2F * getSoundVolumeScale(), 1.5F, new double[]{85, 80, 75}, null);
+            this.doGroundPoundEffect(this.position(), 1.4F, 1.2F * getSoundVolumeScale(), 1.5F, new double[]{45, 35, 25}, null);
             return;
         }
         if (this.level().isClientSide) {
             if (tick % 2 == 1) {
                 int duration = Mth.randomBetweenInclusive(this.random, 10, 15);
-                ParticleOptions dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.55F, 0.56F, 0.59F, 30F, duration, ParticleDust.EnumDustBehavior.SHRINK, 0.9F);
+                ParticleOptions dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.8F, 0.8F, 0.8F, 30F, duration, ParticleDust.EnumDustBehavior.SHRINK, 0.9F, true);
                 spawnRotatingDustEffect(dustData, this.level(), position().add(0, 0.75, 0), 2, 6, 0.8, 1.2, 0.5);
             }
             if (tick % 3 != 1) return;
@@ -1543,7 +1546,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             int targetScale = startScale + Mth.randomBetweenInclusive(this.random, 40, 50);
             boolean inversion = this.random.nextBoolean();
             AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.VORTEX.get(), getRandomX(0.1), getY() + 0.25, getRandomZ(0.1), 0, 0, 0, false, startYaw, Math.PI / 2, 0, 0,
-                    0, 0.55, 0.56, 0.59, 0.98, 1, duration, false, true, false, new ParticleComponent[]{
+                    0, 0.8, 0.8, 0.8, 0.98, 1, duration, true, true, false, new ParticleComponent[]{
                             new ParticleComponent.FreeFallSimulator(0.225F),
                             new PropertyControl(EnumParticleProperty.YAW, AnimData.startAndEnd(inversion ? startYaw : -startYaw, inversion ? targetYaw : -targetYaw), false),
                             new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(startScale, targetScale), false),
@@ -1576,13 +1579,12 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 40F, 40, ParticleDust.EnumDustBehavior.GROW, 0.79F);
             ModParticleUtils.annularParticleOutburst(this.level(), 20 * dustSpeed, dustData, pos.x, pos.y + 0.1, pos.z, 1.6F * dustSpeed, 0.5);
             ModParticleUtils.blockParticlesAround(this.level(), getX(), getY(), getZ(), 15, 0.75 * effectScale, 1.5 * effectScale,
-                    0.1 * effectScale, 0.2 * effectScale, 0.3, 0.7, -0.2, 0.1, (pos2, state) -> getBlockParticleData(this.random, state, pos, 2));
+                    0.1 * effectScale, 0.2 * effectScale, 0.4, 0.7, -0.2, 0.1, (pos2, state) -> getBlockParticleData(this.random, state, pos, 1.5));
             int[] particles = {8, 10};
             double[] radii = {2, 3};
             double[] speeds = {1.8, 2.2};
-            double[] colors = {1F, 0.89F, 0.64F, 0.6F};
-            double[] scales = {0.12, 0.14};
-            ModParticleUtils.multiLayerBowlParticles(this.level(), pos, 3, particles, radii, speeds, angles, colors, scales, 0.55F);
+            double[] colors = {COLORS[0].x, COLORS[0].y, COLORS[0].z, COLORS[0].w};
+            ModParticleUtils.multiLayerBowlParticles(this.level(), pos, 3, particles, radii, speeds, angles, colors, null, 0.55F);
         }
     }
 
@@ -1594,12 +1596,12 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
         ClientProxy.LIGHTNING_RENDER.update(this, bolt);
     }
 
-    private static AdvancedParticleData getRibbonParticleData(float airDiffusionSpeed, float scale, float r, float g, float b) {
+    private static AdvancedParticleData getRibbonParticleData(float airDiffusionSpeed, float scale) {
         return AdvancedParticleBase.createParticleData(ParticleInit.ADV_ORB.get(), new ParticleRotation.EulerAngles(0, 0, 0), 0,
                 0, 0, 0, 0, airDiffusionSpeed, 3, true, false, new ParticleComponent[]{
-                        new RibbonComponent(ParticleInit.FLAT_RIBBON.get(), 4, 0, 0, 0, scale, r, g, b, 0.6F, true, true,
+                        new RibbonComponent(ParticleInit.FLAT_RIBBON.get(), 4, 0, 0, 0, scale, COLORS[0].x, COLORS[0].y, COLORS[0].z, 0.8F, true, true,
                                 new ParticleComponent[]{
-                                        new PropertyOverLength(EnumRibbonProperty.ALPHA, AnimData.KeyTrack.startAndEnd(0.6F, 0F)),
+                                        new PropertyOverLength(EnumRibbonProperty.ALPHA, AnimData.KeyTrack.startAndEnd(1F, 0F)),
                                         new PropertyOverLength(EnumRibbonProperty.SCALE, AnimData.KeyTrack.startAndEnd(0.1F, 1F)),
                                 }, false)
                 }, false);
@@ -1676,8 +1678,8 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 } else if (tick > 30 && tick <= 38) {
                     lookAtTarget(15);
                     entity.pounce(tick, 31, 28, true, 2);
-                } else if (derived && tick >= 54 && tick < 60) {
-                    if (tick < 59) lookAtTarget(20);
+                } else if (derived && tick >= 54 && tick <= 60) {
+                    lookAtTarget(20F);
                     entity.pounce(tick, 48, 5, false, 3);
                 }
             }
@@ -1701,14 +1703,14 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             Animation animation = entity.getAnimation();
             if (animation != HEAVY_SMASH_ANIMATION) {
                 boolean derived = animation == STOMP_ANIMATION2;
-                if (tick <= 10 || tick > (derived ? 17 : 30)) {
+                if (tick <= (derived ? 10 : 8) || tick > (derived ? 17 : 30)) {
                     lookAtTarget(15);
                 } else entity.setYRot(entity.yRotO);
                 if (derived ? (tick >= 4 && tick < 9) : (tick >= 7 && tick < 12)) {
                     entity.pounce(tick, derived ? 4 : 7, 6, true, 4);
                 } else if (tick > (derived ? 13 : 15)) entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
             } else {
-                if (tick < 17 || tick > 45) lookAtTarget(15);
+                if (tick < 18 || tick > 45) lookAtTarget(15);
                 else entity.setYRot(entity.yRotO);
                 if (tick >= 15 && tick <= 18) {
                     entity.pounce(tick, 15, 8, true, 5);
@@ -1732,7 +1734,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             super.tick();
             int tick = entity.getAnimationTick();
             boolean derived = entity.getAnimation() == DOUBLE_FIST_SLAM_ANIMATION;
-            if ((tick > 5 && tick < (derived ? 14 : 20))) {
+            if ((tick > 5 && tick < (derived ? 15 : 20))) {
                 lookAtTarget(derived ? 20 : 30);
             } else if (tick > 30) {
                 lookAtTarget(10);
@@ -1826,7 +1828,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 }
                 if (tick > 16) {
                     entity.setYRot(entity.yRotO);
-                    nextAnimation(animation, BACKSTEP_LANDING_ANIMATION, entity.onGround() || tick >= animation.getDuration() - 1);
+                    nextAnimation(animation, BACKSTEP_LANDING_ANIMATION, entity.onGround() || entity.isInWater() || entity.isInLava() || tick >= animation.getDuration() - 1);
                 }
             } else {
                 entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);

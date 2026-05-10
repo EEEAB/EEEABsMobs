@@ -313,7 +313,7 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
                                 0, 0, 0, true, 0, 0, 0, 0,
                                 14, 0.56, 0.78, 0.86, 1, 1, 28, true, true, false,
                                 new ParticleComponent[]{
-                                        new PropertyControl(EnumParticleProperty.ALPHA, new KeyTrack(new float[]{0.0f, 0.6f, 0.6f, 0.0f}, new float[]{0f, 0.3f, 0.8f, 1f}), false),
+                                        new PropertyControl(EnumParticleProperty.ALPHA, new KeyTrack(new float[]{0.0f, 0.7f, 0.7f, 0.0f}, new float[]{0f, 0.3f, 0.8f, 1f}), false),
                                         new PinLocationWithEntity(entity, new Vec3(0, entity.getEyeHeight(), 0))
                                 });
                     } else {
@@ -365,7 +365,7 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
                                 14, 0.56, 0.78, 0.86, 0.8, 1, 26, true, true, false
                                 , new ParticleComponent[]{
                                         new PinLocationWithEntity(entity, new Vec3(0, entity.getEyeHeight(), 0)),
-                                        new PropertyControl(EnumParticleProperty.ALPHA, new AnimData.Oscillator(0.05f, 0.5f, 15f, 0), true),
+                                        new PropertyControl(EnumParticleProperty.ALPHA, new AnimData.Oscillator(0.2f, 0.8f, 15f, 0), true),
                                         new PropertyControl(EnumParticleProperty.SCALE, new AnimData.Oscillator(25f, 5f, 22f, Mth.PI / 3), false)
                                 });
                     }
@@ -508,10 +508,10 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
             double d0 = 0.1 + i * 0.2;
             AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.ADV_RING2.get(), pos.x, pos.y, pos.z
                     , x * d0, y * d0, z * d0, false, (float) Math.toRadians(-this.getYRot() + 180), (float) Math.toRadians(-this.getXRot()), 0, 0, 1F,
-                    0.8, 0.8, 0.8, 1, 1, 7, true, false, false
+                    0.9, 0.9, 0.9, 1, 1, 7, true, false, false
                     , new ParticleComponent[]{
                             new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(4, 10 + i * 2.5F), false),
-                            new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.8F, 0F), false)
+                            new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(1F, 0.1F), false)
                     });
         }
     }

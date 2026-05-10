@@ -647,7 +647,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                 .inRange(1, 20, (entity, animation, tick) -> {
                     if (tick == 4) entity.playSound(SoundInit.RELIC_ANNIHILATOR_PRE_ATTACK.get(), 1F, entity.getVoicePitch());
                     if (tick == 5) entity.playSound(SoundInit.RELIC_ANNIHILATOR_SMASH.get(), 1F, entity.getVoicePitch());
-                    if (tick == 20) entity.doGroundPoundEffect(2.25F, false);
+                    if (tick == 20) entity.doGroundPoundEffect(2.25F, false, false);
                     entity.doTrailEffect(tick == 18, tick > 18 && tick < 21, true);
                 });
         builder.forAnimation(GROUND_POUND_ANIMATION2)
@@ -655,14 +655,14 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                     entity.doTrailEffect(tick == 18, tick > 18 && tick < 21, false);
                     if (tick == 4) entity.playSound(SoundInit.RELIC_ANNIHILATOR_PRE_ATTACK.get(), 1F, entity.getVoicePitch());
                     if (tick == 5) entity.playSound(SoundInit.RELIC_ANNIHILATOR_SMASH.get(), 1F, entity.getVoicePitch());
-                    if (tick == 20) entity.doGroundPoundEffect(2.25F, false);
+                    if (tick == 20) entity.doGroundPoundEffect(2.25F, false, true);
                 }).inRange(20, 24, (entity, animation, tick) -> {
                             Vec3 pos = entity.getPosOffset(false, 2.25F, 0.2F, 0);
                             if (entity.level().isClientSide) {
                                 if (tick == 20) {
                                     AdvancedParticleBase.spawnParticle(entity.level(), ParticleInit.GLOW.get(), pos.x, pos.y, pos.z, 0, 0, 0, true, 0, 0, 0, 0,
-                                            1, BOLT_COLORS[0].x, BOLT_COLORS[0].y, BOLT_COLORS[0].z, BOLT_COLORS[0].w, 1, 5, true, false, false, new ParticleComponent[]{
-                                                    new PropertyControl(EnumParticleProperty.ALPHA, new AnimData.Oscillator(BOLT_COLORS[0].w, 0, 15, 0), false),
+                                            1, BOLT_COLORS[0].x, BOLT_COLORS[0].y, BOLT_COLORS[0].z, 1F, 1, 5, true, false, false, new ParticleComponent[]{
+                                                    new PropertyControl(EnumParticleProperty.ALPHA, new AnimData.Oscillator(0.82F, 0, 15, 0), false),
                                                     new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(10, 35), false),
                                             });
                                 }
@@ -683,10 +683,10 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                 );
         builder.forAnimation(GROUND_SLAM_ANIMATION1)
                 .atTick(4, (entity, animation, tick) -> entity.playSound(SoundInit.RELIC_ANNIHILATOR_JUMP.get(), 1F, entity.getVoicePitch()))
-                .atTick(13, (entity, animation, tick) -> entity.doGroundPoundEffect(0F, false));
+                .atTick(13, (entity, animation, tick) -> entity.doGroundPoundEffect(0F, false, false));
         builder.forAnimation(GROUND_SLAM_ANIMATION3)
                 .atTick(1, (entity, animation, tick) -> entity.playSound(SoundInit.RELIC_ANNIHILATOR_SMASH.get(), 1F, entity.getVoicePitch() + 1.2F))
-                .atTick(4, (entity, animation, tick) -> entity.doGroundPoundEffect(2.25F, true))
+                .atTick(4, (entity, animation, tick) -> entity.doGroundPoundEffect(2.25F, true, false))
                 .inRange(16, 20, (entity, animation, tick) -> entity.doTrailEffect(tick == 16, tick > 16 && tick < 21, true));
         builder.forAnimation(DIE_ANIMATION)
                 .inRange(1, 6, (entity, animation, tick) -> {
@@ -969,22 +969,22 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
         return (length1 * width1 * height1) >= (length2 * width2 * height2);
     }
 
-    private void doGroundPoundEffect(float offset, boolean block) {
+    private void doGroundPoundEffect(float offset, boolean block, boolean volt) {
         Vec3 pos = this.getPosOffset(false, offset, 0.2F, 0);
         if (this.level().isClientSide) {
-            int[] particles = {15, 20, 10};
-            double[] radii = {1, 1.5, 2};
-            double[] speeds = {1, 0.9, 0.8};
+            int[] particles = {8, 10, 6};
+            double[] radii = {0.7, 1.4, 1.8};
+            double[] speeds = {1.1, 1.2, 1.3};
             double[] angles = {35, 25, 15};
-            double[] color = {0.8, 0.8, 0.8, 0.5F};
-            ModParticleUtils.multiLayerBowlParticles(this.level(), pos, 2, particles, radii, speeds, angles, color, null, 0.9F);
-            this.level().addParticle(new ParticleRing.RingData(ParticleInit.BIG_RING.get(), 0F, (float) (Math.PI / 2F), 10, 0.8F, 0.8F, 0.8F, 0.8F, 90F, false, ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y + 0.5F, pos.z, 0, 0, 0);
+            double[] color = volt ? new double[]{0.52, 0.94, 1, 1} : new double[]{1, 0.88, 0.48, 1};
+            ModParticleUtils.multiLayerBowlParticles(this.level(), pos, 3, particles, radii, speeds, angles, color, null, 0.55F);
+            this.level().addParticle(new ParticleRing.RingData(ParticleInit.BIG_RING.get(), 0F, (float) (Math.PI / 2F), 11, volt ? 0.52F : 1F, volt ? 0.94F : 1F, 1F, 1F, 90F, false, ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y + 0.1F, pos.z, 0, 0, 0);
             ModParticleUtils.blockParticlesAround(this.level(), pos.x, pos.y - 0.2F, pos.z, 40, 0.5, 2.5, block ? 5 : 3, block ? 12 : 6, block ? 8 : 3, block ? 10 : 6, -0.2, 0.1);
             ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 30F, 30, ParticleDust.EnumDustBehavior.GROW, 0.76F);
             ModParticleUtils.annularParticleOutburst(this.level(), 20, dustData, pos.x, pos.y, pos.z, 1.55, 0.5);
         }
         if (block) ShockWaveUtils.doRingShockWave(this, pos, 2, 0F, false, 10);
-        EntityCameraShake.cameraShake(level(), pos, 15, 0.15F, 2, 4);
+        EntityCameraShake.cameraShake(level(), pos, 16, 0.15F, 3, 6);
     }
 
     private void doWalkEffect(Vec3 wheelPos) {
@@ -1042,13 +1042,13 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                     1, 0.94, 0.69, 1, 1, 4, true, false, false
                     , new ParticleComponent[]{
                             new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(4F, 20F), false),
-                            new PropertyControl(EnumParticleProperty.ALPHA, new AnimData.KeyTrack(new float[]{1F, 1F, 0.5F, 0F}, new float[]{0F, 0.5F, 0.75F, 1F}), false)
+                            new PropertyControl(EnumParticleProperty.ALPHA, new AnimData.KeyTrack(new float[]{1F, 1F, 0.6F, 0F}, new float[]{0F, 0.5F, 0.75F, 1F}), false)
                     });
             AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.CROSS_FLASH.get(), muzzle.x + forward.x * 0.9, muzzle.y, muzzle.z + forward.z * 0.9
                     , 0, 0, 0, true, 0, 0, 0, 0, 1F,
-                    1, 0.94, 0.69, 1, 1, 3, true, false, false
+                    1, 0.94, 0.69, 1, 1, 5, true, false, false
                     , new ParticleComponent[]{
-                            new PropertyControl(EnumParticleProperty.SCALE, new AnimData.KeyTrack(new float[]{0F, 8F, 0F}, new float[]{0F, 0.5F, 1F}), false)
+                            new PropertyControl(EnumParticleProperty.SCALE, new AnimData.KeyTrack(new float[]{0F, 10F, 0F}, new float[]{0F, 0.5F, 1F}), false)
                     });
             double baseSpeed = 0.5;
             for (int i = 0; i < 15; i++) {
@@ -1111,15 +1111,15 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                             0.77, 0.25, 0.25, 0.7, 1, 4, true, false, false
                             , new ParticleComponent[]{
                                     new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(18, 14), false),
-                                    new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.7F, 0F), false)
+                                    new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.9F, 0F), false)
                             });
                     if (tick < 40)
                         AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.ADV_RING.get(), forward.x, forward.y, forward.z
                                 , 0, 0, 0, true, (float) Math.toRadians(-this.getYRot()), (float) Math.toRadians(-this.getXRot()), 0, 0, 1F,
-                                0.77, 0.25, 0.25, 1, 1, 3, true, false, false
+                                0.77, 0.25, 0.25, 1, 1, 4, true, false, false
                                 , new ParticleComponent[]{
                                         new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(12, 0), false),
-                                        new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.8F, 0F), false)
+                                        new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.9F, 0F), false)
                                 });
                 }
                 if (tick % 3 == 1 && tick < 40) {
@@ -1131,8 +1131,8 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                                     new ParticleComponent.Attractor(new Vec3[]{forward}, 1.4F, 1F, ParticleComponent.Attractor.EnumAttractorBehavior.EXPONENTIAL),
                                     new RibbonComponent(ParticleInit.FLAT_RIBBON.get(), 6, 0, 0, 0, 0.05F, 1, 0.4, 0.4, 1, true, true,
                                             new ParticleComponent[]{
-                                                    new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.ALPHA, AnimData.KeyTrack.startAndEnd(0.8F, 0F)),
-                                                    new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.SCALE, new AnimData.KeyTrack(new float[]{0.5F, 1F, 0.5F}, new float[]{0F, 0.5F, 1F}))
+                                                    new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.ALPHA, AnimData.KeyTrack.startAndEnd(1F, 0F)),
+                                                    new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.SCALE, new AnimData.KeyTrack(new float[]{0.8F, 1F, 0.8F}, new float[]{0F, 0.5F, 1F}))
                                             }, false
                                     )
                             });
@@ -1145,25 +1145,23 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                             0.8, 0.8, 0.8, 1, 1, 6, true, false, false
                             , new ParticleComponent[]{
                                     new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(6, 14 + i * 2.5F), false),
-                                    new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.8F, 0F), false)
+                                    new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(1F, 0.2F), false)
                             });
                 }
-                for (int i = 0; i < 8; i++) {
+                Vec3 eyeDir = new Vec3(x, y, z).normalize();
+                for (int i = 0; i < 12; i++) {
+                    Vec3 finalDirection = randomDirectionInCone(eyeDir, Math.toRadians(45), this.random);
+                    double speed = 0.8 * (0.5 + this.random.nextDouble() * 0.7);
+                    Vec3 velocity = finalDirection.scale(speed);
                     Vec3 randomPos = forward.offsetRandom(this.random, 0.5F);
-                    Vec3 finalDirection = new Vec3(x, y, z).add(
-                            (random.nextDouble() - 0.5) * 2 * 2,
-                            (random.nextDouble() - 0.5) * 2 * 2,
-                            (random.nextDouble() - 0.5) * 2 * 2
-                    ).normalize();
-                    Vec3 velocity = finalDirection.scale(0.6 * (0.5 + random.nextDouble() * 0.7));
                     AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.ADV_ORB.get(), randomPos.x, randomPos.y, randomPos.z
                             , velocity.x, velocity.y, velocity.z, true, 0, 0, 0, 0, 0,
                             1, 1, 1, 1, 1, 4, true, true, false
                             , new ParticleComponent[]{
-                                    new RibbonComponent(ParticleInit.FLAT_RIBBON.get(), 5, 0, 0, 0, 0.05F, 0.67, 0.83, 0.88, 1, true, true,
+                                    new RibbonComponent(ParticleInit.FLAT_RIBBON.get(), 5, 0, 0, 0, 0.05F, 0.49F, 0.9F, 1F, 1, true, true,
                                             new ParticleComponent[]{
-                                                    new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.ALPHA, AnimData.KeyTrack.startAndEnd(0.8F, 0F)),
-                                                    new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.SCALE, new AnimData.KeyTrack(new float[]{0.5F, 1F, 0.5F}, new float[]{0F, 0.5F, 1F}))
+                                                    new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.ALPHA, AnimData.KeyTrack.startAndEnd(1F, 0F)),
+                                                    new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.SCALE, new AnimData.KeyTrack(new float[]{0.8F, 1F, 0.8F}, new float[]{0F, 0.5F, 1F}))
                                             }, false
                                     )
                             });
@@ -1172,6 +1170,21 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
         } else {
             if (tick == 50) this.playSound(SoundInit.RELIC_ANNIHILATOR_SHOOT_LASER.get(), 1.5F, this.getVoicePitch());
         }
+    }
+
+    public static Vec3 randomDirectionInCone(Vec3 axis, double maxAngleRad, RandomSource random) {
+        double theta = Math.acos(1 - random.nextDouble() * (1 - Math.cos(maxAngleRad)));
+        double phi = random.nextDouble() * 2 * Math.PI;
+        double sinTheta = Math.sin(theta);
+        Vec3 localDir = new Vec3(sinTheta * Math.cos(phi), sinTheta * Math.sin(phi), Math.cos(theta));
+        Vec3 up = Math.abs(axis.y) < 0.999 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0);
+        Vec3 right = axis.cross(up).normalize();
+        Vec3 realUp = right.cross(axis).normalize();
+        return new Vec3(
+                right.x * localDir.x + realUp.x * localDir.y + axis.x * localDir.z,
+                right.y * localDir.x + realUp.y * localDir.y + axis.y * localDir.z,
+                right.z * localDir.x + realUp.z * localDir.y + axis.z * localDir.z
+        ).normalize();
     }
 
     private void doFractalEffect() {
@@ -1531,7 +1544,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                     }
                 } else if (tick == 14) entity.playAnimation(GROUND_SLAM_ANIMATION2);
             } else if (animation == GROUND_SLAM_ANIMATION2) {
-                if (tick > 5 && entity.onGround()) entity.playAnimation(GROUND_SLAM_ANIMATION3);
+                if (tick > 5 && (entity.onGround() || entity.isInWater() || entity.isInLava())) entity.playAnimation(GROUND_SLAM_ANIMATION3);
             }
         }
     }

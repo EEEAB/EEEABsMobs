@@ -21,9 +21,9 @@ import net.minecraft.world.level.Level;
 
 public class EntitySurge extends EntityMagicEffects implements IEntity {
     private static final ParticleComponent[] COMPONENTS = new ParticleComponent[]{
-            new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.RED, AnimData.oscillate(0.373F, 0.73F, 4), false),
-            new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.GREEN, AnimData.oscillate(0.8F, 0.92F, 4), false),
-            new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.BLUE, AnimData.oscillate(0.89F, 0.96F, 4), false)
+            new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.RED, AnimData.oscillate(0.38F, 0.85F, 4), false),
+            new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.GREEN, AnimData.oscillate(0.8F, 0.95F, 4), false),
+            new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.BLUE, AnimData.oscillate(0.89F, 1F, 4), false)
     };
     private ItemStack useItemStack;
     private int warmupDelayTicks;
@@ -105,7 +105,7 @@ public class EntitySurge extends EntityMagicEffects implements IEntity {
                 duration, true, false, COMPONENTS, true), true, getX(), getY() + 2, getZ(), 0, 0, 0);
         this.level().addParticle(AdvancedParticleBase.createParticleData(ParticleInit.GLOW.get(), new ParticleRotation.EulerAngles(0, (float) (Math.PI / 2F), 0), 10F, 1, 1, 1, 0.5, 1,
                 duration - 2, true, false, new ParticleComponent[]{
-                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, AnimData.oscillate(0.1F, 0.4F, 8), false),
+                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, AnimData.oscillate(0.2F, 0.6F, 8), false),
                         new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, AnimData.oscillate(6F, 10F, 8), false),
                         COMPONENTS[0],
                         COMPONENTS[1],

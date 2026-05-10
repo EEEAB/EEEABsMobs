@@ -279,7 +279,7 @@ public abstract class EntityAbsRelicron extends EEEABMobLibrary implements Enemy
         ParticleComponent[] components = new ParticleComponent[]{
                 new ParticleComponent.LightningBoltPath(LightningPathProvider.generateLightningPath(start, end, 20, parallelNoise, spreadFactor, entity.level().getRandom()), AnimData.KeyTrack.startAndEnd(0, 1)),
                 new RibbonComponent(ParticleInit.FLAT_RIBBON.get(), 8, 0, 0, 0,
-                        0.05, color.x, color.y, color.z, color.w, true, true,
+                        0.05, color.x, color.y, color.z, 1, true, true,
                         new ParticleComponent[]{
                                 new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.ALPHA, AnimData.KeyTrack.startAndEnd(color.w, 0F))
                         }, false

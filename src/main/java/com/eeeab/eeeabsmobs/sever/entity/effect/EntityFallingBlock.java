@@ -1,8 +1,6 @@
 package com.eeeab.eeeabsmobs.sever.entity.effect;
 
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
-import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -11,13 +9,11 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
@@ -97,19 +93,6 @@ public class EntityFallingBlock extends Entity implements IEntity {
         } else if (getMode() == FallingMoveType.RENDER_MOVE) {
             this.updateY(getAnimVY(), DROP_FACTORS);
         } else {
-            if (this.level().isClientSide) {
-                if (this.tickCount == 1 && this.random.nextInt(4) == 0) {
-                    BlockState blockstate = this.getBlockState();
-                    if (blockstate != null && blockstate.getRenderShape() != RenderShape.INVISIBLE) {
-                        for (int i = 0; i < 3; ++i) {
-                            double d0 = this.getX() + (double) Mth.randomBetween(this.random, -0.2F, 0.2F);
-                            double d1 = this.getY() + 0.5;
-                            double d2 = this.getZ() + (double) Mth.randomBetween(this.random, -0.2F, 0.2F);
-                            this.level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, blockstate), d0, d1, d2, 0.0D, 0.0D, 0.0D);
-                        }
-                    }
-                }
-            }
             float animVY = getAnimVY();
             if (animVY < 0 && this.tickCount <= this.getDuration()) {
                 //保持一致 避免渲染计算插值时导致抽搐问题
