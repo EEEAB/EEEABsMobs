@@ -7,6 +7,7 @@ import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import com.eeeab.animate.server.ai.animation.AnimationActivate;
 import com.eeeab.animate.server.ai.animation.AnimationDie;
 import com.eeeab.animate.server.animation.Animation;
+import com.eeeab.animate.server.animation.AnimationNotification;
 import com.eeeab.animate.server.animation.OverlapAnimationState;
 import com.eeeab.animate.server.animation.keyframe.Keyframe;
 import com.eeeab.animate.server.animation.keyframe.KeyframeManager;
@@ -108,7 +109,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
     public static final Animation TURNAROUND_SWEEP_ANIMATION = Animation.create(45).doesOverlap();
     public static final Animation BACKSTEP_ANIMATION = Animation.create(100);
     public static final Animation BACKSTEP_LANDING_ANIMATION = Animation.create(35).doesOverlap();
-    public static final Animation LEAP_ANIMATION = Animation.create(100);//35
+    public static final Animation LEAP_ANIMATION = AnimationNotification.create(100, null).level(2);//35
     public static final Animation LEAP_LANDING_ANIMATION = Animation.create(80);
     public static final Animation JUMP_SMASH_START_ANIMATION = Animation.create(35);//25
     public static final Animation JUMP_SMASH_ANIMATION = Animation.create(30);
@@ -874,7 +875,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                     entity.doLeapLandingEffect(ParticleInit.CRIT_RING.get(), 60, 40, 1, 1, new double[]{45, 25}, true);
                     if (entity.level().isClientSide) return;
                     double size = entity.isAlwaysActive() ? 8 : 10;
-                    entity.rangeAttack(size, size, size, 8, hitEntity -> {
+                    entity.rangeAttack(size, size, size, size, hitEntity -> {
                         entity.doHurtTarget(hitEntity, 1F, 0, true);
                         ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, entity.getX() - hitEntity.getX(), entity.getZ() - hitEntity.getZ(), false);
                     });

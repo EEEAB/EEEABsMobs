@@ -210,6 +210,7 @@
   "other.eeeabsmobs.cooling.tip": "冷却中...",
   "block.eeeabsmobs.sliding_door_level1.tip": "这扇门需要「链齿核心」或「歼击者锯刃」才能打开",
   "block.eeeabsmobs.sliding_door_level2.tip": "这扇门需要「戍卫核心」或「谴雷战斧」才能打开",
+  "tip.eeeabsmobs.realm_warden": "将释放大范围攻击，快远离中心！",
   "tip.eeeabsmobs.relic_annihilator_weak_point": "使用弹射物攻击头部暴露的核心可使其瘫痪，并持续削弱其后续攻击精准度",
   "tip.eeeabsmobs.relic_earthshaker": "当目标身上带电且受到火焰攻击时，会额外受到爆炸伤害",
   "tip.eeeabsmobs.relic_observer": "当目标身上带电且受到火焰攻击时，会额外受到爆炸伤害",
