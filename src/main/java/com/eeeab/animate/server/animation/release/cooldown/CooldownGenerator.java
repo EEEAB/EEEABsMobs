@@ -17,9 +17,8 @@ public interface CooldownGenerator {
      */
     default double getDifficultyMultiplier(Difficulty difficulty) {
         return switch (difficulty) {
-            case HARD -> 1;
-            case EASY, PEACEFUL -> 1.3;
-            default -> 1.15;
+            case EASY, PEACEFUL -> 1.15;
+            default -> 1;
         };
     }
 }
