@@ -33,12 +33,14 @@ public final class ModConfigHandler {
             items = new Item(builder);
             entities = new Entity(builder);
             mobs = new Mob(builder);
+            potionEffects = new PotionEffect(builder);
             others = new Other(builder);
         }
 
         public final Mob mobs;
         public final Entity entities;
         public final Item items;
+        public final PotionEffect potionEffects;
         public final Other others;
     }
 
@@ -68,10 +70,10 @@ public final class ModConfigHandler {
                 builder.push("Annihilator Sawblade");
                 chainsword = new ToolConfig(10D, 1.6D);
                 chainswordConfig1 = builder.comment("Set the percentage of damage increase per stack")
-                        .translation(getTranslationKey("chainsword1"))
+                        .translation(getTranslationKey("chainsword_1"))
                         .defineInRange("Set Damage Bonus Per Stack", 5D, 1D, 10D);
                 chainswordConfig2 = builder.comment("Set the maximum number of stacks for the damage buff")
-                        .translation(getTranslationKey("chainsword2"))
+                        .translation(getTranslationKey("chainsword_2"))
                         .defineInRange("Set Max Buff Stacks", 5, 0, 10);
                 builder.pop();
             }
@@ -544,6 +546,27 @@ public final class ModConfigHandler {
 
         public final AttributeConfig combatConfig;
         public final ForgeConfigSpec.DoubleValue minionDeathHealAmount;
+    }
+
+    //药水效果
+    public static class PotionEffect {
+        public PotionEffect(final ForgeConfigSpec.Builder builder) {
+            builder.push("Potion Effects");
+            {
+                builder.push("Electromagnetic Overload");
+                electrifiedConfig1 = builder.comment("Base damage dealt by the electromagnetic overload effect")
+                        .translation(getTranslationKey("electrified_effect_1"))
+                        .defineInRange("Set Base Damage", 8D, 0D, Float.MAX_VALUE);
+                electrifiedConfig2 = builder.comment("Additional damage as a percentage of target's max health")
+                        .translation(getTranslationKey("electrified_effect_2"))
+                        .defineInRange("Set Max Health Ratio", 0.05D, 0D, 0.2D);
+                builder.pop();
+            }
+            builder.pop();
+        }
+
+        public final ForgeConfigSpec.DoubleValue electrifiedConfig1;
+        public final ForgeConfigSpec.DoubleValue electrifiedConfig2;
     }
 
     //其他设置

@@ -1,13 +1,10 @@
 package com.eeeab.eeeabsmobs.sever.entity.effect;
 
 import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityAbsRelicron;
+import com.eeeab.eeeabsmobs.sever.entity.util.damage.ModDamageSource;
+import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.sever.init.EntityInit;
 import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
-import com.eeeab.eeeabsmobs.sever.entity.util.damage.ModDamageSource;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -44,13 +41,14 @@ public class EntityOverloadExplode extends EntityExplode {
     }
 
     private static float getActualDamage(float damage, LivingEntity livingEntity) {
-        float totalDamage = damage + livingEntity.getMaxHealth() * 0.05F;
+        float healthRatio = ModConfigHandler.COMMON.potionEffects.electrifiedConfig2.get().floatValue();
+        float totalDamage = damage + livingEntity.getMaxHealth() * healthRatio;
         if (!(livingEntity instanceof Player)) return totalDamage;
         float remainingHealth = livingEntity.getHealth() - totalDamage;
-        float minSafeHealth = Math.max(1.0F, livingEntity.getMaxHealth() * 0.05F);
+        float minSafeHealth = Math.max(1.0F, livingEntity.getMaxHealth() * healthRatio);
         float actualDamage;
         if (remainingHealth < minSafeHealth) {
-            actualDamage = Math.min(totalDamage, livingEntity.getHealth() - minSafeHealth);
+            actualDamage = Math.min(totalDamage, Math.max(0, livingEntity.getHealth() - minSafeHealth));
         } else {
             actualDamage = totalDamage;
         }
