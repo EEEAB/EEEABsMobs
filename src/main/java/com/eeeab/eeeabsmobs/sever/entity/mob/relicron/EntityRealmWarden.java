@@ -375,25 +375,25 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
         if (!this.level().isClientSide) {
             LeapStage stage = this.getLeapStage();
             if (stage == LeapStage.HOLD) {
-                if (this.leapDownTarget == null || this.hoverTimer >= 20) {
+                if (this.leapDownTarget == null || this.hoverTimer >= 25) {
                     this.hoverTimer = 0;
                     this.setLeapStage(LeapStage.DOWN);
                     this.setDeltaMovement(0, -1, 0);
                     return;
                 }
-                if (hoverTimer < 15) {
+                if (hoverTimer < 10) {
                     if (!this.isAlwaysActive() && this.getRestPos().isPresent()) {
                         this.cachedLandingPos = Vec3.atBottomCenterOf(this.getRestPos().get());
                         this.cachedLandingPosY = cachedLandingPos.y;
                     } else if (this.leapDownTarget.level() == this.level()) {
-                        if (this.leapDownTarget.onGround()) {
+                        if (this.leapDownTarget.onGround() || this.leapDownTarget.isInWater() || this.leapDownTarget.isInLava()) {
                             this.cachedLandingPos = this.leapDownTarget.position();
                         } else if (this.cachedLandingPos == null) {
                             Vec3 pos = this.leapDownTarget.position();
                             this.cachedLandingPos = new Vec3(pos.x, Math.min(this.cachedLandingPosY, pos.y), pos.z);
                         }
                     }
-                } else if (hoverTimer == 15) {
+                } else if (hoverTimer == 20) {
                     Vec3 pos;
                     if (this.cachedLandingPos != null) {
                         pos = this.cachedLandingPos;
@@ -766,10 +766,10 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 }).atTick(17, doPlayWhooshSound)
                 .atTick(19, heavySwingKF1)
                 .atTick(35, heavySwingKF2)
-                .atTick(66, (entity, animation, tick) -> {
+                .atTick(67, (entity, animation, tick) -> {
                     if (!entity.level().isClientSide) if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_BLAST.get(), 1.5F, 1.5F);
                 })
-                .atTick(69, (entity, animation, tick) -> {
+                .atTick(70, (entity, animation, tick) -> {
                     Vec3 pos = entity.getPosOffset(false, 3F, 0F, 0F);
                     entity.doGroundPoundEffect(pos, 1.4F, 1.4F, null);
                     for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 2.4, -0.03F, false, 20)) {
@@ -794,8 +794,8 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, !flag);
             }
         };
-        builder.forAnimation(STOMP_ANIMATION).atTick(13, doPlayAttackSound).atTick(15, stompKeyFrame);
-        builder.forAnimation(STOMP_ANIMATION2).atTick(11, doPlayAttackSound).atTick(13, stompKeyFrame);
+        builder.forAnimation(STOMP_ANIMATION).atTick(17, doPlayAttackSound).atTick(19, stompKeyFrame);
+        builder.forAnimation(STOMP_ANIMATION2).atTick(16, doPlayAttackSound).atTick(18, stompKeyFrame);
         builder.forAnimation(ELBOW_STRIKE_ANIMATION).atTick(1, doPlayShortHumSound)
                 .inRange(13, 21, (entity, animation, tick) -> {
                     entity.doTrailEffect(animation, tick == 19, tick > 19, null, new Vec3(0, -0.5, 0));
@@ -1137,14 +1137,13 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 .nextH(derivedHeavySwingRule, 0.5)
                 .nextH(heavySwingRule, 0.75)
                 .next(doubleFistSlamRule, 0.5, 0.25, ConditionFactory.and(
-                        ConditionFactory.distanceRange(0, 9, 10),
-                        ConditionFactory.randomChanceOnLowHealth(0F, 0.5F)
+                        ConditionFactory.distanceRange(0, 9, 10)
                 ))
                 .build();
 
         AnimationRule<EntityRealmWarden> stompRule2 = builder.define(STOMP_ANIMATION2)
                 .onlyCombo()
-                .triggerAtTick(20)
+                .triggerAtTick(24)
                 .condition(ConditionFactory.distanceRange(0, 6, 8))
                 .nextW(groundPoundRule, 1.2)
                 .nextW(backStepRule, 1.2)
@@ -1274,7 +1273,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
     }
 
     private boolean tryTeleportTo(double x, double y, double z) {
-        double startY = y + this.getBbHeight() * 2;
+        double startY = y + this.getBbHeight() * 3;
         BlockPos blockpos = BlockPos.containing(x, startY, z);
         if (!this.level().hasChunkAt(blockpos)) return false;
         AABB newBB = this.getBoundingBox().move(x - this.getX(), startY - this.getY(), z - this.getZ());
@@ -1704,12 +1703,12 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             Animation animation = entity.getAnimation();
             if (animation != HEAVY_SMASH_ANIMATION) {
                 boolean derived = animation == STOMP_ANIMATION2;
-                if (tick <= (derived ? 10 : 8) || tick > (derived ? 17 : 30)) {
+                if (tick <= 10 || tick > (derived ? 22 : 30)) {
                     lookAtTarget(15);
                 } else entity.setYRot(entity.yRotO);
-                if (derived ? (tick >= 4 && tick < 9) : (tick >= 7 && tick < 12)) {
-                    entity.pounce(tick, derived ? 4 : 7, 6, true, 4);
-                } else if (tick > (derived ? 13 : 15)) entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
+                if (derived ? (tick >= 9 && tick < 14) : (tick >= 12 && tick < 17)) {
+                    entity.pounce(tick, derived ? 9 : 12, 6, true, 4);
+                } else if (tick > (derived ? 18 : 20)) entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
             } else {
                 if (tick < 18 || tick > 45) lookAtTarget(15);
                 else entity.setYRot(entity.yRotO);

@@ -51,7 +51,7 @@ public class RenderRealmWarden extends MobRenderer<EntityRealmWarden, ModelRealm
 
     @Override
     protected void scale(EntityRealmWarden entity, PoseStack matrixStack, float partialTickTime) {
-        matrixStack.scale(1.16F, 1.16F, 1.16F);
+        matrixStack.scale(1.1F, 1.1F, 1.1F);
     }
 
     @Override
