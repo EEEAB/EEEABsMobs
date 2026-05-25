@@ -4,7 +4,7 @@ import com.eeeab.eeeabsmobs.client.render.layer.LayerOuter;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelTester;
 import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
-import com.eeeab.eeeabsmobs.sever.entity.mob.EntityTester;
+import com.eeeab.eeeabsmobs.server.entity.mob.EntityTester;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

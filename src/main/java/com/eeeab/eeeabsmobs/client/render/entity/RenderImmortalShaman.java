@@ -6,7 +6,7 @@ import com.eeeab.eeeabsmobs.client.model.entity.ModelImmortalShaman;
 import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerBreath;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
-import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalShaman;
+import com.eeeab.eeeabsmobs.server.entity.mob.immortal.EntityImmortalShaman;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;

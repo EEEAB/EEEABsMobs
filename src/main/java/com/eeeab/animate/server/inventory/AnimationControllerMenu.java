@@ -1,6 +1,6 @@
 package com.eeeab.animate.server.inventory;
 
-import com.eeeab.eeeabsmobs.sever.init.MenuInit;
+import com.eeeab.eeeabsmobs.server.init.MenuInit;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;

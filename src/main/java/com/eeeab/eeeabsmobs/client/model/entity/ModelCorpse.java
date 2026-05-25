@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs.client.model.entity;
 import com.eeeab.animate.client.model.ModHierarchicalModel;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationCommon;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationCorpse;
-import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpse;
+import com.eeeab.eeeabsmobs.server.entity.mob.corpse.EntityCorpse;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;

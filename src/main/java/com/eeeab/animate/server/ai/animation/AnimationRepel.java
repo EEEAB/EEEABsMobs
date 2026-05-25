@@ -3,7 +3,7 @@ package com.eeeab.animate.server.ai.animation;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
+import com.eeeab.eeeabsmobs.server.entity.EEEABMobLibrary;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;

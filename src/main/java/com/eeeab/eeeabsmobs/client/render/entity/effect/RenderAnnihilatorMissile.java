@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs.client.render.entity.effect;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.effect.ModelAnnihilatorMissile;
 import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
-import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityAnnihilatorMissile;
+import com.eeeab.eeeabsmobs.server.entity.effect.projectile.EntityAnnihilatorMissile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;

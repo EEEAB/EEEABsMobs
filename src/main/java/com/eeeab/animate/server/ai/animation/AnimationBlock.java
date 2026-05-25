@@ -3,7 +3,7 @@ package com.eeeab.animate.server.ai.animation;
 import com.eeeab.animate.server.ai.AnimationSimpleAI;
 import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
+import com.eeeab.eeeabsmobs.server.entity.EEEABMobLibrary;
 
 public class AnimationBlock<T extends EEEABMobLibrary & AnimatedEntity> extends AnimationSimpleAI<T> {
     public AnimationBlock(T entity, Animation animation) {

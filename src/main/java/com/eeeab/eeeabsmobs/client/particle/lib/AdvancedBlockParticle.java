@@ -2,7 +2,6 @@ package com.eeeab.eeeabsmobs.client.particle.lib;
 
 import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent;
 import com.eeeab.eeeabsmobs.client.particle.lib.data.AdvancedBlockParticleData;
-import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;

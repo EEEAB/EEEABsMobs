@@ -6,7 +6,7 @@ import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationRealmWarden;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationRealmWarden2;
-import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityRealmWarden;
+import com.eeeab.eeeabsmobs.server.entity.mob.relicron.EntityRealmWarden;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelPart;

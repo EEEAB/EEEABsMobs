@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.particle;
 
-import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
+import com.eeeab.eeeabsmobs.server.init.ParticleInit;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.NoRenderParticle;
 import net.minecraft.client.particle.Particle;

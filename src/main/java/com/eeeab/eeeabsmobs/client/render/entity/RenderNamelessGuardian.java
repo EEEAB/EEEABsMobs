@@ -4,7 +4,7 @@ import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelNamelessGuardian;
 import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
-import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityNamelessGuardian;
+import com.eeeab.eeeabsmobs.server.entity.mob.relicron.EntityNamelessGuardian;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;

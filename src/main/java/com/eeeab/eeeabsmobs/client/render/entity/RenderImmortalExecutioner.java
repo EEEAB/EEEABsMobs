@@ -4,7 +4,7 @@ import com.eeeab.animate.client.util.ModelPartUtils;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelImmortalExecutioner;
 import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
-import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalExecutioner;
+import com.eeeab.eeeabsmobs.server.entity.mob.immortal.EntityImmortalExecutioner;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

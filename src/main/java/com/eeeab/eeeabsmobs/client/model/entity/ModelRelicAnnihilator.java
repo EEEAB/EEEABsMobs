@@ -1,11 +1,10 @@
 package com.eeeab.eeeabsmobs.client.model.entity;
 
-import com.eeeab.animate.client.animation.KeyframeAnimations;
 import com.eeeab.animate.client.model.ModHierarchicalModel;
 import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationRelicAnnihilator;
-import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityRelicAnnihilator;
+import com.eeeab.eeeabsmobs.server.entity.mob.relicron.EntityRelicAnnihilator;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;

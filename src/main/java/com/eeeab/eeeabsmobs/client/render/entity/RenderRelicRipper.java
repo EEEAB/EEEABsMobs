@@ -5,7 +5,7 @@ import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelRelicRipper;
 import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
-import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityRelicRipper;
+import com.eeeab.eeeabsmobs.server.entity.mob.relicron.EntityRelicRipper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

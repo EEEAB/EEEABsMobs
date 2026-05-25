@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.render.entity.effect;
 
-import com.eeeab.eeeabsmobs.sever.entity.effect.EntityTelegraph;
+import com.eeeab.eeeabsmobs.server.entity.effect.EntityTelegraph;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;

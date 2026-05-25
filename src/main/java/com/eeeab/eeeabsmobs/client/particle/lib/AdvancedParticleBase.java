@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs.client.particle.lib;
 import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent;
 import com.eeeab.eeeabsmobs.client.particle.lib.data.AdvancedParticleData;
 import com.eeeab.eeeabsmobs.client.render.ModRenderType;
-import com.eeeab.eeeabsmobs.sever.util.ModMathUtils;
+import com.eeeab.eeeabsmobs.server.util.ModMathUtils;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;

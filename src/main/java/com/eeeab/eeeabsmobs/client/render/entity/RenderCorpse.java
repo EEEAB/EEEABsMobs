@@ -4,7 +4,7 @@ import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelCorpse;
 import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
-import com.eeeab.eeeabsmobs.sever.entity.mob.corpse.EntityCorpse;
+import com.eeeab.eeeabsmobs.server.entity.mob.corpse.EntityCorpse;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerOuter;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;

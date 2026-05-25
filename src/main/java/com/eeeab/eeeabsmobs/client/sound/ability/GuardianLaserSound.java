@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.sound.ability;
 
-import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
-import com.eeeab.eeeabsmobs.sever.init.SoundInit;
+import com.eeeab.eeeabsmobs.server.ability.AbilityHandler;
+import com.eeeab.eeeabsmobs.server.init.SoundInit;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

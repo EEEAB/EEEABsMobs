@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.client.render.util;
 
 import com.eeeab.eeeabsmobs.client.model.armor.ModelGhostWarriorArmor;
 import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
-import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.eeeab.eeeabsmobs.server.init.ItemInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.EquipmentSlot;

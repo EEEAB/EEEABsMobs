@@ -5,7 +5,7 @@ import com.eeeab.eeeabsmobs.client.particle.lib.AnimData;
 import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent;
 import com.eeeab.eeeabsmobs.client.particle.lib.component.RibbonComponent;
 import com.eeeab.eeeabsmobs.client.particle.lib.data.AdvancedParticleData;
-import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
+import com.eeeab.eeeabsmobs.server.init.ParticleInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;

@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.particle;
 
 import com.eeeab.eeeabsmobs.client.render.ModRenderType;
-import com.eeeab.eeeabsmobs.sever.init.ParticleInit;
+import com.eeeab.eeeabsmobs.server.init.ParticleInit;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;

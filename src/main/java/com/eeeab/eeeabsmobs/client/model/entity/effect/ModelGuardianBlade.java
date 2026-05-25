@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.model.entity.effect;
 
 import com.eeeab.animate.client.model.ModHierarchicalModel;
-import com.eeeab.eeeabsmobs.sever.entity.effect.EntityGuardianBlade;
+import com.eeeab.eeeabsmobs.server.entity.effect.EntityGuardianBlade;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;

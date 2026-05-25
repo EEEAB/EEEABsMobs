@@ -2,8 +2,8 @@ package com.eeeab.animate.server.ai.animation;
 
 import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
-import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.server.entity.EEEABMobLibrary;
+import com.eeeab.eeeabsmobs.server.entity.util.ModEntityUtils;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;

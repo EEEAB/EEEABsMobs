@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs.client.render.entity.effect;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.render.ModRenderType;
 import com.eeeab.eeeabsmobs.client.render.FlatTextureRenderer;
-import com.eeeab.eeeabsmobs.sever.entity.effect.EntityImmortalMagicCircle;
+import com.eeeab.eeeabsmobs.server.entity.effect.EntityImmortalMagicCircle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;

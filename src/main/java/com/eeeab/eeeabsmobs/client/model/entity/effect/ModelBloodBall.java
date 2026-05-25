@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.model.entity.effect;
 
-import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityBloodBall;
+import com.eeeab.eeeabsmobs.server.entity.effect.projectile.EntityBloodBall;
 import com.eeeab.animate.client.model.ModHierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;

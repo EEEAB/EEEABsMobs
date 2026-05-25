@@ -4,7 +4,7 @@ import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.effect.ModelPulsedGrenade;
 import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
 import com.eeeab.eeeabsmobs.client.render.ModRenderType;
-import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityPulsedGrenade;
+import com.eeeab.eeeabsmobs.server.entity.effect.projectile.EntityPulsedGrenade;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;

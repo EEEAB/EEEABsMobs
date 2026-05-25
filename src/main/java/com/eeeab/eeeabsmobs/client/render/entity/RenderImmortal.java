@@ -8,7 +8,7 @@ import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
 import com.eeeab.eeeabsmobs.client.render.ModRenderType;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerOuter;
-import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityImmortalBoss;
+import com.eeeab.eeeabsmobs.server.entity.mob.immortal.EntityImmortalBoss;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -66,7 +66,7 @@ public class RenderImmortal extends MobRenderer<EntityImmortalBoss, ModelImmorta
 
     @Override
     protected void scale(EntityImmortalBoss entity, PoseStack matrixStack, float partialTickTime) {
-        matrixStack.scale(0.86625F, 0.86625F, 0.86625F);
+        matrixStack.scale(0.8525F, 0.8525F, 0.8525F);
     }
 
     @Override

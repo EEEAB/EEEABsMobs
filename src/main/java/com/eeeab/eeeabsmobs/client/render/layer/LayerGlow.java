@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.client.render.layer;
 
-import com.eeeab.eeeabsmobs.sever.entity.mob.GlowEntity;
+import com.eeeab.eeeabsmobs.server.entity.mob.GlowEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;

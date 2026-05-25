@@ -4,7 +4,7 @@ import com.eeeab.animate.client.model.ModHierarchicalModel;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationCommon;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationImmortalSkeleton;
-import com.eeeab.eeeabsmobs.sever.entity.mob.immortal.EntityAbsImmortalSkeleton;
+import com.eeeab.eeeabsmobs.server.entity.mob.immortal.EntityAbsImmortalSkeleton;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.AnimationUtils;
 import net.minecraft.client.model.ArmedModel;

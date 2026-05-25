@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.render.entity.effect;
 
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.effect.EntityFallingBlock;
+import com.eeeab.eeeabsmobs.server.handler.ModConfigHandler;
+import com.eeeab.eeeabsmobs.server.entity.effect.EntityFallingBlock;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

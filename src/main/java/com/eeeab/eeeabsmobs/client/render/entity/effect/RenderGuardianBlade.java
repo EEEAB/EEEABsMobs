@@ -4,7 +4,7 @@ import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.effect.ModelGuardianBlade;
 import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
 import com.eeeab.eeeabsmobs.client.render.ModRenderType;
-import com.eeeab.eeeabsmobs.sever.entity.effect.EntityGuardianBlade;
+import com.eeeab.eeeabsmobs.server.entity.effect.EntityGuardianBlade;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;

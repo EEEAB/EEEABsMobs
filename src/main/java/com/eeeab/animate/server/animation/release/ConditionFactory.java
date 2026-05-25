@@ -1,7 +1,7 @@
 package com.eeeab.animate.server.animation.release;
 
 import com.eeeab.animate.server.animation.AnimatedEntity;
-import com.eeeab.eeeabsmobs.sever.entity.util.ModEntityUtils;
+import com.eeeab.eeeabsmobs.server.entity.util.ModEntityUtils;
 import net.minecraft.world.entity.Mob;
 
 /**

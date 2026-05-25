@@ -5,7 +5,7 @@ import com.eeeab.eeeabsmobs.client.model.item.ModelBusterGauntlet;
 import com.eeeab.eeeabsmobs.client.model.item.ModelGuardianBattleaxe;
 import com.eeeab.eeeabsmobs.client.model.item.ModelTheNetherworldKatana;
 import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
-import com.eeeab.eeeabsmobs.sever.init.ItemInit;
+import com.eeeab.eeeabsmobs.server.init.ItemInit;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;

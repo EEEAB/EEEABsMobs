@@ -11,6 +11,7 @@ public class ModModelLayer {
     //实体
     public static final ModelLayerLocation UNKNOWN = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "unknown"), "main");
     public static final ModelLayerLocation TESTER = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "tester"), "main");
+    public static final ModelLayerLocation FALLEN_ENVOY = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "fallen_envoy"), "main");
     public static final ModelLayerLocation CORPSE = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "corpse"), "main");
     public static final ModelLayerLocation CORPSE_VILLAGER = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "corpse_villager"), "main");
     public static final ModelLayerLocation CORPSE_SLAVERY = new ModelLayerLocation(new ResourceLocation(EEEABMobs.MOD_ID, "corpse_slavery"), "main");

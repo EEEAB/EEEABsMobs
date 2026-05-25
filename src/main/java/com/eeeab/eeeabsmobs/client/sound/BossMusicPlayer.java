@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.sound;
 
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
-import com.eeeab.eeeabsmobs.sever.entity.EEEABMobEntity;
+import com.eeeab.eeeabsmobs.server.handler.ModConfigHandler;
+import com.eeeab.eeeabsmobs.server.entity.EEEABMobEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;

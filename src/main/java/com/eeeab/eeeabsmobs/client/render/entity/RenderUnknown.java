@@ -4,7 +4,7 @@ import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.model.entity.ModelUnKnown;
 import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
-import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
+import com.eeeab.eeeabsmobs.server.entity.EEEABMobLibrary;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;

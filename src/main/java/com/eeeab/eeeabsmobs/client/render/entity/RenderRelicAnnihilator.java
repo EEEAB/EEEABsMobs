@@ -9,7 +9,7 @@ import com.eeeab.eeeabsmobs.client.model.util.ModModelLayer;
 import com.eeeab.eeeabsmobs.client.render.ModRenderType;
 import com.eeeab.eeeabsmobs.client.render.layer.LayerGlow;
 import com.eeeab.eeeabsmobs.client.render.util.EntityAfterImageHelper;
-import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityRelicAnnihilator;
+import com.eeeab.eeeabsmobs.server.entity.mob.relicron.EntityRelicAnnihilator;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelPart;

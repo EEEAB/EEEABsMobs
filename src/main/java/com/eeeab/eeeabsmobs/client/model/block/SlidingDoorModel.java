@@ -5,7 +5,7 @@ import com.eeeab.animate.client.animation.AnimationDefinition;
 import com.eeeab.animate.client.animation.Keyframe;
 import com.eeeab.animate.client.animation.KeyframeAnimations;
 import com.eeeab.animate.client.model.ModHierarchicalModel;
-import com.eeeab.eeeabsmobs.sever.entity.block.EntitySlidingDoorBlock;
+import com.eeeab.eeeabsmobs.server.entity.block.EntitySlidingDoorBlock;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelPart;

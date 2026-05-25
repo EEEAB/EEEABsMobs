@@ -2,7 +2,7 @@ package com.eeeab.animate.server.ai;
 
 import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.animate.server.animation.Animation;
-import com.eeeab.eeeabsmobs.sever.entity.EEEABMobLibrary;
+import com.eeeab.eeeabsmobs.server.entity.EEEABMobLibrary;
 
 import java.util.EnumSet;
 

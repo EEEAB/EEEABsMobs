@@ -3,7 +3,7 @@ package com.eeeab.eeeabsmobs.client.model.entity;
 import com.eeeab.animate.client.model.ModHierarchicalModel;
 import com.eeeab.animate.server.animation.Animation;
 import com.eeeab.eeeabsmobs.client.model.animation.AnimationRelicEarthshaker;
-import com.eeeab.eeeabsmobs.sever.entity.mob.relicron.EntityRelicEarthshaker;
+import com.eeeab.eeeabsmobs.server.entity.mob.relicron.EntityRelicEarthshaker;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;

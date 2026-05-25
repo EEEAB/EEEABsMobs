@@ -1,10 +1,10 @@
 package com.eeeab.eeeabsmobs.client.sound.ability;
 
-import com.eeeab.eeeabsmobs.sever.ability.Ability;
-import com.eeeab.eeeabsmobs.sever.ability.AbilityHandler;
-import com.eeeab.eeeabsmobs.sever.ability.AbilityPeriod;
-import com.eeeab.eeeabsmobs.sever.ability.AbilityType;
-import com.eeeab.eeeabsmobs.sever.capability.AbilityCapability;
+import com.eeeab.eeeabsmobs.server.ability.Ability;
+import com.eeeab.eeeabsmobs.server.ability.AbilityHandler;
+import com.eeeab.eeeabsmobs.server.ability.AbilityPeriod;
+import com.eeeab.eeeabsmobs.server.ability.AbilityType;
+import com.eeeab.eeeabsmobs.server.capability.AbilityCapability;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.sounds.SoundEvent;

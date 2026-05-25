@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.render.entity.effect;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.sever.entity.effect.projectile.EntityPoisonArrow;
+import com.eeeab.eeeabsmobs.server.entity.effect.projectile.EntityPoisonArrow;
 import net.minecraft.client.renderer.entity.ArrowRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
