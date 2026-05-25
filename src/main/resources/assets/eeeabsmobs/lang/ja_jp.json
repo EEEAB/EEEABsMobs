@@ -210,9 +210,9 @@
   "other.eeeabsmobs.cooling.tip": "クールダウン中...",
   "block.eeeabsmobs.sliding_door_level1.tip": "このドアを開けるには、歯車型のコアまたはアナイアレイターソーブレードが必要だ。",
   "block.eeeabsmobs.sliding_door_level2.tip": "このドアを開けるには、ガーディアンキューブまたは破滅の斧が必要だ。",
-  "tip.eeeabsmobs.relic_annihilator_weak_point": "頭の露出したコアに遠距離攻撃を食らわせるとスタンさせることができる",
-  "tip.eeeabsmobs.relic_earthshaker": "感電したモブは燃えると爆発する",
-  "tip.eeeabsmobs.relic_observer": "感電したモブは燃えると爆発する",
+  "popup.eeeabsmobs.relic_annihilator.tip": "頭の露出したコアに遠距離攻撃を食らわせるとスタンさせることができる",
+  "popup.eeeabsmobs.relic_earthshaker.tip": "感電したモブは燃えると爆発する",
+  "popup.eeeabsmobs.relic_observer.tip": "感電したモブは燃えると爆発する",
 
   "_comment": "属性",
   "eeeabsmobs.crit_chance": "クリティカルレート",

@@ -3,8 +3,8 @@ package com.eeeab.eeeabsmobs.client.gui;
 import com.eeeab.eeeabsmobs.EEEABMobs;
 import com.eeeab.eeeabsmobs.client.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.render.util.MultiLineTextRenderer;
-import com.eeeab.eeeabsmobs.sever.handler.ModConfigHandler;
-import com.eeeab.eeeabsmobs.sever.util.TranslateUtils;
+import com.eeeab.eeeabsmobs.server.handler.ModConfigHandler;
+import com.eeeab.eeeabsmobs.server.util.TranslateUtils;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -102,7 +102,7 @@ public class TipNotificationHandler {
     public static void init(ResourceLocation location, int level) {
         if (!ModConfigHandler.CLIENT.tipNotification.enabled.get()) return;
         TipNotificationHandler.level = Mth.clamp(level, 0, 2);
-        current = TranslateUtils.simpleText(location.getNamespace(), "tip.", location.getPath(), getTextStyle(), "");
+        current = TranslateUtils.simpleText(location.getNamespace(), "popup.", location.getPath(), getTextStyle(), TranslateUtils.TIP_SUFFIX);
         currentMode = ModConfigHandler.CLIENT.tipNotification.displayMode.get();
         targetY = ModConfigHandler.CLIENT.tipNotification.hudPositionY.get();
         alphaAControlled.setDuration(ModConfigHandler.CLIENT.tipNotification.displayDuration.get());
