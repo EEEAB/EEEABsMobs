@@ -162,7 +162,6 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
     public EntityRelicAnnihilator(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
         this.active = false;
-        this.LRFlag = level.random.nextBoolean();
         this.clearRedundantAnimationsOnDeath = true;
         this.dropAfterDeathAnim = false;
         this.scope = new EntityRelicAnnihilatorPart(this, "scope", 0.825F, 0.75F);
@@ -451,6 +450,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
     @Override
     public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance instance, MobSpawnType spawnType, @Nullable SpawnGroupData groupData, @Nullable CompoundTag tag) {
         if (spawnType == MobSpawnType.STRUCTURE) this.setYRot(yBodyRot = 180);
+        this.LRFlag = level.getRandom().nextBoolean();
         this.setRestPos(this.blockPosition());
         return super.finalizeSpawn(level, instance, spawnType, groupData, tag);
     }

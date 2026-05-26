@@ -216,7 +216,6 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
         super(type, level);
         this.active = false;
         this.clearRedundantAnimationsOnDeath = true;
-        this.LRFlag = level.random.nextBoolean();
         this.setPathfindingMalus(BlockPathTypes.LAVA, 0.0F);
         this.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
         this.setPathfindingMalus(BlockPathTypes.DAMAGE_OTHER, 8.0F);
@@ -741,6 +740,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @javax.annotation.Nullable SpawnGroupData spawnDataIn, @javax.annotation.Nullable CompoundTag dataTag) {
+        this.LRFlag = worldIn.getRandom().nextBoolean();
         //this.setActive(false);
         return spawnDataIn;
     }
