@@ -114,7 +114,7 @@ public class EntityInit {
     public static final RegistryObject<EntityType<EntityRealmWarden>> REALM_WARDEN =
             ENTITIES.register("realm_warden",
                     () -> EntityType.Builder.<EntityRealmWarden>of(EntityRealmWarden::new, MobCategory.MONSTER)
-                            .sized(2.245f, 4.45f).fireImmune().clientTrackingRange(10)
+                            .sized(2.45f, 4.45f).fireImmune().clientTrackingRange(10)
                             .build(new ResourceLocation(EEEABMobs.MOD_ID, "realm_warden").toString()));
 
     public static final RegistryObject<EntityType<EntityNamelessGuardian>> NAMELESS_GUARDIAN =
