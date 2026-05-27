@@ -4,7 +4,6 @@ import com.eeeab.eeeabsmobs.client.particle.lib.AdvancedParticleBase;
 import com.eeeab.eeeabsmobs.client.particle.lib.AnimData;
 import com.eeeab.eeeabsmobs.client.particle.lib.ParticleRotation;
 import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent;
-import com.eeeab.eeeabsmobs.client.particle.lib.data.AdvancedParticleData;
 import com.eeeab.eeeabsmobs.server.entity.mob.IMob;
 import com.eeeab.eeeabsmobs.server.entity.util.damage.ModDamageSource;
 import com.eeeab.eeeabsmobs.server.handler.ModConfigHandler;
@@ -18,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class EntitySurge extends EntityMagicEffects implements IEntity {
     private static final ParticleComponent[] COMPONENTS = new ParticleComponent[]{
@@ -64,7 +64,11 @@ public class EntitySurge extends EntityMagicEffects implements IEntity {
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) return;
+        if (this.level().isClientSide) {
+            Vec3 pos = this.position().offsetRandom(this.random, 0.5F);
+            this.level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), pos.x, pos.y + 0.2F, pos.z, 0, 0, 0);
+            return;
+        }
         LivingEntity owner = this.getOwner();
         if (--this.warmupDelayTicks < 0) {
             if (!this.sentSpikeEvent) {
@@ -111,12 +115,6 @@ public class EntitySurge extends EntityMagicEffects implements IEntity {
                         COMPONENTS[1],
                         COMPONENTS[2],
                 }, false), getX(), getY() + 0.1, getZ(), 0, 0, 0);
-        for (int i = 0; i < 3; i++) {
-            duration = 5 + this.random.nextInt(5);
-            AdvancedParticleData data2 = AdvancedParticleBase.createParticleData(ParticleInit.SPARK.get(), new ParticleRotation.FaceCamera(0), 3F + (this.random.nextFloat() - 0.5F), 1, 1, 1, 1, 1,
-                    duration, true, false, COMPONENTS, true);
-            this.level().addParticle(data2, getRandomX(1.5), getY() + 0.2 + this.random.nextFloat() * 0.75, getRandomZ(1.5), 0, 0, 0);
-        }
         if (!this.isSilent()) {
             this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundInit.SURGE.get(), this.getSoundSource(), 0.8F, this.random.nextFloat() * 0.2F + 0.85F, false);
         }
