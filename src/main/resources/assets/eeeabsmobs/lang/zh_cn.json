@@ -191,7 +191,7 @@
   "item.eeeabsmobs.guardian_core.tip_1": "按住右键释放激光，造成5点基础伤害+目标最大生命值的1%伤害。\n使用期间持续消耗物品耐久值，未使用时在背包中自动恢复耐久",
   "item.eeeabsmobs.guardian_core.tip": "激光射程：§l[ %1$s §l]",
   "item.eeeabsmobs.buster_gauntlet.tip": "右键发射榴弹造成最大%1$s爆炸伤害",
-  "item.eeeabsmobs.chainsword.tip": "在无攻击冷却时对同种目标生物造成伤害可叠加1层撕裂效果，每层使伤害%1$s，最多%2$s层。每秒衰减1层，攻击其他目标则重置层数",
+  "item.eeeabsmobs.chainsword.tip": "在无攻击冷却时对同种目标生物造成伤害可叠加1层增益效果，每层使伤害%1$s，最多%2$s层。每秒衰减1层，攻击其他目标则重置层数",
   "item.eeeabsmobs.doombolt_battleaxe.tip": "长按右键投掷，命中后释放范围电涌，并自动飞回。下蹲时对地面右键，向前方扇形区域释放多道电涌",
   "item.eeeabsmobs.heart_of_pagan.tip": "用于炼制狂乱药水",
   "item.eeeabsmobs.soul_summon_necklace.tip": "承受伤害累计达到%1$s召唤死尸。可抵消狂乱效果带来的副作用",
