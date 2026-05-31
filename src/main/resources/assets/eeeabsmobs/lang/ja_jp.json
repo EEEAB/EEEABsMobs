@@ -210,9 +210,9 @@
   "other.eeeabsmobs.cooling.tip": "クールダウン中...",
   "block.eeeabsmobs.sliding_door_level1.tip": "このドアを開けるには、歯車型のコアまたはアナイアレイターソーブレードが必要だ。",
   "block.eeeabsmobs.sliding_door_level2.tip": "このドアを開けるには、ガーディアンキューブまたは破滅の斧が必要だ。",
-  "popup.eeeabsmobs.relic_annihilator.tip": "頭の露出したコアに遠距離攻撃を食らわせるとスタンさせることができる",
-  "popup.eeeabsmobs.relic_earthshaker.tip": "感電したモブは燃えると爆発する",
-  "popup.eeeabsmobs.relic_observer.tip": "感電したモブは燃えると爆発する",
+  "popup.eeeabsmobs.relic_annihilator.tip": "レリックアナイアレイターの頭部に露出したコアを投射物で攻撃すると、行動不能になり、以降の攻撃精度が持続的に低下する",
+  "popup.eeeabsmobs.relic_earthshaker.tip": "レリックアースシェイカーが帯電状態で火炎攻撃を受けると爆発が発生し、追加ダメージを与える",
+  "popup.eeeabsmobs.relic_observer.tip": "レリックオブザーバーが帯電状態で火炎攻撃を受けると爆発が発生し、追加ダメージを与える",
 
   "_comment": "属性",
   "eeeabsmobs.crit_chance": "クリティカルレート",
