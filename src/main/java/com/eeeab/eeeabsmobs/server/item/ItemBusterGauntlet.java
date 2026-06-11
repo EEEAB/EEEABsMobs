@@ -2,9 +2,9 @@ package com.eeeab.eeeabsmobs.server.item;
 
 import com.eeeab.animate.client.util.ItemAnimationUtils;
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.server.ability.AbilityHandler;
-import com.eeeab.eeeabsmobs.server.capability.AbilityCapability;
+import com.eeeab.eeeabsmobs.server.entity.effect.projectile.EntityPulsedGrenade;
 import com.eeeab.eeeabsmobs.server.handler.ModConfigHandler;
+import com.eeeab.eeeabsmobs.server.init.SoundInit;
 import com.eeeab.eeeabsmobs.server.util.TranslateUtils;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -18,6 +18,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
@@ -45,16 +46,23 @@ public class ItemBusterGauntlet extends SwordItem implements ConfigurableItem {
         if (itemstack.getDamageValue() >= itemstack.getMaxDamage() - 1) {
             return InteractionResultHolder.fail(itemstack);
         }
-        AbilityCapability.IAbilityCapability capability = AbilityHandler.INSTANCE.getAbilityCapability(player);
-        if (capability != null) {
-            player.getCooldowns().addCooldown(this, (int) (ModConfigHandler.COMMON.items.busterGauntletConfig3.get() * 20));
-            player.startUsingItem(usedHand);
-            AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.BUSTER_GAUNTLET_ABILITY);
-            if (level.isClientSide) ItemAnimationUtils.start(player.getItemInHand(usedHand), player.tickCount);
+        player.getCooldowns().addCooldown(this, (int) (ModConfigHandler.COMMON.items.busterGauntletConfig3.get() * 20));
+        player.startUsingItem(usedHand);
+        if (level.isClientSide) ItemAnimationUtils.start(player.getItemInHand(usedHand), player.tickCount);
+        else {
+            double yBodyRadians = Math.toRadians(player.yHeadRot + (180 * (player.getUsedItemHand() == InteractionHand.MAIN_HAND ? 1 : 2)));
+            float width = player.getBbWidth();
+            EntityPulsedGrenade grenade = new EntityPulsedGrenade(level, player, true);
+            grenade.setRadius(ModConfigHandler.COMMON.items.busterGauntletConfig2.get().floatValue());
+            Vec3 lookPos = player.getLookAngle();
+            Vec3 playerPos = player.position();
+            grenade.shoot(lookPos.x, lookPos.y, lookPos.z, 0.7F, 1F);
+            grenade.setPos(playerPos.x + width * 0.7F * Math.cos(yBodyRadians), player.getY(0.6D), playerPos.z + width * 0.7F * Math.sin(yBodyRadians));
+            level.addFreshEntity(grenade);
             itemstack.hurtAndBreak(1, player, (event) -> event.broadcastBreakEvent(usedHand));
-            return InteractionResultHolder.consume(player.getItemInHand(usedHand));
         }
-        return InteractionResultHolder.fail(player.getItemInHand(usedHand));
+        player.playSound(SoundInit.PULSED_GRENADE_LAUNCH.get());
+        return InteractionResultHolder.consume(player.getItemInHand(usedHand));
     }
 
     @Override

@@ -1,13 +1,10 @@
 package com.eeeab.eeeabsmobs.server.block;
 
-import com.eeeab.eeeabsmobs.server.item.ItemGuardianCore;
-import com.eeeab.eeeabsmobs.server.world.portal.PortalStructureHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -23,15 +20,15 @@ public class BlockVoidCrackPortalLock extends HorizontalDirectionalBlock {
 
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        ItemStack itemStack = player.getItemInHand(hand);
-        if (itemStack.getItem() instanceof ItemGuardianCore && !player.isShiftKeyDown()) {
-            if (!level.isClientSide) {
-                if (PortalStructureHelper.tryActivatePortalFromLock(level, pos)) {
-                    return InteractionResult.SUCCESS;
-                }
-            }
-            return InteractionResult.sidedSuccess(level.isClientSide);
-        }
+        //ItemStack itemStack = player.getItemInHand(hand);
+        //if (itemStack.getItem() instanceof ItemGuardianCore && !player.isShiftKeyDown()) {
+        //    if (!level.isClientSide) {
+        //        if (PortalStructureHelper.tryActivatePortalFromLock(level, pos)) {
+        //            return InteractionResult.SUCCESS;
+        //        }
+        //    }
+        //    return InteractionResult.sidedSuccess(level.isClientSide);
+        //}
         return super.use(state, level, pos, player, hand, hit);
     }
 

@@ -1,6 +1,5 @@
 package com.eeeab.eeeabsmobs.server.entity.trigger.components;
 
-import com.eeeab.animate.server.animation.AnimatedEntity;
 import com.eeeab.animate.server.animation.AnimationNotification;
 import com.eeeab.eeeabsmobs.server.entity.trigger.TriggerContext;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +14,7 @@ public class BaseAnimationTrigger extends BaseCombatTrigger {
     @Override
     public boolean shouldTrigger(ServerPlayer player, ResourceLocation entityId, TriggerContext context) {
         if (getTriggerKey() == null) {
-            if (context.getEntity() instanceof AnimatedEntity entity && entity.getAnimation() instanceof AnimationNotification animation) {
+            if (context.getAnimation() instanceof AnimationNotification animation) {
                 String msgId = animation.getMsgId();
                 setTriggerKey(Strings.isNotBlank(msgId) ? entityId.withSuffix("_" + msgId) : entityId);
                 setMsgLevel(animation.getLevel());

@@ -13,6 +13,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 
+//TODO 未完成
 public class SkyfallHammerAbility extends Ability<Player> {
     private static final double MIN_HEIGHT = 2.0;
     private static final double MAX_HEIGHT = 100;

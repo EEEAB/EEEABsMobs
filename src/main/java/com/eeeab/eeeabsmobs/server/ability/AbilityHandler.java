@@ -17,21 +17,13 @@ public enum AbilityHandler {
     INSTANCE;
     public static final AbilityType<Player, ChainswordComboAbility> CHAINSWORD_COMBO_ABILITY = new AbilityType<>(ChainswordComboAbility::new, "chainsword_combo_ability", true);
     public static final AbilityType<Player, SoulSummonNecklaceAbility> SOUL_SUMMON_NECKLACE_ABILITY = new AbilityType<>(SoulSummonNecklaceAbility::new, "soul_summon_necklace_ability", true);
-    public static final AbilityType<Player, ImmortalStaffAbility> IMMORTAL_STAFF_ABILITY = new AbilityType<>(ImmortalStaffAbility::new, "immortal_staff_ability");
     public static final AbilityType<Player, GuardianLaserAbility> GUARDIAN_LASER_ABILITY = new AbilityType<>(GuardianLaserAbility::new, "guardian_laser_ability");
     public static final AbilityType<Player, SkyfallHammerAbility> SKYFALL_HAMMER_ABILITY = new AbilityType<>(SkyfallHammerAbility::new, "skyfall_hammer_ability");
-    public static final AbilityType<Player, DoomboltAxeAbility> DOOMBOLT_AXE_ABILITY = new AbilityType<>(DoomboltAxeAbility::new, "doombolt_axe_ability");
-    public static final AbilityType<Player, GuardianAxeAbility> GUARDIAN_AXE_ABILITY = new AbilityType<>(GuardianAxeAbility::new, "guardian_axe_ability");
-    public static final AbilityType<Player, BusterGauntletAbility> BUSTER_GAUNTLET_ABILITY = new AbilityType<>(BusterGauntletAbility::new, "buster_gauntlet_ability");
     public static final AbilityType<Player, ? extends Ability<?>>[] PLAYER_ABILITY_TYPES = new AbilityType[]{
             CHAINSWORD_COMBO_ABILITY,
             SOUL_SUMMON_NECKLACE_ABILITY,
-            IMMORTAL_STAFF_ABILITY,
             GUARDIAN_LASER_ABILITY,
-            SKYFALL_HAMMER_ABILITY,
-            GUARDIAN_AXE_ABILITY,
-            DOOMBOLT_AXE_ABILITY,
-            BUSTER_GAUNTLET_ABILITY
+            SKYFALL_HAMMER_ABILITY
     };
 
     public AbilityCapability.IAbilityCapability getAbilityCapability(LivingEntity entity) {

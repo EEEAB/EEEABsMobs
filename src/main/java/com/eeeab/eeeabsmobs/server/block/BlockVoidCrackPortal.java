@@ -1,13 +1,11 @@
 package com.eeeab.eeeabsmobs.server.block;
 
-import com.eeeab.eeeabsmobs.server.world.portal.PortalStructureHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockVoidCrackPortal extends Block {
@@ -18,9 +16,9 @@ public class BlockVoidCrackPortal extends Block {
     @Override
     public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         if (!level.isClientSide() && direction.getAxis().isHorizontal()) {
-            if (!PortalStructureHelper.isPortalStructureComplete(level, pos)) {
-                return Blocks.AIR.defaultBlockState();
-            }
+            //if (!PortalStructureHelper.isPortalStructureComplete(level, pos)) {
+            //    return Blocks.AIR.defaultBlockState();
+            //}
         }
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }

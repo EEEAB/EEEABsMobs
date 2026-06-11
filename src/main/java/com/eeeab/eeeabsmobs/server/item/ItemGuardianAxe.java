@@ -1,18 +1,23 @@
 package com.eeeab.eeeabsmobs.server.item;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.server.ability.AbilityHandler;
-import com.eeeab.eeeabsmobs.server.capability.AbilityCapability;
+import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.server.entity.effect.EntityCameraShake;
+import com.eeeab.eeeabsmobs.server.entity.effect.EntityGuardianBlade;
+import com.eeeab.eeeabsmobs.server.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.server.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.server.init.SoundInit;
 import com.eeeab.eeeabsmobs.server.util.TranslateUtils;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -29,6 +34,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.ToolAction;
 
@@ -57,14 +63,37 @@ public class ItemGuardianAxe extends AxeItem implements ConfigurableItem, IUnbre
         BlockHitResult result = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
         if (Objects.equals(hand, InteractionHand.MAIN_HAND) && HitResult.Type.BLOCK == result.getType() && Direction.UP == result.getDirection()) {
             player.swing(hand, true);
-            AbilityCapability.IAbilityCapability capability = AbilityHandler.INSTANCE.getAbilityCapability(player);
-            if (capability != null) {
-                player.playSound(SoundEvents.GENERIC_EXPLODE, 1.5F, 1F + player.getRandom().nextFloat() * 0.1F);
-                EntityCameraShake.cameraShake(level, player.position(), 8, 0.125F, 0, 20);
-                if (!level.isClientSide) AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.GUARDIAN_AXE_ABILITY);
-                player.getCooldowns().addCooldown(this, (int) (ModConfigHandler.COMMON.items.doomboltAxeConfig.get() * 20));
-                return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide);
+            player.playSound(SoundEvents.GENERIC_EXPLODE, 1.5F, 1F + player.getRandom().nextFloat() * 0.1F);
+            EntityCameraShake.cameraShake(level, player.position(), 8, 0.125F, 0, 20);
+            double x, y, z;
+            BlockPos blockPos = result.getBlockPos();
+            if (player.position().distanceTo(blockPos.getCenter()) > 5) {
+                float f0 = (float) Math.toRadians(player.getYRot() + 90);
+                x = player.getX() + Mth.cos(f0) * 3.0D;
+                y = player.getY() + 0.1D;
+                z = player.getZ() + Mth.sin(f0) * 3.0D;
+            } else {
+                x = blockPos.getX();
+                y = blockPos.getY();
+                z = blockPos.getZ();
             }
+            ModParticleUtils.roundParticleOutburst(player.level(), 40, new ParticleOptions[]{ParticleTypes.SOUL_FIRE_FLAME}, x, y, z, 0.3F);
+            if (!level.isClientSide) {
+                Vec3 lookAngle = player.getLookAngle();
+                Vec3[] vec3s = new Vec3[]{lookAngle.yRot(0.5F), lookAngle, lookAngle.yRot(-0.5F)};
+                Vec3 point = ModEntityUtils.checkSummonEntityPoint(player, player.getX(), player.getZ(), y - 5, y);
+                for (Vec3 vec3 : vec3s) {
+                    float f0 = (float) Mth.atan2(vec3.z, vec3.x);
+                    float f1 = 1F + player.getBbWidth();
+                    x = point.x + Mth.cos(f0) * f1;
+                    y = point.y;
+                    z = point.z + Mth.sin(f0) * f1;
+                    EntityGuardianBlade blade = new EntityGuardianBlade(player.level(), player, x, y, z, f0, false);
+                    player.level().addFreshEntity(blade);
+                }
+            }
+            player.getCooldowns().addCooldown(this, (int) (ModConfigHandler.COMMON.items.doomboltAxeConfig.get() * 20));
+            return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide);
         }
         return InteractionResultHolder.fail(itemStack);
     }

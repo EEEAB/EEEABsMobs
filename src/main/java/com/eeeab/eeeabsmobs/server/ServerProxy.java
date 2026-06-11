@@ -9,7 +9,6 @@ import com.eeeab.eeeabsmobs.server.handler.CapabilityHandler;
 import com.eeeab.eeeabsmobs.server.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.server.init.AttributeInit;
 import com.eeeab.eeeabsmobs.server.message.*;
-import com.eeeab.eeeabsmobs.server.world.portal.PortalStructureHelper;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -31,7 +30,6 @@ public class ServerProxy {
 
     public void initMod(IEventBus bus) {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ModConfigHandler.COMMON_SPEC);
-        bus.addListener(PortalStructureHelper::onRegisterPointOfInterest);
         bus.addListener(CapabilityHandler::registerCapabilities);
         bus.addListener(this::onEntityAttributeModification);
     }
