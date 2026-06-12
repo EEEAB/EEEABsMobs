@@ -103,7 +103,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
     public static final Animation HEAVY_SWING_ANIMATION = Animation.create(70);
     public static final Animation DERIVED_HEAVY_SWING_ANIMATION = Animation.create(95);
     public static final Animation STOMP_ANIMATION = Animation.create(35).doesOverlap();
-    public static final Animation STOMP_ANIMATION2 = Animation.create(35).doesOverlap().setSpeed(1.4F);
+    public static final Animation STOMP_ANIMATION2 = Animation.create(35).doesOverlap();
     public static final Animation ELBOW_STRIKE_ANIMATION = Animation.create(40).doesOverlap();
     public static final Animation SWEEP_ANIMATION = Animation.create(80).doesOverlap();
     public static final Animation TURNAROUND_SWEEP_ANIMATION = Animation.create(45).doesOverlap();
@@ -775,7 +775,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 .atTick(70, (entity, animation, tick) -> {
                     Vec3 pos = entity.getPosOffset(false, 2.8F, 0F, 0F);
                     entity.doGroundPoundEffect(pos, 1.4F, 1.4F, null);
-                    for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 2.4, -0.03F, false, 20)) {
+                    for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 2.2, -0.03F, false, 20)) {
                         entity.doHurtTarget(hitEntity, 1.1F, 0F, true);
                         ModEntityUtils.forceKnockBack(entity, hitEntity, 1.25F, false);
                     }
@@ -798,7 +798,8 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             }
         };
         builder.forAnimation(STOMP_ANIMATION).atTick(17, doPlayAttackSound).atTick(19, stompKeyFrame);
-        builder.forAnimation(STOMP_ANIMATION2).atTick(16, doPlayAttackSound).atTick(18, stompKeyFrame);
+        builder.forAnimation(STOMP_ANIMATION2).atTick(17, doPlayAttackSound).atTick(19, stompKeyFrame);
+        //builder.forAnimation(STOMP_ANIMATION2).atTick(16, doPlayAttackSound).atTick(18, stompKeyFrame);
         builder.forAnimation(ELBOW_STRIKE_ANIMATION).atTick(1, doPlayShortHumSound)
                 .inRange(13, 21, (entity, animation, tick) -> {
                     entity.doTrailEffect(animation, tick == 19, tick > 19, null, new Vec3(0, -0.5, 0));
@@ -821,8 +822,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             if (entity.level().isClientSide) return;
             boolean flag = tick == 24;
             if (tick == 21 || flag) {
-                double range = flag ? 4 : 3.5;
-                entity.rangeAttack(range, entity.getBbHeight(), range, range, 180F, 160F, hitEntity -> {
+                entity.rangeAttack(3.5, entity.getBbHeight(), 3.5, 3.5, 180F, 160F, hitEntity -> {
                     entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), hitEntity, 0.6F, 0, false);
                     if (flag) ModEntityUtils.forceKnockBack(entity, hitEntity, 0.5F, false);
                 });
@@ -833,7 +833,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
         }).atTick(49, doPlayAttackSound).atTick(50, (entity, animation, tick) -> {
             Vec3 pos = entity.getPosOffset(true, 3.2F, 1.75F, 0F);
             entity.doGroundPoundEffect(pos, 1F, 1.1F, new double[]{85, 75, 45});
-            for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 2, 0, false, 20)) {
+            for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 1.75, 0, false, 20)) {
                 entity.doHurtTarget(hitEntity, 1F, 0F, true);
                 ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, false);
             }
@@ -952,9 +952,10 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             List<LivingEntity> entities = entity.getNearByEntities(LivingEntity.class, 8, 8, 8, 8);
             for (LivingEntity inRangeEntity : entities) {
                 if (inRangeEntity instanceof Player player && player.getAbilities().invulnerable) continue;
-                Vec3 diff = inRangeEntity.position().subtract(entity.position());
+                Vec3 diff = inRangeEntity.position().subtract(entity.position().add(0, 1, 0));
                 diff = diff.normalize().scale(0.07);
                 inRangeEntity.setDeltaMovement(inRangeEntity.getDeltaMovement().subtract(diff));
+                if (inRangeEntity.getY() < entity.getY() + 1) inRangeEntity.setDeltaMovement(inRangeEntity.getDeltaMovement().add(0, 0.075, 0));
             }
             if (!entity.level().isClientSide) return;
             if (tick == 17) {
@@ -1022,7 +1023,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
         }).atTick(27, (entity, animation, tick) -> {
             Vec3 pos = entity.getPosOffset(false, 2.8F, 0F, 0F);
             entity.doGroundPoundEffect(pos, 1.4F, 1.5F, null);
-            for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 2.5, -0.03F, false, 20)) {
+            for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 2.25, -0.03F, false, 20)) {
                 entity.doHurtTarget(hitEntity, 1.1F, 0F, true);
                 ModEntityUtils.forceKnockBack(entity, hitEntity, 1.25F, false);
             }
@@ -1146,7 +1147,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
 
         AnimationRule<EntityRealmWarden> stompRule2 = builder.define(STOMP_ANIMATION2)
                 .onlyCombo()
-                .triggerAtTick(24)
+                .triggerAtTick(25)
                 .condition(ConditionFactory.distanceRange(0, 7, 8))
                 .nextW(groundPoundRule, 1.2)
                 .nextW(backStepRule, 1.2)
@@ -1704,13 +1705,12 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             int tick = entity.getAnimationTick();
             Animation animation = entity.getAnimation();
             if (animation != HEAVY_SMASH_ANIMATION) {
-                boolean derived = animation == STOMP_ANIMATION2;
-                if (tick <= 10 || tick > (derived ? 22 : 30)) {
+                if (tick <= 10 || tick > 30) {
                     lookAtTarget(15);
                 } else entity.setYRot(entity.yRotO);
-                if (derived ? (tick >= 9 && tick < 14) : (tick >= 12 && tick < 17)) {
-                    entity.pounce(tick, derived ? 9 : 12, 6, true, 4);
-                } else if (tick > (derived ? 18 : 20)) entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
+                if (tick >= 12 && tick < 17) {
+                    entity.pounce(tick, 12, 6, true, 4);
+                } else if (tick > 20) entity.setDeltaMovement(0, entity.getDeltaMovement().y, 0);
             } else {
                 if (tick < 16 || tick > 45) lookAtTarget(15);
                 else entity.setYRot(entity.yRotO);
