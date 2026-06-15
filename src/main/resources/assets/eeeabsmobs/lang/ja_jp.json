@@ -192,7 +192,7 @@
   "item.eeeabsmobs.guardian_core.tip": "攻撃範囲: §l[ %1$s §l]",
   "item.eeeabsmobs.buster_gauntlet.tip": "右クリックでグレネードを発射する 最大で %1$s ダメージの爆発を引き起こす",
   "item.eeeabsmobs.chainsword.tip": "チャージした状態で同じターゲットを攻撃すると、切った回数が1つ蓄積され、蓄積するごとにダメージが%1$s増加し、最大で%2$sまで蓄積される。1秒ごとに1ずつ減っていき、ターゲットを切り替えると蓄積数がリセットされる。",
-  "item.eeeabsmobs.doombolt_battleaxe.tip": "右クリック長押しで投げることができる。着弾すると、範囲攻撃のサージを引き起こし、自動で戻ってくる。しゃがんだ状態で地面に右クリックで、前方にサージを発生させる。",
+  "item.eeeabsmobs.doombolt_battleaxe.tip_1": "右クリック長押しで投げることができる。着弾すると、範囲攻撃のサージを引き起こし、自動で戻ってくる。しゃがんだ状態で地面に右クリックで、前方にサージを発生させる。",
   "item.eeeabsmobs.heart_of_pagan.tip": "狂乱のポーションを作るのに使える",
   "item.eeeabsmobs.soul_summon_necklace.tip": "ダメージを受けると、死体を召喚する。 %1$s まで蓄積される。狂乱効果の副作用を打ち消すことができる。",
   "item.eeeabsmobs.immortal_sword.tip": "対象に浸食効果を与える",

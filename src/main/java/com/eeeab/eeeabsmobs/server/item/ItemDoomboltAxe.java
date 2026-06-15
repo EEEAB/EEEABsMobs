@@ -10,6 +10,7 @@ import com.eeeab.eeeabsmobs.server.init.SoundInit;
 import com.eeeab.eeeabsmobs.server.util.TranslateUtils;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -139,7 +140,7 @@ public class ItemDoomboltAxe extends AxeItem implements ConfigurableItem, Slidin
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
         if (TranslateUtils.SHOW_ITEM_CD) tooltip.add(TranslateUtils.itemCoolTime(ModConfigHandler.COMMON.items.doomboltAxeConfig.get()));
-        tooltip.add(TranslateUtils.simpleItemText(this.getDescriptionId()));
+        tooltip.addAll(TranslateUtils.complexText(TranslateUtils.ITEM_PREFIX, 2, ChatFormatting.GRAY, this.getDescriptionId()));
     }
 
     @Override
