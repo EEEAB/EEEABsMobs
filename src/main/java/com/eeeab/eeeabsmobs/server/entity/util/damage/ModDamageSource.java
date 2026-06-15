@@ -1,51 +1,72 @@
 package com.eeeab.eeeabsmobs.server.entity.util.damage;
 
 import com.eeeab.eeeabsmobs.server.util.ModResourceKey;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
+import javax.annotation.Nullable;
+
 public class ModDamageSource {
+    private static Registry<DamageType> damageTypes;
+
     public static DamageSource bypassArmor(Entity entity) {
-        return new DamageSource(entity.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(
-                ModResourceKey.BYPASS_ARMOR), entity);
+        return source(entity.level().registryAccess(), ModResourceKey.BYPASS_ARMOR, entity, entity);
     }
 
     public static DamageSource bypassShield(Entity directEntity, Entity causingEntity) {
-        return new DamageSource(directEntity.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(
-                ModResourceKey.BYPASS_SHIELD), directEntity, causingEntity);
+        return source(directEntity.level().registryAccess(), ModResourceKey.BYPASS_SHIELD, directEntity, causingEntity);
     }
 
     public static DamageSource bypassCoolDown(Entity entity) {
-        return new DamageSource(entity.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(
-                ModResourceKey.BYPASS_IFRAME), entity);
+        return source(entity.level().registryAccess(), ModResourceKey.BYPASS_IFRAME, entity, entity);
     }
 
-    public static DamageSource guardianRobustAttack(Entity troll) {
-        return new DamageSource(troll.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).
-                getHolderOrThrow(ModResourceKey.ROBUST_ATTACK), troll);
+    public static DamageSource guardianRobustAttack(Entity entity) {
+        return source(entity.level().registryAccess(), ModResourceKey.ROBUST_ATTACK, entity, entity);
     }
 
-    public static DamageSource laser(Entity laser, Entity caster, boolean ignoreShield, boolean ignoreArmor) {
-        return new DamageSource(laser.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(
-                ignoreArmor ? ModResourceKey.BYPASS_ARMOR : ignoreShield ? ModResourceKey.BYPASS_SHIELD :
-                        caster instanceof Player ? DamageTypes.PLAYER_ATTACK : DamageTypes.MOB_ATTACK), laser, caster);
+    public static DamageSource laser(Entity directEntity, Entity causingEntity, boolean ignoreShield, boolean ignoreArmor) {
+        DamageSource source;
+        if (ignoreArmor) {
+            source = source(directEntity.level().registryAccess(), ModResourceKey.BYPASS_ARMOR, directEntity, causingEntity);
+        } else if (ignoreShield) {
+            source = bypassShield(directEntity, causingEntity);
+        } else {
+            source = source(directEntity.level().registryAccess(), causingEntity instanceof Player ? DamageTypes.PLAYER_ATTACK : DamageTypes.MOB_ATTACK, directEntity, causingEntity);
+        }
+        return source;
     }
 
     public static DamageSource overloadExplode(Entity directEntity, Entity causingEntity) {
-        return new DamageSource(causingEntity.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).
-                getHolderOrThrow(ModResourceKey.OVERLOAD_EXPLODE), directEntity, causingEntity);
+        return source(directEntity.level().registryAccess(), ModResourceKey.OVERLOAD_EXPLODE, directEntity, causingEntity);
     }
 
-    public static DamageSource immortalMagic(Entity magic, Entity caster) {
-        return new DamageSource(magic.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).
-                getHolderOrThrow(ModResourceKey.IMMORTAL_MAGIC), magic, caster);
+    public static DamageSource surge(Entity directEntity, Entity causingEntity) {
+        return source(directEntity.level().registryAccess(), ModResourceKey.SURGE, directEntity, causingEntity);
     }
 
-    public static DamageSource immortalAttack(Entity immortal, boolean ignoreArmor) {
-        return new DamageSource(immortal.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(
-                ignoreArmor ? ModResourceKey.BYPASS_ARMOR : DamageTypes.MOB_ATTACK), immortal);
+    public static DamageSource immortalMagic(Entity directEntity, Entity causingEntity) {
+        return source(directEntity.level().registryAccess(), ModResourceKey.IMMORTAL_MAGIC, directEntity, causingEntity);
+    }
+
+    public static DamageSource immortalAttack(Entity entity, boolean ignoreArmor) {
+        if (ignoreArmor) {
+            return bypassArmor(entity);
+        }
+        return source(entity.level().registryAccess(), DamageTypes.MOB_ATTACK, entity, entity);
+    }
+
+    public static DamageSource source(RegistryAccess registryAccess, ResourceKey<DamageType> resourceKey, @Nullable Entity directEntity, @Nullable Entity causingEntity) {
+        if (damageTypes == null) {
+            damageTypes = registryAccess.registryOrThrow(Registries.DAMAGE_TYPE);
+        }
+        return new DamageSource(damageTypes.getHolderOrThrow(resourceKey), directEntity, causingEntity);
     }
 }

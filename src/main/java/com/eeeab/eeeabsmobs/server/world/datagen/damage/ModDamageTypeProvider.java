@@ -29,7 +29,7 @@ public class ModDamageTypeProvider extends DamageTypeTagsProvider {
         );
         tag(DamageTypeTags.BYPASSES_RESISTANCE).add(ModResourceKey.IMMORTAL_MAGIC);
         tag(DamageTypeTags.BYPASSES_ENCHANTMENTS).add(ModResourceKey.IMMORTAL_MAGIC);
-        tag(DamageTypeTags.BYPASSES_ARMOR).add(ModResourceKey.BYPASS_ARMOR);
+        tag(DamageTypeTags.BYPASSES_ARMOR).add(ModResourceKey.BYPASS_ARMOR).add(ModResourceKey.SURGE);
         tag(DamageTypeTags.BYPASSES_SHIELD).add(ModResourceKey.BYPASS_SHIELD);
         tag(DamageTypeTags.IS_EXPLOSION).add(ModResourceKey.OVERLOAD_EXPLODE);
         tag(ModTagKey.BYPASSES_DAMAGE_CAP).add(DamageTypes.FELL_OUT_OF_WORLD, DamageTypes.GENERIC_KILL);

@@ -23,12 +23,13 @@ public class ModResourceKey {
     public static ResourceKey<Structure> COREFORGE_RUINS = registerResourceKey(Registries.STRUCTURE, "coreforge_ruins");
     public static ResourceKey<Structure> BLOODY_ALTAR = registerResourceKey(Registries.STRUCTURE, "bloody_altar");
 
-    public static final ResourceKey<DamageType> ROBUST_ATTACK = registerResourceKey(Registries.DAMAGE_TYPE, "guardian_robust_attack");
-    public static final ResourceKey<DamageType> OVERLOAD_EXPLODE = registerResourceKey(Registries.DAMAGE_TYPE, "overload_explode");
-    public static final ResourceKey<DamageType> IMMORTAL_MAGIC = registerResourceKey(Registries.DAMAGE_TYPE, "immortal_magic");
     public static final ResourceKey<DamageType> BYPASS_ARMOR = registerResourceKey(Registries.DAMAGE_TYPE, "bypass_armor");
     public static final ResourceKey<DamageType> BYPASS_SHIELD = registerResourceKey(Registries.DAMAGE_TYPE, "bypass_shield");
     public static final ResourceKey<DamageType> BYPASS_IFRAME = registerResourceKey(Registries.DAMAGE_TYPE, "bypass_iframe");
+    public static final ResourceKey<DamageType> OVERLOAD_EXPLODE = registerResourceKey(Registries.DAMAGE_TYPE, "overload_explode");
+    public static final ResourceKey<DamageType> SURGE = registerResourceKey(Registries.DAMAGE_TYPE, "surge");
+    public static final ResourceKey<DamageType> ROBUST_ATTACK = registerResourceKey(Registries.DAMAGE_TYPE, "guardian_robust_attack");
+    public static final ResourceKey<DamageType> IMMORTAL_MAGIC = registerResourceKey(Registries.DAMAGE_TYPE, "immortal_magic");
 
     public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_ANCIENT_BOUNDARY_STONE = registerResourceKey(Registries.CONFIGURED_FEATURE, "ore_ancient_boundary_stone");
     public static final ResourceKey<ConfiguredFeature<?, ?>> BLIGHTED_OAK = registerResourceKey(Registries.CONFIGURED_FEATURE, "blighted_oak");
