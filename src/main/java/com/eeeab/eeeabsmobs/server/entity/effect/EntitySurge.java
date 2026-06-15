@@ -80,15 +80,16 @@ public class EntitySurge extends EntityMagicEffects implements IEntity {
             } else for (LivingEntity hitEntity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.25, 0, 0.25))) {
                 if (hitEntity == owner) continue;
                 float damage = getDamage();
+                if (hitEntity.isInWaterRainOrBubble()) damage *= 2;
                 if (useItemStack != null) {
                     damage += EnchantmentHelper.getDamageBonus(this.useItemStack, hitEntity.getMobType());
                 }
                 if (owner == null) {
-                    hitEntity.hurt(ModDamageSource.bypassShield(this, this), damage);
+                    hitEntity.hurt(ModDamageSource.surge(this, this), damage);
                 } else {
                     if (owner.isAlliedTo(hitEntity)) return;
                     if (owner instanceof IMob iMob) damage += iMob.getDamageAmountByTargetHealthPct(hitEntity);
-                    hitEntity.hurt(ModDamageSource.bypassShield(this, owner), damage);
+                    hitEntity.hurt(ModDamageSource.surge(this, owner), damage);
                 }
             }
         }
@@ -107,10 +108,10 @@ public class EntitySurge extends EntityMagicEffects implements IEntity {
         int duration = 10 + this.random.nextInt(7);
         this.level().addParticle(AdvancedParticleBase.createParticleData(ParticleInit.SURGE.get(), vertical, 20F, 1, 1, 1, 1, 1,
                 duration, true, false, COMPONENTS, true), true, getX(), getY() + 2, getZ(), 0, 0, 0);
-        this.level().addParticle(AdvancedParticleBase.createParticleData(ParticleInit.GLOW.get(), new ParticleRotation.EulerAngles(0, (float) (Math.PI / 2F), 0), 10F, 1, 1, 1, 0.5, 1,
+        this.level().addParticle(AdvancedParticleBase.createParticleData(ParticleInit.GLOW.get(), new ParticleRotation.EulerAngles(0, (float) (Math.PI / 2F), 0), 10F, 1, 1, 1, 1, 1,
                 duration - 2, true, false, new ParticleComponent[]{
-                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, AnimData.oscillate(0.2F, 0.6F, 8), false),
-                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, AnimData.oscillate(6F, 10F, 8), false),
+                        //new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, AnimData.oscillate(0.2F, 0.6F, 8), false),
+                        new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, AnimData.oscillate(5F, 8F, 8), false),
                         COMPONENTS[0],
                         COMPONENTS[1],
                         COMPONENTS[2],
