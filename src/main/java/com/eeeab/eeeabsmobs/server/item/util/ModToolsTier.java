@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 //工具级别
 public enum ModToolsTier implements Tier {
-    RELICRON_TIER(4, 3122, 9.0F, 4.0F, 15, () -> Ingredient.of(ItemInit.ANCIENT_DRIVE_CRYSTAL.get())),
+    RELICRON_TIER(4, 2031, 9.0F, 4.0F, 15, () -> Ingredient.of(ItemInit.ANCIENT_DRIVE_CRYSTAL.get())),
     IMMORTAL_TIER(2, 500, 6.0F, 2.0F, 14, () -> Ingredient.of(ItemInit.IMMORTAL_INGOT.get())),
     GHOST_STEEL_TIER(4, 3000, 9.0F, 5.0F, 20, () -> Ingredient.of(ItemInit.GHOST_STEEL_INGOT.get()));
 
