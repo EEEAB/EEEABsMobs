@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.client.gui;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
+import com.eeeab.eeeabsmobs.server.init.EntityInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -19,14 +20,24 @@ public class BossBarRegistry {
     private static final BossBarConfig DEFAULT_CONFIG = new BossBarConfig(
             new ResourceLocation(EEEABMobs.MOD_ID, "textures/gui/boss_bar/default_base.png"),
             new ResourceLocation(EEEABMobs.MOD_ID, "textures/gui/boss_bar/default_overlay.png"),
-            10, 32, 1, -4, -3, 256, 32, 25, ChatFormatting.WHITE);
+            6, 12, 3, -4, -5, 256, 16, 23, ChatFormatting.WHITE);
 
     /**
      * 初始化注册表
      */
     public static void init() {
         clear();
-        //registerSpecialBoss();
+        BossBarConfig deathpactHierophantConfig = new BossBarConfig(
+                new ResourceLocation(EEEABMobs.MOD_ID, "textures/gui/boss_bar/deathpact_hierophant_base.png"),
+                new ResourceLocation(EEEABMobs.MOD_ID, "textures/gui/boss_bar/deathpact_hierophant_overlay.png"),
+                6, 12, 3, -4, -5, 256, 16, 23, ChatFormatting.RED);
+        registerSpecialBoss(EntityInit.DEATHPACT_HIEROPHANT.getId(), deathpactHierophantConfig);
+        BossBarConfig relicronConfig = new BossBarConfig(
+                new ResourceLocation(EEEABMobs.MOD_ID, "textures/gui/boss_bar/relicron_base.png"),
+                new ResourceLocation(EEEABMobs.MOD_ID, "textures/gui/boss_bar/relicron_overlay.png"),
+                4, 8, 4, -8, -6, 256, 16, 23, ChatFormatting.WHITE);
+        registerSpecialBoss(EntityInit.RELIC_ANNIHILATOR.getId(), relicronConfig);
+        registerSpecialBoss(EntityInit.REALM_WARDEN.getId(), relicronConfig);
     }
 
     /**
@@ -111,6 +122,6 @@ public class BossBarRegistry {
     public static void reloadResourcePackOverrides() {
         RESOURCEPACK_OVERRIDES.clear();
         SCANNED_ENTITIES.clear();
-        EEEABMobs.LOGGER.debug("The custom boss health bar texture overlay cache has been reloaded.");
+        EEEABMobs.LOGGER.debug("The custom boss health bar texture overlay cache has been reloaded");
     }
 }
