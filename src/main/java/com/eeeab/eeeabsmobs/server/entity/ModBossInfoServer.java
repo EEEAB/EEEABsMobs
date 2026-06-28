@@ -54,7 +54,7 @@ public class ModBossInfoServer extends ServerBossEvent {
 
     @Override
     public void addPlayer(ServerPlayer player) {
-        EEEABMobs.NETWORK.sendTo(new UpdateBossBarMessage(this.getId(), boss), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+        if (this.isVisible()) EEEABMobs.NETWORK.sendTo(new UpdateBossBarMessage(this.getId(), boss), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
         if (boss.canShowBossBar() && boss.getSensing().hasLineOfSight(player)) {
             super.addPlayer(player);
         } else {
@@ -64,7 +64,7 @@ public class ModBossInfoServer extends ServerBossEvent {
 
     @Override
     public void removePlayer(ServerPlayer player) {
-        EEEABMobs.NETWORK.sendTo(new UpdateBossBarMessage(this.getId(), null), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+        if (this.isVisible()) EEEABMobs.NETWORK.sendTo(new UpdateBossBarMessage(this.getId(), null), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
         super.removePlayer(player);
         pendingPlayers.remove(player);
     }
