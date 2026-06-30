@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.server.world.structure;
 
 import com.eeeab.eeeabsmobs.EEEABMobs;
-import com.eeeab.eeeabsmobs.server.entity.mob.relicron.EntityAbsRelicron;
+import com.eeeab.eeeabsmobs.server.entity.mob.relicron.AbstractRelicron;
 import com.eeeab.eeeabsmobs.server.init.EntityInit;
 import com.eeeab.eeeabsmobs.server.init.StructuresInit;
 import com.google.common.collect.ImmutableMap;
@@ -121,35 +121,35 @@ public class StructureCoreforgeRuins extends Structure {
 
         @Override
         protected void handleDataMarker(String function, BlockPos blockPos, ServerLevelAccessor levelAccessor, RandomSource source, BoundingBox box) {
-            if ("domain_warder_spawn".equals(function)) {
-                spawnGulingEntity(EntityInit.REALM_WARDEN.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
+            if ("realm_warden_spawn".equals(function)) {
+                spawnRelicronEntity(EntityInit.REALM_WARDEN.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
             }
 
             if ("annihilator_spawn".equals(function)) {
-                spawnGulingEntity(EntityInit.RELIC_ANNIHILATOR.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
+                spawnRelicronEntity(EntityInit.RELIC_ANNIHILATOR.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
             }
 
             if ("earthshaker_spawn".equals(function)) {
-                spawnGulingEntity(EntityInit.RELIC_EARTHSHAKER.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
+                spawnRelicronEntity(EntityInit.RELIC_EARTHSHAKER.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
             }
 
             if ("ripper_spawn".equals(function)) {
-                spawnGulingEntity(EntityInit.RELIC_RIPPER.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
+                spawnRelicronEntity(EntityInit.RELIC_RIPPER.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
             }
 
             if ("observer_spawn".equals(function)) {
-                spawnGulingEntity(EntityInit.RELIC_OBSERVER.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
+                spawnRelicronEntity(EntityInit.RELIC_OBSERVER.get().create(levelAccessor.getLevel()), blockPos, levelAccessor);
             }
         }
 
-        private static void spawnGulingEntity(EntityAbsRelicron absGuling, BlockPos blockPos, ServerLevelAccessor levelAccessor) {
+        private static void spawnRelicronEntity(AbstractRelicron relicron, BlockPos blockPos, ServerLevelAccessor levelAccessor) {
             levelAccessor.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2);
-            if (absGuling != null) {
-                absGuling.moveTo(blockPos, 0, 0);
-                absGuling.finalizeSpawn(levelAccessor, levelAccessor.getCurrentDifficultyAt(blockPos), MobSpawnType.STRUCTURE, null, null);
-                absGuling.setActive(false);
-                absGuling.setAlwaysActive(false);
-                levelAccessor.addFreshEntity(absGuling);
+            if (relicron != null) {
+                relicron.moveTo(blockPos, 0, 0);
+                relicron.finalizeSpawn(levelAccessor, levelAccessor.getCurrentDifficultyAt(blockPos), MobSpawnType.STRUCTURE, null, null);
+                relicron.setActive(false);
+                relicron.setAlwaysActive(false);
+                levelAccessor.addFreshEntity(relicron);
             }
         }
     }
