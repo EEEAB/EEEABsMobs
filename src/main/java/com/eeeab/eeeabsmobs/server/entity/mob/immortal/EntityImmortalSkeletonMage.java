@@ -17,7 +17,6 @@ import net.minecraft.world.phys.Vec3;
 public class EntityImmortalSkeletonMage extends EntityAbsImmortalSkeleton {
     public EntityImmortalSkeletonMage(EntityType<? extends EntityImmortalSkeletonMage> type, Level level) {
         super(type, level);
-        this.canplayHurtAnimation = true;
     }
 
     @Override

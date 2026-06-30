@@ -52,7 +52,6 @@ public class EntityMagicGolem extends EntityAbsImmortal {
         super(type, level);
         this.active = false;
         this.dropAfterDeathAnim = false;
-        this.canplayHurtAnimation = true;
     }
 
     @Override

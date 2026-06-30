@@ -81,7 +81,7 @@ public class EntityGuardianBlade extends EntityMagicEffects {
             List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.2));
             for (LivingEntity target : entities) {
                 LivingEntity owner = getOwner();
-                if (target == owner) continue;
+                if (target == owner || (owner != null && owner.isAlliedTo(target))) continue;
                 if (owner instanceof IMob mob) damage += mob.getDamageAmountByTargetHealthPct(target);
                 damage = Math.max(1, damage * progress);
                 damage = ModEntityUtils.actualDamageIsCalculatedBasedOnArmor(damage, target.getArmorValue(), (float) target.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1F);

@@ -20,9 +20,6 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements Animated
     private Animation animation = NO_ANIMATION;
     private final AnimationState animationState = new AnimationState();
     private final CooldownManager cooldownManager = new CooldownManager();
-    /**
-     * 可以播放受伤动画
-     */
     public boolean canplayHurtAnimation;
     /**
      * 受到伤害时中断其他动画
@@ -35,6 +32,7 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements Animated
 
     public EEEABMobLibrary(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
+        this.canplayHurtAnimation = this.getHurtAnimation() != null;
     }
 
     @Override
