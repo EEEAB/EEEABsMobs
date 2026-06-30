@@ -523,7 +523,7 @@ public final class ServerEventHandler {
     }
 
     private static void tryTriggerOverloadExplosion(LivingEntity entity) {
-        float baseDamage = ModConfigHandler.COMMON.potionEffects.electrifiedConfig1.get().floatValue();
+        float baseDamage = ModConfigHandler.COMMON.potions.electrifiedConfig1.get().floatValue();
         if (baseDamage > 0F && entity.removeEffect(EffectInit.ELECTRIFIED_EFFECT.get())) {
             double radians = Math.toRadians(entity.getYRot() + 90);
             EntityOverloadExplode.explode(entity.level(), entity.position().add(Math.cos(radians), entity.getBbHeight() * 0.3, Math.sin(radians)), entity, 2F, baseDamage);

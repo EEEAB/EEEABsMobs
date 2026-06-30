@@ -33,14 +33,14 @@ public final class ModConfigHandler {
             items = new Item(builder);
             entities = new Entity(builder);
             mobs = new Mob(builder);
-            potionEffects = new PotionEffect(builder);
+            potions = new Potion(builder);
             others = new Other(builder);
         }
 
         public final Mob mobs;
         public final Entity entities;
         public final Item items;
-        public final PotionEffect potionEffects;
+        public final Potion potions;
         public final Other others;
     }
 
@@ -56,7 +56,7 @@ public final class ModConfigHandler {
                 builder.pop();
             }
 
-            builder.push("Weapon");
+            builder.push("Weapons");
             {
                 builder.push("Doombolt Battleaxe");
                 doomboltAxeConfig = itemCD(3D);
@@ -367,8 +367,8 @@ public final class ModConfigHandler {
             relicAnnihilator = new RelicAnnihilator(builder);
             realmwarden = new Realmwarden(builder);
             namelessGuardian = new NamelessGuardian(builder);
-            outOfBattleHeal = builder.comment("If set to 'False' disable healing while not active")
-                    .translation(getTranslationKey("out_of_battle")).define("Enable healing while not active", true);
+            outOfCombatHeal = builder.comment("If set to 'False' disable health regen while out of combat")
+                    .translation(getTranslationKey("out_of_combat")).define("Enable Out Of Combat Health Regen", true);
             builder.pop();
         }
 
@@ -378,7 +378,7 @@ public final class ModConfigHandler {
         public final RelicAnnihilator relicAnnihilator;
         public final Realmwarden realmwarden;
         public final NamelessGuardian namelessGuardian;
-        public final ForgeConfigSpec.BooleanValue outOfBattleHeal;
+        public final ForgeConfigSpec.BooleanValue outOfCombatHeal;
     }
 
     //遗迹观察者
@@ -388,7 +388,7 @@ public final class ModConfigHandler {
             combatConfig = new AttributeConfig();
             {
                 builder.push("Guardian Laser");
-                guardianLaser = new AttributeConfig(6F);
+                guardianLaser = new AttributeConfig(8F);
                 builder.pop();
             }
             builder.pop();
@@ -421,7 +421,7 @@ public final class ModConfigHandler {
             }
             {
                 builder.push("Pulsed Grenade");
-                pulsedGrenade = new AttributeConfig(6F);
+                pulsedGrenade = new AttributeConfig(8F);
                 builder.pop();
             }
             builder.pop();
@@ -437,15 +437,15 @@ public final class ModConfigHandler {
         public RelicAnnihilator(final ForgeConfigSpec.Builder builder) {
             builder.push("Relic Annihilator");
             combatConfig = new AttributeConfig();
-            bossConfig = new BossConfig(20D, 22D, 0.75D);
+            bossConfig = new BossConfig(22D, 24D, 0.75D);
             {
                 builder.push("Guardian Laser");
-                guardianLaser = new AttributeConfig(8F);
+                guardianLaser = new AttributeConfig(10F);
                 builder.pop();
             }
             {
                 builder.push("Annihilator Missile");
-                annihilatorMissile = new AttributeConfig(8F);
+                annihilatorMissile = new AttributeConfig(10F);
                 builder.pop();
             }
             {
@@ -549,9 +549,9 @@ public final class ModConfigHandler {
     }
 
     //药水效果
-    public static class PotionEffect {
-        public PotionEffect(final ForgeConfigSpec.Builder builder) {
-            builder.push("Potion Effects");
+    public static class Potion {
+        public Potion(final ForgeConfigSpec.Builder builder) {
+            builder.push("Potions");
             {
                 builder.push("Electromagnetic Overload");
                 electrifiedConfig1 = builder.comment("Base damage dealt by the electromagnetic overload effect")
