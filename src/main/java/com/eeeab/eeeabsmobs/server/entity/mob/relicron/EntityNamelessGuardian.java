@@ -76,7 +76,7 @@ import java.util.List;
 import java.util.Optional;
 
 //创建于 2023/1/17 终于 2026
-public class EntityNamelessGuardian extends EntityAbsRelicron implements IBoss, PowerableMob {
+public class EntityNamelessGuardian extends AbstractRelicron implements IBoss, PowerableMob {
     public static final Animation DIE_ANIMATION = Animation.create(51);
     public static final Animation ROAR_ANIMATION = Animation.create(80);
     public static final Animation ATTACK_ANIMATION1 = Animation.create(36);
@@ -315,7 +315,7 @@ public class EntityNamelessGuardian extends EntityAbsRelicron implements IBoss, 
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.targetSelector.addGoal(2, new HurtByTargetGoal(this, EntityAbsRelicron.class));
+        this.targetSelector.addGoal(2, new HurtByTargetGoal(this, AbstractRelicron.class));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
             @Override
@@ -510,7 +510,7 @@ public class EntityNamelessGuardian extends EntityAbsRelicron implements IBoss, 
     @Override
     protected void updateActivationState() {
         if (!this.isActive()) {
-            if (ModConfigHandler.COMMON.mobs.relicrons.outOfBattleHeal.get()) this.heal(0.5F);
+            if (ModConfigHandler.COMMON.mobs.relicrons.outOfCombatHeal.get()) this.heal(0.5F);
             this.setDeltaMovement(0, this.getDeltaMovement().y, 0);
             this.yHeadRot = this.yBodyRot = this.getYRot();
         }
@@ -1139,10 +1139,14 @@ public class EntityNamelessGuardian extends EntityAbsRelicron implements IBoss, 
         super.playAnimation(animation);
     }
 
-    @Override
-    protected int getCoolingTimerUtil(int maxCooling, int minCooling, float healthPercentage) {
+    private int getCoolingTimerUtil(int maxCooling, int minCooling, float healthPercentage) {
         if (this.isChallengeMode()) return minCooling;
-        return super.getCoolingTimerUtil(maxCooling, minCooling, healthPercentage);
+        float maximumCoolingPercentage = 1 - healthPercentage;
+        float ratio = 1 - this.getHealthPercentage();
+        if (ratio > maximumCoolingPercentage) {
+            ratio = maximumCoolingPercentage;
+        }
+        return (int) (maxCooling - (ratio / maximumCoolingPercentage) * (maxCooling - minCooling));
     }
 
     public void setPowered(boolean flag) {

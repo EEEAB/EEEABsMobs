@@ -1,6 +1,6 @@
 package com.eeeab.eeeabsmobs.server.entity.effect;
 
-import com.eeeab.eeeabsmobs.server.entity.mob.relicron.EntityAbsRelicron;
+import com.eeeab.eeeabsmobs.server.entity.mob.relicron.AbstractRelicron;
 import com.eeeab.eeeabsmobs.server.entity.util.damage.ModDamageSource;
 import com.eeeab.eeeabsmobs.server.handler.ModConfigHandler;
 import com.eeeab.eeeabsmobs.server.init.EntityInit;
@@ -31,7 +31,7 @@ public class EntityOverloadExplode extends EntityExplode {
     protected void doHurtEntity(DamageSource damageSource, Entity hitEntity, float damage) {
         damageSource = ModDamageSource.overloadExplode(hitEntity, this);
         if (hitEntity instanceof LivingEntity livingEntity) {
-            if (hitEntity instanceof EntityAbsRelicron && !(getOwner() instanceof EntityAbsRelicron)) return;
+            if (hitEntity instanceof AbstractRelicron && !(getOwner() instanceof AbstractRelicron)) return;
             //由于该伤害源无视无敌帧 通过预算与限制造成伤害量来尽量避免被秒杀的风险
             float actualDamage = getActualDamage(damage, livingEntity);
             hitEntity.hurt(damageSource, actualDamage);
@@ -41,7 +41,7 @@ public class EntityOverloadExplode extends EntityExplode {
     }
 
     private static float getActualDamage(float damage, LivingEntity livingEntity) {
-        float healthRatio = ModConfigHandler.COMMON.potionEffects.electrifiedConfig2.get().floatValue();
+        float healthRatio = ModConfigHandler.COMMON.potions.electrifiedConfig2.get().floatValue();
         float totalDamage = damage + livingEntity.getMaxHealth() * healthRatio;
         if (!(livingEntity instanceof Player)) return totalDamage;
         float remainingHealth = livingEntity.getHealth() - totalDamage;

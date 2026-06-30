@@ -95,7 +95,7 @@ public class ModelRelicObserver extends ModHierarchicalModel<EntityRelicObserver
         float delta = ageInTicks - entity.tickCount;
         float frame = entity.frame + delta;
         if (entity.isActive() && (AnimatedEntity.NO_ANIMATION == animation || EntityRelicObserver.HURT_ANIMATION == animation)) {
-            setStaticRotationPoint(root, 0F, -12F, 0F);
+            setStaticRotationPoint(root, 0F, -10F, 0F);
             setStaticRotationPoint(bone1, 2F, -2F, -2F);
             setStaticRotationPoint(bone2, 2F, -2F, 2F);
             setStaticRotationPoint(bone3, 2F, 2F, -2F);

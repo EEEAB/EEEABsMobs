@@ -14,7 +14,6 @@ import com.eeeab.animate.server.animation.release.AnimationCondition;
 import com.eeeab.animate.server.animation.release.AnimationReleaseManager;
 import com.eeeab.animate.server.animation.release.ConditionFactory;
 import com.eeeab.animate.server.animation.release.cooldown.FixedRangeCooldown;
-import com.eeeab.animate.server.animation.release.cooldown.HealthScaledCooldown;
 import com.eeeab.animate.server.handler.AnimationHandler;
 import com.eeeab.eeeabsmobs.client.ClientProxy;
 import com.eeeab.eeeabsmobs.client.ControlledAnimation;
@@ -59,7 +58,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class EntityRelicRipper extends EntityAbsRelicron {
+public class EntityRelicRipper extends AbstractRelicron {
     public static final Animation ACTIVE_ANIMATION = Animation.create(40);
     public static final Animation DEACTIVATE_ANIMATION = Animation.create(20);
     public static final Animation DIE_ANIMATION = Animation.create(25);
@@ -295,7 +294,12 @@ public class EntityRelicRipper extends EntityAbsRelicron {
     }
 
     public static AttributeSupplier.Builder setAttributes() {
-        return createMobAttributes().add(Attributes.MAX_HEALTH, 75.0D).add(Attributes.MOVEMENT_SPEED, 0.28D).add(Attributes.FOLLOW_RANGE, 16.0D).add(Attributes.ATTACK_DAMAGE, 9.0D).add(Attributes.KNOCKBACK_RESISTANCE, 1.0D).add(Attributes.ARMOR, 8.0D);
+        return createMobAttributes().add(Attributes.MAX_HEALTH, 75.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.28D)
+                .add(Attributes.FOLLOW_RANGE, 16.0D)
+                .add(Attributes.ATTACK_DAMAGE, 9.0D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
+                .add(Attributes.ARMOR, 8.0D);
     }
 
     private static KeyframeManager<EntityRelicRipper> setupAnimations() {
@@ -310,7 +314,7 @@ public class EntityRelicRipper extends EntityAbsRelicron {
                     if (!entity.level().isClientSide) {
                         LivingEntity target = entity.getTarget();
                         if (target != null) entity.lookAt(target, 30F, 30F);
-                        if (tick == 22) entity.rangeAttack(3, entity.getBbHeight() + 0.2, 3, 3, 90F, 220F, null);
+                        if (tick == 22) entity.rangeAttack(3, entity.getBbHeight() * 1.5, 3, 3, 90F, 220F, null);
                     }
                 });
         builder.forAnimation(SWEEP_ANIMATION2)
@@ -322,8 +326,8 @@ public class EntityRelicRipper extends EntityAbsRelicron {
                     if (!entity.level().isClientSide) {
                         LivingEntity target = entity.getTarget();
                         if (target != null) entity.lookAt(target, 30F, 30F);
-                        if (tick == 22) entity.rangeAttack(3, entity.getBbHeight() + 0.2, 3, 3, 100F, 200F, null);
-                        if (tick == 36 || tick == 45) entity.rangeAttack(3, entity.getBbHeight(), 3, 3, e -> {
+                        if (tick == 22) entity.rangeAttack(3, entity.getBbHeight() * 1.5, 3, 3, 100F, 200F, null);
+                        if (tick == 36 || tick == 45) entity.rangeAttack(3, entity.getBbHeight() * 1.5, 3, 3, e -> {
                             entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), e, 1, 0.25F, false);
                         });
                         if (tick == 60 && entity.derivedSkill) {
@@ -349,7 +353,7 @@ public class EntityRelicRipper extends EntityAbsRelicron {
                         if (target != null) entity.lookAt(target, 30F, 30F);
                         if (tick == 20 || tick == 38 || tick == 63) {
                             Vec3 pos = entity.getPosOffset(true, 2F, 1.75F, 0F);
-                            for (Entity targetEntity : entity.level().getEntitiesOfClass(Entity.class, ModEntityUtils.makeAABBWithSize(pos.x, pos.y, pos.z, 0, 4, entity.getBbHeight() * 1.2, 4), targetEntity -> targetEntity != entity && targetEntity.isAttackable() && !entity.isAlliedTo(targetEntity))) {
+                            for (Entity targetEntity : entity.level().getEntitiesOfClass(Entity.class, ModEntityUtils.makeAABBWithSize(pos.x, pos.y, pos.z, 0, 4, 8, 4), targetEntity -> targetEntity != entity && targetEntity.isAttackable() && !entity.isAlliedTo(targetEntity))) {
                                 entity.doHurtTarget(targetEntity, tick == 38 ? 1F : 1.2F, 1F, tick == 63);
                             }
                         }
@@ -392,7 +396,7 @@ public class EntityRelicRipper extends EntityAbsRelicron {
         AnimationReleaseManager<EntityRelicRipper> manager = new AnimationReleaseManager<>();
         AnimationReleaseManager.Builder<EntityRelicRipper> builder = manager.builder();
         builder.register(builder.define(CUTTING_START_ANIMATION)
-                .cooldown(new FixedRangeCooldown(400, 20))
+                .cooldown(new FixedRangeCooldown(360, 40))
                 .condition(ConditionFactory.and(
                         ConditionFactory.distanceRange(0, 5),
                         ConditionFactory.randomChance(0.3F)
@@ -406,7 +410,7 @@ public class EntityRelicRipper extends EntityAbsRelicron {
                         ConditionFactory.randomChance(0.3F)
                 ))
                 .priority(1));
-        HealthScaledCooldown derivedCD = new HealthScaledCooldown(340, 20, 60, 0.3F);
+        FixedRangeCooldown derivedCD = new FixedRangeCooldown(300, 40);
         AnimationCondition<EntityRelicRipper> derivedCond = ConditionFactory.and(
                 DERIVED_SKILL_CHECK,
                 ConditionFactory.distanceRange(0, 4),
@@ -418,7 +422,7 @@ public class EntityRelicRipper extends EntityAbsRelicron {
         builder.register(builder.define(SMASH_ANIMATION)
                 .cooldown(derivedCD)
                 .condition(derivedCond));
-        builder.condition(EntityAbsRelicron::isActive);
+        builder.condition(AbstractRelicron::isActive);
         return manager;
     }
 
@@ -552,7 +556,7 @@ public class EntityRelicRipper extends EntityAbsRelicron {
                     entity.lookAt(target, 30F, 60F);
                     entity.getLookControl().setLookAt(target, 30F, 60F);
                 }
-                if (tick % 5 == 0) entity.rangeAttack(2.5, entity.getBbHeight() * 0.75, 2.5, 2.5, 60F, 60F,
+                if (tick % 5 == 0) entity.rangeAttack(3, entity.getBbHeight() * 1.5, 3, 3.1, 60F, 60F,
                         hitEntity -> {
                             if (entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), hitEntity, 0.35F, 0, false)) {
                                 if (EntityRelicAnnihilator.canBeControlled(entity, hitEntity)) {

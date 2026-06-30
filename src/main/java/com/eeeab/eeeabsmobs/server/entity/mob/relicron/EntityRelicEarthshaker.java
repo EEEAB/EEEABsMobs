@@ -65,7 +65,7 @@ import net.minecraftforge.common.ForgeMod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class EntityRelicEarthshaker extends EntityAbsRelicron implements RangedAttackMob {
+public class EntityRelicEarthshaker extends AbstractRelicron implements RangedAttackMob {
     public static final Animation DIE_ANIMATION = Animation.create(60);
     public static final Animation ACTIVE_ANIMATION = Animation.create(30);
     public static final Animation DEACTIVATE_ANIMATION = Animation.create(30);
@@ -94,7 +94,7 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements RangedA
     public final ControlledAnimation hotControlled = new ControlledAnimation(20);
     public final ControlledAnimation electromagneticControlled = new ControlledAnimation(20);
 
-    public EntityRelicEarthshaker(EntityType<? extends EntityAbsRelicron> type, Level level) {
+    public EntityRelicEarthshaker(EntityType<? extends AbstractRelicron> type, Level level) {
         super(type, level);
         this.active = false;
         this.dropAfterDeathAnim = false;
@@ -205,7 +205,7 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements RangedA
                 if (!this.entity.hotControlled.isStop() && !this.entity.isAlliedTo(entity)) entity.setSecondsOnFire(3);
             }
         });
-        this.goalSelector.addGoal(2, new AnimationMeleePlusAI<>(this, 1.0, 30, ATTACK_LEFT_ANIMATION, ATTACK_RIGHT_ANIMATION));
+        this.goalSelector.addGoal(2, new AnimationMeleePlusAI<>(this, 1.0, 25, ATTACK_LEFT_ANIMATION, ATTACK_RIGHT_ANIMATION));
     }
 
     @Override
@@ -260,7 +260,7 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements RangedA
         } else {
             if (source.is(ModResourceKey.OVERLOAD_EXPLODE)) {
                 damage *= 2F;
-            } else if (source.is(DamageTypeTags.IS_PROJECTILE)) {
+            } else if (source.is(DamageTypeTags.IS_PROJECTILE) || this.getAnimation() == ELECTROMAGNETIC_ANIMATION) {
                 damage *= 0.5F;
             }
         }
@@ -557,7 +557,7 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements RangedA
                         ConditionFactory.distanceRange(6.5, 12),
                         ConditionFactory.randomChance(0.4F)
                 )));
-        builder.condition(EntityAbsRelicron::isActive);
+        builder.condition(AbstractRelicron::isActive);
         return manager;
     }
 
@@ -583,7 +583,7 @@ public class EntityRelicEarthshaker extends EntityAbsRelicron implements RangedA
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 150.0D)
                 .add(Attributes.ARMOR, 15.0D)
-                .add(Attributes.ATTACK_DAMAGE, 9.0D)
+                .add(Attributes.ATTACK_DAMAGE, 10.0D)
                 .add(Attributes.FOLLOW_RANGE, 32.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.28D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)

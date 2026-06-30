@@ -5,7 +5,7 @@ import com.eeeab.eeeabsmobs.client.particle.lib.AnimData;
 import com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent;
 import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.server.entity.mob.IMob;
-import com.eeeab.eeeabsmobs.server.entity.mob.relicron.EntityAbsRelicron;
+import com.eeeab.eeeabsmobs.server.entity.mob.relicron.AbstractRelicron;
 import com.eeeab.eeeabsmobs.server.entity.mob.relicron.EntityNamelessGuardian;
 import com.eeeab.eeeabsmobs.server.entity.mob.relicron.EntityRelicAnnihilator;
 import com.eeeab.eeeabsmobs.server.entity.mob.relicron.EntityRelicObserver;
@@ -134,7 +134,7 @@ public class EntityGuardianLaser extends EntityAbsBeam {
         if (this.blockSide != null) {
             Vec3 pos = new Vec3(collidePosX, collidePosY, collidePosZ);
             for (int i = 0; i < 2; i++) {
-                EntityAbsRelicron.doFractalEffect(this, pos, pos.offsetRandom(this.random, 3F), 0.1F, 0.2F);
+                AbstractRelicron.doFractalEffect(this, pos, pos.offsetRandom(this.random, 3F), 0.1F, 0.2F);
                 final float velocity = 0.2F;
                 float yaw = (float) (random.nextFloat() * 2 * Math.PI);
                 float motionY = random.nextFloat() * velocity;
@@ -196,7 +196,7 @@ public class EntityGuardianLaser extends EntityAbsBeam {
 
     public enum UserType {
         PLAYER(0, 0F, 0.5F, 3, 0.8F, 0.6F),
-        RELIC_OBSERVER(1, 0F, 0.75F, 3, 0.45F, 0.4F, 10),
+        RELIC_OBSERVER(1, 0F, 0.7F, 3, 0.45F, 0.4F, 10),
         RELIC_ANNIHILATOR(2, 1.2F, 0.6F, 5, 0.6F, 0.525F),
         NAMELESS_GUARDIAN(3, 1.35F, 0.8F, 5, 1.09F, 0.9F);
 

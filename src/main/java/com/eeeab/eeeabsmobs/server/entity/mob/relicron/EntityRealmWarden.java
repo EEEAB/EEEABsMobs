@@ -98,7 +98,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.IntFunction;
 
-public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, CrackinessEntity<EntityRealmWarden> {
+public class EntityRealmWarden extends AbstractRelicron implements IBoss, CrackinessEntity<EntityRealmWarden> {
     public static final Animation GROUND_POUND_ANIMATION = Animation.create(40).doesOverlap();
     public static final Animation HEAVY_SWING_ANIMATION = Animation.create(70);
     public static final Animation DERIVED_HEAVY_SWING_ANIMATION = Animation.create(95);
@@ -152,7 +152,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
     private static final int BIT_LOW = 2;
     private static final int BIT_MEDIUM = 4;
     private static final int BIT_HIGH = 8;
-    private static final int TIME_UNTIL_OUT_OF_BATTLE_HEAL = 50;
+    private static final int TIME_UNTIL_OUT_OF_COMBAT_BY_RW = 50;
     private final AnimationState groundPoundAnimationState = new OverlapAnimationState(GROUND_POUND_ANIMATION);
     private final AnimationState stompAnimationState = new OverlapAnimationState(STOMP_ANIMATION);
     private final AnimationState stompAnimationState2 = new OverlapAnimationState(STOMP_ANIMATION2);
@@ -286,8 +286,8 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             if (!active && this.isNoAnimation() && target != null && this.targetDistance <= this.activeRange()) {
                 this.playAnimation(ACTIVATE_ANIMATION);
             }
-            if (active && this.isAlive() && target == null && this.timeUntilDeactivate >= TIME_UNTIL_OUT_OF_BATTLE_HEAL) {
-                if (ModConfigHandler.COMMON.mobs.relicrons.outOfBattleHeal.get()) this.heal(this.getHealth() * 0.05F);
+            if (active && this.isAlive() && target == null && this.timeUntilDeactivate >= TIME_UNTIL_OUT_OF_COMBAT_BY_RW) {
+                if (ModConfigHandler.COMMON.mobs.relicrons.outOfCombatHeal.get()) this.heal(this.getHealth() * 0.05F);
             }
         }
     }
@@ -477,7 +477,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
                 triggeredPhashBits |= targetBit;
                 shouldPlayLeapAnimation = true;
                 if (targetBit == BIT_MEDIUM) {
-                    if (!isSecondPhase() && !(target instanceof EntityAbsRelicron)/*自家人不发警报*/) {
+                    if (!isSecondPhase() && !(target instanceof AbstractRelicron)/*自家人不发警报*/) {
                         this.playSound(SoundInit.REALM_WARDEN_VOICE2.get(), 3F, 1F);
                     }
                     setSecondPhase(true);
@@ -522,8 +522,8 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
         if (super.doHurtTarget(damageSource, entity, damageMultiplier, knockBackMultiplier, canDisableShield)) {
             if (secondPhase && entity instanceof LivingEntity target) {
                 boolean hardMode = this.level().getDifficulty() == Difficulty.HARD;
-                ModEntityUtils.addEffectStackingAmplifier(null, target, EffectInit.ELECTRIFIED_EFFECT.get(), 150,
-                        hardMode ? 10 : 5, false, true, hardMode || this.random.nextBoolean(), false);
+                ModEntityUtils.addEffectStackingAmplifier(null, target, EffectInit.ELECTRIFIED_EFFECT.get(), 200,
+                        hardMode ? 10 : 5, false, true, true, false);
             }
             return true;
         }
@@ -684,7 +684,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
             if (!entity.isActive()) entity.setActive(true);
             boolean inServer = !entity.level().isClientSide;
             if (inServer && tick == 1 && entity.getActiveSound() != null) entity.playSound(entity.getActiveSound(), 2F, 0.8F);
-            if (inServer && tick == 20 && (entity.getTarget() != null && !(entity.getTarget() instanceof EntityAbsRelicron))) {
+            if (inServer && tick == 20 && (entity.getTarget() != null && !(entity.getTarget() instanceof AbstractRelicron))) {
                 entity.playSound(SoundInit.REALM_WARDEN_VOICE1.get(), 3F, 1F);
             }
             if (tick == 45 || tick == 54) {
@@ -1272,7 +1272,7 @@ public class EntityRealmWarden extends EntityAbsRelicron implements IBoss, Crack
     }
 
     private float getSoundVolumeScale() {
-        if (getTarget() instanceof EntityAbsRelicron) return 1F;
+        if (getTarget() instanceof AbstractRelicron) return 1F;
         return triggeredPhashBits == BIT_MEDIUM ? 0.2F : 1F;
     }
 

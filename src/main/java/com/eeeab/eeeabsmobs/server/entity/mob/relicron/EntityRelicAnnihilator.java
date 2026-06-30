@@ -93,7 +93,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.Optional;
 
-public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, RangedAttackMob {
+public class EntityRelicAnnihilator extends AbstractRelicron implements IBoss, RangedAttackMob {
     public static final Animation DIE_ANIMATION = Animation.create(60);
     public static final Animation SLASH_ANIMATION = Animation.create(50).doesOverlap();
     public static final Animation SWING_ANIMATION = Animation.create(50).doesOverlap();
@@ -261,11 +261,6 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
     @Override
     protected ModConfigHandler.BossConfig getBossConfig() {
         return ModConfigHandler.COMMON.mobs.relicrons.relicAnnihilator.bossConfig;
-    }
-
-    @Override
-    protected float activeRange() {
-        return 7F;
     }
 
     @Override
@@ -908,7 +903,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
                         ConditionFactory.hybridDistanceRange(6, 0, 4)
                 ))
         );
-        builder.condition(EntityAbsRelicron::isActive);
+        builder.condition(AbstractRelicron::isActive);
         return manager;
     }
 
@@ -1557,7 +1552,7 @@ public class EntityRelicAnnihilator extends EntityAbsRelicron implements IBoss, 
         private int delayCounter;
 
         public KeepDistanceGoal(EntityRelicAnnihilator attacker, Animation... animations) {
-            super(attacker, 1, 0, EntityAbsRelicron::isActive, animations);
+            super(attacker, 1, 0, AbstractRelicron::isActive, animations);
             this.random = attacker.getRandom();
         }
 

@@ -40,19 +40,19 @@ import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;
 
-public abstract class EntityAbsRelicron extends EEEABMobLibrary implements Enemy, GlowEntity {
-    private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EntityAbsRelicron.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> DATA_ALWAYS_ACTIVE = SynchedEntityData.defineId(EntityAbsRelicron.class, EntityDataSerializers.BOOLEAN);
+public abstract class AbstractRelicron extends EEEABMobLibrary implements Enemy, GlowEntity {
+    private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(AbstractRelicron.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_ALWAYS_ACTIVE = SynchedEntityData.defineId(AbstractRelicron.class, EntityDataSerializers.BOOLEAN);
     public static final Vector4f[] BOLT_COLORS = new Vector4f[]{
             new Vector4f(0.49F, 0.9F, 1F, 0.72F),
             new Vector4f(0.56F, 0.78F, 0.86F, 0.8F)
     };
     public static final LightningBolt.LightningBoltBuilder RELICRON_BOLT = new LightningBolt.LightningBoltBuilder()
             .count(1).size(0.08F).lifespan(2).parallelNoise(0.1F).spreadFactor(0.1F).fadeFunction(LightningBolt.FadeFunction.fade(0.1F));
-    public static final int TIME_UNTIL_OUT_OF_BATTLE_ACTIVE_TIME = 200;
+    public static final int TIME_UNTIL_OUT_OF_COMBAT = 200;
     protected int timeUntilDeactivate;
 
-    public EntityAbsRelicron(EntityType<? extends EEEABMobLibrary> type, Level level) {
+    public AbstractRelicron(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
     }
 
@@ -107,7 +107,7 @@ public abstract class EntityAbsRelicron extends EEEABMobLibrary implements Enemy
         if (!this.level().isClientSide) {
             if (this.isActive() && !this.isAlwaysActive()) {
                 LivingEntity target = this.getTarget();
-                if (target == null && this.timeUntilDeactivate < TIME_UNTIL_OUT_OF_BATTLE_ACTIVE_TIME) {
+                if (target == null && this.timeUntilDeactivate < TIME_UNTIL_OUT_OF_COMBAT) {
                     this.timeUntilDeactivate++;
                 } else if (this.timeUntilDeactivate > 0) {
                     this.timeUntilDeactivate--;
@@ -136,7 +136,7 @@ public abstract class EntityAbsRelicron extends EEEABMobLibrary implements Enemy
     public boolean isAlliedTo(Entity entity) {
         if (super.isAlliedTo(entity)) {
             return true;
-        } else if (entity instanceof EntityAbsRelicron) {
+        } else if (entity instanceof AbstractRelicron) {
             return this.getTeam() == null && entity.getTeam() == null;
         } else {
             return false;
@@ -203,7 +203,7 @@ public abstract class EntityAbsRelicron extends EEEABMobLibrary implements Enemy
     }
 
     protected float activeRange() {
-        return 6F;
+        return 7F;
     }
 
     public boolean isActive() {
@@ -225,7 +225,7 @@ public abstract class EntityAbsRelicron extends EEEABMobLibrary implements Enemy
 
     protected void updateActivationState() {
         if (!this.isActive()) {
-            if (ModConfigHandler.COMMON.mobs.relicrons.outOfBattleHeal.get()) this.heal(0.5F);
+            if (ModConfigHandler.COMMON.mobs.relicrons.outOfCombatHeal.get()) this.heal(0.5F);
             this.setDeltaMovement(0F, this.getDeltaMovement().y, 0F);
             this.yHeadRot = this.yBodyRot = this.getYRot();
         }
@@ -240,20 +240,11 @@ public abstract class EntityAbsRelicron extends EEEABMobLibrary implements Enemy
                 this.playAnimation(this.getActiveAnimation());
                 this.setActive(true);
             }
-            if (active && this.isAlive() && target == null && this.timeUntilDeactivate >= TIME_UNTIL_OUT_OF_BATTLE_ACTIVE_TIME) {
+            if (active && this.isAlive() && target == null && this.timeUntilDeactivate >= TIME_UNTIL_OUT_OF_COMBAT) {
                 this.playAnimation(this.getDeactivateAnimation());
                 this.setActive(false);
             }
         }
-    }
-
-    protected int getCoolingTimerUtil(int maxCooling, int minCooling, float healthPercentage) {
-        float maximumCoolingPercentage = 1 - healthPercentage;
-        float ratio = 1 - this.getHealthPercentage();
-        if (ratio > maximumCoolingPercentage) {
-            ratio = maximumCoolingPercentage;
-        }
-        return (int) (maxCooling - (ratio / maximumCoolingPercentage) * (maxCooling - minCooling));
     }
 
     protected void doWalkEffect(int amount) {
@@ -300,9 +291,9 @@ public abstract class EntityAbsRelicron extends EEEABMobLibrary implements Enemy
     }
 
     protected static class RelicronRandomStrollGoal extends WaterAvoidingRandomStrollGoal {
-        private final EntityAbsRelicron relicron;
+        private final AbstractRelicron relicron;
 
-        public RelicronRandomStrollGoal(EntityAbsRelicron relicron, double speedModifier) {
+        public RelicronRandomStrollGoal(AbstractRelicron relicron, double speedModifier) {
             super(relicron, speedModifier);
             this.relicron = relicron;
         }

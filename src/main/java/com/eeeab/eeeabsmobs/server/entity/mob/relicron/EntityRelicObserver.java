@@ -61,7 +61,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.eeeab.eeeabsmobs.client.particle.lib.component.ParticleComponent.PropertyControl.*;
 
-public class EntityRelicObserver extends EntityAbsRelicron implements CrackinessEntity<EntityRelicObserver> {
+public class EntityRelicObserver extends AbstractRelicron implements CrackinessEntity<EntityRelicObserver> {
     public static final Animation DIE_ANIMATION = Animation.create(20);
     public static final Animation HURT_ANIMATION = Animation.create(3);
     public static final Animation ACTIVE_ANIMATION = Animation.create(20);
@@ -80,14 +80,13 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
     };
     private static final KeyframeManager<EntityRelicObserver> KEYFRAME_MANAGER;
     private static final AnimationReleaseManager<EntityRelicObserver> ANIMATION_RELEASE_MANAGER;
-    private static final EntityDimensions DEACTIVATE_SIZE = EntityDimensions.scalable(1, 1);
+    private static final EntityDimensions DEACTIVATE_SIZE = EntityDimensions.scalable(0.99F, 1);
     private static final BlockParticleOption ROUGH_BOUNDARY_BRICKS = new BlockParticleOption(ParticleTypes.BLOCK, BlockInit.ROUGH_BOUNDARY_BRICKS.get().defaultBlockState());
     public final ControlledAnimation rotControlled = new ControlledAnimation(10);
 
     public EntityRelicObserver(EntityType<? extends EEEABMobLibrary> type, Level level) {
         super(type, level);
         this.active = false;
-        this.canplayHurtAnimation = true;
     }
 
     static {
@@ -102,7 +101,7 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
 
     @Override
     protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
-        return size.height * 0.73F;
+        return size.height * 0.65F;
     }
 
     @Override
@@ -200,7 +199,8 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
             Entity entity = source.getDirectEntity();
             if (this.getAnimation() == STORM_ANIMATION) {
                 if (entity instanceof LivingEntity livingEntity) {
-                    if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !source.is(DamageTypes.THORNS) && !source.is(DamageTypeTags.IS_EXPLOSION)) {
+                    if (!source.isIndirect() && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)
+                            && !source.is(DamageTypes.THORNS) && !source.is(DamageTypeTags.IS_EXPLOSION)) {
                         livingEntity.hurt(this.damageSources().thorns(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
                     }
                 }
@@ -384,8 +384,8 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
                                                     true),
                                     });
                         if (entity.random.nextFloat() < 0.6) entity.doFractalEffect(1 + entity.random.nextInt(2));
-                    } else {
-                        entity.rangeAttack(3, 3, 3, 3, e -> {
+                    } else if (tick % 10 == 0) {
+                        entity.rangeAttack(3, 3.5, 3, 3.5, e -> {
                             if (entity.doHurtTarget(e, 1F, 1F)) {
                                 e.addEffect(new MobEffectInstance(EffectInit.ELECTRIFIED_EFFECT.get(), 200, 0, false, false, true), entity);
                             }
@@ -414,7 +414,7 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
                         });
             } else {
                 entity.playSound(SoundInit.RELIC_OBSERVER_ATTACK.get());
-                entity.rangeAttack(2.5, entity.getBbHeight(), 2.5, 2.5, 60F, 60F, null);
+                entity.rangeAttack(2.5, 3, 2.5, 3, 60F, 60F, null);
             }
         });
         return manager;
@@ -442,7 +442,7 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
                         ConditionFactory.hasLineOfSight(),
                         ConditionFactory.distanceRange(0, 8, 10)
                 )));
-        builder.condition(EntityAbsRelicron::isActive);
+        builder.condition(AbstractRelicron::isActive);
         return manager;
     }
 
@@ -520,7 +520,7 @@ public class EntityRelicObserver extends EntityAbsRelicron implements Crackiness
         return createMobAttributes().add(Attributes.MAX_HEALTH, 50.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.28D)
                 .add(Attributes.FOLLOW_RANGE, 18.0D)
-                .add(Attributes.ATTACK_DAMAGE, 6.0D)
+                .add(Attributes.ATTACK_DAMAGE, 8.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
                 .add(Attributes.ARMOR, 10.0D);
     }
