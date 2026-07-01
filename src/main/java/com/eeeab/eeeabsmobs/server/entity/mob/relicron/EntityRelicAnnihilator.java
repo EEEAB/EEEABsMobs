@@ -553,7 +553,7 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements IBoss, R
     }
 
     @Override
-    public AnimationState getOverlapAnimationState(Animation animation) {
+    public AnimationState getAnimationState(Animation animation) {
         if (SLASH_ANIMATION == animation) {
             return this.slashAnimationState;
         } else if (SWING_ANIMATION == animation) {
@@ -561,7 +561,7 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements IBoss, R
         } else if (STAB_ANIMATION == animation) {
             return this.stabAnimationState;
         }
-        return null;
+        return super.getAnimationState(animation);
     }
 
     @Override

@@ -548,7 +548,7 @@ public class EntityRealmWarden extends AbstractRelicron implements IBoss, Cracki
     }
 
     @Override
-    public AnimationState getOverlapAnimationState(Animation animation) {
+    public AnimationState getAnimationState(Animation animation) {
         if (GROUND_POUND_ANIMATION == animation) {
             return this.groundPoundAnimationState;
         } else if (STOMP_ANIMATION == animation) {
@@ -566,7 +566,7 @@ public class EntityRealmWarden extends AbstractRelicron implements IBoss, Cracki
         } else if (DOUBLE_FIST_SLAM_ANIMATION == animation) {
             return this.doubleFistSlamAnimationState;
         }
-        return null;
+        return super.getAnimationState(animation);
     }
 
     @Override

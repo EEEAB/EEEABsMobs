@@ -139,9 +139,9 @@ public class ModelRelicAnnihilator extends ModHierarchicalModel<EntityRelicAnnih
         playAnimation(this, entity, EntityRelicAnnihilator.GROUND_SLAM_ANIMATION1, AnimationRelicAnnihilator.GROUNDS_SLAM_START, ageInTicks);
         playAnimation(this, entity, EntityRelicAnnihilator.GROUND_SLAM_ANIMATION2, AnimationRelicAnnihilator.GROUNDS_SLAM_KEEP, ageInTicks);
         playAnimation(this, entity, EntityRelicAnnihilator.GROUND_SLAM_ANIMATION3, AnimationRelicAnnihilator.GROUNDS_SLAM_END, ageInTicks);
-        playOverlapAnimation(this, entity, EntityRelicAnnihilator.SLASH_ANIMATION, AnimationRelicAnnihilator.SLASH, ageInTicks);
-        playOverlapAnimation(this, entity, EntityRelicAnnihilator.SWING_ANIMATION, AnimationRelicAnnihilator.SWING, ageInTicks);
-        playOverlapAnimation(this, entity, EntityRelicAnnihilator.STAB_ANIMATION, AnimationRelicAnnihilator.STAB, ageInTicks);
+        playAnimation(this, entity, EntityRelicAnnihilator.SLASH_ANIMATION, AnimationRelicAnnihilator.SLASH, ageInTicks);
+        playAnimation(this, entity, EntityRelicAnnihilator.SWING_ANIMATION, AnimationRelicAnnihilator.SWING, ageInTicks);
+        playAnimation(this, entity, EntityRelicAnnihilator.STAB_ANIMATION, AnimationRelicAnnihilator.STAB, ageInTicks);
         Animation animation = entity.getAnimation();
         int tick = entity.getAnimationTick();
         if (!entity.isActive() || (animation == EntityRelicAnnihilator.ACTIVE_ANIMATION && tick < 40)) {

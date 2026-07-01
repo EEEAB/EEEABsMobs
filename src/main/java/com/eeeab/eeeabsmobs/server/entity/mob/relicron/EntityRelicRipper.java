@@ -262,13 +262,13 @@ public class EntityRelicRipper extends AbstractRelicron {
     }
 
     @Override
-    public AnimationState getOverlapAnimationState(Animation animation) {
+    public AnimationState getAnimationState(Animation animation) {
         if (SWEEP_ANIMATION2 == animation) {
             return this.sweepAnimationState;
         } else if (CUTTING_END_ANIMATION == animation) {
             return this.cuttingEndAnimationState;
         }
-        return null;
+        return super.getAnimationState(animation);
     }
 
     @Override

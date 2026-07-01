@@ -16,28 +16,22 @@ public interface AnimatedEntity {
     Animation NO_ANIMATION = Animation.create(0);
 
     /**
-     * @return 获取动画关键Tick
+     * @return 获取动画关键帧
      */
     int getAnimationTick();
 
     /**
-     * 设置动画Tick
-     *
-     * @param tick 游戏刻
+     * 设置动画进度帧
      */
     void setAnimationTick(int tick);
 
     /**
-     * 获取正在播放动画
-     *
      * @return 当前动画
      */
     Animation getAnimation();
 
     /**
      * 设置动画
-     *
-     * @param animation 准备播放动画
      */
     void setAnimation(Animation animation);
 
@@ -49,22 +43,11 @@ public interface AnimatedEntity {
     Animation[] getAnimations();
 
     /**
-     * 获取动画状态
-     *
-     * @return 当前动画状态
+     * @return 获取动画状态
      */
     AnimationState getAnimationState(Animation animation);
 
     /**
-     * 可选-获取叠加动画状态
-     */
-    default AnimationState getOverlapAnimationState(Animation animation) {
-        return null;
-    }
-
-    /**
-     * 获取该动画播放速度
-     *
      * @return 动画速度
      */
     default float getAnimationSpeed(Animation animation) {
@@ -72,8 +55,6 @@ public interface AnimatedEntity {
     }
 
     /**
-     * 获取该动画播放幅度
-     *
      * @return 动画幅度
      */
     default float getAnimationScale(Animation animation) {
@@ -81,7 +62,7 @@ public interface AnimatedEntity {
     }
 
     /**
-     * 可选-获取关键帧触发器
+     * @return 关键帧触发器
      */
     default <T extends Entity & AnimatedEntity> KeyframeManager<T> getKeyframeManager() {
         return null;

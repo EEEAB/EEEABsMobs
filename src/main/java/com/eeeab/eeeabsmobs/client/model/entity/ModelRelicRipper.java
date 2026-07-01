@@ -111,11 +111,11 @@ public class ModelRelicRipper extends ModHierarchicalModel<EntityRelicRipper> {
         playAnimation(this, entity, EntityRelicRipper.ACTIVE_ANIMATION, AnimationRelicRipper.ACTIVE, ageInTicks);
         playAnimation(this, entity, EntityRelicRipper.DEACTIVATE_ANIMATION, AnimationRelicRipper.DEACTIVATE, ageInTicks);
         playAnimation(this, entity, EntityRelicRipper.SWEEP_ANIMATION1, AnimationRelicRipper.SWEEP1, ageInTicks);
-        playOverlapAnimation(this, entity, EntityRelicRipper.SWEEP_ANIMATION2, AnimationRelicRipper.SWEEP2, ageInTicks);
+        playAnimation(this, entity, EntityRelicRipper.SWEEP_ANIMATION2, AnimationRelicRipper.SWEEP2, ageInTicks);
         playAnimation(this, entity, EntityRelicRipper.SMASH_ANIMATION, AnimationRelicRipper.SMASH, ageInTicks);
         playAnimation(this, entity, EntityRelicRipper.CUTTING_START_ANIMATION, AnimationRelicRipper.CUTTING_START, ageInTicks);
         playAnimation(this, entity, EntityRelicRipper.CUTTING_KEEP_ANIMATION, AnimationRelicRipper.CUTTING_KEEP, ageInTicks);
-        playOverlapAnimation(this, entity, EntityRelicRipper.CUTTING_END_ANIMATION, AnimationRelicRipper.CUTTING_END, ageInTicks);
+        playAnimation(this, entity, EntityRelicRipper.CUTTING_END_ANIMATION, AnimationRelicRipper.CUTTING_END, ageInTicks);
         if (entity.isNoAnimation()) {
             if (!entity.isActive()) {
                 setStaticRotationPoint(root, 0F, 6F, 0F);

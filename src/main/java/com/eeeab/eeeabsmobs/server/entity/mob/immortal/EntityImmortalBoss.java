@@ -1693,7 +1693,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
     }
 
     @Override
-    public AnimationState getOverlapAnimationState(Animation animation) {
+    public AnimationState getAnimationState(Animation animation) {
         if (TELEPORT_ANIMATION == animation) {
             return this.teleportAnimationState;
         } else if (PUNCH_RIGHT_ANIMATION == animation) {
@@ -1715,7 +1715,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
         } else if (HURT_ANIMATION1 == animation) {
             return this.hurtAnimationState;
         }
-        return null;
+        return super.getAnimationState(animation);
     }
 
     static class ImmortalGroupAI extends AnimationGroupAI<EntityImmortalBoss> {

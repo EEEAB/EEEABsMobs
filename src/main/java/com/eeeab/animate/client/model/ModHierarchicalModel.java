@@ -7,7 +7,6 @@ import com.eeeab.animate.server.animation.Animation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.AnimationState;
@@ -190,17 +189,10 @@ public abstract class ModHierarchicalModel<E extends Entity> extends EntityModel
     }
 
     public static <E extends Entity & AnimatedEntity> void playAnimation(ModHierarchicalModel<E> model, E entity, Animation animation, AnimationDefinition definition, float ageInTicks) {
-        if (entity.getAnimation() != animation) return;
+        if (entity.getAnimation() != animation && !animation.isOverlap()) return;
         AnimationState state = entity.getAnimationState(animation);
         state.updateTime(ageInTicks, entity.getAnimationSpeed(animation));
         state.ifStarted((s) -> KeyframeAnimations.animate(model, definition, s.getAccumulatedTime(), entity.getAnimationScale(animation), ANIMATION_VECTOR_CACHE));
-    }
-
-    public static <E extends Entity & AnimatedEntity> void playOverlapAnimation(ModHierarchicalModel<E> model, E entity, Animation animation, AnimationDefinition definition, float ageInTicks) {
-        AnimationState overlapState = entity.getOverlapAnimationState(animation);
-        if (overlapState == null) return;
-        overlapState.updateTime(ageInTicks, entity.getAnimationSpeed(animation));
-        overlapState.ifStarted((state) -> KeyframeAnimations.animate(model, definition, state.getAccumulatedTime(), entity.getAnimationScale(animation), ANIMATION_VECTOR_CACHE));
     }
 
     protected void animateWalk(AnimationDefinition animationDefinition, float limbSwing, float limbSwingAmount, float maxAnimationSpeed, float animationScaleFactor) {

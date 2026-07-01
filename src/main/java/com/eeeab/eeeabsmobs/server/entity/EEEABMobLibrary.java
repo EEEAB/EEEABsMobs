@@ -102,8 +102,6 @@ public abstract class EEEABMobLibrary extends EEEABMobEntity implements Animated
 
     @Override
     public AnimationState getAnimationState(Animation animation) {
-        AnimationState state = this.getOverlapAnimationState(animation);
-        if (state != null) return state;
         return this.animationState;
     }
 

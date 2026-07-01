@@ -70,6 +70,7 @@ public class ItemAnimationUtils {
 
     public static void stop(ItemStack stack) {
         UUID uuid = getOrCreateAnimationUUID(stack);
+        stack.getOrCreateTag().remove(ANIMATION_UUID_KEY);
         ANIMATIONS.remove(uuid);
     }
 

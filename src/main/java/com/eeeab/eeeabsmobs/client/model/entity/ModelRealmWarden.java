@@ -151,11 +151,6 @@ public class ModelRealmWarden extends ModHierarchicalModel<EntityRealmWarden> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        super.renderToBuffer(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-    }
-
-    @Override
     public void setupAnim(EntityRealmWarden entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.resetToDefaultPose();
         lookAtTarget(netHeadYaw, headPitch, 2.0F, this.head);
@@ -170,14 +165,14 @@ public class ModelRealmWarden extends ModHierarchicalModel<EntityRealmWarden> {
         playAnimation(this, entity, EntityRealmWarden.JUMP_SMASH_ANIMATION, AnimationRealmWarden2.JUMP_SMASH, ageInTicks);
         playAnimation(this, entity, EntityRealmWarden.DERIVED_JUMP_SMASH_ANIMATION, AnimationRealmWarden2.JUMP_SMASH_DERIVED, ageInTicks);
         playAnimation(this, entity, EntityRealmWarden.JUMP_SMASH_START_ANIMATION, AnimationRealmWarden2.JUMP_SMASH_START, ageInTicks);
-        playOverlapAnimation(this, entity, EntityRealmWarden.SWEEP_ANIMATION, AnimationRealmWarden.SWEEP, ageInTicks);
-        playOverlapAnimation(this, entity, EntityRealmWarden.GROUND_POUND_ANIMATION, AnimationRealmWarden.GROUND_POUND, ageInTicks);
-        playOverlapAnimation(this, entity, EntityRealmWarden.TURNAROUND_SWEEP_ANIMATION, AnimationRealmWarden.TURNAROUND_SWEEP, ageInTicks);
-        playOverlapAnimation(this, entity, EntityRealmWarden.STOMP_ANIMATION, AnimationRealmWarden.STOMP, ageInTicks);
-        playOverlapAnimation(this, entity, EntityRealmWarden.STOMP_ANIMATION2, AnimationRealmWarden.STOMP, ageInTicks);
-        playOverlapAnimation(this, entity, EntityRealmWarden.ELBOW_STRIKE_ANIMATION, AnimationRealmWarden.ELBOW_STRIKE, ageInTicks);
-        playOverlapAnimation(this, entity, EntityRealmWarden.BACKSTEP_LANDING_ANIMATION, AnimationRealmWarden2.BACKSTEP_LANDING, ageInTicks);
-        playOverlapAnimation(this, entity, EntityRealmWarden.DOUBLE_FIST_SLAM_ANIMATION, AnimationRealmWarden2.DOUBLE_FIST_SLAM, ageInTicks);
+        playAnimation(this, entity, EntityRealmWarden.SWEEP_ANIMATION, AnimationRealmWarden.SWEEP, ageInTicks);
+        playAnimation(this, entity, EntityRealmWarden.GROUND_POUND_ANIMATION, AnimationRealmWarden.GROUND_POUND, ageInTicks);
+        playAnimation(this, entity, EntityRealmWarden.TURNAROUND_SWEEP_ANIMATION, AnimationRealmWarden.TURNAROUND_SWEEP, ageInTicks);
+        playAnimation(this, entity, EntityRealmWarden.STOMP_ANIMATION, AnimationRealmWarden.STOMP, ageInTicks);
+        playAnimation(this, entity, EntityRealmWarden.STOMP_ANIMATION2, AnimationRealmWarden.STOMP, ageInTicks);
+        playAnimation(this, entity, EntityRealmWarden.ELBOW_STRIKE_ANIMATION, AnimationRealmWarden.ELBOW_STRIKE, ageInTicks);
+        playAnimation(this, entity, EntityRealmWarden.BACKSTEP_LANDING_ANIMATION, AnimationRealmWarden2.BACKSTEP_LANDING, ageInTicks);
+        playAnimation(this, entity, EntityRealmWarden.DOUBLE_FIST_SLAM_ANIMATION, AnimationRealmWarden2.DOUBLE_FIST_SLAM, ageInTicks);
         //1 main 2 left 3 right
         boolean exhaust1Visible = false;
         boolean exhaust2Visible = false;
