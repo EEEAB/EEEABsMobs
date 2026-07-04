@@ -110,6 +110,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
     @Override
     protected void customServerAiStep() {
         super.customServerAiStep();
+        bossInfo.setVisible(canLoadBossBar());
         if (tickCount % 4 == 0) bossInfo.update();
     }
 
@@ -461,6 +462,10 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
 
     protected boolean canShowBossBar() {
         return true;
+    }
+
+    protected boolean canLoadBossBar() {
+        return this instanceof IBoss && ModConfigHandler.COMMON.others.enableShowBossBars.get();
     }
 
     protected BossEvent.BossBarColor bossBarColor() {
