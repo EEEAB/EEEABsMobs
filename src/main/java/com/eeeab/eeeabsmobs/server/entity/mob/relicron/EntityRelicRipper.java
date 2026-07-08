@@ -216,8 +216,8 @@ public class EntityRelicRipper extends AbstractRelicron {
     }
 
     @Override
-    public boolean doHurtTarget(DamageSource damageSource, Entity entity, float damageMultiplier, float knockBackMultiplier, boolean canDisableShield) {
-        if (!super.doHurtTarget(damageSource, entity, damageMultiplier, knockBackMultiplier, canDisableShield)) {
+    public boolean doHurtTarget(DamageSource damageSource, Entity entity, float damageMultiplier, float knockBackMultiplier, int disableShieldTime) {
+        if (!super.doHurtTarget(damageSource, entity, damageMultiplier, knockBackMultiplier, disableShieldTime)) {
             return false;
         } else {
             if (entity instanceof LivingEntity target) {
@@ -328,7 +328,7 @@ public class EntityRelicRipper extends AbstractRelicron {
                         if (target != null) entity.lookAt(target, 30F, 30F);
                         if (tick == 22) entity.rangeAttack(3, entity.getBbHeight() * 1.5, 3, 3, 100F, 200F, null);
                         if (tick == 36 || tick == 45) entity.rangeAttack(3, entity.getBbHeight() * 1.5, 3, 3, e -> {
-                            entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), e, 1, 0.25F, false);
+                            entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), e, 1, 0.25F, 50);
                         });
                         if (tick == 60 && entity.derivedSkill) {
                             entity.playAnimation(SMASH_ANIMATION);
@@ -354,7 +354,7 @@ public class EntityRelicRipper extends AbstractRelicron {
                         if (tick == 20 || tick == 38 || tick == 63) {
                             Vec3 pos = entity.getPosOffset(true, 2F, 1.75F, 0F);
                             for (Entity targetEntity : entity.level().getEntitiesOfClass(Entity.class, ModEntityUtils.makeAABBWithSize(pos.x, pos.y, pos.z, 0, 4, 8, 4), targetEntity -> targetEntity != entity && targetEntity.isAttackable() && !entity.isAlliedTo(targetEntity))) {
-                                entity.doHurtTarget(targetEntity, tick == 38 ? 1F : 1.2F, 1F, tick == 63);
+                                entity.doHurtTarget(entity.damageSources().mobAttack(entity), targetEntity, tick == 38 ? 1F : 1.2F, 1F, tick == 63 ? 100 : 50);
                             }
                         }
                     }
@@ -558,7 +558,7 @@ public class EntityRelicRipper extends AbstractRelicron {
                 }
                 if (tick % 5 == 0) entity.rangeAttack(3, entity.getBbHeight() * 1.5, 3, 3.1, 60F, 60F,
                         hitEntity -> {
-                            if (entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), hitEntity, 0.35F, 0, false)) {
+                            if (entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), hitEntity, 0.35F, 0, tick % 10 == 0 ? 10 : 0)) {
                                 if (EntityRelicAnnihilator.canBeControlled(entity, hitEntity)) {
                                     double ratioX = -Math.sin(entity.yBodyRot * ((float) Math.PI / 180F));
                                     double ratioZ = Math.cos(entity.yBodyRot * ((float) Math.PI / 180F));

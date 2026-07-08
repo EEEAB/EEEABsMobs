@@ -513,13 +513,13 @@ public class EntityRealmWarden extends AbstractRelicron implements IBoss, Cracki
     }
 
     @Override
-    public boolean doHurtTarget(DamageSource damageSource, Entity entity, float damageMultiplier, float knockBackMultiplier, boolean canDisableShield) {
+    public boolean doHurtTarget(DamageSource damageSource, Entity entity, float damageMultiplier, float knockBackMultiplier, int disableShieldTime) {
         boolean secondPhase = this.isSecondPhase();
         if (secondPhase && entity instanceof LivingEntity target) {
             MobEffectInstance instance = target.getEffect(EffectInit.ELECTRIFIED_EFFECT.get());
             if (instance != null) damageMultiplier += Mth.clamp((instance.getAmplifier() + 1) * 0.05F, 0F, 0.5F);
         }
-        if (super.doHurtTarget(damageSource, entity, damageMultiplier, knockBackMultiplier, canDisableShield)) {
+        if (super.doHurtTarget(damageSource, entity, damageMultiplier, knockBackMultiplier, disableShieldTime)) {
             if (secondPhase && entity instanceof LivingEntity target) {
                 boolean hardMode = this.level().getDifficulty() == Difficulty.HARD;
                 ModEntityUtils.addEffectStackingAmplifier(null, target, EffectInit.ELECTRIFIED_EFFECT.get(), 200,
@@ -737,7 +737,7 @@ public class EntityRealmWarden extends AbstractRelicron implements IBoss, Cracki
             ModEntityUtils.forceKnockBack(entity, hitEntity, 0.5F, false);
         });
         Keyframe<EntityRealmWarden> heavySwingKF2 = (entity, animation, tick) -> entity.rangeAttack(4.25, entity.getBbHeight(), 4.25, 4.5, 90F, 180F, hitEntity -> {
-            entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), hitEntity, 0.7F, 0, false);
+            entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), hitEntity, 0.7F, 0, 0);
             ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, false);
         });
         Keyframe<EntityRealmWarden> doPlayWhooshSound = (entity, animation, tick) -> {
@@ -823,7 +823,7 @@ public class EntityRealmWarden extends AbstractRelicron implements IBoss, Cracki
             boolean flag = tick == 24;
             if (tick == 21 || flag) {
                 entity.rangeAttack(3.5, entity.getBbHeight(), 3.5, 3.5, 180F, 160F, hitEntity -> {
-                    entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), hitEntity, 0.6F, 0, false);
+                    entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), hitEntity, 0.6F, 0, flag ? 50 : 0);
                     if (flag) ModEntityUtils.forceKnockBack(entity, hitEntity, 0.5F, false);
                 });
             }
@@ -908,7 +908,7 @@ public class EntityRealmWarden extends AbstractRelicron implements IBoss, Cracki
                     AABB area = ModEntityUtils.makeAABBWithSize(entity.getX(), entity.getY(), entity.getZ(), 0, size, size, size);
                     List<LivingEntity> entities = entity.level().getEntitiesOfClass(LivingEntity.class, area, target -> target != entity && !entity.isAlliedTo(target));
                     for (LivingEntity hitEntity : entities) {
-                        entity.doHurtTarget(ModDamageSource.bypassArmor(entity), hitEntity, 1.2F, 0, true);
+                        entity.doHurtTarget(ModDamageSource.bypassArmor(entity), hitEntity, 1.2F, 0, 100);
                         ModEntityUtils.forceKnockBack(entity, hitEntity, 1F, entity.getX() - hitEntity.getX(), entity.getZ() - hitEntity.getZ(), false);
                     }
                 }).inRange(40, 43, (entity, animation, tick) -> entity.doLandingExplosionEffect(tick));
@@ -982,7 +982,7 @@ public class EntityRealmWarden extends AbstractRelicron implements IBoss, Cracki
                 AABB area = ModEntityUtils.makeAABBWithSize(pos.x, pos.y, pos.z, 0, 7.5, 14, 7.5);
                 List<LivingEntity> entities = entity.level().getEntitiesOfClass(LivingEntity.class, area, target -> target != entity && !entity.isAlliedTo(target));
                 for (LivingEntity hitEntity : entities) {
-                    entity.doHurtTarget(ModDamageSource.bypassArmor(entity), hitEntity, 1F, 0, true);
+                    entity.doHurtTarget(ModDamageSource.bypassArmor(entity), hitEntity, 1F, 0, 100);
                     ModEntityUtils.forceKnockBack(entity, hitEntity, 1F, pos.x - hitEntity.getX(), pos.z - hitEntity.getZ(), false);
                 }
             }
@@ -1008,12 +1008,12 @@ public class EntityRealmWarden extends AbstractRelicron implements IBoss, Cracki
             entity.doFistSlamEffect();
             if (entity.level().isClientSide) return;
             entity.rangeAttack(3.75, entity.getBbHeight(), 3.75, 3.75, 45F, 45F, hitEntity -> {
-                if (entity.doHurtTarget(ModDamageSource.bypassShield(entity, entity), hitEntity, 1, 1, true)) {
+                if (entity.doHurtTarget(ModDamageSource.bypassShield(entity, entity), hitEntity, 1, 1, 100)) {
                     entity.stun(null, hitEntity, 30, false);
                 }
                 ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, false);
             });
-            EntityCameraShake.cameraShake(entity.level(), entity.position(), 16, 0.2F, 4, 6);
+            EntityCameraShake.cameraShake(entity.level(), entity.position(), 16, 0.22F, 4, 6);
             if (entity.isSecondPhase()) entity.playSound(SoundInit.REALM_WARDEN_SHOCK.get(), 1F, 1.2F + (entity.random.nextFloat() - 0.5F) * 0.1F);
         });
         builder.forAnimation(HEAVY_SMASH_ANIMATION).atTick(1, (entity, animation, tick) -> {
@@ -1441,7 +1441,7 @@ public class EntityRealmWarden extends AbstractRelicron implements IBoss, Cracki
         } else {
             this.playSound(SoundInit.REALM_WARDEN_SHAKE_GROUND.get(), 1.2F * volume, 1.2F * volume);
             if (secondPhase) this.playSound(SoundInit.REALM_WARDEN_SHOCK.get(), volume, 1.3F + (this.random.nextFloat() - 0.5F) * 0.1F);
-            EntityCameraShake.cameraShake(this.level(), pos, 24, 0.125F * scale, 3, 7);
+            EntityCameraShake.cameraShake(this.level(), pos, 24, 0.2F * scale, 4, 6);
         }
     }
 

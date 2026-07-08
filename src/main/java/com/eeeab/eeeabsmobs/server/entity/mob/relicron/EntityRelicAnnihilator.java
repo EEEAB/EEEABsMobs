@@ -907,9 +907,9 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements IBoss, R
         return manager;
     }
 
-    public boolean doHurtTarget(DamageSource damageSource, LivingEntity entity, float damageMultiplier, float knockBackMultiplier, boolean canDisableShield, boolean charged) {
-        if (this.doHurtTarget(damageSource, entity, damageMultiplier, knockBackMultiplier, canDisableShield)) {
-            if (canDisableShield) {
+    public boolean doHurtTarget(DamageSource damageSource, LivingEntity entity, float damageMultiplier, float knockBackMultiplier, int disableShieldTime, boolean charged) {
+        if (this.doHurtTarget(damageSource, entity, damageMultiplier, knockBackMultiplier, disableShieldTime)) {
+            if (disableShieldTime > 0) {
                 boolean hard = this.level().getDifficulty() == Difficulty.HARD;
                 if (this.random.nextFloat() < (hard ? 0.75F : 0.25F)) this.stun(null, entity, 30, false);
             }
@@ -1277,9 +1277,9 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements IBoss, R
             int tick = entity.getAnimationTick();
             Animation animation = entity.getAnimation();
             if (animation == SLASH_ANIMATION) {
-                attack(target, tick, 90F, 200F, false, true);
+                attack(target, tick, 90F, 200F, 0, true);
             } else if (animation == SWING_ANIMATION) {
-                attack(target, tick, 200F, 90F, true, false);
+                attack(target, tick, 200F, 90F, 100, false);
             } else {
                 boolean blinded = entity.isBlinded();
                 if ((tick < 21 || tick > 45)) {
@@ -1317,7 +1317,7 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements IBoss, R
                     float width = entity.getBbWidth() * 2.75F;
                     float radius = entity.getBbHeight() * 1.2F;
                     entity.rangeAttack(width, radius, width, radius, 45F, 45F, hitEntity -> {
-                        if (entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), hitEntity, 0.35F, 0F, false, true) && canBeControlled(entity, hitEntity)) {
+                        if (entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), hitEntity, 0.35F, 0F, 0, true) && canBeControlled(entity, hitEntity)) {
                             pullEntityToPosition(hitEntity, pos, 2F);
                         }
                     });
@@ -1359,12 +1359,12 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements IBoss, R
             target.hurtMarked = true;
         }
 
-        private void attack(LivingEntity target, int tick, float leftArc, float rightArc, boolean canDisableShield, boolean charged) {
+        private void attack(LivingEntity target, int tick, float leftArc, float rightArc, int disableShieldTime, boolean charged) {
             if (tick >= 20 && tick <= 40) {
                 if (tick == 20) {
                     float width = entity.getBbWidth() * 2F;
                     float radius = entity.getBbHeight() * 1.5F;
-                    entity.rangeAttack(width, radius, width, radius, leftArc, rightArc, e -> entity.doHurtTarget(entity.damageSources().mobAttack(entity), e, 1F, 1F, canDisableShield, charged));
+                    entity.rangeAttack(width, radius, width, radius, leftArc, rightArc, e -> entity.doHurtTarget(entity.damageSources().mobAttack(entity), e, 1F, 1F, disableShieldTime, charged));
                 } else entity.setYRot(entity.yRotO);
             } else if (target != null) {
                 if (tick <= 10 || !entity.isBlinded()) {
@@ -1479,7 +1479,7 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements IBoss, R
                 Vec3 pounceVec = new Vec3(Math.cos(radians), 0.0, Math.sin(radians)).normalize();
                 if (tick == 20 || tick == 24 || tick == 29 || tick == 32 || tick == 36) {
                     entity.rangeAttack(3, 4, 3, 4, hitEntity -> {
-                        if (entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), hitEntity, 0.5F, 1F, false, true) && canBeControlled(entity, hitEntity)) {
+                        if (entity.doHurtTarget(ModDamageSource.bypassCoolDown(entity), hitEntity, 0.5F, 1F, 0, true) && canBeControlled(entity, hitEntity)) {
                             ModEntityUtils.forceKnockBack(entity, hitEntity, hitEntity.isBlocking() ? 0.4F : 0.7F, -pounceVec.x, -pounceVec.z, false);
                             if (!hitEntity.onGround()) hitEntity.setDeltaMovement(hitEntity.getDeltaMovement().multiply(1F, 0.5F, 1F));
                         }

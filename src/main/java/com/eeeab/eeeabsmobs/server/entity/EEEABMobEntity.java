@@ -194,11 +194,11 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
     }
 
     public boolean doHurtTarget(Entity entity, float damageMultiplier, float knockBackMultiplier, boolean canDisableShield) {
-        return doHurtTarget(this.damageSources().mobAttack(this), entity, damageMultiplier, knockBackMultiplier, canDisableShield);
+        return doHurtTarget(this.damageSources().mobAttack(this), entity, damageMultiplier, knockBackMultiplier, canDisableShield ? 100 : 0);
     }
 
     //基于自: net.minecraft.world.entity.Mob.doHurtTarget(Entity entity)
-    public boolean doHurtTarget(DamageSource damageSource, Entity entity, float damageMultiplier, float knockBackMultiplier, boolean canDisableShield) {
+    public boolean doHurtTarget(DamageSource damageSource, Entity entity, float damageMultiplier, float knockBackMultiplier, int disableShieldTime) {
         float f = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * damageMultiplier;
         float f1 = (float) this.getAttributeValue(Attributes.ATTACK_KNOCKBACK) * knockBackMultiplier;
         if (entity instanceof LivingEntity livingEntity) {
@@ -225,8 +225,10 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
 
             this.doEnchantDamageEffects(this, entity);
             this.setLastHurtMob(entity);
-        } else if (canDisableShield && entity instanceof Player player && player.isBlocking()) {
-            player.disableShield(true);
+        } else if (disableShieldTime > 0 && entity instanceof Player player && player.isBlocking()) {
+            player.getCooldowns().addCooldown(player.getUseItem().getItem(), disableShieldTime);
+            player.stopUsingItem();
+            player.level().broadcastEntityEvent(player, (byte) 30);
         }
         return flag;
     }
