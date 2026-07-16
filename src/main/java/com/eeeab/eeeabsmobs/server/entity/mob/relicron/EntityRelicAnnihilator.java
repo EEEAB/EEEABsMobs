@@ -52,6 +52,7 @@ import com.eeeab.eeeabsmobs.server.init.ParticleInit;
 import com.eeeab.eeeabsmobs.server.init.SoundInit;
 import com.eeeab.eeeabsmobs.server.util.ModMathUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -84,6 +85,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
@@ -294,14 +296,34 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements IBoss, R
     protected void registerCustomGoals() {
         this.goalSelector.addGoal(0, new AnimationSimpleAI<>(this, STUN_ANIMATION));
         this.goalSelector.addGoal(1, new AnimationSimpleAI<>(this, BACKDASH_ANIMATION) {
+            private boolean canBackOff;
+
+            @Override
+            public void start() {
+                super.start();
+                canBackOff = isBackwardClear(Mth.clamp(getBbWidth() * 1.25F, 1, 10));
+            }
+
             @Override
             public void tick() {
+                double speed = getRetreatSpeed(3F, getBbWidth() * 3, targetDistance);
                 LivingEntity target = getTarget();
-                if (target != null) {
-                    lookAt(target, 30F, 30F);
-                    getLookControl().setLookAt(target, 30F, 30F);
+                if (canBackOff) {
+                    if (target != null) {
+                        lookAt(target, 30F, 30F);
+                        getLookControl().setLookAt(target, 30F, 30F);
+                    }
+                    backOff(target, speed);
+                } else {
+                    if (target != null) {
+                        entity.getLookControl().setLookAt(target, 30F, 30F);
+                        entity.setYRot(entity.yRotO);
+                    }
+                    double forwardRad = Math.toRadians(yBodyRot + 90);
+                    Vec3 forwardDir = new Vec3(Math.cos(forwardRad), 0.0, Math.sin(forwardRad)).normalize();
+                    double moveSpeed = getAttributeValue(Attributes.MOVEMENT_SPEED) * speed;
+                    setDeltaMovement(forwardDir.x * moveSpeed, getDeltaMovement().y, forwardDir.z * moveSpeed);
                 }
-                backOff(target, getRetreatSpeed(3F, getBbWidth() * 3, targetDistance));
             }
         });
         this.goalSelector.addGoal(1, new AnimationDie<>(this));
@@ -934,6 +956,35 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements IBoss, R
         }
         double moveSpeed = this.getAttributeValue(Attributes.MOVEMENT_SPEED) * speed;
         this.setDeltaMovement(direction.x * moveSpeed, this.getDeltaMovement().y, direction.z * moveSpeed);
+    }
+
+    //检查后方是否阻塞
+    private boolean isBackwardClear(double dist) {
+        AABB currentBox = this.getBoundingBox();
+        double forwardRad = Math.toRadians(yBodyRot + 270);
+        Vec3 dir = new Vec3(Math.cos(forwardRad), 0.0, Math.sin(forwardRad)).normalize();
+        AABB futureBox = currentBox.move(dir.x * dist, 0, dir.z * dist);
+        double footY = this.getY();
+        double topY = footY + this.getAttributeValue(ForgeMod.STEP_HEIGHT_ADDITION.get());
+        int minX = Mth.floor(futureBox.minX);
+        int maxX = Mth.floor(futureBox.maxX - 1e-7);
+        int minZ = Mth.floor(futureBox.minZ);
+        int maxZ = Mth.floor(futureBox.maxZ - 1e-7);
+        int minY = Mth.floor(footY);
+        int maxY = Mth.floor(topY);
+        for (BlockPos pos : BlockPos.betweenClosed(minX, minY, minZ, maxX, maxY, maxZ)) {
+            BlockState state = this.level().getBlockState(pos);
+            if (!state.isAir()) {
+                VoxelShape shape = state.getCollisionShape(this.level(), pos);
+                if (!shape.isEmpty()) {
+                    double blockTopY = pos.getY() + shape.max(Direction.Axis.Y);
+                    if (blockTopY > topY) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     public static double getRetreatSpeed(float baseSpeed, double retreatRange, double currentDist) {
