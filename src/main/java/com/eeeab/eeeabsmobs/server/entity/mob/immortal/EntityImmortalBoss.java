@@ -30,7 +30,10 @@ import com.eeeab.eeeabsmobs.client.particle.lib.component.RibbonComponent.Proper
 import com.eeeab.eeeabsmobs.client.particle.lib.component.RibbonComponent.PropertyOverLength.EnumRibbonProperty;
 import com.eeeab.eeeabsmobs.client.particle.lib.data.AdvancedParticleData;
 import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.client.sound.BossMusic;
+import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
 import com.eeeab.eeeabsmobs.server.entity.ai.control.ModBodyRotationControl;
+import com.eeeab.eeeabsmobs.server.entity.ai.goal.HighestDamageTargetGoal;
 import com.eeeab.eeeabsmobs.server.entity.ai.goal.ModLookAtGoal;
 import com.eeeab.eeeabsmobs.server.entity.ai.goal.animate.*;
 import com.eeeab.eeeabsmobs.server.entity.ai.navigate.ModPathNavigateGround;
@@ -78,7 +81,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -424,7 +426,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
 
     @Override
     protected void registerGoals() {
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, EntityAbsImmortal.class));
+        this.targetSelector.addGoal(1, new HighestDamageTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, false));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, TARGET_CONDITIONS));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.7D) {
@@ -1656,8 +1658,14 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
     }
 
     @Override
-    public SoundEvent getBossMusic() {
-        return SoundInit.THE_IMMORTAL_THEME.get();
+    public boolean hasBossMusic() {
+        return true;
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public BossMusic getBossMusic() {
+        return BossMusicPlayer.THE_IMMORTAL_MUSIC;
     }
 
     @Override

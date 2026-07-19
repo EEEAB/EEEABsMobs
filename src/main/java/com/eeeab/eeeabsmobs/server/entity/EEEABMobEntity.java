@@ -1,6 +1,8 @@
 package com.eeeab.eeeabsmobs.server.entity;
 
+import com.eeeab.eeeabsmobs.client.sound.BossMusic;
 import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
+import com.eeeab.eeeabsmobs.server.capability.HurtMemoryCapability;
 import com.eeeab.eeeabsmobs.server.capability.StunCapability;
 import com.eeeab.eeeabsmobs.server.entity.mob.IBoss;
 import com.eeeab.eeeabsmobs.server.entity.mob.IMob;
@@ -11,7 +13,6 @@ import com.eeeab.eeeabsmobs.server.init.EffectInit;
 import com.eeeab.eeeabsmobs.server.util.ModTagKey;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
@@ -33,6 +34,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -97,11 +101,11 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
             if (!target.isAlive()) setTarget(null);
         }
         if (!this.level().isClientSide) {
-            if (getBossMusic() != null) {
-                if (!canPlayMusic()) {
-                    this.level().broadcastEntityEvent(this, STOP_BOSS_MUSIC_ID);
-                } else if (!canHandOffMusic()) {
+            if (this.hasBossMusic()) {
+                if (this.canPlayMusic()) {
                     this.level().broadcastEntityEvent(this, PLAY_BOSS_MUSIC_ID);
+                } else {
+                    this.level().broadcastEntityEvent(this, STOP_BOSS_MUSIC_ID);
                 }
             }
         }
@@ -185,6 +189,18 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
     }
 
     @Override
+    public void remove(RemovalReason reason) {
+        if (reason.shouldDestroy()) {
+            LazyOptional<HurtMemoryCapability.IHurtMemoryCapability> optional = this.getCapability(CapabilityHandler.HURTMEMORY_CAPABILITY);
+            if (optional.isPresent()) {
+                HurtMemoryCapability.IHurtMemoryCapability capability = optional.orElseThrow(() -> new IllegalArgumentException("Lazy optional must not be empty"));
+                capability.clear();
+            }
+        }
+        super.remove(reason);
+    }
+
+    @Override
     public boolean doHurtTarget(Entity entity) {
         return doHurtTarget(entity, 1.0F, 1.0F);
     }
@@ -247,7 +263,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
     @Override
     public void handleEntityEvent(byte id) {
         if (id == PLAY_BOSS_MUSIC_ID) {
-            BossMusicPlayer.playBossMusic(this, getBossMusic());
+            BossMusicPlayer.requestBossMusic(this);
         } else if (id == STOP_BOSS_MUSIC_ID) {
             BossMusicPlayer.stopBossMusic(this);
         } else if (id == MAKE_POOF_ID) {
@@ -478,16 +494,20 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
         return this.getHealth() / this.getMaxHealth();
     }
 
-    public SoundEvent getBossMusic() {
+    public boolean hasBossMusic() {
+        return false;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public BossMusic getBossMusic() {
         return null;
     }
 
     protected boolean canPlayMusic() {
-        return !isNoAi() && !isSilent() && getTarget() instanceof Player;
-    }
-
-    protected boolean canHandOffMusic() {
-        return false;
+        if (isNoAi() || isSilent()) return false;
+        if (getTarget() instanceof Player) return true;
+        HurtMemoryCapability.IHurtMemoryCapability capability = CapabilityHandler.getCapability(this, CapabilityHandler.HURTMEMORY_CAPABILITY);
+        return capability != null && capability.isAnyPlayerInvolved();
     }
 
     public boolean canPlayerHearMusic(Player player) {

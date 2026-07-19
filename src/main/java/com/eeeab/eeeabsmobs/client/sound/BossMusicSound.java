@@ -1,7 +1,7 @@
 package com.eeeab.eeeabsmobs.client.sound;
 
+import com.eeeab.eeeabsmobs.client.ControlledAnimation;
 import com.eeeab.eeeabsmobs.server.entity.EEEABMobEntity;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.sounds.SoundEvent;
@@ -9,37 +9,58 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+//复制自: https://github.com/BobMowzie/MowziesMobs-Public/blob/main/src/main/java/com/bobmowzie/mowziesmobs/client/sound/BossMusicSound.java
 @OnlyIn(Dist.CLIENT)
 public class BossMusicSound extends AbstractTickableSoundInstance {
     private EEEABMobEntity boss;
-    private final SoundEvent sound;
+    private BossMusic music;
 
-    protected BossMusicSound(SoundEvent sound, EEEABMobEntity boss) {
-        super(sound, SoundSource.RECORDS, SoundInstance.createUnseededRandom());
+    private final SoundEvent soundEvent;
+    ControlledAnimation volumeControl;
+
+    private boolean shouldPlay;
+
+    public BossMusicSound(SoundEvent sound, EEEABMobEntity boss, BossMusic music) {
+        this(sound, boss, music, true);
+    }
+
+    public BossMusicSound(SoundEvent sound, EEEABMobEntity boss, BossMusic music, boolean looping) {
+        super(sound, SoundSource.MUSIC, SoundInstance.createUnseededRandom());
+        this.soundEvent = sound;
         this.boss = boss;
-        this.sound = sound;
+        this.music = music;
         this.attenuation = Attenuation.NONE;
-        this.looping = true;
+        this.looping = looping;
         this.delay = 0;
         this.x = boss.getX();
         this.y = boss.getY();
         this.z = boss.getZ();
+
+        volumeControl = new ControlledAnimation(5);
+        volumeControl.setTimer(3);
+        volume = volumeControl.getAnimationFraction() * music.volumeControl.getAnimationFraction();
+
+        shouldPlay = true;
     }
 
     @Override
     public boolean canPlaySound() {
-        return BossMusicPlayer.bossMusic == this;
+        return true;
     }
 
     @Override
+    public boolean canStartSilent() {
+        return true;
+    }
+
     public void tick() {
-        //当音乐需要停止时
-        if (boss == null || !boss.isAlive() || boss.isSilent()) {
-            boss = null;
+        volumeControl.incrementOrDecreaseTimer(shouldPlay);
+
+        if (volume < 0.025) {
             stop();
-            BossMusicPlayer.bossMusic = null;
-            Minecraft.getInstance().getMusicManager().stopPlaying();
         }
+
+        volume = volumeControl.getAnimationFraction() * music.volumeControl.getAnimationFraction();
     }
 
     public void setBoss(EEEABMobEntity boss) {
@@ -51,6 +72,28 @@ public class BossMusicSound extends AbstractTickableSoundInstance {
     }
 
     public SoundEvent getSoundEvent() {
-        return sound;
+        return soundEvent;
+    }
+
+    public void doStop() {
+        stop();
+    }
+
+    public void fadeOut() {
+        shouldPlay = false;
+    }
+
+    public void fadeIn() {
+        shouldPlay = true;
+    }
+
+    public void cutIn() {
+        shouldPlay = true;
+        volumeControl.setTimer(40);
+    }
+
+    public void cutOut() {
+        shouldPlay = false;
+        volumeControl.setTimer(0);
     }
 }

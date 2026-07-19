@@ -6,6 +6,7 @@ import com.eeeab.eeeabsmobs.client.gui.BossBarConfig;
 import com.eeeab.eeeabsmobs.client.gui.BossBarHandler;
 import com.eeeab.eeeabsmobs.client.gui.BossBarRegistry;
 import com.eeeab.eeeabsmobs.client.gui.TipNotificationHandler;
+import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
 import com.eeeab.eeeabsmobs.server.capability.FrenzyCapability;
 import com.eeeab.eeeabsmobs.server.entity.effect.EntityCameraShake;
 import com.eeeab.eeeabsmobs.server.init.EffectInit;
@@ -32,6 +33,7 @@ import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 
 //客户端事件处理器
 @OnlyIn(Dist.CLIENT)
@@ -154,5 +156,12 @@ public class ClientEventHandler {
         BossBarConfig config = BossBarRegistry.getBarForEntity(bossRegistryName);
         event.setCanceled(true);
         BossBarHandler.renderBossBar(event, config);
+    }
+
+    @SubscribeEvent
+    public void onLevelTick(TickEvent.LevelTickEvent event) {
+        if (event.side == LogicalSide.CLIENT && event.phase == TickEvent.Phase.END) {
+            BossMusicPlayer.tick();
+        }
     }
 }

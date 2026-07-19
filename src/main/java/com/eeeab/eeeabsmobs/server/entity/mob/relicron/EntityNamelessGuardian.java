@@ -12,6 +12,8 @@ import com.eeeab.eeeabsmobs.client.ControlledAnimation;
 import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.ParticleRing;
 import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
+import com.eeeab.eeeabsmobs.client.sound.BossMusic;
+import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
 import com.eeeab.eeeabsmobs.server.entity.ModEntityPart;
 import com.eeeab.eeeabsmobs.server.entity.ai.control.ModBodyRotationControl;
 import com.eeeab.eeeabsmobs.server.entity.ai.goal.animate.*;
@@ -67,6 +69,8 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1320,9 +1324,15 @@ public class EntityNamelessGuardian extends AbstractRelicron implements IBoss, P
     //}
 
     @Override
-    public SoundEvent getBossMusic() {
+    public boolean hasBossMusic() {
+        return true;
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public BossMusic getBossMusic() {
         //return this.isChallengeMode() ? SoundInit.GUARDIANS.get() : !this.isPowered() ? SoundInit.GUARDIANS_PRELUDE.get() : SoundInit.GUARDIANS_CLIMAX.get();
-        return SoundInit.NAMELESS_GUARDIAN_THEME.get();
+        return BossMusicPlayer.NAMELESS_GUARDIAN_MUSIC;
     }
 
     @Override
