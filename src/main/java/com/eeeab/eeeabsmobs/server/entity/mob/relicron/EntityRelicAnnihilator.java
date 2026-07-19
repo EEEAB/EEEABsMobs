@@ -35,6 +35,7 @@ import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.client.render.LightningBolt;
 import com.eeeab.eeeabsmobs.server.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.server.entity.ai.control.ModBodyRotationControl;
+import com.eeeab.eeeabsmobs.server.entity.ai.goal.HighestThreatTargetGoal;
 import com.eeeab.eeeabsmobs.server.entity.ai.goal.animate.GuardianLeapGoal;
 import com.eeeab.eeeabsmobs.server.entity.ai.navigate.ModPathNavigateGround;
 import com.eeeab.eeeabsmobs.server.entity.effect.EntityCameraShake;
@@ -72,7 +73,6 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.RangedAttackMob;
@@ -278,7 +278,7 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements IBoss, R
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(1, new HighestThreatTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true, true) {
             @Override
             public boolean canUse() {

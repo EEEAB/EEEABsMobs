@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.server.handler;
 
 import com.eeeab.eeeabsmobs.server.capability.*;
+import com.eeeab.eeeabsmobs.server.entity.mob.IMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -22,11 +23,14 @@ public class CapabilityHandler {
     });
     public static final Capability<AbilityCapability.IAbilityCapability> ABILITY_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
     });
+    public static final Capability<ThreatMemoryCapability.IThreatMemoryCapability> THREATMEMORY_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    });
     public static final Capability<?>[] CAPABILITIES = new Capability[]{
             STUN_CAPABILITY,
             FRENZY_CAPABILITY,
             ELECTRICITY_CAPABILITY,
             ABILITY_CAPABILITY,
+            THREATMEMORY_CAPABILITY,
     };
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -49,6 +53,9 @@ public class CapabilityHandler {
             event.addCapability(StunCapability.ID, new StunCapability.StunCapabilityProvider());
             event.addCapability(FrenzyCapability.ID, new FrenzyCapability.FrenzyCapabilityProvider());
             event.addCapability(ElectricityCapability.ID, new ElectricityCapability.ElectricityCapabilityProvider());
+            if (entity instanceof IMob mob && mob.isBossLevel()) {
+                event.addCapability(ThreatMemoryCapability.ID, new ThreatMemoryCapability.ThreatMemoryCapabilityProvider());
+            }
             if (entity instanceof Player) {
                 event.addCapability(AbilityCapability.ID, new AbilityCapability.AbilityCapabilityProvider());
             }

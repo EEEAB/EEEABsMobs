@@ -11,6 +11,7 @@ import com.eeeab.eeeabsmobs.server.entity.effect.EntityOverloadExplode;
 import com.eeeab.eeeabsmobs.server.entity.effect.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.server.entity.effect.projectile.EntityShamanBomb;
 import com.eeeab.eeeabsmobs.server.entity.mob.IBoss;
+import com.eeeab.eeeabsmobs.server.entity.mob.IMob;
 import com.eeeab.eeeabsmobs.server.entity.mob.corpse.EntityAbsCorpse;
 import com.eeeab.eeeabsmobs.server.entity.mob.corpse.EntityCorpseWarlock;
 import com.eeeab.eeeabsmobs.server.entity.mob.immortal.EntityAbsImmortal;
@@ -20,7 +21,6 @@ import com.eeeab.eeeabsmobs.server.item.IUnbreakableItem;
 import com.eeeab.eeeabsmobs.server.message.ICapabilityMessage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
@@ -42,11 +42,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.raid.Raider;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
@@ -64,18 +65,6 @@ import java.util.UUID;
 
 //服务端事件处理器
 public final class ServerEventHandler {
-
-    @SubscribeEvent
-    public void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof LivingEntity) {
-            event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "stun_processor"), new StunCapability.StunCapabilityProvider());
-            event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "frenzy_processor"), new FrenzyCapability.FrenzyCapabilityProvider());
-            event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "electricity_processor"), new ElectricityCapability.ElectricityCapabilityProvider());
-        }
-        if (event.getObject() instanceof Player) {
-            event.addCapability(new ResourceLocation(EEEABMobs.MOD_ID, "ability_processor"), new AbilityCapability.AbilityCapabilityProvider());
-        }
-    }
 
     @SubscribeEvent
     public void onItemAttributeModifier(ItemAttributeModifierEvent event) {
@@ -306,6 +295,28 @@ public final class ServerEventHandler {
         }
     }
 
+    //实体使用物品后
+    @SubscribeEvent
+    public void onItemUseFinish(LivingEntityUseItemEvent.Finish event) {
+        LivingEntity user = event.getEntity();
+        if (!(user instanceof Player player)) return;
+        if (player.isCreative() || player.isSpectator()) return;
+        ItemStack usedItem = event.getItem();
+        boolean isFood = usedItem.isEdible();
+        boolean isPotion = usedItem.getItem() instanceof PotionItem;
+        if (!isFood && !isPotion) return;
+        LivingEntity target = player.getLastHurtMob();
+        if (target != null && !target.isAlive()) return;
+        if (target instanceof IMob iMob && iMob.isBossLevel()) {
+            ThreatMemoryCapability.IThreatMemoryCapability hurtMemoryCapability = CapabilityHandler.getCapability(target, CapabilityHandler.THREATMEMORY_CAPABILITY);
+            if (hurtMemoryCapability != null) {
+                float threatDamage = Math.min(calculateThreatDamage(usedItem, player), 20F);
+                if ((player.getHealth() / player.getMaxHealth()) <= 0.5) threatDamage *= 2;
+                hurtMemoryCapability.recordDamage(target, player, threatDamage);
+            }
+        }
+    }
+
     //实体被击退
     @SubscribeEvent
     public void onLivingEntityKnockBack(LivingKnockBackEvent event) {
@@ -347,6 +358,10 @@ public final class ServerEventHandler {
         //    }
         //    event.setAmount(damage);
         //}
+        if (hurtEntity instanceof IMob iMob && iMob.isBossLevel() && source.getEntity() instanceof LivingEntity attacker) {
+            ThreatMemoryCapability.IThreatMemoryCapability hurtMemoryCapability = CapabilityHandler.getCapability(hurtEntity, CapabilityHandler.THREATMEMORY_CAPABILITY);
+            if (hurtMemoryCapability != null) hurtMemoryCapability.recordDamage(hurtEntity, attacker, event.getAmount());
+        }
 
         AttributeInstance attribute = hurtEntity.getAttribute(AttributeInit.CRIT_CHANCE.get());
         Entity attacker = source.getEntity();
@@ -470,6 +485,19 @@ public final class ServerEventHandler {
                 }
             }
         }
+    }
+
+    private static float calculateThreatDamage(ItemStack stack, Player player) {
+        if (stack.isEdible()) {
+            FoodProperties food = stack.getFoodProperties(player);
+            if (food != null) {
+                float i = food.getNutrition() + food.getSaturationModifier();
+                if (!food.getEffects().isEmpty()) i *= 1.5F;
+                return i;
+            }
+        }
+        if (stack.getItem() instanceof PotionItem) return 15F;
+        return 0F;
     }
 
     private static void updateGuardianCoreStack(TickEvent.PlayerTickEvent event) {

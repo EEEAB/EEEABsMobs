@@ -36,6 +36,14 @@ public interface IMob {
     MobLevel getMobLevel();
 
     /**
+     * @return 讨伐难度是否是首领级
+     */
+    default boolean isBossLevel() {
+        MobLevel level = getMobLevel();
+        return MobLevel.BOSS == level || MobLevel.LEGENDARY_BOSS == level;
+    }
+
+    /**
      * @return 攻击时附带目标生命值百分比的伤害
      */
     default float getDamageAmountByTargetHealthPct(LivingEntity target) {

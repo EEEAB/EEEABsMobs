@@ -34,8 +34,11 @@ import com.eeeab.eeeabsmobs.client.particle.lib.data.AdvancedBlockParticleData;
 import com.eeeab.eeeabsmobs.client.particle.lib.data.AdvancedParticleData;
 import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.client.render.LightningBolt;
+import com.eeeab.eeeabsmobs.client.sound.BossMusic;
+import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
 import com.eeeab.eeeabsmobs.server.entity.EEEABMobLibrary;
 import com.eeeab.eeeabsmobs.server.entity.ai.control.ModBodyRotationControl;
+import com.eeeab.eeeabsmobs.server.entity.ai.goal.HighestThreatTargetGoal;
 import com.eeeab.eeeabsmobs.server.entity.ai.navigate.ModPathNavigateGround;
 import com.eeeab.eeeabsmobs.server.entity.effect.EntityCameraShake;
 import com.eeeab.eeeabsmobs.server.entity.effect.EntitySurge;
@@ -75,7 +78,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
@@ -319,7 +321,7 @@ public class EntityRealmWarden extends AbstractRelicron implements IBoss, Cracki
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(1, new HighestThreatTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.goalSelector.addGoal(5, new RelicronRandomStrollGoal(this, 1));
     }
@@ -630,8 +632,14 @@ public class EntityRealmWarden extends AbstractRelicron implements IBoss, Cracki
     }
 
     @Override
-    public SoundEvent getBossMusic() {
-        return SoundInit.REALM_WARDEN_THEME.get();
+    public boolean hasBossMusic() {
+        return true;
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public BossMusic getBossMusic() {
+        return BossMusicPlayer.REALM_WARDEN_MUSIC;
     }
 
     @Override

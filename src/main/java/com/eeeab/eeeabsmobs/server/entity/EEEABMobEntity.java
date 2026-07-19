@@ -2,7 +2,7 @@ package com.eeeab.eeeabsmobs.server.entity;
 
 import com.eeeab.eeeabsmobs.client.sound.BossMusic;
 import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
-import com.eeeab.eeeabsmobs.server.capability.HurtMemoryCapability;
+import com.eeeab.eeeabsmobs.server.capability.ThreatMemoryCapability;
 import com.eeeab.eeeabsmobs.server.capability.StunCapability;
 import com.eeeab.eeeabsmobs.server.entity.mob.IBoss;
 import com.eeeab.eeeabsmobs.server.entity.mob.IMob;
@@ -191,9 +191,9 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
     @Override
     public void remove(RemovalReason reason) {
         if (reason.shouldDestroy()) {
-            LazyOptional<HurtMemoryCapability.IHurtMemoryCapability> optional = this.getCapability(CapabilityHandler.HURTMEMORY_CAPABILITY);
+            LazyOptional<ThreatMemoryCapability.IThreatMemoryCapability> optional = this.getCapability(CapabilityHandler.THREATMEMORY_CAPABILITY);
             if (optional.isPresent()) {
-                HurtMemoryCapability.IHurtMemoryCapability capability = optional.orElseThrow(() -> new IllegalArgumentException("Lazy optional must not be empty"));
+                ThreatMemoryCapability.IThreatMemoryCapability capability = optional.orElseThrow(() -> new IllegalArgumentException("Lazy optional must not be empty"));
                 capability.clear();
             }
         }
@@ -506,7 +506,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
     protected boolean canPlayMusic() {
         if (isNoAi() || isSilent()) return false;
         if (getTarget() instanceof Player) return true;
-        HurtMemoryCapability.IHurtMemoryCapability capability = CapabilityHandler.getCapability(this, CapabilityHandler.HURTMEMORY_CAPABILITY);
+        ThreatMemoryCapability.IThreatMemoryCapability capability = CapabilityHandler.getCapability(this, CapabilityHandler.THREATMEMORY_CAPABILITY);
         return capability != null && capability.isAnyPlayerInvolved();
     }
 

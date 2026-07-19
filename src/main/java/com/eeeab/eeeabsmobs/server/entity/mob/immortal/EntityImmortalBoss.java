@@ -33,7 +33,7 @@ import com.eeeab.eeeabsmobs.client.particle.util.ModParticleUtils;
 import com.eeeab.eeeabsmobs.client.sound.BossMusic;
 import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
 import com.eeeab.eeeabsmobs.server.entity.ai.control.ModBodyRotationControl;
-import com.eeeab.eeeabsmobs.server.entity.ai.goal.HighestDamageTargetGoal;
+import com.eeeab.eeeabsmobs.server.entity.ai.goal.HighestThreatTargetGoal;
 import com.eeeab.eeeabsmobs.server.entity.ai.goal.ModLookAtGoal;
 import com.eeeab.eeeabsmobs.server.entity.ai.goal.animate.*;
 import com.eeeab.eeeabsmobs.server.entity.ai.navigate.ModPathNavigateGround;
@@ -426,7 +426,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
 
     @Override
     protected void registerGoals() {
-        this.targetSelector.addGoal(1, new HighestDamageTargetGoal(this));
+        this.targetSelector.addGoal(1, new HighestThreatTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, false));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, TARGET_CONDITIONS));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.7D) {
