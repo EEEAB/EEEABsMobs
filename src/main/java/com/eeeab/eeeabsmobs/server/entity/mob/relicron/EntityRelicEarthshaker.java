@@ -189,9 +189,6 @@ public class EntityRelicEarthshaker extends AbstractRelicron implements RangedAt
             public void tick() {
                 this.entity.setDeltaMovement(0F, this.entity.getDeltaMovement().y, 0F);
                 int tick = this.entity.getAnimationTick();
-                if (tick == 22) {
-                    ModEntityUtils.breakBlocksInRect(entity.level(), entity, 3, 3, 4, 3, 0, 2, true);
-                }
                 LivingEntity target = this.entity.getTarget();
                 if (tick < 17 && target != null) {
                     entity.lookAt(target, 30F, 30F);

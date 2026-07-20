@@ -185,7 +185,6 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
     private int timeUntilBlock;
     private int blockingHurtCount;
     private int battleTimestamp;
-    private int destroyBlocksTick;
     private int closeProximityTickCount;
     private int unableAttackTickCount;
     private int universalCDTime;
@@ -356,6 +355,12 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
         return false;
     }
 
+    //TODO 正式加入后去掉注释
+    //@Override
+    //public boolean canItemDropsWhenBreakBlocks() {
+    //    return super.canItemDropsWhenBreakBlocks() && !this.isAlwaysActive();
+    //}
+
     //@Override
     //public void heal(float healAmount) {
     //    MinecraftForge.EVENT_BUS.post(new LivingHealEvent(this, healAmount));
@@ -521,12 +526,6 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
             if (this.universalCDTime > 0) this.universalCDTime--;
             if (!this.inBlocking() && this.timeUntilBlock > 0) this.timeUntilBlock--;
             if (!this.inBlocking() && this.tickCount % 20 == 0 && this.hurtTime <= 0) this.hurtCount = 0;
-            if (!this.isNoAi() && this.destroyBlocksTick > 0) {
-                this.destroyBlocksTick--;
-                if (this.destroyBlocksTick == 0) {
-                    ModEntityUtils.breakBlocksInRect(this.level(), this, 50F, 2, 5, 2, 0, 0, true);
-                }
-            }
             if (this.isAlive() && !this.isNoAi() && this.tickCount % 30 == 0 && this.getTarget() != null) {
                 this.targets = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(32, 6, 32), e -> this.getTarget() == e || TARGET_CONDITIONS.test(e));
             }
@@ -636,8 +635,6 @@ public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
                 this.stunCheck(source, originalDamage);
             }
             return flag;
-        } else if (this.destroyBlocksTick <= 0) {
-            this.destroyBlocksTick = 20;
         }
         return false;
     }

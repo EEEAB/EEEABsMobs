@@ -105,8 +105,8 @@ public class EntityGuardianLaser extends EntityAbsBeam {
                 if (this.tickCount % 5 == 0) {
                     this.getBeamPathBlocks().forEach(pos -> {
                         if ((ModEntityUtils.canDestroyBlock(this.level(), pos, this, 1F))) {
-                            if (ModEntityUtils.canMobDestroy(this) && owner instanceof EntityNamelessGuardian guardian) {
-                                this.level().destroyBlock(pos, guardian.checkCanDropItems());
+                            if (ModEntityUtils.canMobDestroy(this) && ModConfigHandler.COMMON.others.enableMobGriefing.get()) {
+                                this.level().destroyBlock(pos, ModConfigHandler.COMMON.others.enableItemDropsWhenBreakBlocks.get());
                             } else if (isPlayer() && owner instanceof Player && ModConfigHandler.COMMON.items.guardianCoreConfig2.get()) {
                                 this.level().destroyBlock(pos, true);
                             }

@@ -1,6 +1,7 @@
 package com.eeeab.eeeabsmobs.server.entity.util;
 
-import com.eeeab.eeeabsmobs.server.handler.ModConfigHandler;
+import com.eeeab.eeeabsmobs.server.entity.mob.IMob;
+import com.eeeab.eeeabsmobs.server.util.ModTagKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -69,11 +70,7 @@ public class ModEntityUtils {
     }
 
     public static boolean canDestroyBlock(Level world, BlockPos pos, Entity entity, float maxBlockHardness) {
-        return canDestroyBlock(world, pos, world.getBlockState(pos), maxBlockHardness, entity);
-    }
-
-    public static boolean canDestroyBlock(Level world, BlockPos pos, Entity entity) {
-        return canDestroyBlock(world, pos, world.getBlockState(pos), 50f, entity);
+        return canDestroyBlock(world, pos, world.getBlockState(pos), maxBlockHardness, entity, maxBlockHardness < 0);
     }
 
     /**
@@ -84,13 +81,14 @@ public class ModEntityUtils {
      * @param state            方块状态
      * @param maxBlockHardness 最大硬度
      * @param entity           实体
+     * @param ignoreHardness   是否忽略硬度
      * @return 布尔值
      */
-    public static boolean canDestroyBlock(Level world, BlockPos pos, BlockState state, float maxBlockHardness, Entity entity) {
+    public static boolean canDestroyBlock(Level world, BlockPos pos, BlockState state, float maxBlockHardness, Entity entity, boolean ignoreHardness) {
         float hardness = state.getDestroySpeed(world, pos);
-        return hardness >= 0f && hardness <= maxBlockHardness && !state.isAir()
+        return (ignoreHardness || hardness >= 0f && hardness <= maxBlockHardness) && !state.isAir()
                 && state.getBlock().canEntityDestroy(state, world, pos, entity)
-                && (/* 强制条件 */!(entity instanceof LivingEntity)
+                && !state.is(ModTagKey.MOB_IMMUNE) && (!(entity instanceof LivingEntity)
                 || ForgeEventFactory.onEntityDestroyBlock((LivingEntity) entity, pos, state));
     }
 
@@ -304,8 +302,8 @@ public class ModEntityUtils {
      * @param playSound        是否播放破坏方块的音效
      * @return 是否破坏成功
      */
-    public static boolean breakBlocksInRect(Level level, LivingEntity entity, float maxBlockHardness, int destroyRangeX, int destroyRangeY, int destroyRangeZ, int offsetY, float offset, boolean playSound) {
-        if (entity.level().isClientSide || !canMobDestroy(entity)) return false;
+    public static <T extends LivingEntity & IMob> boolean breakBlocksInRect(Level level, T entity, float maxBlockHardness, int destroyRangeX, int destroyRangeY, int destroyRangeZ, int offsetY, float offset, boolean playSound) {
+        if (entity.level().isClientSide || !canMobDestroy(entity) || !entity.mobGriefing()) return false;
         double radians = Math.toRadians(entity.getYRot() + 90);
         int j1 = Mth.floor(entity.getY());
         int i2 = Mth.floor(entity.getX() + Math.cos(radians) * offset);
@@ -318,9 +316,8 @@ public class ModEntityUtils {
                     int l = j1 + k2;
                     int i1 = j2 + k;
                     BlockPos blockpos = new BlockPos(l2, l, i1);
-                    BlockState blockstate = level.getBlockState(blockpos);
-                    if (blockstate.canEntityDestroy(level, blockpos, entity) && canDestroyBlock(level, blockpos, entity, maxBlockHardness)) {
-                        flag = level.destroyBlock(blockpos, ModConfigHandler.COMMON.others.enableMobsCanBreakingBlockDropItem.get(), entity) || flag;
+                    if (canDestroyBlock(level, blockpos, entity, maxBlockHardness)) {
+                        flag = level.destroyBlock(blockpos, entity.canItemDropsWhenBreakBlocks(), entity) || flag;
                     }
                 }
             }
@@ -341,8 +338,8 @@ public class ModEntityUtils {
      * @param maxExtraHeight   最大额外碰撞高度
      * @param playSound        是否播放破坏方块的音效
      */
-    public static void breakBlocksByEntityAABB(LivingEntity entity, float maxBlockHardness, float extraWidth, float minExtraHeight, float maxExtraHeight, boolean playSound) {
-        if (entity.level().isClientSide || !canMobDestroy(entity)) return;
+    public static <T extends LivingEntity & IMob> void breakBlocksByEntityAABB(T entity, float maxBlockHardness, float extraWidth, float minExtraHeight, float maxExtraHeight, boolean playSound) {
+        if (entity.level().isClientSide || !canMobDestroy(entity) || !entity.mobGriefing()) return;
         AABB bb = entity.getBoundingBox();
         BlockPos min = new BlockPos(Mth.floor(bb.minX - extraWidth), Mth.floor(bb.minY + minExtraHeight), Mth.floor(bb.minZ - extraWidth));
         BlockPos max = new BlockPos(Mth.floor(bb.maxX + extraWidth), Mth.floor(bb.maxY + maxExtraHeight), Mth.floor(bb.maxZ + extraWidth));
@@ -350,7 +347,7 @@ public class ModEntityUtils {
         if (entity.level().hasChunksAt(min, max)) {
             for (BlockPos pos : BlockPos.betweenClosed(min, max)) {
                 if (canDestroyBlock(entity.level(), pos, entity, maxBlockHardness)) {
-                    entity.level().destroyBlock(pos, ModConfigHandler.COMMON.others.enableMobsCanBreakingBlockDropItem.get());
+                    entity.level().destroyBlock(pos, entity.canItemDropsWhenBreakBlocks());
                     flag = true;
                 }
             }

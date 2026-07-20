@@ -61,6 +61,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
     public boolean dropAfterDeathAnim = true;//死亡掉落动画
     public Player killDataAttackingPlayer;
     public LivingEntity blockEntity = null;
+    private int destroyBlocksTick;
     public DamageSource lastDamageSource;//受到的伤害源
     private DamageSource killDataCause;//死亡的伤害源
     private final ModBossInfoServer bossInfo = new ModBossInfoServer(this);
@@ -116,6 +117,14 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
         super.customServerAiStep();
         bossInfo.setVisible(canLoadBossBar());
         if (tickCount % 4 == 0) bossInfo.update();
+        if (this.destroyBlocksTick > 0) {
+            --this.destroyBlocksTick;
+            if (this.destroyBlocksTick == 0 && this.canBreakBlock()) {
+                int width = Math.round(this.getBbWidth());
+                int height = (int) Math.ceil(this.getBbHeight());
+                ModEntityUtils.breakBlocksInRect(this.level(), this, -1F, width, height, width, 0, 0, true);
+            }
+        }
     }
 
     @Override
@@ -142,6 +151,9 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
                     }
                 }
             }
+        }
+        if (this.destroyBlocksTick <= 0) {
+            this.destroyBlocksTick = 20;
         }
         boolean flag = super.hurt(source, amount);
         if (flag) this.lastHurtTime = currentTick;
@@ -514,5 +526,9 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
         return player != null
                 && canAttack(player)
                 && distanceTo(player) < 50 * 50;
+    }
+
+    public boolean canBreakBlock() {
+        return getMobLevel().canBreakBlock();
     }
 }

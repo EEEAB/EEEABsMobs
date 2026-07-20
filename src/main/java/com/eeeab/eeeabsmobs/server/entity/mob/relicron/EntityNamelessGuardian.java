@@ -176,7 +176,6 @@ public class EntityNamelessGuardian extends AbstractRelicron implements IBoss, P
     //判断是否是首次进入强化状态
     private boolean fmFlag = true;
     private int attackTick;
-    private int destroyBlocksTick;
     //private int illegalityCount;
     private final ModEntityPart<EntityNamelessGuardian> core;
     private final ModEntityPart<EntityNamelessGuardian>[] subEntities;
@@ -663,13 +662,6 @@ public class EntityNamelessGuardian extends AbstractRelicron implements IBoss, P
                     this.noUseSkillFromLongTick++;
                 }
             }
-
-            if (!this.isNoAi() && this.destroyBlocksTick > 0) {
-                this.destroyBlocksTick--;
-                if (this.destroyBlocksTick == 0) {
-                    ModEntityUtils.breakBlocksInRect(this.level(), this, 50F, 2, 4, 2, 0, 0, true);
-                }
-            }
         }
 
         this.coreControlled.incrementOrDecreaseTimer(this.isGlow());
@@ -716,8 +708,6 @@ public class EntityNamelessGuardian extends AbstractRelicron implements IBoss, P
                 return super.hurt(source, damage);
             } else if (source.is(ModTagKey.BYPASSES_DAMAGE_CAP)) {
                 return super.hurt(source, damage);
-            } else if (this.destroyBlocksTick <= 0) {
-                this.destroyBlocksTick = 20;
             }
         }
         return false;

@@ -88,6 +88,11 @@ public abstract class AbstractRelicron extends EEEABMobLibrary implements Enemy,
     }
 
     @Override
+    public boolean canItemDropsWhenBreakBlocks() {
+        return super.canItemDropsWhenBreakBlocks() && !this.isAlwaysActive();
+    }
+
+    @Override
     protected void registerGoals() {
         super.registerGoals();
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, EntityAbsImmortal.class, true));

@@ -79,12 +79,10 @@ public final class ModConfigHandler {
             }
             {
                 builder.push("Guardian Core");
-                guardianCoreConfig1 = builder.comment("Set the maximum shooting distance for players")
-                        .translation(getTranslationKey("attack_radius"))
+                guardianCoreConfig1 = builder.translation(getTranslationKey("attack_radius"))
                         .defineInRange("Set Attack Radius", 16D, 1D, 64D);
-                guardianCoreConfig2 = builder.comment("If set to 'False' disable block destruction by players")
-                        .translation(getTranslationKey("guardian_core"))
-                        .define("Enable Destroy Block", false);
+                guardianCoreConfig2 = builder.translation(getTranslationKey("guardian_core"))
+                        .define("Enable Break Block", false);
                 guardianLaser = new AttributeConfig(5F);
                 builder.pop();
             }
@@ -165,7 +163,7 @@ public final class ModConfigHandler {
             builder.push("Entities");
             {
                 builder.push("Falling Block");
-                fallingBlockConfig1 = builder.comment("If set to 'False' disable falling block spawn")
+                fallingBlockConfig1 = builder.comment("If set to 'False', Disable falling block spawn")
                         .translation(getTranslationKey("falling_block_1")).define("Enable Falling Block Spawn", true);
                 fallingBlockConfig2 = builder.comment("Set the maximum range for downward block detection to determine the Y-axis position where the entity spawns")
                         .translation(getTranslationKey("falling_block_2")).defineInRange("Set Below Check Range", 3, 1, 10);
@@ -367,7 +365,7 @@ public final class ModConfigHandler {
             relicAnnihilator = new RelicAnnihilator(builder);
             realmwarden = new Realmwarden(builder);
             namelessGuardian = new NamelessGuardian(builder);
-            outOfCombatHeal = builder.comment("If set to 'False' disable health regen while out of combat")
+            outOfCombatHeal = builder.comment("If set to 'False', Disable health regen while out of combat")
                     .translation(getTranslationKey("out_of_combat")).define("Enable Out Of Combat Health Regen", true);
             builder.pop();
         }
@@ -493,7 +491,7 @@ public final class ModConfigHandler {
             builder.push("Nameless Guardian");
             suckBloodMultiplier = builder.comment("Set suck blood multiplier")
                     .translation(getTranslationKey("suck_blood")).defineInRange("Suck Blood Multiplier", 1D, 0D, 1024D);
-            enableForcedSuckBlood = builder.comment("If set to 'False' disable forced suck blood on power status(This setting does not take effect in Challenge Mode)")
+            enableForcedSuckBlood = builder.comment("If set to 'False', Disable forced suck blood on power status(This setting does not take effect in Challenge Mode)")
                     .translation(getTranslationKey("forced_suck_blood")).define("Enable Forced Suck Blood", true);
             challengeMode = builder.comment("Be careful! It's going to get tricky!")
                     .translation(getTranslationKey("challenge_mode")).define("Challenge Mode", false);
@@ -575,17 +573,19 @@ public final class ModConfigHandler {
             builder.push("Others");
             {
                 builder.push("Bosses");
-                enableShowBossBars = builder.comment("If set to 'False' disable show boss bar")
+                enableShowBossBars = builder.comment("If set to 'False', Disable show boss bar")
                         .translation(getTranslationKey("show_boss_bar")).define("Enable Show Boss Health Bars", true);
                 bossBarMaxDist = builder.comment("Set maximum render distance for boss health bar")
                         .translation(getTranslationKey("boss_bar_render_dist")).defineInRange("Set Render Distance For Boss Bars", 48D, 32D, 128D);
                 builder.pop();
             }
-            enableMobsCanBreakingBlockDropItem = builder.comment("If set to 'False' disable mobs breaking blocks drop items")
-                    .translation(getTranslationKey("break_block_drop")).define("Enable Mobs Breaking Blocks Drop Items", false);
-            enableShowItemCD = builder.comment("If set to 'False' disable showing cooldown time in tooltip")
+            enableMobGriefing = builder.comment("If set to 'False', Disable mobs griefing")
+                    .translation(getTranslationKey("mob_griefing")).define("Enable Mob Griefing", true);
+            enableItemDropsWhenBreakBlocks = builder.comment("If set to 'False', Breaking blocks will not drop items")
+                    .translation(getTranslationKey("do_break_loot")).define("Enable Item Drops When Break Blocks", true);
+            enableShowItemCD = builder.comment("If set to 'False', Disable showing cooldown time in tooltip")
                     .translation(getTranslationKey("show_item_cd")).define("Enable Show Item Cd", false);
-            enableCombatPrompts = builder.comment("If set to 'False' disable all combat encounter prompts")
+            enableCombatPrompts = builder.comment("If set to 'False', Disable all combat encounter prompts")
                     .translation(getTranslationKey("combat_prompt")).define("Enable Combat Prompt Trigger Detection", true);
             builder.pop();
         }
@@ -594,8 +594,10 @@ public final class ModConfigHandler {
         public final ForgeConfigSpec.BooleanValue enableShowBossBars;
         //boss血条显示距离
         public final ForgeConfigSpec.DoubleValue bossBarMaxDist;
-        //启用生物破坏方块掉落对应方块物品
-        public final ForgeConfigSpec.BooleanValue enableMobsCanBreakingBlockDropItem;
+        //启用模组生物破坏性行为
+        public final ForgeConfigSpec.BooleanValue enableMobGriefing;
+        //启用破坏方块掉落对应方块物品
+        public final ForgeConfigSpec.BooleanValue enableItemDropsWhenBreakBlocks;
         //启用显示物品冷却时间
         public final ForgeConfigSpec.BooleanValue enableShowItemCD;
         //启用战斗提示
@@ -650,9 +652,9 @@ public final class ModConfigHandler {
     public static class DamageSourceAdaptConfig {
         public DamageSourceAdaptConfig(int attenuatedDuration, int fullAdaptDuration, double singleAdaptFactor, double playerSingleAdaptFactor, double maxAdaptFactor) {
             COMMON_BUILDER.push("Damage Adapt V1");
-            this.enabled = COMMON_BUILDER.comment("If set to 'False' disable Damage Adaptation")
+            this.enabled = COMMON_BUILDER.comment("If set to 'False', Disable Damage Adaptation")
                     .translation(getTranslationKey("damage_adapt_enabled")).define("Enabled", true);
-            this.debug = COMMON_BUILDER.comment("If set to 'False' disable print logs")
+            this.debug = COMMON_BUILDER.comment("If set to 'False', Disable print logs")
                     .translation(getTranslationKey("damage_adapt_debug")).define("Enabled Debug Mode", false);
             this.attenuatedDuration = COMMON_BUILDER.comment("Duration for adaptation to decay to zero when not fully adapted (in seconds)")
                     .translation(getTranslationKey("damage_adapt_0")).defineInRange("Decay Duration", attenuatedDuration, 1, 300);
@@ -699,13 +701,13 @@ public final class ModConfigHandler {
     public static class Client {
         public Client(final ForgeConfigSpec.Builder builder) {
             tipNotification = new TipNotification(builder);
-            enableCameraShake = builder.comment("If set to 'False' disable camera shake")
+            enableCameraShake = builder.comment("If set to 'False', Disable camera shake")
                     .translation(getTranslationKey("camera_shake")).define("Enable Camera Shake", true);
-            enableCustomBossBars = builder.comment("If set to 'False' disable custom bosse health bar")
+            enableCustomBossBars = builder.comment("If set to 'False', Disable custom bosse health bar")
                     .translation(getTranslationKey("custom_boss_bar")).define("Enable Custom Boss Health Bars", true);
-            enablePlayBossMusic = builder.comment("If set to 'False' disable play boss music")
+            enablePlayBossMusic = builder.comment("If set to 'False', Disable play boss music")
                     .translation(getTranslationKey("play_boss_music")).define("Enable Play Bosses Musics", true);
-            enableFallingBlockRender = builder.comment("If set to 'False' disable falling block rendering")
+            enableFallingBlockRender = builder.comment("If set to 'False', Disable falling block rendering")
                     .translation(getTranslationKey("falling_block_render")).define("Enable Falling Block Render", true);
         }
 
@@ -719,7 +721,7 @@ public final class ModConfigHandler {
     public static class TipNotification {
         public TipNotification(final ForgeConfigSpec.Builder builder) {
             builder.push("Popup Notification");
-            enabled = builder.comment("If set to 'False' disable popup notification")
+            enabled = builder.comment("If set to 'False', Disable popup notification")
                     .translation(getTranslationKey("notification_enabled")).define("Enabled", true);
             displayMode = builder
                     .comment("HUD display mode: FADE_IN_OUT (fade in/out), IMMEDIATE (show immediately)")

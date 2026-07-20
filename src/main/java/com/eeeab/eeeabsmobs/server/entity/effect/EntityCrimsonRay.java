@@ -52,8 +52,8 @@ public class EntityCrimsonRay extends EntityAbsBeam {
             if (blockSide != null) {
                 if (!level().isClientSide) {
                     this.getBeamPathBlocks().forEach(pos -> {
-                        if (ModEntityUtils.canDestroyBlock(this.level(), pos, this, 50) && ModEntityUtils.canMobDestroy(this)) {
-                            this.level().destroyBlock(pos, false);
+                        if (ModEntityUtils.canMobDestroy(this) && ModConfigHandler.COMMON.others.enableMobGriefing.get() && ModEntityUtils.canDestroyBlock(this.level(), pos, this, 50)) {
+                            this.level().destroyBlock(pos, ModConfigHandler.COMMON.others.enableItemDropsWhenBreakBlocks.get());
                         }
                     });
                 } else this.spawnExplosionParticles();
