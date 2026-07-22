@@ -43,7 +43,6 @@ import com.eeeab.eeeabsmobs.server.entity.effect.EntityElectromagnetic;
 import com.eeeab.eeeabsmobs.server.entity.effect.EntityGuardianLaser;
 import com.eeeab.eeeabsmobs.server.entity.effect.EntityInfraredRay;
 import com.eeeab.eeeabsmobs.server.entity.effect.projectile.EntityAnnihilatorMissile;
-import com.eeeab.eeeabsmobs.server.entity.mob.IBoss;
 import com.eeeab.eeeabsmobs.server.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.server.entity.util.ShockWaveUtils;
 import com.eeeab.eeeabsmobs.server.entity.util.damage.ModDamageSource;
@@ -95,7 +94,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.Optional;
 
-public class EntityRelicAnnihilator extends AbstractRelicron implements IBoss, RangedAttackMob {
+public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAttackMob {
     public static final Animation DIE_ANIMATION = Animation.create(60);
     public static final Animation SLASH_ANIMATION = Animation.create(50).doesOverlap();
     public static final Animation SWING_ANIMATION = Animation.create(50).doesOverlap();

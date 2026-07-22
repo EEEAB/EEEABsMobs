@@ -10,7 +10,6 @@ import com.eeeab.eeeabsmobs.server.capability.*;
 import com.eeeab.eeeabsmobs.server.entity.effect.EntityOverloadExplode;
 import com.eeeab.eeeabsmobs.server.entity.effect.projectile.EntityBloodBall;
 import com.eeeab.eeeabsmobs.server.entity.effect.projectile.EntityShamanBomb;
-import com.eeeab.eeeabsmobs.server.entity.mob.IBoss;
 import com.eeeab.eeeabsmobs.server.entity.mob.IMob;
 import com.eeeab.eeeabsmobs.server.entity.mob.corpse.EntityAbsCorpse;
 import com.eeeab.eeeabsmobs.server.entity.mob.corpse.EntityCorpseWarlock;
@@ -45,6 +44,7 @@ import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
@@ -312,7 +312,7 @@ public final class ServerEventHandler {
             if (hurtMemoryCapability != null) {
                 float threatDamage = Math.min(calculateThreatDamage(usedItem, player), 20F);
                 if ((player.getHealth() / player.getMaxHealth()) <= 0.5) threatDamage *= 2;
-                hurtMemoryCapability.recordDamage(target, player, threatDamage);
+                if (threatDamage > 0) hurtMemoryCapability.recordDamage(target, player, threatDamage);
             }
         }
     }
@@ -321,7 +321,7 @@ public final class ServerEventHandler {
     @SubscribeEvent
     public void onLivingEntityKnockBack(LivingKnockBackEvent event) {
         LivingEntity entity = event.getEntity();
-        if (event.isCancelable() && entity instanceof IBoss) {
+        if (event.isCancelable() && entity instanceof IMob iMob && iMob.isBossLevel()) {
             event.setStrength(0F);
             event.setCanceled(true);
         }
@@ -331,7 +331,7 @@ public final class ServerEventHandler {
     @SubscribeEvent
     public void onEntityMountEntity(EntityMountEvent event) {
         Entity entity = event.getEntityMounting();
-        if (event.isCancelable() && entity instanceof IBoss) {
+        if (event.isCancelable() && entity instanceof IMob iMob && iMob.isBossLevel()) {
             event.setCanceled(true);
         }
     }
@@ -496,7 +496,9 @@ public final class ServerEventHandler {
                 return i;
             }
         }
-        if (stack.getItem() instanceof PotionItem) return 15F;
+        if (stack.getItem() instanceof PotionItem && !PotionUtils.getPotion(stack).getEffects().isEmpty()) {
+            return 15F;
+        }
         return 0F;
     }
 

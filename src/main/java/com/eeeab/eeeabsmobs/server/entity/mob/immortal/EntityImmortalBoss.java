@@ -40,7 +40,6 @@ import com.eeeab.eeeabsmobs.server.entity.ai.navigate.ModPathNavigateGround;
 import com.eeeab.eeeabsmobs.server.entity.effect.EntityCameraShake;
 import com.eeeab.eeeabsmobs.server.entity.effect.EntityImmortalLaser;
 import com.eeeab.eeeabsmobs.server.entity.effect.EntityImmortalMagicCircle.MagicCircleType;
-import com.eeeab.eeeabsmobs.server.entity.mob.IBoss;
 import com.eeeab.eeeabsmobs.server.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.server.entity.util.TickBasedProbabilityBooster;
 import com.eeeab.eeeabsmobs.server.entity.util.damage.DamageAdaptation;
@@ -110,7 +109,7 @@ import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
-public class EntityImmortalBoss extends EntityAbsImmortal implements IBoss {
+public class EntityImmortalBoss extends EntityAbsImmortal {
     public static final Animation DIE_ANIMATION = Animation.create(60);
     public static final Animation SPAWN_ANIMATION = Animation.create(100);
     public static final Animation SWITCH_STAGE_ANIMATION = Animation.create(100);

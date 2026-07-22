@@ -2,9 +2,8 @@ package com.eeeab.eeeabsmobs.server.entity;
 
 import com.eeeab.eeeabsmobs.client.sound.BossMusic;
 import com.eeeab.eeeabsmobs.client.sound.BossMusicPlayer;
-import com.eeeab.eeeabsmobs.server.capability.ThreatMemoryCapability;
 import com.eeeab.eeeabsmobs.server.capability.StunCapability;
-import com.eeeab.eeeabsmobs.server.entity.mob.IBoss;
+import com.eeeab.eeeabsmobs.server.capability.ThreatMemoryCapability;
 import com.eeeab.eeeabsmobs.server.entity.mob.IMob;
 import com.eeeab.eeeabsmobs.server.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.server.handler.CapabilityHandler;
@@ -88,7 +87,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
 
     @Override
     public boolean canBeAffected(MobEffectInstance effectInstance) {
-        return (!(this instanceof IBoss) || ModEntityUtils.isBeneficial(effectInstance.getEffect())) && super.canBeAffected(effectInstance);
+        return (!isBossLevel() || ModEntityUtils.isBeneficial(effectInstance.getEffect())) && super.canBeAffected(effectInstance);
     }
 
     @Override
@@ -495,7 +494,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
     }
 
     protected boolean canLoadBossBar() {
-        return this instanceof IBoss && ModConfigHandler.COMMON.others.enableShowBossBars.get();
+        return isBossLevel() && ModConfigHandler.COMMON.others.enableShowBossBars.get();
     }
 
     protected BossEvent.BossBarColor bossBarColor() {

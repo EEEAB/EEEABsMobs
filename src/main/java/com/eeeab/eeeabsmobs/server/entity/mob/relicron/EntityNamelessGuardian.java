@@ -21,7 +21,6 @@ import com.eeeab.eeeabsmobs.server.entity.ai.navigate.ModPathNavigateGround;
 import com.eeeab.eeeabsmobs.server.entity.effect.EntityCameraShake;
 import com.eeeab.eeeabsmobs.server.entity.effect.EntityFallingBlock;
 import com.eeeab.eeeabsmobs.server.entity.effect.EntityGuardianLaser;
-import com.eeeab.eeeabsmobs.server.entity.mob.IBoss;
 import com.eeeab.eeeabsmobs.server.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.server.entity.util.ShockWaveUtils;
 import com.eeeab.eeeabsmobs.server.handler.ModConfigHandler;
@@ -80,7 +79,7 @@ import java.util.List;
 import java.util.Optional;
 
 //创建于 2023/1/17 终于 2026
-public class EntityNamelessGuardian extends AbstractRelicron implements IBoss, PowerableMob {
+public class EntityNamelessGuardian extends AbstractRelicron implements PowerableMob {
     public static final Animation DIE_ANIMATION = Animation.create(51);
     public static final Animation ROAR_ANIMATION = Animation.create(80);
     public static final Animation ATTACK_ANIMATION1 = Animation.create(36);
@@ -1156,7 +1155,6 @@ public class EntityNamelessGuardian extends AbstractRelicron implements IBoss, P
         return this.fmFlag;
     }
 
-    @Override
     public boolean isChallengeMode() {
         return ModConfigHandler.COMMON.mobs.relicrons.namelessGuardian.challengeMode.get();
     }

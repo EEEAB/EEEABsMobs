@@ -45,7 +45,6 @@ import com.eeeab.eeeabsmobs.server.entity.effect.EntitySurge;
 import com.eeeab.eeeabsmobs.server.entity.effect.EntityTelegraph;
 import com.eeeab.eeeabsmobs.server.entity.effect.projectile.EntityAnnihilatorMissile;
 import com.eeeab.eeeabsmobs.server.entity.mob.CrackinessEntity;
-import com.eeeab.eeeabsmobs.server.entity.mob.IBoss;
 import com.eeeab.eeeabsmobs.server.entity.util.ModEntityUtils;
 import com.eeeab.eeeabsmobs.server.entity.util.ShockWaveUtils;
 import com.eeeab.eeeabsmobs.server.entity.util.damage.ModDamageSource;
@@ -100,7 +99,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.IntFunction;
 
-public class EntityRealmWarden extends AbstractRelicron implements IBoss, CrackinessEntity<EntityRealmWarden> {
+public class EntityRealmWarden extends AbstractRelicron implements CrackinessEntity<EntityRealmWarden> {
     public static final Animation GROUND_POUND_ANIMATION = Animation.create(40).doesOverlap();
     public static final Animation HEAVY_SWING_ANIMATION = Animation.create(70);
     public static final Animation DERIVED_HEAVY_SWING_ANIMATION = Animation.create(95);
