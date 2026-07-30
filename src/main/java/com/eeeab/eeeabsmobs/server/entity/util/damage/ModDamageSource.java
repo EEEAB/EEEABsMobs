@@ -1,7 +1,6 @@
 package com.eeeab.eeeabsmobs.server.entity.util.damage;
 
 import com.eeeab.eeeabsmobs.server.util.ModResourceKey;
-import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -14,8 +13,6 @@ import net.minecraft.world.entity.player.Player;
 import javax.annotation.Nullable;
 
 public class ModDamageSource {
-    private static Registry<DamageType> damageTypes;
-
     public static DamageSource bypassArmor(Entity entity) {
         return source(entity.level().registryAccess(), ModResourceKey.BYPASS_ARMOR, entity, entity);
     }
@@ -64,9 +61,7 @@ public class ModDamageSource {
     }
 
     public static DamageSource source(RegistryAccess registryAccess, ResourceKey<DamageType> resourceKey, @Nullable Entity directEntity, @Nullable Entity causingEntity) {
-        if (damageTypes == null) {
-            damageTypes = registryAccess.registryOrThrow(Registries.DAMAGE_TYPE);
-        }
-        return new DamageSource(damageTypes.getHolderOrThrow(resourceKey), directEntity, causingEntity);
+        var registry = registryAccess.registryOrThrow(Registries.DAMAGE_TYPE);
+        return new DamageSource(registry.getHolderOrThrow(resourceKey), directEntity, causingEntity);
     }
 }
