@@ -91,6 +91,7 @@ public class EntityAfterImageHelper<T extends Entity> {
     public void renderAfterImages(T entity, PoseStack poseStack, MultiBufferSource buffer, int packedLight, float partialTicks, long currentTick, Function<T, ResourceLocation> textureProvider) {
         float currentTimeWithPartial = currentTick + partialTicks;
         afterImages.removeIf(img -> currentTimeWithPartial - img.creationTick > duration);
+        if (afterImages.isEmpty()) return;
         AfterImage currentState = capture(entity, currentTick);
 
         for (AfterImage img : afterImages) {
@@ -109,7 +110,7 @@ public class EntityAfterImageHelper<T extends Entity> {
             poseStack.translate(0, -1.501F, 0);
 
             ResourceLocation texture = textureProvider.apply(entity);
-            RenderType renderType = RenderType.entityTranslucentCull(texture);
+            RenderType renderType = RenderType.entityTranslucent(texture);
             VertexConsumer vertexConsumer = buffer.getBuffer(renderType);
             rootPart.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, alpha);
             poseStack.popPose();

@@ -13,6 +13,7 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -20,10 +21,9 @@ import java.util.Locale;
 
 @OnlyIn(Dist.CLIENT)
 public class ParticleDust extends TextureSheetParticle {
-    private final float scale;
+    private final float scale, airDiffusionSpeed, maxAlpha;
     private final boolean emissive;
     private final EnumDustBehavior behavior;
-    private final float airDiffusionSpeed;
 
     public enum EnumDustBehavior {
         SHRINK,
@@ -33,13 +33,15 @@ public class ParticleDust extends TextureSheetParticle {
 
     public ParticleDust(ClientLevel world, double x, double y, double z, double vx, double vy, double vz, double scale, int duration, EnumDustBehavior behavior, double airDiffusionSpeed, boolean emissive) {
         super(world, x, y, z);
-        this.scale = (float) scale * 0.5f * 0.1f;
-        lifetime = duration;
-        xd = vx * 0.5;
-        yd = vy * 0.5;
-        zd = vz * 0.5;
+        float randomFactor = 0.6F + 0.4F * this.random.nextFloat();
+        this.scale = (float) scale * 0.05F * randomFactor;
+        this.maxAlpha = 0.25F + this.random.nextFloat() * 0.25F;
+        this.lifetime = duration + this.random.nextInt(3) + (int) ((this.maxAlpha - 0.25F) * 50);
+        this.xd = vx * 0.5;
+        this.yd = vy * 0.5;
+        this.zd = vz * 0.5;
         this.behavior = behavior;
-        roll = oRoll = (float) (random.nextInt(4) * Math.PI / 2);
+        this.roll = this.oRoll = (float) (this.random.nextInt(4) * Math.PI / 2);
         this.airDiffusionSpeed = (float) airDiffusionSpeed;
         this.emissive = emissive;
     }
@@ -65,10 +67,17 @@ public class ParticleDust extends TextureSheetParticle {
     @Override
     public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
         float var = (age + partialTicks) / (float) lifetime;
-        alpha = 0.25f * ((float) (1 - Math.exp(5 * (var - 1)) - Math.pow(2000, -var)));
-        if (alpha < 0.01) {
-            alpha = 0.01f;
+        var = Mth.clamp(var, 0.0F, 1.0F);
+        float fadeStart = 0.1F;
+        float alpha;
+        if (var <= fadeStart) {
+            alpha = maxAlpha;
+        } else {
+            float t = (var - fadeStart) / (1 - fadeStart);
+            alpha = maxAlpha * (float) (1 - Math.pow(t, 3));
         }
+        if (alpha < 0.01F) alpha = 0.01F;
+        this.alpha = alpha;
         if (behavior == EnumDustBehavior.SHRINK) {
             this.quadSize = scale * ((1 - 0.7f * var) + 0.3f);
         } else if (behavior == EnumDustBehavior.GROW) {
@@ -92,8 +101,13 @@ public class ParticleDust extends TextureSheetParticle {
         public Particle createParticle(DustData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
             ParticleDust particleDust = new ParticleDust(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getScale(), typeIn.getDuration(), typeIn.getBehavior(), typeIn.getAirDiffusionSpeed(), typeIn.getEmissive());
             particleDust.setSpriteFromAge(spriteSet);
-            particleDust.setColor(typeIn.getR(), typeIn.getG(), typeIn.getB());
+            float randomFactor = (particleDust.random.nextFloat() - particleDust.random.nextFloat()) * 0.1F;
+            particleDust.setColor(clampColor(typeIn.getR() + randomFactor), clampColor(typeIn.getG() + randomFactor), clampColor(typeIn.getB() + randomFactor));
             return particleDust;
+        }
+
+        private static float clampColor(float color) {
+            return Mth.clamp(color, 0F, 1F);
         }
     }
 
@@ -150,7 +164,7 @@ public class ParticleDust extends TextureSheetParticle {
         }
 
         public DustData(ParticleType<DustData> type, float scale, int duration, EnumDustBehavior behavior, float airDiffusionSpeed) {
-            this(type, 0.22F, 0.22F, 0.3F, scale, duration, behavior, airDiffusionSpeed);
+            this(type, 0.22F, 0.22F, 0.3F, scale, duration, behavior, airDiffusionSpeed, true);
         }
 
         @Override

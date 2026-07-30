@@ -1,6 +1,5 @@
 package com.eeeab.eeeabsmobs.client.particle;
 
-import com.eeeab.eeeabsmobs.client.render.ModRenderType;
 import com.eeeab.eeeabsmobs.server.init.ParticleInit;
 import com.eeeab.eeeabsmobs.server.util.ModMathUtils;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -27,7 +26,7 @@ import java.util.Locale;
 
 @OnlyIn(Dist.CLIENT)
 public class ParticleRing extends TextureSheetParticle {
-    public float red, green, blue, alpha;
+    public float red, green, blue, opacity;
     public boolean facesCamera;
     public float yRot, xRot;
     public float scale;
@@ -50,7 +49,7 @@ public class ParticleRing extends TextureSheetParticle {
         this.red = red;
         this.green = green;
         this.blue = blue;
-        this.alpha = opacity;
+        this.opacity = opacity;
         this.yRot = yRot;
         this.xRot = xRot;
         this.facesCamera = facesCamera;
@@ -77,6 +76,7 @@ public class ParticleRing extends TextureSheetParticle {
     //参考自: net.minecraft.client.particle.SingleQuadParticle.render
     public void render(VertexConsumer vertexConsumer, Camera renderInfo, float partialTicks) {
         float var = (age + partialTicks) / lifetime;
+        var = Mth.clamp(var, 0.0F, 1.0F);
         if (behavior == EnumRingBehavior.GROW) {
             quadSize = scale * var;
         } else if (behavior == EnumRingBehavior.SHRINK) {
@@ -86,11 +86,18 @@ public class ParticleRing extends TextureSheetParticle {
         } else {
             quadSize = scale;
         }
-        this.alpha = this.alpha * 0.95f * (1 - (age + partialTicks) / lifetime) + 0.05f;
+        float fadeStart = 0.1F;
+        float alpha;
+        if (var <= fadeStart) {
+            alpha = opacity;
+        } else {
+            float t = (var - fadeStart) / (1 - fadeStart);
+            alpha = opacity * (1 - t);
+        }
+        this.alpha = Math.max(0.01F, alpha);
         rCol = red;
         gCol = green;
         bCol = blue;
-
         Vec3 vec3 = renderInfo.getPosition();
         float f = (float) (Mth.lerp(partialTicks, this.xo, this.x) - vec3.x());
         float f1 = (float) (Mth.lerp(partialTicks, this.yo, this.y) - vec3.y());
@@ -110,10 +117,12 @@ public class ParticleRing extends TextureSheetParticle {
             quaternion.mul(quatY);
             quaternion.mul(quatX);
         }
-
-        Vector3f vector3f1 = new Vector3f(-1.0F, -1.0F, 0.0F);
-        quaternion.transform(vector3f1);
-        Vector3f[] avector3f = new Vector3f[]{new Vector3f(-1.0F, -1.0F, 0.0F), new Vector3f(-1.0F, 1.0F, 0.0F), new Vector3f(1.0F, 1.0F, 0.0F), new Vector3f(1.0F, -1.0F, 0.0F)};
+        Vector3f[] avector3f = new Vector3f[]{
+                new Vector3f(-1.0F, -1.0F, 0.0F),
+                new Vector3f(-1.0F, 1.0F, 0.0F),
+                new Vector3f(1.0F, 1.0F, 0.0F),
+                new Vector3f(1.0F, -1.0F, 0.0F)
+        };
         float f3 = this.getQuadSize(partialTicks);
         for (int i = 0; i < 4; ++i) {
             Vector3f vector3f = avector3f[i];
@@ -130,11 +139,15 @@ public class ParticleRing extends TextureSheetParticle {
         vertexConsumer.vertex(avector3f[1].x(), avector3f[1].y(), avector3f[1].z()).uv(f7, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
         vertexConsumer.vertex(avector3f[2].x(), avector3f[2].y(), avector3f[2].z()).uv(f6, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
         vertexConsumer.vertex(avector3f[3].x(), avector3f[3].y(), avector3f[3].z()).uv(f6, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        vertexConsumer.vertex(avector3f[3].x(), avector3f[3].y(), avector3f[3].z()).uv(f6, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        vertexConsumer.vertex(avector3f[2].x(), avector3f[2].y(), avector3f[2].z()).uv(f6, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        vertexConsumer.vertex(avector3f[1].x(), avector3f[1].y(), avector3f[1].z()).uv(f7, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        vertexConsumer.vertex(avector3f[0].x(), avector3f[0].y(), avector3f[0].z()).uv(f7, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
     }
 
     @Override
     public ParticleRenderType getRenderType() {
-        return ModRenderType.PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH;
+        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
 
     @OnlyIn(Dist.CLIENT)

@@ -147,10 +147,6 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
     private boolean LRFlag;//T:left F:right
     @OnlyIn(Dist.CLIENT)
     public Vec3 muzzle;
-    private Vec3 preMuzzle = Vec3.ZERO;
-    @OnlyIn(Dist.CLIENT)
-    public Vec3 saw;
-    private Vec3 preSaw = Vec3.ZERO;
     private final EntityRelicAnnihilatorPart scope;
     private final EntityRelicAnnihilatorPart[] subEntities;
     private final OverlapAnimationState slashAnimationState = new OverlapAnimationState(SLASH_ANIMATION);
@@ -171,7 +167,6 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
         this.setPathfindingMalus(BlockPathTypes.UNPASSABLE_RAIL, 0.0F);
         if (this.level().isClientSide) {
             this.muzzle = new Vec3(0, 0, 0);
-            this.saw = new Vec3(0, 0, 0);
         }
     }
 
@@ -365,8 +360,8 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
                 Vec3 pos = this.scope.position().offsetRandom(this.random, 1.2F);
                 this.level().addParticle(ParticleTypes.LARGE_SMOKE, pos.x, pos.y + 0.2, pos.z, this.random.nextGaussian() * 0.01, 0.007, this.random.nextGaussian() * 0.01);
             }
-            if (this.saw != null && this.tickCount % 5 == 0 && this.random.nextInt(5) == 0) {
-                Vec3 pos = this.isNoAnimation() ? this.getPosOffset(true, 0F, getBbWidth(), getBbHeight() * 0.25F) : this.saw;
+            if (animation == NO_ANIMATION && this.tickCount % 5 == 0 && this.random.nextInt(5) == 0) {
+                Vec3 pos = this.getPosOffset(true, 0F, getBbWidth(), getBbHeight() * 0.25F);
                 pos = pos.offsetRandom(this.random, 0.75F);
                 this.level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), pos.x, pos.y, pos.z, 0.0D, 0.0D, 0.0D);
             }
@@ -383,7 +378,7 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
                 this.doWalkEffect(this.getPosOffset(false, 0, width, 0));
             }
             if (!this.isSilent() && !this.sawControlled.isStop() && this.tickCount % 4 == 1) {
-                this.level().playLocalSound(this.saw.x, this.saw.y, this.saw.z, SoundInit.RELIC_ANNIHILATOR_SAW.get(), this.getSoundSource(),
+                this.level().playLocalSound(this.blockPosition(), SoundInit.RELIC_ANNIHILATOR_SAW.get(), this.getSoundSource(),
                         this.getVoicePitch() * this.sawControlled.getAnimationFraction(), this.getVoicePitch() + 0.2F, false);
             }
         }
@@ -632,18 +627,15 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
                 .inRange(10, 35, (entity, animation, tick) -> {
                     entity.sawControlled.incrementOrDecreaseTimer(tick >= 10 && tick < 25);
                     if (tick == 15) entity.playSound(SoundInit.RELIC_ANNIHILATOR_ATTACK.get(), 1F, entity.getVoicePitch());
-                    entity.doTrailEffect(tick == 17, tick > 17 && tick < 25, false);
                 });
         builder.forAnimation(SWING_ANIMATION)
                 .inRange(15, 24, (entity, animation, tick) -> {
                     if (tick == 15) entity.playSound(SoundInit.RELIC_ANNIHILATOR_ATTACK.get(), 1F, entity.getVoicePitch());
-                    entity.doTrailEffect(tick == 17, tick > 17 && tick < 25, true);
                 });
         builder.forAnimation(STAB_ANIMATION)
                 .inRange(5, 55, (entity, animation, tick) -> {
                     if (tick == 5) entity.playSound(SoundInit.RELIC_ANNIHILATOR_PRE_ATTACK.get(), 1F, entity.getVoicePitch());
                     entity.sawControlled.incrementOrDecreaseTimer(tick >= 8 && tick < 45);
-                    entity.doTrailEffect(tick == 21, tick > 21 && tick < 32, false);
                     if (tick > 31 && tick < 42) entity.doFractalEffect();
                 });
         builder.forAnimation(CYCLONE_ANIMATION)
@@ -652,7 +644,6 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
                     if (tick == 5) entity.playSound(SoundInit.RELIC_ANNIHILATOR_PRE_ATTACK.get(), 1F, entity.getVoicePitch());
                     if (tick > 16 && tick < 37 && tick % 5 == 0) entity.playSound(SoundInit.RELIC_ANNIHILATOR_WHOOSH.get(), 2.5F, entity.getVoicePitch());
                     if (tick > 20 && tick < 39) entity.doCycloneEffect();
-                    entity.doTrailEffect(tick == 22, tick > 22 && tick < 43, false);
                 });
         builder.forAnimation(LASER_ANIMATION)
                 .inRange(5, 52, (entity, animation, tick) -> {
@@ -664,11 +655,9 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
                     if (tick == 4) entity.playSound(SoundInit.RELIC_ANNIHILATOR_PRE_ATTACK.get(), 1F, entity.getVoicePitch());
                     if (tick == 5) entity.playSound(SoundInit.RELIC_ANNIHILATOR_SMASH.get(), 1F, entity.getVoicePitch());
                     if (tick == 20) entity.doGroundPoundEffect(2.25F, false, false);
-                    entity.doTrailEffect(tick == 18, tick > 18 && tick < 21, true);
                 });
         builder.forAnimation(GROUND_POUND_ANIMATION2)
                 .inRange(1, 20, (entity, animation, tick) -> {
-                    entity.doTrailEffect(tick == 18, tick > 18 && tick < 21, false);
                     if (tick == 4) entity.playSound(SoundInit.RELIC_ANNIHILATOR_PRE_ATTACK.get(), 1F, entity.getVoicePitch());
                     if (tick == 5) entity.playSound(SoundInit.RELIC_ANNIHILATOR_SMASH.get(), 1F, entity.getVoicePitch());
                     if (tick == 20) entity.doGroundPoundEffect(2.25F, false, true);
@@ -702,8 +691,7 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
                 .atTick(13, (entity, animation, tick) -> entity.doGroundPoundEffect(0F, false, false));
         builder.forAnimation(GROUND_SLAM_ANIMATION3)
                 .atTick(1, (entity, animation, tick) -> entity.playSound(SoundInit.RELIC_ANNIHILATOR_SMASH.get(), 1F, entity.getVoicePitch() + 1.2F))
-                .atTick(4, (entity, animation, tick) -> entity.doGroundPoundEffect(2.25F, true, false))
-                .inRange(16, 20, (entity, animation, tick) -> entity.doTrailEffect(tick == 16, tick > 16 && tick < 21, true));
+                .atTick(4, (entity, animation, tick) -> entity.doGroundPoundEffect(2.25F, true, false));
         builder.forAnimation(DIE_ANIMATION)
                 .inRange(1, 6, (entity, animation, tick) -> {
                     if (entity.level().isClientSide) {
@@ -1022,11 +1010,11 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
             double[] speeds = {1.1, 1.2, 1.3};
             double[] angles = {35, 25, 15};
             double[] color = volt ? new double[]{0.52, 0.94, 1, 1} : new double[]{1, 0.88, 0.48, 1};
-            ModParticleUtils.multiLayerBowlParticles(this.level(), pos, 3, particles, radii, speeds, angles, color, null, 0.55F);
-            this.level().addParticle(new ParticleRing.RingData(ParticleInit.BIG_RING.get(), 0F, (float) (Math.PI / 2F), 11, volt ? 0.52F : 1F, volt ? 0.94F : 1F, 1F, 1F, 90F, false, ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y + 0.1F, pos.z, 0, 0, 0);
-            ModParticleUtils.blockParticlesAround(this.level(), pos.x, pos.y - 0.2F, pos.z, 40, 0.5, 2.5, block ? 5 : 3, block ? 12 : 6, block ? 8 : 3, block ? 10 : 6, -0.2, 0.1);
-            ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 30F, 30, ParticleDust.EnumDustBehavior.GROW, 0.76F);
-            ModParticleUtils.annularParticleOutburst(this.level(), 20, dustData, pos.x, pos.y, pos.z, 1.55, 0.5);
+            ModParticleUtils.multiLayerBowlParticles(this.level(), pos, 4, particles, radii, speeds, angles, color, null, 0.55F);
+            this.level().addParticle(new ParticleRing.RingData(ParticleInit.BIG_RING.get(), 0F, (float) (Math.PI / 2F), 10, volt ? 0.52F : 1F, volt ? 0.94F : 1F, 1F, 0.95F, 50F, false, ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y + 0.1F, pos.z, 0, 0, 0);
+            ModParticleUtils.blockParticlesAround(this.level(), pos.x, pos.y - 0.2F, pos.z, 25, 0.25, 0.75, block ? 0.2 : 0.1, block ? 0.3 : 0.2, block ? 0.4 : 0.3, block ? 0.5 : 0.4, -0.2, 0.1);
+            ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 30F, 20, ParticleDust.EnumDustBehavior.GROW, 0.76F);
+            ModParticleUtils.annularParticleOutburst(this.level(), 16, dustData, pos.x, pos.y, pos.z, 1.55, 0.5);
         }
         if (block) ShockWaveUtils.doRingShockWave(this, pos, 2, 0F, false, 10);
         EntityCameraShake.cameraShake(level(), pos, 16, 0.15F, 3, 6);
@@ -1095,7 +1083,7 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
                     , new ParticleComponent[]{
                             new PropertyControl(EnumParticleProperty.SCALE, new AnimData.KeyTrack(new float[]{0F, 10F, 0F}, new float[]{0F, 0.5F, 1F}), false)
                     });
-            double baseSpeed = 0.5;
+            double baseSpeed = 0.3;
             for (int i = 0; i < 15; i++) {
                 Vec3 spawnPos = this.muzzle.add(
                         (random.nextDouble() - 0.5) * 2 * 0.1
@@ -1108,8 +1096,8 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
                         (random.nextDouble() - 0.5) * 2 * 0.08
                 ).normalize();
                 boolean large = this.random.nextBoolean();
-                if (large) baseSpeed = 0.4;
-                Vec3 velocity = finalDirection.scale(baseSpeed * (0.5 + random.nextDouble() * 1.2));
+                if (large) baseSpeed = 0.2;
+                Vec3 velocity = finalDirection.scale(baseSpeed * (0.5 + random.nextDouble() * 1.5));
                 this.level().addParticle(
                         large ? ParticleTypes.LARGE_SMOKE : ParticleTypes.SMOKE,
                         spawnPos.x, spawnPos.y, spawnPos.z,
@@ -1161,10 +1149,9 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
                     if (tick < 40)
                         AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.ADV_RING.get(), forward.x, forward.y, forward.z
                                 , 0, 0, 0, true, (float) Math.toRadians(-this.getYRot()), (float) Math.toRadians(-this.getXRot()), 0, 0, 1F,
-                                0.77, 0.25, 0.25, 1, 1, 4, true, false, false
+                                0.77, 0.25, 0.25, 0.9, 1, 4, true, false, false
                                 , new ParticleComponent[]{
-                                        new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(12, 0), false),
-                                        new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.9F, 0F), false)
+                                        new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(14, 0), false),
                                 });
                 }
                 if (tick % 3 == 1 && tick < 40) {
@@ -1233,67 +1220,13 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
     }
 
     private void doFractalEffect() {
-        if (this.level().isClientSide && this.saw != null) {
-            Vec3 start = this.saw.offsetRandom(this.random, 0.5F);
+        if (this.level().isClientSide) {
+            float width = getBbWidth();
+            Vec3 pos = this.getPosOffset(true, width * 2.5F, width * 0.4F, getBbHeight() * 0.73F);
+            Vec3 start = pos.offsetRandom(this.random, 0.5F);
             LightningBolt bolt = RELICRON_BOLT.color(BOLT_COLORS[this.random.nextInt(2)]).spreadFactor(0.12F).lifespan(3)
                     .fadeFunction(LightningBolt.FadeFunction.fade(0.3F)).build(start, start.offsetRandom(this.random, 2F), this.random);
             ClientProxy.LIGHTNING_RENDER.update(this, bolt);
-        }
-    }
-
-    private void doTrailEffect(boolean startFlag, boolean holdFlag, boolean left) {
-        if (this.level().isClientSide && this.saw != null && this.muzzle != null) {
-            if (startFlag) {
-                this.preSaw = saw;
-                this.preMuzzle = muzzle;
-            } else if (holdFlag) {
-                if (left) {
-                    Vec3 leftPos = this.muzzle;
-                    double lLength = this.preMuzzle.subtract(leftPos).length();
-                    this.spawnSwipeParticle(this.preMuzzle, leftPos, (int) Math.min(Math.floor(2 * lLength), 16), true);
-                    this.preMuzzle = leftPos;
-                } else {
-                    Vec3 rightPos = this.saw;
-                    double rLength = this.preSaw.subtract(rightPos).length();
-                    this.spawnSwipeParticle(this.preSaw, rightPos, (int) Math.min(Math.floor(2 * rLength), 16), false);
-                    this.preSaw = rightPos;
-                }
-            }
-        }
-    }
-
-    private void spawnSwipeParticle(Vec3 start, Vec3 end, int numDusts, boolean left) {
-        for (int i = 0; i < numDusts; i++) {
-            double x = start.x + i * (end.x - start.x) / numDusts;
-            double y = start.y + i * (end.y - start.y) / numDusts;
-            double z = start.z + i * (end.z - start.z) / numDusts;
-            int count = left ? 1 : 2;
-            for (int j = 0; j < count; j++) {
-                float randomFactor = 0.15F;
-                if (left) {
-                    double dx = x - this.getX();
-                    double dy = y - this.getY();
-                    double dz = z - this.getZ();
-                    double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                    if (distance > 0) {
-                        double speed = 0.3;
-                        double xSpeed = (dx / distance) * speed;
-                        double ySpeed = (this.random.nextDouble() - 0.1) * 0.05;
-                        double zSpeed = (dz / distance) * speed;
-                        randomFactor = 0.5F;
-                        xSpeed += (this.random.nextDouble() - 0.5) * randomFactor * 0.1;
-                        zSpeed += (this.random.nextDouble() - 0.5) * randomFactor * 0.1;
-                        ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.3F, 0.3F, 0.3F, 15F,
-                                5 + (int) (Math.random() * 4), ParticleDust.EnumDustBehavior.CONSTANT, 1F);
-                        this.level().addParticle(dustData, x, y, z, xSpeed, ySpeed, zSpeed);
-                    }
-                } else {
-                    float xOffset = randomFactor * (2 * this.random.nextFloat() - 1);
-                    float yOffset = randomFactor * (2 * this.random.nextFloat() - 1);
-                    float zOffset = randomFactor * (2 * this.random.nextFloat() - 1);
-                    this.level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), x + xOffset, y + yOffset, z + zOffset, 0, 0, 0);
-                }
-            }
         }
     }
 

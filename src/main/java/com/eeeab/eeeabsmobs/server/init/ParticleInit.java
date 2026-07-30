@@ -8,6 +8,7 @@ import com.eeeab.eeeabsmobs.client.particle.lib.data.AdvancedBlockParticleData;
 import com.eeeab.eeeabsmobs.client.particle.lib.data.AdvancedParticleData;
 import com.eeeab.eeeabsmobs.client.particle.lib.data.RibbonParticleData;
 import com.mojang.serialization.Codec;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -48,9 +49,9 @@ public class ParticleInit {
             return ParticleRing.RingData.CODEC(this);
         }
     });
-    public static final RegistryObject<ParticleType<ParticleRing.RingData>> RADIAL_OPACITY_RING = PARTICLES.register("radial_opacity_ring", () -> new ParticleType<>(false, ParticleRing.RingData.DESERIALIZER) {
-        public Codec<ParticleRing.RingData> codec() {
-            return ParticleRing.RingData.CODEC(this);
+    public static final RegistryObject<ParticleType<BlockParticleOption>> CUSTOM_BLOCK = PARTICLES.register("custom_block", () -> new ParticleType<BlockParticleOption>(false, BlockParticleOption.DESERIALIZER) {
+        public Codec<BlockParticleOption> codec() {
+            return BlockParticleOption.codec(this);
         }
     });
 

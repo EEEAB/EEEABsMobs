@@ -406,8 +406,8 @@ public class EntityRelicObserver extends AbstractRelicron implements CrackinessE
                 Vec3 pos = entity.getPosOffset(false, 1F, 0F, entity.getEyeHeight());
                 entity.doAnnularOutburstEffect(pos, (float) Math.toRadians(entity.getYRot()));
                 AdvancedParticleBase.spawnParticle(entity.level(), ParticleInit.CRIT_RING.get(), pos.x, pos.y, pos.z
-                        , 0, 0, 0, false, Math.toRadians(-entity.getYRot() - 90), Math.toRadians(180), 0, 0, 1,
-                        0.9, 0.9, 0.9, 1, 1, 6, false, false, false
+                        , 0, 0, 0, false, Math.toRadians(-entity.yBodyRot - 90), Math.toRadians(180), 0, 0, 1,
+                        0.9, 0.9, 0.9, 1, 1, 6, true, false, false
                         , new ParticleComponent[]{
                                 new PropertyControl(PropertyControl.EnumParticleProperty.SCALE, AnimData.startAndEnd(0F, 25F), false),
                                 new PropertyControl(PropertyControl.EnumParticleProperty.ALPHA, AnimData.startAndEnd(1F, 0F), false)

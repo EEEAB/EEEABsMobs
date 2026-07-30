@@ -55,7 +55,6 @@ import com.eeeab.eeeabsmobs.server.init.SoundInit;
 import com.eeeab.eeeabsmobs.server.util.ModMathUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -700,10 +699,8 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
                     entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 1F, 1F);
                 } else {
                     Vec3 pos = entity.getPosOffset(tick == 45, 0F, entity.getBbWidth() * 0.915F, 0);
-                    ModParticleUtils.blockParticlesAround(entity.level(), pos.x, pos.y, pos.z, 12, 0.25, 0.75, 0.1,
-                            0.2, 0.25, 0.4, -0.2, 0.1, (pos2, state) -> getBlockParticleData(entity.random, state, pos, 1.5));
-                    ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 28F, 25, ParticleDust.EnumDustBehavior.GROW, 0.74F);
-                    ModParticleUtils.annularParticleOutburst(entity.level(), 16, dustData, pos.x, pos.y, pos.z, 1.55F, 0.5);
+                    ModParticleUtils.blockParticlesAround(entity.level(), pos.x, pos.y, pos.z, 12, 0.5, 1, 0.1,
+                            0.15, 0.25, 0.4, -0.2, 0.1, (pos2, state) -> getBlockParticleData(entity.random, state, pos, 1.2));
                 }
             }
             if (tick == 71) {
@@ -713,14 +710,14 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
                     entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 1F, 1.1F);
                 } else {
                     Vec3 pos = entity.position();
-                    ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 35F, 30, ParticleDust.EnumDustBehavior.GROW, 0.74F);
-                    ModParticleUtils.annularParticleOutburst(entity.level(), 16, dustData, pos.x, pos.y, pos.z, 1.6F, 0.5);
+                    ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 30F, 25, ParticleDust.EnumDustBehavior.GROW, 0.8F);
+                    ModParticleUtils.annularParticleOutburst(entity.level(), 16, dustData, pos.x, pos.y, pos.z, 1.6F, 0.6);
                     Vec3 rPos = entity.getPosOffset(true, 0F, entity.getBbWidth() * 0.915F, 0);
-                    ModParticleUtils.blockParticlesAround(entity.level(), rPos.x, rPos.y, rPos.z, 10, 0.2, 0.7, 0.15,
-                            0.25, 0.3, 0.5, -0.2, 0.1, (pos2, state) -> getBlockParticleData(entity.random, state, rPos, 1.5));
+                    ModParticleUtils.blockParticlesAround(entity.level(), rPos.x, rPos.y, rPos.z, 10, 0.5, 1, 0.1,
+                            0.15, 0.3, 0.5, -0.2, 0.1, (pos2, state) -> getBlockParticleData(entity.random, state, rPos, 1.5));
                     Vec3 lPos = entity.getPosOffset(false, 0F, entity.getBbWidth() * 0.915F, 0);
-                    ModParticleUtils.blockParticlesAround(entity.level(), lPos.x, lPos.y, lPos.z, 10, 0.2, 0.7, 0.15,
-                            0.25, 0.3, 0.5, -0.2, 0.1, (pos2, state) -> getBlockParticleData(entity.random, state, lPos, 1.5));
+                    ModParticleUtils.blockParticlesAround(entity.level(), lPos.x, lPos.y, lPos.z, 10, 0.5, 1, 0.1,
+                            0.15, 0.3, 0.5, -0.2, 0.1, (pos2, state) -> getBlockParticleData(entity.random, state, lPos, 1.5));
                 }
             }
         });
@@ -733,7 +730,7 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
                 .atTick(1, doPlayShortHumSound).atTick(15, doPlayAttackSound)
                 .atTick(17, (entity, animation, tick) -> {
                     Vec3 pos = entity.getPosOffset(true, 1.6F, 1F, 0F);
-                    entity.doGroundPoundEffect(pos, 1F, 1F, new double[]{55, 40, 25});
+                    entity.doGroundPoundEffect(pos, 1F, 1F, false, new double[]{55, 40, 25});
                     for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 2.1, 0, false, 20)) {
                         entity.doHurtTarget(hitEntity, 0.9F, 0F);
                         ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, false);
@@ -781,7 +778,7 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
                 })
                 .atTick(70, (entity, animation, tick) -> {
                     Vec3 pos = entity.getPosOffset(false, 2.8F, 0F, 0F);
-                    entity.doGroundPoundEffect(pos, 1.4F, 1.4F, null);
+                    entity.doGroundPoundEffect(pos, 1.4F, 1.4F, true, null);
                     for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 2.2, -0.03F, false, 20)) {
                         entity.doHurtTarget(hitEntity, 1.1F, 0F, true);
                         ModEntityUtils.forceKnockBack(entity, hitEntity, 1.25F, false);
@@ -798,7 +795,7 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
                 });
         Keyframe<EntityRealmWarden> stompKeyFrame = (entity, animation, tick) -> {
             Vec3 pos = entity.getPosOffset(true, 1.3F, 0.5F, 0F);
-            entity.doGroundPoundEffect(pos, 0.8F, 1.1F, new double[]{65, 45, 25});
+            entity.doGroundPoundEffect(pos, 0.8F, 1.1F, false, new double[]{65, 45, 25});
             for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 1.45, 0, false, 20)) {
                 boolean flag = entity.doHurtTarget(hitEntity, animation == STOMP_ANIMATION ? 0.7F : 0.8F, 0F);
                 ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, !flag);
@@ -839,7 +836,7 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
             if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_BLAST.get(), 1.2F, 1.5F);
         }).atTick(49, doPlayAttackSound).atTick(50, (entity, animation, tick) -> {
             Vec3 pos = entity.getPosOffset(true, 3.2F, 1.75F, 0F);
-            entity.doGroundPoundEffect(pos, 1F, 1.1F, new double[]{85, 75, 45});
+            entity.doGroundPoundEffect(pos, 1F, 1.2F, false, new double[]{85, 75, 45});
             for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 1.75, 0, false, 20)) {
                 entity.doHurtTarget(hitEntity, 1F, 0F, true);
                 ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, false);
@@ -856,7 +853,7 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
         builder.forAnimation(BACKSTEP_LANDING_ANIMATION).atTick(1, (entity, animation, tick) -> {
                     if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 1.4F, 1.1F + (entity.random.nextFloat() - 0.5F) * 0.1F);
                 })
-                .atTick(4, (entity, animation, tick) -> entity.doGroundPoundEffect(entity.position(), 1F, 1.2F, null))
+                .atTick(4, (entity, animation, tick) -> entity.doGroundPoundEffect(entity.position(), 1F, 1.2F, true, null))
                 .inRange(5, 7, (entity, animation, tick) -> {
                     if (entity.level().isClientSide) {
                         if (entity.modelParts == null || entity.modelParts.length < 2) return;
@@ -866,7 +863,7 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
                 });
         builder.forAnimation(LEAP_ANIMATION).inRange(1, 19, (entity, animation, tick) -> {
             boolean leap = tick == 17;
-            entity.doLeapEffect(tick, leap);
+            entity.doLeapEffect(tick, leap, tick == 5);
             if (leap && !entity.level().isClientSide) {
                 entity.playSound(SoundInit.REALM_WARDEN_LEAP.get(), 1.5F * entity.getSoundVolumeScale(), 1F);
                 entity.leapDownTarget = entity.getTarget();
@@ -882,14 +879,14 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
         builder.forAnimation(LEAP_LANDING_ANIMATION).atTick(3, (entity, animation, tick) -> {
                     if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_LANDING.get());
                 }).atTick(5, (entity, animation, tick) -> {
-                    entity.doLeapLandingEffect(ParticleInit.CRIT_RING.get(), 60, 40, 1, 1, new double[]{45, 25}, true);
+                    entity.doLeapLandingEffect(60, 1, 1.4F, new double[]{45, 25});
                     if (entity.level().isClientSide) return;
                     double size = entity.isAlwaysActive() ? 8 : 10;
                     entity.rangeAttack(size, size, size, size, hitEntity -> {
                         entity.doHurtTarget(hitEntity, 1F, 0, true);
                         ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, entity.getX() - hitEntity.getX(), entity.getZ() - hitEntity.getZ(), false);
                     });
-                    EntityCameraShake.cameraShake(entity.level(), entity.position(), 24, 0.2F, 2, 8);
+                    EntityCameraShake.cameraShake(entity.level(), entity.position(), 24, 0.2F, 4, 6);
                     entity.playSound(SoundInit.REALM_WARDEN_SHAKE_GROUND.get(), 1.5F, 1.2F);
                 }).atTick(15, (entity, animation, tick) -> EntityTelegraph.spawn(entity.level(), entity.position().add(0, 0.1, 0), 15, entity.isSecondPhase() ? 0xFF0080FF : 0xFFFF2020, entity.isSecondPhase() ? entity.isAlwaysActive() ? 12 : 15 : entity.isAlwaysActive() ? 10 : 15))
                 .inRange(16, 39, (entity, animation, tick) -> {
@@ -904,13 +901,13 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
                     if (tick == 16) entity.playSound(SoundInit.REALM_WARDEN_HUM.get(), 1.4F, 0.8F + (entity.random.nextFloat() - 0.5F) * 0.1F);
                     if (tick == 37) entity.playSound(SoundInit.REALM_WARDEN_BLAST.get(), 1.5F, 1.75F);
                 }).atTick(40, (entity, animation, tick) -> {
-                    entity.doLeapLandingEffect(ParticleInit.GLOW.get(), 120, 100, 1.4F, 2F, new double[]{55, 25}, false);
+                    entity.doLeapLandingEffect(120, 1.4F, 1.2F, new double[]{55, 25});
                     ShockWaveUtils.doRingShockWave(entity, entity.getPosOffset(false, 0F, entity.getBbWidth(), 0), 2, 0.05F, false, 10);
                     ShockWaveUtils.doRingShockWave(entity, entity.getPosOffset(true, 0F, entity.getBbWidth(), 0), 2, 0.05F, false, 10);
                     if (entity.level().isClientSide) return;
                     entity.playSound(SoundInit.REALM_WARDEN_ATTACK.get(), 1.5F, 1F);
                     if (entity.isSecondPhase()) entity.playSound(SoundInit.REALM_WARDEN_SHOCK.get(), 1.5F, 1.2F + (entity.random.nextFloat() - 0.5F) * 0.1F);
-                    EntityCameraShake.cameraShake(entity.level(), entity.position(), 24, 0.2F, 3, 7);
+                    EntityCameraShake.cameraShake(entity.level(), entity.position(), 24, 0.2F, 6, 5);
                     int size = entity.isSecondPhase() ? entity.isAlwaysActive() ? 24 : 30 : entity.isAlwaysActive() ? 20 : 30;
                     AABB area = ModEntityUtils.makeAABBWithSize(entity.getX(), entity.getY(), entity.getZ(), 0, size, size, size);
                     List<LivingEntity> entities = entity.level().getEntitiesOfClass(LivingEntity.class, area, target -> target != entity && !entity.isAlliedTo(target));
@@ -928,7 +925,7 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
                 double dirX = -Math.sin(rad);
                 double dirZ = Math.cos(rad);
                 float width = entity.getBbWidth() * 0.915F;
-                Vec3 pos = entity.getPosOffset(true, -width / 2, width * 0.2F, entity.getBbHeight() * 0.75F);
+                Vec3 pos = entity.getPosOffset(true, -width * (tick >= 18 ? 0.75F : 0.5F), width * 0.4F, entity.getBbHeight() * 0.85F);
                 for (int i = 0; i < 3; i++) {
                     double speedBase = 1.5;
                     double spread = 1.5;
@@ -936,7 +933,7 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
                     double vy = entity.random.nextDouble() + 0.1;
                     double vz = dirZ * speedBase + (entity.random.nextDouble() - 0.5) * spread;
                     int duration = Mth.randomBetweenInclusive(entity.random, 5, 15);
-                    ParticleOptions dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.8F, 0.8F, 0.8F, 25F, duration, ParticleDust.EnumDustBehavior.SHRINK, 0.85F, true);
+                    ParticleOptions dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.9F, 0.9F, 0.9F, 20F, duration, ParticleDust.EnumDustBehavior.SHRINK, 0.85F, true);
                     entity.level().addParticle(dustData, pos.x, pos.y, pos.z, vx, vy, vz);
                 }
             } else {
@@ -948,11 +945,11 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
         jumpSmashKeyframe(builder, DERIVED_JUMP_SMASH_ANIMATION, doPlayAttackSound).atTick(8, (entity, animation, tick) -> {
             if (!entity.level().isClientSide) return;
             Vec3 pos = entity.getPosOffset(false, 2.4F, 0F, 0F);
-            ModParticleUtils.blockParticlesAround(entity.level(), pos.x, pos.y, pos.z, 15, 0.5, 1, 0.4,
-                    0.6, 0.4, 0.7, -0.2, 0.1, (pos2, state) -> AdvancedBlockParticle.createBlockParticleData(state, null, pos.x, pos.y, pos.z, (entity.random.nextFloat() * 0.5F + 0.5F) * 1.5,
-                            0.6, 0.6, 0.6, 1, 0.98, 17, false, true, new ParticleComponent[]{
+            ModParticleUtils.blockParticlesAround(entity.level(), pos.x, pos.y, pos.z, 15, 0.5, 1, 0.35,
+                    0.5, 0.4, 0.75, -0.2, 0.1, (pos2, state) -> AdvancedBlockParticle.createBlockParticleData(state, null, pos.x, pos.y, pos.z, (entity.random.nextFloat() * 0.5F + 0.5F) * 1.5,
+                            0.6, 0.6, 0.6, 1, 0.98, 17, true, true, new ParticleComponent[]{
                                     new ParticleComponent.FreeFallSimulator(1F),
-                                    new ParticleComponent.Attractor(new Vec3[]{pos.add(0, 0.5, 0)}, 4.5F, 1F, ParticleComponent.Attractor.EnumAttractorBehavior.SIMULATED, 7)
+                                    new ParticleComponent.Attractor(new Vec3[]{pos.add(0, 0.5, 0)}, 4.5F, 1.5F, ParticleComponent.Attractor.EnumAttractorBehavior.SIMULATED, 7),
                             }
                     ));
         }).inRange(15, 24, (entity, animation, tick) -> {
@@ -968,15 +965,12 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
             if (tick == 17) {
                 Vec3 pos = entity.getPosOffset(false, 2.4F, 0F, 0F);
                 Vector4f color = entity.getColorByPhase();
-                AdvancedParticleBase.spawnParticle(entity.level(), ParticleInit.ADV_RING2.get(), pos.x, entity.getY() + 0.1, pos.z, 0, 0, 0, false, 0, Math.PI / 2F, 0,
-                        0, 0, color.x, color.y, color.z, 1, 1, 7, true, false, false, new ParticleComponent[]{
-                                new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(50F, 0F), false),
-                                new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.6F, 0F), false),
-                        });
+                ParticleRing.RingData particle = new ParticleRing.RingData(ParticleInit.BIG_RING.get(), 0F, (float) (Math.PI / 2F), 7, color.x, color.y, color.z, 0.8F, 50F, false, ParticleRing.EnumRingBehavior.SHRINK);
+                entity.level().addParticle(particle, pos.x, entity.getY() + 0.1, pos.z, 0, 0, 0);
             }
         }).atTick(25, (entity, animation, tick) -> {
             Vec3 pos = entity.getPosOffset(false, 2.4F, 0F, 0F);
-            entity.doGroundPoundEffect(pos, 1.5F, 1.5F, 1F, null, entity.isSecondPhase() ? new double[]{0.49F, 0.9F, 1F, 0.92F} : null);
+            entity.doGroundPoundEffect(pos, 1.5F, 1.5F, 1F, true, true, null, entity.isSecondPhase() ? new double[]{0.49F, 0.9F, 1F, 0.92F} : null);
             if (entity.level().isClientSide) {
                 Vector4f color = entity.getColorByPhase();
                 AdvancedParticleBase.spawnParticle(entity.level(), ParticleInit.ADV_RING3.get(), pos.x, pos.y + 0.375F, pos.z, 0, 0, 0, true, 0, 0, 0,
@@ -1020,7 +1014,7 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
                 }
                 ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, false);
             });
-            EntityCameraShake.cameraShake(entity.level(), entity.position(), 16, 0.22F, 4, 6);
+            EntityCameraShake.cameraShake(entity.level(), entity.position(), 16, 0.22F, 6, 4);
             if (entity.isSecondPhase()) entity.playSound(SoundInit.REALM_WARDEN_SHOCK.get(), 1F, 1.2F + (entity.random.nextFloat() - 0.5F) * 0.1F);
         });
         builder.forAnimation(HEAVY_SMASH_ANIMATION).atTick(1, (entity, animation, tick) -> {
@@ -1029,7 +1023,7 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
             if (!entity.level().isClientSide) entity.playSound(SoundInit.REALM_WARDEN_BLAST.get(), 1.5F, 1.5F);
         }).atTick(27, (entity, animation, tick) -> {
             Vec3 pos = entity.getPosOffset(false, 2.8F, 0F, 0F);
-            entity.doGroundPoundEffect(pos, 1.4F, 1.5F, null);
+            entity.doGroundPoundEffect(pos, 1.4F, 1.5F, true, null);
             for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 2.25, -0.03F, false, 20)) {
                 entity.doHurtTarget(hitEntity, 1.1F, 0F, true);
                 ModEntityUtils.forceKnockBack(entity, hitEntity, 1.25F, false);
@@ -1041,7 +1035,7 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
     private static KeyframeManager.KeyframeManegerBuilder<EntityRealmWarden> jumpSmashKeyframe(KeyframeManager.KeyframeManegerBuilder<EntityRealmWarden> builder, Animation defineAnimation, Keyframe<EntityRealmWarden> doPlayAttackSound) {
         return builder.forAnimation(defineAnimation).atTick(5, doPlayAttackSound).atTick(7, (entity, animation, tick) -> {
             Vec3 pos = entity.getPosOffset(false, 2.4F, 0F, 0F);
-            entity.doGroundPoundEffect(pos, 1.2F, 1.2F, new double[]{55, 25, 35});
+            entity.doGroundPoundEffect(pos, 1.2F, 1.2F, false, new double[]{55, 25, 35});
             for (LivingEntity hitEntity : ShockWaveUtils.doRingShockWave(entity, pos, 2.25, -0.015F, false, 20)) {
                 entity.doHurtTarget(hitEntity, 1F, 0F, true);
                 ModEntityUtils.forceKnockBack(entity, hitEntity, 0.75F, false);
@@ -1147,7 +1141,7 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
                 .nextH(leapRule, 0.25)
                 .nextH(derivedHeavySwingRule, 0.5)
                 .nextH(heavySwingRule, 0.75)
-                .next(doubleFistSlamRule, 0.5, 0.25, ConditionFactory.and(
+                .next(doubleFistSlamRule, 0.5, 0.4, ConditionFactory.and(
                         ConditionFactory.distanceRange(0, 9, 10)
                 ))
                 .build();
@@ -1373,17 +1367,14 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
         if (this.level().isClientSide) {
             Vec3 pos = this.getPosOffset(false, 2.1F, 0F, this.getBbHeight() * 0.5F);
             Vector4f color = this.getColorByPhase();
-            this.doFlashingEffect(ParticleInit.THUMP_RING.get(), pos, 45F, 45F, 0, color.x, color.y, color.z);
-            AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.ADV_RING.get(), pos.x, this.getY() + 0.1, pos.z, 0, 0, 0, false, 0, Math.PI / 2F, 0,
-                    0, 0, 0.98F, 0.98F, 0.98F, 0, 1, 5, false, false, false, new ParticleComponent[]{
-                            new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(0F, 40F), false),
-                            new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(0.5F, 0F), false),
-                    });
+            this.doFlashingEffect(pos, 45F, color.x, color.y, color.z);
+            ParticleRing.RingData particle = new ParticleRing.RingData(0F, (float) (Math.PI / 2F), 7, 1F, 1F, 1F, 0.8F, 50F, false, ParticleRing.EnumRingBehavior.GROW);
+            this.level().addParticle(particle, pos.x, this.getY() + 0.1, pos.z, 0, 0, 0);
             ModParticleUtils.roundParticleOutburst(this.level(), 15, new ParticleOptions[]{
                     getRibbonParticleData(0.5F, 0.1F)
             }, pos.x, pos.y, pos.z, 2.5F);
-            ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 40F, 25, ParticleDust.EnumDustBehavior.GROW, 0.74F);
-            ModParticleUtils.annularParticleOutburst(this.level(), 18, dustData, pos.x, this.getY(), pos.z, 2F, 0.6);
+            ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 30F, 15, ParticleDust.EnumDustBehavior.GROW, 0.74F);
+            ModParticleUtils.annularParticleOutburst(this.level(), 16, dustData, pos.x, this.getY(), pos.z, 2F, 0.6);
             if (this.isSecondPhase()) {
                 for (int i = 0; i < 6; i++) {
                     Vec3 start = pos.offsetRandom(this.random, 0.5F);
@@ -1394,33 +1385,23 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
         }
     }
 
-    private void doFlashingEffect(ParticleType<AdvancedParticleData> type, Vec3 pos, float scale1, float scale2, float pitch, float finalR, float finalG, float finalB) {
-        if (isSecondPhase()) {
-            scale1 *= 1.2F;
-            scale2 *= 1.2F;
-        }
-        PropertyControl component0 = new PropertyControl(EnumParticleProperty.RED, new AnimData.KeyTrack(new float[]{1F, finalR}, new float[]{0F, 0.5F}), false);
-        PropertyControl component1 = new PropertyControl(EnumParticleProperty.GREEN, new AnimData.KeyTrack(new float[]{1F, finalG}, new float[]{0F, 0.5F}), false);
-        PropertyControl component2 = new PropertyControl(EnumParticleProperty.BLUE, new AnimData.KeyTrack(new float[]{1F, finalB}, new float[]{0F, 0.5F}), false);
+    private void doFlashingEffect(Vec3 pos, float scale1, float finalR, float finalG, float finalB) {
+        if (isSecondPhase()) scale1 *= 1.2F;
         AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.GLOW.get(), pos.x, pos.y, pos.z, 0, 0, 0, true, 0, 0, 0,
                 0, 0, 1, 1, 1, 0, 1, 5, true, false, false, new ParticleComponent[]{
                         new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(15F, scale1), false),
                         new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(1F, 0.1F), false),
-                        component0, component1, component2,
-                });
-        AdvancedParticleBase.spawnParticle(this.level(), type, pos.x, pos.y, pos.z, 0, 0, 0, pitch == 0, 0, pitch, 0,
-                0, 0, 1, 1, 1, 0, 1, 5, true, false, false, new ParticleComponent[]{
-                        new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(15F, scale2), false),
-                        new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(1F, 0F), false),
-                        component0, component1, component2,
+                        new PropertyControl(EnumParticleProperty.RED, new AnimData.KeyTrack(new float[]{1F, finalR}, new float[]{0F, 0.5F}), false),
+                        new PropertyControl(EnumParticleProperty.GREEN, new AnimData.KeyTrack(new float[]{1F, finalG}, new float[]{0F, 0.5F}), false),
+                        new PropertyControl(EnumParticleProperty.BLUE, new AnimData.KeyTrack(new float[]{1F, finalB}, new float[]{0F, 0.5F}), false),
                 });
     }
 
-    private void doGroundPoundEffect(Vec3 pos, float scale, float yBlockPtcScale, double @Nullable [] angles) {
-        doGroundPoundEffect(pos, scale, scale, yBlockPtcScale, angles, null);
+    private void doGroundPoundEffect(Vec3 pos, float scale, float yBlockPtcScale, boolean dust, double @Nullable [] angles) {
+        doGroundPoundEffect(pos, scale, scale, yBlockPtcScale, dust, true, angles, null);
     }
 
-    private void doGroundPoundEffect(Vec3 pos, float scale, float volume, float yBlockPtcScale, double @Nullable [] angles, double @Nullable [] colors) {
+    private void doGroundPoundEffect(Vec3 pos, float scale, float volume, float yBlockPtcScale, boolean dust, boolean ring, double @Nullable [] angles, double @Nullable [] colors) {
         boolean secondPhase = this.isSecondPhase();
         if (this.level().isClientSide) {
             if (angles == null) angles = new double[]{40, 30, 20};
@@ -1430,14 +1411,18 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
             double[] speeds = {1.8, 2.2, 2.5};
             double[] scales = {1, 1.1, 1.2};
             ModParticleUtils.multiLayerBowlParticles(this.level(), pos, 3, particles, radii, speeds, angles, colors, scales, 0.55F);
-            ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 40F, 35, ParticleDust.EnumDustBehavior.GROW, 0.8F);
-            ModParticleUtils.annularParticleOutburst(this.level(), 18, dustData, pos.x, pos.y, pos.z, 1.6F, 0.6);
+            if (dust) {
+                ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 30F, 20, ParticleDust.EnumDustBehavior.GROW, 0.8F);
+                ModParticleUtils.annularParticleOutburst(this.level(), 18, dustData, pos.x, pos.y, pos.z, 1.6F, 0.6);
+            }
             Vector4f color = this.getColorByPhase();
-            this.level().addParticle(new ParticleRing.RingData(ParticleInit.RADIAL_OPACITY_RING.get(), 0F, (float) (Math.PI / 2F), 15, color.x, color.y, color.z, 1F, 80F * scale, false,
-                    ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y + 0.1F, pos.z, 0, 0, 0);
-            ModParticleUtils.blockParticlesAround(this.level(), pos.x, pos.y, pos.z, (int) (8 * scale), 0.5 * scale, 1 * scale, 0.15,
-                    0.25, 0.3 * yBlockPtcScale, 0.5 * yBlockPtcScale, -0.2, 0.1, (pos2, state) -> getBlockParticleData(this.random, state, pos, 1.5));
-            this.doFlashingEffect(ParticleInit.THUMP_RING.get(), pos.add(0, 0.1, 0), 60F * scale, 40F * scale, (float) (Math.PI / 2F), color.x, color.y, color.z);
+            if (ring) {
+                this.level().addParticle(new ParticleRing.RingData(ParticleInit.BIG_RING.get(), 0F, (float) (Math.PI / 2F), 10, color.x, color.y, color.z, 1F, 50F * scale, false,
+                        ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y + 0.1F, pos.z, 0, 0, 0);
+            }
+            ModParticleUtils.blockParticlesAround(this.level(), pos.x, pos.y, pos.z, (int) (12 * scale), 0.75 * scale, 2.25 * scale, 0.1,
+                    0.2, 0.25 * yBlockPtcScale, 0.5 * yBlockPtcScale, -0.2, 0.1, (pos2, state) -> getBlockParticleData(this.random, state, pos, 1.5));
+            this.doFlashingEffect(pos.add(0, 0.1, 0), 60F * scale, color.x, color.y, color.z);
             if (secondPhase) {
                 for (int i = 0; i < (int) (6 * scale); i++) {
                     Vec3 start = pos.offsetRandom(this.random, 1F);
@@ -1467,46 +1452,32 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
                 double rLength = this.rPrePos.subtract(rightPos).length();
                 int rNumDusts = (int) Math.min(Math.floor(2 * rLength), 14);
                 if (left != null && left) rNumDusts = 0;
-                this.spawnSwipeParticle(animation, lPrePos, leftPos, lNumDusts, true, offset);
-                this.spawnSwipeParticle(animation, rPrePos, rightPos, rNumDusts, false, offset);
+                this.spawnSwipeParticle(animation, lPrePos, leftPos, lNumDusts, offset);
+                this.spawnSwipeParticle(animation, rPrePos, rightPos, rNumDusts, offset);
                 this.lPrePos = leftPos;
                 this.rPrePos = rightPos;
             }
         }
     }
 
-    private void spawnSwipeParticle(Animation animation, Vec3 start, Vec3 end, int numDusts, boolean left, Vec3 offset) {
+    private void spawnSwipeParticle(Animation animation, Vec3 start, Vec3 end, int numDusts, Vec3 offset) {
         for (int i = 0; i < numDusts; i++) {
-            double speedMultiplier = 0.05;
             double x = start.x + i * (end.x - start.x) / numDusts;
             double y = start.y + i * (end.y - start.y) / numDusts;
             double z = start.z + i * (end.z - start.z) / numDusts;
-            float randomFactor;
             double dx = x - this.getX();
             double dy = y - this.getY();
             double dz = z - this.getZ();
             double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
             if (distance > 0) {
-                boolean isElbowStrike = animation == ELBOW_STRIKE_ANIMATION;
-                if (isElbowStrike || animation == SWEEP_ANIMATION || animation == TURNAROUND_SWEEP_ANIMATION) {
-                    if (i == 0) ModParticleUtils.blockParticleDirectionality(this.level(), x + offset.x, this.getY(), z + offset.z, Math.toRadians(this.getYRot()), numDusts, BLOCK_OFFSETS, 5F);
+                if (animation == ELBOW_STRIKE_ANIMATION || animation == SWEEP_ANIMATION || animation == TURNAROUND_SWEEP_ANIMATION) {
+                    if (i == 0) ModParticleUtils.blockParticleDirectionality(this.level(), x + offset.x, this.getY(), z + offset.z, Math.toRadians(this.getYRot()), numDusts, BLOCK_OFFSETS, 2.5F);
                     if (i % 2 == 1) {
                         AdvancedParticleData particleData = getRibbonParticleData(Mth.randomBetween(this.random, 0.2F, 0.25F), 0.07F);
                         ModParticleUtils.blockParticleDirectionality(this.level(), x + offset.x, this.getY(), z + offset.z, -0.2F, Math.toRadians(this.getYRot()), numDusts, SHORT_BLOCK_OFFSETS, 0.14F,
                                 hardness -> true, (pos, state) -> particleData);
                     }
-                    if (isElbowStrike && left) return;
                 }
-                double speed = 1.5;
-                double xSpeed = (dx / distance) * speed;
-                double ySpeed = (this.random.nextDouble() - 0.1) * 0.5 * speedMultiplier;
-                double zSpeed = (dz / distance) * speed;
-                randomFactor = 0.5F;
-                xSpeed += (this.random.nextDouble() - 0.5) * randomFactor * 0.1;
-                zSpeed += (this.random.nextDouble() - 0.5) * randomFactor * 0.1;
-                int duration = 8 + this.random.nextInt(5);
-                ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 30F, duration, ParticleDust.EnumDustBehavior.GROW, 0.76F);
-                this.level().addParticle(dustData, x + offset.x, y + offset.y, z + offset.z, xSpeed, ySpeed, zSpeed);
             }
         }
     }
@@ -1518,7 +1489,7 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
         double[] angles = {80, 60};
         double[] scales = {1, 1.1};
         double[] color = {COLORS[0].x, COLORS[0].y, COLORS[0].z, COLORS[0].w};
-        ModParticleUtils.blockParticlesAround(this.level(), pos.x, pos.y, pos.z, 8, 1, 1.5, 2, 5, 3, 6, -0.2, 0.1);
+        ModParticleUtils.blockParticlesAround(this.level(), pos.x, pos.y, pos.z, 8, 0.5, 1, 0.2, 0.35, 0.2, 0.5, -0.2, 0.1);
         AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.THUMP_RING.get(), pos.x, pos.y, pos.z, 0, 0, 0, false, 0, Math.PI / 2F, 0,
                 0, 0, COLORS[0].x, COLORS[0].y, COLORS[0].z, 0, 1, 4, true, false, false, new ParticleComponent[]{
                         new PropertyControl(EnumParticleProperty.ALPHA, AnimData.startAndEnd(1F, 0.1F), false),
@@ -1537,16 +1508,24 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
         }
     }
 
-    private void doLeapEffect(int tick, boolean leap) {
+    private void doLeapEffect(int tick, boolean leap, boolean cameraShake) {
         if (leap) {
-            this.doGroundPoundEffect(this.position(), 1.4F, 1.2F * getSoundVolumeScale(), 1.5F, new double[]{45, 35, 25}, null);
+            this.doGroundPoundEffect(this.position(), 1F, 1.2F * getSoundVolumeScale(), 2.5F, false, false, new double[]{45, 35, 25}, null);
+            if (this.level().isClientSide) {
+                ParticleRing.RingData particle = new ParticleRing.RingData(0F, (float) (Math.PI / 2F), 10, 1F, 1F, 1F, 1F, 60F, false, ParticleRing.EnumRingBehavior.GROW);
+                this.level().addParticle(particle, getX(), this.getY() + 0.1, this.getZ(), 0, 0, 0);
+            }
             return;
         }
+        if (cameraShake) EntityCameraShake.cameraShake(this.level(), this.position(), 16, 0.1F, 10, 10);
         if (this.level().isClientSide) {
             if (tick % 2 == 1) {
                 int duration = Mth.randomBetweenInclusive(this.random, 10, 15);
-                ParticleOptions dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.8F, 0.8F, 0.8F, 30F, duration, ParticleDust.EnumDustBehavior.SHRINK, 0.9F, true);
+                ParticleOptions dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.9F, 0.9F, 0.9F, 25F, duration, ParticleDust.EnumDustBehavior.SHRINK, 0.9F, true);
                 spawnRotatingDustEffect(dustData, this.level(), position().add(0, 0.75, 0), 2, 6, 0.8, 1.2, 0.5);
+            } else {
+                Vec3 pos = this.position().offsetRandom(this.random, 4F);
+                ModParticleUtils.blockParticlesAround(this.level(), pos.x, this.getY(), pos.z, 4, 1.5F, 3F, 0.01, 0.1, 0.15F, 0.25F, -0.2F, 0.1F);
             }
             if (tick % 3 != 1) return;
             float startYaw = Mth.randomBetween(this.random, 0, Mth.PI * 2);
@@ -1555,12 +1534,12 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
             int startScale = Mth.randomBetweenInclusive(this.random, 5, 20);
             int targetScale = startScale + Mth.randomBetweenInclusive(this.random, 40, 50);
             boolean inversion = this.random.nextBoolean();
-            AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.VORTEX.get(), getRandomX(0.1), getY() + 0.25, getRandomZ(0.1), 0, 0, 0, false, startYaw, Math.PI / 2, 0, 0,
-                    0, 0.8, 0.8, 0.8, 0.98, 1, duration, true, true, false, new ParticleComponent[]{
-                            new ParticleComponent.FreeFallSimulator(0.225F),
+            AdvancedParticleBase.spawnParticle(this.level(), ParticleInit.VORTEX.get(), getRandomX(0.1), getY() + 0.5, getRandomZ(0.1), 0, 0, 0, false, startYaw, Math.PI / 2, 0, 0,
+                    0, 0.8, 0.8, 0.8, 1, 1, duration, true, true, false, new ParticleComponent[]{
+                            new ParticleComponent.FreeFallSimulator(0.1F),
                             new PropertyControl(EnumParticleProperty.YAW, AnimData.startAndEnd(inversion ? startYaw : -startYaw, inversion ? targetYaw : -targetYaw), false),
                             new PropertyControl(EnumParticleProperty.SCALE, AnimData.startAndEnd(startScale, targetScale), false),
-                            new PropertyControl(EnumParticleProperty.ALPHA, new AnimData.KeyTrack(new float[]{0.6F, 0.6F, 0}, new float[]{0, 0.25F, 1}), false),
+                            new PropertyControl(EnumParticleProperty.ALPHA, new AnimData.KeyTrack(new float[]{0.8F, 0.8F, 0}, new float[]{0, 0.25F, 1}), false),
                     });
         }
     }
@@ -1581,15 +1560,17 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
         }
     }
 
-    private void doLeapLandingEffect(ParticleType<AdvancedParticleData> type, float scale1, float scale2, float dustSpeed, float effectScale, double[] angles, boolean landing) {
+    private void doLeapLandingEffect(float scale, float dustSpeed, float effectScale, double[] angles) {
         if (this.level().isClientSide) {
             Vec3 pos = this.position();
             Vector4f color = this.getColorByPhase();
-            this.doFlashingEffect(type, pos.add(0, 0.1, 0), scale1, scale2, (float) (Math.PI / 2F), color.x, color.y, color.z);
-            ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 40F, 40, ParticleDust.EnumDustBehavior.GROW, 0.79F);
-            ModParticleUtils.annularParticleOutburst(this.level(), 20 * dustSpeed, dustData, pos.x, pos.y + 0.1, pos.z, 1.6F * dustSpeed, 0.5);
+            ParticleRing.RingData particle = new ParticleRing.RingData(ParticleInit.BIG_RING.get(), 0F, (float) (Math.PI / 2F), 11, color.x, color.y, color.z, 1F, 70F, false, ParticleRing.EnumRingBehavior.GROW);
+            this.level().addParticle(particle, pos.x, this.getY() + 0.1, pos.z, 0, 0, 0);
+            this.doFlashingEffect(pos.add(0, 0.1, 0), scale, color.x, color.y, color.z);
+            ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 32F, 25, ParticleDust.EnumDustBehavior.GROW, 0.79F);
+            ModParticleUtils.annularParticleOutburst(this.level(), 20 * dustSpeed, dustData, pos.x, pos.y + 0.1, pos.z, 1.6F * dustSpeed, 0.6);
             ModParticleUtils.blockParticlesAround(this.level(), getX(), getY(), getZ(), 15, 0.75 * effectScale, 1.5 * effectScale,
-                    0.1 * effectScale, 0.2 * effectScale, 0.4, 0.7, -0.2, 0.1, (pos2, state) -> getBlockParticleData(this.random, state, pos, 1.5));
+                    0.1 * effectScale, 0.15 * effectScale, 0.45 * effectScale, 0.75 * effectScale, -0.2, 0.1, (pos2, state) -> getBlockParticleData(this.random, state, pos, 1.5));
             int[] particles = {8, 10};
             double[] radii = {2, 3};
             double[] speeds = {1.8, 2.2};
@@ -1620,7 +1601,7 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
     private static AdvancedBlockParticleData getBlockParticleData(RandomSource random, BlockState state, Vec3 pos, double scale) {
         return AdvancedBlockParticle.createBlockParticleData(state, null, pos.x, pos.y, pos.z, (random.nextFloat() * 0.5F + 0.5F) * 2 / scale,
                 0.6, 0.6, 0.6, 1, 0.98, 40, false, true, new ParticleComponent[]{
-                        new ParticleComponent.FreeFallSimulator(2F)
+                        new ParticleComponent.FreeFallSimulator(1.5F)
                 }
         );
     }
@@ -1689,7 +1670,7 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
                     lookAtTarget(15);
                     entity.pounce(tick, 31, 28, true, 2);
                 } else if (derived && tick >= 54 && tick < 60) {
-                    lookAtTarget(20F);
+                    if (tick < 59) lookAtTarget(25F);
                     entity.pounce(tick, 48, 5, false, 3);
                 }
             }

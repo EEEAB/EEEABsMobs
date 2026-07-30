@@ -357,10 +357,10 @@ public class EntityRelicEarthshaker extends AbstractRelicron implements RangedAt
                         double[] speeds = {1.2, 1.3, 1.4};
                         double[] angles = {25, 15, 7.5};
                         double[] color = {1, 0.88, 0.48, 1};
-                        ModParticleUtils.multiLayerBowlParticles(entity.level(), pos, 3, particles, radii, speeds, angles, color, null, 0.55F);
-                        entity.level().addParticle(new ParticleRing.RingData(ParticleInit.BIG_RING.get(), 0F, (float) (Math.PI / 2F), 11, 1F, 1F, 1F, 1F, 90F, false, ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y, pos.z, 0, 0, 0);
-                        entity.doPoundGroundEffect(pos, 1.4F, 0.87F);
-                        ModParticleUtils.blockParticlesAround(entity.level(), pos.x, entity.getY(), pos.z, 45, 1, 3, 2, 5, 3, 6, -0.2, 0.1);
+                        ModParticleUtils.multiLayerBowlParticles(entity.level(), pos, 4, particles, radii, speeds, angles, color, null, 0.55F);
+                        entity.level().addParticle(new ParticleRing.RingData(ParticleInit.BIG_RING.get(), 0F, (float) (Math.PI / 2F), 10, 1F, 1F, 1F, 0.95F, 50F, false, ParticleRing.EnumRingBehavior.GROW), pos.x, pos.y, pos.z, 0, 0, 0);
+                        ModParticleUtils.blockParticlesAround(entity.level(), pos.x, entity.getY(), pos.z, 25, 1, 2.5, 0.1, 0.15, 0.2, 0.45, -0.2, 0.1);
+                        entity.spawnFireEffectWhenHot(pos);
                     }
                     entity.playSound(SoundEvents.GENERIC_EXPLODE, 1.25F, 1F + entity.random.nextFloat() * 0.1F);
                     EntityCameraShake.cameraShake(entity.level(), entity.position(), 16, 0.15F, 4, 6);
@@ -430,8 +430,8 @@ public class EntityRelicEarthshaker extends AbstractRelicron implements RangedAt
                 .atTick(36, (entity, animation, tick) -> {
                     if (entity.level().isClientSide) {
                         Vec3 pos = entity.getPosOffset(false, entity.getBbWidth(), 0F, 0F);
-                        entity.doPoundGroundEffect(pos, 1.2F, 0.91F);
-                        if (!entity.hotControlled.isStop()) ModParticleUtils.annularParticleOutburst(entity.level(), 10, ParticleTypes.SOUL_FIRE_FLAME, pos.x, pos.y, pos.z, 0.3F, 0.2);
+                        entity.doPoundGroundEffect(pos, 1.2F, 0.87F);
+                        entity.spawnFireEffectWhenHot(pos);
                     } else entity.playSound(SoundInit.RELIC_EARTHSHAKER_FALL.get());
                 })
                 .atTick(40, (entity, animation, tick) -> {
@@ -526,9 +526,17 @@ public class EntityRelicEarthshaker extends AbstractRelicron implements RangedAt
         return manager;
     }
 
+    private void spawnFireEffectWhenHot(Vec3 pos) {
+        if (!this.hotControlled.isStop()) {
+            int offset = this.random.nextInt(5);
+            ModParticleUtils.annularParticleOutburst(this.level(), 8 + offset, ParticleTypes.SOUL_FIRE_FLAME, pos.x, pos.y, pos.z, 0.25, 0.3);
+            ModParticleUtils.annularParticleOutburst(this.level(), 12 + offset, ParticleTypes.LARGE_SMOKE, pos.x, pos.y, pos.z, 0.3, 0.3);
+        }
+    }
+
     private void doPoundGroundEffect(Vec3 pos, float dustSpeed, float airDiffusionSpeed) {
-        ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 35F, 30, ParticleDust.EnumDustBehavior.GROW, airDiffusionSpeed);
-        ModParticleUtils.annularParticleOutburst(this.level(), 20, dustData, pos.x, pos.y, pos.z, dustSpeed, 0.5);
+        ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 30F, 25, ParticleDust.EnumDustBehavior.GROW, airDiffusionSpeed);
+        ModParticleUtils.annularParticleOutburst(this.level(), 16, dustData, pos.x, pos.y, pos.z, dustSpeed, 0.6);
     }
 
     private static AnimationReleaseManager<EntityRelicEarthshaker> setupAnimationRules() {

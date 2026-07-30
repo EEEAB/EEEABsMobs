@@ -17,7 +17,6 @@ import com.eeeab.animate.server.animation.release.cooldown.FixedRangeCooldown;
 import com.eeeab.animate.server.handler.AnimationHandler;
 import com.eeeab.eeeabsmobs.client.ClientProxy;
 import com.eeeab.eeeabsmobs.client.ControlledAnimation;
-import com.eeeab.eeeabsmobs.client.particle.ParticleDust;
 import com.eeeab.eeeabsmobs.client.particle.ParticleRing;
 import com.eeeab.eeeabsmobs.client.particle.lib.AdvancedParticleBase;
 import com.eeeab.eeeabsmobs.client.particle.lib.AnimData;
@@ -309,7 +308,6 @@ public class EntityRelicRipper extends AbstractRelicron {
                 .inRange(10, 35, (entity, animation, tick) -> {
                     entity.distractingMovement();
                     entity.sawControlled.incrementOrDecreaseTimer(tick < 25);
-                    entity.doTrailEffect(tick == 20, tick > 20 && tick <= 25);
                     if (tick == 20) entity.playSound(SoundInit.RELIC_RIPPER_WHOOSH.get(), 2.5F, entity.getVoicePitch());
                     if (!entity.level().isClientSide) {
                         LivingEntity target = entity.getTarget();
@@ -321,8 +319,6 @@ public class EntityRelicRipper extends AbstractRelicron {
                 .everyTick((entity, animation, tick) -> {
                     entity.sawControlled.incrementOrDecreaseTimer(tick < 60);
                     if (tick == 19 || tick == 36 || tick == 45) entity.playSound(SoundInit.RELIC_RIPPER_WHOOSH.get(), 2.5F, entity.getVoicePitch());
-                    entity.doTrailEffect(tick == 20, tick > 20 && tick <= 25);
-                    entity.doTrailEffect(tick == 35, tick > 35 && tick <= 50);
                     if (!entity.level().isClientSide) {
                         LivingEntity target = entity.getTarget();
                         if (target != null) entity.lookAt(target, 30F, 30F);
@@ -340,9 +336,6 @@ public class EntityRelicRipper extends AbstractRelicron {
                     entity.derivedSkill = false;
                     entity.sawControlled.decreaseTimer();
                     entity.distractingMovement();
-                    entity.doTrailEffect(tick == 18, tick > 18 && tick <= 20);
-                    entity.doTrailEffect(tick == 36, tick > 36 && tick <= 38);
-                    entity.doTrailEffect(tick == 62, tick > 62 && tick <= 64);
                     if (tick == 17 || tick == 35 || tick == 60) entity.playSound(SoundInit.RELIC_RIPPER_WHOOSH.get(), 2.5F, entity.getVoicePitch());
                     if (tick == 18 || tick == 36 || tick == 62) entity.playSound(SoundInit.RELIC_RIPPER_SHAKE_GROUND.get(), 1F, entity.getVoicePitch());
                     if (entity.level().isClientSide && entity.saw != null && (tick == 21 || tick == 39 || tick == 65)) {
@@ -456,61 +449,11 @@ public class EntityRelicRipper extends AbstractRelicron {
         }
     }
 
-    private void doTrailEffect(boolean startFlag, boolean holdFlag) {
-        if (this.level().isClientSide && this.saw != null) {
-            if (startFlag) {
-                this.preSaw = saw;
-            } else if (holdFlag) {
-                Vec3 rightPos = this.saw;
-                double rLength = this.preSaw.subtract(rightPos).length();
-                this.spawnSwipeParticle(this.preSaw, rightPos, (int) Math.min(Math.floor(2 * rLength), 12));
-                this.preSaw = rightPos;
-            }
-        }
-    }
-
-    private void spawnSwipeParticle(Vec3 start, Vec3 end, int numDusts) {
-        for (int i = 0; i < numDusts; i++) {
-            double speedMultiplier = 0.05;
-            double xSpeed = (this.random.nextDouble() - 0.5) * 2 * speedMultiplier;
-            double ySpeed = (this.random.nextDouble() - 0.1) * 0.5 * speedMultiplier;
-            double zSpeed = (this.random.nextDouble() - 0.5) * 2 * speedMultiplier;
-            double x = start.x + i * (end.x - start.x) / numDusts;
-            double y = start.y + i * (end.y - start.y) / numDusts;
-            double z = start.z + i * (end.z - start.z) / numDusts;
-            int tick = this.getAnimationTick();
-            float randomFactor;
-            for (int j = 0; j < 2; j++) {
-                randomFactor = 0.15F;
-                float xOffset = randomFactor * (2 * this.random.nextFloat() - 1);
-                float yOffset = randomFactor * (2 * this.random.nextFloat() - 1);
-                float zOffset = randomFactor * (2 * this.random.nextFloat() - 1);
-                this.level().addParticle(ParticleInit.GUARDIAN_SPARK.get(), x + xOffset, y + yOffset, z + zOffset, xSpeed, ySpeed, zSpeed);
-            }
-            if (this.getAnimation() == SWEEP_ANIMATION2 && (tick >= 38 && tick < 48)) {
-                double dx = x - this.getX();
-                double dy = y - this.getY();
-                double dz = z - this.getZ();
-                double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                if (distance > 0) {
-                    double speed = 0.3;
-                    xSpeed = (dx / distance) * speed;
-                    zSpeed = (dz / distance) * speed;
-                    randomFactor = 0.3F;
-                    xSpeed += (this.random.nextDouble() - 0.5) * randomFactor * 0.1;
-                    zSpeed += (this.random.nextDouble() - 0.5) * randomFactor * 0.1;
-                }
-                ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 25f, tick > 40 ? 8 : 10, ParticleDust.EnumDustBehavior.GROW, 0.98F);
-                this.level().addParticle(dustData, x, y - 0.75F, z, xSpeed, ySpeed, zSpeed);
-            }
-        }
-    }
-
     private void doGroundSlamEffect(boolean strong) {
-        this.level().addParticle(new ParticleRing.RingData(ParticleInit.BIG_RING.get(), 0F, (float) (Math.PI / 2F), 11, 0.52F, 0.94F, 1F, 0.9F, 60F, false, ParticleRing.EnumRingBehavior.GROW), this.saw.x, this.getY() + 0.1, this.saw.z, 0, 0, 0);
+        this.level().addParticle(new ParticleRing.RingData(ParticleInit.BIG_RING.get(), 0F, (float) (Math.PI / 2F), 10, 0.52F, 0.94F, 1F, 1F, 35F, false, ParticleRing.EnumRingBehavior.GROW), this.saw.x, this.getY() + 0.1, this.saw.z, 0, 0, 0);
         this.doFractalEffect(strong ? 8 + this.random.nextInt(3) : 6, strong ? 1.1 : 0.9);
-        ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 22F, strong ? 30 : 25, ParticleDust.EnumDustBehavior.GROW, 0.8F);
-        ModParticleUtils.annularParticleOutburst(this.level(), 20, dustData, this.saw.x, this.getY() + 0.15, this.saw.z, 1.2, 0.5);
+        //ParticleDust.DustData dustData = new ParticleDust.DustData(ParticleInit.DUST.get(), 22F, 19, ParticleDust.EnumDustBehavior.GROW, 0.8F);
+        //ModParticleUtils.annularParticleOutburst(this.level(), 20, dustData, this.saw.x, this.getY() + 0.15, this.saw.z, strong ? 1.1 : 1, 0.5);
         //int length = 4 + this.random.nextInt(3);
         //for (int i = 0; i < length; i++) {
         //    double angle = 2 * Math.PI * i / length;
@@ -536,7 +479,7 @@ public class EntityRelicRipper extends AbstractRelicron {
         double[] angles = {35, 15};
         double[] color = {0.52, 0.94, 1, 1};
         ModParticleUtils.multiLayerBowlParticles(this.level(), new Vec3(this.saw.x, this.getY(), this.saw.z), 3, particles, radii, speeds, angles, color, null, 0.55F);
-        ModParticleUtils.blockParticlesAround(this.level(), this.saw.x, this.getY(), this.saw.z, 20, 0.5, 1.2, 1, 3, 2, strong ? 4 : 3, -0.2, 0.1);
+        ModParticleUtils.blockParticlesAround(this.level(), this.saw.x, this.getY(), this.saw.z, 12, 0.1, 0.2, 0.15, 0.2, 0.25, strong ? 0.4 : 0.3, -0.2, 0.1);
     }
 
     static class RRCuttingAttackGoal extends AnimationGroupAI<EntityRelicRipper> {

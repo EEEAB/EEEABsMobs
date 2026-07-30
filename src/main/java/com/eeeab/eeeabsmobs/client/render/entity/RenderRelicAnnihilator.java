@@ -30,7 +30,6 @@ public class RenderRelicAnnihilator extends MobRenderer<EntityRelicAnnihilator, 
     private static final ResourceLocation GLOW_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/relic_annihilator_glow.png");
     private static final ResourceLocation FLAME_LAYER = new ResourceLocation(EEEABMobs.MOD_ID, "textures/entity/relic_annihilator_exhaust.png");
     private static final String[] MUZZLE = new String[]{"upper", "leftArm", "leftHand", "muzzle"};
-    private static final String[] SAW = new String[]{"upper", "rightArm", "rightHand", "saw"};
     private final EntityAfterImageHelper<EntityRelicAnnihilator> afterImageHelper;
 
     public RenderRelicAnnihilator(EntityRendererProvider.Context context) {
@@ -48,7 +47,7 @@ public class RenderRelicAnnihilator extends MobRenderer<EntityRelicAnnihilator, 
                 super.renderLayer(entity, stack, vertexConsumer, packedLightIn, r, g, b, 0.4F);
             }
         });
-        afterImageHelper = new EntityAfterImageHelper<>(model.root().getAllParts().collect(Collectors.toList()), model.root(), 2, 1, 2);
+        afterImageHelper = new EntityAfterImageHelper<>(model.root().getAllParts().collect(Collectors.toList()), model.root(), 5, 1, 4);
     }
 
     @Override
@@ -68,7 +67,6 @@ public class RenderRelicAnnihilator extends MobRenderer<EntityRelicAnnihilator, 
         if (animation != AnimatedEntity.NO_ANIMATION) {
             ModelPart root = this.model.root();
             entity.muzzle = ModelPartUtils.getWorldPosition(entity, entity.getYRot(), root, MUZZLE);
-            entity.saw = ModelPartUtils.getWorldPosition(entity, entity.getYRot(), root, SAW);
             boolean afterImage = animation == EntityRelicAnnihilator.BACKDASH_ANIMATION;
             if (animation == EntityRelicAnnihilator.STAB_ANIMATION) {
                 int tick = entity.getAnimationTick();

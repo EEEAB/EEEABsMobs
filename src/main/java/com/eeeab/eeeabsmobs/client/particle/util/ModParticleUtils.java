@@ -76,7 +76,7 @@ public class ModParticleUtils {
             double theta = phi * i;
             double velocityX = Math.cos(theta) * radius;
             double velocityZ = Math.sin(theta) * radius;
-            float sideOffset = (float) (random.nextGaussian() * 0.2D) * (random.nextBoolean() ? 1 : -1);
+            float sideOffset = (float) (random.nextGaussian() * 0.2D);
             for (ParticleOptions particle : particles) {
                 level.addParticle(particle, true, x, y, z, velocityX * (sizeModifier + sideOffset), velocityY * sizeModifier, velocityZ * (sizeModifier + sideOffset));
             }
@@ -115,8 +115,8 @@ public class ModParticleUtils {
             double radians = Math.toRadians(currentAngle);
             double xSpeed = -speedModifier * Math.sin(radians);
             double zSpeed = speedModifier * Math.cos(radians);
-            float sideOffset = (float) (random.nextGaussian() * 0.1D * speedModifier) * (random.nextBoolean() ? 1 : -1);
-            level.addParticle(particle, x, y + yOffset, z, xSpeed + sideOffset, (random.nextFloat() - random.nextFloat()) * 0.1F * yMoveModifier, zSpeed + sideOffset);
+            float sideOffset = 1F + (float) (random.nextGaussian() * 0.2D * speedModifier);
+            level.addParticle(particle, x, y + yOffset, z, xSpeed * sideOffset, (random.nextFloat() - random.nextFloat()) * 0.1F * yMoveModifier, zSpeed * sideOffset);
         }
     }
 
@@ -228,7 +228,7 @@ public class ModParticleUtils {
                                             double maxOutwardSpeed, double minYSpeed, double maxYSpeed,
                                             double yOffset, double particleYOffset) {
         blockParticlesAround(level, x, y, z, points, minRadius, maxRadius, minOutwardSpeed, maxOutwardSpeed
-                , minYSpeed, maxYSpeed, yOffset, particleYOffset, (pos, state) -> new BlockParticleOption(ParticleTypes.BLOCK, state));
+                , minYSpeed, maxYSpeed, yOffset, particleYOffset, (pos, state) -> new BlockParticleOption(ParticleInit.CUSTOM_BLOCK.get(), state));
     }
 
     public static void blockParticlesAround(Level level, double x, double y, double z, int points,
@@ -240,7 +240,7 @@ public class ModParticleUtils {
             double radius = minRadius + random.nextDouble() * (maxRadius - minRadius);
             double posX = x + radius * Math.cos(angle);
             double posZ = z + radius * Math.sin(angle);
-            double outwardSpeed = minOutwardSpeed + random.nextDouble() * (maxOutwardSpeed - minOutwardSpeed);
+            double outwardSpeed = minOutwardSpeed + random.nextGaussian() * (maxOutwardSpeed - minOutwardSpeed);
             double xSpeed = Math.cos(angle) * outwardSpeed;
             double zSpeed = Math.sin(angle) * outwardSpeed;
             double ySpeed = minYSpeed + random.nextDouble() * (maxYSpeed - minYSpeed);
@@ -298,7 +298,7 @@ public class ModParticleUtils {
                 AdvancedParticleBase.spawnParticle(level, ParticleInit.ADV_ORB.get(), startX, startY, startZ, toParticleX * horizontalSpeed, verticalSpeed, toParticleZ * horizontalSpeed,
                         true, 0, 0, 0, 0, 0, 1, 1, 1, 0, friction, duration,
                         true, true, false, new ParticleComponent[]{
-                                new RibbonComponent(ParticleInit.FLAT_RIBBON.get(), 4, 0, 0, 0, 0.08F, color[0], color[1], color[2], color[3], true, true,
+                                new RibbonComponent(ParticleInit.FLAT_RIBBON.get(), 6, 0, 0, 0, 0.08F, color[0], color[1], color[2], color[3], true, true,
                                         new ParticleComponent[]{
                                                 new RibbonComponent.PropertyOverLength(RibbonComponent.PropertyOverLength.EnumRibbonProperty.ALPHA,
                                                         AnimData.KeyTrack.startAndEnd((float) color[3], 0F)),

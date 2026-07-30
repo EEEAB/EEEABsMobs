@@ -772,12 +772,12 @@ public class EntityImmortalBoss extends EntityAbsImmortal {
                     entity.doCollisionEffect(0, 30F, 0.5F);
                 }).atTick(3, (entity, animation, tick) -> entity.shakeGround(0F, 20F, 0.2F, 3, 0))
                 .atTick(12, (entity, animation, tick) -> entity.doImmortalMagicMatrixEffect(MagicCircleType.POWER, 7, 1.5F, 0.5F, 9F));
-        builder.forAnimation(SMASH_GROUND_ANIMATION1).inRange(17, 21, (entity, animation, tick) -> {
-            entity.doTrailEffect(animation, tick == 17, tick > 17 && tick <= 21, null);
+        builder.forAnimation(SMASH_GROUND_ANIMATION1).inRange(17, 22, (entity, animation, tick) -> {
+            entity.doTrailEffect(animation, tick == 17, tick > 17, null);
             if (tick == 20) entity.doShakeGroundEffect(12, 2.5F, 0F, 0.58F, 0.94F, false, true);
         });
-        builder.forAnimation(SMASH_GROUND_ANIMATION2).inRange(13, 17, (entity, animation, tick) -> {
-            entity.doTrailEffect(animation, tick == 13, tick > 13 && tick <= 17, null);
+        builder.forAnimation(SMASH_GROUND_ANIMATION2).inRange(13, 19, (entity, animation, tick) -> {
+            entity.doTrailEffect(animation, tick == 15, tick > 15, null);
             if (tick == 16) entity.doShakeGroundEffect(14, 2.2F, 0F, 0.55F, 0.945F, false, true);
         });
         builder.forAnimation(SMASH_GROUND_ANIMATION3).inRange(10, 21, (entity, animation, tick) -> {
@@ -788,19 +788,21 @@ public class EntityImmortalBoss extends EntityAbsImmortal {
                 entity.doShakeGroundEffect(9, 2.4F, width, 0.5F, 0.91F, true, false);
             } else if (entity.level().isClientSide && tick == 21) {
                 Vec3 pos = entity.getPosOffset(false, 2.4F, 0F, 0.2F);
-                ParticleDust.DustData particle = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.27f, 0.25f, 0.23f, 50f, 38, ParticleDust.EnumDustBehavior.GROW, 0.952F);
-                ModParticleUtils.annularParticleOutburst(entity.level(), 12, particle, pos.x, pos.y, pos.z, 1.75F, 0.5F, 126F, 2F, entity.getYRot());
-                ModParticleUtils.annularParticleOutburst(entity.level(), 8, ParticleTypes.LARGE_SMOKE, pos.x, pos.y, pos.z, 0.5F, 0.1F, 130F, 1F, entity.getYRot());
+                //ParticleDust.DustData particle = new ParticleDust.DustData(ParticleInit.DUST.get(), 35f, 28, ParticleDust.EnumDustBehavior.GROW, 0.952F);
+                //ModParticleUtils.annularParticleOutburst(entity.level(), 12, particle, pos.x, pos.y, pos.z, 1.75F, 0.5F, 126F, 2F, entity.getYRot());
+                ModParticleUtils.annularParticleOutburst(entity.level(), 20, ParticleTypes.LARGE_SMOKE, pos.x, pos.y, pos.z, 0.5F, 0.15F, 130F, 1F, entity.getYRot());
+                ModParticleUtils.annularParticleOutburst(entity.level(), 15, ParticleTypes.LARGE_SMOKE, pos.x, pos.y, pos.z, 0.45F, 0.1F, 120F, 1F, entity.getYRot());
             }
         });
         builder.forAnimation(POUNCE_PRE_ANIMATION).atTick(5, (entity, animation, tick) -> entity.doImmortalMagicMatrixEffect(MagicCircleType.SPEED, 5, 2.5F, 0.4F, 8F));
         builder.forAnimation(POUNCE_SMASH_ANIMATION).inRange(8, 11, (entity, animation, tick) -> {
+            entity.doTrailEffect(animation, tick == 8, tick > 8, true);
             if (tick < 10 && entity.level().isClientSide && entity.getDeltaMovement().horizontalDistanceSqr() > 0.1) {
                 ModParticleUtils.blockParticleDirectionality(entity.level(), entity.getX(), entity.getY() - 0.1, entity.getZ(), Math.toRadians(entity.getYRot()), 10, BLOCK_OFFSETS, 5F);
             } else if (tick == 10) entity.doShakeGroundEffect(15, 3.7F, 0F, 0.58F, 0.93F, false, true);
         });
         builder.forAnimation(POUNCE_PICK_ANIMATION).inRange(1, 11, (entity, animation, tick) -> {
-            entity.doTrailEffect(animation, tick == 7, tick > 7 && tick < 12, null);
+            entity.doTrailEffect(animation, tick == 7, tick > 7, null);
             if (tick < 10 && entity.level().isClientSide && entity.getDeltaMovement().horizontalDistanceSqr() > 0.1) {
                 ModParticleUtils.blockParticleDirectionality(entity.level(), entity.getX(), entity.getY() - 0.1, entity.getZ(), Math.toRadians(entity.getYRot()), 10, BLOCK_OFFSETS, 5F);
             }
@@ -808,8 +810,8 @@ public class EntityImmortalBoss extends EntityAbsImmortal {
         builder.forAnimation(POUNCE_HOLD_ANIMATION).atTick(1, (entity, animation, tick) -> {
             if (!entity.isSilent()) entity.level().playLocalSound(entity.blockPosition(), SoundInit.IMMORTAL_SUBSONIC.get(), entity.getSoundSource(), 0.4F, 1.5F, false);
             entity.doHitEffect(10, entity.random.nextInt(10), 60, 0, 0.55F, true);
-            ParticleDust.DustData particle = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.28f, 0.26f, 0.24f, 50f, 16, ParticleDust.EnumDustBehavior.SHRINK, 1f);
-            ModParticleUtils.roundParticleOutburst(entity.level(), 10, new ParticleOptions[]{particle}, entity.getX(), entity.getY(0.25), entity.getZ(), 1F);
+            //ParticleDust.DustData particle = new ParticleDust.DustData(ParticleInit.DUST.get(), 35f, 16, ParticleDust.EnumDustBehavior.SHRINK, 1f);
+            //ModParticleUtils.roundParticleOutburst(entity.level(), 10, new ParticleOptions[]{particle}, entity.getX(), entity.getY(0.25), entity.getZ(), 1F);
             for (LivingEntity hit : entity.getNearByLivingEntities(5F)) {
                 double angle = entity.getAngleBetweenEntities(entity, hit);
                 double x = Math.cos(Math.toRadians(angle - 90));
@@ -821,22 +823,20 @@ public class EntityImmortalBoss extends EntityAbsImmortal {
             }
         }).inRange(2, 41, (entity, animation, tick) -> {
             if (entity.level().isClientSide && entity.getDeltaMovement().horizontalDistanceSqr() > 0.1) {
-                if (tick < 8 && tick % 2 == 0) {
-                    entity.level().addParticle(new ParticleRing.RingData((float) Math.toRadians(-entity.getYRot()), (float) Math.toRadians(-entity.getXRot()),
-                            40, 0.56F, 0.85F, 0.98F, 0.14F, 90f - 20f * (tick / 6f), false, ParticleRing.EnumRingBehavior.GROW_THEN_SHRINK), entity.getX() + entity.getDeltaMovement().x * 1.5, entity.getY(0.5), entity.getZ() + entity.getDeltaMovement().z * 1.5, 0, 0, 0);
-                }
+                //entity.level().addParticle(new ParticleRing.RingData((float) Math.toRadians(-entity.getYRot()), (float) Math.toRadians(-entity.getXRot()),
+                //        30, 0.56F, 0.85F, 0.98F, 0.8F, 70f - 20f * (tick / 6f), false, ParticleRing.EnumRingBehavior.GROW_THEN_SHRINK), entity.getX() + entity.getDeltaMovement().x * 1.5, entity.getY(0.5), entity.getZ() + entity.getDeltaMovement().z * 1.5, 0, 0, 0);
                 ModParticleUtils.blockParticleDirectionality(entity.level(), entity.getX(), entity.getY() - 0.1, entity.getZ(), Math.toRadians(entity.getYRot()), 10, BLOCK_OFFSETS, 5F);
             }
         });
         builder.forAnimation(ATTRACT_ANIMATION).inRange(1, 42, (entity, animation, tick) -> {
             entity.doAttractEffect();
             if (tick == 32) entity.doImmortalMagicMatrixEffect(MagicCircleType.POWER, 5, 1.5F, 0.45F, 9F);
-            entity.doTrailEffect(animation, tick == 35, tick > 35 && tick <= 42, false);
+            entity.doTrailEffect(animation, tick == 35, tick > 35, false);
         });
         builder.forAnimation(HURT_ANIMATION1).atTick(15, (entity, animation, tick) -> entity.doShakeGroundEffect(10, 1F, entity.getBbWidth() * 0.6F, 0.55F, 0.91F, true, true));
-        builder.forAnimation(SHORYUKEN_ANIMATION).inRange(14, 20, (entity, animation, tick) -> entity.doTrailEffect(animation, tick == 14, tick > 14 && tick <= 20, false))
+        builder.forAnimation(SHORYUKEN_ANIMATION).inRange(14, 21, (entity, animation, tick) -> entity.doTrailEffect(animation, tick == 14, tick > 14, false))
                 .inRange(44, 48, (entity, animation, tick) -> {
-                    entity.doTrailEffect(animation, tick == 44, tick > 44 && tick <= 48, true);
+                    entity.doTrailEffect(animation, tick == 44, tick > 44, true);
                     if (tick == 47) entity.doShakeGroundEffect(12, 4.75F, 0F, 0.58F, 0.92F, false, true);
                 });
         builder.forAnimation(TRACKING_SHURIKEN_ANIMATION).atTick(8, (entity, animation, tick) -> entity.doImmortalMagicMatrixEffect(MagicCircleType.HARMFUL, 12, 2F, 0.5F, 15F));
@@ -1368,11 +1368,10 @@ public class EntityImmortalBoss extends EntityAbsImmortal {
             double px = pos.x;
             double py = pos.y;
             double pz = pos.z;
-            float colorOffset = this.random.nextFloat() * 0.04f;
-            ParticleRing.RingData particle = new ParticleRing.RingData(0F, (float) (Math.PI / 2F), 20, 1F, 1F, 1F, 0.8F, 70F, false, ParticleRing.EnumRingBehavior.GROW);
+            ParticleRing.RingData particle = new ParticleRing.RingData(0F, (float) (Math.PI / 2F), 10, 1F, 1F, 1F, 0.8F, 50F, false, ParticleRing.EnumRingBehavior.GROW);
             this.level().addParticle(particle, px, py + yOffset, pz, 0, 0, 0);
-            ParticleDust.DustData particle2 = new ParticleDust.DustData(ParticleInit.DUST.get(), 0.28f - colorOffset, 0.26f - colorOffset, 0.24f - colorOffset, 50f, 36 + this.random.nextInt(5), ParticleDust.EnumDustBehavior.GROW, airDiffusionSpeed);
-            ModParticleUtils.annularParticleOutburst(this.level(), count, particle2, px, py + 0.2F, pz, 0.8F, 0.5F, 360F, 1.7F, this.getYRot());
+            //ParticleDust.DustData particle2 = new ParticleDust.DustData(ParticleInit.DUST.get(), 35F, 20 + this.random.nextInt(5), ParticleDust.EnumDustBehavior.GROW, airDiffusionSpeed);
+            //ModParticleUtils.annularParticleOutburst(this.level(), count + this.random.nextInt(5), particle2, px, py + 0.2F, pz, 0.7F, 0.6F);
             if (blockEffect) {
                 int x = Mth.floor(px);
                 int y = Mth.floor(py);
@@ -1555,8 +1554,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal {
                 float xOffset = 0.5F * (2 * this.random.nextFloat() - 1);
                 float yOffset = 0.5F * (2 * this.random.nextFloat() - 1);
                 float zOffset = 0.5F * (2 * this.random.nextFloat() - 1);
-                float colorOffset = this.random.nextFloat() * 0.1f;
-                this.level().addParticle(new ParticleDust.DustData(ParticleInit.DUST.get(), (float) 0.18 - colorOffset, (float) 0.3 - colorOffset, (float) 0.36 - colorOffset, (float) (10D + random.nextDouble() * 10D), baseDuration + numDusts, ParticleDust.EnumDustBehavior.SHRINK, 1f, true), x + xOffset, y + yOffset, z + zOffset, xSpeed * speedMultiplier, 0.007F, zSpeed * speedMultiplier);
+                this.level().addParticle(new ParticleDust.DustData(ParticleInit.DUST.get(), 0.18F, 0.3F, 0.36F, (float) (10D + random.nextDouble() * 10D), baseDuration + numDusts, ParticleDust.EnumDustBehavior.SHRINK, 1f, true), x + xOffset, y + yOffset, z + zOffset, xSpeed * speedMultiplier, 0.007F, zSpeed * speedMultiplier);
             }
         }
     }

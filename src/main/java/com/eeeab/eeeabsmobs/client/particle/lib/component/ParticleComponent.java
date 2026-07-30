@@ -446,13 +446,9 @@ public abstract class ParticleComponent {
         }
 
         @Override
-        public void init(AdvancedParticleBase particle) {
-            particle.setGravity(gravity);
-        }
-
-        @Override
         public void preUpdate(AdvancedParticleBase particle) {
             if (particle.getAge() < particle.getLifetime()) {
+                particle.setGravity(this.gravity);
                 particle.setMotionY(particle.getMotionY() - 0.04D * particle.getGravity());
             }
         }
