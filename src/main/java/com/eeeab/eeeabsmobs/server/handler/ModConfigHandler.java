@@ -435,7 +435,7 @@ public final class ModConfigHandler {
         public RelicAnnihilator(final ForgeConfigSpec.Builder builder) {
             builder.push("Relic Annihilator");
             combatConfig = new AttributeConfig();
-            bossConfig = new BossConfig(22D, 24D, 0.75D);
+            bossConfig = new BossConfig(20D, 24D, 0.75D);
             {
                 builder.push("Guardian Laser");
                 guardianLaser = new AttributeConfig(10F);

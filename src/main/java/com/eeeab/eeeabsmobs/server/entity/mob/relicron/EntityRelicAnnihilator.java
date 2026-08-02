@@ -273,16 +273,7 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
     protected void registerGoals() {
         super.registerGoals();
         this.targetSelector.addGoal(1, new HighestThreatTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true, true) {
-            @Override
-            public boolean canUse() {
-                if (this.randomInterval > 0 && this.mob.getRandom().nextInt(this.randomInterval) != 0) {
-                    return false;
-                }
-                this.findTarget();
-                return this.target != null && this.canAttack(this.target, this.targetConditions);
-            }
-        });
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.goalSelector.addGoal(5, new RelicronRandomStrollGoal(this, 0.8));
     }
 
@@ -785,9 +776,9 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
     private static AnimationReleaseManager<EntityRelicAnnihilator> setupAnimationRules() {
         AnimationReleaseManager<EntityRelicAnnihilator> manager = new AnimationReleaseManager<>();
         AnimationReleaseManager.Builder<EntityRelicAnnihilator> builder = manager.builder();
-        HealthScaledCooldown baseAttack = new HealthScaledCooldown(180, 20, 40, 0.3F, true);
+        HealthScaledCooldown baseAttack = new HealthScaledCooldown(180, 20, 50, 0.5F, true);
         AnimationCondition<EntityRelicAnnihilator> heightDiff = ConditionFactory.heightDiff(5);
-        HealthScaledCooldown groundPound = new HealthScaledCooldown(400, 50, 50, 0.3F, true);
+        HealthScaledCooldown groundPound = new HealthScaledCooldown(400, 50, 70, 0.5F, true);
         AnimationRule<EntityRelicAnnihilator> groundPoundBuild = builder.define(GROUND_POUND_ANIMATION)
                 .priority(2)
                 .cooldown(groundPound)
@@ -840,7 +831,7 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
         );
         builder.register(builder.define(LASER_ANIMATION)
                 .priority(2)
-                .cooldown(new FixedRangeCooldown(480, 100, true))
+                .cooldown(new FixedRangeCooldown(460, 100, true))
                 .condition(ConditionFactory.and(
                                 ConditionFactory.healthBelow(0.8F),
                                 (entity, target) -> !entity.isBlinded(),
@@ -849,7 +840,7 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
                                 ConditionFactory.hasLineOfSight()
                         )
                 ));
-        HealthScaledCooldown rangAttack = new HealthScaledCooldown(360, 20, 60, 0.5F, true);
+        HealthScaledCooldown rangAttack = new HealthScaledCooldown(360, 40, 60, 0.4F, true);
         builder.register(builder.define(SHOT_ANIMATION1)
                 .priority(1)
                 .cooldown(rangAttack)
@@ -882,7 +873,7 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
         );
         builder.register(builder.define(CYCLONE_ANIMATION)
                 .priority(1)
-                .cooldown(new HealthScaledCooldown(300, 25, 25, 0.3F, true))
+                .cooldown(new HealthScaledCooldown(300, 25, 25, 0.4F, true))
                 .condition(ConditionFactory.and(
                         heightDiff,
                         ConditionFactory.healthBelow(0.8F),
@@ -894,7 +885,7 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
                         )
                 )));
         builder.register(builder.define(GROUND_SLAM_ANIMATION1)
-                .cooldown(new HealthScaledCooldown(350, 50, 50, 0.3F, true))
+                .cooldown(new HealthScaledCooldown(350, 50, 50, 0.4F, true))
                 .condition(ConditionFactory.and(
                                 ConditionFactory.distanceRange(12, 22),
                                 ConditionFactory.randomChance(0.4F),
@@ -902,7 +893,7 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
                         )
                 ));
         builder.register(builder.define(BACKDASH_ANIMATION)
-                .cooldown(new FixedRangeCooldown(400, 100, true))
+                .cooldown(new HealthScaledCooldown(400, 100, 50, 0.5F, true))
                 .condition(ConditionFactory.and(
                         (entity, target) -> {
                             CooldownManager cooldownManager = entity.getCooldownManager();
