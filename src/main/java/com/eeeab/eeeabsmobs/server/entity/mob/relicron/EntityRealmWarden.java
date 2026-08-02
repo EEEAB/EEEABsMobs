@@ -198,7 +198,7 @@ public class EntityRealmWarden extends AbstractRelicron implements CrackinessEnt
 
     @Override
     public MobLevel getMobLevel() {
-        return MobLevel.LEGENDARY_BOSS;
+        return MobLevel.BRUTAL;
     }
 
     @Override//减少实体在水下的空气供应

@@ -177,7 +177,7 @@ public class EntityRelicAnnihilator extends AbstractRelicron implements RangedAt
 
     @Override
     public MobLevel getMobLevel() {
-        return MobLevel.BOSS;
+        return MobLevel.EXPERT;
     }
 
     @Override

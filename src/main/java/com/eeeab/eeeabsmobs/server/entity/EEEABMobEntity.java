@@ -118,7 +118,7 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
         if (tickCount % 4 == 0) bossInfo.update();
         if (this.destroyBlocksTick > 0) {
             --this.destroyBlocksTick;
-            if (this.destroyBlocksTick == 0 && this.canBreakBlock()) {
+            if (this.destroyBlocksTick == 0 && this.canDestroyBlocksWhenHurt()) {
                 int width = Math.round(this.getBbWidth());
                 int height = (int) Math.ceil(this.getBbHeight());
                 ModEntityUtils.breakBlocksInRect(this.level(), this, -1F, width, height, width, 0, 0, true);
@@ -525,9 +525,5 @@ public abstract class EEEABMobEntity extends PathfinderMob implements IMob {
         return player != null
                 && canAttack(player)
                 && distanceTo(player) < 50 * 50;
-    }
-
-    public boolean canBreakBlock() {
-        return getMobLevel().canBreakBlock();
     }
 }

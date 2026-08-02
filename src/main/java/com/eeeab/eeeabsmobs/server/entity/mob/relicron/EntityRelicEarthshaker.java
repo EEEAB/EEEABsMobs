@@ -111,7 +111,7 @@ public class EntityRelicEarthshaker extends AbstractRelicron implements RangedAt
 
     @Override
     public MobLevel getMobLevel() {
-        return MobLevel.ELITE;
+        return MobLevel.HARD;
     }
 
     @Override//减少实体在水下的空气供应

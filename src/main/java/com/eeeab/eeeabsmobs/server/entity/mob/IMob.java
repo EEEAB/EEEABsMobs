@@ -9,20 +9,21 @@ public interface IMob {
         NONE(0, 0F, false, false),
         EASY(10, 0.01F, false, false),
         NORMAL(50, 0.02F, false, false),
-        ELITE(100, 0.025F, false, true),
-        BOSS(300, 0.03F, true, true),
-        LEGENDARY_BOSS(500, 0.04F, true, true);
+        HARD(100, 0.03F, false, true),
+        EXPERT(300, 0.04F, true, true),
+        BRUTAL(500, 0.05F, true, true),
+        NIGHTMARE(1000, 0.1F, true, true);
 
         private final int xp;
         private final float damagePct;
         private final boolean boss;
-        private final boolean canBreakBlock;
+        private final boolean destroyBlock;
 
-        MobLevel(int xp, float damagePct, boolean boss, boolean canBreakBlock) {
+        MobLevel(int xp, float damagePct, boolean boss, boolean destroyBlock) {
             this.xp = xp;
             this.damagePct = damagePct;
             this.boss = boss;
-            this.canBreakBlock = canBreakBlock;
+            this.destroyBlock = destroyBlock;
         }
 
         public int getXp() {
@@ -33,8 +34,8 @@ public interface IMob {
             return damagePct;
         }
 
-        public boolean canBreakBlock() {
-            return canBreakBlock;
+        public boolean canDestroyBlock() {
+            return destroyBlock;
         }
 
         public boolean isBoss() {
@@ -52,6 +53,13 @@ public interface IMob {
      */
     default boolean isBossLevel() {
         return getMobLevel().isBoss();
+    }
+
+    /**
+     * @return 是否允许在受击时破坏方块
+     */
+    default boolean canDestroyBlocksWhenHurt() {
+        return getMobLevel().canDestroyBlock();
     }
 
     /**
@@ -76,7 +84,7 @@ public interface IMob {
     }
 
     /**
-     * @return 检查配置判断是否可以在破坏方块的时候掉落物品
+     * @return 检查配置判断是否可以在破坏方块时掉落物品
      */
     default boolean canItemDropsWhenBreakBlocks() {
         return ModConfigHandler.COMMON.others.enableItemDropsWhenBreakBlocks.get();

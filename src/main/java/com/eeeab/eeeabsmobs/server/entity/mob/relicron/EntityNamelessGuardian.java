@@ -200,7 +200,7 @@ public class EntityNamelessGuardian extends AbstractRelicron implements Powerabl
 
     @Override
     public MobLevel getMobLevel() {
-        return MobLevel.BOSS;
+        return MobLevel.EXPERT;
     }
 
     @Override//可以站立的流体

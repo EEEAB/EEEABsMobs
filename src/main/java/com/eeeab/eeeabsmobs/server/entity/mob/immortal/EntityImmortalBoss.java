@@ -238,7 +238,7 @@ public class EntityImmortalBoss extends EntityAbsImmortal {
 
     @Override
     public MobLevel getMobLevel() {
-        return MobLevel.LEGENDARY_BOSS;
+        return MobLevel.BRUTAL;
     }
 
     @Override//可以站立的流体

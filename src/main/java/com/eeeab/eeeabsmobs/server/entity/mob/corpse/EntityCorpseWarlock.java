@@ -125,7 +125,7 @@ public class EntityCorpseWarlock extends EntityAbsCorpse implements RangedAttack
 
     @Override
     public MobLevel getMobLevel() {
-        return MobLevel.ELITE;
+        return MobLevel.HARD;
     }
 
 
